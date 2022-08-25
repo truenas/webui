@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import helptext from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -34,6 +35,7 @@ describe('KubernetesSettingsComponent', () => {
           route_v4_gateway: '10.123.45.1',
           configure_gpus: true,
           servicelb: true,
+          validate_host_path: true,
           cluster_cidr: '172.16.0.0/16',
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
@@ -81,6 +83,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': true,
       'Enable GPU support': true,
       'Enable Integrated Loadbalancer': true,
+      'Validate host path': true,
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
@@ -101,13 +104,14 @@ describe('KubernetesSettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalledWith();
+    expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     expect(ws.job).toHaveBeenCalledWith('kubernetes.update', [{
       node_ip: '10.123.45.11',
       route_v4_interface: 'enp0s8',
       route_v4_gateway: '10.123.45.13',
       configure_gpus: false,
       servicelb: false,
+      validate_host_path: true,
       cluster_cidr: '172.16.0.0/16',
       service_cidr: '172.17.0.0/16',
       cluster_dns_ip: '172.17.0.1',
@@ -127,7 +131,11 @@ describe('KubernetesSettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: helptext.kubForm.reInit.title,
+      message: helptext.kubForm.reInit.modalWarning,
+    });
+
     expect(ws.job).toHaveBeenCalledWith('kubernetes.update', [{
       node_ip: '10.123.45.67',
       route_v4_interface: 'enp0s7',
@@ -137,6 +145,32 @@ describe('KubernetesSettingsComponent', () => {
       service_cidr: '172.17.1.0/16',
       cluster_dns_ip: '172.17.1.1',
       servicelb: true,
+      validate_host_path: true,
+    }]);
+  });
+
+  it('shows warning and saves config when validate host path is not choose', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'Validate host path': false });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: helptext.kubForm.reInit.title,
+      message: helptext.kubForm.reInit.modalWarning,
+    });
+
+    expect(ws.job).toHaveBeenCalledWith('kubernetes.update', [{
+      node_ip: '10.123.45.67',
+      route_v4_interface: 'enp0s7',
+      route_v4_gateway: '10.123.45.1',
+      configure_gpus: true,
+      cluster_cidr: '172.16.0.0/16',
+      service_cidr: '172.17.0.0/16',
+      cluster_dns_ip: '172.17.0.1',
+      servicelb: true,
+      validate_host_path: false,
     }]);
   });
 });

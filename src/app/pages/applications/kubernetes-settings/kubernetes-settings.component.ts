@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  EMPTY, forkJoin, of,
+  EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
   catchError, filter, map, switchMap, tap,
@@ -37,6 +37,7 @@ export class KubernetesSettingsComponent implements OnInit {
     enable_container_image_update: [true],
     configure_gpus: [true],
     servicelb: [true],
+    validate_host_path: [true],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
@@ -105,43 +106,56 @@ export class KubernetesSettingsComponent implements OnInit {
   onSubmit(): void {
     const { enable_container_image_update: enableContainerImageUpdate, ...values } = this.form.value;
 
-    (
-      this.wereReInitFieldsChanged(values)
-        ? this.dialogService.confirm({
-          title: helptext.kubForm.reInit.title,
-          message: helptext.kubForm.reInit.modalWarning,
-        })
-        : of(true)
-    ).pipe(
-      filter(Boolean),
-      switchMap(() => {
-        this.loader.open();
-        return forkJoin([
-          this.ws.job('kubernetes.update', [values]),
-          this.appService.updateContainerConfig(enableContainerImageUpdate),
-        ]).pipe(
-          tap(([job]) => {
-            if (job.state !== JobState.Success) {
-              return;
-            }
-            this.loader.close();
-            this.slideInService.close();
-          }),
-          catchError((error) => {
-            this.loader.close();
+    this.showReInitConfirm(values).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.showValidateHostPathConfirm(values).pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.loader.open();
+          return forkJoin([
+            this.ws.job('kubernetes.update', [values]),
+            this.appService.updateContainerConfig(enableContainerImageUpdate),
+          ]).pipe(
+            tap(([job]) => {
+              if (job.state !== JobState.Success) {
+                return;
+              }
+              this.loader.close();
+              this.slideInService.close();
+            }),
+            catchError((error) => {
+              this.loader.close();
 
-            this.errorHandler.handleWsFormError(error, this.form);
-            return EMPTY;
-          }),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe();
+              this.errorHandler.handleWsFormError(error, this.form);
+              return EMPTY;
+            }),
+          );
+        }),
+        untilDestroyed(this),
+      ).subscribe();
+    });
   }
 
   private wereReInitFieldsChanged(newValues: Partial<KubernetesConfigUpdate>): boolean {
     const reInitFields = ['cluster_cidr', 'service_cidr', 'cluster_dns_ip'] as const;
 
     return reInitFields.some((field) => newValues[field] !== this.oldConfig[field]);
+  }
+
+  private showReInitConfirm(values: Partial<KubernetesConfigUpdate>): Observable<boolean> {
+    return this.wereReInitFieldsChanged(values)
+      ? this.dialogService.confirm({
+        title: helptext.kubForm.reInit.title,
+        message: helptext.kubForm.reInit.modalWarning,
+      })
+      : of(true);
+  }
+
+  private showValidateHostPathConfirm(values: Partial<KubernetesConfigUpdate>): Observable<boolean> {
+    return !values.validate_host_path
+      ? this.dialogService.confirm({
+        title: helptext.kubForm.validateHostPathWarning.title,
+        message: helptext.kubForm.validateHostPathWarning.modalWarning,
+      })
+      : of(true);
   }
 }
