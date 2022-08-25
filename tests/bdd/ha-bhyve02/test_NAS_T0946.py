@@ -407,7 +407,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 @then('click disable failover to uncheck it, click save and confirm changes')
 def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     """click disable failover to uncheck it, click save and confirm changes."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Disable Failover")]', 'clickable')
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
     class_attribute = element.get_attribute('class')
