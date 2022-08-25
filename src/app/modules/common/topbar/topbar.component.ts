@@ -257,7 +257,7 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     positioner(window.innerWidth < 768);
 
     // Check width on resize
-    this.breakpoints.addEventListener('change', (state: { matches: any }) => positioner(state.matches));
+    this.breakpoints.addEventListener('change', (state) => positioner(state.matches));
   }
 
   ngOnDestroy(): void {
