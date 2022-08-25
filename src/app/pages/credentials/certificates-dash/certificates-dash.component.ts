@@ -244,26 +244,26 @@ export class CertificatesDashComponent implements OnInit {
     ];
   }
 
-  certificatesDataSourceHelper(res: Certificate[]): Certificate[] {
-    res.forEach((certificate) => {
+  certificatesDataSourceHelper(certificates: Certificate[]): Certificate[] {
+    certificates.forEach((certificate) => {
       if (_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
       }
     });
-    return res.filter((item) => item.certificate !== null);
+    return certificates.filter((item) => item.certificate !== null);
   }
 
-  csrDataSourceHelper(res: Certificate[]): Certificate[] {
-    return res.filter((item) => item.CSR !== null);
+  csrDataSourceHelper(certificates: Certificate[]): Certificate[] {
+    return certificates.filter((item) => item.CSR !== null);
   }
 
-  caDataSourceHelper(res: CertificateAuthority[]): CertificateAuthority[] {
-    res.forEach((row) => {
+  caDataSourceHelper(authorities: CertificateAuthority[]): CertificateAuthority[] {
+    authorities.forEach((row) => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;
       }
     });
-    return res;
+    return authorities;
   }
 
   certificateActions(): AppTableAction[] {
@@ -277,8 +277,7 @@ export class CertificatesDashComponent implements OnInit {
           const path = isCsr ? rowinner.csr_path : rowinner.certificate_path;
           const fileName = `${rowinner.name}.${isCsr ? 'csr' : 'crt'}`;
           this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              const url = res[1];
+            ([, url]) => {
               const mimetype = 'application/x-x509-user-cert';
               this.storage.streamDownloadFile(url, fileName, mimetype)
                 .pipe(untilDestroyed(this))
@@ -295,8 +294,7 @@ export class CertificatesDashComponent implements OnInit {
           );
           const keyName = rowinner.name + '.key';
           this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              const url = res[1];
+            ([, url]) => {
               const mimetype = 'text/plain';
               this.storage.streamDownloadFile(url, keyName, mimetype)
                 .pipe(untilDestroyed(this))
@@ -334,9 +332,9 @@ export class CertificatesDashComponent implements OnInit {
             this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               this.dialog.closeAll();
             });
-            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(this, res, this.dialogService);
+              new EntityUtils().handleWsError(this, failedJob, this.dialogService);
             });
           });
       },
@@ -396,9 +394,9 @@ export class CertificatesDashComponent implements OnInit {
             this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               this.dialog.closeAll();
             });
-            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(this, res, this.dialogService);
+              new EntityUtils().handleWsError(this, failedJob, this.dialogService);
             });
           });
       },

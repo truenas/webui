@@ -14,7 +14,7 @@ interface DiskState {
   highestTemperature: number;
   lowestTemperature: number;
   averageTemperature: number;
-  alters: number;
+  alerts: number;
   smartTests: number;
   unit: string;
   symbolText: string;
@@ -45,7 +45,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     highestTemperature: null,
     lowestTemperature: null,
     averageTemperature: null,
-    alters: 0,
+    alerts: 0,
     smartTests: 0,
     unit: '',
     symbolText: '',
@@ -102,8 +102,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadAlerts(): void {
-    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.diskState.alters = res.length;
+    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
+      this.diskState.alerts = alerts.length;
       this.cdr.markForCheck();
     });
   }

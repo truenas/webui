@@ -215,14 +215,14 @@ export class DatasetUnlockComponent implements FormConfiguration {
     );
     dialogRef.componentInstance.setCall(this.queryCall, [this.pk]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
-      if (!res) {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job: Job<DatasetEncryptionSummary[]>) => {
+      if (!job) {
         return;
       }
 
       dialogRef.close();
-      if (res.result && res.result.length > 0) {
-        for (let i = 0; i < res.result.length; i++) {
+      if (job.result && job.result.length > 0) {
+        for (let i = 0; i < job.result.length; i++) {
           if (this.datasets.controls[i] === undefined) {
             const templateListField = _.cloneDeep(this.datasetsField.templateListField);
             const newFormGroup = this.entityFormService.createFormGroup(templateListField);
@@ -233,7 +233,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           const controls = listFields[i];
           const passphraseConfig = _.find(controls, { name: 'passphrase' });
           const nameTextConfig = _.find(controls, { name: 'name_text' }) as FormParagraphConfig;
-          const result = res.result[i];
+          const result = job.result[i];
 
           (this.datasets.controls[i] as UntypedFormGroup).controls['name'].setValue(result['name']);
           nameTextConfig.paraText = helptext.dataset_name_paratext + result['name'];
@@ -374,13 +374,13 @@ export class DatasetUnlockComponent implements FormConfiguration {
       dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job: Job<DatasetEncryptionSummary[]>) => {
       dialogRef.close();
       // show summary dialog;
       const errors: DatasetEncryptionSummary[] = [];
       const unlock: DatasetEncryptionSummary[] = [];
-      if (res && res.result) {
-        res.result.forEach((result) => {
+      if (job && job.result) {
+        job.result.forEach((result) => {
           if (result.unlock_successful) {
             unlock.push(result);
           } else {
@@ -421,14 +421,14 @@ export class DatasetUnlockComponent implements FormConfiguration {
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetUnlockResult>) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job: Job<DatasetUnlockResult>) => {
       dialogRef.close();
       const errors = [];
       const skipped: { name: string }[] = [];
       const unlock: { name: string }[] = [];
-      if (res && res.result) {
-        if (res.result.failed) {
-          const failed = res.result.failed;
+      if (job && job.result) {
+        if (job.result.failed) {
+          const failed = job.result.failed;
           for (const errorDataset in failed) {
             if (failed.hasOwnProperty(errorDataset)) {
               const fail = failed[errorDataset];
@@ -441,7 +441,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
             }
           }
         }
-        res.result.unlocked.forEach((name) => {
+        job.result.unlocked.forEach((name) => {
           unlock.push({ name });
         });
         if (!this.dialogOpen) { // prevent dialog from opening more than once

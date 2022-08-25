@@ -113,8 +113,8 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   onCheckboxChange(row: PeriodicSnapshotTaskUi): void {
     row.enabled = !row.enabled;
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (!res) {
+      (task) => {
+        if (!task) {
           row.enabled = !row.enabled;
         }
       },

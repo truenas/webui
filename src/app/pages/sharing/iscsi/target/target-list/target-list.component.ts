@@ -97,10 +97,10 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
       onClick: (rowinner: IscsiTarget) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (sessions) => {
             const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
-            for (const session of res) {
+            for (const session of sessions) {
               if (session.target.split(':')[1] === rowinner.name) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
                 payload.push(true); // enable force delele

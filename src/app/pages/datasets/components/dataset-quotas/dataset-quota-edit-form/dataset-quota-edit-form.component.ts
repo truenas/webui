@@ -88,8 +88,8 @@ export class DatasetQuotaEditFormComponent {
     this.isFormLoading = true;
     this.ws.call('pool.dataset.get_quota', [datasetId, quotaType, params])
       .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          this.datasetQuota = res[0];
+        (quotas) => {
+          this.datasetQuota = quotas[0];
           this.isFormLoading = false;
           this.form.patchValue({
             name: this.datasetQuota.name,

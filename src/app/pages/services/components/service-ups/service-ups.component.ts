@@ -115,8 +115,8 @@ export class ServiceUpsComponent implements OnInit {
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
 
-    this.form.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === UpsMode.Master) {
+    this.form.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+      if (mode === UpsMode.Master) {
         this.form.controls.remotehost.disable();
         this.form.controls.remoteport.disable();
         this.form.controls.port.setValidators(Validators.required);

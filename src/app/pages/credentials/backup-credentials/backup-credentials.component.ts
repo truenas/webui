@@ -144,30 +144,32 @@ export class BackupCredentialsComponent implements OnInit {
     ];
   }
 
-  cloudCredentialsDataSourceHelper(res: CloudsyncCredential[]): (CloudsyncCredential & { providerTitle?: string })[] {
-    return res.map((item) => {
+  cloudCredentialsDataSourceHelper(
+    credentials: CloudsyncCredential[],
+  ): (CloudsyncCredential & { providerTitle?: string })[] {
+    return credentials.map((credential) => {
       if (this.providers) {
-        const credentialProvider = this.providers.find((provider) => provider.name === item.provider);
+        const credentialProvider = this.providers.find((provider) => provider.name === credential.provider);
         if (credentialProvider) {
           return {
-            ...item,
+            ...credential,
             providerTitle: credentialProvider.title,
           };
         }
       }
-      return item;
+      return credential;
     });
   }
 
-  sshConnectionsDataSourceHelper(res: KeychainCredential[]): KeychainSshCredentials[] {
-    return res.filter((item) => {
-      return item.type === KeychainCredentialType.SshCredentials;
+  sshConnectionsDataSourceHelper(credentials: KeychainCredential[]): KeychainSshCredentials[] {
+    return credentials.filter((credential) => {
+      return credential.type === KeychainCredentialType.SshCredentials;
     }) as KeychainSshCredentials[];
   }
 
-  sshKeyPairsDataSourceHelper(res: KeychainCredential[]): KeychainSshKeyPair[] {
-    return res.filter((item) => {
-      return item.type === KeychainCredentialType.SshKeyPair;
+  sshKeyPairsDataSourceHelper(credentials: KeychainCredential[]): KeychainSshKeyPair[] {
+    return credentials.filter((credential) => {
+      return credential.type === KeychainCredentialType.SshKeyPair;
     }) as KeychainSshKeyPair[];
   }
 

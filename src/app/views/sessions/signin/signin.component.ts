@@ -122,11 +122,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.ws.call('truecommand.connected').pipe(
-      filter((res) => res.connected),
+      filter((connectionState) => connectionState.connected),
       untilDestroyed(this),
-    ).subscribe((res) => {
-      this.truecommandIp = res.truecommand_ip;
-      this.truecommandUrl = res.truecommand_url;
+    ).subscribe((connectionState) => {
+      this.truecommandIp = connectionState.truecommand_ip;
+      this.truecommandUrl = connectionState.truecommand_url;
     });
   }
 
@@ -164,8 +164,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       instanceId: new UntypedFormControl('', [Validators.required]),
     });
 
-    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.isTwoFactor = res;
+    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactorAuth) => {
+      this.isTwoFactor = hasTwoFactorAuth;
     });
   }
 

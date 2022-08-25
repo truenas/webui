@@ -846,9 +846,9 @@ export class ZvolFormComponent implements FormConfiguration {
         this.loader.close();
         this.modalService.closeSlideIn();
         this.modalService.refreshTable();
-      }, (res) => {
+      }, (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, res);
+        new EntityUtils().handleWsError(this.entityForm, error);
       });
     } else {
       this.editSubmit(body);
