@@ -26,7 +26,7 @@ export enum ApplicationUserEventName {
 
 export interface ApplicationUserEvent {
   name: ApplicationUserEventName;
-  value: boolean | /* tab index */ number;
+  value?: boolean | /* tab index */ number;
   catalogNames?: string[];
   isSelectedAll?: boolean;
 }
