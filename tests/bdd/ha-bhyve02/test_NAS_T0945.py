@@ -51,7 +51,7 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
-    # assert wait_on_element(driver, 10, f'//span[contains(.,"{information}")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')

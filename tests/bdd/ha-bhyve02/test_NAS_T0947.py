@@ -47,13 +47,13 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    # assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
             driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
         except ElementClickInterceptedException:
-            # assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+            assert wait_on_element(driver, 10, '//span[text()="System Information"]')
             pass
 
 

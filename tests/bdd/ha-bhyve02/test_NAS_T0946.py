@@ -48,7 +48,7 @@ def login_appear_enter_root_and_password(driver, password):
 def you_should_see_the_dashboard_and_information(driver, information):
     """you should see the dashboard and "information"."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
-    # assert wait_on_element(driver, 10, f'//span[contains(.,"{information}")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
 
 
 @then('navigate to System Settings and click General')
@@ -423,7 +423,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas")]')
     assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
@@ -446,7 +446,7 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     """navigate to dashboard, verify both contorler hostname."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ix:ha_enabled"]')
     assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"tn-bhyve01-nodea")]')
     assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"tn-bhyve01-nodeb")]')
