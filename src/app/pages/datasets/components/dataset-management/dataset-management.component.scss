@@ -237,6 +237,7 @@ ix-dataset-details-panel {
     &:first-child {
       left: 0;
       position: sticky;
+
       @media (max-width: $breakpoint-tablet) {
         display: block;
       }

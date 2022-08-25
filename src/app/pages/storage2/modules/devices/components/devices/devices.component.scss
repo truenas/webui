@@ -203,6 +203,13 @@ ix-disk-details-panel {
   flex: 1;
   flex-direction: column;
   min-width: fit-content;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-height: fit-content;
+    min-width: unset;
+    overflow-x: auto;
+  }
+
 }
 
 .disk-tree {
@@ -211,18 +218,40 @@ ix-disk-details-panel {
 
 .disk-tree-header {
   @include grid-row();
+
   align-items: center;
   color: var(--fg2);
+  
+  // Override default fraction based values to avoid misaligned columns
+  grid-template-columns: auto 125px 125px 125px 90px;
   min-height: 48px;
   padding-left: 48px;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0 0;
+    width: auto;
+  }
+
+  @media (min-width: $breakpoint-singlecolumn) {
+    grid-template-columns: auto 125px 125px 125px 40px;
+    overflow-x: hidden;
+  }
 
   > div {
     font-weight: bold;
     padding: 4px 0;
 
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
     &:first-child {
       left: 0;
       position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: block;
+      }
     }
   }
 
@@ -230,12 +259,6 @@ ix-disk-details-panel {
     background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
     padding-left: 8px;
     padding-right: 15px;
-  }
-
-  .disk-status-header {
-    display: flex;
-    justify-content: center;
-    width: 70%;
   }
 }
 
@@ -273,4 +296,18 @@ ix-disk-details-panel {
   line-height: 0;
   margin-right: 10px;
   width: 25px;
+}
+
+
+.dataset-nested-tree-root-node ix-icon.mobile-actions,
+.ix-tree-node ix-icon.mobile-actions,
+.ix-nested-tree-node ix-icon.mobile-actions {
+  display: none;
+
+  @media (max-width: $breakpoint-hidden) {
+    display: flex;
+    margin: 12px;
+    position: relative;
+    right: 8px;
+  }
 }

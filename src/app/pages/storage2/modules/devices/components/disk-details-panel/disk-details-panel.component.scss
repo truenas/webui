@@ -101,7 +101,11 @@
   }
 
   .scroll-window {
-    min-height: 480px;
+    min-height: 500px;
+
+    @media (min-width: $breakpoint-dualcolumn) {
+      min-height: 480px;
+    }
   }
 }
 
@@ -141,6 +145,10 @@
 
   @media (min-width: $breakpoint-singlecolumn) {
     align-items: center;
+  }
+
+  a.mobile-back-button:hover {
+    cursor: pointer;
   }
 
   a.mobile-back-button {
