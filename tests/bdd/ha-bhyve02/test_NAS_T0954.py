@@ -120,7 +120,7 @@ def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, '//mat-progress-bar')
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 
