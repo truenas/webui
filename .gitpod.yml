@@ -6,8 +6,8 @@ tasks:
       sudo docker-up
   - name: Pull Image
     env:
-      TNIP: 192.168.242.130
-      PR_NUMBER: 7004
+      TNIP: 8031-1-46-159-69.ngrok.io
+      PR_NUMBER: 7006
     command: docker container run -it -d -e TNIP=$TNIP -p 8080:80 ixsystems/truenas-webui:$PR_NUMBER
 
 # Ports to expose on workspace startup
