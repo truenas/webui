@@ -9,7 +9,7 @@
     <mat-tab label="{{ 'Available Applications' | translate}}"
       ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
       <ng-template matTabContent>
-        <app-catalog (updateTab)="updateTab($event)"></app-catalog>
+        <app-catalog (updateTab)="updateTab($event)" [selectedPool]="selectedPool"></app-catalog>
       </ng-template>
     </mat-tab>
     <mat-tab label="{{ 'Manage Catalogs' | translate}}"

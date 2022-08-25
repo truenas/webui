@@ -14,7 +14,7 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
-import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
+import { ApplicationUserEvent, ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -44,7 +44,7 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 })
 
 export class ChartReleasesComponent implements OnInit, OnDestroy {
-  @Output() updateTab = new EventEmitter();
+  @Output() updateTab: EventEmitter<ApplicationUserEvent> = new EventEmitter();
 
   filteredChartItems: ChartRelease[] = [];
   filterString = '';
