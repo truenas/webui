@@ -103,7 +103,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   private loadAlerts(): void {
     this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
-      this.diskState.alters = alerts.length;
+      this.diskState.alerts = alerts.length;
       this.cdr.markForCheck();
     });
   }
