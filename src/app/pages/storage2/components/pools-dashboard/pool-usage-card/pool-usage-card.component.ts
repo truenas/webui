@@ -1,24 +1,12 @@
 import {
-  Component, Input, OnChanges, OnInit,
+  Component, Input,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
-import { VolumeData } from 'app/interfaces/volume-data.interface';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
-
-interface UsageState {
-  capacity: string;
-  used: string;
-  avail: string;
-  snapshots: string;
-  usedPct: number;
-  health: UsageHealthLevel;
-}
 
 export enum UsageHealthLevel {
   Warn = 'warn',
@@ -26,7 +14,6 @@ export enum UsageHealthLevel {
   Safe = 'safe',
 }
 
-const unknownSize = 'Unknown';
 const maxPct = 80;
 
 @UntilDestroy()
@@ -35,25 +22,14 @@ const maxPct = 80;
   templateUrl: './pool-usage-card.component.html',
   styleUrls: ['./pool-usage-card.component.scss'],
 })
-export class PoolUsageCardComponent implements OnInit, OnChanges {
+export class PoolUsageCardComponent {
   @Input() poolState: Pool;
-  @Input() volumeData: VolumeData;
-  @Input() loading = true;
+  @Input() rootDataset: Dataset;
 
-  private utils: WidgetUtils;
   readonly usageHealthLevel = UsageHealthLevel;
 
-  usageState: UsageState = {
-    avail: unknownSize,
-    capacity: unknownSize,
-    used: unknownSize,
-    usedPct: 0,
-    snapshots: unknownSize,
-    health: UsageHealthLevel.Safe,
-  };
-
   get isLowCapacity(): boolean {
-    return this.usageState.usedPct >= maxPct;
+    return this.usedPercentage >= maxPct;
   }
 
   get allDiskNames(): string[] {
@@ -87,62 +63,26 @@ export class PoolUsageCardComponent implements OnInit, OnChanges {
     return allDiskNames;
   }
 
-  constructor(
-    public router: Router,
-    public translate: TranslateService,
-  ) {
-    this.utils = new WidgetUtils();
+  get capacity(): number {
+    return this.rootDataset.available.parsed + this.rootDataset.used.parsed;
   }
 
-  ngOnInit(): void {
-    if (!this.loading) {
-      this.parseVolumeData(this.volumeData);
-      this.checkVolumeHealth(this.poolState);
-    }
+  get usedPercentage(): number {
+    return this.rootDataset.used.parsed / this.capacity * 100;
   }
 
-  ngOnChanges(): void {
-    this.ngOnInit();
-  }
-
-  private parseVolumeData(volumeData: VolumeData): void {
-    if (volumeData && typeof volumeData.avail !== undefined) {
-      const avail = this.utils.convert(volumeData.avail);
-      this.usageState.avail = `${avail.value} ${avail.units}`;
-    } else {
-      this.usageState.avail = unknownSize;
-    }
-
-    if (volumeData && typeof volumeData.used !== undefined) {
-      const used = this.utils.convert(volumeData.used);
-      this.usageState.used = `${used.value} ${used.units}`;
-    } else {
-      this.usageState.used = unknownSize;
-    }
-
-    if (volumeData && typeof volumeData.avail !== undefined && typeof volumeData.used !== undefined) {
-      const capacity = this.utils.convert(volumeData.avail + volumeData.used);
-      this.usageState.capacity = `${capacity.value} ${capacity.units}`;
-    } else {
-      this.usageState.capacity = unknownSize;
-    }
-
-    if (volumeData && typeof volumeData.used_pct !== undefined) {
-      this.usageState.usedPct = this.percentAsNumber(volumeData.used_pct);
-    }
-  }
-
-  private checkVolumeHealth(poolState: Pool): void {
-    const isError = this.isStatusError(poolState);
-    const isWarning = this.isStatusWarning(poolState);
+  get health(): UsageHealthLevel {
+    const isError = this.isStatusError(this.poolState);
+    const isWarning = this.isStatusWarning(this.poolState);
 
     if (isError) {
-      this.usageState.health = UsageHealthLevel.Error;
-    } else if (isWarning || !poolState.healthy || this.isLowCapacity) {
-      this.usageState.health = UsageHealthLevel.Warn;
-    } else {
-      this.usageState.health = UsageHealthLevel.Safe;
+      return UsageHealthLevel.Error;
     }
+    if (isWarning || !this.poolState.healthy || this.isLowCapacity) {
+      return UsageHealthLevel.Warn;
+    }
+
+    return UsageHealthLevel.Safe;
   }
 
   private isStatusError(poolState: Pool): boolean {
@@ -160,10 +100,5 @@ export class PoolUsageCardComponent implements OnInit, OnChanges {
       PoolStatus.Offline,
       PoolStatus.Degraded,
     ].includes(poolState.status);
-  }
-
-  private percentAsNumber(value: string): number {
-    const spl = value.split('%');
-    return parseInt(spl[0]);
   }
 }

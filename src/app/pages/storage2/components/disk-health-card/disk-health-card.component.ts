@@ -14,7 +14,7 @@ interface DiskState {
   highestTemperature: number;
   lowestTemperature: number;
   averageTemperature: number;
-  alters: number;
+  alerts: number;
   smartTests: number;
   unit: string;
   symbolText: string;
@@ -45,7 +45,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     highestTemperature: null,
     lowestTemperature: null,
     averageTemperature: null,
-    alters: 0,
+    alerts: 0,
     smartTests: 0,
     unit: '',
     symbolText: '',
@@ -103,26 +103,25 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadAlerts(): void {
-    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.diskState.alters = res.length;
+    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
+      this.diskState.alerts = alerts.length;
       this.cdr.markForCheck();
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
   private loadSmartTasks(): void {
-    Object.keys(this.diskDictionary).forEach((disk) => {
-      this.ws.call('smart.test.results', [[['disk', '=', disk]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
-        testResults.forEach((testResult) => {
-          const tests = testResult?.tests ?? [];
-          const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-          this.diskState.smartTests = this.diskState.smartTests + results.length;
-        });
-        this.cdr.markForCheck();
-      }, (err) => {
-        this.dialogService.errorReportMiddleware(err);
+    const disks = Object.keys(this.diskDictionary);
+    this.ws.call('smart.test.results', [[['disk', 'in', disks]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
+      testResults.forEach((testResult) => {
+        const tests = testResult?.tests ?? [];
+        const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
+        this.diskState.smartTests = this.diskState.smartTests + results.length;
       });
+      this.cdr.markForCheck();
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
@@ -141,8 +140,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
       this.diskState.unit = TemperatureUnit.Celsius;
       this.diskState.symbolText = '°';
       this.cdr.markForCheck();
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 }

@@ -1,4 +1,4 @@
-<div *ngIf="!isLoading && !isDisksLoading && !isVolumeDataLoading; else loadingSkeleton">
+<div *ngIf="!isLoading && !areDisksLoading; else loadingSkeleton">
   <div class="pool-header">
     <h2 class="pool-name">{{ pool.name }}</h2>
     <div class="pool-actions">
@@ -29,18 +29,18 @@
   >
     <ix-topology-card
       [poolState]="pool"
-      [loading]="isDisksLoading"
+      [loading]="areDisksLoading"
       [diskDictionary]="diskDictionary"
     ></ix-topology-card>
     <ix-pool-usage-card
-      [loading]="isVolumeDataLoading"
+      *ngIf="rootDataset"
       [poolState]="pool"
-      [volumeData]="volumeData"
+      [rootDataset]="rootDataset"
     ></ix-pool-usage-card>
     <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
     <ix-disk-health-card
       [poolState]="pool"
-      [loading]="isDisksLoading"
+      [loading]="areDisksLoading"
       [diskDictionary]="diskDictionary"
     ></ix-disk-health-card>
   </div>
@@ -57,9 +57,9 @@
       gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
       gdColumns.lt-md="auto"
     >
-      <mat-card class="card" *ngFor="let in of counter(4)">
+      <mat-card class="card" *ngFor="let _ of counter(4)">
         <mat-card-content>
-          <ngx-skeleton-loader *ngFor="let in of counter(5)" fxLayout="column" fxLayoutAlign="center"></ngx-skeleton-loader>
+          <ngx-skeleton-loader *ngFor="let _ of counter(5)" fxLayout="column" fxLayoutAlign="center"></ngx-skeleton-loader>
         </mat-card-content>
       </mat-card>
     </div>

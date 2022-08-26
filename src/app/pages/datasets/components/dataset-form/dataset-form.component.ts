@@ -39,7 +39,6 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
@@ -80,7 +79,6 @@ export class DatasetFormComponent implements FormConfiguration {
   namesInUse: string[] = [];
   nameIsCaseInsensitive = false;
   productType: ProductType;
-  entityUtils: EntityUtils = new EntityUtils();
 
   humanReadable: { [key in SizeField]: string } = {
     quota: '', refquota: '', reservation: '', refreservation: '', special_small_block_size: '',
@@ -905,7 +903,6 @@ export class DatasetFormComponent implements FormConfiguration {
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
-    private errorHandler: FormErrorHandlerService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -931,7 +928,7 @@ export class DatasetFormComponent implements FormConfiguration {
         if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
           this.entityForm.setDisabled('deduplication', false, false);
         }
-      }, this.handleError);
+      });
     } else {
       this.entityForm.setDisabled('deduplication', false, false);
     }
@@ -977,27 +974,22 @@ export class DatasetFormComponent implements FormConfiguration {
       entityForm.setDisabled('share_type', false, false);
     }
 
-    entityForm.formGroup.get('share_type').valueChanges
-      .pipe(
-        filter((shareType) => !!shareType && entityForm.isNew),
-        untilDestroyed(this),
-      )
-      .subscribe((shareType) => {
-        const caseControl = entityForm.formGroup.get('casesensitivity');
-        if (shareType === 'SMB') {
-          aclControl.setValue(AclMode.Restricted);
-          caseControl.setValue(DatasetCaseSensitivity.Insensitive);
-          aclControl.disable();
-          caseControl.disable();
-        } else {
-          aclControl.setValue(AclMode.Passthrough);
-          caseControl.setValue(DatasetCaseSensitivity.Sensitive);
-          aclControl.enable();
-          caseControl.enable();
-        }
-        aclControl.updateValueAndValidity();
-        caseControl.updateValueAndValidity();
-      });
+    entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
+      const caseControl = entityForm.formGroup.get('casesensitivity');
+      if (shareType === 'SMB') {
+        aclControl.setValue(AclMode.Restricted);
+        caseControl.setValue(DatasetCaseSensitivity.Insensitive);
+        aclControl.disable();
+        caseControl.disable();
+      } else {
+        aclControl.setValue(AclMode.Passthrough);
+        caseControl.setValue(DatasetCaseSensitivity.Sensitive);
+        aclControl.enable();
+        caseControl.enable();
+      }
+      aclControl.updateValueAndValidity();
+      caseControl.updateValueAndValidity();
+    });
 
     this.recordsizeControl = this.entityForm.formGroup.controls['recordsize'] as FormControl;
     this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
@@ -1059,6 +1051,10 @@ export class DatasetFormComponent implements FormConfiguration {
       this.entityForm.setDisabled('quota_critical', quotaCritical.value);
     }
   }
+
+  handleError = (err: WebsocketError | Job): void => {
+    new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
+  };
 
   paramMap: {
     volid?: string;
@@ -1400,8 +1396,7 @@ export class DatasetFormComponent implements FormConfiguration {
               this.parentDataset = parentDataset[0];
             }, this.handleError);
           }
-        },
-        this.handleError,
+        }, this.handleError,
       );
     }
   }
@@ -1633,16 +1628,16 @@ export class DatasetFormComponent implements FormConfiguration {
       this.loader.close();
       this.modalService.closeSlideIn();
       const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
+      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
+        if (!isTrivial) {
           this.dialogService.confirm({
             title: helptext.afterSubmitDialog.title,
             message: helptext.afterSubmitDialog.message,
             hideCheckBox: true,
             buttonMsg: helptext.afterSubmitDialog.actionBtn,
             cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
+          }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+            if (confirmed) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
                   this.router.navigate(
@@ -1664,16 +1659,13 @@ export class DatasetFormComponent implements FormConfiguration {
           this.modalService.closeSlideIn();
         }
         this.modalService.refreshTable();
-      });
-    }, (error) => {
+      }, this.handleError);
+    },
+    (error) => {
       this.loader.close();
       this.handleError(error);
     });
   }
-
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
-    this.entityUtils.handleWsError(this.entityForm, error, this.dialogService);
-  };
 
   setParent(id: string): void {
     if (!this.paramMap) {

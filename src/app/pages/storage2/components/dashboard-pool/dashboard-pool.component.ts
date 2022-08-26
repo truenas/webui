@@ -7,14 +7,13 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, filter, switchMap, tap,
+  catchError, delay, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
@@ -30,14 +29,13 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPoolComponent implements OnInit {
+  @Input() index: number;
   @Input() pool: Pool;
+  @Input() rootDataset: Dataset;
   @Input() isLoading: boolean;
 
-  volumeData: VolumeData;
-  isVolumeDataLoading = false;
-
   diskDictionary: { [key: string]: Disk } = {};
-  isDisksLoading = false;
+  areDisksLoading = false;
 
   constructor(
     private matDialog: MatDialog,
@@ -51,45 +49,23 @@ export class DashboardPoolComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadVolumeData();
     this.loadDisks();
   }
 
-  loadVolumeData(): void {
-    this.isVolumeDataLoading = true;
-    this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).pipe(untilDestroyed(this))
-      .subscribe((datasets: Dataset[]) => {
-        const vd: VolumesData = {};
-
-        datasets.forEach((dataset) => {
-          if (typeof dataset === undefined || !dataset) { return; }
-          const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
-          const zvol = {
-            avail: dataset.available.parsed,
-            id: dataset.id,
-            name: dataset.name,
-            used: dataset.used.parsed,
-            used_pct: (usedPercent * 100).toFixed(0) + '%',
-          };
-          vd[zvol.id] = zvol;
-        });
-        this.volumeData = vd[this.pool.name];
-        this.isVolumeDataLoading = false;
-        this.cdr.markForCheck();
-      }, (err) => {
-        this.dialogService.errorReportMiddleware(err);
-      });
-  }
-
   loadDisks(): void {
-    this.isDisksLoading = true;
+    this.areDisksLoading = true;
     this.ws.call('disk.query', [[['pool', '=', this.pool.name]], { extra: { pools: true } }])
-      .pipe(untilDestroyed(this)).subscribe((disks) => {
+      .pipe(
+        // TODO: An ugly hack to make it less likely to not hit max concurrent requests error with too many pools.
+        // TODO: https://ixsystems.atlassian.net/browse/NAS-117846
+        delay(this.index * 400),
+        untilDestroyed(this),
+      ).subscribe((disks) => {
         this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
-        this.isDisksLoading = false;
+        this.areDisksLoading = false;
         this.cdr.markForCheck();
-      }, (err) => {
-        this.dialogService.errorReportMiddleware(err);
+      }, (error) => {
+        this.dialogService.errorReportMiddleware(error);
       });
   }
 

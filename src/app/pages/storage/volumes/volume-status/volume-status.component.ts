@@ -33,16 +33,13 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
+import { ReplaceDiskDialogComponent, ReplaceDiskDialogData } from 'app/pages/storage2/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
-import {
-  ReplaceDiskDialogData,
-  ReplaceDiskDialogComponent,
-} from './components/replace-disk-dialog/replace-disk-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -127,9 +124,9 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
 
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res.fields && res.fields.name === poolName) {
-          this.poolScan = res.fields.scan;
+      (event) => {
+        if (event.fields && event.fields.name === poolName) {
+          this.poolScan = event.fields.scan;
           const seconds = this.poolScan.total_secs_left;
           this.timeRemaining = {
             days: Math.floor(seconds / (3600 * 24)),
@@ -419,10 +416,10 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
                 this.translate.instant(helptext.extend_disk.info_dialog_content) + diskName + '.',
               );
             });
-            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
+            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
-              this.dialogService.errorReport(helptext.extend_disk.err_title, res.error, res.exception);
+              this.dialogService.errorReport(helptext.extend_disk.err_title, failedJob.error, failedJob.exception);
             });
           },
         };

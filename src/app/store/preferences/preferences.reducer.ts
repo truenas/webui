@@ -32,7 +32,7 @@ export const preferencesReducer = createReducer(
   initialState,
 
   on(dashboardStateLoaded, (state, { dashboardState }) => ({ ...state, dashboardState })),
-  on(noDashboardStateFound, (state) => ({ ...state, dashboardState: [] })),
+  on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),
   on(noPreferencesFound, (state) => ({ ...state, preferences: defaultPreferences, areLoaded: true })),
   on(sidenavUpdated, (state, sidenavStatus) => updatePreferences(state, { sidenavStatus })),

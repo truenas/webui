@@ -553,10 +553,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
       delete data.attributes.bucket;
     }
     return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
-      (res) => {
+      (listing) => {
         this.setBucketError(null);
 
-        res.forEach((file) => {
+        listing.forEach((file) => {
           const child = {} as ListdirChild;
           if (file.IsDir) {
             if (data.attributes.folder === '/') {
@@ -754,7 +754,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     this.folderDestinationField = this.fieldSets.config('folder_destination') as FormExplorerConfig;
     this.folderSourceField = this.fieldSets.config('folder_source') as FormExplorerConfig;
-    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE | '') => {
+    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((credentials: number | typeof NULL_VALUE | '') => {
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       this.setDisabled('bucket_policy_only', true, true);
@@ -770,7 +770,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         }
       }
 
-      if (res !== NULL_VALUE) {
+      if (credentials !== NULL_VALUE) {
         if (this.formGroup.get('direction').value === Direction.Pull) {
           this.setDisabled('folder_source', false, false);
           this.setDisabled('folder_destination', true, true);
@@ -783,9 +783,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.setDisabled('folder_destination', true, true);
       }
 
-      if (res !== null) {
+      if (credentials !== null) {
         this.credentials.forEach((item) => {
-          if (item.id !== res) {
+          if (item.id !== credentials) {
             return;
           }
 
@@ -812,7 +812,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
               this.bucketInputField.tooltip = this.translate.instant('Input the pre-defined S3 bucket to use.');
             }
 
-            this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
+            this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((buckets) => {
               if (!entityForm.loaderOpen) {
                 this.loader.close();
               } else {
@@ -821,8 +821,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 entityForm.keepLoaderOpen = false;
               }
               this.bucketField.options = [{ label: '----------', value: '' }];
-              if (res) {
-                res.forEach((subitem) => {
+              if (buckets) {
+                buckets.forEach((subitem) => {
                   this.bucketField.options.push({ label: subitem.Name, value: subitem.Path });
                 });
               }

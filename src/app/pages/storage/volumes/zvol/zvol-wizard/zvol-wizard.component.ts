@@ -537,9 +537,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
           }
         });
         this.modalService.refreshTable();
-      }, (res) => {
+      }, (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityWizard, res);
+        new EntityUtils().handleWsError(this.entityWizard, error);
       });
     }
   }
