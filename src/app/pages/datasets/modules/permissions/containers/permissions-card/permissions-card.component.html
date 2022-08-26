@@ -10,20 +10,15 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div class="file-information">
-      <div *ngIf="stat?.user || isLoading;" class="details-item">
-        <div class="label">{{ 'Owner:' | translate }}</div>
-        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">{{ stat.user }}</div>
-      </div>
-      <div class="details-item">
-        <div class="label">{{ 'Group:' | translate }}</div>
-        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">{{ stat.group }}</div>
-      </div>
-
-      <div class="details-item">
-        <div class="label">{{ 'Path:' | translate }}</div>
-        <div class="value">{{ dataset.mountpoint }}</div>
-      </div>
+    <div class="file-information" *ngIf="stat?.user || isLoading">
+        <div class="details-item">
+          <div class="label">{{ 'Owner:' | translate }}</div>
+          <div *ngIf="!isLoading; else loaderDetailsItem" class="value">{{ stat.user }}</div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Group:' | translate }}</div>
+          <div *ngIf="!isLoading; else loaderDetailsItem" class="value">{{ stat.group }}</div>
+        </div>
     </div>
     <div *ngIf="acl; else loaderPermissions" class="permissions">
       <ix-view-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></ix-view-trivial-permissions>

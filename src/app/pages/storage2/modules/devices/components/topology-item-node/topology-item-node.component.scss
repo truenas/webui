@@ -1,4 +1,5 @@
 @import '~assets/styles/mixins/grid';
+@import '~assets/styles/scss-imports/splitview';
 
 :host {
   align-items: center;
@@ -13,23 +14,32 @@
   @include grid-row();
   align-items: center;
 
+
+  // Override default fraction based values to avoid misaligned columns
+  grid-template-columns: auto 125px 125px 125px 40px;
+
+  @media (max-width: $breakpoint-tablet) {
+    // Override default fraction based values to avoid misaligned columns
+    grid-template-columns: auto 0 0 0 0;
+    width: 100%;
+  }
+
   .cell {
     align-items: center;
     display: inline-flex;
     min-height: 48px;
 
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
     &:first-child {
       left: 0;
       position: sticky;
-    }
-  }
 
-  .cell-status {
-    justify-content: center;
-    width: 70%;
-
-    span {
-      padding: 10px 20px;
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
     }
   }
 

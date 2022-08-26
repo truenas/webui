@@ -52,6 +52,15 @@
           {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
         </span>
       </div>
+      <div class="details-item">
+        <span class="label">{{ 'Path:' | translate }} </span>
+        <span *ngIf="!isLoading"
+          [matTooltip]="dataset.name"
+          matTooltipPosition="above"
+          class="value dataset-path">
+          {{ dataset.name }}
+        </span>
+      </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
       <button

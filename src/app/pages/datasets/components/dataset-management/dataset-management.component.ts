@@ -1,6 +1,15 @@
+import {
+  Breakpoints,
+  BreakpointState,
+  BreakpointObserver,
+} from '@angular/cdk/layout';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,7 +30,7 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetsManagementComponent implements OnInit {
+export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
@@ -32,6 +41,10 @@ export class DatasetsManagementComponent implements OnInit {
   hasConsoleFooter = false;
   headerHeight = headerHeight;
   footerHeight = footerHeight;
+
+  showMobileDetails = false;
+  isMobileView = false;
+
   systemDataset: string;
 
   entityEmptyConf: EmptyConfig = {
@@ -58,6 +71,7 @@ export class DatasetsManagementComponent implements OnInit {
     private datasetStore: DatasetTreeStore,
     private router: Router,
     protected translate: TranslateService,
+    private breakpointObserver: BreakpointObserver,
   ) { }
 
   ngOnInit(): void {
@@ -89,6 +103,21 @@ export class DatasetsManagementComponent implements OnInit {
 
   isSystemDataset(dataset: DatasetDetails): boolean {
     return isRootDataset(dataset) && this.systemDataset === dataset.name;
+  }
+
+  ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.detectChanges();
+      });
   }
 
   onSearch(query: string): void {
@@ -164,5 +193,16 @@ export class DatasetsManagementComponent implements OnInit {
 
   createPool(): void {
     this.router.navigate(['/storage2/create']);
+  }
+
+  // Expose hidden details on mobile
+  openMobileDetails(): void {
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+    }
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
   }
 }

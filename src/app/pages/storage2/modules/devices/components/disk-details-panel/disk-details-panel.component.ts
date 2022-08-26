@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
@@ -15,6 +21,8 @@ export class DiskDetailsPanelComponent {
   @Input() poolId: number;
   @Input() topologyCategory: PoolTopologyCategory;
 
+  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
+
   get title(): string {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk || this.topologyItem.guid;
@@ -25,5 +33,9 @@ export class DiskDetailsPanelComponent {
 
   get isTopologyDisk(): boolean {
     return isTopologyDisk(this.topologyItem);
+  }
+
+  onCloseMobileDetails(): void {
+    this.closeMobileDetails.emit();
   }
 }

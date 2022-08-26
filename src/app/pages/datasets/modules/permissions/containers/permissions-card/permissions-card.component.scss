@@ -17,7 +17,20 @@
       }
 
       .details-item {
-        margin-bottom: 10px;
+        max-width: 100%;
+        width: 100%;
+
+        .value.dataset-path {
+          display: flow-root;
+          max-width: calc(100% - 85px);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      
+        ix-copy-btn {
+          margin-top: -4px;
+        }
       }
     }
 

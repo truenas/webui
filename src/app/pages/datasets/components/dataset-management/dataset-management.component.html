@@ -20,7 +20,11 @@
             <div>
               <span class="dataset-name-header">{{ 'Dataset Name' | translate }}</span>
             </div>
-            <div>{{ 'Used' | translate }}</div>
+            <div>
+              {{ 'Used' | translate }}
+              /
+              {{ 'Available' | translate }}
+            </div>
             <div>{{ 'Encryption' | translate }}</div>
             <div>{{ 'Roles' | translate }}</div>
           </div>
@@ -33,10 +37,11 @@
               [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               routerLinkActive="selected"
+              (click)="openMobileDetails()"
             >
               <button mat-icon-button disabled></button>
               <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
-
+              <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
   
             <ix-nested-tree-node
@@ -47,6 +52,7 @@
                 class="dataset-nested-tree-root-node"
                 [routerLink]="['/datasets', dataset.id]"
                 routerLinkActive="selected"
+                (click)="openMobileDetails()"
               >
                 <button
                   mat-icon-button
@@ -58,8 +64,9 @@
                     {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
                   </mat-icon>
                 </button>
+  
                 <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
-
+                <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
               </div>
   
               <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
@@ -69,7 +76,7 @@
       </div>
     </div>
   
-    <div class="details-container"
+    <div class="details-container" [class.details-container-mobile]="showMobileDetails"
       ixDetailsHeight
       ixDetailsHeightParentClass="rightside-content-hold"
       [hasConsoleFooter]="hasConsoleFooter"
@@ -79,8 +86,9 @@
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
+
+        (closeMobileDetails)="closeMobileDetails()"
       ></ix-dataset-details-panel>
     </div>
   </div>
-
 </ng-template>

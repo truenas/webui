@@ -1,6 +1,17 @@
+import {
+  Breakpoints,
+  BreakpointState,
+  BreakpointObserver,
+} from '@angular/cdk/layout';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  AfterViewInit,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -43,12 +54,16 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => Boolean(node.children?.length);
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
 
+  showMobileDetails = false;
+  isMobileView = false;
+
   constructor(
     private layoutService: LayoutService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
+    private breakpointObserver: BreakpointObserver,
   ) { }
 
   getDisk(node: DeviceNestedDataNode): Disk {
@@ -73,6 +88,19 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.detectChanges();
+      });
+
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
@@ -159,6 +187,17 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
     });
+  }
+
+  // Expose hidden details on mobile
+  openMobileDetails(): void {
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+    }
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
   }
 
   // TODO: Likely belongs to DevicesStore

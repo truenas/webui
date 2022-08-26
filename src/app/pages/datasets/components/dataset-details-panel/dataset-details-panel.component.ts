@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnInit, EventEmitter, Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,6 +21,8 @@ import { ModalService } from 'app/services';
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
+
+  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private modalService: ModalService,
@@ -86,5 +88,9 @@ export class DatasetDetailsPanelComponent implements OnInit {
     const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent);
     addZvolComponent.setParent(this.dataset.id);
     addZvolComponent.isNew = true;
+  }
+
+  onCloseMobileDetails(): void {
+    this.closeMobileDetails.emit();
   }
 }
