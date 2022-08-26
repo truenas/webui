@@ -406,6 +406,7 @@
   "NIC To Attach": "",
   "NONE": "",
   "Name And Method": "",
+  "Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.": "",
   "Name of the new alert service.": "",
   "Name of the pool is required": "",
   "Name of the pool must be correct": "",

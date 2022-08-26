@@ -189,6 +189,7 @@
   "NAS/browser time mismatch can lead to the reporting data display misbehavior.": "",
   "NIC To Attach": "",
   "Name And Method": "",
+  "Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.": "",
   "New Pool": "",
   "New SSH Connection": "",
   "No": "",

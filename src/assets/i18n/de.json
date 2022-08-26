@@ -1371,6 +1371,7 @@
   "Name and Naming Schema cannot be provided at the same time.": "",
   "Name and Provider": "",
   "Name and port of the server that reports the  external IP address. For example, entering <i>checkip.dyndns.org:80</i>  uses  <a href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" target=\"_blank\">Dyn IP detection</a>.  to discover the remote socket IP address.": "",
+  "Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.": "",
   "Name of the WebDAV site, service, or software being used.": "",
   "Name of the extent. If the <i>Extent size</i> is not <i>0</i>, it cannot be an existing file within the pool or dataset.": "",
   "Name of the new cloned boot environment. Alphanumeric characters, dashes (-), underscores (_),     and periods (.) are allowed.": "",

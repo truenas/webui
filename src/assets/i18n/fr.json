@@ -459,6 +459,7 @@
   "NOTICE": "",
   "NTLMv1 Auth": "",
   "Name And Method": "",
+  "Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.": "",
   "Name of the pool is required": "",
   "Name of the pool must be correct": "",
   "Name of the zvol is required": "",
