@@ -321,6 +321,7 @@
   "Interfaces": "",
   "Invalid file": "",
   "Invalid format or character": "",
+  "Invalid format or character. Allowed e.g abc123, abc, abcd-1232": "",
   "Invalid image": "",
   "Isolated GPU Device(s)": "",
   "Isolated GPU PCI Id's": "",

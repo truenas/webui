@@ -1672,6 +1672,7 @@
   "Invalid file": "",
   "Invalid format or character": "",
   "Invalid format or character.": "",
+  "Invalid format or character. Allowed e.g abc123, abc, abcd-1232": "",
   "Invalid image": "",
   "Invalid network address list. Check for typos or missing CIDR netmasks and      separate addresses by pressing <code>Enter</code>.": "",
   "Invalid option selected": "",

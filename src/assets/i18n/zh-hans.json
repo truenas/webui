@@ -139,6 +139,7 @@
   "Inherited Quotas": "",
   "Initial Deployment/Setup": "",
   "Inquiry": "",
+  "Invalid format or character. Allowed e.g abc123, abc, abcd-1232": "",
   "KVM implements Hyper-V Enlightenments   for Windows guests. These features make Windows think they're   running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features.   In some cases enabling these Enlightenments might improve usability and performance on the guest.": "",
   "Keys Synced": "",
   "Keys pending to be synced between KMIP server and TN database were cleared.": "",

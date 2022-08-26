@@ -287,6 +287,7 @@
   "Interfaces": "",
   "Invalid Pod name": "",
   "Invalid format or character": "",
+  "Invalid format or character. Allowed e.g abc123, abc, abcd-1232": "",
   "Invalid image": "",
   "Invalid value. Must be greater than or equal to ": "",
   "Invalid value. Must be less than or equal to ": "",
