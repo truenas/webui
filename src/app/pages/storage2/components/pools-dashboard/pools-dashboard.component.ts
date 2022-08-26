@@ -10,6 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
@@ -29,6 +30,8 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   pools$ = this.store.pools$;
   arePoolsLoading$ = this.store.isLoading$;
+  rootDatasets: { [key: string]: Dataset } = {};
+
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
@@ -70,6 +73,13 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((isLoading) => {
         this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      });
+
+    this.store.rootDatasets$
+      .pipe(untilDestroyed(this))
+      .subscribe((rootDatasets) => {
+        this.rootDatasets = rootDatasets;
         this.cdr.markForCheck();
       });
 
