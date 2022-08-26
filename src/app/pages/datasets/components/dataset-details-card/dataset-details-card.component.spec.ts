@@ -17,6 +17,7 @@ import { ModalService } from 'app/services';
 
 const dataset = {
   id: 'pool/child',
+  name: 'pool/child',
   pool: 'pool',
   type: DatasetType.Filesystem,
   sync: { value: 'STANDARD' },
@@ -75,7 +76,7 @@ describe('DatasetDetailsCardComponent', () => {
 
   it('shows details', () => {
     const details = spectator.queryAll('.details-item');
-    expect(details.length).toEqual(6);
+    expect(details.length).toEqual(7);
 
     expect(details[0].querySelector('.label')).toHaveText('Type:');
     expect(details[0].querySelector('.value')).toHaveText('FILESYSTEM');
@@ -94,6 +95,9 @@ describe('DatasetDetailsCardComponent', () => {
 
     expect(details[5].querySelector('.label')).toHaveText('Case Sensitivity:');
     expect(details[5].querySelector('.value')).toHaveText('OFF');
+
+    expect(details[6].querySelector('.label')).toHaveText('Path:');
+    expect(details[6].querySelector('.value')).toHaveText('pool/child');
   });
 
   it('opens edit dataset form when Edit button is clicked', async () => {
