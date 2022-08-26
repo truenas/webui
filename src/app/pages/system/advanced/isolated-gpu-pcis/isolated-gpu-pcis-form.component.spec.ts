@@ -43,7 +43,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
         mockCall('system.advanced.config', {
           isolated_gpu_pci_ids: ['0000:00:02.0'],
         } as AdvancedConfig),
-        mockCall('system.advanced.update'),
+        mockCall('system.advanced.update_gpu_pci_ids'),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(IxSlideInService),
@@ -77,8 +77,6 @@ describe('IsolatedGpuPcisFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [{
-      isolated_gpu_pci_ids: ['0000:00:01.0'],
-    }]);
+    expect(ws.call).toHaveBeenCalledWith('system.advanced.update_gpu_pci_ids', [['0000:00:01.0']]);
   });
 });
