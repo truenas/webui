@@ -118,7 +118,7 @@ export class ChartFormComponent implements OnDestroy {
     this.form.controls['release_name'].setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
-        this.translate.instant('Invalid format or character. Allowed e.g abc123, abc, abcd-1232'),
+        this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),
       ),
     );
 
