@@ -157,7 +157,9 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       .subscribe((scan) => {
         this.scan = scan.scan;
         this.cdr.markForCheck();
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
   }
 
   private loadScrubTaskStatus(): void {

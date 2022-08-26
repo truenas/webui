@@ -106,7 +106,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.diskState.alters = res.length;
       this.cdr.markForCheck();
-    }, this.dialogService.errorReportMiddleware);
+    }, (err) => {
+      this.dialogService.errorReportMiddleware(err);
+    });
   }
 
   private loadSmartTasks(): void {
@@ -118,7 +120,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
           this.diskState.smartTests = this.diskState.smartTests + results.length;
         });
         this.cdr.markForCheck();
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
     });
   }
 
@@ -137,6 +141,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
       this.diskState.unit = TemperatureUnit.Celsius;
       this.diskState.symbolText = '°';
       this.cdr.markForCheck();
-    }, this.dialogService.errorReportMiddleware);
+    }, (err) => {
+      this.dialogService.errorReportMiddleware(err);
+    });
   }
 }

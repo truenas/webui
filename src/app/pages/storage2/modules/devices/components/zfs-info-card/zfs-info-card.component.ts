@@ -161,7 +161,9 @@ export class ZfsInfoCardComponent {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.devicesStore.reloadList();
         this.dialogService.closeAllDialogs();
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
     });
   }
 

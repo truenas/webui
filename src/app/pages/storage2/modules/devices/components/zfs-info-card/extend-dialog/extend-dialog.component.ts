@@ -93,6 +93,8 @@ export class ExtendDialogComponent implements OnInit {
         );
 
         this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
   }
 }

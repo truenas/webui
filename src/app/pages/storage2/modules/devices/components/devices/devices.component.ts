@@ -70,7 +70,9 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
   }
 
   ngAfterViewInit(): void {

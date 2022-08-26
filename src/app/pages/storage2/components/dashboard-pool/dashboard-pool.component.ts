@@ -76,7 +76,9 @@ export class DashboardPoolComponent implements OnInit {
         this.volumeData = vd[this.pool.name];
         this.isVolumeDataLoading = false;
         this.cdr.markForCheck();
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
   }
 
   loadDisks(): void {
@@ -86,7 +88,9 @@ export class DashboardPoolComponent implements OnInit {
         this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
         this.isDisksLoading = false;
         this.cdr.markForCheck();
-      }, this.dialogService.errorReportMiddleware);
+      }, (err) => {
+        this.dialogService.errorReportMiddleware(err);
+      });
   }
 
   onExport(): void {
