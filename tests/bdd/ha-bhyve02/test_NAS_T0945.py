@@ -78,17 +78,12 @@ def go_to_system_settings_click_services(driver):
 def the_service_page_should_open(driver):
     """the service page should open."""
     assert wait_on_element(driver, 5, '//h1[text()="Services"]')
+    time.sleep(1)
 
 
 @then('press on configure(pencil) SSH')
 def press_on_configure_ssh(driver):
     """press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 5, '//tr[contains(.,"S3")]//button', 'clickable')
-    element = driver.find_element_by_xpath('//tr[contains(.,"S3")]//button')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
 
@@ -124,10 +119,6 @@ def click_save(driver):
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 5, '//h1[text()="Services"]')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 5, '//tr[contains(.,"S3")]//button', 'clickable')
-    element = driver.find_element_by_xpath('//tr[contains(.,"S3")]//button')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')
