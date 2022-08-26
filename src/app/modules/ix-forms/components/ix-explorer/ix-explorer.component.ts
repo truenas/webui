@@ -80,19 +80,16 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   ngOnInit(): void {
-    this.nodes = [
-      {
-        path: this.root,
-        name: this.root,
-        hasChildren: true,
-        type: ExplorerNodeType.Directory,
-      },
-    ];
+    this.setInitialNode();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('multiple' in changes) {
       this.treeOptions.useCheckbox = this.multiple;
+    }
+
+    if ('nodeProvider' in changes || 'root' in changes) {
+      this.setInitialNode();
     }
   }
 
@@ -160,6 +157,17 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     return node;
   }
 
+  private setInitialNode(): void {
+    this.nodes = [
+      {
+        path: this.root,
+        name: this.root,
+        hasChildren: true,
+        type: ExplorerNodeType.Directory,
+      },
+    ];
+  }
+
   private updateInputValue(): void {
     this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value;
   }
@@ -176,6 +184,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {
     this.loadingError = null;
     this.cdr.markForCheck();
+
+    if (!this.nodeProvider) {
+      return of([]);
+    }
 
     return this.nodeProvider(node).pipe(
       catchError((error: WebsocketError | Error) => {

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -394,64 +395,64 @@ export class ReplicationFormComponent implements FormConfiguration {
       class: 'source',
       width: '50%',
       config: [
-        {
-          type: 'explorer',
-          initial: '',
-          explorerType: ExplorerType.Dataset,
-          multiple: true,
-          tristate: false,
-          name: 'source_datasets_PUSH',
-          placeholder: helptext.source_datasets_placeholder,
-          tooltip: helptext.source_datasets_tooltip,
-          required: true,
-          validation: [Validators.required],
-          isHidden: true,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [
-                {
-                  name: 'direction',
-                  value: Direction.Push,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          type: 'explorer',
-          name: 'source_datasets_PULL',
-          multiple: true,
-          placeholder: helptext.source_datasets_placeholder,
-          tooltip: helptext.source_datasets_placeholder,
-          initial: '',
-          explorerType: ExplorerType.Directory,
-          customTemplateStringOptions: {
-            useCheckbox: true,
-            useTriState: false,
-            displayField: 'Path',
-            isExpandedField: 'expanded',
-            idField: 'uuid',
-            getChildren: this.getChildren.bind(this),
-            nodeHeight: 23,
-            allowDrag: false,
-            useVirtualScroll: false,
-          },
-          required: true,
-          validation: [Validators.required],
-          isHidden: true,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [
-                {
-                  name: 'direction',
-                  value: Direction.Pull,
-                },
-              ],
-            },
-          ],
-        },
+        // {
+        //   type: 'explorer',
+        //   initial: '',
+        //   explorerType: ExplorerType.Dataset,
+        //   multiple: true,
+        //   tristate: false,
+        //   name: 'source_datasets_PUSH',
+        //   placeholder: helptext.source_datasets_placeholder,
+        //   tooltip: helptext.source_datasets_tooltip,
+        //   required: true,
+        //   validation: [Validators.required],
+        //   isHidden: true,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [
+        //         {
+        //           name: 'direction',
+        //           value: Direction.Push,
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'explorer',
+        //   name: 'source_datasets_PULL',
+        //   multiple: true,
+        //   placeholder: helptext.source_datasets_placeholder,
+        //   tooltip: helptext.source_datasets_placeholder,
+        //   initial: '',
+        //   explorerType: ExplorerType.Directory,
+        //   customTemplateStringOptions: {
+        //     useCheckbox: true,
+        //     useTriState: false,
+        //     displayField: 'Path',
+        //     isExpandedField: 'expanded',
+        //     idField: 'uuid',
+        //     getChildren: this.getChildren.bind(this),
+        //     nodeHeight: 23,
+        //     allowDrag: false,
+        //     useVirtualScroll: false,
+        //   },
+        //   required: true,
+        //   validation: [Validators.required],
+        //   isHidden: true,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [
+        //         {
+        //           name: 'direction',
+        //           value: Direction.Pull,
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
         // {
         //   type: 'checkbox',
         //   name: 'recursive',
@@ -688,59 +689,59 @@ export class ReplicationFormComponent implements FormConfiguration {
       class: 'destination',
       width: '50%',
       config: [
-        {
-          type: 'explorer',
-          name: 'target_dataset_PUSH',
-          placeholder: helptext.target_dataset_placeholder,
-          tooltip: helptext.target_dataset_tooltip,
-          initial: '',
-          explorerType: ExplorerType.Directory,
-          customTemplateStringOptions: {
-            displayField: 'Path',
-            isExpandedField: 'expanded',
-            idField: 'uuid',
-            getChildren: this.getChildren.bind(this),
-            nodeHeight: 23,
-            allowDrag: false,
-            useVirtualScroll: false,
-          },
-          required: true,
-          validation: [Validators.required],
-          isHidden: true,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [
-                {
-                  name: 'direction',
-                  value: Direction.Push,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          type: 'explorer',
-          initial: '',
-          explorerType: ExplorerType.Dataset,
-          name: 'target_dataset_PULL',
-          placeholder: helptext.target_dataset_placeholder,
-          tooltip: helptext.target_dataset_placeholder,
-          required: true,
-          validation: [Validators.required],
-          isHidden: true,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [
-                {
-                  name: 'direction',
-                  value: Direction.Pull,
-                },
-              ],
-            },
-          ],
-        },
+        // {
+        //   type: 'explorer',
+        //   name: 'target_dataset_PUSH',
+        //   placeholder: helptext.target_dataset_placeholder,
+        //   tooltip: helptext.target_dataset_tooltip,
+        //   initial: '',
+        //   explorerType: ExplorerType.Directory,
+        //   customTemplateStringOptions: {
+        //     displayField: 'Path',
+        //     isExpandedField: 'expanded',
+        //     idField: 'uuid',
+        //     getChildren: this.getChildren.bind(this),
+        //     nodeHeight: 23,
+        //     allowDrag: false,
+        //     useVirtualScroll: false,
+        //   },
+        //   required: true,
+        //   validation: [Validators.required],
+        //   isHidden: true,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [
+        //         {
+        //           name: 'direction',
+        //           value: Direction.Push,
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'explorer',
+        //   initial: '',
+        //   explorerType: ExplorerType.Dataset,
+        //   name: 'target_dataset_PULL',
+        //   placeholder: helptext.target_dataset_placeholder,
+        //   tooltip: helptext.target_dataset_placeholder,
+        //   required: true,
+        //   validation: [Validators.required],
+        //   isHidden: true,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [
+        //         {
+        //           name: 'direction',
+        //           value: Direction.Pull,
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
         // {
         //   type: 'select',
         //   name: 'readonly',
@@ -1080,7 +1081,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     //     // },
     //   ],
     // },
-    { name: 'divider', divider: true },
+    // { name: 'divider', divider: true },
   ]);
 
   constructor(
@@ -1133,48 +1134,48 @@ export class ReplicationFormComponent implements FormConfiguration {
     // });
   }
 
-  countEligibleManualSnapshots(): void {
-    const namingSchema = this.entityForm.formGroup.controls['also_include_naming_schema'].value;
-    const nameRegex = this.entityForm.formGroup.controls['name_regex'].value;
-    if ((typeof namingSchema !== 'string' && namingSchema.length === 0) && (typeof nameRegex !== 'string' && nameRegex.length === 0)) {
-      return;
-    }
+  // countEligibleManualSnapshots(): void {
+  //   const namingSchema = this.entityForm.formGroup.controls['also_include_naming_schema'].value;
+  //   const nameRegex = this.entityForm.formGroup.controls['name_regex'].value;
+  //   if ((typeof namingSchema !== 'string' && namingSchema.length === 0) && (typeof nameRegex !== 'string' && nameRegex.length === 0)) {
+  //     return;
+  //   }
+  //
+  //   const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
+  //   const payload: any = {
+  //     datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
+  //     transport: this.entityForm.formGroup.controls['transport'].value,
+  //     ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
+  //   };
+  //
+  //   if (this.entityForm.formGroup.get('schema_or_regex').value === SnapshotNamingOption.NamingSchema) {
+  //     payload.naming_schema = namingSchema;
+  //   } else {
+  //     payload.name_regex = nameRegex;
+  //   }
+  //
+  //   this.ws
+  //     .call('replication.count_eligible_manual_snapshots', [payload])
+  //     .pipe(untilDestroyed(this)).subscribe(
+  //       (res) => {
+  //         this.formMessage.type = res.eligible === 0 ? 'warning' : 'info';
+  //         this.formMessage.content = this.translate.instant(
+  //           '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
+  //           {
+  //             eligible: res.eligible,
+  //             total: res.total,
+  //             targetDataset: this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
+  //           },
+  //         );
+  //       },
+  //       (err) => {
+  //         this.formMessage.content = '';
+  //         new EntityUtils().handleWsError(this, err);
+  //       },
+  //     );
+  // }
 
-    const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
-    const payload: any = {
-      datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
-      transport: this.entityForm.formGroup.controls['transport'].value,
-      ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
-    };
-
-    if (this.entityForm.formGroup.get('schema_or_regex').value === SnapshotNamingOption.NamingSchema) {
-      payload.naming_schema = namingSchema;
-    } else {
-      payload.name_regex = nameRegex;
-    }
-
-    this.ws
-      .call('replication.count_eligible_manual_snapshots', [payload])
-      .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          this.formMessage.type = res.eligible === 0 ? 'warning' : 'info';
-          this.formMessage.content = this.translate.instant(
-            '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
-            {
-              eligible: res.eligible,
-              total: res.total,
-              targetDataset: this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
-            },
-          );
-        },
-        (err) => {
-          this.formMessage.content = '';
-          new EntityUtils().handleWsError(this, err);
-        },
-      );
-  }
-
-  afterInit(entityForm: EntityFormComponent): void {
+  // afterInit(entityForm: EntityFormComponent): void {
     // this.entityForm = entityForm;
     // this.pk = entityForm.pk as number;
     // this.isNew = entityForm.isNew;
@@ -1185,42 +1186,42 @@ export class ReplicationFormComponent implements FormConfiguration {
     //   readonlyCtrl.setValue(ReadOnlyMode.Require);
     // }
 
-    if (this.entityForm.formGroup.controls['speed_limit'].value) {
-      const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
-      this.storageService.humanReadable = presetSpeed;
-    }
-    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      if (
-        entityForm.formGroup.controls['direction'].value === Direction.Push
-        && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
-      ) {
-        this.countEligibleManualSnapshots();
-      } else {
-        this.formMessage.content = '';
-      }
-    });
-    this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.toggleNamingSchemaOrRegex();
-    });
-    entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (
-        res === Direction.Push
-        && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
-      ) {
-        this.countEligibleManualSnapshots();
-      } else {
-        this.formMessage.content = '';
-      }
-      this.fieldSets.config('schema_or_regex').placeholder = helptext[
-        (res === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')
-      ];
-      this.toggleNamingSchemaOrRegex();
-    });
+    // if (this.entityForm.formGroup.controls['speed_limit'].value) {
+    //   const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
+    //   this.storageService.humanReadable = presetSpeed;
+    // }
+    // this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    //   if (
+    //     entityForm.formGroup.controls['direction'].value === Direction.Push
+    //     && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+    //     && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
+    //   ) {
+    //     this.countEligibleManualSnapshots();
+    //   } else {
+    //     this.formMessage.content = '';
+    //   }
+    // });
+    // this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    //   this.toggleNamingSchemaOrRegex();
+    // });
+    // entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    //   // if (
+    //   //   res === Direction.Push
+    //   //   && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+    //   //   && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
+    //   // ) {
+    //   //   this.countEligibleManualSnapshots();
+    //   // } else {
+    //   //   this.formMessage.content = '';
+    //   // }
+    //   // this.fieldSets.config('schema_or_regex').placeholder = helptext[
+    //   //   (res === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')
+    //   // ];
+    //   // this.toggleNamingSchemaOrRegex();
+    // });
 
-    const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
-    entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    // const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
+    // entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       // if (
       //   res !== TransportMode.Local
       //   && entityForm.formGroup.controls['direction'].value === Direction.Push
@@ -1232,17 +1233,17 @@ export class ReplicationFormComponent implements FormConfiguration {
       //   this.formMessage.content = '';
       // }
 
-      if (retentionPolicyField.options !== this.retentionPolicyChoice) {
-        retentionPolicyField.options = this.retentionPolicyChoice;
-      }
+      // if (retentionPolicyField.options !== this.retentionPolicyChoice) {
+      //   retentionPolicyField.options = this.retentionPolicyChoice;
+      // }
 
-      if (res === TransportMode.Local) {
-        entityForm.formGroup.controls['direction'].setValue(Direction.Push);
-        entityForm.setDisabled('target_dataset_PUSH', true, true);
-        entityForm.setDisabled('ssh_credentials', true, true);
-        entityForm.setDisabled('target_dataset_PULL', false, false);
-      }
-    });
+      // if (res === TransportMode.Local) {
+      //   entityForm.formGroup.controls['direction'].setValue(Direction.Push);
+      //   entityForm.setDisabled('target_dataset_PUSH', true, true);
+      //   entityForm.setDisabled('ssh_credentials', true, true);
+      //   entityForm.setDisabled('target_dataset_PULL', false, false);
+      // }
+    // });
 
     // entityForm.formGroup.controls['schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
     //   entityForm.setDisabled('schedule_picker', !res, !res);
@@ -1272,21 +1273,21 @@ export class ReplicationFormComponent implements FormConfiguration {
     //   }
     // });
 
-    entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-        const explorerConfig = this.fieldSets.config(item) as FormExplorerConfig;
-        const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
-        if (explorerComponent) {
-          explorerComponent.nodes = [
-            {
-              mountpoint: explorerComponent.config.initial,
-              name: explorerComponent.config.initial,
-              hasChildren: true,
-            },
-          ];
-        }
-      }
-    });
+    // entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    //   for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+    //     const explorerConfig = this.fieldSets.config(item) as FormExplorerConfig;
+    //     const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
+    //     if (explorerComponent) {
+    //       explorerComponent.nodes = [
+    //         {
+    //           mountpoint: explorerComponent.config.initial,
+    //           name: explorerComponent.config.initial,
+    //           hasChildren: true,
+    //         },
+    //       ];
+    //     }
+    //   }
+    // });
 
     // entityForm.formGroup.controls['speed_limit'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
     //   const speedLimitField = this.fieldSets.config('speed_limit');
@@ -1315,199 +1316,200 @@ export class ReplicationFormComponent implements FormConfiguration {
     //   entityForm.formGroup.controls['properties_override'].setErrors(null);
     // });
     // entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
-    this.toggleNamingSchemaOrRegex();
-  }
+    // this.toggleNamingSchemaOrRegex();
+  // }
 
   resourceTransformIncomingRestData(wsResponse: any): any {
-    this.queryRes = _.cloneDeep(wsResponse);
-    wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
-    wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
-    wsResponse['source_datasets_PULL'] = wsResponse['source_datasets'];
-    wsResponse['target_dataset_PULL'] = wsResponse['target_dataset'];
+    // this.queryRes = _.cloneDeep(wsResponse);
+    // wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
+    // wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
+    // wsResponse['source_datasets_PULL'] = wsResponse['source_datasets'];
+    // wsResponse['target_dataset_PULL'] = wsResponse['target_dataset'];
+    //
+    // if (wsResponse['ssh_credentials']) {
+    //   wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
+    // }
 
-    if (wsResponse['ssh_credentials']) {
-      wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
-    }
-
-    wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
-    wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
-    const snapshotTasks = [];
-    for (const item of wsResponse['periodic_snapshot_tasks']) {
-      snapshotTasks.push(item.id);
-    }
-    wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
-
-    if (wsResponse.schedule) {
-      wsResponse['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
-      wsResponse['schedule_begin'] = wsResponse.schedule.begin;
-      wsResponse['schedule_end'] = wsResponse.schedule.end;
-      wsResponse['schedule'] = true;
-    }
-
-    if (wsResponse.restrict_schedule) {
-      wsResponse['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
-      wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
-      wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
-      wsResponse['restrict_schedule'] = true;
-    }
-    wsResponse['speed_limit'] = wsResponse['speed_limit']
-      ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
-      : undefined;
+    // wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
+    // wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
+    // const snapshotTasks = [];
+    // for (const item of wsResponse['periodic_snapshot_tasks']) {
+    //   snapshotTasks.push(item.id);
+    // }
+    // wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
+    //
+    // if (wsResponse.schedule) {
+    //   wsResponse['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
+    //   wsResponse['schedule_begin'] = wsResponse.schedule.begin;
+    //   wsResponse['schedule_end'] = wsResponse.schedule.end;
+    //   wsResponse['schedule'] = true;
+    // }
+    //
+    // if (wsResponse.restrict_schedule) {
+    //   wsResponse['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
+    //   wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
+    //   wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
+    //   wsResponse['restrict_schedule'] = true;
+    // }
+    // wsResponse['speed_limit'] = wsResponse['speed_limit']
+    //   ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
+    //   : undefined;
     // block large_block changes if it is enabled
-    if (this.entityForm.wsResponse.large_block) {
-      this.entityForm.setDisabled('large_block', true, false);
-    }
+    // if (this.entityForm.wsResponse.large_block) {
+    //   this.entityForm.setDisabled('large_block', true, false);
+    // }
 
-    if (wsResponse.properties_override) {
-      const propertiesExcludeList = [];
-      for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        propertiesExcludeList.push(`${key}=${value}`);
-      }
-      wsResponse['properties_override'] = propertiesExcludeList;
-    }
+    // if (wsResponse.properties_override) {
+    //   const propertiesExcludeList = [];
+    //   for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+    //     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    //     propertiesExcludeList.push(`${key}=${value}`);
+    //   }
+    //   wsResponse['properties_override'] = propertiesExcludeList;
+    // }
 
-    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS';
-    if (wsResponse.encryption_key_location_truenasdb) {
-      delete wsResponse.encryption_key_location;
-    }
+    // wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS';
+    // if (wsResponse.encryption_key_location_truenasdb) {
+    //   delete wsResponse.encryption_key_location;
+    // }
 
-    if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
-      wsResponse.encryption_key_generate = false;
-      wsResponse.encryption_key_hex = wsResponse.encryption_key;
-    } else {
-      wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
-    }
+    // if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
+    //   wsResponse.encryption_key_generate = false;
+    //   wsResponse.encryption_key_hex = wsResponse.encryption_key;
+    // } else {
+    //   wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
+    // }
 
-    if (wsResponse.name_regex) {
-      this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NameRegex);
-    } else {
-      this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NamingSchema);
-    }
+    // if (wsResponse.name_regex) {
+    //   this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NameRegex);
+    // } else {
+    //   this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NamingSchema);
+    // }
 
     return wsResponse;
   }
 
-  parsePickerTime(
-    picker: string,
-    begin: string,
-    end: string,
-  ): Schedule {
-    const spl = picker.split(' ');
-    return {
-      minute: spl[0],
-      hour: spl[1],
-      dom: spl[2],
-      month: spl[3],
-      dow: spl[4],
-      begin,
-      end,
-    };
-  }
+  // parsePickerTime(
+  //   picker: string,
+  //   begin: string,
+  //   end: string,
+  // ): Schedule {
+  //   const spl = picker.split(' ');
+  //   return {
+  //     minute: spl[0],
+  //     hour: spl[1],
+  //     dom: spl[2],
+  //     month: spl[3],
+  //     dow: spl[4],
+  //     begin,
+  //     end,
+  //   };
+  // }
 
   beforeSubmit(data: any): void {
-    if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
-      delete data['naming_schema'];
-      delete data['also_include_naming_schema'];
-    } else {
-      delete data['name_regex'];
-    }
-    delete data['schema_or_regex'];
-    if (data['replicate']) {
-      data['recursive'] = true;
-      data['properties'] = true;
-      data['exclude'] = [];
-    }
-    const propertiesExcludeObj: any = {};
-    if (data['properties_override']) {
-      for (let item of data['properties_override']) {
-        item = item.split('=');
-        propertiesExcludeObj[item[0]] = item[1];
-      }
-    }
-    data['properties_override'] = propertiesExcludeObj;
-    if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
-      data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
-    }
+    // if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
+    //   delete data['naming_schema'];
+    //   delete data['also_include_naming_schema'];
+    // } else {
+    //   delete data['name_regex'];
+    // }
+    // delete data['schema_or_regex'];
+    // if (data['replicate']) {
+    //   data['recursive'] = true;
+    //   data['properties'] = true;
+    //   data['exclude'] = [];
+    // }
+    // const propertiesExcludeObj: any = {};
+    // if (data['properties_override']) {
+    //   for (let item of data['properties_override']) {
+    //     item = item.split('=');
+    //     propertiesExcludeObj[item[0]] = item[1];
+    //   }
+    // }
+    // data['properties_override'] = propertiesExcludeObj;
+    // if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
+    //   data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+    // }
+    // TODO: Why?
     if (data['transport'] === TransportMode.Local) {
       data['direction'] = Direction.Push;
       data['target_dataset_PUSH'] = _.cloneDeep(data['target_dataset_PULL']);
       delete data['target_dataset_PULL'];
     }
-    if (data['direction'] === Direction.Push) {
-      for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
-        if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
-          data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
-        }
-      }
-      data['source_datasets'] = _.filter(
-        Array.isArray(data['source_datasets_PUSH'])
-          ? _.cloneDeep(data['source_datasets_PUSH'])
-          : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim),
-      );
+    // if (data['direction'] === Direction.Push) {
+    //   for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
+    //     if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
+    //       data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
+    //     }
+    //   }
+    //   data['source_datasets'] = _.filter(
+    //     Array.isArray(data['source_datasets_PUSH'])
+    //       ? _.cloneDeep(data['source_datasets_PUSH'])
+    //       : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim),
+    //   );
+    //
+    //   data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? data['target_dataset_PUSH'] : data['target_dataset_PUSH'].toString();
+    //
+    //   delete data['source_datasets_PUSH'];
+    //   delete data['target_dataset_PUSH'];
+    // } else {
+    //   data['source_datasets'] = _.filter(
+    //     Array.isArray(data['source_datasets_PULL'])
+    //       ? _.cloneDeep(data['source_datasets_PULL'])
+    //       : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim),
+    //   );
+    //   data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string'
+    //     ? _.cloneDeep(data['target_dataset_PULL'])
+    //     : _.cloneDeep(data['target_dataset_PULL']).toString();
+    //   if (_.startsWith(data['target_dataset'], '/mnt/')) {
+    //     data['target_dataset'] = data['target_dataset'].substring(5);
+    //   }
+    //   delete data['source_datasets_PULL'];
+    //   delete data['target_dataset_PULL'];
+    // }
 
-      data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? data['target_dataset_PUSH'] : data['target_dataset_PUSH'].toString();
+    // if (data['schedule']) {
+    //   data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
+    //   delete data['schedule_picker'];
+    //   delete data['schedule_begin'];
+    //   delete data['schedule_end'];
+    // }
+    // if (data['restrict_schedule']) {
+    //   data['restrict_schedule'] = this.parsePickerTime(
+    //     data['restrict_schedule_picker'],
+    //     data['restrict_schedule_begin'],
+    //     data['restrict_schedule_end'],
+    //   );
+    //   delete data['restrict_schedule_picker'];
+    //   delete data['restrict_schedule_begin'];
+    //   delete data['restrict_schedule_end'];
+    // } else {
+    //   delete data['restrict_schedule'];
+    // }
 
-      delete data['source_datasets_PUSH'];
-      delete data['target_dataset_PUSH'];
-    } else {
-      data['source_datasets'] = _.filter(
-        Array.isArray(data['source_datasets_PULL'])
-          ? _.cloneDeep(data['source_datasets_PULL'])
-          : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim),
-      );
-      data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string'
-        ? _.cloneDeep(data['target_dataset_PULL'])
-        : _.cloneDeep(data['target_dataset_PULL']).toString();
-      if (_.startsWith(data['target_dataset'], '/mnt/')) {
-        data['target_dataset'] = data['target_dataset'].substring(5);
-      }
-      delete data['source_datasets_PULL'];
-      delete data['target_dataset_PULL'];
-    }
+    // if (data['compression'] === CompressionType.Disabled) {
+    //   delete data['compression'];
+    // }
+    // if (data['logging_level'] === LoggingLevel.Default) {
+    //   delete data['logging_level'];
+    // }
 
-    if (data['schedule']) {
-      data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
-      delete data['schedule_picker'];
-      delete data['schedule_begin'];
-      delete data['schedule_end'];
-    }
-    if (data['restrict_schedule']) {
-      data['restrict_schedule'] = this.parsePickerTime(
-        data['restrict_schedule_picker'],
-        data['restrict_schedule_begin'],
-        data['restrict_schedule_end'],
-      );
-      delete data['restrict_schedule_picker'];
-      delete data['restrict_schedule_begin'];
-      delete data['restrict_schedule_end'];
-    } else {
-      delete data['restrict_schedule'];
-    }
+    // if (data['encryption_key_location_truenasdb']) {
+    //   data['encryption_key_location'] = '$TrueNAS';
+    // }
+    // delete data['encryption_key_location_truenasdb'];
 
-    if (data['compression'] === CompressionType.Disabled) {
-      delete data['compression'];
-    }
-    if (data['logging_level'] === LoggingLevel.Default) {
-      delete data['logging_level'];
-    }
-
-    if (data['encryption_key_location_truenasdb']) {
-      data['encryption_key_location'] = '$TrueNAS';
-    }
-    delete data['encryption_key_location_truenasdb'];
-
-    if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
-      data['encryption_key'] = data['encryption_key_passphrase'];
-    } else {
-      data['encryption_key'] = data['encryption_key_generate']
-        ? this.replicationService.generateEncryptionHexKey(64)
-        : data['encryption_key_hex'];
-    }
-
-    delete data['encryption_key_passphrase'];
-    delete data['encryption_key_generate'];
-    delete data['encryption_key_hex'];
+    // if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
+    //   data['encryption_key'] = data['encryption_key_passphrase'];
+    // } else {
+    //   data['encryption_key'] = data['encryption_key_generate']
+    //     ? this.replicationService.generateEncryptionHexKey(64)
+    //     : data['encryption_key_hex'];
+    // }
+    //
+    // delete data['encryption_key_passphrase'];
+    // delete data['encryption_key_generate'];
+    // delete data['encryption_key_hex'];
 
     // for edit replication task
     if (!this.entityForm.isNew) {
@@ -1538,26 +1540,26 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  getChildren(): Promise<Promise<ListdirChild[]>> {
-    for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-      this.fieldSets.config(item).hasErrors = false;
-    }
-
-    const transport = this.entityForm.formGroup.controls['transport'].value;
-    const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
-    if ((sshCredentials === undefined || sshCredentials === '') && transport !== TransportMode.Local) {
-      for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-        const fieldConfig = this.fieldSets.config(item);
-        fieldConfig.hasErrors = true;
-        fieldConfig.errors = this.translate.instant('Please select a valid SSH Connection');
-      }
-      return;
-    }
-
-    return new Promise((resolve) => {
-      resolve(this.replicationService.getRemoteDataset(transport, sshCredentials, this));
-    });
-  }
+  // getChildren(): Promise<Promise<ListdirChild[]>> {
+  //   for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+  //     this.fieldSets.config(item).hasErrors = false;
+  //   }
+  //
+  //   const transport = this.entityForm.formGroup.controls['transport'].value;
+  //   const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
+  //   if ((sshCredentials === undefined || sshCredentials === '') && transport !== TransportMode.Local) {
+  //     for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+  //       const fieldConfig = this.fieldSets.config(item);
+  //       fieldConfig.hasErrors = true;
+  //       fieldConfig.errors = this.translate.instant('Please select a valid SSH Connection');
+  //     }
+  //     return;
+  //   }
+  //
+  //   return new Promise((resolve) => {
+  //     resolve(this.replicationService.getRemoteDataset(transport, sshCredentials, this));
+  //   });
+  // }
 
   // speedLimitBlur(): void {
   //   if (this.entityForm) {
@@ -1583,25 +1585,25 @@ export class ReplicationFormComponent implements FormConfiguration {
   //   return actionId === 'wizard_add' && this.pk === undefined;
   // }
 
-  toggleNamingSchemaOrRegex(): void {
-    const directionValue = this.entityForm.formGroup.controls['direction'].value;
-    const schemaOrRegexValue = this.entityForm.formGroup.controls['schema_or_regex'].value;
-    if (schemaOrRegexValue === SnapshotNamingOption.NamingSchema) {
-      this.entityForm.setDisabled('name_regex', true, true);
-      if (directionValue === Direction.Push) {
-        this.entityForm.setDisabled('naming_schema', true, true);
-      } else {
-        this.entityForm.setDisabled('naming_schema', false, false);
-      }
-      if (directionValue === Direction.Pull) {
-        this.entityForm.setDisabled('also_include_naming_schema', true, true);
-      } else {
-        this.entityForm.setDisabled('also_include_naming_schema', false, false);
-      }
-    } else {
-      this.entityForm.setDisabled('name_regex', false, false);
-      this.entityForm.setDisabled('naming_schema', true, true);
-      this.entityForm.setDisabled('also_include_naming_schema', true, true);
-    }
-  }
+  // toggleNamingSchemaOrRegex(): void {
+  //   const directionValue = this.entityForm.formGroup.controls['direction'].value;
+  //   const schemaOrRegexValue = this.entityForm.formGroup.controls['schema_or_regex'].value;
+  //   if (schemaOrRegexValue === SnapshotNamingOption.NamingSchema) {
+  //     this.entityForm.setDisabled('name_regex', true, true);
+  //     if (directionValue === Direction.Push) {
+  //       this.entityForm.setDisabled('naming_schema', true, true);
+  //     } else {
+  //       this.entityForm.setDisabled('naming_schema', false, false);
+  //     }
+  //     if (directionValue === Direction.Pull) {
+  //       this.entityForm.setDisabled('also_include_naming_schema', true, true);
+  //     } else {
+  //       this.entityForm.setDisabled('also_include_naming_schema', false, false);
+  //     }
+  //   } else {
+  //     this.entityForm.setDisabled('name_regex', false, false);
+  //     this.entityForm.setDisabled('naming_schema', true, true);
+  //     this.entityForm.setDisabled('also_include_naming_schema', true, true);
+  //   }
+  // }
 }
