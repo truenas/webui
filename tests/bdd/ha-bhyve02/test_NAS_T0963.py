@@ -48,7 +48,7 @@ def if_the_login_page_appears_enter__user_and_password(driver, user, password):
 def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
     """on the Dashboard, click Storage on the left sidebar."""
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 

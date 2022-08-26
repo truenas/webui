@@ -52,7 +52,7 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
@@ -85,8 +85,8 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
     # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
     # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(ad_domain)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('"Please wait" should appear while settings are being applied')
@@ -149,8 +149,8 @@ def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_
 def check_the_enable_box_and_click_save(driver):
     """check the Enable box and click SAVE."""
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('the Active Directory setup should successfully save without an error')
@@ -236,7 +236,7 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 def on_the_dashboard_wait_for_the_active_directory_service(driver):
     """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
-    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 120, '//span[text()="System Information"]')
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
@@ -281,8 +281,8 @@ def on_the_add_dataset_page_input_the_dataset_name_my_acl_dataset(driver, datase
 @then(parsers.parse('click Summit the "{dataset_name}" data should be created'))
 def click_summit_the_my_acl_dataset_data_should_be_created(driver, dataset_name):
     """click Summit the "my_acl_dataset" data should be created."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
 
