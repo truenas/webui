@@ -9,8 +9,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -68,8 +68,8 @@ import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/sto
     EntityModule,
     MatButtonModule,
     MatDialogModule,
-    CoreComponents,
     NgxSkeletonLoaderModule,
+    CoreComponents,
   ],
   declarations: [
     AclEditorListComponent,
