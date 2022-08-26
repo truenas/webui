@@ -6,6 +6,7 @@ import { MatSelectHarness } from '@angular/material/select/testing';
 import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModalComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
@@ -43,9 +44,16 @@ describe('SchedulerComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows control label', () => {
-    const label = spectator.query('label');
-    expect(label).toHaveText('Run at');
+  it('renders a label and passes properties to it', () => {
+    spectator.setInput('label', 'Apply To Groups');
+    spectator.setInput('required', true);
+    spectator.setInput('tooltip', 'Enter the location of the system.');
+
+    const label = spectator.query(IxLabelComponent);
+    expect(label).toExist();
+    expect(label.label).toBe('Apply To Groups');
+    expect(label.required).toBe(true);
+    expect(label.tooltip).toBe('Enter the location of the system.');
   });
 
   it('shows a list of presets and a custom option', async () => {
