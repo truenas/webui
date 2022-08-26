@@ -236,6 +236,7 @@ export class VmFormComponent implements FormConfiguration {
     },
   ];
   private bootloader: FormSelectConfig;
+  private gpuVmPciSlots: string[];
 
   constructor(
     protected router: Router,
@@ -323,7 +324,8 @@ export class VmFormComponent implements FormConfiguration {
         }
       }
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
-      if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
+      if (finalIsolatedPciIds.length && gpusValue.length
+        && this.gpuVmPciSlots !== gpusValue && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
           if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
@@ -402,8 +404,8 @@ export class VmFormComponent implements FormConfiguration {
         }
         return true;
       });
-      const gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.entityForm.formGroup.controls['gpus'].setValue(gpuVmPciSlots);
+      this.gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
+      this.entityForm.formGroup.controls['gpus'].setValue(this.gpuVmPciSlots);
     });
     return vmRes;
   }
