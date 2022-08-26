@@ -11,7 +11,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -36,7 +35,6 @@ export class DatasetsManagementComponent implements OnInit {
   headerHeight = headerHeight;
   footerHeight = footerHeight;
   systemDataset: string;
-  entityUtils = new EntityUtils();
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -93,7 +91,7 @@ export class DatasetsManagementComponent implements OnInit {
   }
 
   handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
-    this.entityUtils.errorReport(error, this.dialogService);
+    this.dialogService.errorReportMiddleware(error);
   };
 
   isSystemDataset(dataset: DatasetDetails): boolean {

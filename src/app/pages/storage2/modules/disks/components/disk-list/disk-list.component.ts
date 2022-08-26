@@ -13,7 +13,6 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage2/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -24,7 +23,7 @@ import {
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -103,6 +102,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     private core: CoreService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
+    private dialogService: DialogService,
   ) {}
 
   getActions(parentRow: Disk): EntityTableAction[] {
@@ -180,7 +180,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         return true;
       }),
       catchError((error) => {
-        new EntityUtils().handleWsError(this, error);
+        this.dialogService.errorReportMiddleware(error);
         return of(false);
       }),
     ).toPromise();

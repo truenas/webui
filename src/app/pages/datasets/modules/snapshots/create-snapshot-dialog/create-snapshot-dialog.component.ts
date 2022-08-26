@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
@@ -91,7 +90,7 @@ export class CreateSnapshotDialogComponent implements OnInit {
       .subscribe((hasVmsInDataset) => {
         this.hasVmsInDataset = hasVmsInDataset;
       }, (err) => {
-        new EntityUtils().errorReport(err, this.dialog);
+        this.dialog.errorReportMiddleware(err);
       });
   }
 }

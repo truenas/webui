@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -45,14 +44,14 @@ export class LockDatasetDialogComponent {
       jobDialogRef.close();
       this.dialogRef.close(true);
     }, (err) => {
-      new EntityUtils().errorReport(err, this.dialogService);
+      this.dialogService.errorReportMiddleware(err);
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
       jobDialogRef.close();
       this.dialogRef.close(true);
       this.dialogService.errorReport(job.error, job.state, job.exception);
     }, (err) => {
-      new EntityUtils().errorReport(err, this.dialogService);
+      this.dialogService.errorReportMiddleware(err);
     });
   }
 }

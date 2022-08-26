@@ -18,7 +18,6 @@ import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
@@ -215,7 +214,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
         this.loader.close();
       },
       (error: WebsocketError) => {
-        new EntityUtils().errorReport(error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
         this.loader.close();
       },
     );

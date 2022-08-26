@@ -265,7 +265,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       if (err) {
         dialogRef.close();
-        new EntityUtils().handleWsError(entityEdit, err, this.dialogService);
+        this.handleError(err);
       }
     }, this.handleError);
 
@@ -404,7 +404,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     }, this.handleError);
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close();
-      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
+      this.handleError(err);
     }, this.handleError);
   }
 
@@ -463,7 +463,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     }, this.handleError);
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close();
-      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
+      this.handleError(err);
     }, this.handleError);
   }
 

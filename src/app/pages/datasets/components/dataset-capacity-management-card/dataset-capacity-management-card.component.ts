@@ -9,7 +9,6 @@ import {
 } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -96,7 +95,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       this.cdr.markForCheck();
     },
     (error) => {
-      new EntityUtils().errorReport(error, this.dialogService);
+      this.dialogService.errorReportMiddleware(error);
       this.cdr.markForCheck();
     });
   }
@@ -113,7 +112,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       this.inheritedQuotasDataset = dataset;
       this.cdr.markForCheck();
     }, (error) => {
-      new EntityUtils().errorReport(error, this.dialogService);
+      this.dialogService.errorReportMiddleware(error);
       this.cdr.markForCheck();
     });
   }

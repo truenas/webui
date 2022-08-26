@@ -21,7 +21,6 @@ import {
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,
@@ -77,7 +76,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             });
           }),
           catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
+            this.dialog.errorReportMiddleware(error);
 
             this.patchState({
               isLoading: false,
@@ -208,14 +207,14 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               this.router.navigate(['/datasets']);
             }, (err) => {
               dialogRef.close();
-              new EntityUtils().errorReport(err, this.dialog);
+              this.dialog.errorReportMiddleware(err);
             });
             dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
               dialogRef.close();
-              new EntityUtils().errorReport(err, this.dialog);
+              this.dialog.errorReportMiddleware(err);
             }, (err) => {
               dialogRef.close();
-              new EntityUtils().errorReport(err, this.dialog);
+              this.dialog.errorReportMiddleware(err);
             });
             dialogRef.componentInstance.submit();
           },
@@ -255,14 +254,14 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           this.router.navigate(['/datasets']);
         }, (err) => {
           dialogRef.close();
-          new EntityUtils().errorReport(err, this.dialog);
+          this.dialog.errorReportMiddleware(err);
         });
         dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
           dialogRef.close();
-          new EntityUtils().errorReport(err, this.dialog);
+          this.dialog.errorReportMiddleware(err);
         }, (err) => {
           dialogRef.close();
-          new EntityUtils().errorReport(err, this.dialog);
+          this.dialog.errorReportMiddleware(err);
         });
         dialogRef.componentInstance.submit();
       }),
@@ -344,7 +343,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           this.userService.getUserByName(ace.who).pipe(
             tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
             catchError((error) => {
-              new EntityUtils().errorReport(error, this.dialog);
+              this.dialog.errorReportMiddleware(error);
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -359,7 +358,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           this.userService.getGroupByName(ace.who).pipe(
             tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
             catchError((error) => {
-              new EntityUtils().errorReport(error, this.dialog);
+              this.dialog.errorReportMiddleware(error);
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -372,7 +371,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       this.userService.getUserByName(options.owner).pipe(
         tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
         catchError((error) => {
-          new EntityUtils().errorReport(error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
           return EMPTY;
         }),
       ),
@@ -382,7 +381,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       this.userService.getGroupByName(options.ownerGroup).pipe(
         tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
         catchError((error) => {
-          new EntityUtils().errorReport(error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
           return EMPTY;
         }),
       ),

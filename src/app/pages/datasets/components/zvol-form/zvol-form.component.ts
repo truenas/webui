@@ -408,7 +408,7 @@ export class ZvolFormComponent implements FormConfiguration {
   ) {}
 
   handleError = (err: WebsocketError | Job<null, unknown[]>): void => {
-    new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
+    new EntityUtils().handleWsError(this.entityForm, err);
   };
 
   preInit(entityForm: EntityFormComponent): void {
@@ -837,7 +837,7 @@ export class ZvolFormComponent implements FormConfiguration {
           this.modalService.refreshTable();
         }, (eres) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this.entityForm, eres);
+          this.handleError(eres);
         });
       } else {
         this.loader.close();
@@ -855,9 +855,9 @@ export class ZvolFormComponent implements FormConfiguration {
         this.loader.close();
         this.modalService.closeSlideIn();
         this.modalService.refreshTable();
-      }, (res) => {
+      }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, res);
+        this.handleError(err);
       });
     } else {
       this.editSubmit(body);
