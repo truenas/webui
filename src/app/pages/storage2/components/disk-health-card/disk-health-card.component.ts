@@ -109,15 +109,14 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadSmartTasks(): void {
-    Object.keys(this.diskDictionary).forEach((disk) => {
-      this.ws.call('smart.test.results', [[['disk', '=', disk]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
-        testResults.forEach((testResult) => {
-          const tests = testResult?.tests ?? [];
-          const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-          this.diskState.smartTests = this.diskState.smartTests + results.length;
-        });
-        this.cdr.markForCheck();
+    const disks = Object.keys(this.diskDictionary);
+    this.ws.call('smart.test.results', [[['disk', 'in', disks]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
+      testResults.forEach((testResult) => {
+        const tests = testResult?.tests ?? [];
+        const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
+        this.diskState.smartTests = this.diskState.smartTests + results.length;
       });
+      this.cdr.markForCheck();
     });
   }
 

@@ -30,9 +30,11 @@
     <ix-unused-resources *ngIf="!isEmptyPools && false" [pools]="pools$ | async"></ix-unused-resources>
 
     <ix-dashboard-pool
-      *ngFor="let pool of pools$ | async"
+      *ngFor="let pool of pools$ | async; let i = index"
+      [index]="i"
       [pool]="pool"
       [isLoading]="arePoolsLoading$ | async"
+      [rootDataset]="rootDatasets[pool.name]"
       class="pool"
     ></ix-dashboard-pool>
   </div>
