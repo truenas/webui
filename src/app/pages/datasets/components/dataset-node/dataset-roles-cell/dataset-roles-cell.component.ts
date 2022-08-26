@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { isDatasetHasShares, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { isDatasetHasShares, isRootDataset, ixApplications } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-dataset-roles-cell',
@@ -20,7 +20,7 @@ export class DatasetRolesCellComponent {
   }
 
   get isApplications(): boolean {
-    return this.dataset.name.endsWith('ix-applications');
+    return this.dataset.name.endsWith(ixApplications);
   }
 
   get appsNames(): string {

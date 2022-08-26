@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-roles-card',
@@ -13,7 +14,7 @@ export class RolesCardComponent {
   @Input() hasChildrenWithShares = false;
 
   get isApplications(): boolean {
-    return this.dataset.name && this.dataset.name.endsWith('ix-applications');
+    return this.dataset.name && this.dataset.name.endsWith(ixApplications);
   }
 
   get appsNames(): string {
