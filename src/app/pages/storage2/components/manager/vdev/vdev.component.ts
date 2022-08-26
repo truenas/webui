@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -51,6 +52,7 @@ export class VdevComponent implements OnInit {
   constructor(
     public translate: TranslateService,
     public sorter: StorageService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -131,6 +133,7 @@ export class VdevComponent implements OnInit {
         this.typeControl.setValue('stripe');
       }
     }
+    this.cdr.detectChanges();
   }
 
   estimateSize(): void {
