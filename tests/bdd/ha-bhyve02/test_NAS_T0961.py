@@ -30,8 +30,6 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
-    else:
-        driver.refresh()
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -157,10 +155,7 @@ def navigate_to_system_setting_and_click_misc(driver):
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Cron Jobs")]')
-    element = driver.find_element_by_xpath('//h3[contains(.,"Cron Jobs")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//h3[text()="System Dataset Pool"]')
 
 
 @then('click on System Dataset')
@@ -227,8 +222,8 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
+    assert wait_on_element(driver, 10, '//span[contains(.,"System InformationStandby")]')
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
-    assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
     assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
