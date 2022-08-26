@@ -27,7 +27,10 @@ export class IxFileInputHarness extends ComponentHarness implements IxFormContro
   }
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor(IxLabelHarness)();
+    const label = await this.locatorForOptional(IxLabelHarness)();
+    if (!label) {
+      return '';
+    }
     return label.getLabel();
   }
 

@@ -25,7 +25,10 @@ export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxF
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor(IxLabelHarness)();
+    const label = await this.locatorForOptional(IxLabelHarness)();
+    if (!label) {
+      return '';
+    }
     return label.getLabel();
   }
 

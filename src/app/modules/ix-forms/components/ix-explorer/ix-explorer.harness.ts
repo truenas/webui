@@ -21,7 +21,10 @@ export class IxExplorerHarness extends ComponentHarness implements IxFormControl
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor(IxLabelHarness)();
+    const label = await this.locatorForOptional(IxLabelHarness)();
+    if (!label) {
+      return '';
+    }
     return label.getLabel();
   }
 
