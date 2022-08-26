@@ -64,7 +64,7 @@ $padding-left: 8px;
   @for $i from 1 through 10 {
     ix-tree-node[aria-level="#{$i}"],
     ix-nested-tree-node[aria-level="#{$i}"] {
-      .mat-icon-button:first-child {
+      > .mat-icon-button:first-child {
         left: $padding-left + $level-offset * ($i - 1);
       }
 

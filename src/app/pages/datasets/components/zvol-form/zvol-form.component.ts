@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import {
-  DatasetEncryptionType, DatasetRecordSize, DatasetSync, DatasetType,
+  DatasetEncryptionType, DatasetRecordSize, DatasetSync, DatasetType, DatasetSnapdev,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -237,6 +237,18 @@ export class ZvolFormComponent implements FormConfiguration {
           { label: '128 KiB', value: '128K' },
         ],
         isHidden: false,
+      },
+      {
+        type: 'select',
+        name: 'snapdev',
+        placeholder: 'Snapdev',
+        tooltip: this.translate.instant('Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩ \
+ are hidden or visible. The default value is hidden.'),
+        options: [
+          { label: this.translate.instant('Visible'), value: DatasetSnapdev.Visible },
+          { label: this.translate.instant('Hidden'), value: DatasetSnapdev.Hidden },
+        ],
+        value: DatasetSnapdev.Hidden,
       },
     ],
   },
@@ -581,6 +593,7 @@ export class ZvolFormComponent implements FormConfiguration {
       const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
       const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
       const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' }) as FormSelectConfig;
+      const snapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
 
       if (pkDatasets && pkDatasets[0].type === DatasetType.Filesystem) {
         const syncInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].sync.rawvalue})`, value: inherit }];
@@ -595,10 +608,14 @@ export class ZvolFormComponent implements FormConfiguration {
         const volblocksizeInherit: Option[] = [{ label: `${inheritTr}`, value: inherit }];
         volblocksize.options = volblocksizeInherit.concat(volblocksize.options);
 
+        const snapdevInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].snapdev.rawvalue})`, value: inherit }];
+        snapdev.options = snapdevInherit.concat(snapdev.options);
+
         entityForm.formGroup.controls['sync'].setValue(inherit);
         entityForm.formGroup.controls['compression'].setValue(inherit);
         entityForm.formGroup.controls['deduplication'].setValue(inherit);
         entityForm.formGroup.controls['readonly'].setValue(inherit);
+        entityForm.formGroup.controls['snapdev'].setValue(inherit);
         const root = this.parent.split('/')[0];
         this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
           this.entityForm.formGroup.controls['volblocksize'].setValue(recommendedSize);
@@ -678,6 +695,17 @@ export class ZvolFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['compression'].setValue(pkDatasets[0].compression.value + '-6');
           }
           entityForm.formGroup.controls['deduplication'].setValue(pkDatasets[0].deduplication.value);
+
+          const snapdevOptions: Option[] = [{ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit }];
+          snapdev.options = snapdevOptions.concat(snapdev.options);
+          if (
+            pkDatasets[0].snapdev.source === ZfsPropertySource.Inherited
+            || pkDatasets[0].snapdev.source === ZfsPropertySource.Default
+          ) {
+            entityForm.formGroup.controls['snapdev'].setValue(inherit);
+          } else {
+            entityForm.formGroup.controls['snapdev'].setValue(pkDatasets[0].snapdev.value);
+          }
         });
       }
     });
@@ -818,9 +846,9 @@ export class ZvolFormComponent implements FormConfiguration {
         this.loader.close();
         this.modalService.closeSlideIn();
         this.modalService.refreshTable();
-      }, (res) => {
+      }, (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, res);
+        new EntityUtils().handleWsError(this.entityForm, error);
       });
     } else {
       this.editSubmit(body);

@@ -55,7 +55,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
     this.loader.open();
     const values = this.form.value;
     const request$ = this.isNew
-      ? this.ws.call('api_key.create', [{ name: values.name }])
+      ? this.ws.call('api_key.create', [{ name: values.name, allowlist: [{ method: '*', resource: '*' }] }])
       : this.ws.call('api_key.update', [this.editingRow.id, values] as UpdateApiKeyRequest);
 
     request$

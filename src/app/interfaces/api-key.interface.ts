@@ -9,9 +9,15 @@ export interface ApiKey {
 
 export interface CreateApiKeyRequest {
   name: string;
+  allowlist: ApiKeyAllowListItem[];
 }
 
 export type UpdateApiKeyRequest = [number, {
   name: string;
   reset?: boolean;
 }];
+
+export interface ApiKeyAllowListItem {
+  method: string;
+  resource: string;
+}

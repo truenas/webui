@@ -78,8 +78,8 @@ export class SupportComponent implements OnInit {
     this.ws.call('truenas.is_production').pipe(
       delay(500),
       untilDestroyed(this),
-    ).subscribe((res) => {
-      this.isProduction = res;
+    ).subscribe((isProduction) => {
+      this.isProduction = isProduction;
     });
   }
 

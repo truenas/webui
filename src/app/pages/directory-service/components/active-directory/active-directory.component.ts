@@ -174,7 +174,13 @@ export class ActiveDirectoryComponent implements OnInit {
   private loadDirectoryState(): Observable<void> {
     return this.ws.call('directoryservices.get_state').pipe(
       map((adState) => {
-        this.canLeaveDomain = adState.activedirectory === DirectoryServiceState.Healthy;
+        const isHealthy = adState.activedirectory === DirectoryServiceState.Healthy;
+        this.canLeaveDomain = isHealthy;
+
+        if (isHealthy) {
+          this.form.controls.netbiosname.disable();
+          this.form.controls.netbiosalias.disable();
+        }
       }),
     );
   }

@@ -42,8 +42,8 @@ export class DynamicListComponent implements OnInit {
     if (this.listControl.value === undefined) {
       this.listControl.setValue(new Set([]));
     }
-    this.listControl.statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      const method = res === 'DISABLED' ? 'disable' : 'enable';
+    this.listControl.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      const method = status === 'DISABLED' ? 'disable' : 'enable';
       this.inputControl[method]();
     });
   }

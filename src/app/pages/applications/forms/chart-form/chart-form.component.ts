@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
   noop, of, Subject, Subscription,
@@ -21,6 +22,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
 import { AppSchemaService } from 'app/services/app-schema.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -55,6 +57,8 @@ export class ChartFormComponent implements OnDestroy {
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
     private mdDialog: MatDialog,
+    private validatorsService: IxValidatorsService,
+    private translate: TranslateService,
   ) {}
 
   ngOnDestroy(): void {
@@ -109,8 +113,14 @@ export class ChartFormComponent implements OnDestroy {
       this.selectedVersionKey = versionKeys[0];
     }
 
-    this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
     this.form.addControl('version', new UntypedFormControl(this.selectedVersionKey, [Validators.required]));
+    this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
+    this.form.controls['release_name'].setValidators(
+      this.validatorsService.withMessage(
+        Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
+        this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),
+      ),
+    );
 
     this.dynamicSection.push({
       name: 'Application name',
@@ -289,11 +299,11 @@ export class ChartFormComponent implements OnDestroy {
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
   }
 
-  onFailure = (res: Job<null, unknown[]>): void => {
-    if (res.exc_info && res.exc_info.extra) {
-      new EntityUtils().handleWsError(this, res);
+  onFailure = (failedJob: Job<null, unknown[]>): void => {
+    if (failedJob.exc_info && failedJob.exc_info.extra) {
+      new EntityUtils().handleWsError(this, failedJob);
     } else {
-      this.dialogService.errorReport('Error', res.error, res.exception);
+      this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
     }
   };
 

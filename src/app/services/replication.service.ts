@@ -78,9 +78,9 @@ export class ReplicationService {
       queryParams.push(sshCredentials);
     }
     return this.ws.call('replication.list_datasets', queryParams).pipe(
-      map((res) => {
+      map((datasets) => {
         const nodes: ListdirChild[] = [];
-        res.forEach((dataset) => {
+        datasets.forEach((dataset) => {
           const pathArr = dataset.split('/');
           if (pathArr.length === 1) {
             const node: ListdirChild = {
@@ -121,10 +121,10 @@ export class ReplicationService {
 
   generateEncryptionHexKey(length: number): string {
     const characters = '0123456789abcdef';
-    let res = '';
+    let encryptionKey = '';
     for (let i = 0; i < length; i++) {
-      res += characters.charAt(Math.floor(Math.random() * characters.length));
+      encryptionKey += characters.charAt(Math.floor(Math.random() * characters.length));
     }
-    return res;
+    return encryptionKey;
   }
 }

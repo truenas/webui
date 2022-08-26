@@ -120,14 +120,14 @@ export class DiskBulkEditComponent {
     this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          if (res.state !== JobState.Success) {
+        (job) => {
+          if (job.state !== JobState.Success) {
             return;
           }
 
           this.isLoading = false;
           let isSuccessful = true;
-          for (const result of res.result) {
+          for (const result of job.result) {
             if (result.error !== null) {
               this.slideInService.close();
               this.dialogService.errorReport(helptext.dialog_error, result.error);

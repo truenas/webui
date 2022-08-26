@@ -19,6 +19,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ChartsModule } from 'ng2-charts';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
@@ -87,6 +88,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     NgxSkeletonLoaderModule,
     LayoutModule,
     EntityModule,
+    NgxFilesizeModule,
   ],
   declarations: [
     PoolsDashboardComponent,

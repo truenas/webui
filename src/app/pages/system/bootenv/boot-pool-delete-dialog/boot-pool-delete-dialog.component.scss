@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  min-width: 500px;
+
+  .bulk-list {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding-bottom: 16px;
+  }
+
+  p strong:not(:first-child) {
+    margin-left: 5px;
+  }
+
+  .form-actions-cell {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .form-actions {
+    align-items: center;
+    border-top: 1px solid var(--lines);
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+
+    ix-checkbox {
+      margin: 0;
+    }
+  }
+}

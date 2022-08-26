@@ -3,7 +3,7 @@
 </div>
 
 <ng-template #datasetContainer>
-  <div class="container" fxLayoutGap="16px" *ngIf="!isLoading; else loading">
+  <div class="container" fxLayoutGap="16px">
     <div class="table-container">
       <ix-fake-progress-bar
         class="loader-bar"
@@ -83,9 +83,4 @@
     </div>
   </div>
 
-  <ng-template #loading>
-    <div fxFlex="100%" fxLayoutAlign="center center">
-      <mat-spinner [diameter]="120" class="spinner"></mat-spinner>
-    </div>
-  </ng-template>
 </ng-template>

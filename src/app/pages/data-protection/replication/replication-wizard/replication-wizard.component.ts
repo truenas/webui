@@ -800,8 +800,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {
-    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.namesInUse.push(...res.map((replication) => replication.name));
+    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {
+      this.namesInUse.push(...replications.map((replication) => replication.name));
     });
     this.modalService.getRow$.pipe(
       take(1),
@@ -833,8 +833,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   step0Init(): void {
     const existReplicationField = _.find(this.preloadFieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
-      (res: ReplicationTask[]) => {
-        for (const task of res) {
+      (tasks: ReplicationTask[]) => {
+        for (const task of tasks) {
           if (task.transport !== TransportMode.Legacy) {
             // TODO: Change to icu message format.
             const label = task.name + ' (' + ((task.state && task.state.datetime)
@@ -1226,11 +1226,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
           enabled: true,
         };
-        await this.isSnapshotTaskExist(payload).then((res) => {
-          if (res.length === 0) {
+        await this.isSnapshotTaskExist(payload).then((tasks) => {
+          if (tasks.length === 0) {
             snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
           } else {
-            this.existSnapshotTasks.push(...res.map((task) => task.id));
+            this.existSnapshotTasks.push(...tasks.map((task) => task.id));
           }
         });
       }

@@ -195,7 +195,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
-    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map((res) => res.pool)).toPromise();
+    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map((config) => config.pool)).toPromise();
 
     this.store$.pipe(
       waitForSystemInfo,
@@ -211,9 +211,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.hasKeyDataset = {};
     this.hasEncryptedRoot = {};
-    this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const key in res) {
-        if (res.hasOwnProperty(key)) {
+    this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((rootKeys) => {
+      for (const key in rootKeys) {
+        if (rootKeys.hasOwnProperty(key)) {
           const pool = key.split('/')[0];
           this.hasKeyDataset[pool] = true;
         }
@@ -305,11 +305,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
       this.showDefaults = true;
       this.showSpinner = false;
-    }, (res) => {
+    }, (error) => {
       this.showDefaults = true;
       this.showSpinner = false;
 
-      this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), res.message, res.stack);
+      this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), error.message, error.stack);
     });
   }
 

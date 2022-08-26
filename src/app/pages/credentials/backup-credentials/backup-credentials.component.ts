@@ -14,7 +14,6 @@ import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.c
 import {
   CloudCredentialsFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
-import { DemoComponent } from 'app/pages/credentials/backup-credentials/demo/demo.component';
 import {
   SshConnectionFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
@@ -145,34 +144,32 @@ export class BackupCredentialsComponent implements OnInit {
     ];
   }
 
-  cloudCredentialsDataSourceHelper(res: CloudsyncCredential[]): (CloudsyncCredential & { providerTitle?: string })[] {
-    return res.map((item) => {
+  cloudCredentialsDataSourceHelper(
+    credentials: CloudsyncCredential[],
+  ): (CloudsyncCredential & { providerTitle?: string })[] {
+    return credentials.map((credential) => {
       if (this.providers) {
-        const credentialProvider = this.providers.find((provider) => provider.name === item.provider);
+        const credentialProvider = this.providers.find((provider) => provider.name === credential.provider);
         if (credentialProvider) {
           return {
-            ...item,
+            ...credential,
             providerTitle: credentialProvider.title,
           };
         }
       }
-      return item;
+      return credential;
     });
   }
 
-  onTest(): void {
-    this.slideInService.open(DemoComponent);
-  }
-
-  sshConnectionsDataSourceHelper(res: KeychainCredential[]): KeychainSshCredentials[] {
-    return res.filter((item) => {
-      return item.type === KeychainCredentialType.SshCredentials;
+  sshConnectionsDataSourceHelper(credentials: KeychainCredential[]): KeychainSshCredentials[] {
+    return credentials.filter((credential) => {
+      return credential.type === KeychainCredentialType.SshCredentials;
     }) as KeychainSshCredentials[];
   }
 
-  sshKeyPairsDataSourceHelper(res: KeychainCredential[]): KeychainSshKeyPair[] {
-    return res.filter((item) => {
-      return item.type === KeychainCredentialType.SshKeyPair;
+  sshKeyPairsDataSourceHelper(credentials: KeychainCredential[]): KeychainSshKeyPair[] {
+    return credentials.filter((credential) => {
+      return credential.type === KeychainCredentialType.SshKeyPair;
     }) as KeychainSshKeyPair[];
   }
 

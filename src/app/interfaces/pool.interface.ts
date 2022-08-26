@@ -121,7 +121,7 @@ export interface PoolInstance {
   encryptkey: string;
   encryptkey_path: string;
   is_decrypted: boolean;
-  status: string;
+  status: PoolStatus;
   path: string;
   scan: PoolScanUpdate;
   is_upgraded: boolean;

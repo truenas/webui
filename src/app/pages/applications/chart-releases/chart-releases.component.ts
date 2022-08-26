@@ -11,7 +11,7 @@ import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
-import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
+import { ApplicationUserEvent, ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -43,7 +43,7 @@ import { ModalService } from 'app/services/modal.service';
 export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  @Output() updateTab = new EventEmitter();
+  @Output() updateTab: EventEmitter<ApplicationUserEvent> = new EventEmitter();
 
   filteredChartItems: ChartRelease[] = [];
   filterString = '';
@@ -265,13 +265,13 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   updateChartReleases(): void {
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res.pool) {
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
+      if (!config.pool) {
         this.chartItems = {};
         this.showLoadStatus(EmptyType.FirstUse);
       } else {
-        this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((res) => {
-          if (!res) {
+        this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((kubernetesStarted) => {
+          if (!kubernetesStarted) {
             this.chartItems = {};
             this.showLoadStatus(EmptyType.Errors);
           } else {
@@ -340,7 +340,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   update(name: string): void {
     const catalogApp = this.chartItems[name];
     this.appLoaderService.open();
-    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
+    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((summary: UpgradeSummary) => {
       this.appLoaderService.close();
 
       const dialogRef = this.mdDialog.open(ChartUpgradeDialogComponent, {
@@ -349,7 +349,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
         maxWidth: '750px',
         data: {
           appInfo: catalogApp,
-          upgradeSummary: res,
+          upgradeSummary: summary,
         } as ChartUpgradeDialogConfig,
       });
       dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((version) => {
@@ -417,7 +417,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.ws.call('chart.release.query', [
       [['id', '=', name]],
       { extra: { include_chart_schema: true } },
-    ]).pipe(untilDestroyed(this)).subscribe((res: ChartRelease[]) => {
+    ]).pipe(untilDestroyed(this)).subscribe((releases: ChartRelease[]) => {
       this.appLoaderService.close();
       const form = this.slideInService.open(ChartFormComponent, { wide: true });
       if (catalogApp.chart_metadata.name === ixChartApp) {
@@ -425,8 +425,8 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       } else {
         form.setTitle(catalogApp.chart_metadata.name);
       }
-      if (res.length) {
-        form.setChartEdit(res[0]);
+      if (releases.length) {
+        form.setChartEdit(releases[0]);
       }
     });
   }
@@ -526,10 +526,10 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedItems.map((item) => [item])]);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
-        (res: Job<CoreBulkResponse[]>) => {
+        (job: Job<CoreBulkResponse[]>) => {
           this.dialogService.closeAllDialogs();
           let message = '';
-          res.result.forEach((item) => {
+          job.result.forEach((item) => {
             if (item.error !== null) {
               message = message + '<li>' + item.error + '</li>';
             }
@@ -569,9 +569,9 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
       this.appLoaderService.close();
-      this.podDetails = { ...res };
+      this.podDetails = { ...consoleChoices };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length === 0) {
         this.dialogService.confirm({
@@ -608,9 +608,9 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
       this.appLoaderService.close();
-      this.podDetails = { ...res };
+      this.podDetails = { ...consoleChoices };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length === 0) {
         this.dialogService.confirm({

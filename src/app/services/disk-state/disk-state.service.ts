@@ -18,14 +18,14 @@ export class DiskStateService extends BaseService {
     this.authenticated = true;
 
     // Check for Disk Presence
-    this.ws.sub('disk.query').subscribe((res: Disk) => {
-      this.core.emit({ name: 'DisksChanged', data: res, sender: this });
+    this.ws.sub('disk.query').subscribe((disk: Disk) => {
+      this.core.emit({ name: 'DisksChanged', data: disk, sender: this });
     });
 
     // Check for Pool Status
-    this.ws.subscribe('zfs.pool.scan').subscribe((res: ResilverJob) => {
-      if (res.fields.scan.function === PoolScanFunction.Resilver) {
-        this.core.emit({ name: 'Resilvering', data: res.fields, sender: this });
+    this.ws.subscribe('zfs.pool.scan').subscribe((resilverJob: ResilverJob) => {
+      if (resilverJob.fields.scan.function === PoolScanFunction.Resilver) {
+        this.core.emit({ name: 'Resilvering', data: resilverJob.fields, sender: this });
       }
     });
   }

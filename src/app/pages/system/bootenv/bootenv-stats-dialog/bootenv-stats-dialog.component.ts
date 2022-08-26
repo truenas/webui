@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
-import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
+import { PoolInstance } from 'app/interfaces/pool.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,7 +26,7 @@ export class BootenvStatsDialogComponent implements OnInit {
     interval: [null as number, [Validators.required, Validators.min(1)]],
   });
 
-  state: BootPoolState;
+  state: PoolInstance;
 
   readonly PoolStatus = PoolStatus;
   readonly poolStatusLabels = getPoolStatusLabels(this.translate);
@@ -45,7 +45,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   ) {}
 
   get condition(): PoolStatus {
-    return this.state.properties.health.value as PoolStatus;
+    return this.state.status;
   }
 
   ngOnInit(): void {

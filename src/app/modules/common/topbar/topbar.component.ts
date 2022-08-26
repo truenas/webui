@@ -500,9 +500,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   checkUpgradePending(): void {
     this.pendingUpgradeChecked = true;
-    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.upgradeWaitingToFinish = res;
-      if (res) {
+    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((isUpgradePending) => {
+      this.upgradeWaitingToFinish = isUpgradePending;
+      if (isUpgradePending) {
         this.upgradePendingDialog();
       }
     });
@@ -530,12 +530,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   getDirServicesStatus(): void {
-    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dirServicesStatus = Object.values(res);
+    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
+      this.dirServicesStatus = Object.values(state);
       this.showDirectoryServicesIcon();
     });
-    this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dirServicesStatus = Object.values(res);
+    this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((status) => {
+      this.dirServicesStatus = Object.values(status);
       this.showDirectoryServicesIcon();
     });
   }

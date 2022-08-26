@@ -90,8 +90,8 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe(
-        (res) => {
-          row.enabled = res.enabled;
+        (share) => {
+          row.enabled = share.enabled;
         },
         (err) => {
           row.enabled = !row.enabled;
