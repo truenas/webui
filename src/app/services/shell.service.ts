@@ -73,7 +73,7 @@ export class ShellService {
   }
 
   onmessage(msg: MessageEvent): void {
-    let data: any;
+    let data: { id?: string; msg: string };
 
     try {
       data = JSON.parse(msg.data);

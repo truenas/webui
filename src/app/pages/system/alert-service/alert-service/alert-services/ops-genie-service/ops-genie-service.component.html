@@ -1,0 +1,13 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    [label]="'API Key' | translate"
+    formControlName="api_key"
+    [required]="true"
+    [tooltip]="helptext.OpsGenie_api_key_tooltip | translate"
+  ></ix-input>
+  <ix-input
+    label="API URL"
+    formControlName="api_url"
+    [tooltip]="helptext.OpsGenie_api_url_tooltip | translate"
+  ></ix-input>
+</ng-container>

@@ -7,8 +7,10 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Pool } from 'app/interfaces/pool.interface';
+import { TranslateService } from '@ngx-translate/core';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage2/stores/pools-dashboard-store.service';
 import { WebSocketService } from 'app/services';
@@ -25,28 +27,57 @@ import { StorageService } from 'app/services/storage.service';
 export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  pools: Pool[];
-  isPoolsLoading = false;
+  pools$ = this.store.pools$;
+  arePoolsLoading$ = this.store.isLoading$;
+  entityEmptyConf: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    large: true,
+    title: this.translate.instant('No Pools'),
+    message: `${this.translate.instant(
+      'It seems you haven\'t configured pools yet.',
+    )} ${this.translate.instant(
+      'Please click the button below to create a pool.',
+    )}`,
+    button: {
+      label: this.translate.instant('Create pool'),
+      action: () => this.createPool(),
+    },
+  };
+
+  isLoading = true;
+  isEmptyPools = false;
 
   constructor(
     private ws: WebSocketService,
+    protected router: Router,
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private sorter: StorageService,
     private store: PoolsDashboardStore,
-  ) {}
+    protected translate: TranslateService,
+  ) { }
 
   ngOnInit(): void {
-    this.loadPools();
+    this.pools$
+      .pipe(untilDestroyed(this))
+      .subscribe((pools) => {
+        this.isEmptyPools = pools.length === 0;
+        this.cdr.markForCheck();
+      });
+
+    this.arePoolsLoading$
+      .pipe(untilDestroyed(this))
+      .subscribe((isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      });
+
+    this.store.loadDashboard();
 
     this.slideIn.onClose$
       .pipe(untilDestroyed(this))
-      .subscribe(() => this.loadPools());
-
-    this.store.dashboardReloaded$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.loadPools());
+      .subscribe(() => this.store.loadDashboard());
   }
 
   ngAfterViewInit(): void {
@@ -57,18 +88,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     this.slideIn.open(ImportPoolComponent);
   }
 
-  loadPools(): void {
-    // TODO: Add loading indicator
-    // TODO: Handle error
-    this.isPoolsLoading = true;
-    this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]).pipe(untilDestroyed(this)).subscribe(
-      (pools: Pool[]) => {
-        this.pools = this.sorter.tableSorter(pools, 'name', 'asc');
-        setTimeout(() => {
-          this.isPoolsLoading = false;
-          this.cdr.markForCheck();
-        }, 2000);
-      },
-    );
+  createPool(): void {
+    this.router.navigate(['/storage2/create']);
   }
 }

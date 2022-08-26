@@ -29,6 +29,9 @@ export class DialogService {
   }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
+  /**
+   * @deprecated Use dialogForm or build a separate dialog component
+   */
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>;
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
@@ -65,6 +68,7 @@ export class DialogService {
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
+        // TODO: Does not belong to dialog.service in any form or shape.
         if (selection && data && data[0]) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;

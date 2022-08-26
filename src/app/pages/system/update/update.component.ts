@@ -21,7 +21,6 @@ import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -91,7 +90,6 @@ export class UpdateComponent implements OnInit {
     protected dialogService: DialogService,
     public translate: TranslateService,
     protected storage: StorageService,
-    public core: CoreService,
     private store$: Store<AppState>,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -111,35 +109,35 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
       this.autoCheck = isAutoDownloadOn;
 
-      this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((trains) => {
         this.checkable = true;
-        this.fullTrainList = res.trains;
+        this.fullTrainList = trains.trains;
 
         // On page load, make sure we are working with train of the current OS
-        this.train = res.current;
-        this.selectedTrain = res.current;
+        this.train = trains.current;
+        this.selectedTrain = trains.current;
 
         if (this.autoCheck) {
           this.check();
         }
 
         this.trains = [];
-        for (const i in res.trains) {
-          this.trains.push({ name: i, description: res.trains[i].description });
+        for (const i in trains.trains) {
+          this.trains.push({ name: i, description: trains.trains[i].description });
         }
         if (this.trains.length > 0) {
           this.singleDescription = this.trains[0].description;
         }
 
-        if (this.fullTrainList[res.current]) {
-          if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
+        if (this.fullTrainList[trains.current]) {
+          if (this.fullTrainList[trains.current].description.toLowerCase().includes('[nightly]')) {
             this.currentTrainDescription = '[nightly]';
-          } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
+          } else if (this.fullTrainList[trains.current].description.toLowerCase().includes('[release]')) {
             this.currentTrainDescription = '[release]';
-          } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+          } else if (this.fullTrainList[trains.current].description.toLowerCase().includes('[prerelease]')) {
             this.currentTrainDescription = '[prerelease]';
           } else {
-            this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+            this.currentTrainDescription = trains.trains[this.selectedTrain].description.toLowerCase();
           }
         } else {
           this.currentTrainDescription = '';
@@ -157,8 +155,8 @@ export class UpdateComponent implements OnInit {
 
     if (this.productType === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
-        this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res) {
+        this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isLicensed) => {
+          if (isLicensed) {
             this.updateMethod = 'failover.upgrade';
             this.isHa = true;
           }
@@ -185,8 +183,8 @@ export class UpdateComponent implements OnInit {
   }
 
   checkUpgradePending(): void {
-    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.failoverUpgradePending = res;
+    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((hasPendingUpdate) => {
+      this.failoverUpgradePending = hasPendingUpdate;
     });
   }
 
@@ -196,19 +194,18 @@ export class UpdateComponent implements OnInit {
       message: '',
       hideCheckBox: true,
       buttonMsg: this.translate.instant('Continue'),
-    }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-        dialogRef.componentInstance.setCall('failover.upgrade_finish');
-        dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.failoverUpgradePending = false;
-          dialogRef.close(false);
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
-          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-        });
+    }).pipe(untilDestroyed(this)).subscribe((confirmed: boolean) => {
+      if (!confirmed) {
+        return;
       }
+
+      const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
+      dialogRef.componentInstance.setCall('failover.upgrade_finish');
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.failoverUpgradePending = false;
+        dialogRef.close(false);
+      });
     });
   }
 
@@ -524,8 +521,8 @@ export class UpdateComponent implements OnInit {
       dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       dialogRef.componentInstance.submit();
 
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob: any) => {
+        this.dialogService.errorReport(failedJob.error, failedJob.reason, failedJob.trace.formatted);
       });
     } else {
       this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {

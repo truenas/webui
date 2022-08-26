@@ -24,7 +24,7 @@ import {
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { StorageService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -99,7 +99,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
-    public diskbucket: StorageService,
     private matDialog: MatDialog,
     private core: CoreService,
     protected translate: TranslateService,

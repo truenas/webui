@@ -5,7 +5,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { Pool } from 'app/interfaces/pool.interface';
+import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
@@ -52,6 +54,37 @@ export class PoolUsageCardComponent implements OnInit, OnChanges {
 
   get isLowCapacity(): boolean {
     return this.usageState.usedPct >= maxPct;
+  }
+
+  get allDiskNames(): string[] {
+    if (!this.poolState || !this.poolState.topology) {
+      return [];
+    }
+
+    const allDiskNames: string[] = [];
+    (['cache', 'data', 'dedup', 'log', 'spare', 'special'] as PoolTopologyCategory[]).forEach((categoryName) => {
+      const category = this.poolState.topology[categoryName];
+
+      if (!category || !category.length) {
+        return;
+      }
+
+      category.forEach((item) => {
+        if (isTopologyDisk(item) && item.disk) {
+          allDiskNames.push(item.disk);
+        } else {
+          item.children.forEach((device) => {
+            if (!device.disk) {
+              return;
+            }
+
+            allDiskNames.push(device.disk);
+          });
+        }
+      });
+    });
+
+    return allDiskNames;
   }
 
   constructor(

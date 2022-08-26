@@ -43,7 +43,6 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, JobService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -189,27 +188,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   };
 
-  resetColumns(): void {
-    this.displayedColumns = [];
-    this.allColumns = [];
-    this.alwaysDisplayedCols = [];
-    this.conf.columns.forEach((column) => {
-      this.displayedColumns.push(column.prop);
-      if (!column.always_display) {
-        this.allColumns.push(column); // Make array of optionally-displayed cols
-      } else {
-        this.alwaysDisplayedCols.push(column); // Make an array of required cols
-      }
-    });
-    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
-    // Remove any alwaysDisplayed cols from the official list
-    this.conf.columns = this.conf.columns.filter((column) => !column.always_display);
-  }
-
   isAllSelected = false;
 
   constructor(
-    protected core: CoreService,
     protected router: Router,
     public ws: WebSocketService,
     public dialogService: DialogService,
@@ -237,7 +218,6 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   }
 
   cleanup(): void {
-    this.core.unregister({ observerClass: this });
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -1017,26 +997,28 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
             .pipe(untilDestroyed(this))
             .subscribe(
               (res1) => {
-                if (res1.state === JobState.Success) {
-                  this.loader.close();
-                  this.loaderOpen = false;
-                  this.getData();
-                  // this.selected = [];
-                  this.selection.clear();
+                if (res1.state !== JobState.Success) {
+                  return;
+                }
 
-                  const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
-                  let message = '';
-                  for (let i = 0; i < res1.result.length; i++) {
-                    if (res1.result[i].error !== null) {
-                      message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
-                    }
+                this.loader.close();
+                this.loaderOpen = false;
+                this.getData();
+                // this.selected = [];
+                this.selection.clear();
+
+                const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                let message = '';
+                for (let i = 0; i < res1.result.length; i++) {
+                  if (res1.result[i].error !== null) {
+                    message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
                   }
-                  if (message === '') {
-                    this.dialogService.info(this.translate.instant('Items deleted'), '');
-                  } else {
-                    message = '<ul>' + message + '</ul>';
-                    this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
-                  }
+                }
+                if (message === '') {
+                  this.dialogService.info(this.translate.instant('Items deleted'), '');
+                } else {
+                  message = '<ul>' + message + '</ul>';
+                  this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
                 }
               },
               (res1) => {
@@ -1231,24 +1213,26 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
       preferredCols.forEach((column) => {
         // If preferred columns have been set for THIS table...
-        if (column.title === this.title) {
-          this.firstUse = false;
-          this.conf.columns = column.cols.filter((col) => {
-            // Remove columns if they are already present in always displayed columns
-            return !this.alwaysDisplayedCols.find((item) => item.prop === col.prop);
-          });
-
-          // Remove columns from display and preferred cols if they don't exist in the table
-          const notFound: EntityTableColumnProp[] = [];
-          this.conf.columns.forEach((col) => {
-            const found = this.filterColumns.find((filterColumn) => filterColumn.prop === col.prop);
-            if (!found) {
-              notFound.push(col.prop);
-            }
-          });
-          this.conf.columns = this.conf.columns.filter((col) => !notFound.includes(col.prop));
-          this.selectColumnsToShowOrHide();
+        if (column.title !== this.title) {
+          return;
         }
+
+        this.firstUse = false;
+        this.conf.columns = column.cols.filter((col) => {
+          // Remove columns if they are already present in always displayed columns
+          return !this.alwaysDisplayedCols.find((item) => item.prop === col.prop);
+        });
+
+        // Remove columns from display and preferred cols if they don't exist in the table
+        const notFound: EntityTableColumnProp[] = [];
+        this.conf.columns.forEach((col) => {
+          const found = this.filterColumns.find((filterColumn) => filterColumn.prop === col.prop);
+          if (!found) {
+            notFound.push(col.prop);
+          }
+        });
+        this.conf.columns = this.conf.columns.filter((col) => !notFound.includes(col.prop));
+        this.selectColumnsToShowOrHide();
       });
 
       this.changeDetectorRef.markForCheck();

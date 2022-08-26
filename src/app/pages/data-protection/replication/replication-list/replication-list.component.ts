@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -52,6 +53,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -86,7 +88,10 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;

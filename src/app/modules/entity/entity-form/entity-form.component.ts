@@ -59,7 +59,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   wsResponseIdx: any;
   queryResponse: any;
   saveSubmitText: string = this.translate.instant('Save');
-  showPassword = false;
   successMessage: string = this.translate.instant('Settings saved.');
 
   loaderOpen = false;
@@ -68,13 +67,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   get controls(): FieldConfig[] {
     return this.fieldConfig.filter(({ type }) => type !== 'button');
   }
-  get changes(): Observable<any> {
+  get changes(): Observable<unknown> {
     return this.formGroup.valueChanges;
   }
   get valid(): boolean {
     return this.formGroup.valid;
   }
-  get value(): any {
+  get value(): unknown {
     return this.formGroup.value;
   }
 
@@ -376,19 +375,21 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   ngOnChanges(): void {
-    if (this.formGroup) {
-      const controls = Object.keys(this.formGroup.controls);
-      const configControls = this.controls.map((item) => item.name);
-
-      controls.filter((control) => !configControls.includes(control))
-        .forEach((control) => this.formGroup.removeControl(control));
-
-      configControls.filter((control) => !controls.includes(control))
-        .forEach((name) => {
-          const config = this.fieldConfig.find((control) => control.name === name);
-          this.formGroup.addControl(name, this.createControl(config));
-        });
+    if (!this.formGroup) {
+      return;
     }
+
+    const controls = Object.keys(this.formGroup.controls);
+    const configControls = this.controls.map((item) => item.name);
+
+    controls.filter((control) => !configControls.includes(control))
+      .forEach((control) => this.formGroup.removeControl(control));
+
+    configControls.filter((control) => !controls.includes(control))
+      .forEach((name) => {
+        const config = this.fieldConfig.find((control) => control.name === name);
+        this.formGroup.addControl(name, this.createControl(config));
+      });
   }
 
   goBack(): void {

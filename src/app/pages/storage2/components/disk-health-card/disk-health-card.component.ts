@@ -1,26 +1,20 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit, OnDestroy,
+  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { EMPTY } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
-import { Alert } from 'app/interfaces/alert.interface';
-import { CoreEvent } from 'app/interfaces/events';
+import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { Interval } from 'app/interfaces/timeout.interface';
 import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
-import { Temperature } from 'app/services/disk-temperature.service';
 
 interface DiskState {
   health: DiskHealthLevel;
   highestTemperature: number;
   lowestTemperature: number;
   averageTemperature: number;
-  alters: number;
+  alerts: number;
   smartTests: number;
   unit: string;
   symbolText: string;
@@ -32,12 +26,6 @@ export enum DiskHealthLevel {
   Safe = 'safe',
 }
 
-export enum TemperatureUnit {
-  Celsius = 'C',
-  Fahrenheit = 'F',
-  Kelvin = 'K',
-}
-
 @UntilDestroy()
 @Component({
   selector: 'ix-disk-health-card',
@@ -45,25 +33,19 @@ export enum TemperatureUnit {
   styleUrls: ['./disk-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
+export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() loading = true;
   @Input() diskDictionary: { [key: string]: Disk } = {};
 
-  // Disks temperature related alerts
-  private alterts: Alert[];
-  private broadcast: Interval;
-  private subscribers = 0;
-
   readonly diskHealthLevel = DiskHealthLevel;
 
-  isStarting = true;
   diskState: DiskState = {
     health: DiskHealthLevel.Safe,
-    highestTemperature: 0,
-    lowestTemperature: 0,
-    averageTemperature: 0,
-    alters: 0,
+    highestTemperature: null,
+    lowestTemperature: null,
+    averageTemperature: null,
+    alerts: 0,
     smartTests: 0,
     unit: '',
     symbolText: '',
@@ -71,27 +53,22 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private ws: WebSocketService,
-    private core: CoreService,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    if (!this.loading) {
-      this.checkVolumeHealth(this.poolState);
-      this.loadAlerts();
-      this.loadSmartTasks();
-      this.loadTemperatures();
+    if (this.loading) {
+      return;
     }
+
+    this.checkVolumeHealth(this.poolState);
+    this.loadAlerts();
+    this.loadSmartTasks();
+    this.loadTemperatures();
   }
 
   ngOnChanges(): void {
     this.ngOnInit();
-  }
-
-  ngOnDestroy(): void {
-    this.stop();
-    this.core.emit({ name: 'DiskTemperaturesUnsubscribe', sender: this });
-    this.core.unregister({ observerClass: this });
   }
 
   private checkVolumeHealth(poolState: Pool): void {
@@ -125,9 +102,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private loadAlerts(): void {
-    this.ws.call('alert.list').pipe(untilDestroyed(this)).subscribe((res) => {
-      // Should filter with disks temperature category
-      this.alterts = res;
+    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
+      this.diskState.alerts = alerts.length;
+      this.cdr.markForCheck();
     });
   }
 
@@ -145,60 +122,20 @@ export class DiskHealthCardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private loadTemperatures(): void {
-    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesSubscribe' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.subscribers++;
-      if (!this.broadcast) {
-        this.start();
-      }
-    });
+    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((res) => {
+      const temperatures = Object.values(res);
 
-    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesUnsubscribe' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.subscribers--;
-      if (this.subscribers === 0) {
-        this.stop();
-      }
-    });
+      const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
+      const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);
+      const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
+      const avgSum = avgValues.reduce((a, b) => a + b, 0);
 
-    this.core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      const temperatures: number[] = Object.values(evt.data.values);
-      this.diskState.highestTemperature = Math.max(...temperatures);
-      this.diskState.lowestTemperature = Math.min(...temperatures);
-      this.diskState.averageTemperature = temperatures.reduce((a, b) => a + b, 0) / temperatures.length;
-      this.diskState.unit = evt.data.unit;
-      this.diskState.symbolText = evt.data.symbolText;
-      this.isStarting = false;
+      this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : null;
+      this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : null;
+      this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : null;
+      this.diskState.unit = TemperatureUnit.Celsius;
+      this.diskState.symbolText = '°';
       this.cdr.markForCheck();
-    });
-
-    this.core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
-  }
-
-  private start(): void {
-    this.broadcast = setInterval(() => {
-      this.fetch();
-    }, 2000);
-  }
-
-  private stop(): void {
-    clearInterval(this.broadcast);
-    delete this.broadcast;
-  }
-
-  private fetch(): void {
-    this.ws.call('disk.temperatures', [Object.keys(this.diskDictionary)]).pipe(
-      catchError(() => {
-        this.stop();
-        return EMPTY;
-      }),
-      untilDestroyed(this),
-    ).subscribe((res) => {
-      const data: Temperature = {
-        keys: Object.keys(res),
-        values: res,
-        unit: TemperatureUnit.Celsius,
-        symbolText: '°',
-      };
-      this.core.emit({ name: 'DiskTemperatures', data, sender: this });
     });
   }
 }

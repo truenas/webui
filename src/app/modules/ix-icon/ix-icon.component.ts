@@ -1,6 +1,6 @@
 import {
   Attribute, ChangeDetectionStrategy, Component, ElementRef,
-  ErrorHandler, Inject, Input, OnInit, Optional, ViewEncapsulation,
+  ErrorHandler, Inject, Input, OnChanges, OnInit, Optional, ViewEncapsulation,
 } from '@angular/core';
 import {
   MatIcon, MatIconDefaultOptions, MatIconLocation, MatIconRegistry, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
@@ -27,7 +27,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxIconComponent extends MatIcon implements OnInit {
+export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
   @Input() name: string;
 
   private get iconName(): string {
@@ -70,15 +70,24 @@ export class IxIconComponent extends MatIcon implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.iconName.startsWith('ix:')) {
-      this.svgIcon = this.iconName;
-    } else if (this.iconName.startsWith('mdi')) {
+    this.updateIcon(this.iconName);
+    super.ngOnInit();
+  }
+
+  ngOnChanges(): void {
+    this.updateIcon(this.iconName);
+  }
+
+  private updateIcon(iconName: string): void {
+    if (iconName.startsWith('ix:')) {
+      this.svgIcon = iconName;
+    } else if (iconName.startsWith('mdi')) {
       this.fontSet = 'mdi-set';
-      this.fontIcon = this.iconName;
+      this.fontIcon = iconName;
     } else {
-      this.fontIcon = this.iconName;
+      this.fontSet = null;
+      this.fontIcon = iconName;
       this.iconLigature = null;
     }
-    super.ngOnInit();
   }
 }

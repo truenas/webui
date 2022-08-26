@@ -81,8 +81,8 @@ export class WebdavListComponent implements EntityTableConfig, OnInit {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as WebDavShareUpdate])
       .pipe(untilDestroyed(this))
       .subscribe(
-        (res) => {
-          row.enabled = res.enabled;
+        (share) => {
+          row.enabled = share.enabled;
         },
         (err) => {
           row.enabled = !row.enabled;

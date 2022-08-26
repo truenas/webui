@@ -22,7 +22,6 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
 
   actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
-  spin = true;
   direction = 'left';
 
   get totalActions(): number {
@@ -42,6 +41,8 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
     this.entityTableService.addActionsUpdater$.pipe(untilDestroyed(this)).subscribe((actions: EntityTableAction[]) => {
       this.actions = actions;
     });
+
+    this.filterValue = this.entity.conf.filterValue || '';
   }
 
   ngAfterViewInit(): void {
@@ -59,6 +60,8 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
           this.filterValue = this.filter.nativeElement.value;
           this.entity.filter(this.filter.nativeElement.value);
         });
+
+      this.entity.filter(this.filterValue);
     }
   }
 

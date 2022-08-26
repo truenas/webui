@@ -14,7 +14,6 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -45,7 +44,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
                   Kill process shortcut is <i>Crtl+C</i>.`);
 
   constructor(
-    private core: CoreService,
     private ws: WebSocketService,
     private ss: ShellService,
     private dialog: MatDialog,

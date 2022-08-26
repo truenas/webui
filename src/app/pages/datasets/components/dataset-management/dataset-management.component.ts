@@ -14,13 +14,14 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, pluck } from 'rxjs/operators';
+import { filter, map, pluck } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -32,8 +33,6 @@ import { WebSocketService } from 'app/services';
 export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
-
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>((dataset) => dataset.children, {
     trackBy: (dataset) => dataset.id,
@@ -42,8 +41,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   hasConsoleFooter = false;
   headerHeight = headerHeight;
   footerHeight = footerHeight;
+
   showMobileDetails = false;
   isMobileView = false;
+
   systemDataset: string;
 
   entityEmptyConf: EmptyConfig = {
@@ -60,6 +61,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       action: () => this.createPool(),
     },
   };
+
+  isLoading = true;
 
   constructor(
     private ws: WebSocketService,
@@ -82,6 +85,24 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
+
+    this.ws.call('systemdataset.config').pipe(
+      map((config) => config.pool),
+      untilDestroyed(this),
+    ).subscribe((systemDataset) => {
+      this.systemDataset = systemDataset;
+    });
+
+    this.isLoading$
+      .pipe(untilDestroyed(this))
+      .subscribe((isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      });
+  }
+
+  isSystemDataset(dataset: DatasetDetails): boolean {
+    return isRootDataset(dataset) && this.systemDataset === dataset.name;
   }
 
   ngAfterViewInit(): void {

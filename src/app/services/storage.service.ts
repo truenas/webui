@@ -4,8 +4,6 @@ import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -15,12 +13,6 @@ import { WebSocketService } from './ws.service';
 export class StorageService {
   protected diskResource = 'disk.query' as const;
 
-  ids: string[];
-  diskNames: string[];
-  hddStandby: DiskStandby;
-  diskToggleStatus: boolean;
-  smartOptions: string;
-  advPowerMgt: DiskPowerLevel;
   humanReadable: string;
   iecUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
@@ -195,7 +187,7 @@ export class StorageService {
       sorter = [];
       for (const elem of timeArr) {
         try {
-          sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
+          sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // format should match locale service
         } catch (error: unknown) {
           console.error(error);
         }
@@ -223,19 +215,6 @@ export class StorageService {
     return arr;
   }
 
-  // This section passes data from disk-list to disk-bulk-edit form
-  diskIdsBucket(arr: string[]): void {
-    this.ids = arr;
-  }
-
-  diskNamesBucket(arr: string[]): void {
-    this.diskNames = arr;
-  }
-
-  diskToggleBucket(bool: boolean): void {
-    this.diskToggleStatus = bool;
-  }
-
   getDatasetNameOptions(): Observable<Option[]> {
     return this.ws
       .call('pool.filesystem_choices')
@@ -258,8 +237,6 @@ export class StorageService {
 
     return !path.includes('/');
   }
-
-  // ----------------------- //
 
   normalizeUnit(unitStr: string): string {
     // normalize short units ("MB") or human units ("M") to IEC units ("MiB")

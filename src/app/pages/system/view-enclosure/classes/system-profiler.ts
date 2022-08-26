@@ -1,10 +1,11 @@
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import {
   Enclosure,
   EnclosureElement,
   EnclosureElementData,
   EnclosureElementsGroup,
 } from 'app/interfaces/enclosure.interface';
-import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import {
   Disk, isTopologyDisk, TopologyItem, TopologyItemStats,
@@ -174,12 +175,12 @@ export class SystemProfiler {
         return;
       }
 
-      this.parseByTopology('data', pool, pIndex);
-      this.parseByTopology('spare', pool, pIndex);
-      this.parseByTopology('cache', pool, pIndex);
-      this.parseByTopology('log', pool, pIndex);
-      this.parseByTopology('special', pool, pIndex);
-      this.parseByTopology('dedup', pool, pIndex);
+      this.parseByTopology(PoolTopologyCategory.Data, pool, pIndex);
+      this.parseByTopology(PoolTopologyCategory.Spare, pool, pIndex);
+      this.parseByTopology(PoolTopologyCategory.Cache, pool, pIndex);
+      this.parseByTopology(PoolTopologyCategory.Log, pool, pIndex);
+      this.parseByTopology(PoolTopologyCategory.Special, pool, pIndex);
+      this.parseByTopology(PoolTopologyCategory.Dedup, pool, pIndex);
     });
   }
 
@@ -323,9 +324,5 @@ export class SystemProfiler {
       }
     });
     return capacity;
-  }
-
-  getDiskById(id: string): Disk {
-    return this.diskData ? this.diskData.find((disk) => disk.identifier === id) : null;
   }
 }

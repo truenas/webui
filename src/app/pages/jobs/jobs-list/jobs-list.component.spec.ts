@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
@@ -16,7 +17,6 @@ import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer'
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { JobsListComponent } from './jobs-list.component';
 
 export const fakeJobDataSource: Job[] = [{
@@ -64,13 +64,13 @@ describe('JobsListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      MatTabsModule,
     ],
     declarations: [
       JobLogsRowComponent,
       MockPipe(FormatDateTimePipe, jest.fn(() => '2022-05-28 00:00:01')),
     ],
     providers: [
-      mockProvider(CoreService),
       mockProvider(DialogService),
       mockWebsocket([
         mockCall('core.download', [1, 'http://localhost/download/log']),

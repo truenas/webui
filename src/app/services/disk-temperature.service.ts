@@ -43,8 +43,8 @@ export class DiskTemperatureService extends BaseService {
     this.authenticated = true;
 
     const queryOptions: QueryOptions<Disk> = { select: ['name', 'type'] };
-    this.websocket.call('disk.query', [[], queryOptions]).subscribe((res) => {
-      this.disks = res;
+    this.websocket.call('disk.query', [[], queryOptions]).subscribe((disks) => {
+      this.disks = disks;
       if (this.subscribers > 0) this.start();
     });
 
@@ -53,8 +53,8 @@ export class DiskTemperatureService extends BaseService {
       eventName: 'DisksChanged',
     }).subscribe(() => {
       this.stop();
-      this.websocket.call('disk.query', [[], queryOptions]).subscribe((res) => {
-        this.disks = res;
+      this.websocket.call('disk.query', [[], queryOptions]).subscribe((disks) => {
+        this.disks = disks;
         if (this.subscribers > 0) this.start();
       });
     });
@@ -72,10 +72,10 @@ export class DiskTemperatureService extends BaseService {
   }
 
   fetch(disks: string[]): void {
-    this.websocket.call('disk.temperatures', [disks]).subscribe((res) => {
+    this.websocket.call('disk.temperatures', [disks]).subscribe((temperatures) => {
       const data: Temperature = {
-        keys: Object.keys(res),
-        values: res,
+        keys: Object.keys(temperatures),
+        values: temperatures,
         unit: 'Celsius',
         symbolText: '°',
       };

@@ -1,11 +1,12 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
+import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 
 describe('DatasetNodeComponent', () => {
   let spectator: Spectator<DatasetNodeComponent>;
@@ -20,12 +21,13 @@ describe('DatasetNodeComponent', () => {
       parsed: 12344848,
     },
     locked: false,
-  } as Dataset;
+  } as DatasetDetails;
   const createComponent = createComponentFactory({
     component: DatasetNodeComponent,
     declarations: [
       DatasetIconComponent,
       DatasetEncryptionCellComponent,
+      DatasetRolesCellComponent,
     ],
   });
 
@@ -51,13 +53,15 @@ describe('DatasetNodeComponent', () => {
     expect(cell.dataset).toBe(dataset);
   });
 
-  describe('roles', () => {
-    it('says "Root Dataset" for a root dataset', () => {
-      spectator.setInput('dataset', {
-        ...dataset,
-        name: 'root',
-      });
-      expect(spectator.query('.cell-roles')).toHaveText('Root Dataset');
+  it('shows a dataset roles cell', () => {
+    spectator.setInput('dataset', {
+      ...dataset,
+      name: 'root',
     });
+
+    const cell = spectator.query(DatasetRolesCellComponent);
+    expect(cell).toBeTruthy();
+    expect(cell.isRoot).toBeTruthy();
+    expect(cell.isSystemDataset).toBeFalsy();
   });
 });

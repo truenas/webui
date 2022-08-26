@@ -1,4 +1,4 @@
-<div *ngIf="dataSource.data.length === 0; else datasetContainer" class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+<div *ngIf="dataSource.data.length === 0 && !isLoading; else datasetContainer" class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
   <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
 </div>
 
@@ -40,7 +40,7 @@
               (click)="openMobileDetails()"
             >
               <button mat-icon-button disabled></button>
-              <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+              <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
   
@@ -65,7 +65,7 @@
                   </mat-icon>
                 </button>
   
-                <ix-dataset-node [dataset]="dataset"></ix-dataset-node>
+                <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
                 <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
               </div>
   
@@ -86,6 +86,7 @@
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
+
         (closeMobileDetails)="closeMobileDetails()"
       ></ix-dataset-details-panel>
     </div>

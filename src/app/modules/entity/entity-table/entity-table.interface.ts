@@ -5,7 +5,7 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 
-export interface EntityTableConfig<Row = any> {
+export interface EntityTableConfig<Row = unknown> {
   columns: EntityTableColumn[];
   title?: string;
 
@@ -47,22 +47,23 @@ export interface EntityTableConfig<Row = any> {
   inlineActions?: boolean;
   addBtnDisabled?: boolean;
   routeAddTooltip?: string;
+  filterValue?: string;
 
   /**
    * Returns EmptyConfig for EmptyType or returns null if default behavior is acceptable for that EmptyType
    */
   getCustomEmptyConfig?: (emptyType: EmptyType) => EmptyConfig;
-  wsDeleteParams?: (row: Row, id: string | number) => any;
+  wsDeleteParams?: (row: Row, id: string | number) => unknown;
   addRows?: (entity: EntityTableComponent) => void;
   changeEvent?: (entity: EntityTableComponent) => void;
   preInit?: (entity: EntityTableComponent) => void;
   afterInit?: (entity: EntityTableComponent) => void;
-  dataHandler?: (entity: EntityTableComponent) => any;
-  resourceTransformIncomingRestData?: (data: any) => any;
+  dataHandler?: (entity: EntityTableComponent) => unknown;
+  resourceTransformIncomingRestData?: (data: unknown) => unknown;
   getActions?: (row: Row) => EntityTableAction<Row>[];
   getAddActions?: () => EntityTableAction[];
   rowValue?: (row: unknown, attr: string) => unknown;
-  wsMultiDeleteParams?: (selected: Row[]) => any;
+  wsMultiDeleteParams?: (selected: Row[]) => [string, (string[][] | number[][])?];
   doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   doEdit?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   onCheckboxChange?: (row: Row) => void;
@@ -75,7 +76,7 @@ export interface EntityTableConfig<Row = any> {
   onRowClick?: (row: Row) => void;
 }
 
-export interface EntityTableAction<Row = any> {
+export interface EntityTableAction<Row = unknown> {
   id: string | number;
   // TODO: Either name or actionName may be unnecessary
   name: string;
@@ -91,7 +92,7 @@ export interface EntityTableAction<Row = any> {
   ttposition?: TooltipPosition;
 }
 
-export interface EntityTableMultiAction<Row = any> {
+export interface EntityTableMultiAction<Row = unknown> {
   id: string;
   onClick: (selection: Row[]) => void;
   icon: string;
@@ -106,7 +107,7 @@ export interface EntityTableConfigConfig {
   paging?: boolean;
   multiSelect?: boolean;
   deleteMsg?: {
-    doubleConfirm?: (item: any) => Observable<boolean>;
+    doubleConfirm?: (item: unknown) => Observable<boolean>;
     id_prop?: string;
     title?: string;
     key_props: string[];
@@ -135,6 +136,7 @@ export interface EntityTableColumn {
   button?: boolean;
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
+  emptyText?: string;
 
   icon?: string;
   widget?: {

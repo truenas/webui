@@ -17,6 +17,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DevicesComponent } from 'app/pages/storage2/modules/devices/components/devices/devices.component';
 import {
@@ -36,6 +37,7 @@ import { ZfsInfoCardComponent } from 'app/pages/storage2/modules/devices/compone
 import { routes } from 'app/pages/storage2/modules/devices/devices.routing';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-card.component';
+import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/extend-dialog.component';
 
 @NgModule({
   imports: [
@@ -62,6 +64,7 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     CoreComponents,
     CastModule,
     AppLoaderModule,
+    LayoutModule,
     CommonDirectivesModule,
   ],
   declarations: [
@@ -71,10 +74,11 @@ import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-
     HardwareDiskEncryptionComponent,
     ManageDiskSedDialogComponent,
     SmartInfoCardComponent,
-    TopologyItemNodeComponent,
     ZfsInfoCardComponent,
-    VDevGroupNodeComponent,
+    ExtendDialogComponent,
+    TopologyItemNodeComponent,
     TopologyItemIconComponent,
+    VDevGroupNodeComponent,
   ],
   providers: [
     DevicesStore,

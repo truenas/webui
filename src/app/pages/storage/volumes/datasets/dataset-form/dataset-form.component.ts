@@ -624,7 +624,7 @@ export class DatasetFormComponent implements FormConfiguration {
           options: [
             { label: this.translate.instant('Inherit'), value: DatasetAclType.Inherit },
             { label: this.translate.instant('Off'), value: DatasetAclType.Off },
-            { label: this.translate.instant('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: this.translate.instant('SMB/NFSv4'), value: DatasetAclType.Nfsv4 },
             { label: this.translate.instant('POSIX'), value: DatasetAclType.Posix },
           ],
           required: false,
@@ -1345,7 +1345,7 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  getFieldValueOrRaw(field: any): any {
+  getFieldValueOrRaw(field: ZfsProperty<unknown>): any {
     if (field === undefined || field.value === undefined) {
       return field;
     }
@@ -1406,7 +1406,7 @@ export class DatasetFormComponent implements FormConfiguration {
     });
 
     const returnValue: DatasetFormData = {
-      name: this.getFieldValueOrRaw(wsResponse.name),
+      name: wsResponse.name,
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
       acltype: this.getFieldValueOrRaw(wsResponse.acltype),
@@ -1460,7 +1460,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return returnValue;
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: { parent: unknown }): void {
     delete data.parent;
   }
 
@@ -1583,16 +1583,16 @@ export class DatasetFormComponent implements FormConfiguration {
       this.loader.close();
       this.modalService.closeSlideIn();
       const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
+      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
+        if (!isTrivial) {
           this.dialogService.confirm({
             title: helptext.afterSubmitDialog.title,
             message: helptext.afterSubmitDialog.message,
             hideCheckBox: true,
             buttonMsg: helptext.afterSubmitDialog.actionBtn,
             cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
+          }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+            if (confirmed) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
                   this.router.navigate(
@@ -1615,9 +1615,9 @@ export class DatasetFormComponent implements FormConfiguration {
         }
         this.modalService.refreshTable();
       });
-    }, (res) => {
+    }, (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this.entityForm, res);
+      new EntityUtils().handleWsError(this.entityForm, error);
     });
   }
 

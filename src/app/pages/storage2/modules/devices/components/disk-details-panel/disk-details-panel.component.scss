@@ -101,10 +101,10 @@
   }
 
   .scroll-window {
-    min-height: 500px;
+    min-height: 400px;
 
-    @media (min-width: $breakpoint-dualcolumn) {
-      min-height: 480px;
+    @media (max-height: 800px) {
+      min-height: 600px;
     }
   }
 }

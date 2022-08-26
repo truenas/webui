@@ -145,33 +145,34 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.sysName = 'TrueNAS ENTERPRISE';
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event && (event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade')) {
-        this.updateIsRunning = true;
-        if (event.fields.state === JobState.Failed || event.fields.state === JobState.Aborted) {
-          this.updateIsRunning = false;
-          this.systemWillRestart = false;
-        }
+      if (!event || (event.fields.method !== 'update.update' && event.fields.method !== 'failover.upgrade')) {
+        return;
+      }
+      this.updateIsRunning = true;
+      if (event.fields.state === JobState.Failed || event.fields.state === JobState.Aborted) {
+        this.updateIsRunning = false;
+        this.systemWillRestart = false;
+      }
 
-        // When update starts on HA system, listen for 'finish', then quit listening
-        if (this.isHa) {
-          this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
-            this.updateIsRunning = false;
-            this.updateIsDone.unsubscribe();
-          });
-        }
-        if (!this.isHa) {
-          if (event && event.fields && event.fields.arguments[0] && (event.fields.arguments[0] as any).reboot) {
-            this.systemWillRestart = true;
-            if (event.fields.state === JobState.Success) {
-              this.router.navigate(['/others/reboot']);
-            }
+      // When update starts on HA system, listen for 'finish', then quit listening
+      if (this.isHa) {
+        this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
+          this.updateIsRunning = false;
+          this.updateIsDone.unsubscribe();
+        });
+      }
+      if (!this.isHa) {
+        if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
+          this.systemWillRestart = true;
+          if (event.fields.state === JobState.Success) {
+            this.router.navigate(['/others/reboot']);
           }
         }
+      }
 
-        if (!this.updateNotificationSent) {
-          this.updateInProgress();
-          this.updateNotificationSent = true;
-        }
+      if (!this.updateNotificationSent) {
+        this.updateInProgress();
+        this.updateNotificationSent = true;
       }
     });
 
@@ -533,9 +534,9 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   checkUpgradePending(): void {
     this.pendingUpgradeChecked = true;
-    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.upgradeWaitingToFinish = res;
-      if (res) {
+    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((isUpgradePending) => {
+      this.upgradeWaitingToFinish = isUpgradePending;
+      if (isUpgradePending) {
         this.upgradePendingDialog();
       }
     });
@@ -563,12 +564,12 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDirServicesStatus(): void {
-    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dirServicesStatus = Object.values(res);
+    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
+      this.dirServicesStatus = Object.values(state);
       this.showDirectoryServicesIcon();
     });
-    this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dirServicesStatus = Object.values(res);
+    this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((status) => {
+      this.dirServicesStatus = Object.values(status);
       this.showDirectoryServicesIcon();
     });
   }

@@ -23,33 +23,33 @@ export interface FlattenedData extends Record<string, unknown> {
 }
 
 export class EntityUtils {
-  handleError(entity: any, res: any): void {
-    if (res.code === 409) {
-      this.handleObjError(entity, res);
-    } else if (res.code === 400) {
-      if (typeof res.error === 'object') {
-        this.handleObjError(entity, res);
+  handleError(entity: any, error: any): void {
+    if (error.code === 409) {
+      this.handleObjError(entity, error);
+    } else if (error.code === 400) {
+      if (typeof error.error === 'object') {
+        this.handleObjError(entity, error);
       } else {
-        entity.error = res.error;
+        entity.error = error.error;
       }
-    } else if (res.code === 500) {
-      if (res.error.error_message) {
-        entity.error = res.error.error_message;
+    } else if (error.code === 500) {
+      if (error.error.error_message) {
+        entity.error = error.error.error_message;
       } else {
-        entity.error = 'Server error: ' + res.error;
+        entity.error = 'Server error: ' + error.error;
       }
     } else {
       entity.error = 'Fatal error! Check logs.';
-      console.error('Unknown error code', res.code);
+      console.error('Unknown error code', error.code);
     }
   }
 
-  handleObjError(entity: EntityErrorHandler, res: any): void {
+  handleObjError(entity: EntityErrorHandler, error: any): void {
     let scroll = false;
     entity.error = '';
-    for (const i in res.error) {
-      if (res.error.hasOwnProperty(i)) {
-        const field = res.error[i];
+    for (const i in error.error) {
+      if (error.error.hasOwnProperty(i)) {
+        const field = error.error[i];
         const fc = _.find(entity.fieldConfig, { name: i });
         if (fc) {
           const element = document.getElementById(i);

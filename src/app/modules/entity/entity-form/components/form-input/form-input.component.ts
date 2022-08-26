@@ -112,15 +112,17 @@ export class FormInputComponent implements Field {
   }
 
   onPaste(event: ClipboardEvent): void {
-    if (!this.config.inputType || this.config.inputType !== 'password') {
-      this.hasPasteEvent = true;
-      const clipboardData = event.clipboardData;
-      const pastedText = clipboardData.getData('text');
-      if (pastedText.startsWith(' ')) {
-        this.config.warnings = globalHelptext.pasteValueStartsWithSpace;
-      } else if (pastedText.endsWith(' ')) {
-        this.config.warnings = globalHelptext.pasteValueEndsWithSpace;
-      }
+    if (this.config.inputType && this.config.inputType === 'password') {
+      return;
+    }
+
+    this.hasPasteEvent = true;
+    const clipboardData = event.clipboardData;
+    const pastedText = clipboardData.getData('text');
+    if (pastedText.startsWith(' ')) {
+      this.config.warnings = globalHelptext.pasteValueStartsWithSpace;
+    } else if (pastedText.endsWith(' ')) {
+      this.config.warnings = globalHelptext.pasteValueEndsWithSpace;
     }
   }
 

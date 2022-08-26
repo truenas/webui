@@ -23,7 +23,6 @@ import helptext from 'app/helptext/topbar';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -93,7 +92,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     public translate: TranslateService,
     private dialogService: DialogService,
     private fb: UntypedFormBuilder,
-    private core: CoreService,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -124,11 +122,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.ws.call('truecommand.connected').pipe(
-      filter((res) => res.connected),
+      filter((connectionState) => connectionState.connected),
       untilDestroyed(this),
-    ).subscribe((res) => {
-      this.truecommandIp = res.truecommand_ip;
-      this.truecommandUrl = res.truecommand_url;
+    ).subscribe((connectionState) => {
+      this.truecommandIp = connectionState.truecommand_ip;
+      this.truecommandUrl = connectionState.truecommand_url;
     });
   }
 
@@ -166,8 +164,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       instanceId: new UntypedFormControl('', [Validators.required]),
     });
 
-    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.isTwoFactor = res;
+    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactorAuth) => {
+      this.isTwoFactor = hasTwoFactorAuth;
     });
   }
 
@@ -175,7 +173,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.haInterval) {
       clearInterval(this.haInterval);
     }
-    this.core.unregister({ observerClass: this });
     if (this.tokenObservable) {
       this.tokenObservable.unsubscribe();
     }

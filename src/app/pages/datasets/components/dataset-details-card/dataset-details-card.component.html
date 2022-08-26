@@ -1,12 +1,15 @@
 <div>
   <mat-card class="card">
     <mat-card-header>
-      <h3 mat-card-title>{{ 'Dataset Details' | translate }}</h3>
-      <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+      <h3 mat-card-title *ngIf="isFilesystem">{{ 'Dataset Details' | translate }}</h3>
+      <button *ngIf="isFilesystem" mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+
+      <h3 mat-card-title *ngIf="isZvol">{{ 'Zvol Details' | translate }}</h3>
+      <button *ngIf="isZvol" mat-button (click)="editZvol()">{{ 'Edit' | translate }}</button>
     </mat-card-header>
     <mat-card-content>
       <div class="details-item">
-        <span class="label">{{ 'Type:' | translate }} </span>
+        <span class="label">{{ 'Type' | translate }}:</span>
         <span class="value">
           <ng-container *ngIf="dataset.type; else notAvailable">
             {{ dataset.type }}
@@ -14,40 +17,44 @@
         </span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Sync:' | translate }} </span>
-        <span *ngIf="!isLoading; else loaderSkel" class="value">
-          <ng-container *ngIf="extraProperties?.sync?.value; else notAvailable">
-            {{ extraProperties.sync.value }}
+        <span class="label">{{ 'Sync' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="dataset?.sync?.value; else notAvailable">
+            {{ dataset.sync.value }}
           </ng-container>
         </span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Compression Level:' | translate }} </span>
-        <span *ngIf="!isLoading; else loaderSkel" class="value">
+        <span class="label">{{ 'Compression Level' | translate }}:</span>
+        <span class="value">
           <ng-container *ngIf="datasetCompression; else notAvailable">
             {{ datasetCompression }}
           </ng-container>
         </span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Enable Atime:' | translate }} </span>
-        <span *ngIf="!isLoading; else loaderSkel" class="value">
-          <ng-container *ngIf="extraProperties?.atime?.value; else notAvailable">
-            {{ extraProperties.atime.value }}
+        <span class="label">{{ 'Enable Atime' | translate }}:</span>
+        <span class="value">
+          {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
+        </span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'ZFS Deduplication' | translate }}:</span>
+        <span class="value">
+          <ng-container *ngIf="dataset?.deduplication?.value; else notAvailable">
+            {{ dataset.deduplication.value }}
           </ng-container>
         </span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'ZFS Deduplication:' | translate }} </span>
-        <span *ngIf="!isLoading; else loaderSkel" class="value">
-          <ng-container *ngIf="extraProperties?.deduplication?.value; else notAvailable">
-            {{ extraProperties.deduplication.value }}
-          </ng-container>
+        <span class="label">{{ 'Case Sensitivity' | translate }}:</span>
+        <span class="value">
+          {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
         </span>
       </div>
       <div class="details-item">
         <span class="label">{{ 'Path:' | translate }} </span>
-        <span *ngIf="!isLoading; else loaderSkel"
+        <span *ngIf="!isLoading"
           [matTooltip]="dataset.name"
           matTooltipPosition="above"
           class="value dataset-path">
@@ -55,7 +62,7 @@
         </span>
       </div>
     </mat-card-content>
-    <mat-card-actions *ngIf="dataset.id !== dataset.pool" >
+    <mat-card-actions *ngIf="dataset.id !== dataset.pool">
       <button
         mat-stroked-button
         (click)="deleteDataset()"
@@ -63,10 +70,6 @@
     </mat-card-actions>
   </mat-card>
 </div>
-
-<ng-template #loaderSkel>
-  <ngx-skeleton-loader class="loader-skel"></ngx-skeleton-loader>
-</ng-template>
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}

@@ -29,7 +29,7 @@ export class ApplicationsService {
   }
 
   getAllCatalogItems(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { cache: true, retrieve_versions: false, item_details: true } }]);
+    return this.ws.call('catalog.query', [[], { extra: { cache: true, item_details: true } }]);
   }
 
   getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
@@ -51,14 +51,6 @@ export class ApplicationsService {
 
   getChartReleaseNames(): Observable<{ name: string }[]> {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
-  }
-
-  getPodConsoleChoices(name: string): Observable<Record<string, string[]>> {
-    return this.ws.call('chart.release.pod_console_choices', [name]);
-  }
-
-  getNicChoices(): Observable<Choices> {
-    return this.ws.call('chart.release.nic_choices');
   }
 
   getInterfaces(): Observable<NetworkInterface[]> {

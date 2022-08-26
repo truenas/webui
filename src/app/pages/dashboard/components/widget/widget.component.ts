@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  templateUrl: './widget.component.html',
+  template: '',
 })
 export class WidgetComponent {
   @Input() widgetSize: string;
@@ -14,7 +14,6 @@ export class WidgetComponent {
   @Input() showReorderHandle = false;
   @Output() back = new EventEmitter();
   title: string = this.translate.instant('Widget Base Class');
-  chartSize: number;
 
   flipAnimation = 'stop';
   flipDirection = 'vertical';

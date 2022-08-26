@@ -28,16 +28,16 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   @ViewChild('field', { static: true }) field: MatFormField;
 
   formReady = false;
-  selected: any;
-  selectedValues: any[] = [];
+  selected: string;
+  selectedValues: string[] = [];
   selectStates: boolean[] = []; // Collection of checkmark states
-  customTriggerValue: any;
-  private _formValue: any;
+  customTriggerValue: string[];
+  private _formValue: string | string[];
   private entityUtils = new EntityUtils();
-  get formValue(): any {
+  get formValue(): string | string[] {
     return this._formValue;
   }
-  set formValue(value: any) {
+  set formValue(value: string | string[]) {
     const result = this.config.multiple ? this.selectedValues : this.selected;
     this._formValue = result;
   }
@@ -78,7 +78,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         }
       }
     }
-    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string | string[]) => {
       // When set the value to null, Change it to 'null_value' string
       if (this.control.value === null) {
         this.control.setValue(NULL_VALUE);
@@ -114,13 +114,15 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewChecked(): void {
-    if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
-      const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
-      this.selectStates = newStates;
-      this.updateValues();
-      this.formReady = true;
-      this.cd.detectChanges();
+    if (this.formReady || typeof this.config.options === 'undefined' || !this.config.options || this.config.options.length <= 0) {
+      return;
     }
+
+    const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
+    this.selectStates = newStates;
+    this.updateValues();
+    this.formReady = true;
+    this.cd.detectChanges();
   }
 
   onChangeOption($event: MatSelectChange): void {
@@ -150,8 +152,8 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   updateValues(): void {
-    const newValues: any[] = [];
-    const triggerValue: any[] = [];
+    const newValues: string[] = [];
+    const triggerValue: string[] = [];
     this.selectStates.forEach((item, index) => {
       if (item) {
         newValues.push(this.config.options[index].value);

@@ -3,7 +3,7 @@ import {
   Observable, BehaviorSubject, merge, Subject,
 } from 'rxjs';
 import {
-  map, distinctUntilChanged, debounceTime, takeUntil,
+  map, distinctUntilChanged, debounceTime, takeUntil, filter,
 } from 'rxjs/operators';
 
 /**
@@ -59,6 +59,7 @@ export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSo
 
   private detectFilterChanges(): void {
     this.filterChanged$.pipe(
+      filter(() => !!this.filterPredicate),
       debounceTime(200),
       distinctUntilChanged(),
       takeUntil(this.disconnect$),

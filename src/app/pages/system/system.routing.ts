@@ -11,7 +11,6 @@ import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/componen
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
-import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootPoolAttachFormComponent } from './bootenv/boot-pool-attach/boot-pool-attach-form.component';
 import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-pool-replace-form.component';
@@ -54,7 +53,7 @@ export const routes: Routes = [
       }, {
         path: 'status',
         component: BootStatusListComponent,
-        data: { title: T('Status'), breadcrumb: T('Status') },
+        data: { title: T('Boot Pool Status'), breadcrumb: T('Status') },
       }, {
         path: 'attach/:pk',
         component: BootPoolAttachFormComponent,
@@ -114,20 +113,7 @@ export const routes: Routes = [
     }, {
       path: 'alertservice',
       data: { title: T('Alert Services'), breadcrumb: T('Alert Services'), icon: 'notifications' },
-      children: [{
-        path: '',
-        component: AlertServiceListComponent,
-        data: { title: T('Alert Services'), breadcrumb: T('Alert Services') },
-      }, {
-        path: 'add',
-        component: AlertServiceComponent,
-        data: { title: T('Add Alert Service'), breadcrumb: T('Add Alert Service') },
-      }, {
-        path: 'edit/:pk',
-        component: AlertServiceComponent,
-        data: { title: T('Edit Alert Service'), breadcrumb: T('Edit Alert Service') },
-      },
-      ],
+      component: AlertServiceListComponent,
     }, {
       path: 'failover',
       component: FailoverSettingsComponent,

@@ -224,14 +224,16 @@ export class NetworkComponent implements OnInit, OnDestroy {
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
       .pipe(untilDestroyed(this))
       .subscribe((evt: NetworkInterfacesChangedEvent) => {
-        if (evt && evt.data.checkin) {
-          this.checkinRemaining = null;
-          this.checkinWaiting = false;
-          if (this.checkinInterval) {
-            clearInterval(this.checkinInterval);
-          }
-          this.hasPendingChanges = false;
+        if (!evt || !evt.data.checkin) {
+          return;
         }
+
+        this.checkinRemaining = null;
+        this.checkinWaiting = false;
+        if (this.checkinInterval) {
+          clearInterval(this.checkinInterval);
+        }
+        this.hasPendingChanges = false;
       });
 
     if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
@@ -310,10 +312,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.ws
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res.length > 0) {
+      .subscribe((services) => {
+        if (services.length > 0) {
           const ips: string[] = [];
-          res.forEach((item) => {
+          services.forEach((item) => {
             if ((item as any)['system-service']) {
               this.affectedServices.push((item as any)['system-service']);
             }
@@ -497,8 +499,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
       });
   }
 
-  interfaceDataSourceHelper(res: NetworkInterface[]): NetworkInterfaceUi[] {
-    return res.map((networkInterface) => {
+  interfaceDataSourceHelper(nic: NetworkInterface[]): NetworkInterfaceUi[] {
+    return nic.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
       transformed['link_state'] = networkInterface['state']['link_state'];
       const addresses = new Set([]);

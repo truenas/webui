@@ -1,95 +1,93 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { NestedTreeControl } from '@angular/cdk/tree';
+import {
+  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { TreeNode } from 'primeng/api';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { BootPoolTopologyItem, BootPoolState } from 'app/interfaces/boot-pool-state.interface';
-import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
+import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { PoolInstance } from 'app/interfaces/pool.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
-interface PoolDiskInfo {
-  name: string;
-  read: number;
-  write: number;
-  checksum: number;
-  status: string;
-  actions?: {
-    title: string;
-    actions: {
-      id?: string;
-      label: string;
-      onClick: (row: PoolDiskInfo) => void;
-      isHidden: boolean;
-    }[];
-  }[];
-  path?: string;
+export enum BootPoolActionType {
+  Replace = 'replace',
+  Attach = 'attach',
+  Detach = 'detach',
+}
+export interface BootPoolActionEvent {
+  action: BootPoolActionType;
+  node: TopologyItem;
 }
 
 @UntilDestroy()
 @Component({
   templateUrl: './bootenv-status.component.html',
+  styleUrls: ['./bootenv-status.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootStatusListComponent implements OnInit {
-  title = this.translate.instant('Boot Pool Status');
-  protected queryCall = 'boot.get_state' as const;
-  protected pk: number;
-  poolScan: {
-    function: string;
-    state: string;
-    errors: string;
-    start_time: ApiTimestamp;
-    pause: boolean;
+  isLoading$ = new BehaviorSubject(false);
+  dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
+  treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
+    trackBy: (vdev) => vdev.guid,
+  });
+  poolInstance: PoolInstance;
+  readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => {
+    return Boolean(node?.children?.length);
   };
 
-  oneDisk = false;
-  expandRows: number[] = [1];
-  treeTableConfig: EntityTreeTable = {
-    tableData: [],
-    columns: [
-      { name: this.translate.instant('Name'), prop: 'name' },
-      { name: this.translate.instant('Read'), prop: 'read' },
-      { name: this.translate.instant('Write'), prop: 'write' },
-      { name: this.translate.instant('Checksum'), prop: 'checksum' },
-      { name: this.translate.instant('Status'), prop: 'status' },
-      { name: this.translate.instant('Actions'), prop: 'actions' },
-    ],
-  };
+  get oneDisk(): boolean {
+    if (!this.poolInstance) {
+      return false;
+    }
+    return this.poolInstance.topology.data[0].type === TopologyItemType.Disk;
+  }
 
   constructor(
     private router: Router,
     private ws: WebSocketService,
     private dialog: DialogService,
-    protected loader: AppLoaderService,
-    protected aroute: ActivatedRoute,
-    protected translate: TranslateService,
+    private loader: AppLoaderService,
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  getData(): void {
-    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(
-      (state) => {
-        if (state.groups.data[0].type === 'disk') {
-          this.oneDisk = true;
-        }
-        if (state) {
-          this.dataHandler(state);
-        }
-      },
-      (err) => {
-        new EntityUtils().handleError(this, err);
-      },
-    );
+  ngOnInit(): void {
+    this.loadPoolInstance();
   }
 
-  ngOnInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = parseInt(params['pk'], 10);
-      this.getData();
+  loadPoolInstance(): void {
+    this.ws.call('boot.get_state').pipe(
+      tap(() => this.isLoading$.next(true)),
+      untilDestroyed(this),
+    ).subscribe((poolInstance) => {
+      this.poolInstance = poolInstance;
+      this.createDataSource(poolInstance);
+      this.openGroupNodes();
+      this.isLoading$.next(false);
+      this.cdr.markForCheck();
+    },
+    (err) => {
+      this.isLoading$.next(false);
+      this.cdr.markForCheck();
+      new EntityUtils().handleError(this, err);
     });
+  }
+
+  attach(diskPath: string): void {
+    this.router.navigate(['/', 'system', 'boot', 'attach', diskPath]);
+  }
+
+  replace(diskPath: string): void {
+    this.router.navigate(['/', 'system', 'boot', 'replace', diskPath]);
   }
 
   detach(diskPath: string): void {
@@ -104,132 +102,42 @@ export class BootStatusListComponent implements OnInit {
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
       },
-      (res) => {
+      (error) => {
         this.loader.close();
-        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+        this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
       },
     );
   }
 
-  parseData(data: BootPoolTopologyItem | BootPoolState, bootPool?: BootPoolTopologyItem): PoolDiskInfo {
-    let stats = {
-      read_errors: 0,
-      write_errors: 0,
-      checksum_errors: 0,
-    };
-
-    if ('stats' in data) {
-      stats = data.stats;
+  doAction(event: BootPoolActionEvent): void {
+    switch (event.action) {
+      case BootPoolActionType.Replace:
+        this.replace(event.node.name);
+        break;
+      case BootPoolActionType.Attach:
+        this.attach(event.node.name);
+        break;
+      case BootPoolActionType.Detach:
+        this.detach(event.node.name);
+        break;
+      default:
+        break;
     }
-
-    let name = (data as BootPoolState).name;
-    if ('type' in data && (data as any).type !== 'disk') {
-      name = data.type;
-    }
-    // use path as the device name if the device name is null
-    if (!(data as TopologyDisk).device) {
-      (data as TopologyDisk).device = (data as TopologyItem).path;
-    }
-
-    const item: PoolDiskInfo = {
-      name: name || (data as TopologyDisk).device,
-      read: stats.read_errors ? stats.read_errors : 0,
-      write: stats.write_errors ? stats.write_errors : 0,
-      checksum: stats.checksum_errors ? stats.checksum_errors : 0,
-      status: data.status,
-      path: (data as TopologyItem).path,
-    };
-
-    let actions: {
-      id?: string;
-      label: string;
-      onClick: (row: PoolDiskInfo) => void;
-      isHidden: boolean;
-    }[] = [];
-
-    if ('type' in data && bootPool && bootPool.type === 'mirror' && data.path) {
-      actions = [{
-        id: 'edit',
-        label: this.translate.instant('Detach'),
-        onClick: (row: PoolDiskInfo) => {
-          this.detach(row.name);
-        },
-        isHidden: false,
-      },
-      {
-        label: this.translate.instant('Replace'),
-        onClick: (row: PoolDiskInfo) => {
-          this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
-        },
-        isHidden: false,
-      }];
-    }
-
-    if ('type' in data && bootPool && bootPool.type === 'disk' && data.path && !this.oneDisk) {
-      actions = [
-        {
-          label: this.translate.instant('Replace'),
-          onClick: (row: PoolDiskInfo) => {
-            this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
-          },
-          isHidden: false,
-        }];
-    }
-
-    if ('type' in data && bootPool && bootPool.type === 'disk' && data.path && this.oneDisk) {
-      actions = [
-        {
-          label: this.translate.instant('Attach'),
-          onClick: (row: PoolDiskInfo) => {
-            this.router.navigate(['/', 'system', 'boot', 'attach', row.name]);
-          },
-          isHidden: false,
-        },
-        {
-          label: this.translate.instant('Replace'),
-          onClick: (row: PoolDiskInfo) => {
-            this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
-          },
-          isHidden: false,
-        }];
-    }
-
-    if (actions.length) {
-      item.actions = [{ actions, title: this.translate.instant('Actions') }];
-    }
-
-    return item;
   }
 
-  parseTopology(data: BootPoolTopologyItem, parent?: BootPoolTopologyItem): TreeNode {
-    const node: TreeNode = {};
-    node.data = this.parseData(data, parent);
-    node.expanded = true;
-    node.children = [];
+  private createDataSource(poolInstance: PoolInstance): void {
+    const dataNodes = [{
+      ...poolInstance,
+      guid: poolInstance.guid,
+      group: poolInstance.name,
+      children: poolInstance.topology.data,
+    } as DeviceNestedDataNode];
 
-    if (data.children) {
-      node.children = data.children.map((vdev) => {
-        return this.parseTopology(vdev, parent);
-      });
-    }
-    delete node.data.children;
-    return node;
+    this.dataSource = new IxNestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
+    this.treeControl.dataNodes = dataNodes;
   }
 
-  dataHandler(pool: BootPoolState): void {
-    this.treeTableConfig.tableData = [];
-    const node: TreeNode = {};
-    node.data = this.parseData(pool);
-    node.expanded = true;
-    node.children = [];
-
-    node.children = pool.groups.data.map((vdev) => {
-      return this.parseTopology(vdev, vdev);
-    });
-
-    delete node.data.children;
-    const config = { ...this.treeTableConfig };
-    config.tableData = [node];
-    this.treeTableConfig = config;
+  private openGroupNodes(): void {
+    this.treeControl?.dataNodes?.forEach((node) => this.treeControl.expand(node));
   }
 }

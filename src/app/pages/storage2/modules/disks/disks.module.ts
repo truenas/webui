@@ -21,6 +21,7 @@ import {
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage2/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
+import { ReplaceDiskDialogComponent } from 'app/pages/storage2/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import {
   SmartResultsComponent,
 } from 'app/pages/storage2/modules/disks/components/smart-results/smart-results.component';
@@ -47,6 +48,7 @@ import { routes } from 'app/pages/storage2/modules/disks/disks.routing';
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
     SmartResultsComponent,
+    ReplaceDiskDialogComponent,
   ],
 })
 export class DisksModule {}

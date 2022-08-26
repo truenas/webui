@@ -7,11 +7,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -27,8 +29,10 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
@@ -45,8 +49,21 @@ import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslo
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
+import { AwsSnsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
+import {
+  EmailServiceComponent,
+} from 'app/pages/system/alert-service/alert-service/alert-services/email-service/email-service.component';
+import { InfluxDbServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/influx-db-service/influx-db-service.component';
+import { MattermostServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/mattermost-service/mattermost-service.component';
+import { OpsGenieServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
+import { PagerDutyServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/pager-duty-service/pager-duty-service.component';
+import { SlackServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/slack-service/slack-service.component';
+import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/snmp-trap-service/snmp-trap-service.component';
+import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
+import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 import { AlertConfigComponent } from 'app/pages/system/alert/alert.component';
 import { BootPoolAttachFormComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-form.component';
+import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootPoolReplaceFormComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
@@ -81,11 +98,13 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
+import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { routing } from './system.routing';
 
 @NgModule({
   imports: [
+    AppLoaderModule,
     CastModule,
     CommonDirectivesModule,
     CommonModule,
@@ -96,6 +115,7 @@ import { routing } from './system.routing';
     FormsModule,
     IxFormsModule,
     IxTableModule,
+    IxTreeModule,
     SchedulerModule,
     JobsModule,
     MarkdownModule.forRoot(),
@@ -122,6 +142,9 @@ import { routing } from './system.routing';
     AppCommonModule,
     LayoutModule,
     FileTicketModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    AppLoaderModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -168,6 +191,27 @@ import { routing } from './system.routing';
     UploadConfigDialogComponent,
     ManageConfigurationMenuComponent,
     SaveDebugButtonComponent,
+    AwsSnsServiceComponent,
+    InfluxDbServiceComponent,
+    MattermostServiceComponent,
+    OpsGenieServiceComponent,
+    PagerDutyServiceComponent,
+    SlackServiceComponent,
+    SnmpTrapServiceComponent,
+    TelegramServiceComponent,
+    VictorOpsServiceComponent,
+    AwsSnsServiceComponent,
+    EmailServiceComponent,
+    InfluxDbServiceComponent,
+    MattermostServiceComponent,
+    OpsGenieServiceComponent,
+    PagerDutyServiceComponent,
+    SlackServiceComponent,
+    SnmpTrapServiceComponent,
+    TelegramServiceComponent,
+    VictorOpsServiceComponent,
+    BootenvNodeItemComponent,
+    BootPoolDeleteDialogComponent,
   ],
   providers: [
     TranslateService,

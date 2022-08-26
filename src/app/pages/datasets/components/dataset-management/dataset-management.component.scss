@@ -184,7 +184,7 @@ ix-dataset-details-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-bottom: 0.333rem;
+  margin-bottom: 1.5rem;
   overflow: auto;
 }
 
@@ -290,5 +290,13 @@ ix-dataset-details-panel {
     margin: 12px;
     position: relative;
     right: 8px;
+  }
+}
+
+.entity-empty-wrapper {
+  padding: 16px;
+
+  ix-entity-empty {
+    margin: 32px 0;
   }
 }

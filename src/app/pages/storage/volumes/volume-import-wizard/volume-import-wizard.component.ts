@@ -8,8 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { WebSocketService, DialogService, ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -52,9 +54,9 @@ export class VolumeImportWizardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.state === JobState.Success) {
-        const result: PoolFindResult[] = res.result;
+    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((job) => {
+      if (job.state === JobState.Success) {
+        const result: PoolFindResult[] = job.result;
         const opts = result.map((pool) => ({
           label: `${pool.name} | ${pool.guid}`,
           value: pool.guid,
@@ -89,10 +91,10 @@ export class VolumeImportWizardComponent implements OnInit {
     });
   }
 
-  errorReport(result: any): void {
-    if (result.reason && result.trace) {
+  errorReport(result: Job | WebsocketError): void {
+    if ('reason' in result && result.reason && result.trace) {
       this.dialogService.errorReport(this.translate.instant('Error importing pool'), result.reason, result.trace.formatted);
-    } else if (result.error && result.exception) {
+    } else if ('exception' in result && result.error && result.exception) {
       this.dialogService.errorReport(this.translate.instant('Error importing pool'), result.error, result.exception);
     } else {
       console.error(result);

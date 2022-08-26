@@ -12,7 +12,6 @@ import { usersInitialState, UsersState } from 'app/pages/account/users/store/use
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 
@@ -78,7 +77,6 @@ describe('UserListComponent', () => {
       UserDetailsRowComponent,
     ],
     providers: [
-      mockProvider(CoreService),
       mockProvider(WebSocketService),
       mockProvider(DialogService),
       provideMockStore({

@@ -4,7 +4,7 @@ import {
   DatasetCaseSensitivity,
   DatasetChecksum,
   DatasetRecordSize,
-  DatasetShareType,
+  DatasetShareType, DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
   DatasetType,
@@ -52,6 +52,7 @@ export interface Dataset {
   refquota: ZfsProperty<number>;
   refreservation: ZfsProperty<number>;
   reservation: ZfsProperty<number>;
+  snapdev: ZfsProperty<string>;
   snapdir: ZfsProperty<number>;
   share_type: ZfsProperty<string>;
   special_small_block_size: ZfsProperty<string>;
@@ -106,6 +107,7 @@ export interface DatasetCreate {
   special_small_block_size?: WithInherit<number>;
   copies?: WithInherit<number>;
   snapdir?: DatasetSnapdir;
+  snapdev?: DatasetSnapdev;
   deduplication?: string;
   checksum?: DatasetChecksum;
   readonly?: WithInherit<OnOff>;
@@ -148,6 +150,7 @@ export interface DatasetUpdate {
   special_small_block_size?: number;
   copies?: WithInherit<number>;
   snapdir?: DatasetSnapdir;
+  snapdev?: DatasetSnapdev;
   deduplication?: DeduplicationSetting;
   checksum?: WithInherit<DatasetChecksum>;
   readonly?: WithInherit<OnOff>;
@@ -174,7 +177,13 @@ export interface DatasetDetails {
   pool: string;
   type: DatasetType;
   used: ZfsProperty<number>;
+  usedbychildren: ZfsProperty<number>;
+  usedbydataset: ZfsProperty<number>;
+  usedbysnapshots: ZfsProperty<number>;
   quota: ZfsProperty<number>;
+  refquota: ZfsProperty<number>;
+  refreservation: ZfsProperty<number>;
+  reservation: ZfsProperty<number>;
   snapshot_count?: number;
   replication_tasks_count?: number;
   snapshot_tasks_count?: number;
@@ -182,8 +191,19 @@ export interface DatasetDetails {
   rsync_tasks_count?: number;
   smb_shares?: { enabled: boolean; path: string; share_name: string }[];
   nfs_shares?: { enabled: boolean; path: string }[];
-  iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string; thick_provisioned: boolean }[];
+  iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string }[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
   children?: DatasetDetails[];
+  volsize?: ZfsProperty<number>; // Present for type === DatasetType.Volume
+  thick_provisioned?: boolean; // Present for type === DatasetType.Volume
+  atime: boolean;
+  casesensitive: boolean;
+  sync: ZfsProperty<string>;
+  compression: ZfsProperty<string>;
+  deduplication: ZfsProperty<string>;
+  refquota_critical?: ZfsProperty<number>;
+  refquota_warning?: ZfsProperty<number>;
+  quota_critical?: ZfsProperty<number>;
+  quota_warning?: ZfsProperty<number>;
 }

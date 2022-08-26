@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -26,6 +29,8 @@ import {
   WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -41,6 +46,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Description'), prop: 'description', always_display: true },
@@ -86,7 +92,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected loader: AppLoaderService,
     protected taskService: TaskService,
     private matDialog: MatDialog,
-  ) {}
+    private route: ActivatedRoute,
+    private store$: Store<AppState>,
+  ) {
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -95,14 +105,17 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
-    return data.map((task) => {
+  resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
+    return tasks.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, timezone) : this.translate.instant('Disabled');
+      });
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
@@ -129,26 +142,24 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         onClick: (row: CloudSyncTaskUi) => {
           this.dialog
             .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this cloud sync now?'), hideCheckBox: true })
-            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-              if (res) {
-                row.state = { state: JobState.Running };
-                this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
-                  (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task Started'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      true,
-                    );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
-                      row.state = { state: job.state };
-                      row.job = job;
-                    });
-                  },
-                  (err) => {
-                    new EntityUtils().handleWsError(this.entityList, err);
-                  },
-                );
-              }
+            .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              row.state = { state: JobState.Running };
+              this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
+                (jobId: number) => {
+                  this.dialog.info(
+                    this.translate.instant('Task Started'),
+                    this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
+                    true,
+                  );
+                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+                    row.state = { state: job.state };
+                    row.job = job;
+                  });
+                },
+                (err) => {
+                  new EntityUtils().handleWsError(this.entityList, err);
+                },
+              );
             });
         },
       },
@@ -165,21 +176,19 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               message: this.translate.instant('Stop this cloud sync?'),
               hideCheckBox: true,
             })
-            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-              if (res) {
-                this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
-                  () => {
-                    this.dialog.info(
-                      this.translate.instant('Task Stopped'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
-                      true,
-                    );
-                  },
-                  (wsErr) => {
-                    new EntityUtils().handleWsError(this.entityList, wsErr);
-                  },
-                );
-              }
+            .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
+                () => {
+                  this.dialog.info(
+                    this.translate.instant('Task Stopped'),
+                    this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
+                    true,
+                  );
+                },
+                (wsErr) => {
+                  new EntityUtils().handleWsError(this.entityList, wsErr);
+                },
+              );
             });
         },
       },
@@ -196,25 +205,23 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               message: helptext.dry_run_dialog,
               hideCheckBox: true,
             })
-            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-              if (res) {
-                this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
-                  (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task Started'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      true,
-                    );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
-                      row.state = { state: job.state };
-                      row.job = job;
-                    });
-                  },
-                  (err) => {
-                    new EntityUtils().handleWsError(this.entityList, err);
-                  },
-                );
-              }
+            .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
+                (jobId: number) => {
+                  this.dialog.info(
+                    this.translate.instant('Task Started'),
+                    this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
+                    true,
+                  );
+                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+                    row.state = { state: job.state };
+                    row.job = job;
+                  });
+                },
+                (err) => {
+                  new EntityUtils().handleWsError(this.entityList, err);
+                },
+              );
             });
         },
       },

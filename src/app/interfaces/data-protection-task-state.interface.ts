@@ -7,6 +7,5 @@ export interface DataProtectionTaskState {
   error?: string;
   reason?: string;
   warnings?: string[];
-  progress?: any;
   last_snapshot?: string;
 }

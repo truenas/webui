@@ -32,10 +32,10 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     this.actions = this.getActions();
   }
 
-  getPropValue(prop: string, isCronTime = false): any {
-    const val = _.get(this.config, prop.split('.'));
-    if (val === undefined || val === null) {
-      return 'N/A';
+  getColumnValue(column: EntityTableColumn, isCronTime = false): unknown {
+    const val = _.get(this.config, column.prop.split('.'));
+    if (_.isEmpty(val)) {
+      return column.emptyText || 'N/A';
     }
 
     if (isCronTime) {

@@ -1,3 +1,13 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <a
+      mat-button
+      color="primary"
+      [routerLink]="['/', 'storage2', poolId, 'add-vdevs']"
+    >{{ 'Add' | translate }}&nbsp;{{ 'Vdev' | translate | uppercase }}</a>
+  </ix-page-title-header>
+</ng-template>
+
 <div
   *appLet="selectedNode$ | async as selectedNode"
   class="container"
@@ -110,6 +120,8 @@
       [topologyParentItem]="selectedParentNode$ | async | cast"
       [disk]="getDisk(selectedNode)"
       (closeMobileDetails)="closeMobileDetails()"
+      [poolId]="poolId"
+      [topologyCategory]="selectedTopologyCategory$ | async"
     ></ix-disk-details-panel>
   </div>
 </div>

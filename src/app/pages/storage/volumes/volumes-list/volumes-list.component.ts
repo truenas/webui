@@ -28,7 +28,6 @@ import { ZvolFormComponent } from 'app/pages/storage/volumes/zvol/zvol-form/zvol
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { JobService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -149,7 +148,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   readonly PoolStatus = PoolStatus;
 
   constructor(
-    protected core: CoreService,
     protected router: Router,
     public ws: WebSocketService,
     public dialogService: DialogService,
@@ -166,7 +164,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     slideIn: IxSlideInService,
   ) {
     super(
-      core,
       router,
       ws,
       dialogService,
@@ -198,7 +195,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
-    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map((res) => res.pool)).toPromise();
+    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map((config) => config.pool)).toPromise();
 
     this.store$.pipe(
       waitForSystemInfo,
@@ -214,9 +211,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.hasKeyDataset = {};
     this.hasEncryptedRoot = {};
-    this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const key in res) {
-        if (res.hasOwnProperty(key)) {
+    this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((rootKeys) => {
+      for (const key in rootKeys) {
+        if (rootKeys.hasOwnProperty(key)) {
           const pool = key.split('/')[0];
           this.hasKeyDataset[pool] = true;
         }
@@ -308,11 +305,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
       this.showDefaults = true;
       this.showSpinner = false;
-    }, (res) => {
+    }, (error) => {
       this.showDefaults = true;
       this.showSpinner = false;
 
-      this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), res.message, res.stack);
+      this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), error.message, error.stack);
     });
   }
 

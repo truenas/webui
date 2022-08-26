@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -79,6 +80,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
   readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
+  dataset = '';
 
   constructor(
     private dialogService: DialogService,
@@ -90,7 +92,10 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,
     private layoutService: LayoutService,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+  }
 
   ngOnInit(): void {
     this.store$.dispatch(snapshotPageEntered());
@@ -167,6 +172,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
       this.cdr.markForCheck();
     }, 0);
+    this.dataSource.filter = this.dataset;
   }
 
   toggleExtraColumns(event: MouseEvent): void {

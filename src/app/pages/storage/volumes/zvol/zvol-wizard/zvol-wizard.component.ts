@@ -25,7 +25,6 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StorageService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface ZvolFormData {
@@ -274,7 +273,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   constructor(
-    protected core: CoreService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
@@ -424,18 +422,20 @@ export class ZvolWizardComponent implements WizardConfiguration {
   afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = this.entityWizard.formArray.get([1]) as UntypedFormGroup;
     (entityWizard.formArray.get([0]) as UntypedFormGroup).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
-      if (pool.includes('mnt')) {
-        const split = pool.split('/');
-        this.parent = '';
-        for (let i = 2; i < split.length; i++) {
-          this.parent += split[i];
-          if (i + 1 < split.length) {
-            this.parent += '/';
-          }
-        }
-        this.summary[this.translate.instant('Dataset Path')] = this.parent;
-        (entityWizard.formArray.get([0]) as UntypedFormGroup).controls['path'].setValue(this.parent);
+      if (!pool.includes('mnt')) {
+        return;
       }
+
+      const split = pool.split('/');
+      this.parent = '';
+      for (let i = 2; i < split.length; i++) {
+        this.parent += split[i];
+        if (i + 1 < split.length) {
+          this.parent += '/';
+        }
+      }
+      this.summary[this.translate.instant('Dataset Path')] = this.parent;
+      (entityWizard.formArray.get([0]) as UntypedFormGroup).controls['path'].setValue(this.parent);
     });
     zvolEntityForm.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
       this.summary[this.translate.instant('Zvol Name')] = name;
@@ -529,18 +529,17 @@ export class ZvolWizardComponent implements WizardConfiguration {
     this.loader.open();
 
     if (this.isNew) {
-      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
+      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.modalService.closeSlideIn().then((closed) => {
           if (closed) {
             this.parent = null;
           }
         });
-        this.core.emit({ name: 'zvolCreated', sender: this, data: restPostResp });
         this.modalService.refreshTable();
-      }, (res) => {
+      }, (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityWizard, res);
+        new EntityUtils().handleWsError(this.entityWizard, error);
       });
     }
   }

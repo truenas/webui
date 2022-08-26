@@ -139,7 +139,7 @@ describe('CoreService', () => {
       .subscribe((evt: CoreEvent) => {
         totalEvents++;
         expect(evt.sender).toMatchObject(mockSender2);
-        expect(evt.sender.name).toMatch('Sender2');
+        expect((evt.sender as MockObject).name).toMatch('Sender2');
 
         if (totalEvents === 2) spectator.service.unregister({ observerClass: mockObserver });
       });

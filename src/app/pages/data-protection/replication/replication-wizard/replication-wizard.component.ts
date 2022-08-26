@@ -795,8 +795,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private modalService: ModalService,
     private translate: TranslateService,
   ) {
-    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.namesInUse.push(...res.map((replication) => replication.name));
+    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {
+      this.namesInUse.push(...replications.map((replication) => replication.name));
     });
     this.modalService.getRow$.pipe(
       take(1),
@@ -828,8 +828,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   step0Init(): void {
     const existReplicationField = _.find(this.preloadFieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
-      (res: ReplicationTask[]) => {
-        for (const task of res) {
+      (tasks: ReplicationTask[]) => {
+        for (const task of tasks) {
           if (task.transport !== TransportMode.Legacy) {
             // TODO: Change to icu message format.
             const label = task.name + ' (' + ((task.state && task.state.datetime)
@@ -1221,11 +1221,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
           enabled: true,
         };
-        await this.isSnapshotTaskExist(payload).then((res) => {
-          if (res.length === 0) {
+        await this.isSnapshotTaskExist(payload).then((tasks) => {
+          if (tasks.length === 0) {
             snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
           } else {
-            this.existSnapshotTasks.push(...res.map((task) => task.id));
+            this.existSnapshotTasks.push(...tasks.map((task) => task.id));
           }
         });
       }
@@ -1397,7 +1397,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   async rollBack(items: any): Promise<void> {
     const keys = Object.keys(items).reverse();
     for (const key of keys) {
-      if (items[key] !== null) {
+      if (key === 'periodic_snapshot_tasks') {
+        if (!items[key]?.length) {
+          continue;
+        }
+        for (const task of items[key]) {
+          await this.ws.call('pool.snapshottask.delete', [task]).toPromise();
+        }
+
+        continue;
+      }
+
+      if (items[key] !== null && items[key] !== undefined) {
         await this.ws.call((this.deleteCalls as any)[key], [items[key]]).toPromise().then(
           () => {},
         );
@@ -1558,7 +1569,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  async isSnapshotTaskExist(payload: any): Promise<PeriodicSnapshotTask[]> {
+  async isSnapshotTaskExist(payload: {
+    dataset: string;
+    schedule: Schedule;
+    naming_schema?: string;
+  }): Promise<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query', [[
       ['dataset', '=', payload['dataset']],
       ['schedule.minute', '=', payload['schedule']['minute']],

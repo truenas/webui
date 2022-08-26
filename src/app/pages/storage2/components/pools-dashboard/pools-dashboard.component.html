@@ -7,17 +7,33 @@
 
     <a
       mat-button
+      [routerLink]="['/storage2/disks']"
+    >{{ 'Disks' | translate }}</a>
+
+    <a
+      mat-button
       color="primary"
       [routerLink]="['/storage2/create']"
     >{{ 'Create Pool' | translate }}</a>
   </ix-page-title-header>
 </ng-template>
 
-<ix-unused-resources [pools]="pools"></ix-unused-resources>
+<ng-container *ngIf="isEmptyPools && !isLoading; else poolContainer">
+  <div class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+    <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
+  </div>
+</ng-container>
 
-<ix-dashboard-pool
-  *ngFor="let pool of pools"
-  [pool]="pool"
-  [isLoading]="isPoolsLoading"
-  class="pool"
-></ix-dashboard-pool>
+<ng-template #poolContainer>
+  <div fxFlex="100%" fxLayout="column">
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-117820 -->
+    <ix-unused-resources *ngIf="!isEmptyPools && false" [pools]="pools$ | async"></ix-unused-resources>
+
+    <ix-dashboard-pool
+      *ngFor="let pool of pools$ | async"
+      [pool]="pool"
+      [isLoading]="arePoolsLoading$ | async"
+      class="pool"
+    ></ix-dashboard-pool>
+  </div>
+</ng-template>

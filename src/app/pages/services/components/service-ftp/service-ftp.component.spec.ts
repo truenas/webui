@@ -107,7 +107,6 @@ describe('ServiceFtpComponent', () => {
       'Login Attempts': '1',
       'Notransfer Timeout': '300',
       Timeout: '600',
-      Certificate: 'Secure certificate',
     });
   });
 

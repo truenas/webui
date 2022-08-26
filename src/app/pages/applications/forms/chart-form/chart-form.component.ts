@@ -2,7 +2,11 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of, Subscription } from 'rxjs';
+import _ from 'lodash';
+import {
+  noop, of, Subject, Subscription,
+} from 'rxjs';
+import { take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -13,8 +17,10 @@ import {
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { DialogService } from 'app/services';
 import { AppSchemaService } from 'app/services/app-schema.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -151,29 +157,111 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
-    this.subscription.add(this.appSchemaService.addFormControls(chartSchemaNode, this.form, this.config));
+    this.subscription.add(
+      this.appSchemaService.addFormControls(
+        chartSchemaNode,
+        this.form,
+        this.config,
+        this.isNew,
+        false,
+      ),
+    );
   }
 
   addFormSchema(chartSchemaNode: ChartSchemaNode, group: string): void {
     this.dynamicSection.forEach((section) => {
       if (section.name === group) {
         section.schema = section.schema.concat(
-          this.appSchemaService.transformNode(chartSchemaNode),
+          this.appSchemaService.transformNode(chartSchemaNode, this.isNew, false),
         );
       }
     });
   }
 
   addItem(event: AddListItemEvent): void {
-    this.appSchemaService.addFormListItem(event);
+    this.appSchemaService.addFormListItem(event, this.isNew, false);
   }
 
   deleteItem(event: DeleteListItemEvent): void {
     this.appSchemaService.deleteFormListItem(event);
   }
 
+  getFieldsHiddenOnForm(
+    data: any,
+    deleteField$: Subject<string>,
+    path = '',
+  ): void {
+    if (path) {
+      const formField = (this.form.get(path) as CustomUntypedFormField);
+      formField?.hidden$?.pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((hidden) => {
+        if (hidden) {
+          deleteField$.next(path);
+        }
+      });
+    }
+    if (_.isPlainObject(data)) {
+      for (const key in data) {
+        this.getFieldsHiddenOnForm(data[key], deleteField$, path ? path + '.' + key : key);
+      }
+    }
+    if (_.isArray(data)) {
+      for (let i = 0; i < data.length; i++) {
+        this.getFieldsHiddenOnForm(data[i], deleteField$, path + '.' + i);
+      }
+    }
+  }
+
+  deleteFieldFromData(
+    data: any,
+    fieldTobeDeleted: string,
+  ): void {
+    const keys = fieldTobeDeleted.split('.');
+    let value: any = data;
+    for (let i = 0; i < keys.length - 1; i++) {
+      value = value[keys[i]];
+      if (value === undefined || value === null) {
+        break;
+      }
+    }
+    if (value !== undefined && value !== null) {
+      if (this.isNew) {
+        delete value[keys[keys.length - 1]];
+      } else {
+        let configValue: any = this.config;
+        for (let i = 0; i < keys.length - 1; i++) {
+          configValue = configValue[keys[i]];
+          if (configValue === undefined || configValue === null) {
+            break;
+          }
+        }
+        if (!configValue || !configValue[keys[keys.length - 1]]) {
+          delete value[keys[keys.length - 1]];
+        }
+      }
+    }
+  }
+
   onSubmit(): void {
-    const data = this.appSchemaService.serializeFormValue(this.form.value) as ChartFormValues;
+    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
+    const deleteField$: Subject<string> = new Subject();
+    deleteField$.pipe(untilDestroyed(this)).subscribe(
+      (fieldTobeDeleted) => {
+        this.deleteFieldFromData(data, fieldTobeDeleted);
+      },
+      noop,
+      () => {
+        this.saveData(data);
+      },
+    );
+
+    this.getFieldsHiddenOnForm(data, deleteField$);
+    deleteField$.complete();
+  }
+
+  saveData(data: any): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,
@@ -196,17 +284,21 @@ export class ChartFormComponent implements OnDestroy {
     }
 
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.slideInService.close();
-    });
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(this.onSuccess);
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.exc_info && res.exc_info.extra) {
-        new EntityUtils().handleWsError(this, res);
-      } else {
-        this.dialogService.errorReport('Error', res.error, res.exception);
-      }
-    });
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
   }
+
+  onFailure = (failedJob: Job<null, unknown[]>): void => {
+    if (failedJob.exc_info && failedJob.exc_info.extra) {
+      new EntityUtils().handleWsError(this, failedJob);
+    } else {
+      this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
+    }
+  };
+
+  onSuccess = (): void => {
+    this.dialogService.closeAllDialogs();
+    this.slideInService.close();
+  };
 }

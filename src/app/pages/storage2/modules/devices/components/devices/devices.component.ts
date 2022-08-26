@@ -10,19 +10,22 @@ import {
   Component,
   OnInit,
   AfterViewInit,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
-  Disk, isTopologyDisk, isVdev,
+  Disk, isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage2/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services';
+import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -31,9 +34,11 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
+  selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
 
   diskDictionary: { [guid: string]: Disk } = {};
   dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
@@ -53,6 +58,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   isMobileView = false;
 
   constructor(
+    private layoutService: LayoutService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -94,6 +100,8 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         }
         this.cdr.detectChanges();
       });
+
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
@@ -143,6 +151,9 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
+    dataNodes.forEach((dataNode) => {
+      this.sortDataNodesByDiskName(dataNode.children);
+    });
     this.dataSource = new IxNestedTreeDataSource(dataNodes);
     this.dataSource.filterPredicate = (dataNodes, query = '') => {
       return flattenTreeWithFilter(dataNodes, (dataNode) => {
@@ -173,6 +184,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((guid: string) => {
+      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
     });
   }
@@ -186,5 +198,22 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
+  }
+
+  // TODO: Likely belongs to DevicesStore
+  private sortDataNodesByDiskName(dataNodes: DeviceNestedDataNode[]): void {
+    dataNodes.forEach((dataNodes) => {
+      if (dataNodes.children.length === 0) {
+        return;
+      }
+
+      dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
+        const nameA = a.disk.toLowerCase();
+        const nameB = b.disk.toLowerCase();
+
+        return nameA.localeCompare(nameB);
+      });
+      this.sortDataNodesByDiskName(dataNodes.children);
+    });
   }
 }

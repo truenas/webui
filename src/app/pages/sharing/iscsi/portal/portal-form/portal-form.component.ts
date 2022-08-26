@@ -81,13 +81,8 @@ export class PortalFormComponent {
   private ipAddressFromControls = [
     {
       name: 'ip',
-      default: [] as string[],
+      default: '' as string,
       validator: [Validators.required, ipValidator('all')],
-    },
-    {
-      name: 'port',
-      default: 3260,
-      validator: [Validators.required],
     },
   ];
 
@@ -104,16 +99,14 @@ export class PortalFormComponent {
   setupForm(iscsiPortal: IscsiPortal): void {
     this.editingIscsiPortal = iscsiPortal;
 
-    Object.entries(_.groupBy(iscsiPortal.listen, 'port')).forEach(([port, listen], index) => {
+    iscsiPortal.listen.forEach((listen, index) => {
       const newListItem: any = {};
       this.ipAddressFromControls.forEach((fc) => {
-        let defaultValue = Number(port) as number | string[];
         if (fc.name === 'ip') {
-          defaultValue = listen.map((item) => item.ip);
+          const defaultValue = listen.ip;
+          newListItem[fc.name] = defaultValue;
+          this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(defaultValue, fc.validator));
         }
-
-        newListItem[fc.name] = defaultValue;
-        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(defaultValue, fc.validator));
       });
       this.listen.push(newListItem);
     });
@@ -143,27 +136,21 @@ export class PortalFormComponent {
     this.listen.splice(index, 1);
   }
 
-  prepareSubmit(values: any): IscsiInterface[] {
+  prepareSubmit(values: PortalFormComponent['form']['value']): IscsiInterface[] {
     const listen = [] as IscsiInterface[];
 
     const tempListen: { name: string; index: string; value: string | number | string[] }[] = [];
     Object.keys(values).forEach((key) => {
       const keys = key.split(this.listPrefix);
       if (keys.length > 1) {
-        tempListen.push({ name: keys[0], index: keys[1], value: values[key] });
+        tempListen.push({ name: keys[0], index: keys[1], value: values[key as keyof PortalFormComponent['form']['value']] });
       }
     });
 
     Object.values(_.groupBy(tempListen, 'index')).forEach((item) => {
-      const ip = item.find((ele) => ele.name === 'ip')?.value as string[];
-      const port = item.find((ele) => ele.name === 'port')?.value;
-      if (ip && port) {
-        ip.forEach((sip) => {
-          listen.push({
-            ip: sip,
-            port: Number(port),
-          });
-        });
+      const ip = item.find((ele) => ele.name === 'ip')?.value as string;
+      if (ip) {
+        listen.push({ ip });
       }
     });
 

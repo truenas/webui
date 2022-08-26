@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -34,8 +35,7 @@ export class TargetFormComponent {
   readonly modes$ = of(this.helptext.target_form_enum_mode);
   readonly portals$ = this.iscsiService.listPortals().pipe(
     map((portals) => {
-      const opts = [];
-      opts.push({ label: '---', value: null });
+      const opts: Option[] = [];
       portals.forEach((portal) => {
         let label = String(portal.tag);
         if (portal.comment) {
@@ -48,8 +48,7 @@ export class TargetFormComponent {
   );
   readonly initiators$ = this.iscsiService.listInitiators().pipe(
     map((initiators) => {
-      const opts = [];
-      opts.push({ label: 'None', value: null });
+      const opts: Option[] = [];
       initiators.forEach((initiator) => {
         const optionLabel = initiator.id
           + ' ('
@@ -63,8 +62,7 @@ export class TargetFormComponent {
   readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {
-      const opts = [];
-      opts.push({ label: 'None', value: null });
+      const opts: Option[] = [];
       const tags = _.uniq(auths.map((item) => item.tag));
       tags.forEach((tag) => {
         opts.push({ label: String(tag), value: tag });
@@ -74,36 +72,16 @@ export class TargetFormComponent {
   );
 
   isLoading = false;
-  groups: IscsiTargetGroup[] = [];
-  listPrefix = '__';
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
     alias: [''],
-    mode: ['ISCSI' as IscsiTargetMode],
+    mode: [IscsiTargetMode.Iscsi],
+    groups: this.formBuilder.array<IscsiTargetGroup>([]),
+    auth_networks: this.formBuilder.array<string>([]),
   });
 
   private editingTarget: IscsiTarget;
-
-  private groupsFromControls = [
-    {
-      name: 'portal',
-      default: null as number,
-      validator: [Validators.required],
-    },
-    {
-      name: 'initiator',
-      default: null as number,
-    },
-    {
-      name: 'authmethod',
-      default: IscsiAuthMethod.None,
-    },
-    {
-      name: 'auth',
-      default: null as number,
-    },
-  ];
 
   constructor(
     protected iscsiService: IscsiService,
@@ -118,12 +96,8 @@ export class TargetFormComponent {
   setTargetForEdit(target: IscsiTarget): void {
     this.editingTarget = target;
 
-    Object.values(target.groups).forEach((group, index) => {
-      this.groupsFromControls.forEach((fc) => {
-        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(fc.name, fc.validator));
-      });
-      this.groups.push(group);
-    });
+    Object.values(target.groups).forEach(() => this.addGroup());
+    Object.values(target.auth_networks).forEach(() => this.addNetwork());
 
     this.form.patchValue({
       ...target,
@@ -133,23 +107,13 @@ export class TargetFormComponent {
   onSubmit(): void {
     const values = this.form.value;
 
-    const params = {
-      name: values.name,
-      alias: values.alias,
-      mode: values.mode,
-      groups: this.groups,
-    };
-
     this.isLoading = true;
     this.cdr.markForCheck();
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.target.create', [params]);
+      request$ = this.ws.call('iscsi.target.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.target.update', [
-        this.editingTarget.id,
-        params,
-      ]);
+      request$ = this.ws.call('iscsi.target.update', [this.editingTarget.id, values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -163,21 +127,27 @@ export class TargetFormComponent {
   }
 
   addGroup(): void {
-    const newIndex = this.groups.length;
-    const newListItem: any = {};
-    this.groupsFromControls.forEach((fc) => {
-      newListItem[fc.name] = fc.default;
-      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
-    });
-
-    this.groups.push(newListItem);
+    this.form.controls.groups.push(
+      this.formBuilder.group({
+        portal: [null as number, Validators.required],
+        initiator: [null as number],
+        authmethod: [IscsiAuthMethod.None, Validators.required],
+        auth: [null as number],
+      }),
+    );
   }
 
-  deleteGroup(id: number): void {
-    this.groupsFromControls.forEach((fc) => {
-      this.form.removeControl(`${fc.name}${this.listPrefix}${id}`);
-    });
+  deleteGroup(index: number): void {
+    this.form.controls.groups.removeAt(index);
+  }
 
-    this.groups.splice(id, 1);
+  addNetwork(): void {
+    this.form.controls.auth_networks.push(
+      this.formBuilder.control(''),
+    );
+  }
+
+  deleteNetwork(index: number): void {
+    this.form.controls.auth_networks.removeAt(index);
   }
 }

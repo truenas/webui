@@ -14,6 +14,7 @@ $scrollbar-offset: 20px;
   height: 2px;
   position: absolute;
   top: 0;
+  z-index: 10;
 }
 
 .container {
@@ -194,7 +195,7 @@ ix-disk-details-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-bottom: 0.333rem;
+  margin-bottom: 1.5rem;
   overflow: auto;
 }
 

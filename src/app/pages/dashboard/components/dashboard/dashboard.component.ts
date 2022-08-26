@@ -2,11 +2,11 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -25,11 +25,12 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
-import { waitForDashboardState } from 'app/store/preferences/preferences.selectors';
+import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
+import { PreferencesState } from 'app/store/preferences/preferences.reducer';
+import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
@@ -117,7 +118,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   initialLoading = true;
 
   constructor(
-    protected core: CoreService,
     protected ws: WebSocketService,
     private el: ElementRef,
     private translate: TranslateService,
@@ -157,7 +157,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
@@ -461,6 +460,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const modal = this.slideInService.open(DashboardFormComponent);
     modal.setupForm(this.dashState);
     modal.onSubmit$.pipe(take(1), untilDestroyed(this)).subscribe((dashState) => {
+      this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
       this.setDashState(dashState);
     });
   }
@@ -591,11 +591,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadUserAttributes(): void {
     this.store$.pipe(
-      waitForDashboardState,
+      select(selectPreferencesState),
+      filter(Boolean),
       take(1),
       untilDestroyed(this),
-    ).subscribe((dashState) => {
-      this.applyState(dashState);
+    ).subscribe((preferences: PreferencesState) => {
+      if (preferences.dashboardState) {
+        this.applyState(preferences.dashboardState);
+      } else {
+        this.availableWidgets = this.generateDefaultConfig();
+        this.setDashState(this.availableWidgets);
+      }
       this.dashStateReady = true;
     });
   }

@@ -3,6 +3,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -45,16 +46,9 @@ export interface Pool {
   is_upgraded?: boolean;
 }
 
-export interface PoolTopology {
-  cache: TopologyItem[];
-  data: TopologyItem[];
-  dedup: TopologyItem[];
-  log: TopologyItem[];
-  spare: TopologyItem[];
-  special: TopologyItem[];
-}
-
-export type PoolTopologyCategory = keyof PoolTopology;
+export type PoolTopology = {
+  [category in PoolTopologyCategory]: TopologyItem[];
+};
 
 export interface PoolScanUpdate {
   bytes_issued: number;
@@ -127,7 +121,7 @@ export interface PoolInstance {
   encryptkey: string;
   encryptkey_path: string;
   is_decrypted: boolean;
-  status: string;
+  status: PoolStatus;
   path: string;
   scan: PoolScanUpdate;
   is_upgraded: boolean;

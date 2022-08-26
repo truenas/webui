@@ -197,8 +197,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   enableToggle(service: Service): void {
     this.ws.call('service.update', [service.id, { enable: service.enable }])
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (!res) {
+      .subscribe((updated) => {
+        if (!updated) {
           // To uncheck the checkbox
           service.enable = false;
           // Middleware should return the service id

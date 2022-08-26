@@ -14,6 +14,6 @@
     <ix-dataset-encryption-cell [dataset]="dataset"></ix-dataset-encryption-cell>
   </div>
   <div class="cell cell-roles">
-    {{ roles.join(', ') }}
+    <ix-dataset-roles-cell [dataset]="dataset" [isSystemDataset]="isSystemDataset"></ix-dataset-roles-cell>
   </div>
 </div>

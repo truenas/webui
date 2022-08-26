@@ -22,7 +22,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartistModule } from 'ng-chartist';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
@@ -111,7 +110,6 @@ import { LocaleService } from 'app/services/locale.service';
     LocaleService,
   ],
   exports: [
-    ViewControllerComponent,
     SearchInputComponent,
   ],
 })
