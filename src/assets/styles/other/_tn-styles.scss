@@ -560,17 +560,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-dialog-content {
     overflow: hidden;
-    padding-bottom: -3px;
+    padding-bottom: 0;
 
     .more-info {
-      margin-bottom: 4px;
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      min-height: 40px;
     }
 
     .more-info .mat-icon {
-      cursor: pointer;
-      margin: 0 4px 12px;
-      position: relative;
-      top: 7px;
+      margin: 0 4px;
     }
 
     .info-panel {

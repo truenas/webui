@@ -10,6 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ImportPoolComponent } from 'app/pages/storage2/components/import-pool/import-pool.component';
@@ -86,8 +87,10 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     this.store.loadDashboard();
 
     this.slideIn.onClose$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.store.loadDashboard());
+      .pipe(
+        filter((value) => value.modalType === ImportPoolComponent && value.response === true),
+        untilDestroyed(this),
+      ).subscribe(() => this.store.loadDashboard());
   }
 
   ngAfterViewInit(): void {

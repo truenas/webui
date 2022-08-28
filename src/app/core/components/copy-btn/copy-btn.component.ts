@@ -1,6 +1,8 @@
 import {
-  Component, Input, ViewChild, ElementRef,
+  Component, Input,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
 @Component({
   selector: 'ix-copy-btn',
@@ -8,23 +10,22 @@ import {
   styleUrls: ['./copy-btn.component.scss'],
 })
 export class CopyButtonComponent {
-  @ViewChild('el', { static: false }) el: ElementRef;
   @Input() text: string;
-  @Input() showPopup = true;
-  popupIsVisible = false;
 
-  onIconClick(): void {
-    this.popupIsVisible = !this.popupIsVisible;
-    this.copyToClipboard();
-  }
-
-  onPopupClose(): void {
-    this.popupIsVisible = false;
-  }
+  constructor(
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+  ) {}
 
   copyToClipboard(): void {
-    this.el.nativeElement.focus();
-    this.el.nativeElement.select();
-    document.execCommand('copy');
+    if (!navigator.clipboard) {
+      /** @deprecated */
+      document.execCommand('copy', false, this.text);
+      this.snackbar.success(this.translate.instant('Copied to clipboard'));
+    } else {
+      navigator.clipboard.writeText(this.text).then(() => {
+        this.snackbar.success(this.translate.instant('Copied to clipboard'));
+      });
+    }
   }
 }
