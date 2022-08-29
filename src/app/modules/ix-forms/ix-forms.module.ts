@@ -46,6 +46,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { IxLabelComponent } from './components/ix-label/ix-label.component';
 
 @NgModule({
   imports: [
@@ -97,6 +98,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxCheckboxListComponent,
     IxDynamicFormComponent,
     IxDynamicFormItemComponent,
+    IxLabelComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -120,6 +122,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxCheckboxListComponent,
     IxDynamicFormComponent,
     IxDynamicFormItemComponent,
+    IxLabelComponent,
   ],
   providers: [
     IxFormatterService,

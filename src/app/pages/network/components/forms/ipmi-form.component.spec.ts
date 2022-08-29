@@ -87,7 +87,7 @@ describe('IpmiFormComponent', () => {
       const formValue = await form.getValues();
 
       expect(formValue).toEqual({
-        'Active: TrueNAS Controller 1': 'Active: TrueNAS Controller 1',
+        'Remote Controller': 'Active: TrueNAS Controller 1',
         DHCP: false,
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
@@ -104,7 +104,7 @@ describe('IpmiFormComponent', () => {
       const formData = await form.getValues();
 
       expect(formData).toEqual({
-        'Active: TrueNAS Controller 1': 'Standby: TrueNAS Controller 2',
+        'Remote Controller': 'Standby: TrueNAS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',
@@ -129,7 +129,7 @@ describe('IpmiFormComponent', () => {
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       spectator.component.setIdIpmi(1);
       const dataForm = {
-        'Active: TrueNAS Controller 1': 'Standby: TrueNAS Controller 2',
+        'Remote Controller': 'Standby: TrueNAS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',
