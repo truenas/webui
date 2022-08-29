@@ -88,7 +88,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
     this.slideIn.onClose$
       .pipe(
-        filter((value) => value.modalType === ImportPoolComponent && value.response === true),
+        filter((value) => value.response === true),
         untilDestroyed(this),
       ).subscribe(() => this.store.loadDashboard());
   }

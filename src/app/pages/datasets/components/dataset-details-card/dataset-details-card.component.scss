@@ -3,17 +3,29 @@
 .card {
   @include details-card();
 
-  .value.dataset-path {
-    display: flow-root;
-    max-width: calc(100% - 85px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   ix-copy-btn {
     height: 24px;
     width: 24px;
+  }
+
+  .details-item {
+    align-items: flex-start;
+
+    .value.dataset-path {
+      display: flow-root;
+      max-width: calc(100% - 85px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .value.dataset-comments {
+      flex: 1;
+      margin: 0;
+      overflow: auto;
+      text-overflow: initial;
+      white-space: normal;
+    }
   }
 }
 

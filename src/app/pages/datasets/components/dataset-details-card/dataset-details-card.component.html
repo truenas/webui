@@ -62,12 +62,11 @@
         </span>
         <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
       </div>
-      <div class="details-item">
+      <div class="details-item" *ngIf="!isLoading && hasComments">
         <span class="label">{{ 'Comments' | translate }}:</span>
-        <span *ngIf="!isLoading" class="value dataset-comments">
-          <ng-container *ngIf="dataset?.comments?.value; else notAvailable">
-            {{ dataset.comments.value }}
-          </ng-container>
+        <span class="value dataset-comments">
+          <span textLimiter threshold="128" [content]="dataset.comments.value" [popup]="false"></span>
+          <ix-copy-btn *ngIf="dataset.comments.value.length > 128" [text]="dataset.comments.value"></ix-copy-btn>
         </span>
       </div>
     </mat-card-content>
