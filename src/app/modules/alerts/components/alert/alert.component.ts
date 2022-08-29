@@ -24,6 +24,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 })
 export class AlertComponent implements OnChanges {
   @Input() alert: Alert;
+  @Input() isHa: boolean;
 
   alertLevelColor: ThemePalette;
   icon: string;

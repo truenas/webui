@@ -24,6 +24,10 @@ export class AlertPageObject {
     return this.spectator.query('.alert-time');
   }
 
+  get nodeElement(): HTMLElement {
+    return this.spectator.query('.alert-node');
+  }
+
   async getIconHarness(): Promise<MatIconHarness> {
     return this.loader.getHarness(MatIconHarness);
   }
