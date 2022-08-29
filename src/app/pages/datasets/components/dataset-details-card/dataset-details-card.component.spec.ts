@@ -25,6 +25,7 @@ const dataset = {
   atime: false,
   deduplication: { value: 'OFF' },
   casesensitive: false,
+  comments: { value: 'Test comment' },
 } as DatasetDetails;
 
 describe('DatasetDetailsCardComponent', () => {
@@ -76,7 +77,7 @@ describe('DatasetDetailsCardComponent', () => {
 
   it('shows details', () => {
     const details = spectator.queryAll('.details-item');
-    expect(details.length).toEqual(7);
+    expect(details.length).toEqual(8);
 
     expect(details[0].querySelector('.label')).toHaveText('Type:');
     expect(details[0].querySelector('.value')).toHaveText('FILESYSTEM');
@@ -98,6 +99,9 @@ describe('DatasetDetailsCardComponent', () => {
 
     expect(details[6].querySelector('.label')).toHaveText('Path:');
     expect(details[6].querySelector('.value')).toHaveText('pool/child');
+
+    expect(details[7].querySelector('.label')).toHaveText('Comments:');
+    expect(details[7].querySelector('.value')).toHaveText('Test comment');
   });
 
   it('opens edit dataset form when Edit button is clicked', async () => {
