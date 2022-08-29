@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -25,7 +26,7 @@ const dataset = {
   atime: false,
   deduplication: { value: 'OFF' },
   casesensitive: false,
-  comments: { value: 'Test comment' },
+  comments: { value: 'Test comment', source: ZfsPropertySource.Local },
 } as DatasetDetails;
 
 describe('DatasetDetailsCardComponent', () => {
@@ -43,6 +44,7 @@ describe('DatasetDetailsCardComponent', () => {
       MockComponents(
         DatasetFormComponent,
         NgxSkeletonLoaderComponent,
+        CopyButtonComponent,
       ),
     ],
     providers: [

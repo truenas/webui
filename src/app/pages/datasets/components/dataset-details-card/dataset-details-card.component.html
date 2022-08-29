@@ -64,10 +64,7 @@
       </div>
       <div class="details-item" *ngIf="!isLoading && hasComments">
         <span class="label">{{ 'Comments' | translate }}:</span>
-        <span class="value dataset-comments">
-          <span textLimiter threshold="128" [content]="dataset.comments.value" [popup]="false"></span>
-          <ix-copy-btn *ngIf="dataset.comments.value.length > 128" [text]="dataset.comments.value"></ix-copy-btn>
-        </span>
+        <span class="value dataset-comments">{{ dataset.comments.value }}</span>
       </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
