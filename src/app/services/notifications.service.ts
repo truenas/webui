@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 export interface NotificationAlert {
   id: string;
   message: string;
+  node: string;
   icon: string;
   icon_tooltip: string;
   time: string;
@@ -142,6 +143,7 @@ export class NotificationsService {
     const level: string = <string>alertObj.level;
     const date: Date = new Date(alertObj.datetime.$date);
     const dateStr = date.toUTCString();
+    const node = alertObj.node;
     const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
@@ -168,6 +170,7 @@ export class NotificationsService {
 
     const newNotification: NotificationAlert = {
       id,
+      node,
       message,
       icon,
       icon_tooltip,

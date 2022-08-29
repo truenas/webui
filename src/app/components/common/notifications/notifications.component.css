@@ -27,6 +27,11 @@ a:hover {
     height: unset;
 }
 
+.notific-item .node {
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
 .dismissed {
   opacity: .6;
 }

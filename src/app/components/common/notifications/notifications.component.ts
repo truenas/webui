@@ -1,6 +1,7 @@
 import {
   Component, OnInit, Input, OnDestroy,
 } from '@angular/core';
+import { WebSocketService } from 'app/services';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Subscription } from 'rxjs';
@@ -19,8 +20,13 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
   dateFormatSubscription: Subscription;
 
-  constructor(private notificationsService: NotificationsService, protected localeService: LocaleService) {
-  }
+  isHa = false;
+
+  constructor(
+    private notificationsService: NotificationsService,
+    protected localeService: LocaleService,
+    private ws: WebSocketService,
+  ) {}
 
   ngOnInit() {
     this.initData();
@@ -44,6 +50,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.dateFormatSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
       this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
     });
+
+    this.checkFailoverStatus();
   }
 
   initData() {
@@ -82,5 +90,15 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.dateFormatSubscription.unsubscribe();
+  }
+
+  private checkFailoverStatus(): void {
+    if (window.localStorage.getItem('product_type') !== 'ENTERPRISE') {
+      return;
+    }
+
+    this.ws.call('failover.licensed').subscribe((licensed: boolean) => {
+      this.isHa = true;
+    });
   }
 }

@@ -15,6 +15,7 @@
         <div class="mat-list-text">
           <h3 class="notific-title {{n.color}}">{{n.level}}</h3>
           <h4 class="message" [innerHTML]="n.message"></h4>
+          <div *ngIf="isHa" class="node">{{ n.node }}</div>
           <small class="time">{{n.time_locale | date: ngDateFormat }} ({{n.timezone}})</small>
           <a (click)="turnMeOff(n,$event)" class="dismiss">{{"Dismiss" | translate}}</a>
         </div>
