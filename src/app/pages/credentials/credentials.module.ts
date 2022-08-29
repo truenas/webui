@@ -54,7 +54,6 @@ import { PcloudProviderFormComponent } from './backup-credentials/cloud-credenti
 import { S3ProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
 import { SftpProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
 import { WebdavProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
-import { DemoComponent } from './backup-credentials/demo/demo.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
@@ -95,7 +94,6 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     StorjProviderFormComponent,
     OauthProviderComponent,
     CertificateAcmeAddComponent,
-    DemoComponent,
   ],
   imports: [
     CommonModule,

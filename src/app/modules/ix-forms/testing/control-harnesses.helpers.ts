@@ -43,11 +43,10 @@ export async function indexControlsByLabel(
   controls: SupportedFormControlHarness[],
 ): Promise<{ [label: string]: SupportedFormControlHarness }> {
   const result: { [label: string]: SupportedFormControlHarness } = {};
-  const getLabels = controls.map((control) => control.getLabelText().then((label) => {
+  for (const control of controls) {
+    const label = await control.getLabelText();
     result[label] = control;
-  }));
-
-  await Promise.all(getLabels);
+  }
 
   return result;
 }
