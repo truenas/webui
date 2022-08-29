@@ -61,6 +61,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
         break;
       case ApplicationTab.AvailableApps:
         this.catalogTab.loadCatalogs();
+        this.catalogTab.loadPoolSet();
         break;
       case ApplicationTab.Catalogs:
         this.manageCatalogTab.refresh();

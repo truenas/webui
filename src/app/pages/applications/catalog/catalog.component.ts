@@ -22,9 +22,9 @@ import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { CommonAppsToolbarButtonsComponent } from 'app/pages/applications/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
-import { SelectPoolDialogComponent } from 'app/pages/applications/select-pool-dialog/select-pool-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -46,6 +46,8 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
+    private commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
 
   catalogApps: CatalogApp[] = [];
   filteredCatalogNames: string[] = [];
@@ -202,9 +204,15 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
       if (config.pool) {
         this.selectedPool = config.pool;
       } else {
-        this.mdDialog.open(SelectPoolDialogComponent);
+        this.commonAppsToolbarButtons.onChoosePool();
         this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: ApplicationTab.AvailableApps });
       }
+    });
+  }
+
+  loadPoolSet(): void {
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
+      this.selectedPool = config.pool || '';
     });
   }
 
