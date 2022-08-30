@@ -222,7 +222,7 @@ ix-disk-details-panel {
 
   align-items: center;
   color: var(--fg2);
-  
+
   // Override default fraction based values to avoid misaligned columns
   grid-template-columns: auto 125px 125px 125px 90px;
   min-height: 48px;
@@ -260,6 +260,11 @@ ix-disk-details-panel {
     background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
     padding-left: 8px;
     padding-right: 15px;
+  }
+
+  .disk-status-header {
+    padding-left: 8px;
+    padding-right: 8px;
   }
 }
 
