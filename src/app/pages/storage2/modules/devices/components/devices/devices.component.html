@@ -39,7 +39,6 @@
             ixTreeNodeToggle
             [ixTreeNodeToggleRecursive]="false"
             [ixTreeNodeDefDataSource]="dataSource"
-            [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage2', poolId, 'devices', topologyItem.guid]"
             routerLinkActive="selected"
             (click)="openMobileDetails()"
@@ -81,8 +80,6 @@
           >
             <div
               class="disk-nested-tree-root-node"
-
-              [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage2', poolId, 'devices', vdev.guid]"
               routerLinkActive="selected"
               (click)="openMobileDetails()"

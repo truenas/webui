@@ -2,6 +2,8 @@
 
 .card {
   @include details-card();
+  max-width: inherit;
+  overflow: hidden;
 
   ix-copy-btn {
     height: 24px;
@@ -13,7 +15,8 @@
 
     .value.dataset-path {
       display: flow-root;
-      max-width: calc(100% - 85px);
+      flex: 1;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

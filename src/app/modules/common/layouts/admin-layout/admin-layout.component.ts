@@ -16,12 +16,10 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
+import { BehaviorSubject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
-import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
-import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
@@ -53,7 +51,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   consoleMessages: string[] = [];
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';
-  currentTheme = '';
   isOpen = false;
   menuName: string;
   readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
@@ -69,8 +66,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
-  themes: Theme[];
   productType$ = this.sysGeneralService.getProductType$;
+  arePreferencesLoaded$ = new BehaviorSubject(false);
 
   constructor(
     private router: Router,
@@ -104,30 +101,66 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       core.emit({ name: 'MediaChange', data: change, sender: this });
     });
 
+    this.getStoreUpdates();
+  }
+
+  ngOnInit(): void {
+    if (this.media.isActive('xs') || this.media.isActive('sm')) {
+      this.isSidenavOpen = false;
+    }
+    this.patchScrollOnWindows();
+    this.sysGeneralService.toggleSentryInit();
+    this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
+    this.store$.dispatch(adminUiInitialized());
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollToBottomOnFooterBar();
+  }
+
+  ngAfterViewInit(): void {
+    this.pageHeaderUpdater();
+  }
+
+  getStoreUpdates(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
     });
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'ForceSidenav',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ForceSidenavEvent) => {
-      this.updateSidenav(evt.data);
+    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+      this.onShowConsoleFooterBar(config.ui_consolemsg);
     });
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'SidenavStatus',
-    }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
-      this.isSidenavOpen = evt.data.isOpen;
-      this.sidenavMode = evt.data.mode;
-      this.isSidenavCollapsed = evt.data.isCollapsed;
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
+      if (preferences.sidenavStatus) {
+        this.isSidenavOpen = preferences.sidenavStatus.isOpen;
+        this.sidenavMode = preferences.sidenavStatus.mode;
+        this.isSidenavCollapsed = preferences.sidenavStatus.isCollapsed;
+      }
+      this.updateSidenav();
+      this.arePreferencesLoaded$.next(true);
     });
   }
 
-  ngOnInit(): void {
-    this.themes = this.themeService.allThemes;
-    this.currentTheme = this.themeService.currentTheme().name;
+  pageHeaderUpdater(): void {
+    this.layoutService.pageHeaderUpdater$
+      .pipe(filter((headerContent) => !!headerContent), untilDestroyed(this))
+      .subscribe((headerContent) => {
+        try {
+          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+          this.cdr.detectChanges();
+        } catch (error: unknown) {
+          // Prevents an error on one header from breaking headers on all pages.
+          console.error('Error when rendering page header template', error);
+          this.headerPortalOutlet = null;
+        }
+      });
+  }
+
+  patchScrollOnWindows(): void {
     const navigationHold = document.getElementById('scroll-area');
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
@@ -139,42 +172,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
         }
       });
     }
-
-    if (this.media.isActive('xs') || this.media.isActive('sm')) {
-      this.isSidenavOpen = false;
-    }
-    this.sysGeneralService.toggleSentryInit();
-
-    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
-      this.onShowConsoleFooterBar(config.ui_consolemsg);
-    });
-
-    this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
-
-    this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.core.emit({ name: 'Authenticated', data: evt, sender: this });
-    });
-
-    this.store$.dispatch(adminUiInitialized());
-  }
-
-  ngAfterViewChecked(): void {
-    this.scrollToBottomOnFooterBar();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$
-      .pipe(untilDestroyed(this))
-      .subscribe((headerContent) => {
-        try {
-          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-          this.cdr.detectChanges();
-        } catch (error: unknown) {
-          // Prevents an error on one header from breaking headers on all pages.
-          console.error('Error when rendering page header template', error);
-          this.headerPortalOutlet = null;
-        }
-      });
   }
 
   updateSidenav(force?: 'open' | 'close'): void {
@@ -191,7 +188,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     if (!this.isMobile) {
       // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
       setTimeout(() => {
-        this.sideNav.open();
+        this.sideNav?.open();
       });
       this.store$.pipe(
         waitForPreferences,

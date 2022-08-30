@@ -139,7 +139,11 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_name_tooltip,
           readonly: true,
           required: true,
-          validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
+          validation: [
+            Validators.required,
+            forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive),
+            Validators.maxLength(200),
+          ],
         },
         {
           type: 'input',

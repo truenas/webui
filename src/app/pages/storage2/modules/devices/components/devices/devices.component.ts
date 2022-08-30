@@ -13,7 +13,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, pluck } from 'rxjs/operators';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
@@ -64,6 +64,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
+    private router: Router,
   ) { }
 
   getDisk(node: DeviceNestedDataNode): Disk {
@@ -133,6 +134,10 @@ export class DevicesComponent implements OnInit, AfterViewInit {
           const routeGuid = this.route.snapshot.paramMap.get('guid');
           if (routeGuid) {
             this.devicesStore.selectNodeByGuid(routeGuid);
+            this.openMobileDetails();
+          } else {
+            const firstNode = this.treeControl.dataNodes[0].children[0];
+            this.router.navigate(['/storage2', this.poolId, 'devices', firstNode.guid]);
           }
         },
       );

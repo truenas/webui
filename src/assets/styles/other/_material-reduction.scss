@@ -848,11 +848,6 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
-/* Material Design Icon Set */
-.mat-icon.mdi-set {
-  font-size: 24px; /* Default Size to match other mat icons */
-  margin-top: 2px;
-}
 
 @media only screen and (max-width: 750px) {
   .viewcontroller-wrapper {
@@ -948,7 +943,7 @@ ul.nested-list li {
 
 .mat-tab-header-pagination-chevron {
   border-color: unset !important;
-  color: var(--fg2); 
+  color: var(--fg2);
 }
 
 .mat-tab-header-pagination {

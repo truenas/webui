@@ -40,6 +40,7 @@ html {
 
 html,
 body {
+  background: var(--bg1);
   height: 100%;
   min-height: 100%;
   position: relative;
@@ -55,7 +56,6 @@ body:not(.safari-platform) {
 }
 
 body {
-  background: var(--bg1);
   color: rgba(0, 0, 0, 0.87);
   font-family: 'IBM Plex Sans', 'Roboto', 'Helvetica Neue', sans-serif;
   font-size: 0.875rem;
@@ -617,10 +617,6 @@ body .mat-select-trigger {
   padding-left: 54px;
 }
 
-.app-side-nav-container .mat-sidenav-content {
-  padding: 0;
-}
-
 /*------- Collapsed Sidenav -------*/
 .collapsed-menu .sidebar-panel {
   min-width: 48px;
@@ -705,9 +701,9 @@ body .mat-select-trigger {
 
 .collapsed-menu .sidebar-panel .mat-nav-list > div >  .sidebar-list-item a .menu-caret {
   font-size: medium;
-  left: 33px;
+  left: 32px;
   position: absolute;
-  top: 16px;
+  top: 14px;
 }
 
 /*---- Pages (Sign in, sign up, forgot, lockscreen) -----*/

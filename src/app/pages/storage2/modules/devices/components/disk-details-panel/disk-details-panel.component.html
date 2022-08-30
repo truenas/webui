@@ -1,11 +1,12 @@
 <div class="header">
   <h3 class="title">
     <div class="mobile-prefix">
-      <a class="mobile-back-button">
-        <ix-icon
-        name="mdi-chevron-left"
+      <a mat-icon-button
+        class="mobile-back-button"
+        [routerLink]="['/storage2', this.poolId, 'devices']"
         (click)="onCloseMobileDetails()"
-        ></ix-icon>
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
       </a>
       {{ 'Details for' | translate }}
     </div>

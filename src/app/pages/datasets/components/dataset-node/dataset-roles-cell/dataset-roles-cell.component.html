@@ -1,6 +1,6 @@
-<span *ngIf="isRoot && !isSystemDataset">{{ 'Root Dataset' | translate }}</span>
-<span *ngIf="isSystemDataset && !isRoot">{{ 'System Dataset' | translate }}</span>
-<span *ngIf="isRoot && isSystemDataset">{{ 'Root & System Dataset' | translate }}</span>
+<ng-container *ngIf="isSystemDataset">
+  <ix-icon name="ix:truenas_scale_logomark" [matTooltip]="'System Dataset' | translate"></ix-icon>
+</ng-container>
 <ng-container *ngIf="dataset.apps?.length || isApplications">
   <ix-icon name="apps" *ngIf="!isApplications" [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appsNames }"></ix-icon>
   <ix-icon name="apps" *ngIf="isApplications" [matTooltip]="'This dataset is used to store Kubernetes config and other container related data' | translate"></ix-icon>

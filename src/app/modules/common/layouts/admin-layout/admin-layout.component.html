@@ -1,4 +1,11 @@
+<ix-fake-progress-bar
+  *ngIf="!(arePreferencesLoaded$ | async)"
+  class="loader-bar"
+  [loading]="true"
+></ix-fake-progress-bar>
+
 <mat-sidenav-container
+  *ngIf="arePreferencesLoaded$ | async"
   class="app-side-nav-container"
   fxLayout="row"
   ngClass.xs="xs"

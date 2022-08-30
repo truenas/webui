@@ -1,0 +1,24 @@
+@import '~assets/styles/scss-imports/splitview';
+
+@mixin background-logo-loader($zoom: 1) {
+  &::before {
+    animation: loading 2s linear infinite;
+
+    background: transparent url('~assets/customicons/truenas_scale_logo_full.svg') no-repeat center center;
+    color: var(--fg2);
+    content: '';
+    filter: invert(1);
+    height: 65px * $zoom;
+    left: 50%;
+    opacity: 0.1;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px * $zoom;
+
+    @media  (max-width: $breakpoint-tablet) {
+      height: 65px * $zoom * 0.75;
+      width: 300px * $zoom * 0.75;
+    }
+  }
+}

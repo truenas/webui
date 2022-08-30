@@ -9,9 +9,8 @@
   flex-direction: row;
   flex-wrap: nowrap;
   gap: $title-gap;
-  max-width: 70%;
+  min-width: 0;
   place-items: start;
-  width: 80%;
 
   @media (max-width: $breakpoint-tablet) {
     align-items: start;
@@ -35,6 +34,8 @@
   .mobile-prefix {
     align-items: center;
     display: none;
+    flex-shrink: 0;
+    white-space: nowrap;
 
     @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: calc($breakpoint-hidden - 1px)) {
       margin-bottom: 2px;
@@ -54,8 +55,9 @@
 
   .prefix {
     display: flex;
-    max-width: 30%;
+    flex-shrink: 0;
     opacity: 0.85;
+    white-space: nowrap;
 
     @media (max-width: $breakpoint-hidden) {
       display: none;
@@ -65,6 +67,7 @@
   .full-path {
     display: flex;
     max-width: inherit;
+    min-width: 0;
 
     @media  (max-width: $breakpoint-tablet) {
       display: flex;
@@ -85,7 +88,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
   }
 }
 
@@ -100,8 +102,10 @@
 .header {
   align-items: center;
   display: flex;
+  flex: 0 0 auto;
   margin-bottom: 16px;
-  padding: 12px 12px 12px 0;
+  min-height: 60px;
+  padding: 4px 12px 4px 4px;
   place-content: space-between;
 
 
@@ -130,9 +134,8 @@
     display: none;
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
-      padding: 0 4px 0 16px;
+      padding: 0;
       position: relative;
-      top: 1px;
     }
   }
 
@@ -152,7 +155,6 @@
 
   .add-buttons {
     flex-shrink: 0;
-
 
     @media (max-width: $breakpoint-tablet) {
       border-bottom: solid 1px var(--lines);

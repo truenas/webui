@@ -300,12 +300,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.layoutService.isMobile) {
       this.store$.dispatch(sidenavUpdated(data));
     }
-
-    this.core.emit({
-      name: 'SidenavStatus',
-      data,
-      sender: this,
-    });
   }
 
   toggleLogo(): string {

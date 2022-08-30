@@ -1,4 +1,4 @@
-@import 'assets/styles/mixins/animations';
+@import '~assets/styles/mixins/animations';
 $size: 24px;
 
 .ix-icon {
@@ -15,5 +15,9 @@ $size: 24px;
 
   &.mat-ligature-font::before {
     content: attr(data-mat-icon-name);
+  }
+
+  &.mdi-set {
+    font-size: $size;
   }
 }

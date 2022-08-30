@@ -2,11 +2,8 @@
   <h3 class="title">
 
     <div class="mobile-prefix">
-      <a [routerLink]="['/datasets']" class="mobile-back-button">
-        <ix-icon 
-        name="mdi-chevron-left"
-        (click)="onCloseMobileDetails()"
-        ></ix-icon>
+      <a mat-icon-button [routerLink]="['/datasets']" class="mobile-back-button" (click)="onCloseMobileDetails()">
+        <ix-icon name="mdi-chevron-left"></ix-icon>
       </a>
       {{ 'Details for' | translate }}
     </div>
@@ -16,8 +13,8 @@
     </span>
 
     <div class="full-path">
-        <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
-        <span class="own-name">{{ ownName }}</span>
+      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+      <span class="own-name">{{ ownName }}</span>
     </div>
   </h3>
 

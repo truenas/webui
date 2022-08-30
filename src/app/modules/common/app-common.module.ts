@@ -46,6 +46,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { LanguageService } from 'app/services';
@@ -87,6 +88,7 @@ import { LocaleService } from 'app/services/locale.service';
     TooltipModule,
     TranslateModule,
     TruecommandModule,
+    AppLoaderModule,
   ],
   declarations: [
     AboutDialogComponent,

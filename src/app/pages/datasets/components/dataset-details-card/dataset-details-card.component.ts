@@ -37,14 +37,8 @@ export class DatasetDetailsCardComponent {
 
   get datasetCompression(): string {
     return this.dataset?.compression?.source === ZfsPropertySource.Inherited
-      ? 'Inherit (' + this.dataset.compression?.value + ')'
+      ? this.translate.instant('Inherit ({value})', { value: this.dataset.compression?.value })
       : this.dataset.compression?.value;
-  }
-
-  get datasetSpace(): string {
-    return (this.dataset.quota.value !== null || this.dataset.quota.value !== '0')
-    || (this.dataset.refquota.value !== null || this.dataset.refquota.value !== '0')
-      ? this.dataset.available.value + ' (Quota set)' : this.dataset.available.value;
   }
 
   get isFilesystem(): boolean {

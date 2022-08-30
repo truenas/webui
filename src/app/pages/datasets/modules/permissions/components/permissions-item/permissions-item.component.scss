@@ -1,15 +1,15 @@
 :host {
   align-items: center;
   display: flex;
-  padding: 12px 14px;
+  padding: 8px 14px;
 }
 
 .icon {
   align-self: normal;
+  display: inline-flex;
   margin-right: 8px;
 
-  mat-icon {
-    float: left;
+  ix-icon {
     font-size: 21px;
     height: 21px;
     line-height: 21px;
