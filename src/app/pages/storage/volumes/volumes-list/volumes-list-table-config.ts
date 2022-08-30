@@ -807,28 +807,28 @@ export class VolumesListTableConfig implements EntityTableConfig {
           if (dataset.compression.source !== ZfsPropertySource.Inherited) {
             dataObj.compression = (dataset.compression.parsed);
           } else {
-            dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
+            dataObj.compression = `${inherits} (${dataset.compression.parsed})`;
           }
         }
         if (dataset.compressratio) {
           if (dataset.compressratio.source !== ZfsPropertySource.Inherited) {
             dataObj.compressratio = (dataset.compressratio.parsed);
           } else {
-            dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
+            dataObj.compressratio = `${inherits} (${dataset.compressratio.parsed})`;
           }
         }
         if (dataset.readonly) {
           if (dataset.readonly.source !== ZfsPropertySource.Inherited) {
             dataObj.readonly = (dataset.readonly.parsed) as any;
           } else {
-            dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
+            dataObj.readonly = `${inherits} (${String(dataset.readonly.parsed)})`;
           }
         }
         if (dataset.deduplication) {
           if (dataset.deduplication.source !== ZfsPropertySource.Inherited) {
             dataObj.dedup = (dataset.deduplication.parsed);
           } else {
-            dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
+            dataObj.dedup = `${inherits} (${dataset.deduplication.parsed})`;
           }
         }
         if (dataset.comments) {

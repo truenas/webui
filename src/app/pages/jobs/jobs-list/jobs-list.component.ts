@@ -146,7 +146,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   downloadLogs(job: Job): void {
-    const filename = job.id + '.log';
+    const filename = `${job.id}.log`;
     this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe(
       ([_, url]) => {
         const mimetype = 'text/plain';

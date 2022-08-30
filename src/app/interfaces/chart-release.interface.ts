@@ -40,15 +40,6 @@ export interface ChartResources {
   statefulsets: unknown[];
 }
 
-export interface ChartReleaseCreate {
-  values: { [key: string]: string };
-  catalog: string;
-  item: string;
-  release_name: string;
-  train: string;
-  version: string;
-}
-
 export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[];
 
 export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
@@ -83,6 +74,24 @@ export interface ChartRelease {
 
   // TODO: Frontend field, move to another interface.
   selected?: boolean;
+}
+
+export interface ChartReleaseCreate {
+  values: { [key: string]: ChartFormValue };
+  catalog: string;
+  item: string;
+  release_name: string;
+  train: string;
+  version: string;
+}
+
+export interface ChartReleaseUpdate {
+  values: { [key: string]: ChartFormValue };
+}
+
+export interface ChartReleaseUpgrade {
+  item_version?: string;
+  values?: { [key: string]: ChartFormValue };
 }
 
 export type ChartReleaseQueryParams = QueryParams<ChartRelease, {

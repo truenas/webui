@@ -317,7 +317,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       });
 
       if (addresses.length > 0) {
-        ip = addresses[0].address + '/' + addresses[0].netmask;
+        ip = `${addresses[0].address}/${addresses[0].netmask}`;
 
         if (addresses.length >= 2) {
           ip += ` (+${addresses.length - 1})`; /* show that interface has additional addresses */
