@@ -1,7 +1,7 @@
 <div [ngSwitch]="item.type" class="icon">
-  <mat-icon *ngSwitchCase="PermissionsItem.Group">people</mat-icon>
-  <mat-icon *ngSwitchCase="PermissionsItem.Other">groups</mat-icon>
-  <mat-icon *ngSwitchDefault>person</mat-icon>
+  <ix-icon name="people" *ngSwitchCase="PermissionsItem.Group"></ix-icon>
+  <ix-icon name="groups" *ngSwitchCase="PermissionsItem.Other"></ix-icon>
+  <ix-icon name="person" *ngSwitchDefault></ix-icon>
 </div>
 <div class="name">{{ item.name }}</div>
 <div class="permissions">{{ item.description }}</div>
