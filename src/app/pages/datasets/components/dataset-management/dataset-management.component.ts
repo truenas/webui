@@ -192,7 +192,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   createPool(): void {
-    this.router.navigate(['/storage2/create']);
+    this.router.navigate(['/storage', 'create']);
   }
 
   // Expose hidden details on mobile
