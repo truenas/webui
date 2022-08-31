@@ -49,7 +49,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     cc: [[] as string[], [
       this.validatorsService.customValidator(
         (control: AbstractControl) => {
-          return !control.value?.every((item: string) => EmailValidator.validate(item));
+          return control.value?.every((item: string) => EmailValidator.validate(item));
         },
         this.translate.instant(helptext.cc.err),
       ),

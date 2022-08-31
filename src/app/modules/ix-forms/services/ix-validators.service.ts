@@ -80,14 +80,14 @@ export class IxValidatorsService {
   }
 
   /**
-   * Specify simple validator function returning true for error and an error message.
+   * Specify simple validator function returning false for invalid value and an error message.
    */
   customValidator(validatorFn: (control: AbstractControl) => boolean, message: string): ValidatorFn {
     return this.withMessage(
       (control) => {
-        const hasError = validatorFn(control);
+        const isValid = validatorFn(control);
 
-        if (!hasError) {
+        if (isValid) {
           return null;
         }
 
