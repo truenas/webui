@@ -68,7 +68,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     await addDisksButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'storage', 'create']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
   });
 
   it('redirects to add disks to pool page when choosing Add Disks To Existing Pool', async () => {
@@ -84,6 +84,6 @@ describe('ManageUnusedDiskDialogComponent', () => {
     await addDisksButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'storage', 2, 'add-vdevs']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 2, 'add-vdevs']);
   });
 });

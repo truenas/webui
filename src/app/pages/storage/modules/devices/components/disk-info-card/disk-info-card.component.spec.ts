@@ -6,7 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
+import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -21,6 +23,9 @@ describe('DiskInfoCardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DiskInfoCardComponent,
+    declarations: [
+      MockComponents(CopyButtonComponent),
+    ],
     providers: [
       mockProvider(IxSlideInService),
       mockProvider(ActivatedRoute, {
