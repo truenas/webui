@@ -8,7 +8,6 @@ import {
 } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
   snapshotAdded, snapshotChanged,
   snapshotPageEntered,
@@ -25,7 +24,7 @@ export class SnapshotEffects {
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
       return this.ws.call('zfs.snapshot.query', [
-        snapshotExcludeBootQueryFilter,
+        [],
         {
           select: ['snapshot_name', 'dataset', 'name', ...(preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [])],
           order_by: ['name'],
