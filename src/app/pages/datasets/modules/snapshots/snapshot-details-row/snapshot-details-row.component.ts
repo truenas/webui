@@ -79,13 +79,12 @@ export class SnapshotDetailsRowComponent implements OnInit {
       switchMap(() => this.ws.call('zfs.snapshot.delete', [snapshot.name])),
       untilDestroyed(this),
     ).subscribe(
-      () => {
-        this.loader.close();
-      },
+      () => this.loader.close(),
       (error: WebsocketError) => {
-        console.error(error);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
         this.loader.close();
       },
+      () => this.loader.close(),
     );
   }
 }
