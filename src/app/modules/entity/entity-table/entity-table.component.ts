@@ -1004,14 +1004,13 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
                 this.loader.close();
                 this.loaderOpen = false;
                 this.getData();
-                // this.selected = [];
                 this.selection.clear();
 
-                const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                const selectedName = String(this.conf.wsMultiDeleteParams(selected)[1]);
                 let message = '';
                 for (let i = 0; i < res1.result.length; i++) {
                   if (res1.result[i].error !== null) {
-                    message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    message = `${message}<li>${selectedName[i]}: ${res1.result[i].error}</li>`;
                   }
                 }
                 if (message === '') {
@@ -1105,7 +1104,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     }
   }
 
-  getButtonClass(row: any): string {
+  getButtonClass(row: { warnings: unknown[]; state: JobState }): string {
     // Bring warnings to user's attention even if state is finished or successful.
     if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
 

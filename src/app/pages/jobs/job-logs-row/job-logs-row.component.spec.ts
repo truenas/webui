@@ -49,7 +49,7 @@ describe('JobLogsRowComponent', () => {
 
     const [logPath, logExcerpt, error] = spectator.queryAll('.list-item div');
     expect(logPath).toHaveText('/var/log/jobs/446.log');
-    expect(logExcerpt).toHaveText('<3>ERROR : webdav root \'\': error reading source root directory: couldn\'t list files: Propfind \"http:192.168.3.133/\"');
+    expect(logExcerpt).toHaveText('<3>ERROR : webdav root \'\': error reading source root directory: couldn\'t list files: Propfind "http:192.168.3.133/"');
     expect(error).toHaveText('[EFAULT] Transferred:   \t          0 / 0 Byte, -, 0 Byte/s, ETA');
   });
 });

@@ -49,7 +49,7 @@ import { ChartReleaseEvent, ChartRollbackParams, ChartScaleResult } from 'app/in
 import {
   ChartRelease,
   ChartReleaseCreate,
-  ChartReleaseQueryParams,
+  ChartReleaseQueryParams, ChartReleaseUpdate, ChartReleaseUpgrade,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
@@ -369,8 +369,8 @@ export type ApiDirectory = {
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
-  'chart.release.update': { params: any; response: ChartRelease };
-  'chart.release.upgrade': { params: any; response: ChartRelease };
+  'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
+  'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };

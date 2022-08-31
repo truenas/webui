@@ -507,21 +507,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {
-          addresses.add(alias.address + '/' + alias.netmask);
+          addresses.add(`${alias.address}/${alias.netmask}`);
         }
       });
 
       if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
         transformed.state.aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
-            addresses.add(alias.address + '/' + alias.netmask);
+            addresses.add(`${alias.address}/${alias.netmask}`);
           }
         });
       }
       if (transformed.hasOwnProperty('failover_aliases')) {
         transformed.failover_aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
-            addresses.add(alias.address + '/' + alias.netmask);
+            addresses.add(`${alias.address}/${alias.netmask}`);
           }
         });
       }

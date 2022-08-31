@@ -109,7 +109,7 @@ export class VmWizardComponent implements WizardConfiguration {
           name: 'name',
           placeholder: helptext.name_placeholder,
           tooltip: helptext.name_tooltip,
-          validation: [Validators.required, Validators.pattern('^[a-zA-Z0-9\_]*$'), forbiddenValues(this.namesInUse)],
+          validation: [Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$'), forbiddenValues(this.namesInUse)],
           required: true,
         },
         {
@@ -726,7 +726,8 @@ export class VmWizardComponent implements WizardConfiguration {
               prevSelectedGpus.push(gpu);
             }
           }
-          const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+          const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
+          const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
           gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
           if (prevSelectedGpus.length) {
             gpusConf.warnings += this.translate.instant(
@@ -752,7 +753,8 @@ export class VmWizardComponent implements WizardConfiguration {
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
             if (stat.free_bytes < volsize) {
-              this.getFormControlFromFieldName('volsize').setValue(Math.floor(stat.free_bytes / (1073741824)) + ' GiB');
+              const volsize = Math.floor(stat.free_bytes / (1024 ** 3));
+              this.getFormControlFromFieldName('volsize').setValue(`${volsize} GiB`);
             } else if (stat.free_bytes > 40 * 1073741824) {
               const vmOs = this.getFormControlFromFieldName('os').value;
               if (vmOs === 'Windows') {

@@ -90,7 +90,7 @@ export class AppComponent {
     const appName = navigator.appName;
     const ua = navigator.userAgent;
     const browserVersion = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-    const versionMatch = ua.match(/version\/([\.\d]+)/i);
+    const versionMatch = ua.match(/version\/([.\d]+)/i);
     if (browserVersion && versionMatch !== null) {
       browserVersion[2] = versionMatch[1];
     }
