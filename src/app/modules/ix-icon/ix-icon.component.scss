@@ -13,8 +13,7 @@ $size: 24px;
     width: $size;
   }
 
-  &.mat-ligature-font::before,
-  &[data-mat-icon-type='svg']::before {
+  &.mat-ligature-font::before {
     display: inline-block;
     visibility: hidden;
     width: 0;
