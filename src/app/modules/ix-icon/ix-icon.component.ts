@@ -75,19 +75,32 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.updateIcon(this.iconName);
+    this.updateIcon(this.name);
   }
 
   private updateIcon(iconName: string): void {
+    if (!iconName) {
+      this.svgIcon = '';
+      this.fontSet = '';
+      this.fontIcon = '';
+      this.iconLigature = '';
+      return;
+    }
+
     if (iconName.startsWith('ix:')) {
+      this.fontIcon = '';
+      this.fontSet = '';
       this.svgIcon = iconName;
     } else if (iconName.startsWith('mdi')) {
+      this.svgIcon = '';
+      this.iconLigature = '';
       this.fontSet = 'mdi-set';
       this.fontIcon = iconName;
     } else {
-      this.fontSet = null;
-      this.fontIcon = iconName;
-      this.iconLigature = null;
+      this.fontSet = '';
+      this.svgIcon = '';
+      this.fontIcon = '';
+      this.iconLigature = iconName;
     }
   }
 }

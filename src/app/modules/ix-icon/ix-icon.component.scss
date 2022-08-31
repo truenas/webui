@@ -13,7 +13,10 @@ $size: 24px;
     width: $size;
   }
 
-  &.mat-ligature-font::before {
-    content: attr(data-mat-icon-name);
+  &.mat-ligature-font::before,
+  &[data-mat-icon-type='svg']::before {
+    display: inline-block;
+    visibility: hidden;
+    width: 0;
   }
 }
