@@ -126,8 +126,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadTemperatures(): void {
-    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((res) => {
-      const temperatures = Object.values(res);
+    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((tempAggregates) => {
+      const temperatures = Object.values(tempAggregates);
 
       const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
       const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);

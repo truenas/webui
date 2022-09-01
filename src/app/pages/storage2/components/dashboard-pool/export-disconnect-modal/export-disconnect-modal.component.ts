@@ -118,13 +118,13 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed);
       }
       entityJobRef.close(true);
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
-    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failureData) => {
       let conditionalErrMessage = '';
-      if (res.error) {
-        if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
+      if (failureData.error) {
+        if (failureData.exc_info.extra && failureData.exc_info.extra['code'] === 'control_services') {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           entityJobRef.close(true);
@@ -132,18 +132,18 @@ export class ExportDisconnectModalComponent implements OnInit {
           const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
           const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
           // TODO: Extract to template
-          if ((res.exc_info.extra.stop_services as string[]).length > 0) {
+          if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
             conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-            (res.exc_info.extra.stop_services as string[]).forEach((item) => {
+            (failureData.exc_info.extra.stop_services as string[]).forEach((item) => {
               conditionalErrMessage += `<br>- ${item}`;
             });
           }
-          if ((res.exc_info.extra.restart_services as string[]).length > 0) {
-            if ((res.exc_info.extra.stop_services as string[]).length > 0) {
+          if ((failureData.exc_info.extra.restart_services as string[]).length > 0) {
+            if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
               conditionalErrMessage += '<br><br>';
             }
             conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-            (res.exc_info.extra.restart_services as string[]).forEach((item) => {
+            (failureData.exc_info.extra.restart_services as string[]).forEach((item) => {
               conditionalErrMessage += `<br>- ${item}`;
             });
           }
@@ -160,27 +160,27 @@ export class ExportDisconnectModalComponent implements OnInit {
             this.restartServices = true;
             this.startExportDisconnectJob();
           });
-        } else if ((res as any).extra && (res as any).extra['code'] === 'unstoppable_processes') {
+        } else if ((failureData as any).extra && (failureData as any).extra['code'] === 'unstoppable_processes') {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-          conditionalErrMessage = msg + (res as any).extra['processes'];
+          conditionalErrMessage = msg + (failureData as any).extra['processes'];
           entityJobRef.close(true);
-          this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
+          this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
         } else {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           entityJobRef.close(true);
-          this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
+          this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
         }
       } else {
         this.dialogRef.close(true);
         this.isFormLoading = false;
         entityJobRef.close(true);
-        this.dialogService.errorReport(helptext.exportError, res.error, res.exception);
+        this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
       }
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
@@ -200,9 +200,9 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.systemConfig = systemConfig;
         this.prepareForm();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReport(helptext.exportError, err.reason, err.trace.formatted);
+        this.dialogService.errorReport(helptext.exportError, error.reason, error.trace.formatted);
       });
   }
 

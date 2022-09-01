@@ -89,8 +89,8 @@ export class CreateSnapshotDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((hasVmsInDataset) => {
         this.hasVmsInDataset = hasVmsInDataset;
-      }, (err) => {
-        this.dialog.errorReportMiddleware(err);
+      }, (error) => {
+        this.dialog.errorReportMiddleware(error);
       });
   }
 }

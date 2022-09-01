@@ -74,9 +74,9 @@ export class ExtendDialogComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
           this.dialogRef.close(true);
         },
-        (err) => {
+        (error) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(err);
+          this.dialogService.errorReportMiddleware(error);
         },
       );
   }
@@ -93,8 +93,8 @@ export class ExtendDialogComponent implements OnInit {
         );
 
         this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-      }, (err) => {
-        this.dialogService.errorReportMiddleware(err);
+      }, (error) => {
+        this.dialogService.errorReportMiddleware(error);
       });
   }
 }

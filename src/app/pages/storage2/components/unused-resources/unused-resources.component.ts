@@ -27,8 +27,8 @@ export class UnusedResourcesComponent implements OnInit {
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
       this.unusedDisks = disks;
       this.cdr.markForCheck();
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 }

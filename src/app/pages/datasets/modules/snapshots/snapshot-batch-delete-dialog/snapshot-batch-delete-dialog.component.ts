@@ -77,7 +77,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   }
 
   getErrorMessage(): string {
-    return this.jobErrors.map((err) => err + '\n')
+    return this.jobErrors.map((error) => error + '\n')
       .toString()
       .split(',')
       .join('')

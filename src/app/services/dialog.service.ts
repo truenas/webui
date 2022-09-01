@@ -89,14 +89,14 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  errorReportMiddleware(res: WebsocketError | Job): void {
-    if ('trace' in res && res.trace.formatted) {
-      this.errorReport(res.trace.class, res.reason, res.trace.formatted);
-    } else if ('state' in res && res.error && res.exception) {
-      this.errorReport(res.state, res.error, res.exception);
+  errorReportMiddleware(error: WebsocketError | Job): void {
+    if ('trace' in error && error.trace.formatted) {
+      this.errorReport(error.trace.class, error.reason, error.trace.formatted);
+    } else if ('state' in error && error.error && error.exception) {
+      this.errorReport(error.state, error.error, error.exception);
     } else {
       // if it can't print the error at least put it on the console.
-      console.error(res);
+      console.error(error);
     }
   }
 

@@ -205,16 +205,16 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
               dialogRef.close();
               this.router.navigate(['/datasets']);
-            }, (err) => {
+            }, (error) => {
               dialogRef.close();
-              this.dialog.errorReportMiddleware(err);
+              this.dialog.errorReportMiddleware(error);
             });
-            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
+            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((error) => {
               dialogRef.close();
-              this.dialog.errorReportMiddleware(err);
-            }, (err) => {
+              this.dialog.errorReportMiddleware(error);
+            }, (error) => {
               dialogRef.close();
-              this.dialog.errorReportMiddleware(err);
+              this.dialog.errorReportMiddleware(error);
             });
             dialogRef.componentInstance.submit();
           },
@@ -252,16 +252,16 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
           dialogRef.close();
           this.router.navigate(['/datasets']);
-        }, (err) => {
+        }, (error) => {
           dialogRef.close();
-          this.dialog.errorReportMiddleware(err);
+          this.dialog.errorReportMiddleware(error);
         });
-        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
+        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((error) => {
           dialogRef.close();
-          this.dialog.errorReportMiddleware(err);
-        }, (err) => {
+          this.dialog.errorReportMiddleware(error);
+        }, (error) => {
           dialogRef.close();
-          this.dialog.errorReportMiddleware(err);
+          this.dialog.errorReportMiddleware(error);
         });
         dialogRef.componentInstance.submit();
       }),

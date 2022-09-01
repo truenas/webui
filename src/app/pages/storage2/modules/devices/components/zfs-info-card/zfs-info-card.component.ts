@@ -87,9 +87,9 @@ export class ZfsInfoCardComponent {
         this.devicesStore.reloadList();
         this.loader.close();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(err);
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }
@@ -110,9 +110,9 @@ export class ZfsInfoCardComponent {
         this.devicesStore.reloadList();
         this.loader.close();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(err);
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }
@@ -133,9 +133,9 @@ export class ZfsInfoCardComponent {
         this.devicesStore.reloadList();
         this.loader.close();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(err);
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }
@@ -161,8 +161,8 @@ export class ZfsInfoCardComponent {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.devicesStore.reloadList();
         this.dialogService.closeAllDialogs();
-      }, (err) => {
-        this.dialogService.errorReportMiddleware(err);
+      }, (error) => {
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }

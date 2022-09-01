@@ -98,8 +98,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     window.localStorage.setItem('useFullFilter', 'true');
   }
 
-  handleError = (err: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(err);
+  handleError = (error: WebsocketError | Job): void => {
+    this.dialogService.errorReportMiddleware(error);
   };
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
@@ -152,9 +152,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       this.isLoading = false;
       this.createDataSource(quotas);
       this.checkInvalidQuotas();
-    }, (err) => {
+    }, (error) => {
       this.emptyOrErrorConfig = this.errorConfig;
-      this.handleError(err);
+      this.handleError(error);
     });
   }
 
@@ -218,9 +218,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         .subscribe(() => {
           this.loader.close();
           this.getGroupQuotas();
-        }, (err) => {
+        }, (error) => {
           this.loader.close();
-          this.handleError(err);
+          this.handleError(error);
         });
     });
   }
@@ -251,9 +251,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         this.loader.close();
         this.getGroupQuotas();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReportMiddleware(err);
+        this.dialogService.errorReportMiddleware(error);
       },
     );
   }

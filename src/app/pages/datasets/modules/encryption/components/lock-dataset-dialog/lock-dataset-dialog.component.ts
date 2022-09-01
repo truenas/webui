@@ -43,15 +43,15 @@ export class LockDatasetDialogComponent {
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close();
       this.dialogRef.close(true);
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
       jobDialogRef.close();
       this.dialogRef.close(true);
       this.dialogService.errorReport(job.error, job.state, job.exception);
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 }

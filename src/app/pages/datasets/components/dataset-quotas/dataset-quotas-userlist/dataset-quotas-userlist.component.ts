@@ -148,14 +148,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       this.isLoading = false;
       this.createDataSource(quotas);
       this.checkInvalidQuotas();
-    }, (err) => {
+    }, (error) => {
       this.emptyOrErrorConfig = this.errorConfig;
-      this.handleError(err);
+      this.handleError(error);
     });
   }
 
-  handleError = (err: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(err);
+  handleError = (error: WebsocketError | Job): void => {
+    this.dialogService.errorReportMiddleware(error);
   };
 
   createDataSource(quotas: DatasetQuota[] = []): void {
@@ -217,9 +217,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         .subscribe(() => {
           this.loader.close();
           this.getUserQuotas();
-        }, (err) => {
+        }, (error) => {
           this.loader.close();
-          this.handleError(err);
+          this.handleError(error);
         });
     });
   }
@@ -250,9 +250,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        this.handleError(err);
+        this.handleError(error);
       },
     );
   }

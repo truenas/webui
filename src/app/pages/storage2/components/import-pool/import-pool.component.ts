@@ -58,21 +58,21 @@ export class ImportPoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.state !== JobState.Success) {
+    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((importablePoolFindJob) => {
+      if (importablePoolFindJob.state !== JobState.Success) {
         return;
       }
 
       this.isLoading = false;
-      const result: PoolFindResult[] = res.result;
+      const result: PoolFindResult[] = importablePoolFindJob.result;
       const opts = result.map((pool) => ({
         label: `${pool.name} | ${pool.guid}`,
         value: pool.guid,
       } as Option));
       this.pool.options = of(opts);
       this.cdr.markForCheck();
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
@@ -93,25 +93,25 @@ export class ImportPoolComponent implements OnInit {
       this.isLoading = false;
       this.slideInService.close();
       this.modalService.refreshTable();
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((result) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failureData) => {
       dialogRef.close(false);
       this.isLoading = false;
-      this.errorReport(result);
-    }, (err) => {
-      this.dialogService.errorReportMiddleware(err);
+      this.errorReport(failureData);
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
-  errorReport(result: Job | WebsocketError): void {
-    if ('reason' in result && result.reason && result.trace) {
-      this.dialogService.errorReport(this.translate.instant('Error importing pool'), result.reason, result.trace.formatted);
-    } else if ('exception' in result && result.error && result.exception) {
-      this.dialogService.errorReport(this.translate.instant('Error importing pool'), result.error, result.exception);
+  errorReport(error: Job | WebsocketError): void {
+    if ('reason' in error && error.reason && error.trace) {
+      this.dialogService.errorReport(this.translate.instant('Error importing pool'), error.reason, error.trace.formatted);
+    } else if ('exception' in error && error.error && error.exception) {
+      this.dialogService.errorReport(this.translate.instant('Error importing pool'), error.error, error.exception);
     } else {
-      console.error(result);
+      console.error(error);
     }
   }
 }

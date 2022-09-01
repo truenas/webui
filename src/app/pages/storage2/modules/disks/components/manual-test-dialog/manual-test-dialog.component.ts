@@ -78,8 +78,8 @@ export class ManualTestDialogComponent {
           this.startedTests = startedTests;
           this.cdr.markForCheck();
         },
-        (err) => {
-          this.dialogService.errorReportMiddleware(err);
+        (error) => {
+          this.dialogService.errorReportMiddleware(error);
           this.cdr.markForCheck();
         },
       );

@@ -262,10 +262,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
         }
       }
     }, this.handleError);
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      if (err) {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      if (error) {
         dialogRef.close();
-        this.handleError(err);
+        this.handleError(error);
       }
     }, this.handleError);
 
@@ -402,9 +402,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
         unlockDialogRef.componentInstance.data = payload as DatasetUnlockParams;
       }
     }, this.handleError);
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       dialogRef.close();
-      this.handleError(err);
+      this.handleError(error);
     }, this.handleError);
   }
 
@@ -461,9 +461,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
         }
       }
     }, this.handleError);
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       dialogRef.close();
-      this.handleError(err);
+      this.handleError(error);
     }, this.handleError);
   }
 

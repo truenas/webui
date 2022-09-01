@@ -974,7 +974,10 @@ export class DatasetFormComponent implements FormConfiguration {
       entityForm.setDisabled('share_type', false, false);
     }
 
-    entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
+    entityForm.formGroup.get('share_type').valueChanges.pipe(
+      filter((shareType) => !!shareType && entityForm.isNew),
+      untilDestroyed(this),
+    ).subscribe((shareType) => {
       const caseControl = entityForm.formGroup.get('casesensitivity');
       if (shareType === 'SMB') {
         aclControl.setValue(AclMode.Restricted);
@@ -1052,8 +1055,8 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  handleError = (err: WebsocketError | Job): void => {
-    new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
+  handleError = (error: WebsocketError | Job): void => {
+    new EntityUtils().handleWsError(this.entityForm, error, this.dialogService);
   };
 
   paramMap: {
