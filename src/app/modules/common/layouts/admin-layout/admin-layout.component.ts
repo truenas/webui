@@ -17,7 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { BehaviorSubject } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, take, timeout } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -133,6 +133,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
     this.store$.pipe(
       waitForPreferences,
+      timeout(5000),
       untilDestroyed(this),
     ).subscribe((preferences) => {
       if (preferences.sidenavStatus) {
@@ -140,6 +141,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
         this.sidenavMode = preferences.sidenavStatus.mode;
         this.isSidenavCollapsed = preferences.sidenavStatus.isCollapsed;
       }
+      this.updateSidenav();
+      this.arePreferencesLoaded$.next(true);
+    },
+    (error) => {
+      console.error(error);
+    },
+    () => {
       this.updateSidenav();
       this.arePreferencesLoaded$.next(true);
     });

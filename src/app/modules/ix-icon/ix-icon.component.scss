@@ -16,7 +16,10 @@ $size: 24px;
   &.mat-ligature-font::before {
     content: attr(data-mat-icon-name);
   }
+}
 
+.ix-icon,
+.mat-icon {
   &.mdi-set {
     font-size: $size;
   }
