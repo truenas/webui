@@ -3,6 +3,7 @@ import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxInputComponent } from './ix-input.component';
 
@@ -16,6 +17,7 @@ describe('IxInputComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
+      MockComponent(IxLabelComponent),
       MockComponent(TooltipComponent),
     ],
   });
@@ -27,16 +29,22 @@ describe('IxInputComponent', () => {
   });
 
   describe('rendering', () => {
+    it('renders a label and passes properties to it', () => {
+      spectator.setInput('label', 'New Password');
+      spectator.setInput('required', true);
+      spectator.setInput('tooltip', 'Minimum length is 8 characters.');
+
+      const label = spectator.query(IxLabelComponent);
+      expect(label).toExist();
+      expect(label.label).toBe('New Password');
+      expect(label.required).toBe(true);
+      expect(label.tooltip).toBe('Minimum length is 8 characters.');
+    });
+
     it('renders a hint when it is provided', () => {
       spectator.setInput('hint', 'Capital letters only');
 
       expect(spectator.query('mat-hint')).toHaveText('Capital letters only');
-    });
-
-    it('renders a label when it is provided', () => {
-      spectator.setInput('label', 'First Name');
-
-      expect(spectator.query('.label')).toHaveText('First Name');
     });
 
     it('renders a prefix icon when it is provided', () => {
@@ -44,22 +52,6 @@ describe('IxInputComponent', () => {
 
       expect(spectator.query('.prefix-icon')).toHaveText('person');
       expect(spectator.query('input')).toHaveClass('prefix-padding');
-    });
-
-    it('renders a tooltip next to a label when it and the label are provided', () => {
-      spectator.setInput('tooltip', 'Enter your first name');
-      spectator.setInput('label', 'First Name');
-
-      const tooltip = spectator.query(TooltipComponent);
-      expect(tooltip.header).toBe('First Name');
-      expect(tooltip.message).toBe('Enter your first name');
-    });
-
-    it('shows an asterisk when label is provided and required is true', () => {
-      spectator.setInput('label', 'First Name');
-      spectator.setInput('required', true);
-
-      expect(spectator.query('.label')).toHaveText('First Name*');
     });
 
     it('marks input element as readonly when readonly input is true', () => {
