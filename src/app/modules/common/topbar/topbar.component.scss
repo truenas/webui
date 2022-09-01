@@ -58,8 +58,9 @@
 
 .mobile-logo {
   display: none;
+  overflow: hidden;
   width: 100%;
-  
+
   @media (max-width: $breakpoint-tablet) {
     display: flex;
     place-content: center;
@@ -75,7 +76,7 @@
     left: 10px;
     position: absolute;
     top: 10px;
-    transform: scale(1.7); 
+    transform: scale(1.7);
   }
 
   .logotype {
