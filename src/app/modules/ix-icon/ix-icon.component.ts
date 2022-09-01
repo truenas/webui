@@ -99,7 +99,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
     } else {
       this.fontSet = '';
       this.svgIcon = '';
-      this.fontIcon = '';
+      this.fontIcon = iconName;
       this.iconLigature = iconName;
     }
   }
