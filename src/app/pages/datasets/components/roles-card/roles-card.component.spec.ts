@@ -67,6 +67,8 @@ describe('RolesCardComponent', () => {
           }],
           apps: [
             { name: 'app', path: 'apppath' },
+            { name: 'app', path: 'apppath' },
+            { name: 'app2', path: 'app2path' },
           ],
         },
       },
@@ -104,10 +106,16 @@ describe('RolesCardComponent', () => {
   });
 
   it('shows apps row', () => {
-    expect(
-      spectator.query('.apps.value'),
-    ).toHaveText(
-      'This dataset is used by one or more apps',
+    expect(spectator.query('.apps.value')).toHaveText(
+      'This dataset is used by: app, app2',
+    );
+  });
+
+  it('shows apps row when dataset has name `ix-applications`', () => {
+    spectator.component.dataset.name = 'root/ix-applications';
+    spectator.detectChanges();
+    expect(spectator.query('.apps.value')).toHaveText(
+      'This dataset is used to store Kubernetes config and other container related data',
     );
   });
 });

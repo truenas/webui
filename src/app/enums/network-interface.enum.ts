@@ -40,6 +40,7 @@ export enum XmitHashPolicy {
 export enum LinkState {
   Up = 'LINK_STATE_UP',
   Down = 'LINK_STATE_DOWN',
+  Unknown = 'LINK_STATE_UNKNOWN',
 }
 
 export enum LacpduRate {

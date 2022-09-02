@@ -24,7 +24,7 @@ export class ServiceSnmpComponent implements OnInit {
   form = this.fb.group({
     location: [''],
     contact: ['', Validators.email],
-    community: ['', Validators.pattern(/^[\w\_\-\.\s]*$/)],
+    community: ['', Validators.pattern(/^[\w_\-.\s]*$/)],
 
     v3: [false],
     v3_username: [''],

@@ -9,6 +9,7 @@
     {{ alertLevelLabel }}
   </h3>
   <h4 class="alert-message" [innerHTML]="alert.formatted"></h4>
+  <div *ngIf="isHa" class="alert-node">{{ alert.node }}</div>
   <div class="alert-time">
     {{ alert.datetime.$date | formatDateTime }}
     <ng-container *ngIf="timezone$ | async as timezone">({{ timezone }})</ng-container>

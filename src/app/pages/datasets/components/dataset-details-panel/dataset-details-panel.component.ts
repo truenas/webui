@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnInit, EventEmitter, Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,7 +8,9 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isDatasetHasShares, isIocageMounted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import {
+  isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
+} from 'app/pages/datasets/utils/dataset.utils';
 import { ModalService } from 'app/services';
 
 @UntilDestroy()
@@ -21,6 +23,8 @@ import { ModalService } from 'app/services';
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
+
+  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private modalService: ModalService,
@@ -39,7 +43,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
     || this.datasetHasChildrenWithShares
     || !!this.dataset.smb_shares?.length
     || !!this.dataset.nfs_shares?.length
-    || !!this.dataset.iscsi_shares?.length;
+    || !!this.dataset.iscsi_shares?.length
+    || this.dataset.name.endsWith(ixApplications);
   }
 
   get datasetHasChildrenWithShares(): boolean {
@@ -86,5 +91,9 @@ export class DatasetDetailsPanelComponent implements OnInit {
     const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent);
     addZvolComponent.setParent(this.dataset.id);
     addZvolComponent.isNew = true;
+  }
+
+  onCloseMobileDetails(): void {
+    this.closeMobileDetails.emit();
   }
 }

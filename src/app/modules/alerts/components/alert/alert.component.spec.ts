@@ -21,6 +21,7 @@ const dummyAlert = {
   datetime: {
     $date: 1641811015,
   },
+  node: 'Active Controller (A)',
   level: AlertLevel.Critical,
   formatted: 'CPU is on fire',
   dismissed: false,
@@ -76,6 +77,11 @@ describe('AlertComponent', () => {
 
   it('shows alert message', () => {
     expect(alert.messageElement).toHaveExactText('CPU is on fire');
+  });
+
+  it('shows an alert node on an HA system', () => {
+    spectator.setInput('isHa', true);
+    expect(alert.nodeElement).toHaveExactText('Active Controller (A)');
   });
 
   it('shows an alert icon', async () => {

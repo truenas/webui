@@ -1,0 +1,163 @@
+@import '~assets/styles/mixins/cards';
+@import '~assets/styles/scss-imports/splitview';
+
+.title {
+  $title-gap: 8px;
+  align-items: center;
+  color: var(--fg2);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: $title-gap;
+  max-width: 70%;
+  place-items: start;
+  width: 80%;
+
+  @media (max-width: $breakpoint-tablet) {
+    align-items: start;
+    flex-direction: column;
+    gap: unset;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: calc($breakpoint-hidden - 1px)) {
+    align-items: center;
+  }
+
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    align-items: start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .mobile-prefix {
+    align-items: center;
+    display: none;
+
+    @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: calc($breakpoint-hidden - 1px)) {
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: $breakpoint-hidden) {
+      display: flex;
+      max-width: 30%;
+      opacity: 0.85;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+
+  .prefix {
+    display: flex;
+    max-width: 30%;
+    opacity: 0.85;
+
+    @media (max-width: $breakpoint-hidden) {
+      display: none;
+    }
+  }
+
+  .full-path {
+    display: flex;
+    max-width: inherit;
+
+    @media  (max-width: $breakpoint-tablet) {
+      display: flex;
+      margin-left: 40px;
+      margin-top: 4px;
+      max-width: calc(100% - 48px);
+    }
+
+    @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      width: 100%;
+    }
+
+    @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
+      display: flex;
+    }
+
+    .device-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+  }
+}
+
+.cards {
+  @include details-cards();
+  height: 100%;
+  overscroll-behavior: contain;
+
+  @media (max-width: $breakpoint-tablet) {
+    overflow: hidden;
+  }
+
+  .scroll-window {
+    min-height: 400px;
+
+    @media (max-height: 800px) {
+      min-height: 600px;
+    }
+  }
+}
+
+.title-icon {
+  display: inline-block;
+  margin-left: 1px;
+  margin-right: 4px;
+
+  @media (max-width: calc($breakpoint-tablet - 1px)) {
+    margin: 0 8px 0 4px;
+  }
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  margin-bottom: 16px;
+  padding: 12px 12px 12px 0;
+  place-content: space-between;
+
+
+  @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
+    border-bottom: solid 1px var(--lines);
+    place-content: start;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    flex-direction: column;
+    place-content: start;
+  }
+
+  @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    padding-bottom: 0;
+  }
+
+  @media (min-width: $breakpoint-singlecolumn) {
+    align-items: center;
+  }
+
+  a.mobile-back-button:hover {
+    cursor: pointer;
+  }
+
+  a.mobile-back-button {
+    display: none;
+    @media (max-width: $breakpoint-hidden) {
+      display: inline-block;
+      padding: 0 4px 0 16px;
+      position: relative;
+      top: 1px;
+    }
+  }
+}

@@ -85,8 +85,8 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Sharing', breadcrumb: 'Sharing' },
   },
   {
-    path: 'storage',
-    loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
+    path: 'storage-old',
+    loadChildren: () => import('./pages/storage-old/storage-old.module').then((module) => module.StorageOldModule),
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {
@@ -95,8 +95,8 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {
-    path: 'storage2',
-    loadChildren: () => import('./pages/storage2/storage2.module').then((module) => module.Storage2Module),
+    path: 'storage',
+    loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
     data: { title: 'Storage', breadcrumb: 'Storage' },
   },
   {

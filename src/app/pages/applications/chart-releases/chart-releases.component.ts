@@ -11,7 +11,7 @@ import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
-import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
+import { ApplicationUserEvent, ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -43,7 +43,7 @@ import { ModalService } from 'app/services/modal.service';
 export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  @Output() updateTab = new EventEmitter();
+  @Output() updateTab: EventEmitter<ApplicationUserEvent> = new EventEmitter();
 
   filteredChartItems: ChartRelease[] = [];
   filterString = '';

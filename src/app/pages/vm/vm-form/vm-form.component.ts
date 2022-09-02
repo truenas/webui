@@ -236,6 +236,7 @@ export class VmFormComponent implements FormConfiguration {
     },
   ];
   private bootloader: FormSelectConfig;
+  private gpuVmPciSlots: string[];
 
   constructor(
     protected router: Router,
@@ -323,14 +324,16 @@ export class VmFormComponent implements FormConfiguration {
         }
       }
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
-      if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
+      if (finalIsolatedPciIds.length && gpusValue.length
+        && this.gpuVmPciSlots !== gpusValue && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
           if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
             prevSelectedGpus.push(gpu);
           }
         }
-        const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+        const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
+        const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
         gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
         if (prevSelectedGpus.length) {
           gpusConf.warnings += this.translate.instant(
@@ -402,8 +405,8 @@ export class VmFormComponent implements FormConfiguration {
         }
         return true;
       });
-      const gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.entityForm.formGroup.controls['gpus'].setValue(gpuVmPciSlots);
+      this.gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
+      this.entityForm.formGroup.controls['gpus'].setValue(this.gpuVmPciSlots);
     });
     return vmRes;
   }

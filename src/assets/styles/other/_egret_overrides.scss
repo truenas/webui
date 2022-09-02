@@ -1,3 +1,5 @@
+@import '~assets/styles/scss-imports/splitview';
+
 /* Universal Overrides for Egret */
 
 .hidden {
@@ -17,6 +19,40 @@ ix-topbar {
 
 ix-topbar {
   top: 0;
+
+  .topbar-mobile-footer {
+    align-items: center;
+    display: inline-flex;
+    place-content: end;
+    width: inherit;
+
+    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-min-mobile) {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      background-color: var(--topbar);
+      bottom: 0;
+      height: 48px;
+      left: 0;
+      padding: 0 16px;
+      place-content: space-around;
+      position: fixed;
+      width: 100%;
+    }
+  
+    .topbar-button-right {
+      margin: 0;
+      
+      @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+        margin: 4px;
+      }
+    }
+
+  }
+
 }
 
 div.mat-toolbar {
@@ -34,6 +70,11 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
 
 .xs .rightside-content-hold {
   padding: 0 !important;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding-bottom: 96px !important;
+  }
+
 }
 
 @keyframes silde_to_top {

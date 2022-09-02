@@ -76,7 +76,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
       .attr('height', height);
 
     // Arc Group
-    const arcGroup = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+    const arcGroup = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`);
 
     // Text Group
     const textGroup = svg.append('g').attr('class', 'text-group');
@@ -103,7 +103,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
     }
     // Subtitle as text
     subtext.style('fill', 'var(--fg2)')
-      .style('font-size', (this.config.fontSize / 2) + 'px')
+      .style('font-size', `${this.config.fontSize / 2}px`)
       .style('font-weight', 400)
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central');
@@ -147,7 +147,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
         .attrTween('d', this.load(this.percentToAngle(value)));
 
       d3.select('#gauge-' + this.chartId + ' text#text-value')
-        .text(value + this.config.units);
+        .text(String(value) + this.config.units);
     }
   }
 

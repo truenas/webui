@@ -100,7 +100,7 @@ export class PortalFormComponent {
     this.editingIscsiPortal = iscsiPortal;
 
     iscsiPortal.listen.forEach((listen, index) => {
-      const newListItem: any = {};
+      const newListItem = {} as IscsiInterface;
       this.ipAddressFromControls.forEach((fc) => {
         if (fc.name === 'ip') {
           const defaultValue = listen.ip;
@@ -119,9 +119,9 @@ export class PortalFormComponent {
 
   onAdd(): void {
     const newIndex = this.listen.length;
-    const newListItem: any = {};
+    const newListItem = {} as IscsiInterface;
     this.ipAddressFromControls.forEach((fc) => {
-      newListItem[fc.name] = fc.default;
+      newListItem[fc.name as keyof IscsiInterface] = fc.default;
       this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
     });
 
