@@ -1,24 +1,27 @@
 <td [attr.colspan]="colspan">
   <dl class="details">
-    <div class="details-row">
+    <div class="details-row" fxLayout="row">
       <dt>{{ 'Used' | translate }}:</dt>
-      <dd>
+      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+      <dd *ngIf="!isLoading">
         <ng-container *ngIf="snapshotInfo?.properties?.used?.parsed; else notAvailable">
           {{ +snapshotInfo.properties.used.parsed | filesize: { standard: "iec" } }}
         </ng-container>
       </dd>
     </div>
-    <div class="details-row">
+    <div class="details-row" fxLayout="row">
       <dt>{{ 'Date created' | translate }}:</dt>
-      <dd>
+      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+      <dd *ngIf="!isLoading">
         <ng-container *ngIf="snapshotInfo?.properties?.creation?.parsed?.$date; else notAvailable">
           {{ snapshotInfo.properties.creation.parsed.$date | formatDateTime }}
         </ng-container>
       </dd>
     </div>
-    <div class="details-row">
+    <div class="details-row" fxLayout="row">
       <dt>{{ 'Referenced' | translate }}:</dt>
-      <dd>
+      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+      <dd *ngIf="!isLoading">
         <ng-container *ngIf="snapshotInfo?.properties?.referenced?.parsed; else notAvailable">
           {{ +snapshotInfo.properties.referenced.parsed | filesize: { standard: "iec" } }}
         </ng-container>

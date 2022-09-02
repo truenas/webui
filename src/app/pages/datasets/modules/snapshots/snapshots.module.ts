@@ -17,6 +17,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -68,6 +69,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     AppCommonModule,
     MatSlideToggleModule,
     LayoutModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     SnapshotListComponent,

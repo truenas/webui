@@ -141,4 +141,23 @@ describe('SnapshotListComponent', () => {
     const tableData = await table.getCells(true);
     expect(tableData).toEqual(expectedRows);
   });
+
+  it('should show table with extra rows', async () => {
+    store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: true } as Preferences);
+    store$.overrideSelector(selectSnapshots, fakeZfsSnapshotDataSource);
+    store$.refreshState();
+
+    store$.select(selectSnapshots).subscribe((snapshots) => {
+      expect(snapshots).toEqual(fakeZfsSnapshotDataSource);
+    });
+
+    const table = await loader.getHarness(IxTableHarness);
+    const tableData = await table.getCells(true);
+    const expectedRows = [
+      ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced', ''],
+      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'expand_more'],
+      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'expand_more'],
+    ];
+    expect(tableData).toEqual(expectedRows);
+  });
 });

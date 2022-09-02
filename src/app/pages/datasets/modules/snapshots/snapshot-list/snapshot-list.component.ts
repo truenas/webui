@@ -21,6 +21,8 @@ import {
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
@@ -29,9 +31,12 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -54,6 +59,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       return of(this.emptyConfig);
     }),
   );
+  showExtraColumns: boolean;
   expandedRow: ZfsSnapshot;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -78,10 +84,12 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     title: this.translate.instant('Snapshots could not be loaded'),
   };
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
+  readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
   dataset = '';
 
   constructor(
+    private dialogService: DialogService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
@@ -95,11 +103,25 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.store$.dispatch(snapshotPageEntered());
+    this.getPreferences();
     this.getSnapshots();
   }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  getPreferences(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      map((preferences) => preferences.showSnapshotExtraColumns),
+      untilDestroyed(this),
+    ).subscribe((showExtraColumns) => {
+      this.store$.dispatch(snapshotPageEntered());
+      this.showExtraColumns = showExtraColumns;
+      this.displayedColumns = this.showExtraColumns ? this.defaultExtraColumns : this.defaultColumns;
+      this.cdr.markForCheck();
+    });
   }
 
   getSnapshots(): void {
@@ -115,6 +137,24 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getConfirmOptions(): ConfirmOptions {
+    if (this.showExtraColumns) {
+      return {
+        title: this.translate.instant(helptext.extra_cols.title_hide),
+        message: this.translate.instant(helptext.extra_cols.message_hide),
+        buttonMsg: this.translate.instant(helptext.extra_cols.button_hide),
+        hideCheckBox: true,
+      };
+    }
+
+    return {
+      title: this.translate.instant(helptext.extra_cols.title_show),
+      message: this.translate.instant(helptext.extra_cols.message_show),
+      buttonMsg: this.translate.instant(helptext.extra_cols.button_show),
+      hideCheckBox: true,
+    };
+  }
+
   createDataSource(snapshots: ZfsSnapshot[] = []): void {
     this.dataSource = new MatTableDataSource(snapshots);
     this.dataSource.sortingDataAccessor = (item, property) => {
@@ -123,6 +163,12 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
           return item.snapshot_name;
         case 'dataset':
           return item.dataset;
+        case 'used':
+          return item.properties ? item.properties.used.parsed.toString() : '';
+        case 'created':
+          return item.properties ? item.properties.creation.parsed.$date.toString() : '';
+        case 'referenced':
+          return item.properties ? item.properties.referenced.parsed.toString() : '';
       }
     };
     setTimeout(() => {
@@ -131,6 +177,13 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       this.cdr.markForCheck();
     }, 0);
     this.dataSource.filter = this.dataset;
+  }
+
+  toggleExtraColumns(event: MouseEvent): void {
+    event.preventDefault();
+    this.dialogService.confirm(this.getConfirmOptions())
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.store$.dispatch(snapshotExtraColumnsToggled()));
   }
 
   doAdd(): void {
