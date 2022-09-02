@@ -1,12 +1,11 @@
 <div class="full-width container has-tooltip">
 
-  <div *ngIf="label || tooltip" class="label-container">
-    <label class="label">
-      {{ label }}
-      <span *ngIf="required" class="required">*</span>
-    </label>
-    <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
-  </div>
+  <ix-label
+    *ngIf="label || tooltip"
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+  ></ix-label>
 
   <div class="input-container" [class.disabled]="isDisabled">
     <mat-select

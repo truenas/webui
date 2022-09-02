@@ -50,10 +50,8 @@ export class TargetFormComponent {
     map((initiators) => {
       const opts: Option[] = [];
       initiators.forEach((initiator) => {
-        const optionLabel = initiator.id
-          + ' ('
-          + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
-          + ')';
+        const initiatorsAllowed = initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString();
+        const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
         opts.push({ label: optionLabel, value: initiator.id });
       });
       return opts;

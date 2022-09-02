@@ -104,13 +104,11 @@
       </div>
     </div>
   </div>
-  <div class="details-container" [class.details-container-mobile]="showMobileDetails"
-    ixDetailsHeight
-    ixDetailsHeightParentClass="rightside-content-hold"
-    [hasConsoleFooter]="hasConsoleFooter"
-    [headerHeight]="headerHeight"
-    [footerHeight]="footerHeight"
-    >
+  <div 
+    class="details-container" 
+    [class.details-container-mobile]="showMobileDetails"
+    ixDetailsHeight="rightside-content-hold"
+  >
     <ix-disk-details-panel
       *ngIf="selectedNode"
       [topologyItem]="selectedNode | cast"

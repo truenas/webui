@@ -33,7 +33,7 @@ export class EntityWizardComponent implements OnInit {
   formGroup: UntypedFormGroup;
   showSpinner = false;
 
-  summaryValue: any;
+  summaryValue: unknown;
   summaryFieldConfigs: FieldConfig[] = [];
 
   saveSubmitText: string = this.translate.instant('Save');

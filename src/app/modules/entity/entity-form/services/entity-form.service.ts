@@ -237,7 +237,7 @@ export class EntityFormService {
           return NaN;
         }
       }
-      return num + ' ' + humanReableUnit;
+      return `${num} ${humanReableUnit}`;
     }
     return NaN;
   }

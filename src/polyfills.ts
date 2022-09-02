@@ -27,4 +27,4 @@ import 'core-js/es/reflect';
 import 'zone.js'; // Included with Angular CLI.
 
 // Used by chartist.js
-(window as any).global = window;
+Object.defineProperty(window, 'global', { value: window });

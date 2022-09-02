@@ -70,7 +70,7 @@ export class TableService {
       });
   }
 
-  delete(table: TableComponent, item: any, action?: string): void {
+  delete(table: TableComponent, item: Record<string, any>, action?: string): void {
     const deleteMsg: string = table.tableConf.confirmDeleteDialog?.isMessageComplete
       ? ''
       : this.getDeleteMessage(table, item, action);
@@ -103,15 +103,15 @@ export class TableService {
   }
 
   // generate delete msg
-  getDeleteMessage(table: TableComponent, item: any, action: string = T('Delete ')): string {
+  getDeleteMessage(table: TableComponent, item: Record<string, unknown>, action: string = T('Delete ')): string {
     let deleteMsg: string = T('Delete the selected item?');
     if (table.tableConf.deleteMsg) {
       deleteMsg = action + table.tableConf.deleteMsg.title;
-      let message = ' <b>' + item[table.tableConf.deleteMsg.key_props[0]];
+      let message = ' <b>' + String(item[table.tableConf.deleteMsg.key_props[0]]);
       if (table.tableConf.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < table.tableConf.deleteMsg.key_props.length; i++) {
           if (item[table.tableConf.deleteMsg.key_props[i]] !== '') {
-            message = message + ' - ' + item[table.tableConf.deleteMsg.key_props[i]];
+            message = message + ' - ' + String(item[table.tableConf.deleteMsg.key_props[i]]);
           }
         }
       }
@@ -122,18 +122,17 @@ export class TableService {
     return this.translate.instant(deleteMsg);
   }
 
-  // excute deletion of item
-  doDelete(table: TableComponent, item: any): void {
+  doDelete(table: TableComponent, item: Record<string, unknown>): void {
     if (table.tableConf.deleteCallIsJob) {
       this.loader.open();
       table.loaderOpen = true;
     }
 
-    let id;
+    let id: string | number;
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.id_prop) {
-      id = item[table.tableConf.deleteMsg.id_prop];
+      id = item[table.tableConf.deleteMsg.id_prop] as string | number;
     } else {
-      id = item.id;
+      id = item.id as string | number;
     }
     const params = table.tableConf.getDeleteCallParams ? table.tableConf.getDeleteCallParams(item, id) : [id];
 

@@ -354,8 +354,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const bgRgb = this.utils.convertToRgb((this.currentTheme[color as keyof Theme]) as string).rgb;
 
-      ds.backgroundColor = this.utils.rgbToString(bgRgb as any, 0.85);
-      ds.borderColor = this.utils.rgbToString(bgRgb as any);
+      ds.backgroundColor = this.utils.rgbToString(bgRgb, 0.85);
+      ds.borderColor = this.utils.rgbToString(bgRgb);
       datasets.push(ds);
     });
 
@@ -376,7 +376,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const rgb = valueType === 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
-    const rgba = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')';
+    const rgba = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
 
     return rgba;
   }
