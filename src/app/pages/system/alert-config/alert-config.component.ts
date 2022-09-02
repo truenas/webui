@@ -21,8 +21,8 @@ import { LayoutService } from 'app/services/layout.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-system-alert',
-  templateUrl: './alert.component.html',
-  styleUrls: ['./alert.component.scss'],
+  templateUrl: './alert-config.component.html',
+  styleUrls: ['./alert-config.component.scss'],
 })
 export class AlertConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;

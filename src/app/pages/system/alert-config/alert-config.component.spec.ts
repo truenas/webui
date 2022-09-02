@@ -5,7 +5,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AlertConfigComponent } from 'app/pages/system/alert/alert.component';
+import { AlertConfigComponent } from 'app/pages/system/alert-config/alert-config.component';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
 describe('AlertConfigComponent', () => {

@@ -47,6 +47,7 @@ import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-b
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
+import { AlertConfigComponent } from 'app/pages/system/alert-config/alert-config.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AwsSnsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
@@ -61,7 +62,6 @@ import { SlackServiceComponent } from 'app/pages/system/alert-service/alert-serv
 import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/snmp-trap-service/snmp-trap-service.component';
 import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
 import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { AlertConfigComponent } from 'app/pages/system/alert/alert.component';
 import { BootPoolAttachFormComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-form.component';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootPoolReplaceFormComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-form.component';

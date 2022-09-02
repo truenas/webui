@@ -11,7 +11,7 @@ import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/componen
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
-import { AlertConfigComponent } from './alert/alert.component';
+import { AlertConfigComponent } from './alert-config/alert-config.component';
 import { BootPoolAttachFormComponent } from './bootenv/boot-pool-attach/boot-pool-attach-form.component';
 import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
