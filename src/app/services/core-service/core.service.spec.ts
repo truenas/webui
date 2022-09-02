@@ -63,7 +63,7 @@ describe('CoreService', () => {
     spectator.service.register(payload1);
 
     for (let i = 0; i < 3; i++) {
-      const payload: Registration = { observerClass: mockObserver2, eventName: 'TestEvent' + i, sender: {} };
+      const payload: Registration = { observerClass: mockObserver2, eventName: `TestEvent${i}`, sender: {} };
       spectator.service.register(payload);
     }
 

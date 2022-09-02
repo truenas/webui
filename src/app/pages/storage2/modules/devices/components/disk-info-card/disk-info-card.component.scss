@@ -2,4 +2,9 @@
 
 .card {
   @include details-card();
+
+  ix-copy-btn {
+    height: 24px;
+    width: 24px;
+  }
 }

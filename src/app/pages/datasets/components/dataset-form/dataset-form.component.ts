@@ -771,9 +771,6 @@ export class DatasetFormComponent implements FormConfiguration {
 
   setBasicMode(isBasicMode: boolean): void {
     this.isBasicMode = isBasicMode;
-    if (this.isParentEncrypted && !this.isEncryptionInherited) {
-      _.find(this.fieldConfig, { name: 'encryption' }).isHidden = isBasicMode;
-    }
     _.find(this.fieldSets, { class: 'dataset' }).label = !isBasicMode;
     _.find(this.fieldSets, { class: 'refdataset' }).label = !isBasicMode;
     _.find(this.fieldSets, { name: 'quota_divider' }).divider = !isBasicMode;
@@ -970,6 +967,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.entityForm.setDisabled('inherit_encryption', true, true);
     } else {
       entityForm.setDisabled('share_type', false, false);
+      entityForm.setDisabled('encryption', this.isEncryptionInherited, this.isEncryptionInherited);
     }
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
@@ -1142,7 +1140,6 @@ export class DatasetFormComponent implements FormConfiguration {
                 }
               }
             });
-            _.find(this.fieldConfig, { name: 'encryption' }).isHidden = true;
             const inheritEncryptionControl = this.entityForm.formGroup.controls['inherit_encryption'];
             const encryptionControl = this.entityForm.formGroup.controls['encryption'];
             const encryptionTypeControl = this.entityForm.formGroup.controls['encryption_type'];
@@ -1157,26 +1154,22 @@ export class DatasetFormComponent implements FormConfiguration {
               this.isEncryptionInherited = inherit;
               if (inherit) {
                 allEncryptionFields.forEach((field) => {
-                  this.entityForm.setDisabled(field, inherit, inherit);
+                  this.entityForm.setDisabled(field, true, true);
                 });
-                _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
+                this.entityForm.setDisabled('encryption', true, true);
               }
               if (!inherit) {
-                this.entityForm.setDisabled('encryption_type', inherit, inherit);
-                this.entityForm.setDisabled('algorithm', inherit, inherit);
+                this.entityForm.setDisabled('encryption_type', false, false);
+                this.entityForm.setDisabled('algorithm', false, false);
                 if (this.parentHasPassphrase) { // keep it hidden if it passphrase
                   _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
                 }
-                const key = (this.encryptionType === 'key');
-                this.entityForm.setDisabled('passphrase', key, key);
-                this.entityForm.setDisabled('confirm_passphrase', key, key);
-                this.entityForm.setDisabled('pbkdf2iters', key, key);
-                this.entityForm.setDisabled('generate_key', !key, !key);
-                if (this.isParentEncrypted) {
-                  _.find(this.fieldConfig, { name: 'encryption' }).isHidden = this.isBasicMode;
-                } else {
-                  _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
-                }
+                const isKeyEncryptionType = (this.encryptionType === 'key');
+                this.entityForm.setDisabled('passphrase', isKeyEncryptionType, isKeyEncryptionType);
+                this.entityForm.setDisabled('confirm_passphrase', isKeyEncryptionType, isKeyEncryptionType);
+                this.entityForm.setDisabled('pbkdf2iters', isKeyEncryptionType, isKeyEncryptionType);
+                this.entityForm.setDisabled('generate_key', !isKeyEncryptionType, !isKeyEncryptionType);
+                this.entityForm.setDisabled('encryption', false, false);
               }
             });
             encryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {

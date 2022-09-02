@@ -29,7 +29,7 @@
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
             <span *ngIf="topologyState.data === mixedDev" class="warning">
-              <mat-icon class="pool-icon icon-warning">warning</mat-icon>
+              <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
             </span>
             <span class="vdev-value">{{topologyState.data}}</span>
           </div>
@@ -39,7 +39,7 @@
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
             <span *ngIf="topologyState.metadata === mixedDev" class="warning">
-              <mat-icon class="pool-icon icon-warning">warning</mat-icon>
+              <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
             </span>
             <span class="vdev-value">{{topologyState.metadata}}</span>
           </div>
@@ -49,7 +49,7 @@
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
             <span *ngIf="topologyState.log === mixedDev" class="warning">
-              <mat-icon class="pool-icon icon-warning">warning</mat-icon>
+              <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
             </span>
             <span class="vdev-value">{{topologyState.log}}</span>
           </div>
@@ -59,7 +59,7 @@
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
             <span *ngIf="topologyState.cache === mixedDev" class="warning">
-              <mat-icon class="pool-icon icon-warning">warning</mat-icon>
+              <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
             </span>
             <span class="vdev-value">{{topologyState.cache}}</span>
           </div>
@@ -69,7 +69,7 @@
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
             <span *ngIf="topologyState.spare === mixedDev" class="warning">
-              <mat-icon class="pool-icon icon-warning">warning</mat-icon>
+              <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
             </span>
             <span class="vdev-value">{{topologyState.spare}}</span>
           </div>
@@ -79,7 +79,7 @@
           <span class="loader-caption" *ngIf="loading"></span>
           <div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center">
             <span *ngIf="topologyState.dedup === mixedDev" class="warning">
-              <mat-icon class="pool-icon icon-warning">warning</mat-icon>
+              <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
             </span>
             <span class="vdev-value">{{topologyState.dedup}}</span>
           </div>

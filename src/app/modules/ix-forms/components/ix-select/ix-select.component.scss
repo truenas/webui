@@ -10,10 +10,6 @@
   width: 100%;
 }
 
-.tooltip {
-  margin: 0 0 0 8px;
-}
-
 .link {
   color: var(--primary);
   cursor: pointer;
@@ -45,19 +41,6 @@
       opacity: 1;
     }
   }
-}
-
-.label-container {
-  align-items: center;
-  display: flex;
-  margin-bottom: 1px;
-  margin-left: 1px;
-  min-height: 24px;
-}
-
-.label {
-  display: inline-flex;
-  font-size: x-small;
 }
 
 .loader {

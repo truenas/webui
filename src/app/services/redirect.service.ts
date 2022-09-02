@@ -23,7 +23,7 @@ export class RedirectService {
   ) {}
 
   openWindow(url: string, target?: string): Window {
-    if (!url.includes('http:\/\/')) {
+    if (!url.includes('http://')) {
       return window.open(url, target);
     }
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {

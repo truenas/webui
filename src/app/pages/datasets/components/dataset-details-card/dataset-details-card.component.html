@@ -53,13 +53,18 @@
         </span>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Path:' | translate }} </span>
+        <span class="label">{{ 'Path' | translate }}:</span>
         <span *ngIf="!isLoading"
           [matTooltip]="dataset.name"
           matTooltipPosition="above"
           class="value dataset-path">
           {{ dataset.name }}
         </span>
+        <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
+      </div>
+      <div class="details-item" *ngIf="!isLoading && hasComments">
+        <span class="label">{{ 'Comments' | translate }}:</span>
+        <span class="value dataset-comments">{{ dataset.comments.value }}</span>
       </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">

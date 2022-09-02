@@ -56,8 +56,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   hasConf = true;
   wsResponse: any;
   wsfg: AbstractControl;
-  wsResponseIdx: any;
-  queryResponse: any;
   saveSubmitText: string = this.translate.instant('Save');
   successMessage: string = this.translate.instant('Settings saved.');
 
@@ -228,7 +226,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.submitFunction = this.editCall;
             // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
-            this.resourceName = this.resourceName + this.pk + '/';
+            this.resourceName = `${this.resourceName}${this.pk}/`;
           }
         } else {
           if (this.conf.saveSubmitText === undefined) {
@@ -311,7 +309,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               }
             }
           } else {
-            this.queryResponse = res;
             if (res[0]) {
               this.wsResponse = res[0];
             } else {
@@ -331,7 +328,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             } else {
               for (const key in this.wsResponse) {
                 this.wsfg = this.formGroup.controls[key];
-                this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
@@ -583,7 +579,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  setValue(name: string, value: any): void {
+  setValue(name: string, value: unknown): void {
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 

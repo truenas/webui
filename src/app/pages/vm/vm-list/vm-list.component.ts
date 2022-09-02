@@ -15,7 +15,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { VirtualizationDetails, VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VirtualizationDetails, VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -83,7 +83,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     },
   };
 
-  protected wsMethods: { [name: string]: ApiMethod } = {
+  protected wsMethods = {
     start: 'vm.start',
     restart: 'vm.restart',
     stop: 'vm.stop',
@@ -91,7 +91,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     update: 'vm.update',
     clone: 'vm.clone',
     getAvailableMemory: 'vm.get_available_memory',
-  };
+  } as const;
 
   availableMemory: string;
   memTitle = wizardHelptext.vm_mem_title;
@@ -287,7 +287,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     if (method === this.wsMethods.stop) {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });
-      this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
+      this.dialogRef.componentInstance.setCall(method, [params[0], params[1]] as VmStopParams);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         if (updateTable) {
@@ -308,7 +308,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       });
     } else {
       this.loader.open();
-      this.ws.call(method, params).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call(method, params as any).pipe(untilDestroyed(this)).subscribe(
         () => {
           if (updateTable) {
             this.entityList.getData();

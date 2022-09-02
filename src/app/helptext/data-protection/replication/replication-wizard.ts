@@ -66,7 +66,7 @@ export default {
   encryption_key_passphrase_tooltip: T('Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.'),
 
   encryption_key_format_placeholder: T('Encryption Key Format'),
-  encryption_key_format_tooltip: T('Choose between a <i>Hex</i> \(base 16 numeral\) or <i>Passphrase</i> \(alphanumeric\) style encryption key.'),
+  encryption_key_format_tooltip: T('Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> (alphanumeric) style encryption key.'),
 
   encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
   encryption_key_location_truenasdb_tooltip: T('Set to store the encryption key in the TrueNAS database.'),

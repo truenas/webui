@@ -1,10 +1,11 @@
 <div class="container">
   <div class="label-container">
-    <label *ngIf="label" class="label">
-      {{label}}
-      <span *ngIf="required" class="required">*</span>
-    </label>
-    <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
+    <ix-label
+      *ngIf="label || tooltip"
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="required"
+    ></ix-label>
     <button
       *ngIf="canAdd"
       mat-button

@@ -23,6 +23,7 @@
       <span class="label">{{ 'Serial' | translate }}:</span>
       <span *ngIf="disk?.serial; else notAvailable" class="value">
         {{ disk.serial }}
+        <ix-copy-btn [text]="disk.serial"></ix-copy-btn>
       </span>
     </div>
     <div class="details-item">

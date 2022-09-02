@@ -3,6 +3,33 @@
 // Write a bunch of pure functions above
 // and add it to our commands below
 
+export interface CoreEvent {
+  name: string;
+  sender?: unknown;
+  data?: unknown;
+}
+
+export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
+
+export interface ReportingData {
+  end: number;
+  identifier: string;
+  legend: string[];
+  name: string;
+  start: number;
+  step: number;
+  data: number[][];
+  aggregations: {
+    [key in ReportingAggregationKeys]: string[];
+  };
+}
+
+export interface Command {
+  command: string; // Use '|' or '--pipe' to use the output of previous command as input
+  input: unknown;
+  options?: unknown[]; // Function parameters
+}
+
 const maxDecimals = (input: number, max?: number): number => {
   if (!max) {
     max = 2;
@@ -141,7 +168,7 @@ function convertAggregations(input: any, labelY?: string): any {
   return output;
 }
 
-function optimizeLegend(input: any): any {
+function optimizeLegend(input: ReportingData): any {
   const output: { legend: string[] } = input;
   // Do stuff
   switch (input.name) {
@@ -239,8 +266,8 @@ function optimizeLegend(input: any): any {
   return output;
 }
 
-function avgCpuTempReport(report: any): any {
-  const output = { ...report };
+function avgCpuTempReport(report: ReportingData): any {
+  const output = { ...report } as any;
   // Handle Data
   output.data = avgFromReportData(report.data);
 
@@ -278,37 +305,37 @@ const commands = {
     console.log(output);
     return output;
   },
-  avgFromReportData: (input: any) => {
+  avgFromReportData: (input: number[][]) => {
     const output = avgFromReportData(input);
     return output;
   },
-  optimizeLegend: (input: any) => {
+  optimizeLegend: (input: ReportingData) => {
     const output = optimizeLegend(input);
     return output;
   },
-  convertAggregations: (input: any, options?: any) => {
+  convertAggregations: (input: any, options?: [string]) => {
     const output = options ? convertAggregations(input, ...options) : input;
     if (!options) {
       console.warn('You must specify a label to parse. (Usually the Y axis label). Returning input value instead');
     }
     return output;
   },
-  avgCpuTempReport: (input: any) => {
+  avgCpuTempReport: (input: ReportingData) => {
     const output = avgCpuTempReport(input);
     return output;
   },
-  arrayAvg: (input: any) => {
+  arrayAvg: (input: number[]) => {
     const output = arrayAvg(input);
     return output;
   },
-  maxDecimals: (input: any, options?: any) => {
+  maxDecimals: (input: number, options?: [number]) => {
     const output = options ? maxDecimals(input, ...options) : maxDecimals(input);
     return output;
   },
 };
 
-function processCommands(list: any[]): any {
-  let output: any;
+function processCommands(list: Command[]): unknown {
+  let output: unknown;
   list.forEach((item) => {
     const input = item.input === '--pipe' || item.input === '|' ? output : item.input;
     output = item.options
@@ -319,7 +346,7 @@ function processCommands(list: any[]): any {
   return output;
 }
 
-function emit(evt: any): void {
+function emit(evt: CoreEvent): void {
   postMessage(evt);
 }
 

@@ -17,8 +17,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: any;
-  options?: any[]; // Function parameters
+  input: unknown;
+  options?: unknown[]; // Function parameters
 }
 
 export enum ReportingDatabaseError {

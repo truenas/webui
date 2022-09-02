@@ -992,7 +992,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (this.cloudcredentialService.getByte(sublimitArr[1]) === -1) {
           _.find(this.fieldConfig, { name: 'bwlimit' }).hasErrors = true;
           _.find(this.fieldConfig, { name: 'bwlimit' }).errors = 'Invalid bandwidth ' + sublimitArr[1];
-          (this.formGroup.controls['bwlimit'] as any).setErrors('Invalid bandwidth ' + sublimitArr[1]);
+          this.formGroup.controls['bwlimit'].setErrors({
+            custom: 'Invalid bandwidth ' + sublimitArr[1],
+          });
         } else {
           (sublimitArr[1] as any) = this.cloudcredentialService.getByte(sublimitArr[1]);
         }

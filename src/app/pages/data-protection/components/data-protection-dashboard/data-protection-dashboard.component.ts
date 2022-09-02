@@ -82,6 +82,7 @@ SmartTestTaskUi
 export class DataProtectionDashboardComponent implements OnInit {
   dataCards: TaskCard[] = [];
   disks: Disk[] = [];
+  jobStates: { [jobId: string]: string } = {};
 
   constructor(
     private ws: WebSocketService,
@@ -109,16 +110,35 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCardData();
+    this.refreshAllTables();
 
-    this.refreshTables();
     merge(
-      this.modalService.refreshTable$,
       this.modalService.onClose$,
       this.slideInService.onClose$,
     )
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.refreshTables();
+      .subscribe(({ modalType }) => {
+        switch (modalType) {
+          case ReplicationFormComponent:
+          case ReplicationWizardComponent:
+            this.refreshTable(TaskCardId.Replication);
+            break;
+          case CloudsyncFormComponent:
+            this.refreshTable(TaskCardId.CloudSync);
+            break;
+          case ScrubTaskFormComponent:
+            this.refreshTable(TaskCardId.Scrub);
+            break;
+          case SnapshotTaskComponent:
+            this.refreshTable(TaskCardId.Snapshot);
+            break;
+          case RsyncTaskFormComponent:
+            this.refreshTable(TaskCardId.Rsync);
+            break;
+          case SmartTaskFormComponent:
+            this.refreshTable(TaskCardId.Smart);
+            break;
+        }
       });
 
     this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
@@ -404,7 +424,15 @@ export class DataProtectionDashboardComponent implements OnInit {
     ];
   }
 
-  refreshTables(): void {
+  refreshTable(taskCardId: TaskCardId): void {
+    this.dataCards.forEach((card) => {
+      if (card.name === taskCardId) {
+        card.tableConf.tableComponent.getData();
+      }
+    });
+  }
+
+  refreshAllTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf.tableComponent) {
         card.tableConf.tableComponent.getData();
@@ -446,7 +474,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
-          this.refreshTables();
+          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+            this.refreshTable(TaskCardId.CloudSync);
+          }
+          this.jobStates[job.id] = job.state;
         });
       }
 
@@ -475,7 +506,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state.state = job.state;
           task.job = job;
-          this.refreshTables();
+          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+            this.refreshTable(TaskCardId.Replication);
+          }
+          this.jobStates[job.id] = job.state;
         });
       }
       return task;
@@ -542,7 +576,10 @@ export class DataProtectionDashboardComponent implements OnInit {
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
-          this.refreshTables();
+          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+            this.refreshTable(TaskCardId.Rsync);
+          }
+          this.jobStates[job.id] = job.state;
         });
       }
 
@@ -582,7 +619,10 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
-                        this.refreshTables();
+                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+                          this.refreshTable(TaskCardId.Replication);
+                        }
+                        this.jobStates[job.id] = job.state;
                       });
                   },
                   (err) => {
@@ -603,7 +643,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           dialog
             .afterClosed()
             .pipe(untilDestroyed(this))
-            .subscribe(() => this.refreshTables());
+            .subscribe(() => this.refreshTable(TaskCardId.Replication));
         },
       },
     ];
@@ -641,7 +681,10 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
-                        this.refreshTables();
+                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+                          this.refreshTable(TaskCardId.CloudSync);
+                        }
+                        this.jobStates[job.id] = job.state;
                       });
                   },
                   (err) => {
@@ -711,7 +754,10 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
-                        this.refreshTables();
+                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+                          this.refreshTable(TaskCardId.CloudSync);
+                        }
+                        this.jobStates[job.id] = job.state;
                       });
                   },
                   (err) => {
@@ -732,7 +778,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           dialog
             .afterClosed()
             .pipe(untilDestroyed(this))
-            .subscribe(() => this.refreshTables());
+            .subscribe(() => this.refreshTable(TaskCardId.CloudSync));
         },
       },
     ];
@@ -770,7 +816,10 @@ export class DataProtectionDashboardComponent implements OnInit {
                       .subscribe((job: Job) => {
                         row.state = { state: job.state };
                         row.job = job;
-                        this.refreshTables();
+                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+                          this.refreshTable(TaskCardId.Rsync);
+                        }
+                        this.jobStates[job.id] = job.state;
                       });
                   },
                   (err) => {

@@ -84,10 +84,6 @@ export class VdevComponent implements OnInit {
     return helptext.vdev_types[this.type as keyof typeof helptext.vdev_types];
   }
 
-  getTitle(): string {
-    return 'Vdev ' + (this.index + 1) + ': ' + this.type.charAt(0).toUpperCase() + this.type.slice(1);
-  }
-
   addDisk(disk: ManagerDisk): void {
     this.disks.push(disk);
     this.disks = [...this.disks];
