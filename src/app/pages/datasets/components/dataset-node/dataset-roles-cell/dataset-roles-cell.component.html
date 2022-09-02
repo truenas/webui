@@ -6,7 +6,7 @@
   <ix-icon name="apps" *ngIf="isApplications" [matTooltip]="'This dataset is used to store Kubernetes config and other container related data' | translate"></ix-icon>
 </ng-container>
 <ng-container *ngIf="dataset.vms?.length">
-  <ix-icon name="computer" [matTooltip]="'This dataset is used by VM' | translate"></ix-icon>
+  <ix-icon name="computer" [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmsNames }"></ix-icon>
 </ng-container>
 <ng-container *ngIf="hasShares">
   <ix-icon name="share" [matTooltip]="'This dataset has children with shares' | translate"></ix-icon>
