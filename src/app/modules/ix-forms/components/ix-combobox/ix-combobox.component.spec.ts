@@ -11,6 +11,7 @@ import { SimpleComboboxProvider } from 'app/modules/ix-forms/classes/simple-comb
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 class FakeProvider implements IxComboboxProvider {
@@ -38,6 +39,7 @@ describe('IxComboboxComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
+      MockComponent(IxLabelComponent),
       MockComponent(TooltipComponent),
     ],
   });
@@ -49,32 +51,16 @@ describe('IxComboboxComponent', () => {
   });
 
   describe('rendering', () => {
-    it('renders a hint when it is provided', () => {
-      spectator.setInput('hint', 'Capital letters only');
-
-      expect(spectator.query('mat-hint')).toHaveText('Capital letters only');
-    });
-
-    it('renders a label when it is provided', () => {
-      spectator.setInput('label', 'First Name');
-
-      expect(spectator.query('.label')).toHaveText('First Name');
-    });
-
-    it('renders a tooltip next when it and the labels are provided', () => {
-      spectator.setInput('tooltip', 'Enter your first name');
-      spectator.setInput('label', 'First Name');
-
-      const tooltip = spectator.query(TooltipComponent);
-      expect(tooltip.header).toBe('First Name');
-      expect(tooltip.message).toBe('Enter your first name');
-    });
-
-    it('shows an asterisk when label is provided and required is true', () => {
-      spectator.setInput('label', 'First Name');
+    it('renders a label and passes properties to it', () => {
+      spectator.setInput('label', 'Apply To Group');
       spectator.setInput('required', true);
+      spectator.setInput('tooltip', 'Select group to delete');
 
-      expect(spectator.query('.label')).toHaveText('First Name *');
+      const label = spectator.query(IxLabelComponent);
+      expect(label).toExist();
+      expect(label.label).toBe('Apply To Group');
+      expect(label.required).toBe(true);
+      expect(label.tooltip).toBe('Select group to delete');
     });
   });
 

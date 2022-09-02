@@ -3,6 +3,7 @@ import {
 } from '@angular/cdk/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatSelectHarness } from '@angular/material/select/testing';
+import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 
@@ -24,8 +25,11 @@ export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxF
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor('label')();
-    return label.text({ exclude: '.required' });
+    const label = await this.locatorForOptional(IxLabelHarness)();
+    if (!label) {
+      return '';
+    }
+    return label.getLabel();
   }
 
   async getValue(): Promise<string> {

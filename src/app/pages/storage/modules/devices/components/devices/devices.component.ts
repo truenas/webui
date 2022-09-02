@@ -20,7 +20,6 @@ import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-
 import {
   Disk, isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
-import { footerHeight, headerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
@@ -46,10 +45,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
-
-  hasConsoleFooter = false;
-  readonly headerHeight = headerHeight;
-  readonly footerHeight = footerHeight;
 
   readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => Boolean(node.children?.length);
   readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
@@ -78,13 +73,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     this.devicesStore.loadNodes(this.poolId);
     this.listenForRouteChanges();
     this.setupTree();
-
-    this.ws
-      .call('system.advanced.config')
-      .pipe(untilDestroyed(this))
-      .subscribe((advancedConfig) => {
-        this.hasConsoleFooter = advancedConfig.consolemsg;
-      });
   }
 
   ngAfterViewInit(): void {

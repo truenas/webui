@@ -8,10 +8,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatChipListHarness } from '@angular/material/chips/testing';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
 describe('IxChipsComponent', () => {
@@ -33,6 +34,7 @@ describe('IxChipsComponent', () => {
     ],
     declarations: [
       IxErrorsComponent,
+      MockComponent(IxLabelComponent),
     ],
   });
 
@@ -49,28 +51,16 @@ describe('IxChipsComponent', () => {
     spectator.fixture.detectChanges();
   });
 
-  it('shows an asterisk when label is provided and required is true', () => {
+  it('renders a label and passes properties to it', () => {
     spectator.setInput('label', 'Apply To Groups');
     spectator.setInput('required', true);
+    spectator.setInput('tooltip', 'Select local groups.');
 
-    expect(spectator.query('.label')).toHaveText('Apply To Groups *');
-  });
-
-  it('renders a hint when it is provided', () => {
-    spectator.setInput('hint', 'Separate values with commas');
-
-    expect(spectator.query('mat-hint')).toHaveText('Separate values with commas');
-  });
-
-  it('renders a tooltip next when it and the labels are provided', () => {
-    spectator.setInput('label', 'Apply To Groups');
-    spectator.setInput('tooltip', 'Enter the location of the system.');
-    const tooltipEl = spectator.query('ix-tooltip');
-    const tooltip = spectator.query(TooltipComponent);
-
-    expect(tooltipEl).toBeTruthy();
-    expect(tooltip.header).toBe('Apply To Groups');
-    expect(tooltip.message).toBe('Enter the location of the system.');
+    const label = spectator.query(IxLabelComponent);
+    expect(label).toExist();
+    expect(label.label).toBe('Apply To Groups');
+    expect(label.required).toBe(true);
+    expect(label.tooltip).toBe('Select local groups.');
   });
 
   it('after creating the chip, the input field should be cleared', async () => {

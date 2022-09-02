@@ -1,6 +1,7 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
 import * as cronParser from 'cron-parser';
+import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
 import { SchedulerModalHarness } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.harness';
@@ -22,8 +23,11 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor('label')();
-    return label.text({ exclude: '.required' });
+    const label = await this.locatorForOptional(IxLabelHarness)();
+    if (!label) {
+      return '';
+    }
+    return label.getLabel();
   }
 
   async openCustomModal(): Promise<void> {
