@@ -546,6 +546,8 @@
   "Offline disk {name}?": "",
   "Ok": "",
   "One time snapshot of {dataset}": "",
+  "One-Time Password (if necessary)": "",
+  "One-Time Password if two factor authentication is enabled.": "",
   "Online disk {name}?": "",
   "Only appears if <i>Device</i> is selected. Select the unused zvol or zvol snapshot.": "",
   "Only first {number} examples are shown.": "",
