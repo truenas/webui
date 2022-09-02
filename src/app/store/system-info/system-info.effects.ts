@@ -30,6 +30,7 @@ export class SystemInfoEffects {
   loadSystemFeatures = createEffect(() => this.actions$.pipe(
     ofType(systemInfoLoaded),
     switchMap(({ systemInfo }) => {
+      // TODO: Remove sessionStorage.
       window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
       const features: SystemFeatures = {
         HA: false,
@@ -67,6 +68,7 @@ export class SystemInfoEffects {
 
           const enabledText = failoverDisabledReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
 
+          // TODO: Do something about this.
           window.sessionStorage.setItem('ha_status', haEnabled.toString());
           return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });
         }),

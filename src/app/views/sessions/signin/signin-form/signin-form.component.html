@@ -1,0 +1,32 @@
+<form [formGroup]="form" (submit)="onSubmit()">
+  <ix-input
+    formControlName="username"
+    [label]="'Username' | translate"
+    [required]="true"
+    prefixIcon="person"
+  ></ix-input>
+
+  <ix-input
+    formControlName="password"
+    [label]="'Password' | translate"
+    [required]="true"
+    type="password"
+    prefixIcon="lock"
+  ></ix-input>
+
+  <ix-input
+    *ngIf="hasTwoFactor"
+    formControlName="otp"
+    [label]="'Two-Factor Authentication Code' | translate"
+    [required]="true"
+    prefixIcon="phonelink"
+  ></ix-input>
+
+  <button
+    class="submit-button"
+    mat-button
+    type="submit"
+    [disabled]="!form.valid"
+    color="primary"
+  >{{ 'Log in' | translate }}</button>
+</form>

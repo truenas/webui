@@ -50,6 +50,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { CopyrightLineComponent } from './copyright-line/copyright-line.component';
 
 @NgModule({
   imports: [
@@ -104,6 +105,7 @@ import { LocaleService } from 'app/services/locale.service';
     SearchInputComponent,
     TopbarComponent,
     UpdateDialogComponent,
+    CopyrightLineComponent,
   ],
   providers: [
     LanguageService,
@@ -111,6 +113,7 @@ import { LocaleService } from 'app/services/locale.service';
   ],
   exports: [
     SearchInputComponent,
+    CopyrightLineComponent,
   ],
 })
 export class AppCommonModule {}

@@ -5,6 +5,7 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
+  BehaviorSubject,
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
 import { filter, share, switchMap } from 'rxjs/operators';
@@ -19,42 +20,46 @@ import { Job } from 'app/interfaces/job.interface';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  private authStatus$: Subject<boolean>;
-  onCloseSubject$: Subject<boolean>;
-  onOpenSubject$: Subject<boolean>;
-  pendingCalls: Map<string, {
+  private authStatus$ = new Subject<boolean>();
+  onCloseSubject$ = new Subject<boolean>();
+
+  socket: WebSocket;
+  isConnected$ = new BehaviorSubject(false);
+  loggedIn = false;
+  @LocalStorage() token: string;
+
+  redirectUrl = '';
+  shuttingdown = false;
+
+  private pendingMessages: unknown[] = [];
+  private pendingCalls = new Map<string, {
     method: ApiMethod;
     args: unknown;
     observer: Subscriber<unknown>;
-  }>;
-  pendingSubs: {
+  }>();
+  private pendingSubs: {
     [name: string]: {
       observers: {
         [id: string]: Subscriber<unknown>;
       };
     };
   } = {};
-  pendingMessages: unknown[] = [];
-  socket: WebSocket;
-  connected = false;
-  loggedIn = false;
-  @LocalStorage() token: string;
-  redirectUrl = '';
-  shuttingdown = false;
 
-  protocol: string;
-  remote: string;
+  private protocol: string;
+  private remote: string;
 
-  subscriptions = new Map<string, Observer<unknown>[]>();
+  private subscriptions = new Map<string, Observer<unknown>[]>();
 
-  constructor(protected router: Router) {
-    this.authStatus$ = new Subject<boolean>();
-    this.onOpenSubject$ = new Subject();
-    this.onCloseSubject$ = new Subject();
-    this.pendingCalls = new Map();
+  constructor(
+    protected router: Router,
+  ) {
     this.protocol = window.location.protocol;
     this.remote = environment.remote;
     this.connect();
+  }
+
+  get connected(): boolean {
+    return this.isConnected$.value;
   }
 
   get authStatus(): Observable<boolean> {
@@ -78,7 +83,6 @@ export class WebSocketService {
   }
 
   onopen(): void {
-    this.onOpenSubject$.next(true);
     this.send({ msg: ApiEventMessage.Connect, version: '1', support: ['1'] });
   }
 
@@ -91,7 +95,7 @@ export class WebSocketService {
   }
 
   onclose(): void {
-    this.connected = false;
+    this.isConnected$.next(false);
     this.onCloseSubject$.next(true);
     setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
@@ -132,7 +136,7 @@ export class WebSocketService {
         call.observer.complete();
       }
     } else if (data.msg === ApiEventMessage.Connected) {
-      this.connected = true;
+      this.isConnected$.next(true);
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {

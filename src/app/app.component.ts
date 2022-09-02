@@ -6,7 +6,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { WebSocketService } from 'app/services';
-import productText from './helptext/product';
 import { SystemGeneralService } from './services';
 
 @UntilDestroy()
@@ -21,8 +20,7 @@ export class AppComponent {
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
   ) {
-    const product = productText.product.trim();
-    this.title.setTitle(product + ' - ' + window.location.hostname);
+    this.title.setTitle('TrueNAS - ' + window.location.hostname);
     const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
     const savedProductType = window.localStorage.product_type;
