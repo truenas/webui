@@ -1,0 +1,11 @@
+.class-row {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  .class-label {
+    align-items: center;
+    display: flex;
+    margin-top: 25px;
+  }
+}
