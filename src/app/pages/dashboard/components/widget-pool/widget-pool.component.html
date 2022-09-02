@@ -34,9 +34,9 @@
           </h3>
 
           <div class="controls">
-            <button
+            <a
               mat-icon-button
-              (click)="router.navigate(['storage/status/' + poolState.id.toString()])"
+              [routerLink]="['/storage', 'status', poolState.id]"
               [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus"
             >
               <mat-icon
@@ -47,7 +47,7 @@
                 aria-label="Configure Pools"
               >
               </mat-icon>
-            </button>
+            </a>
 
             <a
               mat-icon-button
