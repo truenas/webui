@@ -9,6 +9,7 @@ import helptext from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -153,13 +154,10 @@ describe('KubernetesSettingsComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({ 'Validate host path': false });
 
+    expect(spectator.query(IxWarningComponent).message).toEqual(helptext.kubForm.validateHostPathWarning.modalWarning);
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext.kubForm.reInit.title,
-      message: helptext.kubForm.reInit.modalWarning,
-    });
 
     expect(ws.job).toHaveBeenCalledWith('kubernetes.update', [{
       node_ip: '10.123.45.67',

@@ -68,6 +68,11 @@ export class KubernetesSettingsComponent implements OnInit {
 
   private oldConfig: KubernetesConfig;
 
+  get validateHostPathWarning(): string {
+    return !this.form.controls.validate_host_path.value
+      ? helptext.kubForm.validateHostPathWarning.modalWarning : '';
+  }
+
   constructor(
     protected ws: WebSocketService,
     private loader: AppLoaderService,
@@ -106,33 +111,30 @@ export class KubernetesSettingsComponent implements OnInit {
   onSubmit(): void {
     const { enable_container_image_update: enableContainerImageUpdate, ...values } = this.form.value;
 
-    this.showReInitConfirm(values).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.showValidateHostPathConfirm(values).pipe(
-        filter(Boolean),
-        switchMap(() => {
-          this.loader.open();
-          return forkJoin([
-            this.ws.job('kubernetes.update', [values]),
-            this.appService.updateContainerConfig(enableContainerImageUpdate),
-          ]).pipe(
-            tap(([job]) => {
-              if (job.state !== JobState.Success) {
-                return;
-              }
-              this.loader.close();
-              this.slideInService.close();
-            }),
-            catchError((error) => {
-              this.loader.close();
-
-              this.errorHandler.handleWsFormError(error, this.form);
-              return EMPTY;
-            }),
-          );
-        }),
-        untilDestroyed(this),
-      ).subscribe();
-    });
+    this.showReInitConfirm(values).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.loader.open();
+        return forkJoin([
+          this.ws.job('kubernetes.update', [values]),
+          this.appService.updateContainerConfig(enableContainerImageUpdate),
+        ]).pipe(
+          tap(([job]) => {
+            if (job.state !== JobState.Success) {
+              return;
+            }
+            this.loader.close();
+            this.slideInService.close();
+          }),
+          catchError((error) => {
+            this.loader.close();
+            this.errorHandler.handleWsFormError(error, this.form);
+            return EMPTY;
+          }),
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   private wereReInitFieldsChanged(newValues: Partial<KubernetesConfigUpdate>): boolean {
@@ -146,15 +148,6 @@ export class KubernetesSettingsComponent implements OnInit {
       ? this.dialogService.confirm({
         title: helptext.kubForm.reInit.title,
         message: helptext.kubForm.reInit.modalWarning,
-      })
-      : of(true);
-  }
-
-  private showValidateHostPathConfirm(values: Partial<KubernetesConfigUpdate>): Observable<boolean> {
-    return !values.validate_host_path
-      ? this.dialogService.confirm({
-        title: helptext.kubForm.validateHostPathWarning.title,
-        message: helptext.kubForm.validateHostPathWarning.modalWarning,
       })
       : of(true);
   }

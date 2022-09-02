@@ -42,6 +42,7 @@ import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
+import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -78,6 +79,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
   declarations: [
     IxInputComponent,
     IxErrorsComponent,
+    IxWarningComponent,
     IxSelectComponent,
     IxFieldsetComponent,
     IxSlideInComponent,
@@ -100,6 +102,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
   ],
   exports: [
     IxErrorsComponent,
+    IxWarningComponent,
     IxInputComponent,
     IxSelectComponent,
     IxSlideInComponent,
