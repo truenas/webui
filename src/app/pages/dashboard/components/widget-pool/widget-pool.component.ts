@@ -20,9 +20,10 @@ import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { getAllDiskNames } from 'app/pages/storage/modules/disks/utils/disks.utils';
 import { WebSocketService } from 'app/services';
 
 interface Slide {
@@ -133,34 +134,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get allDiskNames(): string[] {
-    if (!this.poolState || !this.poolState.topology) {
-      return [];
-    }
-
-    const allDiskNames: string[] = [];
-    (['cache', 'data', 'dedup', 'log', 'spare', 'special'] as PoolTopologyCategory[]).forEach((categoryName) => {
-      const category = this.poolState.topology[categoryName];
-
-      if (!category || !category.length) {
-        return;
-      }
-
-      category.forEach((item) => {
-        if (isTopologyDisk(item) && item.disk) {
-          allDiskNames.push(item.disk);
-        } else {
-          item.children.forEach((device) => {
-            if (!device.disk) {
-              return;
-            }
-
-            allDiskNames.push(device.disk);
-          });
-        }
-      });
-    });
-
-    return allDiskNames;
+    return getAllDiskNames(this.poolState);
   }
 
   title: string;

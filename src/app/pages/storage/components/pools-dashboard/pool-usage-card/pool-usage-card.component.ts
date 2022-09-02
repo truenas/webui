@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { isTopologyDisk } from 'app/interfaces/storage.interface';
+import { getAllDiskNames } from 'app/pages/storage/modules/disks/utils/disks.utils';
 
 export enum UsageHealthLevel {
   Warn = 'warn',
@@ -33,34 +32,7 @@ export class PoolUsageCardComponent {
   }
 
   get allDiskNames(): string[] {
-    if (!this.poolState || !this.poolState.topology) {
-      return [];
-    }
-
-    const allDiskNames: string[] = [];
-    (['cache', 'data', 'dedup', 'log', 'spare', 'special'] as PoolTopologyCategory[]).forEach((categoryName) => {
-      const category = this.poolState.topology[categoryName];
-
-      if (!category || !category.length) {
-        return;
-      }
-
-      category.forEach((item) => {
-        if (isTopologyDisk(item) && item.disk) {
-          allDiskNames.push(item.disk);
-        } else {
-          item.children.forEach((device) => {
-            if (!device.disk) {
-              return;
-            }
-
-            allDiskNames.push(device.disk);
-          });
-        }
-      });
-    });
-
-    return allDiskNames;
+    return getAllDiskNames(this.poolState);
   }
 
   get capacity(): number {

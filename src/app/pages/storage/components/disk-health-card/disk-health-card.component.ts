@@ -7,6 +7,7 @@ import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { getAllDiskNames } from 'app/pages/storage/modules/disks/utils/disks.utils';
 import { WebSocketService } from 'app/services';
 
 interface DiskState {
@@ -50,6 +51,10 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     unit: '',
     symbolText: '',
   };
+
+  get allDiskNames(): string[] {
+    return getAllDiskNames(this.poolState);
+  }
 
   constructor(
     private ws: WebSocketService,
