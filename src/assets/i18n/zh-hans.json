@@ -1981,7 +1981,6 @@
   "Host Sync": "同步主机",
   "Host name of second TrueNAS controller.": "第二个TrueNAS控制器的主机名。",
   "Host name or IP address of the central key server.": "中央密钥服务器的主机名或IP地址。",
-  "HostName": "主机名",
   "Hostname": "主机名",
   "Hostname (TrueNAS Controller 2)": "主机名（TrueNAS 控制器 2）",
   "Hostname (Virtual)": "主机名（虚拟）",

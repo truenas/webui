@@ -3872,7 +3872,6 @@
   "Hide Standard Output": "標準出力を非表示にする",
   "Hide error output (stderr) from the command.                When unset, any error output is mailed to the user                account cron used to run the command.": "コマンドからエラー出力（stderr）を非表示にします。設定を解除すると、エラー出力はcronによってコマンドの実行に使用されたユーザーアカウント送信されます。",
   "Hide standard output (stdout) from the command.                When unset, any standard output is mailed to the user                account cron used to run the command.": "コマンドから標準出力（stdout）を非表示にします。設定を解除すると、標準出力はcronによってコマンドの実行に使用されるユーザーアカウントに送信されます。",
-  "HostName": "ホスト名",
   "Hostname": "ホスト名",
   "Hostname or IP address of SMTP server to use for sending this email.": "この電子メールの送信に使用するSMTPサーバーのホスト名またはIPアドレス。",
   "Hostname or IP address of a remote   <a href=\"http://graphiteapp.org/\" target=\"_blank\">Graphite</a> server.": "リモート<a href=\"http://graphiteapp.org/\" target=\"_blank\">Graphite</a>サーバーのホスト名またはIPアドレス。",

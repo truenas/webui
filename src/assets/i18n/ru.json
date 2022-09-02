@@ -3004,7 +3004,6 @@
   "Host Sync": "Синхронизация хостов",
   "Host name of second TrueNAS controller.": "Имя хоста второго контроллера TrueNAS.",
   "Host name or IP address of the central key server.": "Имя хоста или IP-адрес центрального сервера ключей.",
-  "HostName": "Имя хоста",
   "Hostname": "Имя хоста",
   "Hostname (Virtual)": "Имя хоста (Виртуальное)",
   "Hostname and Domain": "Имя хоста и домен",

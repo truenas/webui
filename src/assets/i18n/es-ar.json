@@ -2537,7 +2537,6 @@
   "Host Sync": "Sincronización de host",
   "Host name of second TrueNAS controller.": "Nombre de host del segundo controlador TrueNAS.",
   "Host name or IP address of the central key server.": "Nombre de host o dirección IP del servidor central de claves.",
-  "HostName": "Nombre del Host",
   "Hostname": "Nombre del Host",
   "Hostname (TrueNAS Controller 2)": "Nombre de host (controlador TrueNAS 2)",
   "Hostname (Virtual)": "Nombre del Host (Virtual)",
