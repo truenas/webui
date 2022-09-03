@@ -20,8 +20,6 @@ import { SnapshotDetailsComponent, SnapshotListComponent } from './snapshots/sna
 import { DatasetFormComponent } from './volumes/datasets/dataset-form';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl';
-import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock';
-import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager';
@@ -49,6 +47,9 @@ import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quota
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
+import { SnapshotsBatchDeleteResultsDialogComponent } from 'app/pages/storage/snapshots/snapshot-list/components/batch-delete-results/snapshots-batch-delete-results-dialog.component';
+import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
+import { UnlockDialogComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component';
 
 @NgModule({
   imports: [
@@ -68,6 +69,7 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,
     VolumeChangekeyFormComponent,
+    SnapshotsBatchDeleteResultsDialogComponent,
     ZvolFormComponent,
     VolumeImportWizardComponent,
     SnapshotListComponent,
@@ -92,7 +94,7 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
   ],
-  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
+  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent, SnapshotsBatchDeleteResultsDialogComponent],
   providers: [UserService, StorageService, MessageService, JobService, TranslateService],
 })
 export class StorageModule {
