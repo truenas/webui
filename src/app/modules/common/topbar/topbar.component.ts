@@ -14,21 +14,17 @@ import { filter } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
-import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
-import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -62,10 +58,8 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
   interval: Interval;
   updateIsDone: Subscription;
 
-  showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: PoolScan;
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsPanelComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
@@ -190,19 +184,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.checkinInterval) {
           clearInterval(this.checkinInterval);
         }
-      }
-    });
-
-    this.core.register({
-      observerClass: this,
-      eventName: 'Resilvering',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
-      if (evt.data.scan.state === PoolScanState.Finished) {
-        this.showResilvering = false;
-        this.resilveringDetails = null;
-      } else {
-        this.resilveringDetails = evt.data;
-        this.showResilvering = true;
       }
     });
 
@@ -458,10 +439,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.router.navigate(['/network']);
       });
     }
-  }
-
-  showResilveringDetails(): void {
-    this.dialog.open(ResilverProgressDialogComponent);
   }
 
   onShowDirServicesMonitor(): void {
