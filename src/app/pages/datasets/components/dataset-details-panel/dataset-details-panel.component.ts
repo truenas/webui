@@ -41,6 +41,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
   get datasetHasRoles(): boolean {
     return !!this.dataset.apps?.length
     || this.datasetHasChildrenWithShares
+    || !!this.dataset.vms?.length
     || !!this.dataset.smb_shares?.length
     || !!this.dataset.nfs_shares?.length
     || !!this.dataset.iscsi_shares?.length
