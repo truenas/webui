@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewChecked,
@@ -9,7 +10,6 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { BehaviorSubject } from 'rxjs';
-import { filter, take, timeout } from 'rxjs/operators';
+import { filter, timeout } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -41,7 +41,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterViewInit {
-  private isMobile: boolean;
+  private isMobileView = false;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode: MatDrawerMode = 'over';
@@ -74,7 +74,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     public core: CoreService,
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
-    private media: MediaObserver,
     protected ws: WebSocketService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
@@ -83,34 +82,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     private store$: Store<AppState>,
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
-  ) {
-    // Close sidenav after route change in mobile
-    this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
-      if (routeChange instanceof NavigationStart) {
-        this.headerPortalOutlet = null;
-      }
-      if (routeChange instanceof NavigationEnd && this.isMobile) {
-        this.sideNav.close();
-      }
-    });
-
-    // Watches screen size and open/close sidenav
-    this.media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
-      this.isMobile = this.layoutService.isMobile;
-      this.updateSidenav();
-      core.emit({ name: 'MediaChange', data: change, sender: this });
-    });
-
-    this.getStoreUpdates();
-  }
+    private breakpointObserver: BreakpointObserver,
+  ) {}
 
   ngOnInit(): void {
-    if (this.media.isActive('xs') || this.media.isActive('sm')) {
-      this.isSidenavOpen = false;
-    }
+    this.detectDeviceType();
+    this.listenForRouteChanges();
+    this.getStoreUpdates();
     this.patchScrollOnWindows();
     this.sysGeneralService.toggleSentryInit();
-    this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
     this.store$.dispatch(adminUiInitialized());
   }
 
@@ -120,6 +100,31 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
   ngAfterViewInit(): void {
     this.pageHeaderUpdater();
+  }
+
+  listenForRouteChanges(): void {
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationStart || event instanceof NavigationEnd),
+      untilDestroyed(this),
+    ).subscribe((routeChange) => {
+      if (routeChange instanceof NavigationStart) {
+        this.headerPortalOutlet = null;
+      }
+      if (routeChange instanceof NavigationEnd && this.isMobileView) {
+        this.sideNav.close();
+      }
+    });
+  }
+
+  detectDeviceType(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        this.isMobileView = state.matches;
+        this.isSidenavOpen = false;
+        this.cdr.markForCheck();
+      });
   }
 
   getStoreUpdates(): void {
@@ -140,11 +145,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
         this.isSidenavOpen = preferences.sidenavStatus.isOpen;
         this.sidenavMode = preferences.sidenavStatus.mode;
         this.isSidenavCollapsed = preferences.sidenavStatus.isCollapsed;
+        this.layoutService.isMenuCollapsed = this.isSidenavCollapsed;
       }
-      this.updateSidenav();
-      this.arePreferencesLoaded$.next(true);
-    },
-    () => {
       this.updateSidenav();
       this.arePreferencesLoaded$.next(true);
     },
@@ -192,26 +194,17 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       return;
     }
 
-    this.isSidenavOpen = !this.isMobile;
-    this.sidenavMode = this.isMobile ? 'over' : 'side';
-    if (!this.isMobile) {
+    this.isSidenavOpen = !this.isMobileView;
+    this.sidenavMode = this.isMobileView ? 'over' : 'side';
+    if (!this.isMobileView) {
       // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
       setTimeout(() => {
         this.sideNav?.open();
       });
-      this.store$.pipe(
-        waitForPreferences,
-        take(1),
-        filter((preferences) => Boolean(preferences.sidenavStatus)),
-        untilDestroyed(this),
-      ).subscribe(({ sidenavStatus }) => {
-        this.layoutService.isMenuCollapsed = sidenavStatus.isCollapsed;
-        this.isSidenavCollapsed = sidenavStatus.isCollapsed;
-      });
     } else {
       this.layoutService.isMenuCollapsed = false;
     }
-    this.cd.detectChanges();
+    this.cd.markForCheck();
   }
 
   get sidenavWidth(): string {
