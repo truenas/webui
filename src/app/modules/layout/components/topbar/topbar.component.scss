@@ -1,8 +1,9 @@
-@import '~assets/styles/scss-imports/splitview';
+@import '../../../../../assets/styles/scss-imports/splitview';
 
 .fa-spin {
   animation: fa-spin 2s infinite linear;
 }
+
 @keyframes fa-spin {
   0% {
     transform: rotate(0deg);
@@ -11,10 +12,6 @@
   100% {
     transform: rotate(359deg);
   }
-}
-
-.hidden-button {
-  height: 0 !important;
 }
 
 .topbar {
@@ -59,7 +56,7 @@
 .mobile-logo {
   display: none;
   width: 100%;
-  
+
   @media (max-width: $breakpoint-tablet) {
     display: flex;
     place-content: center;
@@ -75,7 +72,7 @@
     left: 10px;
     position: absolute;
     top: 10px;
-    transform: scale(1.7); 
+    transform: scale(1.7);
   }
 
   .logotype {

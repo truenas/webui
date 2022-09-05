@@ -18,7 +18,6 @@ import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
-import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -110,13 +109,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
     this.core.register({
       observerClass: this,
-      eventName: 'ForceSidenav',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ForceSidenavEvent) => {
-      this.updateSidenav(evt.data);
-    });
-
-    this.core.register({
-      observerClass: this,
       eventName: 'SidenavStatus',
     }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
       this.isSidenavOpen = evt.data.isOpen;
@@ -177,15 +169,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       });
   }
 
-  updateSidenav(force?: 'open' | 'close'): void {
-    if (force) {
-      this.isSidenavOpen = force === 'open';
-      if (force === 'close') {
-        this.layoutService.isMenuCollapsed = false;
-      }
-      return;
-    }
-
+  updateSidenav(): void {
     this.isSidenavOpen = !this.isMobile;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
     if (!this.isMobile) {
