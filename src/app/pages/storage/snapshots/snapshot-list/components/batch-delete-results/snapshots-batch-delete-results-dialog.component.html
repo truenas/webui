@@ -1,26 +1,26 @@
-<h1 mat-dialog-title>Batch Operation Results</h1>
+<h1 mat-dialog-title>{{ 'Batch Operation Results' | translate }}</h1>
 <div mat-dialog-content>
-    <div *ngIf="errorsCount > 0">
-        <h4><strong>{{ errorsTitle  }}</strong></h4>
-        <ul>
-            <li *ngFor="let error of snapshotNamesWithErrors" class="item">
-                <div><strong>{{ 'Snapshot: ' | translate }}</strong> {{ error.snapshot }}</div>
-                <div><strong>{{ 'Error: ' | translate }}</strong> {{ error.error }}</div>
-            </li>
-        </ul>
-    </div>
-    <div *ngIf="snapshotsFailedToDelete.length">
-        <h4><strong>{{ failureMsg }}</strong></h4>
-        <ul>
-            <li *ngFor="let snapshot of snapshotsFailedToDelete">{{ snapshot }}</li>
-        </ul>
-    </div>
-    <div *ngIf="snapshotsDeleted.length">
-        <h4><strong>{{ successMsg }}</strong></h4>
-        <ul>
-            <li *ngFor="let snapshot of snapshotsDeleted">{{ snapshot }}</li>
-        </ul>
-    </div>
+  <div *ngIf="errorsCount > 0">
+    <h4><strong>{{ errorsTitle  }}</strong></h4>
+    <ul>
+      <li *ngFor="let error of snapshotNamesWithErrors" class="item">
+        <div><strong>{{ 'Snapshot: ' | translate }}</strong> {{ error.snapshot }}</div>
+        <div><strong>{{ 'Error: ' | translate }}</strong> {{ error.error }}</div>
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="snapshotsFailedToDelete.length">
+    <h4><strong>{{ failureMsg }}</strong></h4>
+    <ul>
+      <li *ngFor="let snapshot of snapshotsFailedToDelete">{{ snapshot }}</li>
+    </ul>
+  </div>
+  <div *ngIf="snapshotsDeleted.length">
+    <h4><strong>{{ successMsg }}</strong></h4>
+    <ul>
+      <li *ngFor="let snapshot of snapshotsDeleted">{{ snapshot }}</li>
+    </ul>
+  </div>
 </div>
 <div mat-dialog-actions>
   <span fxFlex></span>
