@@ -10,7 +10,7 @@
 
   .scroll-window {
 
-    // GRID 
+    // GRID
     display: grid;
     grid-template-columns: auto;
 
@@ -43,7 +43,7 @@
       width: inherit;
     }
 
-    // Two Columns 
+    // Two Columns
     @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
       display: flex;
       flex-direction: column;
@@ -56,7 +56,7 @@
       width: inherit;
     }
 
-    // Three Columns 
+    // Three Columns
     @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
       display: flex;
       flex-direction: column;
@@ -116,6 +116,10 @@
     // Smaller text for smaller screens
     @media (max-width: $breakpoint-flex) {
       padding: 8px 8px 8px 0;
+    }
+
+    .mat-button {
+      flex-shrink: 0;
     }
   }
 
