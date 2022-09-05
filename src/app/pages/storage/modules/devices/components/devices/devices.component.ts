@@ -125,7 +125,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
             this.openMobileDetails();
           } else {
             const firstNode = this.treeControl.dataNodes[0].children[0];
-            this.router.navigate(['/storage2', this.poolId, 'devices', firstNode.guid]);
+            this.router.navigate(['/storage', this.poolId, 'devices', firstNode.guid]);
           }
         },
       );

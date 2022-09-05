@@ -17,7 +17,7 @@
       *ngIf="!loading"
       mat-button
       ix-auto-type="button"
-      (click)="router.navigate(['/storage', this.poolState.id, 'devices'])"
+      [routerLink]="['/storage', poolState.id, 'devices']"
     >{{ 'Manage Devices' | translate }}</button>
   </mat-card-header>
 

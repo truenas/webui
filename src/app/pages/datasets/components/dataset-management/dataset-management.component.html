@@ -41,7 +41,13 @@
             >
               <button mat-icon-button disabled></button>
               <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
-              <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
+              <ix-icon
+                name="mdi-chevron-right"
+                class="mobile-actions"
+                [matTooltip]="'Open Dataset Details' | translate"
+                [matTooltipShowDelay]="1000"
+                matTooltipPosition="before"
+              ></ix-icon>
             </ix-tree-node>
 
             <ix-nested-tree-node
@@ -55,16 +61,26 @@
                 (click)="openMobileDetails()"
               >
                 <button
+                  *appLet="treeControl.isExpanded(dataset) as isExpanded"
                   mat-icon-button
                   ixTreeNodeToggle
                   (click)="$event.preventDefault()"
                   [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
+                  [matTooltip]="(isExpanded ? 'Collapse Node' : 'Expand Node') | translate"
+                  [matTooltipShowDelay]="1000"
+                  matTooltipPosition="after"
                 >
-                  <ix-icon [name]="treeControl.isExpanded(dataset) ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
+                  <ix-icon [name]="isExpanded ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
                 </button>
 
                 <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
-                <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
+                <ix-icon
+                  name="mdi-chevron-right"
+                  class="mobile-actions"
+                  [matTooltip]="'Open Dataset Details' | translate"
+                  [matTooltipShowDelay]="1000"
+                  matTooltipPosition="before"
+                ></ix-icon>
               </div>
 
               <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
@@ -73,9 +89,9 @@
         </div>
       </div>
     </div>
-  
-    <div 
-      class="details-container" 
+
+    <div
+      class="details-container"
       [class.details-container-mobile]="showMobileDetails"
       ixDetailsHeight="rightside-content-hold"
     >
