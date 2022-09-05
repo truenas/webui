@@ -2,8 +2,11 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk } from 'app/interfaces/storage.interface';
 
 export function getPoolDisks(pool: Pool): string[] {
-  const disks: string[] = [];
+  if (!pool || !pool.topology) {
+    return [];
+  }
 
+  const disks: string[] = [];
   Array.from(Object.values(pool.topology))
     .filter((devices) => devices.length)
     .forEach((devices) => {
