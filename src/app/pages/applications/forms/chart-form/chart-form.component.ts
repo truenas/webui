@@ -159,6 +159,7 @@ export class ChartFormComponent implements OnDestroy {
       });
       this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length > 0);
       if (!this.isNew) {
+        this.appSchemaService.serializeConfig(this.config, this.form);
         this.form.patchValue(this.config);
       }
     } catch (error: unknown) {

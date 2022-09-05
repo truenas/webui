@@ -615,4 +615,27 @@ export class AppSchemaService {
       return this.serializeFormValue(listItem[Object.keys(listItem)[0]]);
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
+
+  serializeConfig(
+    config: { [key: string]: ChartFormValue } | ChartFormValue,
+    form: CustomUntypedFormGroup | FormGroup,
+  ): void {
+    for (const [keyConfig, valueConfig] of Object.entries(config)) {
+      const formConfig = form.controls[keyConfig] as FormGroup;
+      if (formConfig) {
+        if (_.isArray(valueConfig)) {
+          valueConfig.forEach((valueItem, idxItem) => {
+            if (!_.isPlainObject(valueItem)) {
+              const keyItem = Object.keys(formConfig.value[idxItem])[0];
+              valueConfig[idxItem] = { [keyItem]: valueItem };
+            } else {
+              this.serializeConfig(valueItem, formConfig.controls[idxItem] as FormGroup);
+            }
+          });
+        } else if (_.isPlainObject(valueConfig)) {
+          this.serializeConfig(valueConfig, formConfig);
+        }
+      }
+    }
+  }
 }
