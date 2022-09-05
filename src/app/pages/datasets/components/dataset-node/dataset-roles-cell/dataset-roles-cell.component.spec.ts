@@ -55,6 +55,13 @@ describe('DatasetRolesCellComponent', () => {
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by: app1, app2');
   });
 
+  it('shows "VM" icon and tooltip when dataset has vms', async () => {
+    await setupTest({ name: 'root', vms: [{ name: 'vm1', path: '' }, { name: 'vm1', path: '' }, { name: 'vm2', path: '' }] } as DatasetDetails, false);
+
+    expect(await ixIcon.getName()).toBe('computer');
+    expect(spectator.query(MatTooltip).message).toBe('This dataset is used by: vm1, vm2');
+  });
+
   it('shows "Share" icon when dataset or children has shares', async () => {
     await setupTest({
       name: 'root/shares',

@@ -18,6 +18,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
   @Input() tooltip: string;
+  @Input() warning: string;
   @Input() required: boolean;
 
   isDisabled = false;

@@ -66,9 +66,14 @@ describe('RolesCardComponent', () => {
             ],
           }],
           apps: [
-            { name: 'app', path: 'apppath' },
-            { name: 'app', path: 'apppath' },
+            { name: 'app1', path: 'app1path' },
+            { name: 'app1', path: 'app1path' },
             { name: 'app2', path: 'app2path' },
+          ],
+          vms: [
+            { name: 'vm1', path: 'vm1path' },
+            { name: 'vm1', path: 'vm1path' },
+            { name: 'vm2', path: 'vm2path' },
           ],
         },
       },
@@ -107,7 +112,13 @@ describe('RolesCardComponent', () => {
 
   it('shows apps row', () => {
     expect(spectator.query('.apps.value')).toHaveText(
-      'This dataset is used by: app, app2',
+      'This dataset is used by: app1, app2',
+    );
+  });
+
+  it('shows vms row', () => {
+    expect(spectator.query('.vms.value')).toHaveText(
+      'This dataset is used by: vm1, vm2',
     );
   });
 
