@@ -12,6 +12,7 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { SnapshotsBatchDeleteResultsDialogComponent } from 'app/pages/storage/snapshots/snapshot-list/components/batch-delete-results/snapshots-batch-delete-results-dialog.component';
 
 @Component({
   selector: 'app-snapshot-list',
@@ -288,10 +289,11 @@ export class SnapshotListComponent {
       dialogRef.close();
       this.entityList.getData();
       this.entityList.selected = [];
-
-      let infoMessage: string = T('Deleted') + ' ' + params[1].length + ' ';
-      infoMessage += params[1].length > 1 ? T('snapshots') : T('snapshot');
-      this.dialogService.report(infoMessage, '', '320px', 'info', true);
+      this.dialog.open(SnapshotsBatchDeleteResultsDialogComponent, {
+        data: {
+          results: job_res,
+        },
+      });
     });
 
     dialogRef.componentInstance.failure.subscribe((err) => {
