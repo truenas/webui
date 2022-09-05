@@ -11,7 +11,6 @@ import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -118,6 +117,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     jobComponent.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
       this.router.navigate(['/datasets', this.datasetId]);
+    }, (error) => {
+      dialogRef.close();
+      this.dialog.errorReportMiddleware(error);
     });
   }
 
@@ -141,7 +143,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
         },
         (error) => {
           this.isLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
         },
       );
   }

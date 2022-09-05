@@ -9,7 +9,6 @@ import { map, tap } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
 
@@ -89,7 +88,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
       (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
       },
     );
   }

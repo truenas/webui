@@ -9,6 +9,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   constructor(
     private store: PermissionsCardStore,
     private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
   ) {}
 
   get editPermissionsUrl(): string[] {
@@ -64,6 +66,9 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
         }
 
         this.cdr.markForCheck();
+      }, (error) => {
+        this.isLoading = false;
+        this.dialogService.errorReportMiddleware(error);
       });
   }
 
