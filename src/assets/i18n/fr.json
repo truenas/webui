@@ -2556,7 +2556,6 @@
   "Host Sync": "Synchronisation avec l'hôte",
   "Host name of second TrueNAS controller.": "Nom d'hôte du deuxième contrôleur TrueNAS.",
   "Host name or IP address of the central key server.": "Nom d'hôte ou adresse IP du serveur de clés central.",
-  "HostName": "Nom d'hôte",
   "Hostname": "Nom d'hôte",
   "Hostname (Virtual)": "Nom d'hôte (virtuel)",
   "Hostname Database:": "Base de données de nom d’hôte :",

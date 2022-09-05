@@ -3671,7 +3671,6 @@
   "Host Allow": "允許主機",
   "Host Deny": "拒絕主機",
   "Host Sync": "主機同步",
-  "HostName": "主機名稱",
   "Hostname": "主機名稱",
   "Hostname (Virtual)": "主機名稱 (虛擬)",
   "Hosts Allow": "允許主機清單",
