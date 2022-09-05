@@ -69,9 +69,10 @@
           </li>
         </ul>
       </div>
-      <a class="link" [routerLink]="['/reportsdashboard/disk']" [queryParams]="{ disks: allDiskNames }">
-        {{ 'View Disk Space Reports' | translate }}
-      </a>
+      <a class="link"
+        [routerLink]="['/reportsdashboard', 'disk']"
+        [queryParams]="{ disks }"
+      >{{ 'View Disk Space Reports' | translate }}</a>
     </div>
   </mat-card-content>
 </mat-card>
