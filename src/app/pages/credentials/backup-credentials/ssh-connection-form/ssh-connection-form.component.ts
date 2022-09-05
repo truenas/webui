@@ -56,6 +56,7 @@ export class SshConnectionFormComponent {
       (control) => control.parent && !this.isManualSetup,
       Validators.required,
     )],
+    otp_token: [''],
     private_key: [null as (number | typeof generateNewKeyValue), Validators.required],
 
     cipher: [CipherType.Standard],
@@ -229,6 +230,7 @@ export class SshConnectionFormComponent {
         url: values.url,
         password: values.password,
         username: values.username,
+        otp_token: values.otp_token,
         connect_timeout: values.connect_timeout,
         cipher: values.cipher,
       };

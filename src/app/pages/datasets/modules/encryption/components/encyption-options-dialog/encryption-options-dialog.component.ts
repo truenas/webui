@@ -15,7 +15,6 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
@@ -184,7 +183,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         },
         (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
         },
       );
   }

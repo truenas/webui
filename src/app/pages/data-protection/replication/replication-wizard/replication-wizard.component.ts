@@ -719,6 +719,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }],
       }],
     }, {
+      type: 'input',
+      name: 'otp_token',
+      placeholder: sshConnectionsHelptex.otp_placeholder,
+      tooltip: sshConnectionsHelptex.otp_tooltip,
+      relation: [{
+        action: RelationAction.Show,
+        when: [{
+          name: 'setup_method',
+          value: 'semiautomatic',
+        }],
+      }],
+    }, {
       type: 'select',
       name: 'private_key',
       placeholder: sshConnectionsHelptex.private_key_placeholder,
