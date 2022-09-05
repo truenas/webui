@@ -1,4 +1,4 @@
-@import '../../../../../../node_modules/text-security/text-security.css';
+@import '~text-security/text-security.css';
 
 :host {
   color: var(--fg1);
@@ -10,10 +10,6 @@
 
 td {
   padding: 5px 7px;
-}
-
-.tooltip {
-  margin: 0 0 0 8px;
 }
 
 .permissions-container {
@@ -30,19 +26,6 @@ td {
       cursor: copy;
     }
   }
-}
-
-.label-container {
-  align-items: center;
-  display: flex;
-  margin-bottom: 1px;
-  margin-left: 1px;
-  min-height: 24px;
-}
-
-.label {
-  display: inline-flex;
-  font-size: x-small;
 }
 
 .header-label {

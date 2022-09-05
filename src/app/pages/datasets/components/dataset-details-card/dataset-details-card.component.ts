@@ -55,6 +55,10 @@ export class DatasetDetailsCardComponent {
     return this.dataset.type === DatasetType.Volume;
   }
 
+  get hasComments(): boolean {
+    return this.dataset.comments?.source === ZfsPropertySource.Local && !!this.dataset.comments?.value?.length;
+  }
+
   deleteDataset(): void {
     this.mdDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
       .afterClosed()

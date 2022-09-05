@@ -86,14 +86,14 @@ export class FormInputComponent implements Field {
       if (this.config.min !== undefined && numberValue < this.config.min) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
-          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + this.config.min,
+          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + String(this.config.min),
         });
       }
 
       if (this.config.max !== undefined && numberValue > this.config.max) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
-          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + this.config.max,
+          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + String(this.config.max),
         });
       }
     }

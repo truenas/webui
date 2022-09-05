@@ -374,7 +374,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
               },
               {
                 label: this.translate.instant('Password'),
-                value: sedPassword ? '\*'.repeat(sedPassword.length) : '–',
+                value: sedPassword ? '*'.repeat(sedPassword.length) : '–',
               },
             ],
           });

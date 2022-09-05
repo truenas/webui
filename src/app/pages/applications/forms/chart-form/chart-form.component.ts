@@ -197,7 +197,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   getFieldsHiddenOnForm(
-    data: any,
+    data: unknown,
     deleteField$: Subject<string>,
     path = '',
   ): void {
@@ -213,13 +213,13 @@ export class ChartFormComponent implements OnDestroy {
       });
     }
     if (_.isPlainObject(data)) {
-      for (const key in data) {
-        this.getFieldsHiddenOnForm(data[key], deleteField$, path ? path + '.' + key : key);
+      for (const key in (data as Record<string, unknown>)) {
+        this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
       }
     }
     if (_.isArray(data)) {
       for (let i = 0; i < data.length; i++) {
-        this.getFieldsHiddenOnForm(data[i], deleteField$, path + '.' + i);
+        this.getFieldsHiddenOnForm(data[i], deleteField$, `${path}.${i}`);
       }
     }
   }

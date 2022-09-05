@@ -103,7 +103,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
               // apparently this is the proper way to clone an object
               const option = JSON.parse(JSON.stringify(warningOption));
               if (option.value === categoryClass.level) {
-                option.label = option.label + ' (Default)';
+                option.label = `${option.label} (Default)`;
               }
               warningOptions.push(option);
             }

@@ -26,14 +26,14 @@ export class ServiceUpsComponent implements OnInit {
   isMasterMode = true;
 
   form = this.fb.group({
-    identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/)]],
+    identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
     mode: [null as string],
     remotehost: [null as string, Validators.required],
     remoteport: [null as number, Validators.required],
     driver: [null as string, Validators.required],
     port: [null as string, Validators.required],
     monuser: [null as string, Validators.required],
-    monpwd: [null as string, Validators.pattern(/^((?![\#|\s]).)*$/)],
+    monpwd: [null as string, Validators.pattern(/^((?![#|\s]).)*$/)],
     extrausers: [null as string],
     rmonitor: [false],
     shutdown: [null as string],

@@ -207,7 +207,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
 
     const ds: ChartDataSets = {
       label: this.labels as any,
-      data: data.map((x) => x[1] as any),
+      data: data.map((x) => Number(x[1])),
       backgroundColor: [],
       borderColor: [],
       borderWidth: 1,
