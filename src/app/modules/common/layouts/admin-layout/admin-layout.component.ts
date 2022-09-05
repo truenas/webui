@@ -144,8 +144,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       this.updateSidenav();
       this.arePreferencesLoaded$.next(true);
     },
-    (error) => {
-      console.error(error);
+    () => {
+      this.updateSidenav();
+      this.arePreferencesLoaded$.next(true);
     },
     () => {
       this.updateSidenav();
