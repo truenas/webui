@@ -1121,7 +1121,11 @@ export class VmWizardComponent implements WizardConfiguration {
     if (value.hdd_path) {
       for (const device of vmPayload['devices']) {
         if (device.dtype === VmDeviceType.Disk) {
-          device.attributes.path = value.hdd_path;
+          if (device.attributes.create_zvol) {
+            delete device.attributes.path;
+          } else {
+            device.attributes.path = value.hdd_path;
+          }
         }
       }
 
@@ -1162,7 +1166,11 @@ export class VmWizardComponent implements WizardConfiguration {
           const zvolName = zvolPayload['zvol_name'];
           const zvolVolsize = zvolPayload['zvol_volsize'];
 
-          device.attributes.path = origHdd;
+          if (createZvol) {
+            delete device.attributes.path;
+          } else {
+            device.attributes.path = origHdd;
+          }
           device.attributes.type = value.hdd_type;
           device.attributes.create_zvol = createZvol;
           device.attributes.zvol_name = zvolName;
