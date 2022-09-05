@@ -50,7 +50,10 @@
           {{ diskState.symbolText }}{{ diskState.unit }}
         </ng-container>
       </div>
-      <a [routerLink]="['/reportsdashboard/disk']" [queryParams]="{ disks: allDiskNames }">{{ 'View Reports' | translate }}</a>
+      <a
+        [routerLink]="['/reportsdashboard', 'disk']"
+        [queryParams]="{ disks }"
+      >{{ 'View Reports' | translate }}</a>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>

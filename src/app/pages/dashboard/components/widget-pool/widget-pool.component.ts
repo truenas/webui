@@ -23,7 +23,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { getAllDiskNames } from 'app/pages/storage/modules/disks/utils/disks.utils';
+import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 import { WebSocketService } from 'app/services';
 
 interface Slide {
@@ -133,8 +133,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return { totalErrors: 'Unknown', disks: [] };
   }
 
-  get allDiskNames(): string[] {
-    return getAllDiskNames(this.poolState);
+  get poolDisks(): string[] {
+    return getPoolDisks(this.poolState);
   }
 
   title: string;

@@ -5,7 +5,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { getAllDiskNames } from 'app/pages/storage/modules/disks/utils/disks.utils';
+import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 export enum UsageHealthLevel {
   Warn = 'warn',
@@ -31,8 +31,8 @@ export class PoolUsageCardComponent {
     return this.usedPercentage >= maxPct;
   }
 
-  get allDiskNames(): string[] {
-    return getAllDiskNames(this.poolState);
+  get disks(): string[] {
+    return getPoolDisks(this.poolState);
   }
 
   get capacity(): number {
