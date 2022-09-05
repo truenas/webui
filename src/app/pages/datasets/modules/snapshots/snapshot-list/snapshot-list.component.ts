@@ -86,7 +86,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
   readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
-  dataset = '';
+  datasetFilter = '';
 
   constructor(
     private dialogService: DialogService,
@@ -98,7 +98,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.datasetFilter = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   ngOnInit(): void {
@@ -176,7 +176,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
       this.cdr.markForCheck();
     }, 0);
-    this.dataSource.filter = this.dataset;
+    this.dataSource.filter = this.datasetFilter;
   }
 
   toggleExtraColumns(event: MouseEvent): void {
@@ -220,6 +220,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(query: string): void {
+    this.datasetFilter = query;
     this.dataSource.filter = query;
   }
 }
