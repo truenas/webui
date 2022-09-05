@@ -129,7 +129,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
           const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
           if (routeDatasetId) {
             this.datasetStore.selectDatasetById(routeDatasetId);
-            this.openMobileDetails();
           } else {
             const firstNode = this.treeControl.dataNodes[0];
             this.router.navigate(['/datasets', firstNode.id]);

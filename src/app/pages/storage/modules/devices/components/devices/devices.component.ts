@@ -23,7 +23,6 @@ import {
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -54,7 +53,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private layoutService: LayoutService,
-    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
@@ -122,7 +120,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
           const routeGuid = this.route.snapshot.paramMap.get('guid');
           if (routeGuid) {
             this.devicesStore.selectNodeByGuid(routeGuid);
-            this.openMobileDetails();
           } else {
             const firstNode = this.treeControl.dataNodes[0].children[0];
             this.router.navigate(['/storage', this.poolId, 'devices', firstNode.guid]);
