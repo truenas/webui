@@ -55,6 +55,7 @@
 
 .mobile-logo {
   display: none;
+  overflow: hidden;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
