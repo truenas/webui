@@ -13,13 +13,13 @@
     ><mat-icon>menu</mat-icon></button>
 
     <span fxFlex></span>
-   
-    <div class="mobile-logo">
+
+    <a class="mobile-logo" routerLink="/">
       <div class="mobile-logo-container">
         <ix-icon name="ix:truenas_scale_logomark_color" class="logomark"></ix-icon>
         <ix-icon name="ix:truenas_scale_logotype_color" class="logotype"></ix-icon>
       </div>
-    </div>
+    </a>
 
     <div class="topbar-mobile-footer">
       <div class="ix-systems-logo-icon">
@@ -31,9 +31,9 @@
           tabindex="0"
         ></mat-icon>
       </div>
-  
+
       <ix-truecommand-button></ix-truecommand-button>
-  
+
       <!-- finish update -->
       <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update"
               [matTooltip]="tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()"
