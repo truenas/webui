@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
+import { ProductType } from 'app/enums/product-type.enum';
 import urls from 'app/helptext/urls';
-import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocsService {
-  constructor(
-    private systemGeneralService: SystemGeneralService,
-  ) { }
-
   docReplace(message: string): string {
     if (message !== undefined && typeof message === 'string') {
       // For some reason # markers are getting a "\" appended to them by the translate service now
@@ -36,7 +32,7 @@ export class DocsService {
         }
       }
 
-      const productType = this.systemGeneralService.getProductType();
+      const productType = window.localStorage.getItem('product_type') as ProductType;
       message = message.replace(/--nas--/g, `truenas ${productType}`);
       message = message.replace(/--NAS--/g, `TrueNAS ${productType}`);
     }
