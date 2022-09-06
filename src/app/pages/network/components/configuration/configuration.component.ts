@@ -139,7 +139,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
-    label: '',
+    label: helptext.outbound_activity,
     tooltip: '',
     options: of([
       // Mismatch between enum and label is expected.
@@ -165,7 +165,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   outboundNetworkValue = {
     fcName: 'outbound_network_value',
-    label: '',
+    label: helptext.outbound_network_value.placeholder,
     tooltip: helptext.outbound_network_value.tooltip,
     options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,

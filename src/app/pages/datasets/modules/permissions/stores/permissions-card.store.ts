@@ -4,7 +4,6 @@ import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
@@ -46,7 +45,7 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
             });
           }),
           catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
+            this.dialog.errorReportMiddleware(error);
 
             this.patchState({
               isLoading: false,

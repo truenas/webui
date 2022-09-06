@@ -81,7 +81,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class CloudCredentialsFormComponent implements OnInit {
   commonForm = this.formBuilder.group({
     name: ['', Validators.required],
-    provider: [null as CloudsyncProviderName],
+    provider: [CloudsyncProviderName.Storj],
   });
 
   isLoading = false;
@@ -235,10 +235,6 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.renderProviderForm();
           if (this.existingCredential) {
             this.providerForm.setValues(this.existingCredential.attributes);
-          } else {
-            this.commonForm.patchValue({
-              provider: providers[0].name,
-            });
           }
           this.isLoading = false;
           this.cdr.markForCheck();

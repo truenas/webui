@@ -21,6 +21,10 @@ export class RolesCardComponent {
     return _.uniq(this.dataset.apps.map((app) => app.name)).join(', ');
   }
 
+  get vmsNames(): string {
+    return _.uniq(this.dataset.vms.map((app) => app.name)).join(', ');
+  }
+
   get smbSharesNames(): string {
     if (!this.dataset.smb_shares?.length) {
       return '';

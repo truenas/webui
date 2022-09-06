@@ -81,7 +81,7 @@ export class SnapshotDetailsRowComponent implements OnInit {
     ).subscribe(
       () => this.loader.close(),
       (error: WebsocketError) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
         this.loader.close();
       },
       () => this.loader.close(),

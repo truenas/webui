@@ -18,6 +18,15 @@
       <div class="label">{{ 'Child Shares' | translate }}:</div>
       <div class="children-with-shares value">{{ 'This dataset has children with shares' | translate }}</div>
     </div>
+    <div class="details-item" *ngIf="dataset.vms?.length">
+      <mat-icon class="icon">computer</mat-icon>
+      <div class="label">{{ 'VM' | translate }}:</div>
+      <div class="vms value">{{ 'This dataset is used by: {vms}' | translate: { vms: vmsNames } }}</div>
+      <a
+        class="action"
+        [routerLink]="['/vm']"
+      >{{ 'Manage VM Settings' | translate }}</a>
+    </div>
     <div class="details-item" *ngIf="dataset.smb_shares?.length">
       <mat-icon svgIcon="ix:smb_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>

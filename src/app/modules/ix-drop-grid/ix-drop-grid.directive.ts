@@ -83,8 +83,8 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
       this.sourceIndex = dragIndex;
       this.source = drag.dropContainer as IxDropGridItemDirective;
 
-      phElement.style.width = dropElement.clientWidth / 2 + 'px';
-      phElement.style.height = dropElement.clientHeight + 'px';
+      phElement.style.width = `${dropElement.clientWidth / 2}px`;
+      phElement.style.height = `${dropElement.clientHeight}px`;
 
       sourceElement.parentElement.removeChild(sourceElement);
     }

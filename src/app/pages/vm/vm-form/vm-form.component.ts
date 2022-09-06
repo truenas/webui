@@ -332,7 +332,8 @@ export class VmFormComponent implements FormConfiguration {
             prevSelectedGpus.push(gpu);
           }
         }
-        const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+        const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
+        const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
         gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
         if (prevSelectedGpus.length) {
           gpusConf.warnings += this.translate.instant(

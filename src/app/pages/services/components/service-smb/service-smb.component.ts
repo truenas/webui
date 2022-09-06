@@ -38,7 +38,7 @@ export class ServiceSmbComponent implements OnInit {
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
         (control: AbstractControl) => {
-          return control.value?.some((alias: string) => alias.length > 15);
+          return control.value?.every((alias: string) => alias.length <= 15);
         },
         this.translate.instant('Aliases must be 15 characters or less.'),
       ),

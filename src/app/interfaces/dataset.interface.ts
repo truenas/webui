@@ -206,4 +206,5 @@ export interface DatasetDetails {
   refquota_warning?: ZfsProperty<number>;
   quota_critical?: ZfsProperty<number>;
   quota_warning?: ZfsProperty<number>;
+  comments?: ZfsProperty<string>;
 }
