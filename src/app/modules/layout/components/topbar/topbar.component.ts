@@ -59,7 +59,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   updateDialog: MatDialogRef<UpdateDialogComponent>;
   haStatusText: string;
   haDisabledReasons: FailoverDisabledReason[] = [];
-  isHa = false;
+  isFailoverLicensed = false;
   upgradeWaitingToFinish = false;
   pendingUpgradeChecked = false;
   hostname: string;
@@ -111,8 +111,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
 
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.isHa = isHa;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isFailoverLicensed) => {
+        this.isFailoverLicensed = isFailoverLicensed;
         this.getHaStatus();
       });
     }
@@ -128,13 +128,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
 
       // When update starts on HA system, listen for 'finish', then quit listening
-      if (this.isHa) {
+      if (this.isFailoverLicensed) {
         this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
           this.updateIsRunning = false;
           this.updateIsDone.unsubscribe();
         });
       }
-      if (!this.isHa) {
+      if (!this.isFailoverLicensed) {
         if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
           this.systemWillRestart = true;
           if (event.fields.state === JobState.Success) {
@@ -188,8 +188,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.ws.unsubscribe('failover.disabled.reasons');
-
     this.core.unregister({ observerClass: this });
   }
 
@@ -423,7 +421,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   showUpdateDialog(): void {
-    const message = this.isHa || !this.systemWillRestart
+    const message = this.isFailoverLicensed || !this.systemWillRestart
       ? helptext.updateRunning_dialog.message
       : helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
     const title = helptext.updateRunning_dialog.title;

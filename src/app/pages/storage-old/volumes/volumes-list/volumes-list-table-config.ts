@@ -14,7 +14,6 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { DatasetLockParams } from 'app/interfaces/dataset-lock.interface';
@@ -83,7 +82,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
   // TODO: Unused?
   encryptedStatus: number;
   subs: Subs;
-  productType = window.localStorage.getItem('product_type') as ProductType;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,

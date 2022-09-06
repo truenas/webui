@@ -12,7 +12,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -28,7 +28,7 @@ export class SmbListComponent implements EntityTableConfig {
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
-  productType = window.localStorage.getItem('product_type') as ProductType;
+  productType = this.systemGeneralService.getProductType();
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No SMB Shares have been configured yet'),
@@ -70,6 +70,7 @@ export class SmbListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
     private dialog: DialogService,
     private translate: TranslateService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {

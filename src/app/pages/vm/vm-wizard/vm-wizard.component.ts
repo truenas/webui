@@ -36,7 +36,7 @@ import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-w
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
-  NetworkService, StorageService, WebSocketService,
+  NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -70,7 +70,7 @@ export class VmWizardComponent implements WizardConfiguration {
   private isolatedGpuPciIds: string[];
 
   entityWizard: EntityWizardComponent;
-  private productType = window.localStorage.getItem('product_type') as ProductType;
+  private productType = this.systemGeneralService.getProductType();
 
   wizardConfig: Wizard[] = [
     {
@@ -544,6 +544,7 @@ export class VmWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     protected modalService: ModalService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   preInit(entityWizard: EntityWizardComponent): void {

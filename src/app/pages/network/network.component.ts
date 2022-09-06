@@ -36,7 +36,7 @@ import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interfa
 import {
   AppLoaderService,
   DialogService,
-  StorageService,
+  StorageService, SystemGeneralService,
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -202,6 +202,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
@@ -238,7 +239,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         this.hasPendingChanges = false;
       });
 
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))

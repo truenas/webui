@@ -1,10 +1,8 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -15,7 +13,6 @@ import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { UUID } from 'angular2-uuid';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
@@ -23,7 +20,6 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -32,7 +28,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -41,22 +37,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
-export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterViewInit {
+export class AdminLayoutComponent implements OnInit, AfterViewInit {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode: MatDrawerMode = 'over';
-  isShowFooterConsole = false;
-  consoleMsg = '';
   hostname: string;
-  consoleMessages: string[] = [];
-  logoPath = 'assets/images/light-logo.svg';
-  logoTextPath = 'assets/images/light-logo-text.svg';
   currentTheme = '';
   isOpen = false;
   menuName: string;
-  readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
-  consoleMsgsSubscriptionId: string = null;
   subs: SubMenuItem[];
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
@@ -65,9 +54,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   readonly productTypeLabels = productTypeLabels;
 
   isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
+  hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
-  @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   themes: Theme[];
   productType$ = this.sysGeneralService.getProductType$;
 
@@ -137,10 +126,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     }
     this.sysGeneralService.toggleSentryInit();
 
-    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
-      this.onShowConsoleFooterBar(config.ui_consolemsg);
-    });
-
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
     this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt) => {
@@ -148,10 +133,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     });
 
     this.store$.dispatch(adminUiInitialized());
-  }
-
-  ngAfterViewChecked(): void {
-    this.scrollToBottomOnFooterBar();
   }
 
   ngAfterViewInit(): void {
@@ -200,65 +181,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       return '240px';
     }
     return '0px';
-  }
-
-  scrollToBottomOnFooterBar(): void {
-    try {
-      this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch (err: unknown) { }
-  }
-
-  getLogConsoleMsg(): void {
-    this.consoleMsgsSubscriptionId = UUID.UUID();
-    this.ws.sub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId).pipe(untilDestroyed(this)).subscribe((log) => {
-      if (log && log.data && typeof log.data === 'string') {
-        this.consoleMsg = this.accumulateConsoleMsg(log.data, 3);
-      }
-    });
-  }
-
-  accumulateConsoleMsg(msg: string, num: number): string {
-    let msgs = '';
-    const msgarr = msg.split('\n');
-
-    // consoleMSgList will store just 500 messages.
-    msgarr.forEach((message) => {
-      if ((message) !== '') {
-        this.consoleMessages.push((message));
-      }
-    });
-    while (this.consoleMessages.length > 500) {
-      this.consoleMessages.shift();
-    }
-
-    const limit = Math.min(num, 500, this.consoleMessages.length);
-    for (let i = this.consoleMessages.length - 1; i >= this.consoleMessages.length - limit; --i) {
-      msgs = this.consoleMessages[i] + '\n' + msgs;
-    }
-
-    return msgs;
-  }
-
-  onShowConsoleFooterBar(isConsoleFooterEnabled: boolean): void {
-    if (isConsoleFooterEnabled && this.consoleMsg === '') {
-      this.getLogConsoleMsg();
-    } else if (!isConsoleFooterEnabled && this.consoleMsgsSubscriptionId) {
-      this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);
-    }
-
-    this.isShowFooterConsole = isConsoleFooterEnabled;
-  }
-
-  onShowConsolePanel(): void {
-    const dialogRef = this.dialog.open(ConsolePanelDialogComponent, {});
-    const sub = dialogRef.componentInstance.onEventEmitter.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
-    });
-
-    dialogRef.beforeClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      clearInterval(dialogRef.componentInstance.intervalPing);
-      sub.unsubscribe();
-    });
   }
 
   // For the slide-in menu

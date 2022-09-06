@@ -98,7 +98,7 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = this.sysGenService.getProductType();
 
     this.store$.pipe(waitForSystemInfo)
       .pipe(untilDestroyed(this))

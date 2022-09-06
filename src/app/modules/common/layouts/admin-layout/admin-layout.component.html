@@ -71,14 +71,12 @@
     <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
 
     <!-- App content -->
-    <div class="rightside-content-hold" [class.has-footer]="isShowFooterConsole">
+    <div class="rightside-content-hold" [class.has-footer]="hasConsoleFooter$ | async">
       <ix-page-title-header *ngIf="!headerPortalOutlet"></ix-page-title-header>
       <ng-template *ngIf="headerPortalOutlet" [cdkPortalOutlet]="headerPortalOutlet"></ng-template>
       <router-outlet></router-outlet>
     </div>
-    <div class="footer-console-bar" *ngIf="isShowFooterConsole" ix-auto ix-auto-type="shell" ix-auto-identifier="footer-console">
-      <pre #footerBarScroll class="message" (click)="onShowConsolePanel()">{{consoleMsg}}</pre>
-    </div>
+    <ix-console-footer *ngIf="hasConsoleFooter$ | async"></ix-console-footer>
   </mat-sidenav-content>
   <!-- Alert bar -->
   <mat-sidenav
