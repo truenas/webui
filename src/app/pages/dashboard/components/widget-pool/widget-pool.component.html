@@ -34,9 +34,9 @@
           </h3>
 
           <div class="controls">
-            <button
+            <a
               mat-icon-button
-              (click)="router.navigate(['storage/status/' + poolState.id.toString()])"
+              [routerLink]="['/storage', 'status', poolState.id]"
               [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus"
             >
               <mat-icon
@@ -47,15 +47,15 @@
                 aria-label="Configure Pools"
               >
               </mat-icon>
-            </button>
+            </a>
 
             <a
               mat-icon-button
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="diskReports"
-              [routerLink]="['/reportsdashboard/disk']"
-              [queryParams]="{ disks: allDiskNames }"
+              [routerLink]="['/reportsdashboard', 'disk']"
+              [queryParams]="{ disks: poolDisks }"
             >
               <mat-icon
                 matTooltip="{{'Disk Reports' | translate}}"

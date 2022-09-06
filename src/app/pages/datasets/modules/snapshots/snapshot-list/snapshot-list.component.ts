@@ -214,7 +214,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
         this.loader.close();
       },
       (error: WebsocketError) => {
-        console.error(error);
+        this.dialogService.errorReportMiddleware(error);
         this.loader.close();
       },
     );

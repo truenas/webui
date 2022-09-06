@@ -34,7 +34,7 @@ export default {
 
   domain_tooltip: T('Fully qualified domain name of the host with the \
  dynamic IP address. Separate multiple domains with a space, comma \
- \(,\), or semicolon \(;\). Example: \
+ (,), or semicolon (;). Example: \
  <i>myname.dyndns.org; myothername.dyndns.org</i>.'),
 
   username_tooltip: T('Username for logging in to the provider and \

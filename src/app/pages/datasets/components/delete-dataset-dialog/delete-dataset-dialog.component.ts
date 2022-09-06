@@ -14,7 +14,6 @@ import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -118,7 +117,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
       }, (error) => {
         this.loader.close();
         this.dialogRef.close(false);
-        (new EntityUtils()).errorReport(error, this.dialog);
+        this.dialog.errorReportMiddleware(error);
       });
   }
 

@@ -30,7 +30,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Storage'),
       icon: 'dns',
-      state: 'storage2',
+      state: 'storage',
     },
     {
       name: T('Datasets'),
@@ -44,7 +44,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Storage (Deprecated)'),
       icon: 'dns',
-      state: 'storage',
+      state: 'storage-old',
     },
     {
       name: T('Shares'),

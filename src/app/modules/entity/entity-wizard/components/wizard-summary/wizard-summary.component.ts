@@ -11,7 +11,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 })
 export class WizardSummaryComponent {
   @Input() fieldConfigs: FieldConfig[];
-  @Input() value: any;
+  @Input() value: Record<string, any>;
   @Input() isRoot: boolean;
   @Input() summary: Record<string, unknown>;
 

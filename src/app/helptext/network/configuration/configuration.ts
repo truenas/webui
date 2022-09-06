@@ -69,6 +69,7 @@ export default {
   gateway: T('Default Gateway'),
   nameservers: T('DNS Servers'),
   outbound_network: T('Outbound Network'),
+  outbound_activity: T('Outbound Activity'),
   other: T('Other Settings'),
   service_announcement: T('Service Announcement'),
 
@@ -104,6 +105,7 @@ communicate externally. All other external traffic is restricted.'),
     },
   },
   outbound_network_value: {
+    placeholder: T('Allowed Services'),
     tooltip: T('Select the system services that will be allowed to \
 communicate externally.'),
   },

@@ -76,12 +76,10 @@
       </div>
     </div>
   
-    <div class="details-container" [class.details-container-mobile]="showMobileDetails"
-      ixDetailsHeight
-      ixDetailsHeightParentClass="rightside-content-hold"
-      [hasConsoleFooter]="hasConsoleFooter"
-      [headerHeight]="headerHeight"
-      [footerHeight]="footerHeight"
+    <div 
+      class="details-container" 
+      [class.details-container-mobile]="showMobileDetails"
+      ixDetailsHeight="rightside-content-hold"
     >
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"

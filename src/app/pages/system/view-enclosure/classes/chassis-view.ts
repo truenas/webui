@@ -288,7 +288,7 @@ export class ChassisView {
   colorDriveTray(slot: number, color: string): void {
     const driveIndex = slot - this.slotRange.start;
     if (driveIndex < 0 || driveIndex >= this.totalDriveTrays) {
-      console.warn('IGNORING DRIVE AT INDEX ' + driveIndex + ' SLOT ' + slot + ' IS OUT OF RANGE');
+      console.warn(`IGNORING DRIVE AT INDEX ${driveIndex} SLOT ${slot} IS OUT OF RANGE`);
       return;
     }
     const dt = this.driveTrayObjects[driveIndex];

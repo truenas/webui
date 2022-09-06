@@ -211,7 +211,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     const day = build.getUTCDate();
     const hours = build.getUTCHours();
     const minutes = build.getUTCMinutes();
-    this.buildDate = month + ' ' + day + ', ' + year + ' ' + hours + ':' + minutes;
+    this.buildDate = `${month} ${day}, ${year} ${hours}:${minutes}`;
 
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 

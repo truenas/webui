@@ -1,21 +1,28 @@
 import {
   Directive, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
+import { headerHeight, footerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 /**
  * This directive is used to dynamically adjust height of the "details" block in a "master-details" layout
  * to fill the bottom space, which becomes available when user scrolls the page down,
  * so the page's heading is shifted off the screen
  */
+@UntilDestroy()
 @Directive({
   selector: '[ixDetailsHeight]',
 })
 export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
-  @Input() ixDetailsHeightParentClass: string;
-  @Input() hasConsoleFooter = false;
-  @Input() headerHeight = 0;
-  @Input() footerHeight = 0;
+  @Input('ixDetailsHeight') ixDetailsHeightParentClass: string;
+
+  private hasConsoleFooter = false;
+  private headerHeight = headerHeight;
+  private footerHeight = footerHeight;
 
   private readonly onScrollHandler = this.onScroll.bind(this);
 
@@ -27,9 +34,17 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   constructor(
     @Inject(WINDOW) private window: Window,
     private element: ElementRef,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
+    this.store$.pipe(
+      waitForAdvancedConfig,
+      untilDestroyed(this),
+    ).subscribe((advancedConfig) => {
+      this.hasConsoleFooter = advancedConfig.consolemsg;
+    });
+
     this.element.nativeElement.style.height = this.heightCssValue;
     this.window.addEventListener('scroll', this.onScrollHandler, true);
   }

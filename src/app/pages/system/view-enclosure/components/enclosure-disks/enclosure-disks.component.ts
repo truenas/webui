@@ -1071,8 +1071,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       const cc = this.hexToRgb(this.theme.cyan);
       const animation = keyframes({
         values: [
-          { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ')' },
-          { borderWidth: 30, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ', 0)' },
+          { borderWidth: 0, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]})` },
+          { borderWidth: 30, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]}, 0)` },
         ],
         duration: 1000,
         loop: Infinity,
