@@ -21,7 +21,8 @@ export class FailoverStatusComponent implements OnChanges {
   reasonText = helptext.ha_disabled_reasons;
   statusMessage = this.translate.instant('Checking HA status');
 
-  statusDescriptions = {
+  statusDescriptions: { [status in FailoverStatus]: string } = {
+    [FailoverStatus.Single]: '',
     [FailoverStatus.Master]: this.translate.instant('Active {controller}.', { controller: globalHelptext.Ctrlr }),
     [FailoverStatus.Backup]: this.translate.instant('Standby {controller}.', { controller: globalHelptext.Ctrlr }),
     [FailoverStatus.Electing]: this.translate.instant('Electing {controller}.', { controller: globalHelptext.Ctrlr }),

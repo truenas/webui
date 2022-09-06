@@ -1,4 +1,4 @@
-@import '../../../../assets/styles/scss-imports/cssvars';
+@import 'cssvars';
 
 .session-form-hold {
   margin: 0 auto;
@@ -103,6 +103,7 @@
   }
 }
 
+// TODO: Nuke
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

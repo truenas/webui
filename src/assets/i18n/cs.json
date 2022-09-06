@@ -4167,7 +4167,6 @@
   "Zvol name": "název Zvol",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
   "below to confirm.": "níže pro potvrzení.",
-  "close": "zavřít",
   "days": "dní",
   "overview": "přehled",
   "was successfully attached.": "byl úspěšně připojen."

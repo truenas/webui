@@ -4120,7 +4120,6 @@
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[使用更少的交易来换取更多的RAM。]（https://rclone.org/docs/\\#fast-list）这也可以加快或减慢传输速度。",
   "below to confirm.": "下方确认。",
   "bytes.": "bytes。",
-  "close": "关闭",
   "cores": "核心",
   "days": "天数",
   "details": "详细信息",

@@ -4126,7 +4126,6 @@
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Utilisez moins de transactions en échange de plus de RAM](https://rclone.org/docs/\\#fast-list) Cela peut aussi accélérer ou ralentir le transfert.",
   "below to confirm.": "ci-dessous pour confirmer.",
   "bytes.": "octets.",
-  "close": "fermer",
   "cores": "cœurs",
   "days": "jours",
   "details": "détails",

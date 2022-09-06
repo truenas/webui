@@ -4167,7 +4167,6 @@
   "Zvol name": "nome Zvol",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Usa meno transazioni in cambio di più RAM.](https://rclone.org/docs/\\#fast-list) Questo può anche accelerare o rallentare il trasferimento.",
   "below to confirm.": "sotto per confermare.",
-  "close": "chiuso",
   "days": "giorni",
   "overview": "panoramica",
   "was successfully attached.": "è stata collegata correttamente."

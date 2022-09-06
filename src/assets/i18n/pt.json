@@ -4169,6 +4169,5 @@
   "When": "Quando",
   "Wipe": "Apagar",
   "ZFS Filesystem": "Sistema de Ficheiros ZFS",
-  "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
-  "close": "fechar"
+  "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer."
 }

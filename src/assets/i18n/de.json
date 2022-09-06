@@ -4163,7 +4163,6 @@
   "Zvol Location": "ZVOL Ort",
   "Zvol name": "ZVOL Name",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
-  "close": "Schließen",
   "days": "Tage",
   "details": "Details",
   "lz4 (recommended)": "lz4 (empfohlen)",

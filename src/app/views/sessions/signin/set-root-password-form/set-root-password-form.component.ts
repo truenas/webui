@@ -4,11 +4,13 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { switchMap } from 'rxjs/operators';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services';
+import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
 @Component({
@@ -18,6 +20,8 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SetRootPasswordFormComponent implements OnInit {
+  isLoading$ = this.signinStore.isLoading$;
+
   form = this.formBuilder.group({
     password: ['', Validators.required],
     password2: ['', [
@@ -31,7 +35,6 @@ export class SetRootPasswordFormComponent implements OnInit {
   });
 
   hasInstanceId = false;
-  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,6 +43,7 @@ export class SetRootPasswordFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
     private translate: TranslateService,
+    private signinStore: SigninStore,
   ) { }
 
   ngOnInit(): void {
@@ -48,24 +52,26 @@ export class SetRootPasswordFormComponent implements OnInit {
 
   onSubmit(): void {
     const formValues = this.form.value;
-    this.isLoading = true;
+    this.signinStore.setLoadingState(true);
 
     const request$ = this.hasInstanceId
       ? this.ws.call('user.set_root_password', [formValues.password, { instance_id: formValues.instanceId }])
       : this.ws.call('user.set_root_password', [formValues.password]);
 
-    request$.pipe(untilDestroyed(this)).subscribe(
+    request$.pipe(
+      switchMap(() => {
+        return this.ws.login('root', formValues.password);
+        // TODO: Handle login error.
+      }),
+      untilDestroyed(this),
+    ).subscribe(
       () => {
-        this.isLoading = true;
-        this.cdr.markForCheck();
-        // TODO: Login success
-        // this.ws.login('root', this.password.value)
-        //   .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
+        this.signinStore.setLoadingState(false);
+        this.signinStore.handleSuccessfulLogin();
       },
       (error) => {
         this.errorHandler.handleWsFormError(error, this.form);
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.signinStore.setLoadingState(false);
       },
     );
   }

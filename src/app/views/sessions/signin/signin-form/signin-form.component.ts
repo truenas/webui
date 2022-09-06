@@ -3,8 +3,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
+import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
 @Component({
@@ -14,6 +16,8 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninFormComponent implements OnInit {
+  isLoading$ = this.signinStore.isLoading$;
+
   form = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
@@ -21,13 +25,14 @@ export class SigninFormComponent implements OnInit {
   });
 
   hasTwoFactor = false;
-  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
+    private errorHandler: FormErrorHandlerService,
+    private signinStore: SigninStore,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -36,6 +41,7 @@ export class SigninFormComponent implements OnInit {
 
   // TODO: Autofocus
   // TODO: Check the need for firefox fix from Alex
+
   // this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
   //   if (!this.didSetFocus) {
   //     this.didSetFocus = true;
@@ -44,8 +50,7 @@ export class SigninFormComponent implements OnInit {
   // });
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
 
     const request$ = this.hasTwoFactor
@@ -53,14 +58,20 @@ export class SigninFormComponent implements OnInit {
       : this.ws.login(formValues.username, formValues.password);
 
     request$.pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+      (wasLoggedIn) => {
+        this.signinStore.setLoadingState(false);
 
-        // TODO: Figure out callback
-        // this.loginCallback(result)
+        if (!wasLoggedIn) {
+          this.handleFailedLogin();
+          return;
+        }
+
+        this.signinStore.handleSuccessfulLogin();
       },
-      // TODO: Handle error
+      (error) => {
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.signinStore.setLoadingState(false);
+      },
     );
   }
 
@@ -74,5 +85,19 @@ export class SigninFormComponent implements OnInit {
       }
       this.cdr.markForCheck();
     });
+  }
+
+  private handleFailedLogin(): void {
+    let message: string;
+    if (this.hasTwoFactor) {
+      message = this.translate.instant('Username, Password, or 2FA Code is incorrect.');
+    } else {
+      message = this.translate.instant('Username or Password is incorrect.');
+    }
+
+    this.signinStore.showSnackbar(message);
+    this.form.patchValue({ password: '', otp: '' });
+    this.form.controls.password.setErrors(null);
+    this.form.controls.otp.setErrors(null);
   }
 }
