@@ -41,10 +41,9 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterViewInit {
-  private isMobileView = false;
+  private isMobileView = this.layoutService.isMobile;
+  isSidenavCollapsed = this.layoutService.isMenuCollapsed;
   isSidenavOpen = true;
-  isSidenavCollapsed = false;
-  sidenavMode: MatDrawerMode = 'over';
   isShowFooterConsole = false;
   consoleMsg = '';
   hostname: string;
@@ -69,10 +68,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
   productType$ = this.sysGeneralService.getProductType$;
   arePreferencesLoaded$ = new BehaviorSubject(false);
 
+  get sidenavMode(): MatDrawerMode {
+    return this.isMobileView ? 'over' : 'side';
+  }
+
   constructor(
     private router: Router,
     public core: CoreService,
-    public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     protected ws: WebSocketService,
     public dialog: MatDialog,
@@ -118,11 +120,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
   detectDeviceType(): void {
     this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .observe([Breakpoints.XSmall, Breakpoints.Small])
       .pipe(untilDestroyed(this))
       .subscribe((state: BreakpointState) => {
         this.isMobileView = state.matches;
-        this.isSidenavOpen = false;
+        this.updateSidenav();
         this.cdr.markForCheck();
       });
   }
@@ -143,7 +145,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     ).subscribe((preferences) => {
       if (preferences.sidenavStatus) {
         this.isSidenavOpen = preferences.sidenavStatus.isOpen;
-        this.sidenavMode = preferences.sidenavStatus.mode;
         this.isSidenavCollapsed = preferences.sidenavStatus.isCollapsed;
         this.layoutService.isMenuCollapsed = this.isSidenavCollapsed;
       }
@@ -195,16 +196,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     }
 
     this.isSidenavOpen = !this.isMobileView;
-    this.sidenavMode = this.isMobileView ? 'over' : 'side';
-    if (!this.isMobileView) {
+    if (this.isMobileView) {
+      this.layoutService.isMenuCollapsed = false;
+    } else {
       // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
       setTimeout(() => {
+        this.layoutService.isMenuCollapsed = this.isSidenavCollapsed;
         this.sideNav?.open();
       });
-    } else {
-      this.layoutService.isMenuCollapsed = false;
     }
-    this.cd.markForCheck();
+    this.cdr.markForCheck();
   }
 
   get sidenavWidth(): string {
