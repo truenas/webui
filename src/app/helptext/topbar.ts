@@ -33,6 +33,7 @@ export default {
     upgrade_waiting: T('Upgrade Waiting to Finish'),
     pending_network_changes: T('Pending Network Changes'),
     directory_services_monitor: T('Directory Services Monitor'),
+    resilvering: T('Resilvering'),
     replication: T('Replication'),
     task_manager: T('Jobs'),
     alerts: T('Alerts'),
