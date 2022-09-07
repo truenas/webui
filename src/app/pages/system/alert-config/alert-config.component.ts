@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -13,23 +11,20 @@ import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services/';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-system-alert',
+  selector: 'ix-alert-config',
   templateUrl: './alert-config.component.html',
   styleUrls: ['./alert-config.component.scss'],
 })
-export class AlertConfigComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class AlertConfigComponent implements OnInit {
   categories: AlertCategory[] = [];
-  selectedCategory = '';
+  selectedCategoryId = '';
   form = this.formBuilder.group({});
+  isFormLoading = false;
   readonly helptext = helptext;
 
   readonly levelOptions$ = of([
@@ -48,24 +43,26 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     }),
   );
 
+  get selectedCategory(): AlertCategory {
+    return this.categories.find((category) => this.selectedCategoryId === category.id);
+  }
+
   constructor(
     private ws: WebSocketService,
-    protected loader: AppLoaderService,
     public dialog: DialogService,
     protected translate: TranslateService,
-    private layoutService: LayoutService,
     private snackbarService: SnackbarService,
     private formBuilder: FormBuilder,
   ) {}
 
   ngOnInit(): void {
-    this.loader.open();
+    this.isFormLoading = true;
 
     this.ws.call('alert.list_categories').pipe(untilDestroyed(this)).subscribe((categories) => {
       this.categories = categories;
 
       if (categories.length) {
-        this.selectedCategory = categories[0].id;
+        this.selectedCategoryId = categories[0].id;
       }
 
       categories.forEach((category) => {
@@ -82,29 +79,26 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
       this.ws.call('alertclasses.config').pipe(untilDestroyed(this)).subscribe(
         (alertConfig) => {
           this.form.patchValue(alertConfig.classes);
-          this.loader.close();
+          this.isFormLoading = false;
         },
         (error: WebsocketError) => {
-          this.loader.close();
+          this.isFormLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialog);
         },
       );
     },
     (error: WebsocketError) => {
-      this.loader.close();
+      this.isFormLoading = false;
       new EntityUtils().handleWsError(this, error, this.dialog);
     });
   }
 
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
   onCategoryChanged(categotyId: string): void {
-    this.selectedCategory = categotyId;
+    this.selectedCategoryId = categotyId;
   }
 
   onSubmit(): void {
+    this.isFormLoading = true;
     const payload: AlertClassesUpdate = { classes: {} };
     for (const [className, classControl] of Object.entries(this.form.controls)) {
       const levelControl = classControl.controls.level as FormControl;
@@ -119,11 +113,10 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    this.loader.open();
 
     this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe(
       () => this.snackbarService.success(this.translate.instant('Settings saved')),
       (error) => new EntityUtils().handleWsError(this, error, this.dialog),
-    ).add(() => this.loader.close());
+    ).add(() => this.isFormLoading = false);
   }
 }
