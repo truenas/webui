@@ -1,0 +1,24 @@
+:host {
+  display: table-row;
+}
+
+.details {
+  margin: 0;
+  padding: 16px 0;
+
+  dt {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  dd {
+    display: inline-block;
+    margin: 0;
+  }
+
+  ngx-skeleton-loader {
+    height: 28px;
+    width: 50px;
+  }
+}
