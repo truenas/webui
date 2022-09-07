@@ -11,7 +11,9 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService } from 'app/services';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
 
 interface SigninState {
   isLoading: boolean;
@@ -52,6 +54,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
+    private dialogService: DialogService,
     private router: Router,
     private snackbar: MatSnackBar,
     @Inject(WINDOW) private window: Window,
@@ -87,15 +90,21 @@ export class SigninStore extends ComponentStore<SigninState> {
     this.setLoadingState(true);
     this.snackbar.dismiss();
 
-    this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(untilDestroyed(this)).subscribe((token) => {
-      if (!token) {
-        // TODO: Handle
-        return;
-      }
+    this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(
+      tapResponse(
+        (token) => {
+          if (!token) {
+            // TODO: Handle
+            return;
+          }
 
-      this.ws.token = token;
-      this.router.navigateByUrl(this.getRedirectUrl());
-    });
+          this.ws.token = token;
+          this.router.navigateByUrl(this.getRedirectUrl());
+        },
+        (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
+      ),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   showSnackbar(message: string): void {
@@ -111,7 +120,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       tapResponse(
         (wasLoggedIn) => {
           if (!wasLoggedIn) {
-            // TODO: Handle
             this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
             this.ws.token = null;
             this.setLoadingState(false);
