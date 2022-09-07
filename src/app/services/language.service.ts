@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
+import { find } from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { AppState } from 'app/store';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { WebSocketService } from './ws.service';
 
-@UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class LanguageService {
   currentLanguage: string = null;
   availableLangs = [
@@ -367,14 +366,11 @@ export class LanguageService {
       code: 'zh-hans',
     },
   ];
-  updateCall = 'system.general.update' as const;
 
   constructor(
     protected translate: TranslateService,
-    protected ws: WebSocketService,
     private store$: Store<AppState>,
-  ) {
-  }
+  ) {}
 
   setLanguageFromBrowser(): Observable<boolean> {
     if (this.currentLanguage) {
@@ -399,10 +395,10 @@ export class LanguageService {
    * @return Observable that completes when translations have been loaded.
    */
   setLanguage(lang: string): Observable<boolean> {
-    if (_.find(this.availableLangs, { code: lang })) {
+    if (find(this.availableLangs, { code: lang })) {
       this.currentLanguage = lang;
     } else {
-      this.currentLanguage = 'en';
+      this.currentLanguage = this.translate.defaultLang;
     }
 
     return this.translate.use(this.currentLanguage).pipe(

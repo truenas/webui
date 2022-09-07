@@ -16,14 +16,14 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter, timeout } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService, SystemGeneralService, LanguageService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -85,6 +85,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
     private breakpointObserver: BreakpointObserver,
+    private languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -138,20 +139,24 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       this.onShowConsoleFooterBar(config.ui_consolemsg);
     });
 
-    this.store$.pipe(
-      waitForPreferences,
-      timeout(5000),
+    combineLatest([
+      this.store$.pipe(waitForGeneralConfig),
+      this.store$.pipe(waitForPreferences),
+    ]).pipe(
+      timeout(10000),
       untilDestroyed(this),
-    ).subscribe((preferences) => {
+    ).subscribe(([config, preferences]) => {
       if (preferences.sidenavStatus) {
         this.isSidenavOpen = preferences.sidenavStatus.isOpen;
         this.isSidenavCollapsed = preferences.sidenavStatus.isCollapsed;
         this.layoutService.isMenuCollapsed = this.isSidenavCollapsed;
       }
+      if (config.language) {
+        this.languageService.setLanguage(config.language);
+      }
       this.updateSidenav();
       this.arePreferencesLoaded$.next(true);
-    },
-    () => {
+    }, () => {
       this.updateSidenav();
       this.arePreferencesLoaded$.next(true);
     });
