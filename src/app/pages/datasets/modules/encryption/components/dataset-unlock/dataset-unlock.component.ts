@@ -18,6 +18,7 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -200,6 +201,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
   }
 
+  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+    new EntityUtils().handleWsError(this.entityForm, error, this.dialogService);
+  };
+
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'] as UntypedFormArray;
@@ -256,13 +261,13 @@ export class DatasetUnlockComponent implements FormConfiguration {
           );
         }
       }
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      if (err) {
+    }, this.handleError);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      if (error) {
         dialogRef.close();
-        new EntityUtils().handleWsError(entityEdit, err, this.dialogService);
+        this.handleError(error);
       }
-    });
+    }, this.handleError);
 
     this.keyFileControl = entityEdit.formGroup.controls['key_file'] as UntypedFormControl;
     this.unlockChildrenControl = entityEdit.formGroup.controls['unlock_children'] as UntypedFormControl;
@@ -286,7 +291,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           this.setDisabled(keyConfig, datasetControls['key'], hideKeyDatasets, hideKeyDatasets);
         }
       }
-    });
+    }, this.handleError);
     this.unlockChildrenControl.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((unlockChildren: boolean) => {
@@ -396,11 +401,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
         unlockDialogRef.componentInstance.errorDatasets = errors;
         unlockDialogRef.componentInstance.data = payload as DatasetUnlockParams;
       }
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+    }, this.handleError);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       dialogRef.close();
-      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
-    });
+      this.handleError(error);
+    }, this.handleError);
   }
 
   unlockSubmit(payload: DatasetUnlockParams): void {
@@ -455,11 +460,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
           unlockDialogRef.componentInstance.data = payload;
         }
       }
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+    }, this.handleError);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       dialogRef.close();
-      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
-    });
+      this.handleError(error);
+    }, this.handleError);
   }
 
   goBack(): void {

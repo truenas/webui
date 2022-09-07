@@ -7,7 +7,8 @@ import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services';
+import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
+import { DialogService, WebSocketService } from 'app/services';
 
 interface DiskState {
   health: DiskHealthLevel;
@@ -51,9 +52,14 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     symbolText: '',
   };
 
+  get disks(): string[] {
+    return getPoolDisks(this.poolState);
+  }
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -105,6 +111,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
       this.diskState.alerts = alerts.length;
       this.cdr.markForCheck();
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
@@ -117,12 +125,14 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
         this.diskState.smartTests = this.diskState.smartTests + results.length;
       });
       this.cdr.markForCheck();
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 
   private loadTemperatures(): void {
-    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((res) => {
-      const temperatures = Object.values(res);
+    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((tempAggregates) => {
+      const temperatures = Object.values(tempAggregates);
 
       const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
       const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);
@@ -135,6 +145,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
       this.diskState.unit = TemperatureUnit.Celsius;
       this.diskState.symbolText = '°';
       this.cdr.markForCheck();
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
   }
 }

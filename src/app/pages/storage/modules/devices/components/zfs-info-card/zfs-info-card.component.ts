@@ -10,7 +10,6 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
@@ -88,9 +87,9 @@ export class ZfsInfoCardComponent {
         this.devicesStore.reloadList();
         this.loader.close();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }
@@ -111,9 +110,9 @@ export class ZfsInfoCardComponent {
         this.devicesStore.reloadList();
         this.loader.close();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }
@@ -134,9 +133,9 @@ export class ZfsInfoCardComponent {
         this.devicesStore.reloadList();
         this.loader.close();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }
@@ -162,6 +161,8 @@ export class ZfsInfoCardComponent {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.devicesStore.reloadList();
         this.dialogService.closeAllDialogs();
+      }, (error) => {
+        this.dialogService.errorReportMiddleware(error);
       });
     });
   }

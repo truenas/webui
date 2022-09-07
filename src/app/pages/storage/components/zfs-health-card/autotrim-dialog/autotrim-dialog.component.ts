@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { OnOff } from 'app/enums/on-off.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
@@ -52,7 +51,7 @@ export class AutotrimDialogComponent implements OnInit {
         },
         error: (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
         },
       });
   }
