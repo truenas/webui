@@ -165,6 +165,13 @@ def run_testing():
         os.environ["nas_password"] = password
         os.environ["nas_version"] = version
         os.environ['test_suite'] = test_suite
+    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'bluefin':
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
+        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
+        os.environ["nas_version"] = configs['NAS_CONFIG']['version']
+        os.environ['test_suite'] = test_suite
     else:
         os.environ["nas_ip"] = 'None'
         os.environ["nas_password"] = 'None'
