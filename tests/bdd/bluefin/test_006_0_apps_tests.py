@@ -80,50 +80,50 @@ def remove_an_app(driver):
 @then('delete a container image')
 def delete_a_container_image(driver):
     """delete_a_container_image"""
-    import t_006_6_delete_a_container_image
-    t_006_6_delete_a_container_image.test_delete_a_container_image(driver)
+#    import t_006_6_delete_a_container_image
+#    t_006_6_delete_a_container_image.test_delete_a_container_image(driver)
 
 
 @then('validate minio with docker image')
 def validate_truecommand(driver):
     """validate_truecommand"""
-    import t_006_7_validate_minio
-    t_006_7_validate_minio.test_validate_minio(driver)
+#    import t_006_7_validate_minio
+#    t_006_7_validate_minio.test_validate_minio(driver)
 
 
 @then('import pool with apps')
 def import_pool_with_apps(driver):
     """import_pool_with_apps"""
-    import t_006_8_import_pool_with_apps
-    t_006_8_import_pool_with_apps.test_import_pool_with_apps(driver)
+#    import t_006_8_import_pool_with_apps
+#    t_006_8_import_pool_with_apps.test_import_pool_with_apps(driver)
 
 
 @then('change pool for apps')
 def change_pool_for_apps(driver):
     """change_pool_for_apps"""
-    import t_006_9_change_pool_for_apps
-    t_006_9_change_pool_for_apps.test_change_pool_for_apps(driver)
+#    import t_006_9_change_pool_for_apps
+#    t_006_9_change_pool_for_apps.test_change_pool_for_apps(driver)
 
 
 @then('add a catalog')
 def add_a_catalog(driver):
     """add_a_catalog"""
-    import t_006_10_add_a_catalog
-    t_006_10_add_a_catalog.test_add_a_catalog(driver)
+#    import t_006_10_add_a_catalog
+#    t_006_10_add_a_catalog.test_add_a_catalog(driver)
 
 
 @then('remove a catalog')
 def remove_a_catalog(driver):
     """remove_a_catalog"""
-    import t_006_11_remove_a_catalog
-    t_006_11_remove_a_catalog.test_remove_a_catalog(driver)
+#    import t_006_11_remove_a_catalog
+#    t_006_11_remove_a_catalog.test_remove_a_catalog(driver)
 
 
 @then('delete a docker container')
 def delete_a_docker_container(driver):
     """delete_a_container"""
-    import t_006_12_delete_a_docker_container
-    t_006_12_delete_a_docker_container.test_delete_a_docker_container(driver)
+#    import t_006_12_delete_a_docker_container
+#    t_006_12_delete_a_docker_container.test_delete_a_docker_container(driver)
 
 
 
