@@ -1,9 +1,8 @@
-import { MediaMatcher } from '@angular/cdk/layout';
 import {
-  AfterViewInit, Component, Inject, Input, OnDestroy, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog, MatDialogRef, DialogPosition } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,7 +10,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -26,18 +24,11 @@ import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.in
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
-import { DirectoryServicesMonitorComponent } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
-import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
-import { selectRunningJobsCount, selectIsJobPanelOpen } from 'app/modules/jobs/store/job.selectors';
-import {
-  ChangePasswordDialogComponent,
-} from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -48,36 +39,29 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { alertIndicatorPressed, sidenavUpdated, jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-topbar',
-  styleUrls: ['./topbar.component.scss'],
   templateUrl: './topbar.component.html',
+  styleUrls: ['./topbar.component.scss'],
 })
-export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav: MatSidenav;
 
-  interval: Interval;
   updateIsDone: Subscription;
 
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
   resilveringDetails: PoolScan;
-  isDirServicesMonitorOpened = false;
-  taskDialogRef: MatDialogRef<JobsPanelComponent>;
-  dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   updateDialog: MatDialogRef<UpdateDialogComponent>;
-  dirServicesStatus: DirectoryServiceState[] = [];
-  showDirServicesIcon = false;
   haStatusText: string;
   haDisabledReasons: FailoverDisabledReason[] = [];
   isHa = false;
   upgradeWaitingToFinish = false;
   pendingUpgradeChecked = false;
-  sysName = 'TrueNAS CORE';
   hostname: string;
   checkinRemaining: number;
   checkinInterval: Interval;
@@ -89,17 +73,7 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
   screenSize = 'waiting';
   productType: ProductType;
 
-  breakpoints!: MediaQueryList;
-
-  dialogPosition: DialogPosition = {
-    top: '48px',
-    right: '16px',
-  };
-
-  jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
-
-  isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
 
   readonly FailoverDisabledReason = FailoverDisabledReason;
 
@@ -118,7 +92,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     private store$: Store<AlertSlice>,
     private core: CoreService,
     private snackbar: SnackbarService,
-    public mediaMatcher: MediaMatcher,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -142,8 +115,8 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isHa = isHa;
         this.getHaStatus();
       });
-      this.sysName = 'TrueNAS ENTERPRISE';
     }
+
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (!event || (event.fields.method !== 'update.update' && event.fields.method !== 'failover.upgrade')) {
         return;
@@ -178,7 +151,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
-    this.getDirServicesStatus();
     this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: NetworkInterfacesChangedEvent) => {
       if (evt && evt.data.commit) {
         this.pendingNetworkChanges = false;
@@ -213,59 +185,9 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.closeSlideIn();
     });
-
-    this.isJobPanelOpen$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.taskDialogRef = this.dialog.open(JobsPanelComponent, {
-        width: '400px',
-        hasBackdrop: true,
-        panelClass: 'topbar-panel',
-        position: this.dialogPosition,
-      });
-
-      this.taskDialogRef.beforeClosed().pipe(
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.onJobPanelClosed();
-      });
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.breakpoints = this.mediaMatcher.matchMedia('(max-width: 767px)');
-
-    const positioner = (hasFooter: boolean): void => {
-      if (hasFooter) {
-        this.dialogPosition = {
-          bottom: '48px',
-          right: '16px',
-        };
-      } else {
-        this.dialogPosition = {
-          top: '48px',
-          right: '16px',
-        };
-      }
-
-      if (this.taskDialogRef) {
-        this.taskDialogRef.updatePosition(this.dialogPosition);
-      }
-    };
-
-    // Check width on page load
-    positioner(window.innerWidth < 768);
-
-    // Check width on resize
-    this.breakpoints.addEventListener('change', (state) => positioner(state.matches));
   }
 
   ngOnDestroy(): void {
-    if (typeof (this.interval) !== 'undefined') {
-      clearInterval(this.interval);
-    }
-
     this.ws.unsubscribe('failover.disabled.reasons');
 
     this.core.unregister({ observerClass: this });
@@ -273,14 +195,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onAlertIndicatorPressed(): void {
     this.store$.dispatch(alertIndicatorPressed());
-  }
-
-  onJobIndicatorPressed(): void {
-    this.store$.dispatch(jobIndicatorPressed());
-  }
-
-  onJobPanelClosed(): void {
-    this.store$.dispatch(jobPanelClosed());
   }
 
   toggleCollapse(): void {
@@ -308,7 +222,7 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  toggleLogo(): string {
+  getLogoIcon(): string {
     const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
     if (isBlueTheme && this.screenSize === 'xs') {
       return 'ix:logomark';
@@ -320,46 +234,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
       return 'ix:full_logo';
     }
     return 'ix:full_logo_rgb';
-  }
-
-  onShowAbout(): void {
-    this.dialog.open(AboutDialogComponent, {
-      maxWidth: '600px',
-      data: {
-        systemType: this.productType,
-      },
-      disableClose: true,
-    });
-  }
-
-  signOut(): void {
-    this.ws.logout();
-  }
-
-  onShutdown(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Shut down'),
-      message: this.translate.instant('Shut down the system?'),
-      buttonMsg: this.translate.instant('Shut Down'),
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.router.navigate(['/others/shutdown']);
-    });
-  }
-
-  onReboot(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Restart'),
-      message: this.translate.instant('Restart the system?'),
-      buttonMsg: this.translate.instant('Restart'),
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.router.navigate(['/others/reboot']);
-    });
   }
 
   checkEula(): void {
@@ -464,29 +338,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialog.open(ResilverProgressDialogComponent);
   }
 
-  onShowDirServicesMonitor(): void {
-    if (this.isDirServicesMonitorOpened) {
-      this.dirServicesMonitor.close(true);
-    } else {
-      this.isDirServicesMonitorOpened = true;
-      this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
-        width: '400px',
-        hasBackdrop: true,
-        panelClass: 'topbar-panel',
-        position: {
-          top: '48px',
-          right: '16px',
-        },
-      });
-    }
-
-    this.dirServicesMonitor.afterClosed().pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.isDirServicesMonitorOpened = false;
-      },
-    );
-  }
-
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
     if (info.status === 'HA Enabled') {
@@ -563,26 +414,6 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  getDirServicesStatus(): void {
-    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
-      this.dirServicesStatus = Object.values(state);
-      this.showDirectoryServicesIcon();
-    });
-    this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((status) => {
-      this.dirServicesStatus = Object.values(status);
-      this.showDirectoryServicesIcon();
-    });
-  }
-
-  showDirectoryServicesIcon(): void {
-    this.showDirServicesIcon = false;
-    this.dirServicesStatus.forEach((item) => {
-      if (item !== DirectoryServiceState.Disabled) {
-        this.showDirServicesIcon = true;
-      }
-    });
-  }
-
   updateInProgress(): void {
     this.systemGeneralService.updateRunning.emit('true');
     if (!this.updateNotificationSent) {
@@ -601,23 +432,12 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
-      position: {
-        top: '48px',
-        right: '16px',
-      },
+      position: topbarDialogPosition,
     });
     this.updateDialog.componentInstance.setMessage({ title, message });
   }
 
   openIx(): void {
     window.open('https://www.ixsystems.com/', '_blank');
-  }
-
-  openChangePasswordDialog(): void {
-    this.dialog.open(ChangePasswordDialogComponent);
-  }
-
-  navExternal(link: string): void {
-    window.open(link);
   }
 }

@@ -11,13 +11,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -40,58 +38,51 @@ import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/ad
 import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from 'app/modules/common/modal/modal.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
-import { TopbarComponent } from 'app/modules/common/topbar/topbar.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 
 @NgModule({
   imports: [
-    AlertsModule,
     CastModule,
     ChartistModule,
     CommonDirectivesModule,
     CommonModule,
     CoreComponents,
-    EntityModule,
     FlexLayoutModule,
     HttpClientModule,
     IxFormsModule,
     JobsModule,
-    LayoutModule,
     MatBadgeModule,
     MatButtonModule,
+    EntityModule,
     MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
     IxIconModule,
     MatInputModule,
     MatListModule,
-    MatMenuModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSelectModule,
-    MatSidenavModule,
     MatTableModule,
-    MatToolbarModule,
     MatTooltipModule,
     PortalModule,
     RouterModule,
     ScrollingModule,
     TooltipModule,
     TranslateModule,
-    TruecommandModule,
+    LayoutModule,
+    MatSidenavModule,
+    AlertsModule,
   ],
   declarations: [
     AboutDialogComponent,
-    AdminLayoutComponent,
-    AuthLayoutComponent,
     ConfirmDialogComponent,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
@@ -102,8 +93,9 @@ import { LocaleService } from 'app/services/locale.service';
     RedirectDialogComponent,
     ResilverProgressDialogComponent,
     SearchInputComponent,
-    TopbarComponent,
     UpdateDialogComponent,
+    AuthLayoutComponent,
+    AdminLayoutComponent,
   ],
   providers: [
     LanguageService,
@@ -111,6 +103,7 @@ import { LocaleService } from 'app/services/locale.service';
   ],
   exports: [
     SearchInputComponent,
+    ModalComponent,
   ],
 })
 export class AppCommonModule {}
