@@ -1203,22 +1203,22 @@ export class VMWizardComponent implements WizardConfiguration {
       () => {
         this.loader.close();
         this.dialogService.errorReport(
-          this.translate.instant('Error creating VM.') as string,
+          this.translate.instant('Error creating VM.'),
           this.translate.instant(
             'Error while creating the {device} device.\n {reason}',
             { device: error.device.dtype, reason: error.reason },
-          ) as string,
+          ),
           error.trace.formatted,
         );
       },
       (err: Job<null, unknown[]> | WebsocketError) => {
         this.loader.close();
         this.dialogService.errorReport(
-          this.translate.instant('Error creating VM.') as string,
+          this.translate.instant('Error creating VM.'),
           this.translate.instant(
             'Error while creating the {device} device.\n {reason}',
             { device: error.device.dtype, reason: error.reason },
-          ) as string,
+          ),
           error.trace.formatted,
         );
         new EntityUtils().handleWsError(this, err, this.dialogService);
