@@ -18,7 +18,7 @@ pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1559.feature', 'System Tests')
-def system_tests(driver):
+def test_system_tests(driver):
     """system tests."""
     pass
 
