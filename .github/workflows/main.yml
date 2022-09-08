@@ -2,7 +2,7 @@ name: WebUI
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore:
       - 'tests/**'
   pull_request:

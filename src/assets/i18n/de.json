@@ -1518,6 +1518,8 @@
   "One or more data vdevs has disks of different sizes.": "",
   "One time snapshot of {dataset}": "",
   "One-Time Password (OTP) Digits": "",
+  "One-Time Password (if necessary)": "",
+  "One-Time Password if two factor authentication is enabled.": "",
   "Online": "",
   "Online Disk": "",
   "Online disk ": "",

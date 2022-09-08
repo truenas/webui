@@ -1,3 +1,4 @@
+import { PlatformLocation } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -15,6 +16,10 @@ export class IxSlideInService {
   private slideInComponent: IxSlideInComponent;
   private slideInClosed$ = new Subject<ResponseOnClose>();
   modalType: Type<unknown>;
+
+  constructor(private location: PlatformLocation) {
+    this.location.onPopState(() => this.close());
+  }
 
   setModal(modal: IxSlideInComponent): void {
     this.slideInComponent = modal;

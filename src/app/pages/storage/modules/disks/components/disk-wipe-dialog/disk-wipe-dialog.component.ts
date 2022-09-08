@@ -83,6 +83,8 @@ export class DiskWipeDialogComponent {
         message: helptext.diskWipeDialogForm.infoContent,
         hideCancel: true,
       });
+    }, (error) => {
+      this.dialogService.errorReportMiddleware(error);
     });
 
     jobComponent.submit();

@@ -140,10 +140,10 @@ export class DiskBulkEditComponent {
             this.snackbarService.success(successText);
           }
         },
-        (err) => {
+        (error) => {
           this.isLoading = false;
           this.slideInService.close();
-          this.errorHandler.handleWsFormError(err, this.form);
+          this.errorHandler.handleWsFormError(error, this.form);
         },
       );
   }

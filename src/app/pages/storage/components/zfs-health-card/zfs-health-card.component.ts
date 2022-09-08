@@ -19,7 +19,6 @@ import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helpe
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
@@ -110,7 +109,7 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
         filter(Boolean),
         switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
         catchError((error) => {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -128,7 +127,7 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       filter(Boolean),
       switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
       catchError((error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -158,6 +157,8 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       .subscribe((scan) => {
         this.scan = scan.scan;
         this.cdr.markForCheck();
+      }, (error) => {
+        this.dialogService.errorReportMiddleware(error);
       });
   }
 

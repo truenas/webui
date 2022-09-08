@@ -23,7 +23,7 @@ import {
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -58,6 +58,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
+    private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
   ) { }
 

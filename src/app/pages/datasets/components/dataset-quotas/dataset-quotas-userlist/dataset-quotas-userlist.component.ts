@@ -16,9 +16,10 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
@@ -147,10 +148,15 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       this.isLoading = false;
       this.createDataSource(quotas);
       this.checkInvalidQuotas();
-    }, () => {
+    }, (error) => {
       this.emptyOrErrorConfig = this.errorConfig;
+      this.handleError(error);
     });
   }
+
+  handleError = (error: WebsocketError | Job): void => {
+    this.dialogService.errorReportMiddleware(error);
+  };
 
   createDataSource(quotas: DatasetQuota[] = []): void {
     if (!quotas.length) {
@@ -169,7 +175,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       if (quotas?.length) {
         this.invalidQuotas = quotas;
       }
-    });
+    }, this.handleError);
   }
 
   toggleDisplay(): void {
@@ -211,9 +217,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         .subscribe(() => {
           this.loader.close();
           this.getUserQuotas();
-        }, (err) => {
+        }, (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.handleError(error);
         });
     });
   }
@@ -244,9 +250,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       },
-      (err) => {
+      (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.handleError(error);
       },
     );
   }

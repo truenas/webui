@@ -14,7 +14,6 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
@@ -65,6 +64,8 @@ export class DashboardPoolComponent implements OnInit {
         this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
         this.areDisksLoading = false;
         this.cdr.markForCheck();
+      }, (error) => {
+        this.dialogService.errorReportMiddleware(error);
       });
   }
 
@@ -105,7 +106,7 @@ export class DashboardPoolComponent implements OnInit {
         }),
         catchError((error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
           return EMPTY;
         }),
         untilDestroyed(this),
@@ -132,7 +133,7 @@ export class DashboardPoolComponent implements OnInit {
       }),
       catchError((error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
         return EMPTY;
       }),
       untilDestroyed(this),
