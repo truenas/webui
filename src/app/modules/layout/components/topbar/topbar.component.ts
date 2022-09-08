@@ -56,7 +56,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: PoolScan;
   updateDialog: MatDialogRef<UpdateDialogComponent>;
   haStatusText: string;
   haDisabledReasons: FailoverDisabledReason[] = [];

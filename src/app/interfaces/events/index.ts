@@ -17,7 +17,6 @@ export interface UntypedEvent {
 export type CoreEvent =
   | UntypedEvent
   | CpuStatsEvent
-  | ForceSidenavEvent
   | SidenavStatusEvent
   | TreeTableGlobalFilterEvent
   | MediaChangeEvent
