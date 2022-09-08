@@ -42,7 +42,8 @@ test_suite_list = [
     'ha-bhyve02',
     'ha-tn09',
     'scale',
-    'scale-validation'
+    'scale-validation',
+    'bluefin'
 ]
 
 markers_list = [
