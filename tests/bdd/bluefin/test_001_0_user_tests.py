@@ -129,5 +129,5 @@ def change_permissions_on_user_home_dir(driver):
 @then('user ssh key')
 def user_ssh_key(driver, nas_ip):
     """user ssh key"""
-    import t_001_13_user_ssh_key
-    t_001_13_user_ssh_key.test_user_ssh_key(driver, nas_ip)
+#    import t_001_13_user_ssh_key
+#    t_001_13_user_ssh_key.test_user_ssh_key(driver, nas_ip)
