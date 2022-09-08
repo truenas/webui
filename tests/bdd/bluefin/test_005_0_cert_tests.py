@@ -16,7 +16,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1561.feature', 'Bluefin UI: Cert Tests')
+@scenario('features/NAS-T1561.feature', 'Cert Tests')
 def test_cert_tests(driver):
     """cert tests."""
     pass

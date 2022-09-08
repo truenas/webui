@@ -17,7 +17,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1556.feature', 'Bluefin UI: Bootstrap Tests')
+@scenario('features/NAS-T1556.feature', 'Bootstrap Tests')
 def test_bootstrap_tests(driver):
     """bootstrap_test"""
     pass

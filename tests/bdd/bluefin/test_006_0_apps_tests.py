@@ -16,7 +16,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1562.feature', 'Bluefin UI: Apps Tests')
+@scenario('features/NAS-T1562.feature', 'Apps Tests')
 def test_apps_tests(driver):
     """apps tests."""
     pass
@@ -87,8 +87,8 @@ def delete_a_container_image(driver):
 @then('validate minio with docker image')
 def validate_truecommand(driver):
     """validate_truecommand"""
-    import t_006_7_validate_truecommand
-    t_006_7_validate_truecommand.test_validate_truecommand(driver)
+    import t_006_7_validate_minio
+    t_006_7_validate_minio.test_validate_minio(driver)
 
 
 @then('import pool with apps')

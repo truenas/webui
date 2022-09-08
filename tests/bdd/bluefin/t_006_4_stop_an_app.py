@@ -27,11 +27,11 @@ def test_stop_an_app(driver):
 
 
     # click the stop button and confirm
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//span[contains(.,"Stop")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//span[contains(.,"Stop")]').click()
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"minio")]//span[contains(.,"Stop")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"minio")]//span[contains(.,"Stop")]').click()
 
 
     # Verify the application has stopped
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Stopping")]')
-    assert wait_on_element(driver, 15, '//mat-card[contains(.,"collabora-test")]//span[contains(.,"STOPPED ")]')
+    assert wait_on_element(driver, 15, '//mat-card[contains(.,"minio-test")]//span[contains(.,"STOPPED ")]')

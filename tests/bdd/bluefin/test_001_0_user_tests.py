@@ -16,7 +16,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1557.feature', 'Bluefin UI: User Tests')
+@scenario('features/NAS-T1557.feature', 'User Tests')
 def test_user_tests(driver):
     """user tests."""
     pass

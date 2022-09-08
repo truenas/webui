@@ -27,8 +27,8 @@ def test_remove_an_app(driver):
 
 
     # click the three dots icon and select delete
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//mat-icon[contains(.,"more_vert")]').click()
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"minio")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"minio")]//mat-icon[contains(.,"more_vert")]').click()
     assert wait_on_element(driver, 20, '//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
 
@@ -44,4 +44,4 @@ def test_remove_an_app(driver):
     assert wait_on_element(driver, 5, '//h1[contains(.,"Deleting...")]')
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Deleting...")]')
     time.sleep(1)  # we have to wait for the page to update
-    assert wait_on_element_disappear(driver, 10, '//mat-card[contains(.,"collabora-test")]')
+    assert wait_on_element_disappear(driver, 10, '//mat-card[contains(.,"minio-test")]')
