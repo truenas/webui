@@ -1,11 +1,17 @@
 # coding=utf-8
 """BLUEFIN UI feature tests."""
 
+from function import (
+    wait_on_element,
+    is_element_present,
+    attribute_value_exist,
+)
 from pytest_bdd import (
     given,
     scenario,
     then,
     when,
+    parsers
 )
 import pytest
 pytestmark = [pytest.mark.debug_test]
@@ -46,7 +52,7 @@ def verify_core_file_alert_works(driver, nas_ip, root_password):
 
 
 @then('verify the ssh host key is the same after reboot')
-def verify_the_ssh_host_key_is_the_same_after_reboot(driver, nas_ip, root_password)):
+def verify_the_ssh_host_key_is_the_same_after_reboot(driver, nas_ip, root_password):
     """erify the ssh host key is the same after reboot"""
     import test_003_2_verify_the_ssh_host_key_is_the_same_after_reboot
     test_003_2_verify_the_ssh_host_key_is_the_same_after_reboot.test_verify_the_ssh_host_key_is_the_same_after_reboot()
