@@ -990,7 +990,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
   }
 
-  customSubmit(value: { volsize: string; memory: string; gpus: string[]; [key: string]: any }): void {
+  customSubmit(value: { volsize: string; memory: string | number; gpus: string[]; [key: string]: any }): void {
     let hdd;
     const vmPayload: any = {};
 
