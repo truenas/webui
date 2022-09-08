@@ -31,11 +31,11 @@ def test_change_permissions_on_user_home_dir(driver):
     element = driver.find_element_by_xpath('//button//span[contains(.,"Save")]')
     # Scroll to bottom
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[3]/mat-checkbox//label//span', 'clickable')
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[3]/mat-checkbox//label//span').click()
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]/mat-checkbox//label//span').click()
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[3]/mat-checkbox//label//span').click()
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]/mat-checkbox//label//span').click()
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]/fieldset[1]/ix-permissions[1]/div[1]/table[1]/tr[2]/td[3]/mat-checkbox[1]/label[1]/span[1]', 'clickable')
+    driver.find_element_by_xpath('//ix-fieldset[1]/fieldset[1]/ix-permissions[1]/div[1]/table[1]/tr[3]/td[3]/mat-checkbox[1]/label[1]/span[1]').click()
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]//mat-checkbox[1]/label[1]/span[1]').click()
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[3]//mat-checkbox[1]/label[1]/span[1]').click()
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]//mat-checkbox[1]/label[1]/span[1]').click()
     time.sleep(1)
     wait_on_element(driver, 10, '//button//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button//span[contains(.,"Save")]').click()
@@ -54,24 +54,24 @@ def test_change_permissions_on_user_home_dir(driver):
     element = driver.find_element_by_xpath('//button//span[contains(.,"Save")]')
     # Scroll to bottom
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]/mat-checkbox//label//span')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[2]/td[2]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[2]/td[3]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[2]/td[4]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[2]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[3]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]/mat-checkbox//label//span//input[@aria-checked="true"]') is False
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[2]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[3]/mat-checkbox//label//span//input[@aria-checked="true"]')
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]/mat-checkbox//label//span//input[@aria-checked="true"]') is False
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]/fieldset[1]/ix-permissions[1]/div[1]/table[1]/tr[2]/td[3]/mat-checkbox[1]/label[1]/span[1]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[2]/td[2]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[2]/td[3]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[2]/td[4]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[2]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[3]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]') is False
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[2]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[3]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]')
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]//mat-checkbox[1]/label[1]/span[1]//input[@aria-checked="true"]') is False
 
 
     # revert your changes, click save, and return to dashboard
-    assert wait_on_element(driver, 2, '//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]/mat-checkbox//label//span', 'clickable')
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[3]/mat-checkbox//label//span').click()
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]/mat-checkbox//label//span').click()
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[3]/mat-checkbox//label//span').click()
-    driver.find_element_by_xpath('//body/ix-slide-in[@id="ix-slide-in-form"]/div[1]//div[1]//ng-component[1]//form[1]//div[1]//div[1]//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]/mat-checkbox//label//span').click()
+    assert wait_on_element(driver, 2, '//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]//mat-checkbox[1]/label[1]/span[1]', 'clickable')
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[3]//mat-checkbox[1]/label[1]/span[1]').click()
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[3]/td[4]//mat-checkbox[1]/label[1]/span[1]').click()
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[3]//mat-checkbox[1]/label[1]/span[1]').click()
+    driver.find_element_by_xpath('//ix-fieldset[1]//fieldset[1]//ix-permissions[1]//div[2]/table[1]/tr[4]/td[4]//mat-checkbox[1]/label[1]/span[1]').click()
     time.sleep(0.5)
     wait_on_element(driver, 10, '//button//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button//span[contains(.,"Save")]').click()
