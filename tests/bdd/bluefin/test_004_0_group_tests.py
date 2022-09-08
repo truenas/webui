@@ -28,19 +28,20 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-            assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-            driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-            driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-            driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-            driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-            assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-            driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-        else:
-            driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
+        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    else:
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
-        #    """on the dashboard click on the System Settings side menu, then click services."""
-        assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    #    """on the dashboard click on the System Settings side menu, then click services."""
+    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+
 
 @then('create a group')
 def create_a_group(driver):
