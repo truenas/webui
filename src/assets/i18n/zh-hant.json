@@ -1072,6 +1072,7 @@
   "Error deleting zvol {name}.": "",
   "Error details for ": "",
   "Error detected reading App": "",
+  "Error generating token, please try again.": "",
   "Error getting chart data": "",
   "Error getting pool data.": "",
   "Error importing pool": "",

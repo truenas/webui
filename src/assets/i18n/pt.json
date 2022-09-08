@@ -1345,6 +1345,7 @@
   "Error exporting the Private Key": "",
   "Error exporting the certificate": "",
   "Error exporting/disconnecting pool.": "",
+  "Error generating token, please try again.": "",
   "Error getting chart data": "",
   "Error getting pool data.": "",
   "Error importing pool": "",

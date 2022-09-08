@@ -28,6 +28,7 @@ describe('SigninFormComponent', () => {
       ]),
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
+        handleSuccessfulLogin: jest.fn(),
       }),
     ],
   });

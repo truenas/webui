@@ -223,6 +223,7 @@
   "Error Promoting dataset ": "",
   "Error deleting dataset {datasetName}.": "",
   "Error deleting zvol {name}.": "",
+  "Error generating token, please try again.": "",
   "Error importing pool": "",
   "Error starting service {serviceName}.": "",
   "Error stopping service {serviceName}.": "",

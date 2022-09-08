@@ -840,6 +840,7 @@
   "Error deleting dataset {datasetName}.": "",
   "Error deleting zvol {name}.": "",
   "Error detected reading App": "",
+  "Error generating token, please try again.": "",
   "Error getting chart data": "",
   "Error importing pool": "",
   "Error starting service OpenVPN {serviceLabel}": "",

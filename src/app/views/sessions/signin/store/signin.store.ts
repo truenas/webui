@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -62,50 +62,46 @@ export class SigninStore extends ComponentStore<SigninState> {
     super(initialState);
   }
 
-  init(): void {
-    this.setLoadingState(true);
-
-    forkJoin([
-      this.checkIfRootPasswordSet(),
-      this.loadFailoverStatus(),
-    ])
-      .pipe(
-        switchMap(() => {
-          // TODO: ws.token implicitly stores token in localStorage.
-          if (!this.ws.token) {
-            return of(null);
-          }
-
-          return this.loginWithToken();
-        }),
-        tap(() => this.setLoadingState(false)),
-      )
-      // TODO: Handle error.
-      .subscribe();
-  }
-
   setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
 
-  handleSuccessfulLogin(): void {
-    this.setLoadingState(true);
-    this.snackbar.dismiss();
+  init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
+    tap(() => this.setLoadingState(true)),
+    switchMap(() => {
+      return forkJoin([
+        this.checkIfRootPasswordSet(),
+        this.loadFailoverStatus(),
+      ])
+        .pipe(
+          switchMap(() => {
+            // TODO: ws.token implicitly stores token in localStorage.
+            if (!this.ws.token) {
+              return of(null);
+            }
 
-    this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(
-      tapResponse(
-        (token) => {
-          if (!token) {
-            // TODO: Handle
-            return;
-          }
+            return this.loginWithToken();
+          }),
+          tapResponse(
+            () => this.setLoadingState(false),
+            (error: WebsocketError) => {
+              this.setLoadingState(false);
+              new EntityUtils().handleWsError(this, error, this.dialogService);
+            },
+          ),
+        );
+    }),
+  ));
 
-          this.ws.token = token;
-          this.router.navigateByUrl(this.getRedirectUrl());
-        },
-        (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
-      ),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
+    tap(() => {
+      this.setLoadingState(true);
+      this.snackbar.dismiss();
+    }),
+    switchMap(() => this.generateToken()),
+    tapResponse(
+      () => this.router.navigateByUrl(this.getRedirectUrl()),
+      (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
+    ),
+  ));
 
   showSnackbar(message: string): void {
     this.snackbar.open(
@@ -117,7 +113,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private loginWithToken(): Observable<unknown> {
     return this.ws.loginToken(this.ws.token).pipe(
-      tapResponse(
+      tap(
         (wasLoggedIn) => {
           if (!wasLoggedIn) {
             this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
@@ -128,8 +124,20 @@ export class SigninStore extends ComponentStore<SigninState> {
 
           this.handleSuccessfulLogin();
         },
-        () => {
-          // TODO: Handle
+      ),
+    );
+  }
+
+  private generateToken(): Observable<string> {
+    return this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(
+      tap(
+        (token) => {
+          if (!token) {
+            this.showSnackbar(this.translate.instant('Error generating token, please try again.'));
+            return;
+          }
+
+          this.ws.token = token;
         },
       ),
     );
@@ -150,9 +158,8 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private checkIfRootPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_root_password').pipe(
-      tapResponse(
+      tap(
         (hasRootPassword) => this.patchState({ hasRootPassword }),
-        () => {}, // TODO: handle error
       ),
     );
   }
@@ -180,7 +187,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.ws.call('failover.disabled.reasons'),
     ])
       .pipe(
-        tapResponse(
+        tap(
           ([ips, reasons]) => {
             this.patchState((state) => {
               return {
@@ -193,7 +200,6 @@ export class SigninStore extends ComponentStore<SigninState> {
               };
             });
           },
-          () => {}, // TODO: Handle error.
         ),
       );
   }
