@@ -20,7 +20,7 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService, SystemGeneralService, LanguageService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -74,6 +74,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
+    private languageService: LanguageService,
   ) {
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
@@ -125,6 +126,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
       this.isSidenavOpen = false;
     }
     this.sysGeneralService.toggleSentryInit();
+
+    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+      this.languageService.setLanguage(config.language);
+    });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
