@@ -15,13 +15,10 @@ from function import (
 def test_create_ericbsd_dataset(driver):
     """test_create_ericbsd_dataset"""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')

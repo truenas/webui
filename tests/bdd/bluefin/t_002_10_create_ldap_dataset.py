@@ -23,8 +23,8 @@ def test_create_ldap_dataset(driver):
     driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
 
 
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
 
 
     # the storage page should open, then click on the tank three dots button, select Add Dataset

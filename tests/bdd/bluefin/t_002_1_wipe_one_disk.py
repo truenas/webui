@@ -16,8 +16,8 @@ def test_wipe_one_disk(driver):
     """test_wipe_one_disk"""
         """click on the Credentials on the side menu, click on Local Users."""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
 
     
     # 'the pools page appears click disk and select disks

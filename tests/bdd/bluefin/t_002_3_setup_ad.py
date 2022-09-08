@@ -117,8 +117,8 @@ def test_setup_ad(driver):
 
 
     # after open the Storage page and click on the system 3 dots button, select Add Dataset.
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
     # This will wait for the spinner to go away and looks like this xpath work for all spinners.
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')

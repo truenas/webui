@@ -15,8 +15,8 @@ from function import (
 def test_recursive_and_transverse_acls(driver):
     """test_recursive_and_transverse_acls"""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
@@ -156,8 +156,8 @@ def test_recursive_and_transverse_acls(driver):
 
 
     # Apply ACL to rt-acl-test-1 with recusrive checked
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"rt-acl-test-1")]')
     time.sleep(1)

@@ -15,8 +15,8 @@ from function import (
 def test_verify_fullaudit_for_smb(driver):
     """test_verify_fullaudit_for_smb"""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
    """"click on the System Settings side menu, then click services."""
