@@ -691,11 +691,11 @@ export class VMWizardComponent implements WizardConfiguration {
       });
 
       const gpusFormControl = this.getFormControlFromFieldName('gpus');
-      gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue) => {
+      gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
         const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
         for (const gpuValue of gpusValue) {
           if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-            finalIsolatedPciIds.push(gpuValue as string);
+            finalIsolatedPciIds.push(gpuValue);
           }
         }
         const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' }) as FormSelectConfig;
@@ -990,7 +990,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { volsize: string; memory: string; gpus: string[]; [key: string]: any }): void {
     let hdd;
     const vmPayload: any = {};
 
@@ -1003,7 +1003,7 @@ export class VMWizardComponent implements WizardConfiguration {
     const zvolPayload = {
       create_zvol: true,
       zvol_name: hdd,
-      zvol_volsize: this.storageService.convertHumanStringToNum(value.volsize as string),
+      zvol_volsize: this.storageService.convertHumanStringToNum(value.volsize),
     };
 
     if (this.productType.includes(ProductType.Scale)) {
@@ -1018,7 +1018,7 @@ export class VMWizardComponent implements WizardConfiguration {
     vmPayload['vcpus'] = value.vcpus;
     vmPayload['cores'] = value.cores;
     vmPayload['threads'] = value.threads;
-    vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory as string) / 1024 ** 2); // bytes -> mb
+    vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
     vmPayload['autoloader'] = value.autoloader;
@@ -1097,7 +1097,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
       for (const gpuValue of value.gpus) {
         if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-          finalIsolatedPciIds.push(gpuValue as string);
+          finalIsolatedPciIds.push(gpuValue);
         }
       }
       this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
