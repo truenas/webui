@@ -10,8 +10,6 @@ from function import (
 )
 
 
-
-
 def test_validate_minio(driver):
     """test_validate_minio"""
     if not is_element_present(driver, '//h1[contains(.,"Applications")]'):
@@ -35,43 +33,23 @@ def test_validate_minio(driver):
 
     # set application name
     assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Application Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('minio-test')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
-
-
-    # set workload configuration
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Workload Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Workload Configuration"]').click()
+    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Application Name")]//input ')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Application Name")]//input ').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Application Name")]//input ').send_keys('minio-test')
 
 
     # minio Configuration
-    driver.find_element_by_xpath('//input[@ix-auto="input__Root User"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Root User"]').send_keys('minio-user')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Root Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Root Password"]').send_keys('minio-pass')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Minio Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Minio Configuration"]').click()
-
-
-    # set storage
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
-    
-    # Advanced DNS Settings
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Advanced DNS Settings"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Advanced DNS Settings"]').click()
-
+    driver.find_element_by_xpath('//ix-input[contains(.,"Root User")]//input ').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Root User")]//input ').send_keys('minio-user')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Root Password")]//input ').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Root Password")]//input ').send_keys('minio-pass')
 
     # confirm options
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button//span[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button//span[contains(.,"Save")]').click()
 
-    assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 45, '//*[contains(.,"Installing")]')
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 300, '//h1[contains(.,"Installing")]')
 
 
     # confirm installation is successful
