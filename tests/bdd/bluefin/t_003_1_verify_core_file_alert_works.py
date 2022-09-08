@@ -24,7 +24,7 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
 
     # on the dashboard, if there is dismiss all notification
     assert wait_on_element(driver, 7, '//h1[text()="Dashboard"]')
-    assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
+    #assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
