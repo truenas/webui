@@ -19,11 +19,10 @@ def test_change_permissions_on_user_home_dir(driver):
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
         assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
         driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
-
-    # the Users page should open, click the down carat sign right of the users
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+        # the Users page should open, click the down carat sign right of the users
+        assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+        #assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+        #driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
     # the User Field should expand down, click the Edit button
