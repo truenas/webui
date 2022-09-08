@@ -438,8 +438,8 @@ describe('AppSchemaService', () => {
     });
   });
 
-  describe('serializeConfig()', () => {
-    it('serialization validation', () => {
+  describe('restoreKeysFromFormGroup()', () => {
+    it('restores keys from form group', () => {
       const config = {
         noObjectList: ['test1', 'test2', 'test3'],
         objectList: [{ nestedList: ['test4', 'test5'] }],
@@ -466,8 +466,8 @@ describe('AppSchemaService', () => {
           ]),
         }),
       });
-      service.serializeConfig(config, form);
-      expect(config).toEqual({
+      const result = service.restoreKeysFromFormGroup(config, form);
+      expect(result).toEqual({
         noObjectList: [{ key1: 'test1' }, { key1: 'test2' }, { key1: 'test3' }],
         objectList: [{ nestedList: [{ key2: 'test4' }, { key2: 'test5' }] }],
         object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },

@@ -616,26 +616,44 @@ export class AppSchemaService {
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 
-  serializeConfig(
-    config: { [key: string]: ChartFormValue } | ChartFormValue,
-    form: CustomUntypedFormGroup | FormGroup,
-  ): void {
+  /**
+   * Restores keys from form group
+   * @param config Object without keys. Example: { objectList: [{ nestedList: ['test4', 'test5'] }] }
+   * @param form Form group to restore keys from
+   * @returns Object with keys. Example: { objectList: [{ nestedList: ['test4', 'test5'] }] }
+   */
+  restoreKeysFromFormGroup(
+    config: HierarchicalObjectMap<ChartFormValue>,
+    form: FormGroup,
+  ): HierarchicalObjectMap<ChartFormValue> {
+    const newConfig = {} as HierarchicalObjectMap<ChartFormValue>;
     for (const [keyConfig, valueConfig] of Object.entries(config)) {
       const formConfig = form.controls[keyConfig] as FormGroup;
-      if (formConfig) {
-        if (_.isArray(valueConfig)) {
-          valueConfig.forEach((valueItem, idxItem) => {
-            if (!_.isPlainObject(valueItem)) {
-              const keyItem = Object.keys(formConfig.value[idxItem])[0];
-              valueConfig[idxItem] = { [keyItem]: valueItem };
-            } else {
-              this.serializeConfig(valueItem, formConfig.controls[idxItem] as FormGroup);
-            }
-          });
-        } else if (_.isPlainObject(valueConfig)) {
-          this.serializeConfig(valueConfig, formConfig);
-        }
+      if (!formConfig) {
+        continue;
+      }
+
+      if (_.isArray(valueConfig)) {
+        newConfig[keyConfig] = valueConfig.map((valueItem, idxItem) => {
+          if (_.isPlainObject(valueItem)) {
+            return this.restoreKeysFromFormGroup(
+              valueItem as HierarchicalObjectMap<ChartFormValue>,
+              formConfig.controls[idxItem] as FormGroup,
+            );
+          }
+          const keyItem = Object.keys(formConfig.value[idxItem])[0];
+          return { [keyItem]: valueItem };
+        });
+      } else if (_.isPlainObject(valueConfig)) {
+        newConfig[keyConfig] = this.restoreKeysFromFormGroup(
+          valueConfig as HierarchicalObjectMap<ChartFormValue>,
+          formConfig,
+        );
+      } else {
+        newConfig[keyConfig] = valueConfig;
       }
     }
+
+    return newConfig;
   }
 }
