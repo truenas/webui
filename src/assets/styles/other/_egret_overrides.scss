@@ -23,7 +23,7 @@ ix-topbar {
   .topbar-mobile-footer {
     align-items: center;
     display: inline-flex;
-    place-content: flex-end;
+    place-content: end;
     width: inherit;
 
     @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-min-mobile) {
@@ -42,10 +42,10 @@ ix-topbar {
       position: fixed;
       width: 100%;
     }
-
+  
     .topbar-button-right {
       margin: 0;
-
+      
       @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
         margin: 4px;
       }
