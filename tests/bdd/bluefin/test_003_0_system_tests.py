@@ -48,13 +48,13 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 def verify_core_file_alert_works(driver, nas_ip, root_password):
     """verify core file alert works"""
     import t_003_1_verify_core_file_alert_works
-    t_003_1_verify_core_file_alert_works.test_verify_core_file_alert_works()
+    t_003_1_verify_core_file_alert_works.test_verify_core_file_alert_works(driver, nas_ip, root_password)
 
 
 @then('verify the ssh host key is the same after reboot')
 def verify_the_ssh_host_key_is_the_same_after_reboot(driver, nas_ip, root_password):
     """erify the ssh host key is the same after reboot"""
     import t_003_2_verify_the_ssh_host_key_is_the_same_after_reboot
-    t_003_2_verify_the_ssh_host_key_is_the_same_after_reboot.test_verify_the_ssh_host_key_is_the_same_after_reboot()
+    t_003_2_verify_the_ssh_host_key_is_the_same_after_reboot.test_verify_the_ssh_host_key_is_the_same_after_reboot(driver, nas_ip, root_password)
 
 

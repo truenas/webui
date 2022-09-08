@@ -12,15 +12,18 @@ from function import (
 
 def test_change_permissions_on_user_home_dir(driver):
     """change_permissions_on_user_home_dir"""
-    #assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    #driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    #assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    #driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    if not is_element_present(driver, '//div[contains(.,"Users")]'):
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+        assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+        driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
     # the Users page should open, click the down carat sign right of the users
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    #assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
-    #driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
     # the User Field should expand down, click the Edit button

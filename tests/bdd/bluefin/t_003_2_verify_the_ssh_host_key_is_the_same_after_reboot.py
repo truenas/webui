@@ -13,7 +13,7 @@ from function import (
 
 
 
-def test_verify_the_ssh_host_key_is_the_same_after_reboot(driver):
+def test_verify_the_ssh_host_key_is_the_same_after_reboot(driver, nas_ip, root_password):
     """test_verify_the_ssh_host_key_is_the_same_after_reboot"""
     if not is_element_present(driver, '//span[contains(text(),"System Information")]'):
         assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')

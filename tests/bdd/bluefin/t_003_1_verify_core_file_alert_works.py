@@ -13,7 +13,7 @@ from function import (
 
 
 
-def test_verify_core_file_alert_works(driver):
+def test_verify_core_file_alert_works(driver, nas_ip, root_password):
     """test_verify_core_file_alert_works"""
     if not is_element_present(driver, '//span[contains(text(),"System Information")]'):
         assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
