@@ -1,7 +1,6 @@
 import { AuthenticatedEvent } from 'app/interfaces/events/authenticated-event.interface';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
-import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { MemoryStatsEvent } from 'app/interfaces/events/memory-stats-event.interface';
