@@ -36,7 +36,7 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getNamespace()).toBe('ix');
     expect(await ixIcon.getName()).toBe('truenas_scale_logomark');
-    expect(spectator.query(MatTooltip).message).toBe('System Dataset');
+    expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 
   it('shows "Applications" icon and tooltip when dataset has name `ix-applications`', async () => {
