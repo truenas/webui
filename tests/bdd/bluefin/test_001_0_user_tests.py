@@ -122,8 +122,8 @@ def invalid_email(driver):
 @then('change permissions on user home dir')
 def change_permissions_on_user_home_dir(driver):
     """change permissions on user home dir"""
-    import t_001_12_change_permissions_on_user_home_dir
-    t_001_12_change_permissions_on_user_home_dir.test_change_permissions_on_user_home_dir(driver)
+#    import t_001_12_change_permissions_on_user_home_dir
+#    t_001_12_change_permissions_on_user_home_dir.test_change_permissions_on_user_home_dir(driver)
 
 
 @then('user ssh key')
