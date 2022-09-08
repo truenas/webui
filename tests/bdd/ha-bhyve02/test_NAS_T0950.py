@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -22,6 +23,7 @@ def test_edit_user_email(driver):
     pass
 
 
+@pytest.mark.dependency(depends=['First_User'], scope='session')
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_user}"."""

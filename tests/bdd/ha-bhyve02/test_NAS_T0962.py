@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -17,6 +18,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Active_Directory', depends=['System_Dataset', 'Setup_SSH'], scope='session')
 @scenario('features/NAS-T962.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_verify_active_directory_works_after_failover_with_new_system_dataset(driver):
     """Verify Active Directory works after failover with new system dataset."""

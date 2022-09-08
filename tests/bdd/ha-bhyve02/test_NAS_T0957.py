@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -15,6 +16,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(depends=['First_User'], scope='session')
 @scenario('features/NAS-T957.feature', 'Verify invalid email cannot enter be in the User Edit Page')
 def test_verify_invalid_email_cannot_enter_be_in_the_user_edit_page(driver):
     """Verify invalid email cannot enter be in the User Edit Page."""

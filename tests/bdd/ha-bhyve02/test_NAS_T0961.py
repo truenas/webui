@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -16,6 +17,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='System_Dataset', depends=['Setup_HA'], scope='session')
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
 def test_creating_new_pool_and_set_it_as_system_dataset(driver):
     """Creating new pool and set it as System Dataset."""

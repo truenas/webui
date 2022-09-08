@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -17,6 +18,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(depends=['First_User'], scope='session')
 @scenario('features/NAS-T958.feature', 'Change user home directory permissions')
 def test_change_user_home_directory_permissions(driver):
     """Change user home directory permissions."""

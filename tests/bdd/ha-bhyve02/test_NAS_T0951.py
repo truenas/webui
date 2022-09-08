@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 from selenium.webdriver.common.keys import Keys
 import time
 from function import (
@@ -17,6 +18,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(depends=['First_User'], scope='session')
 @scenario('features/NAS-T951.feature', 'Edit user auxiliary group')
 def test_edit_user_auxiliary_group(driver):
     """Edit user auxiliary group."""

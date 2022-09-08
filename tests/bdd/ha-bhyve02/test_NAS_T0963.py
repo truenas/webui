@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -15,6 +16,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='SMB_ACTIVE_Directory', depends=['Active_Directory', 'Setup_SSH'], scope='session')
 @scenario('features/NAS-T963.feature', 'Add an ACL Item and verify is preserve')
 def test_add_an_acl_item_and_verify_is_preserve(driver):
     """Add an ACL Item and verify is preserve."""

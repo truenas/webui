@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -17,6 +18,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(depends=['First_User', 'Setup_SSH'], scope='session')
 @scenario('features/NAS-T955.feature', 'Edit User Change Password')
 def test_edit_user_change_password(driver):
     """Edit User Change Password."""

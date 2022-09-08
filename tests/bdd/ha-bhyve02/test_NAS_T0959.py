@@ -40,6 +40,7 @@ def ssh_key():
     return ssh_key_file.read().strip()
 
 
+@pytest.mark.dependency(depends=['First_User', 'Setup_SSH'], scope='session')
 @scenario('features/NAS-T959.feature', 'Adding sshkey to a user and verify it works')
 def test_adding_sshkey_to_a_user_and_verify_it_works(driver):
     """Adding sshkey to a user and verify it works."""

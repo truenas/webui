@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn09) feature tests."""
 
+import pytest
 import time
 from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
@@ -20,6 +21,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Setup_SSH')
 @scenario('features/NAS-T945.feature', 'Verify SSH Access with Root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with Root works."""

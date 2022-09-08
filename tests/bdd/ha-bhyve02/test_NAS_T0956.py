@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -15,6 +16,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(depends=['First_User'], scope='session')
 @scenario('features/NAS-T956.feature', 'Edit User Try Change Password with mismatched passwords')
 def test_edit_user_try_change_password_with_mismatched_passwords(driver):
     """Edit User Try Change Password with mismatched passwords."""
