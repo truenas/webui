@@ -62,15 +62,10 @@ export class VmWizardComponent implements WizardConfiguration {
   threads = 1;
   mode: VmCpuMode;
   model: string | null;
-  private currentStep = 0;
   title = helptext.formTitle;
   hideCancel = true;
-  private maxVcpus = 16;
-  private gpus: Device[];
-  private isolatedGpuPciIds: string[];
 
   entityWizard: EntityWizardComponent;
-  private productType = this.systemGeneralService.getProductType();
 
   wizardConfig: Wizard[] = [
     {
@@ -532,6 +527,12 @@ export class VmWizardComponent implements WizardConfiguration {
   private nicAttach: FormSelectConfig;
   private nicType: FormSelectConfig;
   private bootloader: FormSelectConfig;
+
+  private currentStep = 0;
+  private maxVcpus = 16;
+  private gpus: Device[];
+  private isolatedGpuPciIds: string[];
+  private productType = this.systemGeneralService.getProductType();
 
   constructor(
     protected ws: WebSocketService,
