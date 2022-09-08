@@ -662,8 +662,8 @@ export class VMWizardComponent implements WizardConfiguration {
         });
       }
 
-      this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory) => {
-        this.summary[this.translate.instant('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory as string))
+      this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory: string) => {
+        this.summary[this.translate.instant('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
           ? '0 MiB'
           : this.storageService.humanReadable;
       });
@@ -1141,9 +1141,9 @@ export class VMWizardComponent implements WizardConfiguration {
             }, 1000);
           },
         );
-      }, (error) => {
+      }, (error: WebsocketError) => {
         this.loader.close();
-        this.dialogService.errorReport(this.translate.instant('Error creating VM.') as string, error.reason as string, error.trace.formatted as string);
+        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
       });
     } else {
       for (const device of vmPayload['devices']) {
