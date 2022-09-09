@@ -39,7 +39,7 @@ import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-w
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
-  NetworkService, StorageService, WebSocketService,
+  NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -65,15 +65,10 @@ export class VmWizardComponent implements WizardConfiguration {
   threads = 1;
   mode: VmCpuMode;
   model: string | null;
-  private currentStep = 0;
   title = helptext.formTitle;
   hideCancel = true;
-  private maxVcpus = 16;
-  private gpus: Device[];
-  private isolatedGpuPciIds: string[];
 
   entityWizard: EntityWizardComponent;
-  private productType = window.localStorage.getItem('product_type') as ProductType;
 
   wizardConfig: Wizard[] = [
     {
@@ -538,6 +533,12 @@ export class VmWizardComponent implements WizardConfiguration {
   private nicType: FormSelectConfig;
   private bootloader: FormSelectConfig;
 
+  private currentStep = 0;
+  private maxVcpus = 16;
+  private gpus: Device[];
+  private isolatedGpuPciIds: string[];
+  private productType = this.systemGeneralService.getProductType();
+
   constructor(
     protected ws: WebSocketService,
     public vmService: VmService,
@@ -549,6 +550,7 @@ export class VmWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     protected modalService: ModalService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   preInit(entityWizard: EntityWizardComponent): void {

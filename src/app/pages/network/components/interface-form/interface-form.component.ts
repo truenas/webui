@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +18,6 @@ import {
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
@@ -40,7 +39,7 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
-import { NetworkService, WebSocketService } from 'app/services';
+import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -137,7 +136,7 @@ export class InterfaceFormComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
-    @Inject(WINDOW) private window: Window,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   get isNew(): boolean {
@@ -264,7 +263,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private loadFailoverStatus(): void {
-    if (this.window.localStorage.getItem('product_type') !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
       return;
     }
 
