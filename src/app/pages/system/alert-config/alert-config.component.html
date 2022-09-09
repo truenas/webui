@@ -11,8 +11,14 @@
         <button
           *ngFor="let category of categories; let i = index"
           mat-menu-item
-          (click)="onCategoryChanged(category.id)"
-        > {{ category.title }} </button>
+          (click)="onCategoryChanged(category)"
+        >
+          <span>
+            <mat-icon *ngIf="category === selectedCategory">check_circle</mat-icon>
+            <mat-icon *ngIf="category !== selectedCategory">remove</mat-icon>
+          </span>
+          <span>{{ category.title }}</span>
+        </button>
       </mat-menu>
     </div>
   </div>

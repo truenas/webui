@@ -22,7 +22,7 @@ import { DialogService, WebSocketService } from 'app/services/';
 })
 export class AlertConfigComponent implements OnInit {
   categories: AlertCategory[] = [];
-  selectedCategoryId = '';
+  selectedCategory: AlertCategory;
   form = this.formBuilder.group({});
   isFormLoading = false;
   readonly helptext = helptext;
@@ -43,10 +43,6 @@ export class AlertConfigComponent implements OnInit {
     }),
   );
 
-  get selectedCategory(): AlertCategory {
-    return this.categories.find((category) => this.selectedCategoryId === category.id);
-  }
-
   constructor(
     private ws: WebSocketService,
     public dialog: DialogService,
@@ -62,7 +58,7 @@ export class AlertConfigComponent implements OnInit {
       this.categories = categories;
 
       if (categories.length) {
-        this.selectedCategoryId = categories[0].id;
+        this.selectedCategory = categories[0];
       }
 
       categories.forEach((category) => {
@@ -93,8 +89,8 @@ export class AlertConfigComponent implements OnInit {
     });
   }
 
-  onCategoryChanged(categotyId: string): void {
-    this.selectedCategoryId = categotyId;
+  onCategoryChanged(category: AlertCategory): void {
+    this.selectedCategory = category;
   }
 
   onSubmit(): void {
