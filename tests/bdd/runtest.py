@@ -3,6 +3,7 @@
 import sys
 import os
 import getopt
+import json
 from configparser import ConfigParser
 from platform import system
 from subprocess import run
@@ -176,6 +177,14 @@ def run_testing():
         pytest_cmd.append("-k")
         pytest_cmd.append(marker)
     run(pytest_cmd)
+    openfile = open('results/cucumber/webui_test.json')
+    data = json.load(openfile)
+    for num in range(len(data)):
+        if len(data[num]['elements'][0]['steps']) == 1:
+            data[num]['elements'][0]['steps'][0]['result']['status'] = 'blocked'
+    with open('results/cucumber/webui_test.json', 'w') as outfile:
+        json.dump(data, outfile)
+    openfile.close()
 
 
 if run_convert is True:
