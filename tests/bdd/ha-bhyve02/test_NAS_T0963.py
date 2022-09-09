@@ -14,17 +14,19 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
-@pytest.mark.dependency(name='SMB_ACTIVE_Directory', depends=['Active_Directory', 'Setup_SSH'], scope='session')
+@pytest.mark.dependency(name='SMB_ACTIVE_Directory', scope='session')
 @scenario('features/NAS-T963.feature', 'Add an ACL Item and verify is preserve')
 def test_add_an_acl_item_and_verify_is_preserve(driver):
     """Add an ACL Item and verify is preserve."""
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
+    depends(request, ['Active_Directory'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

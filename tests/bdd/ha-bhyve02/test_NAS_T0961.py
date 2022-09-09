@@ -28,7 +28,7 @@ def test_creating_new_pool_and_set_it_as_system_dataset(driver):
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
-    depends(request, ['Setup_HA'], scope='session')
+    depends(request, ["Setup_HA"], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:

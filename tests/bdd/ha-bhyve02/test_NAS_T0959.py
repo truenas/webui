@@ -21,6 +21,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 localHome = os.path.expanduser('~')
 dotsshPath = localHome + '/.ssh'
@@ -40,7 +41,6 @@ def ssh_key():
     return ssh_key_file.read().strip()
 
 
-@pytest.mark.dependency(depends=['First_User', 'Setup_SSH'], scope='session')
 @scenario('features/NAS-T959.feature', 'Adding sshkey to a user and verify it works')
 def test_adding_sshkey_to_a_user_and_verify_it_works(driver):
     """Adding sshkey to a user and verify it works."""
@@ -48,8 +48,9 @@ def test_adding_sshkey_to_a_user_and_verify_it_works(driver):
 
 
 @given(parsers.parse('The browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open, navigate to "{nas_url}"."""
+    depends(request, ['First_User', 'Setup_SSH'], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:
