@@ -1,7 +1,6 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-import pytest
 from selenium.webdriver.common.keys import Keys
 import time
 from function import (

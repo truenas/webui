@@ -1,7 +1,6 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-import pytest
 import time
 from function import (
     wait_on_element,
