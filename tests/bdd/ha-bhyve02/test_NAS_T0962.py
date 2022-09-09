@@ -66,6 +66,8 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
 def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver):
     """on the network page, click on setting on the Global Configuration card."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
+    assert wait_on_element(driver, 7, '//h3[text()="Global Configuration"]')
+    assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__globalSettings"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
 
@@ -75,10 +77,11 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}"."""
     global nameserver_1
     nameserver_1 = nameserver1
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Hostname and Domain")]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
+    assert wait_on_element(driver, 7, '//h3[text()="Global Configuration" and @class="ix-formtitle"]')
+    assert wait_on_element(driver, 7, '//legend[contains(.,"DNS Servers")]')
+    assert wait_on_element(driver, 5, '//ix-input[contains(.,"Nameserver 1")]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
+    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
 
 
 @then(parsers.parse('change the Domain for "{ad_domain}", and click Save'))
@@ -86,7 +89,7 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
     """change the Domain for "ad_domain", and click Save."""
     global domain
     domain = ad_domain
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
+    # assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
     # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
     # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(ad_domain)
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
@@ -96,7 +99,8 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
 @then('"Please wait" should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//mat-progress-bar')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 10, f'//span[text()="{nameserver_1}"]')
 
 
@@ -125,25 +129,25 @@ def on_the_active_directory_page_input_the_domain_name_ad_domain(driver, ad_doma
     global domain
     domain = ad_domain
     assert wait_on_element(driver, 5, '//h3[@class="formtitle" and text()="Active Directory"]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="domainname"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="domainname"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="domainname"]//input').send_keys(ad_domain)
 
 
 @then(parsers.parse('input the Account name "{ad_user}", the Password "{ad_password}"'))
 def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_password):
     """input the Account name "ad_user", the Password "ad_password"."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').send_keys(ad_user)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Password"]').send_keys(ad_password)
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindname"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindname"]//input').send_keys(ad_user)
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindpw"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindpw"]//input').send_keys(ad_password)
 
 
 @then(parsers.parse('click advanced, and input the Computer Account OU "{ca_ou}"'))
 def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_ou):
     """click advanced, and input the Computer Account OU "ca_ou"."""
-    if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    if is_element_present(driver, '//button[../text()="Advanced Options"]'):
+        driver.find_element_by_xpath('//button[../text()="Advanced Options"]').click()
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Computer Account OU"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').send_keys(ca_ou)
