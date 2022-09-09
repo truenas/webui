@@ -48,9 +48,6 @@ export class SystemGeneralService {
     });
   }
 
-  /**
-   * If it is possible to use the async `getProductType$` method, prefer that.
-   */
   getProductType(): ProductType {
     return this.window.localStorage.getItem('product_type') as ProductType;
   }

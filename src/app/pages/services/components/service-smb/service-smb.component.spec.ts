@@ -11,7 +11,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { DialogService, UserService, WebSocketService } from 'app/services';
+import {
+  DialogService, SystemGeneralService, UserService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ServiceSmbComponent', () => {
@@ -68,6 +70,7 @@ describe('ServiceSmbComponent', () => {
       mockProvider(FormErrorHandlerService),
       mockProvider(Router),
       mockProvider(DialogService),
+      mockProvider(SystemGeneralService),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([{
           group: 'test-group',

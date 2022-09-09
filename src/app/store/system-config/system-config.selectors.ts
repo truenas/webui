@@ -31,3 +31,8 @@ export const selectAdvancedConfig = createSelector(
  * Will wait for config to load. Use within .pipe().
  */
 export const waitForAdvancedConfig = selectNotNull(selectAdvancedConfig);
+
+export const selectHasConsoleFooter = createSelector(
+  selectGeneralConfig,
+  (config) => config?.ui_consolemsg,
+);

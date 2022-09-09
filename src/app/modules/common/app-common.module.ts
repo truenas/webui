@@ -24,6 +24,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
@@ -46,6 +47,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { ConsoleFooterComponent } from './console-footer/console-footer.component';
 
 @NgModule({
   imports: [
@@ -96,10 +98,12 @@ import { LocaleService } from 'app/services/locale.service';
     UpdateDialogComponent,
     AuthLayoutComponent,
     AdminLayoutComponent,
+    ConsoleFooterComponent,
   ],
   providers: [
     LanguageService,
     LocaleService,
+    ConsoleMessagesStore,
   ],
   exports: [
     SearchInputComponent,

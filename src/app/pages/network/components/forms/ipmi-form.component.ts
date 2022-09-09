@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
@@ -21,7 +20,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import { DialogService, RedirectService, WebSocketService } from 'app/services';
+import {
+  DialogService, RedirectService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -86,8 +87,8 @@ export class IpmiFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
     private snackbar: SnackbarService,
+    private systemGeneralService: SystemGeneralService,
   ) {
   }
 
@@ -123,7 +124,7 @@ export class IpmiFormComponent implements OnInit {
   prepareDataForm(): void {
     this.isLoading = true;
 
-    if (this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(
         switchMap((isHa) => {
           if (isHa) {

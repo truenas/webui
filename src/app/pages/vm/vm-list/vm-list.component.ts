@@ -29,7 +29,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
 } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -49,7 +49,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   routeAdd: string[] = ['vm', 'wizard'];
   routeEdit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  private productType = window.localStorage.getItem('product_type') as ProductType;
+  private productType = this.systemGeneralService.getProductType();
   hasVirtualizationSupport = false;
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
@@ -108,6 +108,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private vmService: VmService,
     private translate: TranslateService,
     private layoutService: LayoutService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
