@@ -11,7 +11,7 @@ import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/componen
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
-import { AlertConfigComponent } from './alert-config/alert-config.component';
+import { AlertConfigFormComponent } from './alert-config-form/alert-config-form.component';
 import { BootPoolAttachFormComponent } from './bootenv/boot-pool-attach/boot-pool-attach-form.component';
 import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
@@ -108,7 +108,7 @@ export const routes: Routes = [
       data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     }, {
       path: 'alertsettings',
-      component: AlertConfigComponent,
+      component: AlertConfigFormComponent,
       data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
     }, {
       path: 'alertservice',

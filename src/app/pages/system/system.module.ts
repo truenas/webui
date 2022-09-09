@@ -47,7 +47,7 @@ import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-b
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
-import { AlertConfigComponent } from 'app/pages/system/alert-config/alert-config.component';
+import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AwsSnsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
@@ -148,7 +148,7 @@ import { routing } from './system.routing';
   ],
   declarations: [
     AdvancedSettingsComponent,
-    AlertConfigComponent,
+    AlertConfigFormComponent,
     AlertServiceComponent,
     AlertServiceListComponent,
     BootEnvironmentFormComponent,

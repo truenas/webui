@@ -5,14 +5,14 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AlertConfigComponent } from 'app/pages/system/alert-config/alert-config.component';
+import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AppLoaderService, WebSocketService } from 'app/services';
 
-describe('AlertConfigComponent', () => {
-  let spectator: Spectator<AlertConfigComponent>;
+describe('AlertConfigFormComponent', () => {
+  let spectator: Spectator<AlertConfigFormComponent>;
   let ws: WebSocketService;
   const createComponent = createComponentFactory({
-    component: AlertConfigComponent,
+    component: AlertConfigFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

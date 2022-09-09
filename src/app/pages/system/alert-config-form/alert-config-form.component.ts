@@ -16,11 +16,11 @@ import { DialogService, WebSocketService } from 'app/services/';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-alert-config',
-  templateUrl: './alert-config.component.html',
-  styleUrls: ['./alert-config.component.scss'],
+  selector: 'ix-alert-config-form',
+  templateUrl: './alert-config-form.component.html',
+  styleUrls: ['./alert-config-form.component.scss'],
 })
-export class AlertConfigComponent implements OnInit {
+export class AlertConfigFormComponent implements OnInit {
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory;
   form = this.formBuilder.group({});
