@@ -150,10 +150,11 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     """navigate to Network and on the Network page click on Global Configuration Settings."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//h3[text()="Global Configuration"]')
+    assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 7, '//h3[text()="Global Configuration" and @class="ix-formtitle"]')
     time.sleep(1)
 
 
