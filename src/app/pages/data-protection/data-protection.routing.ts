@@ -34,10 +34,6 @@ export const dataProtectionRoutes: Routes = [{
         path: 'add',
         component: CloudsyncFormComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: CloudsyncFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'snapshot',

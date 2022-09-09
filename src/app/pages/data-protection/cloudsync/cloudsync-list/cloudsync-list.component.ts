@@ -28,7 +28,7 @@ import {
   TaskService,
   WebSocketService,
 } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -88,7 +88,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     protected translate: TranslateService,
     protected dialog: DialogService,
     protected job: JobService,
-    protected modalService: ModalService,
+    protected slideInService: IxSlideInService,
     protected loader: AppLoaderService,
     protected taskService: TaskService,
     private matDialog: MatDialog,
@@ -100,7 +100,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -314,11 +314,13 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     }
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(CloudsyncFormComponent, id);
+  doAdd(): void {
+    this.slideInService.open(CloudsyncFormComponent, { wide: true });
   }
 
   doEdit(id: number): void {
-    this.doAdd(id);
+    const row: CloudSyncTaskUi = this.entityList.rows.find((row) => row.id === id);
+    const form = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+    form.setTaskForEdit(row);
   }
 }
