@@ -141,17 +141,19 @@ export class FormInputComponent implements Field {
     }
   }
 
-  onInput(event: any): void {
+  onInput(event: Event): void {
+    const inputValue = (event as MessageEvent).data;
+
     if (this.config.inputType === 'number') {
       this.config.errors = null;
 
-      if (!this.shouldShowResetInput() && !event.data !== null) {
+      if (!this.shouldShowResetInput() && !inputValue !== null) {
         this.group.controls[this.config.name].setErrors({
           pattern: true,
         });
       }
 
-      if (event.data === null) {
+      if (inputValue === null) {
         this.group.controls[this.config.name].setValue(null);
       }
     }

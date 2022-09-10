@@ -1,11 +1,11 @@
 <div
+  *ngIf="!config['isHidden']"
   id="{{ config.name }}"
   class="dynamic-field form-input form-element"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-pwtoggle]="config.togglePw"
   [class.has-tooltip]="config.tooltip"
-  *ngIf="!config['isHidden']"
 >
   <div *ngIf="config.placeholder" class="label-container">
     <label class="label input-text">
@@ -24,9 +24,9 @@
   <input name="DummyPassword" type="password" />
 
   <div
+    *ngIf="config.inputType != 'file'; else elseBlock"
     class="full-width"
     [ngClass]="{ has_toggle_pw: config.togglePw }"
-    *ngIf="config.inputType != 'file'; else elseBlock"
   >
     <mat-spinner
       diameter="30"
@@ -71,9 +71,9 @@
       />
       <span *ngIf="shouldShowResetInput()" class="reset-input">
         <mat-icon
-          (click)="resetInput()"
           fontSet="mdi-set"
           fontIcon="mdi-close-circle"
+          (click)="resetInput()"
         ></mat-icon>
       </span>
     </div>
@@ -82,10 +82,10 @@
       mat-icon-button
       type="button"
       class="toggle_pw"
-      (click)="togglePassword()"
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="{{ config.name }}_toggle-pw"
+      (click)="togglePassword()"
     >
       <i class="material-icons" matTooltip="Hide" *ngIf="showPassword"
         >visibility</i
