@@ -27,8 +27,8 @@ def test_remove_an_app(driver):
 
 
     # click the three dots icon and select delete
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"minio")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"minio")]//mat-icon[contains(.,"more_vert")]').click()
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"minio-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"minio-test")]//mat-icon[contains(.,"more_vert")]').click()
     assert wait_on_element(driver, 20, '//span[contains(.,"Delete")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
 

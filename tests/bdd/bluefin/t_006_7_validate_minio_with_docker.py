@@ -12,8 +12,8 @@ from function import (
 
 
 
-def test_validate_truecommand(driver):
-    """test_validate_truecommand"""
+def test_validate_minio_with_docker(driver):
+    """test_validate_minio_with_docker"""
     if not is_element_present(driver, '//h1[contains(.,"Applications")]'):
         assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
@@ -41,82 +41,56 @@ def test_validate_truecommand(driver):
 
     # set Application Name
     assert wait_on_element(driver, 30, '//h3[contains(.,"Launch Docker Image")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Application Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('truecommand-test')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
-
+    assert wait_on_element(driver, 7, '//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Application Name")]//ancestor::ix-input/div/input')
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Application Name")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Application Name")]//ancestor::ix-input/div/input').send_keys('minio-test')
 
     # set Container Images
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Image repository"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Image repository"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Image repository"]').send_keys('ixsystems/truecommand')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Images"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Images"]').click()
-
+    assert wait_on_element(driver, 7, '//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Image repository")]')
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Image repository")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Image repository")]//ancestor::ix-input/div/input').send_keys('bitnami/minio')
 
     # set Container Entrypoint
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Entrypoint"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Entrypoint"]').click()
-
 
     # set Container Environment Variables
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Environment Variables"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Environment Variables"]').click()
-
 
     # set Networking
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
-
 
     # set Port Forwarding List
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__add-box_portForwardingList"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__add-box_portForwardingList"]').click()
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Container Port"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Container Port"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Container Port"]').send_keys('80')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Node Port"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Node Port"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Node Port"]').send_keys('9004')
+    assert wait_on_element(driver, 7, '//legend[contains(text(),"Port Forwarding")]//ancestor::ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div//button//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//legend[contains(text(),"Port Forwarding")]//ancestor::ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div//button//span[contains(.,"Add")]').click()
+    assert wait_on_element(driver, 7, '//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Container Port")]')
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Container Port")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Container Port")]//ancestor::ix-input/div/input').send_keys('9000')
+    assert wait_on_element(driver, 7, '//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Node Port")]')
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Node Port")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Node Port")]//ancestor::ix-input/div/input').send_keys('9000')
 
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__add-box_portForwardingList"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__add-box_portForwardingList"]').click()
-    assert wait_on_element(driver, 7, '(//input[@ix-auto="input__Container Port"])[2]')
-    driver.find_element_by_xpath('(//input[@ix-auto="input__Container Port"])[2]').clear()
-    driver.find_element_by_xpath('(//input[@ix-auto="input__Container Port"])[2]').send_keys('443')
-    assert wait_on_element(driver, 7, '(//input[@ix-auto="input__Node Port"])[2]')
-    driver.find_element_by_xpath('(//input[@ix-auto="input__Node Port"])[2]').clear()
-    driver.find_element_by_xpath('(//input[@ix-auto="input__Node Port"])[2]').send_keys('9005')
-
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Port Forwarding"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Port Forwarding"]').click()
-
+    assert wait_on_element(driver, 7, '//legend[contains(text(),"Port Forwarding")]//ancestor::ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div//button//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//legend[contains(text(),"Port Forwarding")]//ancestor::ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div//button//span[contains(.,"Add")]').click()
+    assert wait_on_element(driver, 7, '//ix-dynamic-form//ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div[2]/ix-list-item[2]/div//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Container Port")]')
+    driver.find_element_by_xpath('//ix-dynamic-form//ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div[2]/ix-list-item[2]/div//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Container Port")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-dynamic-form//ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div[2]/ix-list-item[2]/div//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Container Port")]//ancestor::ix-input/div/input').send_keys('9001')
+    assert wait_on_element(driver, 7, '//ix-dynamic-form//ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div[2]/ix-list-item[2]/div//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Node Port")]')
+    driver.find_element_by_xpath('//ix-dynamic-form//ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div[2]/ix-list-item[2]/div//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Node Port")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-dynamic-form//ix-fieldset//fieldset//ix-dynamic-form-item//div//ix-list//div//div[2]/ix-list-item[2]/div//ix-dynamic-form-item//div//ix-input//ix-label//label//span[contains(.,"Node Port")]//ancestor::ix-input/div/input').send_keys('9001')
 
     # set Storage
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
 
     # set Workload Details
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Workload Details"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Workload Details"]').click()
-
 
     # set Scaling/Upgrade Policy
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]').click()
-
 
     # set Resource Reservation
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Reservation"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click()
+
+    # set Resource Limits
+
+    # set Portal Configuration
 
 
     # Confirm Options
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
     assert wait_on_element_disappear(driver, 180, '//*[contains(.,"Installing")]')
@@ -128,18 +102,18 @@ def test_validate_truecommand(driver):
     time.sleep(1)
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    assert wait_on_element(driver, 120, '//strong[text()="plex-test"]')
+    #assert wait_on_element(driver, 120, '//strong[text()="plex-test"]')
     time.sleep(2)
-    if is_element_present(driver, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]') is False:
-        assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]')
-        assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]', 'clickable')
-        driver.find_element_by_xpath('//strong[contains(.,"truecommand-test")]').click()
+    if is_element_present(driver, '//mat-card[contains(.,"minio-test")]//span[@class="status active"]') is False:
+        assert wait_on_element(driver, 20, '//strong[contains(.,"minio-test")]')
+        assert wait_on_element(driver, 20, '//strong[contains(.,"minio-test")]', 'clickable')
+        driver.find_element_by_xpath('//strong[contains(.,"minio-test")]').click()
         if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
             assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Please wait")]')
         # refresh loop
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
-        while is_element_present(driver, '//div[(normalize-space(text())="Started container ix-chart")]') is False:
+        while is_element_present(driver, '//div[(normalize-space(text())="Created container ix-chart")]') is False:
             time.sleep(2)
             assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
@@ -149,6 +123,6 @@ def test_validate_truecommand(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 300, '//mat-card[contains(.,"minio-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 300, '//mat-card[contains(.,"minio-test")]//span[@class="status active"]')

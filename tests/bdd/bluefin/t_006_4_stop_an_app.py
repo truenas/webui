@@ -20,15 +20,15 @@ def test_stop_an_app(driver):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Applications")]')
 
     # the Apps page load, open available applications
-        if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
+    if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
         assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
 
 
     # click the stop button and confirm
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"minio")]//span[contains(.,"Stop")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"minio")]//span[contains(.,"Stop")]').click()
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"minio-test")]//span[contains(.,"Stop")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"minio-test")]//span[contains(.,"Stop")]').click()
 
 
     # Verify the application has stopped

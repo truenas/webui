@@ -78,6 +78,7 @@ def test_apps_page_validation(driver):
     # seems like sometimes zfs-driver is present.
     assert wait_on_element(driver, 5, '//h3[contains(.,"No Docker Images")]') or wait_on_element(driver, 5, '//div[contains(.,"rancher")]')
     # test the buttons
+    time.sleep(1) # button is registered as clickable before the tab fully loads which makes the click ineffective
     assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):

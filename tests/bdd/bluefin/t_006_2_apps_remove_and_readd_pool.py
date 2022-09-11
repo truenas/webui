@@ -40,11 +40,13 @@ def test_apps_remove_and_readd_pool(driver):
 
 
     # click setting, reset pool
+
     assert wait_on_element(driver, 10, '//button//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button//span[contains(text(),"Settings")]').click()
     assert wait_on_element(driver, 10, '//button[contains(text(),"Choose Pool")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Choose Pool")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Choose a pool for Apps")]')
+    time.sleep(1) #we need to let the UI settle for some reason because another element obscures the mat-select
     assert wait_on_element(driver, 10, '//mat-dialog-container//ng-component//form//ix-select//div//div//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-dialog-container//ng-component//form//ix-select//div//div//mat-select').click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"tank")]', 'clickable')
