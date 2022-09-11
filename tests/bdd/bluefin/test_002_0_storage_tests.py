@@ -43,11 +43,12 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
     #    """on the dashboard click on the System Settings side menu, then click services."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
 
+
 @then('wipe one disk')
 def wipe_one_disk(driver):
     """wipe one disk"""
 #    import t_002_1_wipe_one_disk
-#    t_002_1_wipe_one_disk.test_wipe_one_disk()
+#    t_002_1_wipe_one_disk.test_wipe_one_disk(driver)
 
 
 @then('create pool for system dataset')
@@ -57,18 +58,18 @@ def create_pool_for_system_dataset(driver):
 #    t_002_2_create_pool_for_system_dataset.test_create_pool_for_system_dataset(driver)
 
 
-@then(parsers.parse('setup ad with {nameserver1} {ad_domain} {ad_user} {ad_password} {ca_ou} {cmd1} {ad_object1} {cmd2} {dataset_name} {group_name}'))
-def setup_ad(driver):
+@then(parsers.parse('setup ad with "{ad_ns}" "{ad_domain}" "{ad_user}" "{ad_password}" "{ca_ou}" "{cmd1}" "{ad_object1}" "{cmd2}" "{dataset_name}" "{group_name}"'))
+def setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name):
     """setup ad"""
 #    import t_002_3_setup_ad
-#    t_002_3_setup_ad.test_setup_ad(driver, nameserver1, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
+#    t_002_3_setup_ad.test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
 
 
 @then(parsers.parse('create ad dataset with {dataset_name} {group_name}'))
 def create_ad_dataset(driver):
     """create ad dataset"""
-#    import t_002_4_create_ad_dataset
-#    t_002_4_create_ad_dataset.test_create_ad_dataset(driver, dataset_name, group_name)
+    import t_002_4_create_ad_dataset
+    t_002_4_create_ad_dataset.test_create_ad_dataset(driver, dataset_name, group_name)
 
 
 @then(parsers.parse('add acl item on tank with {input} {user}'))

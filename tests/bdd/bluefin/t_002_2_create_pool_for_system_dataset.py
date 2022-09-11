@@ -14,10 +14,10 @@ from function import (
 
 def test_create_pool_for_system_dataset(driver):
     """test_wipe_one_disk"""
-        """click on the Credentials on the side menu, click on Local Users."""
+    """click on the Storage on the side menu."""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
@@ -72,6 +72,7 @@ def test_create_pool_for_system_dataset(driver):
 
     # click on System Dataset Configure button and close the popup
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
+    time.sleep(1) #the page needs to settle before it can scroll to element
     element = driver.find_element_by_xpath('//h3[contains(.,"System Dataset Pool")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]', 'clickable')
@@ -83,10 +84,10 @@ def test_create_pool_for_system_dataset(driver):
 
     # click on System Dataset Pool select system, click Save
     assert wait_on_element(driver, 5, '//h3[contains(text(),"System Dataset Pool") and @class="ix-formtitle"]')
-    assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Select Pool")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//mat-select', 'clickable')
-    driver.find_element_by_xpath('//mat-select').click()
+    assert wait_on_element(driver, 5, '//ix-slide-in[@id="ix-slide-in-form"]//span[contains(text(),"tank")]', 'clickable')
+    driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//span[contains(text(),"tank")]').click()
     assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"system")]')
     driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"system")]').click()
     assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')

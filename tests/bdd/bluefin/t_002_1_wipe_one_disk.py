@@ -14,10 +14,11 @@ from function import (
 
 def test_wipe_one_disk(driver):
     """test_wipe_one_disk"""
-        """click on the Credentials on the side menu, click on Local Users."""
+    """click on the Storage on the side menu."""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
     
     # 'the pools page appears click disk and select disks
@@ -43,16 +44,17 @@ def test_wipe_one_disk(driver):
         assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
         assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__WIPE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
+        assert wait_on_element(driver, 7, '//span[contains(text(),"Wipe")]', 'clickable')
+
+        driver.find_element_by_xpath('//span[contains(text(),"Wipe")]').click()
         assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
         assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+        assert wait_on_element(driver, 7, '//span[contains(text(),"Continue")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Continue")]').click()
         assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 5, '//button[contains(.,"CLOSE")]', 'clickable')
-        driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
+        assert wait_on_element(driver, 5, '//button[contains(.,"Close")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
 
 
     # click wipe and conform, wait for popup, then click close
