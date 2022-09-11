@@ -5,7 +5,11 @@
     <h4>{{ 'Unassigned Disks' | translate }}</h4>
     <ul class="unused-disks">
       <li *ngFor="let disk of groupedDisks">
-        {{ disk }}
+        {{ disk.formattedDisk }}
+        <ix-warning
+          *ngIf="disk.exportedZpool"
+          [message]="getWarningText(disk.exportedZpool, disk.disksCount)"
+        ></ix-warning>
       </li>
     </ul>
 

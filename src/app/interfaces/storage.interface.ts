@@ -136,6 +136,7 @@ export interface UnusedDisk extends Disk {
   partitions: {
     path: string;
   }[];
+  exported_zpool?: string;
 }
 
 /**
