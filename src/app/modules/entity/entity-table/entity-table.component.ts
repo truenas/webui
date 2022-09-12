@@ -577,26 +577,24 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   }
 
   callGetFunction(skipActions = false): void {
-    this.getFunction.pipe(untilDestroyed(this)).subscribe(
-      {
-        next: (res) => {
-          this.handleData(res, skipActions);
-        },
-        error: (res: WebsocketError) => {
-          this.isTableEmpty = true;
-          this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
-          if (this.loaderOpen) {
-            this.loader.close();
-            this.loaderOpen = false;
-          }
-          if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
-            this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
-          } else {
-            new EntityUtils().handleError(this, res);
-          }
-        },
+    this.getFunction.pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
+        this.handleData(res, skipActions);
       },
-    );
+      error: (res: WebsocketError) => {
+        this.isTableEmpty = true;
+        this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
+        if (this.loaderOpen) {
+          this.loader.close();
+          this.loaderOpen = false;
+        }
+        if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
+          this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
+        } else {
+          new EntityUtils().handleError(this, res);
+        }
+      },
+    });
   }
 
   handleData(res: any, skipActions = false): any {

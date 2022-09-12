@@ -7,7 +7,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
-import { firstValueFrom } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -226,11 +225,10 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    return firstValueFrom(
-      this.dialog
-        .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
-        .pipe(tap(() => this.isFirstTime = false)),
-    );
+    return this.dialog
+      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+      .pipe(tap(() => this.isFirstTime = false))
+      .toPromise();
   }
 
   formatSyslogLevel(level: string): string {

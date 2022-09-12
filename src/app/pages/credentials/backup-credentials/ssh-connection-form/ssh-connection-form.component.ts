@@ -163,20 +163,18 @@ export class SshConnectionFormComponent {
 
     this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        {
-          next: (remoteHostKey) => {
-            this.loader.close();
-            this.form.patchValue({
-              remote_host_key: remoteHostKey,
-            });
-          },
-          error: (error) => {
-            this.loader.close();
-            this.errorHandler.handleWsFormError(error, this.form);
-          },
+      .subscribe({
+        next: (remoteHostKey) => {
+          this.loader.close();
+          this.form.patchValue({
+            remote_host_key: remoteHostKey,
+          });
         },
-      );
+        error: (error) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
+      });
   }
 
   onSubmit(): void {

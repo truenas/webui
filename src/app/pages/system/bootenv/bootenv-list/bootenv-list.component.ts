@@ -187,19 +187,17 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
     this.ws.call('bootenv.query').pipe(
       untilDestroyed(this),
-    ).subscribe(
-      {
-        next: (bootenvs) => {
-          this.createDataSource(bootenvs);
-        },
-        error: () => {
-          this.createDataSource();
-          this.isLoading$.next(false);
-          this.isError$.next(true);
-          this.cdr.markForCheck();
-        },
+    ).subscribe({
+      next: (bootenvs) => {
+        this.createDataSource(bootenvs);
       },
-    );
+      error: () => {
+        this.createDataSource();
+        this.isLoading$.next(false);
+        this.isError$.next(true);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   doActivate(bootenv: Bootenv): void {

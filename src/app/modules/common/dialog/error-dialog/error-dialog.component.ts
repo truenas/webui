@@ -55,30 +55,28 @@ export class ErrorDialogComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe(
-      {
-        next: (res) => {
-          const url = res[1];
-          const mimetype = 'text/plain';
-          this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
-            next: (file) => {
-              this.storage.downloadBlob(file, `${this.logs.id}.log`);
-              if (this.dialogRef) {
-                this.dialogRef.close();
-              }
-            },
-            error: (err) => {
-              if (this.dialogRef) {
-                this.dialogRef.close();
-              }
-              new EntityUtils().handleWsError(this, err);
-            },
-          });
-        },
-        error: (err) => {
-          new EntityUtils().handleWsError(this, err);
-        },
+    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
+        const url = res[1];
+        const mimetype = 'text/plain';
+        this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
+          next: (file) => {
+            this.storage.downloadBlob(file, `${this.logs.id}.log`);
+            if (this.dialogRef) {
+              this.dialogRef.close();
+            }
+          },
+          error: (err) => {
+            if (this.dialogRef) {
+              this.dialogRef.close();
+            }
+            new EntityUtils().handleWsError(this, err);
+          },
+        });
       },
-    );
+      error: (err) => {
+        new EntityUtils().handleWsError(this, err);
+      },
+    });
   }
 }

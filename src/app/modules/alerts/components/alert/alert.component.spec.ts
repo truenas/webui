@@ -2,8 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe, ngMocks } from 'ng-mocks';
-import { firstValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -102,7 +101,7 @@ describe('AlertComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['79']);
 
-    const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
+    const state = await spectator.inject(Store).pipe(map(selectAlerts), first()).toPromise();
     expect(state).toEqual([
       {
         ...dummyAlert,
@@ -121,7 +120,7 @@ describe('AlertComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['79']);
 
-    const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
+    const state = await spectator.inject(Store).pipe(map(selectAlerts), first()).toPromise();
     expect(state).toEqual([dummyAlert]);
   });
 });
