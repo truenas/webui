@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -926,7 +927,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         extent: value['extent'],
       };
     }
-    return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
+    return lastValueFrom(this.ws.call((this.createCalls as any)[item], [payload]));
   }
 
   rollBack(items: Record<string, unknown>): void {

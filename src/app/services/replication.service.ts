@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { Observable, of, throwError } from 'rxjs';
+import {
+  lastValueFrom, Observable, of, throwError,
+} from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -22,8 +24,11 @@ export class ReplicationService {
     private dialogService: DialogService,
   ) { }
 
+  /**
+   * @deprecated
+   */
   genSshKeypair(): Promise<SshKeyPair> {
-    return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
+    return lastValueFrom(this.ws.call('keychaincredential.generate_ssh_key_pair'));
   }
 
   getTreeNodeProvider(providerOptions: {

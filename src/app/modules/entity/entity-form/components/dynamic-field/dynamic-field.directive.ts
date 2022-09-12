@@ -1,5 +1,4 @@
 import {
-  ComponentFactoryResolver,
   ComponentRef,
   Directive,
   Input,
@@ -82,8 +81,9 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
 
   component: ComponentRef<Field>;
 
-  constructor(private resolver: ComponentFactoryResolver,
-    private container: ViewContainerRef) {}
+  constructor(
+    private container: ViewContainerRef,
+  ) {}
 
   ngOnChanges(): void {
     if (this.component) {
@@ -99,10 +99,8 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
       throw new Error(`Trying to use an unsupported type (${this.config.type}).
         Supported types: ${supportedTypes}`);
     }
-    const component = this.resolver.resolveComponentFactory<Field>(
-      components[this.config.type as keyof typeof components],
-    );
-    this.component = this.container.createComponent(component);
+    const component = components[this.config.type as keyof typeof components];
+    this.component = this.container.createComponent(component) as ComponentRef<Field>;
     this.component.instance.config = this.config;
     this.component.instance.group = this.group;
     this.component.instance.fieldShow = this.fieldShow;

@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
-import { Subject } from 'rxjs';
+import { lastValueFrom, Subject } from 'rxjs';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
@@ -342,7 +342,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   async fetchReportData(): Promise<void> {
-    const endDate = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
+    const endDate = await lastValueFrom(this.reportsService.getServerTime());
     const subOptions: Duration = {};
     subOptions['hours'] = 1;
     const startDate = sub(endDate, subOptions);

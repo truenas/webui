@@ -268,7 +268,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         return this.ws.call('filesystem.get_default_acl', [preset]).pipe(
           map((aclItems) => {
             const state = this.get();
-            // TODO: Working around backend https://jira.ixsystems.com/browse/NAS-111464
+            // TODO: Working around backend https://ixsystems.atlassian.net/browse/NAS-111464
             const newAclItems = (aclItems as (NfsAclItem | PosixAclItem)[]).map((ace) => {
               let who = '';
               if ([NfsAclTag.Owner, PosixAclTag.UserObject].includes(ace.tag)) {

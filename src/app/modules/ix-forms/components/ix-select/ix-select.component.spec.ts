@@ -135,7 +135,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'Options cannot be loaded\' if options has some error', async () => {
-      spectator.component.options = throwError('Some Error');
+      spectator.component.options = throwError(() => new Error('Some Error'));
       spectator.component.ngOnChanges();
 
       const select = await loader.getHarness(MatSelectHarness);
