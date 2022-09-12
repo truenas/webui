@@ -10,7 +10,7 @@ import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
 })
 export class RolesCardComponent {
   @Input() dataset: DatasetDetails;
-
+  @Input() systemDataset: string;
   @Input() hasChildrenWithShares = false;
 
   get isApplications(): boolean {
@@ -23,6 +23,10 @@ export class RolesCardComponent {
 
   get vmsNames(): string {
     return _.uniq(this.dataset.vms.map((app) => app.name)).join(', ');
+  }
+
+  get isSystemDataset(): boolean {
+    return this.dataset.name === this.systemDataset;
   }
 
   get smbSharesNames(): string {

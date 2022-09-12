@@ -22,6 +22,7 @@ import { ModalService } from 'app/services';
 })
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
+  @Input() systemDataset: string;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
@@ -45,6 +46,7 @@ export class DatasetDetailsPanelComponent implements OnInit {
     || !!this.dataset.smb_shares?.length
     || !!this.dataset.nfs_shares?.length
     || !!this.dataset.iscsi_shares?.length
+    || this.isSystemDataset
     || this.dataset.name.endsWith(ixApplications);
   }
 
@@ -79,6 +81,10 @@ export class DatasetDetailsPanelComponent implements OnInit {
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
+  }
+
+  get isSystemDataset(): boolean {
+    return this.dataset.name === this.systemDataset;
   }
 
   onAddDataset(): void {

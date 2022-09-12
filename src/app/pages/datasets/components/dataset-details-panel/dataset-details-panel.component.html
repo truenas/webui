@@ -3,9 +3,9 @@
 
     <div class="mobile-prefix">
       <a [routerLink]="['/datasets']" class="mobile-back-button">
-        <ix-icon 
-        name="mdi-chevron-left"
-        (click)="onCloseMobileDetails()"
+        <ix-icon
+          name="mdi-chevron-left"
+          (click)="onCloseMobileDetails()"
         ></ix-icon>
       </a>
       {{ 'Details for' | translate }}
@@ -54,6 +54,7 @@
       *ngIf="datasetHasRoles"
       [dataset]="dataset"
       [hasChildrenWithShares]="datasetHasChildrenWithShares"
+      [systemDataset]="systemDataset"
     ></ix-roles-card>
     <ix-permissions-card
       *ngIf="hasPermissions && !dataset.locked"
