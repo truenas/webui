@@ -867,6 +867,7 @@
   "This dataset is used by: {vms}": "",
   "This dataset is used to store Kubernetes config and other container related data": "",
   "This disk is part of the exported zpool {zpool}": "",
+  "This disk is part of the exported zpool {zpool}. Adding this disk to a new or  other existing pools will make {zpool} unable to import. You will lose any and all data   in {zpool}. Are you sure you want to add this disk?": "",
   "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).": "",
   "This is a ONE-SHOT {alertLevel} alert, it won't be dismissed automatically": "",
   "This is a one way action and cannot be reversed. Are you sure you want to revoke this Certificate?": "",

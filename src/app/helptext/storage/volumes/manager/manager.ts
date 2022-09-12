@@ -71,5 +71,8 @@ export default {
   dedup_vdev_title: T('Dedup'),
   dedup_vdev_description: T('De-duplication tables are stored on this special vdev type. These vdevs must\
  be sized to <i>X</i> GiB for each <i>X</i> TiB of general storage.'),
+  exported_zpool_warning: T('This disk is part of the exported zpool {zpool}. Adding this disk to a new or\
+  other existing pools will make {zpool} unable to import. You will lose any and all data\
+   in {zpool}. Are you sure you want to add this disk?'),
 
 };
