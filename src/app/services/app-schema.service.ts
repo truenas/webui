@@ -617,10 +617,10 @@ export class AppSchemaService {
   }
 
   /**
-   * Restores keys from form group
+   * Restores keys from a form group
    * @param config Object without keys. Example: { objectList: [{ nestedList: ['test4', 'test5'] }] }
    * @param form Form group to restore keys from
-   * @returns Object with keys. Example: { objectList: [{ nestedList: ['test4', 'test5'] }] }
+   * @returns Object with keys. Example: { objectList: [{ key2: 'test4' }, { key2: 'test5' }] }
    */
   restoreKeysFromFormGroup(
     config: HierarchicalObjectMap<ChartFormValue>,
