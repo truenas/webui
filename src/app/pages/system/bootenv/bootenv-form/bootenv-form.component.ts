@@ -99,13 +99,16 @@ export class BootEnvironmentFormComponent {
           name: this.formGroup.value.name,
         }];
 
-        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
-          this.isFormLoading = false;
-          this.slideInService.close(null, true);
-        }, (error) => {
-          this.isFormLoading = false;
-          this.slideInService.close(error, false);
-          this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.isFormLoading = false;
+            this.slideInService.close(null, true);
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.slideInService.close(error, false);
+            this.errorHandler.handleWsFormError(error, this.formGroup);
+          },
         });
 
         break;

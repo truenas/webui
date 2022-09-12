@@ -72,8 +72,8 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.call('alert.list_policies').pipe(untilDestroyed(this)).subscribe(
-      (policies) => {
+    this.ws.call('alert.list_policies').pipe(untilDestroyed(this)).subscribe({
+      next: (policies) => {
         this.settingOptions = policies.map((policy) => {
           let label: string = policy;
           if (policy === AlertPolicy.Immediately) {
@@ -83,118 +83,120 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
           return { label, value: policy };
         });
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, error, this.dialog);
       },
-    );
+    });
 
     const sets: FieldSet[] = [];
 
     this.ws
       .call('alert.list_categories')
-      .toPromise()
-      .then((categories) => {
-        this.categories = categories;
-        categories.forEach((category) => {
-          const config: FieldConfig[] = [];
-          for (const categoryClass of category.classes) {
-            const warningOptions = [];
-            for (const warningOption of this.warningOptions) {
-              // apparently this is the proper way to clone an object
-              const option = JSON.parse(JSON.stringify(warningOption));
-              if (option.value === categoryClass.level) {
-                option.label = `${option.label} (Default)`;
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (categories) => {
+          this.categories = categories;
+          categories.forEach((category) => {
+            const config: FieldConfig[] = [];
+            for (const categoryClass of category.classes) {
+              const warningOptions = [];
+              for (const warningOption of this.warningOptions) {
+                // apparently this is the proper way to clone an object
+                const option = JSON.parse(JSON.stringify(warningOption));
+                if (option.value === categoryClass.level) {
+                  option.label = `${option.label} (Default)`;
+                }
+                warningOptions.push(option);
               }
-              warningOptions.push(option);
+              config.push(
+                {
+                  type: 'select',
+                  class: 'new-line',
+                  name: categoryClass.id + '_level',
+                  inlineLabel: categoryClass.title,
+                  placeholder: this.translate.instant('Set Warning Level'),
+                  tooltip: helptext.level_tooltip,
+                  options: warningOptions,
+                  value: categoryClass.level,
+                },
+                {
+                  type: 'select',
+                  name: categoryClass.id + '_policy',
+                  inlineLabel: ' ',
+                  placeholder: this.translate.instant('Set Frequency'),
+                  tooltip: helptext.policy_tooltip,
+                  options: this.settingOptions,
+                  value: AlertPolicy.Immediately,
+                },
+              );
+
+              if (categoryClass.proactive_support && this.isEnterprise) {
+                config.push({
+                  type: 'checkbox',
+                  name: categoryClass.id + '_proactive_support',
+                  value: true,
+                  inlineLabel: true,
+                  placeholder: this.translate.instant('Proactive Support'),
+                });
+              }
+
+              if (categoryClass.proactive_support && this.isEnterprise) {
+                this.defaults.push({
+                  id: categoryClass.id,
+                  level: categoryClass.level,
+                  policy: AlertPolicy.Immediately,
+                  proactive_support: true,
+                });
+              } else {
+                this.defaults.push({
+                  id: categoryClass.id,
+                  level: categoryClass.level,
+                  policy: AlertPolicy.Immediately,
+                });
+              }
             }
-            config.push(
-              {
-                type: 'select',
-                class: 'new-line',
-                name: categoryClass.id + '_level',
-                inlineLabel: categoryClass.title,
-                placeholder: this.translate.instant('Set Warning Level'),
-                tooltip: helptext.level_tooltip,
-                options: warningOptions,
-                value: categoryClass.level,
-              },
-              {
-                type: 'select',
-                name: categoryClass.id + '_policy',
-                inlineLabel: ' ',
-                placeholder: this.translate.instant('Set Frequency'),
-                tooltip: helptext.policy_tooltip,
-                options: this.settingOptions,
-                value: AlertPolicy.Immediately,
-              },
-            );
 
-            if (categoryClass.proactive_support && this.isEnterprise) {
-              config.push({
-                type: 'checkbox',
-                name: categoryClass.id + '_proactive_support',
-                value: true,
-                inlineLabel: true,
-                placeholder: this.translate.instant('Proactive Support'),
-              });
-            }
+            const fieldSet = {
+              name: category.title,
+              label: true,
+              width: '100%',
+              config,
+            };
 
-            if (categoryClass.proactive_support && this.isEnterprise) {
-              this.defaults.push({
-                id: categoryClass.id,
-                level: categoryClass.level,
-                policy: AlertPolicy.Immediately,
-                proactive_support: true,
-              });
-            } else {
-              this.defaults.push({
-                id: categoryClass.id,
-                level: categoryClass.level,
-                policy: AlertPolicy.Immediately,
-              });
-            }
-          }
+            sets.push(fieldSet);
+          });
 
-          const fieldSet = {
-            name: category.title,
-            label: true,
-            width: '100%',
-            config,
-          };
+          this.fieldSets = new FieldSets(sets);
 
-          sets.push(fieldSet);
-        });
+          this.fieldConfig = this.fieldSets.configs();
+          this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-        this.fieldSets = new FieldSets(sets);
-
-        this.fieldConfig = this.fieldSets.configs();
-        this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-        this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
-          (alertConfig) => {
-            this.loader.close();
-            for (const alertClass in alertConfig.classes) {
-              for (const levelOrPolicy in alertConfig.classes[alertClass]) {
-                const controlName = alertClass + '_' + levelOrPolicy;
-                const controlValue = alertConfig.classes[alertClass][levelOrPolicy as keyof AlertClassSettings];
-                if (this.formGroup.controls[controlName]) {
-                  this.formGroup.controls[controlName].setValue(controlValue);
-                } else {
-                  console.error('Missing control: ' + controlName); // some properties don't exist between both calls?
+          this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe({
+            next: (alertConfig) => {
+              this.loader.close();
+              for (const alertClass in alertConfig.classes) {
+                for (const levelOrPolicy in alertConfig.classes[alertClass]) {
+                  const controlName = alertClass + '_' + levelOrPolicy;
+                  const controlValue = alertConfig.classes[alertClass][levelOrPolicy as keyof AlertClassSettings];
+                  if (this.formGroup.controls[controlName]) {
+                    this.formGroup.controls[controlName].setValue(controlValue);
+                  } else {
+                    console.error('Missing control: ' + controlName); // some properties don't exist between both calls?
+                  }
                 }
               }
-            }
-          },
-          (err) => {
-            this.loader.close();
-            new EntityUtils().handleWsError(this, err, this.dialog);
-          },
-        );
-      })
-      .catch((error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialog);
+            },
+            error: (err) => {
+              this.loader.close();
+              new EntityUtils().handleWsError(this, err, this.dialog);
+            },
+          });
+        },
+        error: (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error, this.dialog);
+        },
       });
   }
 
@@ -234,10 +236,10 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
 
     this.ws
       .call(this.editCall, [payload])
-      .pipe(untilDestroyed(this)).subscribe(
-        () => this.snackbarService.success(this.translate.instant('Settings saved')),
-        (error) => new EntityUtils().handleWsError(this, error, this.dialog),
-      )
+      .pipe(untilDestroyed(this)).subscribe({
+        next: () => this.snackbarService.success(this.translate.instant('Settings saved')),
+        error: (error) => new EntityUtils().handleWsError(this, error, this.dialog),
+      })
       .add(() => this.loader.close());
   }
 }

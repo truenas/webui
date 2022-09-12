@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { firstValueFrom } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -96,8 +97,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                 filter((run) => !!run),
                 switchMap(() => this.ws.call('cronjob.run', [row.id])),
               )
-              .pipe(untilDestroyed(this)).subscribe(
-                () => {
+              .pipe(untilDestroyed(this)).subscribe({
+                next: () => {
                   const message = row.enabled
                     ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
                     : this.translate.instant('This job will not run again until it is enabled.');
@@ -107,8 +108,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                     true,
                   );
                 },
-                (err: WebsocketError) => new EntityUtils().handleError(this, err),
-              );
+                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              });
           },
         },
       ];
@@ -225,10 +226,11 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    return this.dialog
-      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
-      .pipe(tap(() => this.isFirstTime = false))
-      .toPromise();
+    return firstValueFrom(
+      this.dialog
+        .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+        .pipe(tap(() => this.isFirstTime = false)),
+    );
   }
 
   formatSyslogLevel(level: string): string {
