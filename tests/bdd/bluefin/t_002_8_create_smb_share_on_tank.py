@@ -7,13 +7,13 @@ from function import (
     attribute_value_exist,
     wait_for_attribute_value,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_cmd,
+    run_cmd,
+    post
 )
 
 
-
-
-def test_create_smb_share_on_tank(driver):
+def test_create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password):
     """test_create_smb_share_on_tank"""
 
 
@@ -67,8 +67,8 @@ def test_create_smb_share_on_tank(driver):
 
 
     # Verify that the is on nas_ip with root and password
-    global results
+    global smbresults2
     cmd = 'ls -la /mnt/system/my_acl_dataset/'
-    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'], results['output']
-    assert 'testfile' in results['output'], results['output']
+    smbresults2 = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert smbresults2['result'], smbresults2['output']
+    assert 'testfile' in smbresults2['output'], smbresults2['output']

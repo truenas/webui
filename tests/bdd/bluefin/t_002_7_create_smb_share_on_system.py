@@ -1,24 +1,26 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 import time
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
     wait_for_attribute_value,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_cmd,
+    run_cmd,
+    post
 )
 
 
 
 
-def test_create_smb_share_on_system(driver):
+def test_create_smb_share_on_system(driver, nas_ip, root_password, systemsmbpath, systemsmbname, systemsmbdescription, mysmbshare, user, password):
     """test_create_smb_share_on_system"""
 
 
    # click on sharing and click add
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
 
@@ -34,23 +36,31 @@ def test_create_smb_share_on_system(driver):
     global smb_path
     smb_path = systemsmbpath
     """Set Path to the ACL dataset "/mnt/system/my_acl_dataset"."""
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(systemsmbpath)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(systemsmbname)
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'clickable')
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+
+    assert wait_on_element(driver, 5, '//ix-explorer//ix-label//label//span[contains(text(),"Path")]//ancestor::ix-explorer/div/input', 'inputable')
+    driver.find_element_by_xpath('//ix-explorer//ix-label//label//span[contains(text(),"Path")]//ancestor::ix-explorer/div/input').clear()
+    driver.find_element_by_xpath('//ix-explorer//ix-label//label//span[contains(text(),"Path")]//ancestor::ix-explorer/div/input').send_keys(systemsmbpath)
+    driver.find_element_by_xpath('//ix-explorer//ix-label//label//span[contains(text(),"Path")]//ancestor::ix-explorer/div/input').send_keys(Keys.TAB)
+    assert wait_on_element(driver, 5, '//ix-input//ix-label//label//span[contains(text(),"Name")]//ancestor::ix-input/div/input', 'inputable')
+    driver.find_element_by_xpath('//ix-input//ix-label//label//span[contains(text(),"Name")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-input//ix-label//label//span[contains(text(),"Name")]//ancestor::ix-input/div/input').send_keys(systemsmbname)
+
+    assert wait_on_element(driver, 5, '//mat-card[1]/mat-card-content[1]/form[1]/ix-fieldset[1]/fieldset[1]/ix-checkbox[1]/mat-checkbox[1]/label[1]/span[contains(text(),"Enabled")]//ancestor::ix-checkbox//mat-checkbox', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//mat-card[1]/mat-card-content[1]/form[1]/ix-fieldset[1]/fieldset[1]/ix-checkbox[1]/mat-checkbox[1]/label[1]/span[contains(text(),"Enabled")]//ancestor::ix-checkbox//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+        driver.find_element_by_xpath('//mat-card[1]/mat-card-content[1]/form[1]/ix-fieldset[1]/fieldset[1]/ix-checkbox[1]/mat-checkbox[1]/label[1]/span[contains(text(),"Enabled")]//ancestor::ix-checkbox//mat-checkbox').click()
+    assert attribute_value_exist(driver, '//mat-card[1]/mat-card-content[1]/form[1]/ix-fieldset[1]/fieldset[1]/ix-checkbox[1]/mat-checkbox[1]/label[1]/span[contains(text(),"Enabled")]//ancestor::ix-checkbox//mat-checkbox', 'class', 'mat-checkbox-checked')
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(systemsmbdescription)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//ix-input//ix-label//label//span[contains(text(),"Description")]//ancestor::ix-input/div/input', 'inputable')
+    driver.find_element_by_xpath('//ix-input//ix-label//label//span[contains(text(),"Description")]//ancestor::ix-input/div/input').clear()
+    driver.find_element_by_xpath('//ix-input//ix-label//label//span[contains(text(),"Description")]//ancestor::ix-input/div/input').send_keys(systemsmbdescription)
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+
+    if is_element_present(driver, '//h3[contains(text(),"Restart SMB Service")]'):
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Restart Service")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Restart Service")]').click()
+
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
@@ -67,8 +77,8 @@ def test_create_smb_share_on_system(driver):
 
 
     # Verify that the is on nas_ip with root and password
-    global results
+    global smbresults
     cmd = 'ls -la /mnt/system/my_acl_dataset/'
-    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'], results['output']
-    assert 'testfile' in results['output'], results['output']
+    smbresults = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert smbresults['result'], smbresults['output']
+    assert 'testfile' in smbresults['output'], smbresults['output']
