@@ -59,6 +59,7 @@ export class DiskTemperatureService {
   }
 
   start(): void {
+    this.fetch(this.disks.map((disk) => disk.name));
     this.broadcast = setInterval(() => {
       this.fetch(this.disks.map((disk) => disk.name));
     }, 10000);
