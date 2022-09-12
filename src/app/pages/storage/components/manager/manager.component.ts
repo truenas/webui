@@ -501,6 +501,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.size = filesize(sizeEstimate, { standard: 'iec' });
 
     this.getDuplicableDisks();
+
+    const selectedDisksWithExportedZpoolsAttached = this.selected.filter((selectedDisk) => selectedDisk.exported_zpool);
+    this.disksNamesWithExportedZpoolsAlreadyWarnedFor = selectedDisksWithExportedZpoolsAttached.map(
+      (selectedDisk) => selectedDisk.devname,
+    );
   }
 
   getDuplicableDisks(): void {
