@@ -158,10 +158,10 @@ const afterEnum = [[{
     required: true,
     title: 'Label Select Int',
     tooltip: undefined,
-    options: {
-      _isScalar: false,
+    // TODO: Rework not to rely on rxjs internals
+    options: expect.objectContaining({
       _subscribe: expect.any(Function),
-    },
+    }),
     type: 'select',
   }, {
     controlName: 'variable_select_string',
@@ -170,10 +170,9 @@ const afterEnum = [[{
     required: false,
     title: 'Label Select String',
     tooltip: undefined,
-    options: {
-      _isScalar: false,
+    options: expect.objectContaining({
       _subscribe: expect.any(Function),
-    },
+    }),
     type: 'select',
   }] as DynamicFormSchemaSelect[],
   controlName: 'variable_dict',
