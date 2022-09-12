@@ -502,10 +502,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
     this.getDuplicableDisks();
 
-    const selectedDisksWithExportedZpoolsAttached = this.selected.filter((selectedDisk) => selectedDisk.exported_zpool);
-    this.disksNamesWithExportedZpoolsAlreadyWarnedFor = selectedDisksWithExportedZpoolsAttached.map(
-      (selectedDisk) => selectedDisk.devname,
-    );
+    this.updateDisksWithExportedZpoolWarningFlags(this.selected);
   }
 
   getDuplicableDisks(): void {
@@ -743,11 +740,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.selected.push(...selected);
   }
 
-  handleWarningAboutExportedZpoolDisks(selected: ManagerDisk[]): void {
-    if (this.shouldWarnAboutExportedZpoolForLastSelectedDisk(selected)) {
-      this.showWarningAboutExportedZpoolForDisk(selected[selected.length - 1]);
+  handleWarningAboutExportedZpoolDisks(selectedDisks: ManagerDisk[]): void {
+    if (this.shouldWarnAboutExportedZpoolForLastSelectedDisk(selectedDisks)) {
+      this.showWarningAboutExportedZpoolForDisk(selectedDisks[selectedDisks.length - 1]);
     }
-    const selectedDisksWithExportedZpoolsAttached = selected.filter((selectedDisk) => selectedDisk.exported_zpool);
+    this.updateDisksWithExportedZpoolWarningFlags(selectedDisks);
+  }
+
+  updateDisksWithExportedZpoolWarningFlags(selectedDisks: ManagerDisk[]): void {
+    const selectedDisksWithExportedZpoolsAttached = selectedDisks.filter((selectedDisk) => selectedDisk.exported_zpool);
     this.disksNamesWithExportedZpoolsAlreadyWarnedFor = selectedDisksWithExportedZpoolsAttached.map(
       (selectedDisk) => selectedDisk.devname,
     );
