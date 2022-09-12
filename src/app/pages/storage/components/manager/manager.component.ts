@@ -76,6 +76,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   poolError: string = null;
   loaderOpen = false;
   help = helptext;
+  disksNamesWithExportedZpoolsAlreadyWarnedFor: string[] = [];
 
   submitTitle: string = this.translate.instant('Create');
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
@@ -341,7 +342,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.loader.open();
     this.loaderOpen = true;
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.loader.close();
       this.loaderOpen = false;
       this.disks = unusedDisks.map((disk) => {
@@ -732,8 +733,33 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   onSelect({ selected }: { selected: ManagerDisk[] }): void {
+    this.handleWarningAboutExportedZpoolDisks(selected);
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
+  }
+
+  handleWarningAboutExportedZpoolDisks(selected: ManagerDisk[]): void {
+    if (this.shouldWarnAboutExportedZpoolForLastSelectedDisk(selected)) {
+      this.showWarningAboutExportedZpoolForDisk(selected[selected.length - 1]);
+    }
+  }
+
+  showWarningAboutExportedZpoolForDisk(lastSelectedItem: ManagerDisk): void {
+    this.dialog.warn(
+      this.translate.instant('Warning'),
+      this.translate.instant(helptext.exported_zpool_warning, { zpool: '\'' + lastSelectedItem.exported_zpool + '\'' }),
+    );
+  }
+
+  shouldWarnAboutExportedZpoolForLastSelectedDisk(selectedDisks: ManagerDisk[]): boolean {
+    if (!selectedDisks.length) {
+      return false;
+    }
+    const lastSelectedDisk = selectedDisks[selectedDisks.length - 1];
+    const wasAlreadyWarnedAboutThisDisk = this.disksNamesWithExportedZpoolsAlreadyWarnedFor.find(
+      (warningDisk) => warningDisk === lastSelectedDisk.devname,
+    );
+    return lastSelectedDisk.exported_zpool && !wasAlreadyWarnedAboutThisDisk;
   }
 
   updateFilter(event: KeyboardEvent): void {
