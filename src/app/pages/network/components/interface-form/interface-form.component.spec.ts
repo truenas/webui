@@ -14,7 +14,6 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -24,7 +23,7 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { NetworkService, WebSocketService } from 'app/services';
+import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -98,14 +97,9 @@ describe('InterfaceFormComponent', () => {
       }),
       mockProvider(CoreService),
       mockProvider(IxSlideInService),
-      {
-        provide: WINDOW,
-        useValue: {
-          localStorage: {
-            getItem: () => ProductType.ScaleEnterprise,
-          },
-        },
-      },
+      mockProvider(SystemGeneralService, {
+        getProductType: () => ProductType.ScaleEnterprise,
+      }),
     ],
   });
 

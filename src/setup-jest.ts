@@ -20,6 +20,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
@@ -27,6 +29,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { WINDOW } from 'app/helpers/window.helper';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
@@ -75,6 +78,8 @@ defineGlobalsInjections({
       },
       useDefaultLang: false,
     }),
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
   ],
   providers: [
     {
@@ -84,6 +89,10 @@ defineGlobalsInjections({
     {
       provide: MATERIAL_SANITY_CHECKS,
       useValue: false,
+    },
+    {
+      provide: WINDOW,
+      useValue: {},
     },
   ],
 });

@@ -48,8 +48,6 @@ export class FailoverComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
-
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/session/signin');
 

@@ -42,7 +42,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -900,6 +900,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -917,7 +918,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = this.systemGeneralService.getProductType();
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
     if (this.productType === ProductType.ScaleEnterprise) {
