@@ -159,9 +159,6 @@ def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
     assert wait_on_element(driver, 7, '//h3[contains(.,"Cron Jobs")]')
-    element = driver.find_element_by_xpath('//h3[contains(.,"Cron Jobs")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
 
 
 @then('click on System Dataset')
