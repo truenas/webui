@@ -184,7 +184,7 @@ def the_system_dataset_page_should_open(driver):
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
     assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
-    time.sleep(0.5)  # needed on my local machine or the test fails.
+    time.sleep(1)  # needed on my local machine or the test fails.
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
     assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{pool_name}")]')
@@ -198,7 +198,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
     assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
-    assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[text()="dozer"]')
+    assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[text()="tank"]')
     assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[text()="dozer"]')
 
 
