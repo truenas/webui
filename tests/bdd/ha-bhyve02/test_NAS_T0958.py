@@ -15,6 +15,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T958.feature', 'Change user home directory permissions')
@@ -24,8 +25,9 @@ def test_change_user_home_directory_permissions(driver):
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_url}"."""
+    depends(request, ['First_User'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         time.sleep(1)

@@ -15,9 +15,11 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='System_Dataset', scope='session')
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
 def test_creating_new_pool_and_set_it_as_system_dataset(driver):
     """Creating new pool and set it as System Dataset."""
@@ -25,8 +27,9 @@ def test_creating_new_pool_and_set_it_as_system_dataset(driver):
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
+    depends(request, ["Setup_HA"], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:

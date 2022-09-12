@@ -18,6 +18,7 @@ from pytest_bdd import (
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='Setup_HA')
 @scenario('features/NAS-T946.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
     """Verify setting up HA works with a single failover group."""
