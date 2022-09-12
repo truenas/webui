@@ -742,6 +742,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.shouldWarnAboutExportedZpoolForLastSelectedDisk(selected)) {
       this.showWarningAboutExportedZpoolForDisk(selected[selected.length - 1]);
     }
+    const selectedDisksWithExportedZpoolsAttached = selected.filter((selectedDisk) => selectedDisk.exported_zpool);
+    this.disksNamesWithExportedZpoolsAlreadyWarnedFor = selectedDisksWithExportedZpoolsAttached.map(
+      (selectedDisk) => selectedDisk.devname,
+    );
   }
 
   showWarningAboutExportedZpoolForDisk(lastSelectedItem: ManagerDisk): void {
