@@ -39,33 +39,39 @@ export class DownloadKeyDialogComponent {
     this.loader.open();
     if (this.new) { // new is ZoL encryption
       mimetype = 'application/json';
-      this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName]).pipe(untilDestroyed(this)).subscribe(([, url]) => {
-        this.loader.close();
-        this.storage.streamDownloadFile(url, this.fileName, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe((file) => {
-            this.storage.downloadBlob(file, this.fileName);
-            this.isDownloaded = true;
-          });
-      }, (error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialog);
+      this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName]).pipe(untilDestroyed(this)).subscribe({
+        next: ([, url]) => {
+          this.loader.close();
+          this.storage.streamDownloadFile(url, this.fileName, mimetype)
+            .pipe(untilDestroyed(this))
+            .subscribe((file) => {
+              this.storage.downloadBlob(file, this.fileName);
+              this.isDownloaded = true;
+            });
+        },
+        error: (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, error, this.dialog);
+        },
       });
     } else {
       mimetype = 'application/octet-stream';
-      this.ws.call('pool.download_encryption_key', payload).pipe(untilDestroyed(this)).subscribe((encryptionKey) => {
-        this.loader.close();
-        this.storage.streamDownloadFile(encryptionKey, this.fileName, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe((file) => {
-            if (encryptionKey !== null && encryptionKey !== '') {
-              this.storage.downloadBlob(file, this.fileName);
-              this.isDownloaded = true;
-            }
-          });
-      }, () => {
-        this.isDownloaded = true;
-        this.loader.close();
+      this.ws.call('pool.download_encryption_key', payload).pipe(untilDestroyed(this)).subscribe({
+        next: (encryptionKey) => {
+          this.loader.close();
+          this.storage.streamDownloadFile(encryptionKey, this.fileName, mimetype)
+            .pipe(untilDestroyed(this))
+            .subscribe((file) => {
+              if (encryptionKey !== null && encryptionKey !== '') {
+                this.storage.downloadBlob(file, this.fileName);
+                this.isDownloaded = true;
+              }
+            });
+        },
+        error: () => {
+          this.isDownloaded = true;
+          this.loader.close();
+        },
       });
     }
   }

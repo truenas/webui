@@ -246,8 +246,8 @@ export class NetworkConfigurationComponent implements OnInit {
   private loadConfig(): void {
     this.ws.call('network.configuration.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config: NetworkConfiguration) => {
+      .subscribe({
+        next: (config: NetworkConfiguration) => {
           const transformed: NetworkConfigurationConfig = {
             hostname: config.hostname,
             hostname_b: config.hostname_b,
@@ -288,12 +288,12 @@ export class NetworkConfigurationComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onSubmit(): void {
@@ -333,17 +333,17 @@ export class NetworkConfigurationComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 }

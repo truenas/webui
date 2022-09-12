@@ -123,19 +123,22 @@ export class GroupFormComponent {
       switchMap((id) => this.ws.call('group.query', [[['id', '=', id]]])),
       map((groups) => groups[0]),
       untilDestroyed(this),
-    ).subscribe((group) => {
-      if (this.isNew) {
-        this.store$.dispatch(groupAdded({ group }));
-      } else {
-        this.store$.dispatch(groupChanged({ group }));
-      }
-      this.isFormLoading = false;
-      this.slideInService.close();
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (group) => {
+        if (this.isNew) {
+          this.store$.dispatch(groupAdded({ group }));
+        } else {
+          this.store$.dispatch(groupChanged({ group }));
+        }
+        this.isFormLoading = false;
+        this.slideInService.close();
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

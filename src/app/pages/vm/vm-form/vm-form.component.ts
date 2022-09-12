@@ -500,15 +500,15 @@ export class VmFormComponent implements FormConfiguration {
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
     // TODO: Potential error - forkJoin may be needed.
-    combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    combineLatest(observables).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
-    );
+    });
   }
 }

@@ -812,43 +812,45 @@ export class CloudsyncFormComponent implements FormConfiguration {
               this.bucketInputField.tooltip = this.translate.instant('Input the pre-defined S3 bucket to use.');
             }
 
-            this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((buckets) => {
-              if (!entityForm.loaderOpen) {
-                this.loader.close();
-              } else {
-                entityForm.loader.close();
-                entityForm.loaderOpen = false;
-                entityForm.keepLoaderOpen = false;
-              }
-              this.bucketField.options = [{ label: '----------', value: '' }];
-              if (buckets) {
-                buckets.forEach((subitem) => {
-                  this.bucketField.options.push({ label: subitem.Name, value: subitem.Path });
+            this.getBuckets(item).pipe(untilDestroyed(this)).subscribe({
+              next: (buckets) => {
+                if (!entityForm.loaderOpen) {
+                  this.loader.close();
+                } else {
+                  entityForm.loader.close();
+                  entityForm.loaderOpen = false;
+                  entityForm.keepLoaderOpen = false;
+                }
+                this.bucketField.options = [{ label: '----------', value: '' }];
+                if (buckets) {
+                  buckets.forEach((subitem) => {
+                    this.bucketField.options.push({ label: subitem.Name, value: subitem.Path });
+                  });
+                }
+                this.setDisabled('bucket', false, false);
+                this.setDisabled('bucket_input', true, true);
+              },
+              error: (err) => {
+                if (!entityForm.loaderOpen) {
+                  this.loader.close();
+                } else {
+                  entityForm.loader.close();
+                  entityForm.loaderOpen = false;
+                  entityForm.keepLoaderOpen = false;
+                }
+                this.setDisabled('bucket', true, true);
+                this.setDisabled('bucket_input', false, false);
+                this.dialog.confirm({
+                  title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
+                  message: err.reason,
+                  hideCheckBox: true,
+                  buttonMsg: this.translate.instant('Fix Credential'),
+                }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                  this.modalService.closeSlideIn();
+                  const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: item.id } };
+                  this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
                 });
-              }
-              this.setDisabled('bucket', false, false);
-              this.setDisabled('bucket_input', true, true);
-            },
-            (err) => {
-              if (!entityForm.loaderOpen) {
-                this.loader.close();
-              } else {
-                entityForm.loader.close();
-                entityForm.loaderOpen = false;
-                entityForm.keepLoaderOpen = false;
-              }
-              this.setDisabled('bucket', true, true);
-              this.setDisabled('bucket_input', false, false);
-              this.dialog.confirm({
-                title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-                message: err.reason,
-                hideCheckBox: true,
-                buttonMsg: this.translate.instant('Fix Credential'),
-              }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                this.modalService.closeSlideIn();
-                const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: item.id } };
-                this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
-              });
+              },
             });
           } else {
             this.setDisabled('bucket', true, true);
@@ -1118,25 +1120,28 @@ export class CloudsyncFormComponent implements FormConfiguration {
     value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
-      this.ws.call(this.addCall, [value]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.loader.close();
-        this.modalService.closeSlideIn();
-      }, (err) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, err);
-      });
-    } else {
-      this.loader.open();
-      this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-        () => {
+      this.ws.call(this.addCall, [value]).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
           this.loader.close();
           this.modalService.closeSlideIn();
         },
-        (err) => {
+        error: (err) => {
           this.loader.close();
           new EntityUtils().handleWsError(this, err);
         },
-      );
+      });
+    } else {
+      this.loader.open();
+      this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          this.modalService.closeSlideIn();
+        },
+        error: (err) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, err);
+        },
+      });
     }
   }
 

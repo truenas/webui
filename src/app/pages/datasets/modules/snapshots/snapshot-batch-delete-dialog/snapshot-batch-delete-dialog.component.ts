@@ -61,18 +61,21 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
       untilDestroyed(this),
-    ).subscribe((results: CoreBulkResponse<boolean>[]) => {
-      results.forEach((item) => {
-        if (item.error) {
-          this.jobErrors.push(item.error);
-        } else {
-          this.jobSuccess.push(item.result);
-        }
-      });
-      this.isJobCompleted = true;
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    ).subscribe({
+      next: (results: CoreBulkResponse<boolean>[]) => {
+        results.forEach((item) => {
+          if (item.error) {
+            this.jobErrors.push(item.error);
+          } else {
+            this.jobSuccess.push(item.result);
+          }
+        });
+        this.isJobCompleted = true;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 

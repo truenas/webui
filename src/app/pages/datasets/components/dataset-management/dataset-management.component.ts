@@ -80,9 +80,12 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     this.ws.call('systemdataset.config').pipe(
       map((config) => config.pool),
       untilDestroyed(this),
-    ).subscribe((systemDataset) => {
-      this.systemDataset = systemDataset;
-    }, this.handleError);
+    ).subscribe({
+      next: (systemDataset) => {
+        this.systemDataset = systemDataset;
+      },
+      error: this.handleError,
+    });
 
     this.isLoading$
       .pipe(untilDestroyed(this))
@@ -122,8 +125,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   private setupTree(): void {
     this.datasetStore.datasets$
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (datasets) => {
+      .subscribe({
+        next: (datasets) => {
           this.sortDatasetsByName(datasets);
           this.createDataSource(datasets);
           this.treeControl.dataNodes = datasets;
@@ -141,14 +144,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
             this.router.navigate(['/datasets', firstNode.id]);
           }
         },
-        this.handleError,
-      );
+        error: this.handleError,
+      });
 
     this.datasetStore.selectedBranch$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((selectedBranch: DatasetDetails[]) => {
-        selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
-      }, this.handleError);
+      .subscribe({
+        next: (selectedBranch: DatasetDetails[]) => {
+          selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
+        },
+        error: this.handleError,
+      });
   }
 
   private listenForRouteChanges(): void {

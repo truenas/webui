@@ -154,11 +154,14 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
         filter((scan) => scan.name === this.pool.name),
         untilDestroyed(this),
       )
-      .subscribe((scan) => {
-        this.scan = scan.scan;
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      .subscribe({
+        next: (scan) => {
+          this.scan = scan.scan;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
   }
 

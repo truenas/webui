@@ -140,21 +140,23 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
   }
 
   getData(): void {
-    this.ws.call('pool.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
-      this.pool = pools[0];
-      if (!pools[0]) {
-        return;
-      }
+    this.ws.call('pool.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (pools) => {
+        this.pool = pools[0];
+        if (!pools[0]) {
+          return;
+        }
 
-      this.poolScan = pools[0].scan;
-      // subscribe zfs.pool.scan to get scrub job info
-      if (this.poolScan.state === PoolScanState.Scanning) {
-        this.getZfsPoolScan(pools[0].name);
-      }
-      this.dataHandler(pools[0]);
-    },
-    (err) => {
-      new EntityUtils().handleError(this, err);
+        this.poolScan = pools[0].scan;
+        // subscribe zfs.pool.scan to get scrub job info
+        if (this.poolScan.state === PoolScanState.Scanning) {
+          this.getZfsPoolScan(pools[0].name);
+        }
+        this.dataHandler(pools[0]);
+      },
+      error: (err) => {
+        new EntityUtils().handleError(this, err);
+      },
     });
   }
 
@@ -227,16 +229,16 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
         ).subscribe(() => {
           this.loader.open();
           const value = { label: row.guid };
-          this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-            () => {
+          this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe({
+            next: () => {
               this.getData();
               this.loader.close();
             },
-            (err) => {
+            error: (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         });
       },
       isHidden: data.status === 'OFFLINE',
@@ -257,16 +259,16 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
         ).subscribe(() => {
           this.loader.open();
           const value = { label: row.guid };
-          this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-            () => {
+          this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe({
+            next: () => {
               this.getData();
               this.loader.close();
             },
-            (err) => {
+            error: (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         });
       },
       isHidden: !!(data.status === 'ONLINE' || this.pool.encrypt !== 0),
@@ -336,17 +338,17 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
           untilDestroyed(this),
         ).subscribe(() => {
           this.loader.open();
-          this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-            () => {
+          this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe({
+            next: () => {
               this.getData();
               this.getUnusedDisk();
               this.loader.close();
             },
-            (err) => {
+            error: (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         });
       },
       isHidden: true,

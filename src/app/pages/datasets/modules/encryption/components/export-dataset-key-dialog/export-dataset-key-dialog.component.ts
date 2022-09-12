@@ -43,12 +43,15 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         switchMap(([, url]) => this.storageService.downloadUrl(url, fileName, mimetype)),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.loader.close();
-        this.dialogRef.close();
-      }, (error) => {
-        this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.dialogRef.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
   }
 
@@ -56,8 +59,8 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
     this.loader.open();
     this.ws.job('pool.dataset.export_key', [this.dataset.id])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (job) => {
+      .subscribe({
+        next: (job) => {
           if (job.state !== JobState.Success) {
             return;
           }
@@ -65,10 +68,10 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
           this.cdr.markForCheck();
           this.loader.close();
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.dialogService.errorReportMiddleware(error);
         },
-      );
+      });
   }
 }

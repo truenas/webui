@@ -66,8 +66,8 @@ export class TruecommandSignupModalComponent implements OnInit {
       params.api_key = this.form.value.api_key;
     }
 
-    this.ws.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.dialogRef.close();
 
@@ -75,11 +75,11 @@ export class TruecommandSignupModalComponent implements OnInit {
           this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
         }
       },
-      (err) => {
+      error: (err) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 
   onDeregister(): void {
@@ -96,8 +96,8 @@ export class TruecommandSignupModalComponent implements OnInit {
       this.loader.open();
       this.ws.call('truecommand.update', [{ api_key: null, enabled: false }])
         .pipe(untilDestroyed(this))
-        .subscribe(
-          () => {
+        .subscribe({
+          next: () => {
             this.loader.close();
             this.dialogRef.close({ deregistered: true });
             this.dialogService.generalDialog({
@@ -106,11 +106,11 @@ export class TruecommandSignupModalComponent implements OnInit {
               hideCancel: true,
             });
           },
-          (err) => {
+          error: (err) => {
             this.loader.close();
             new EntityUtils().handleWsError(this, err, this.dialogService);
           },
-        );
+        });
     });
   }
 }

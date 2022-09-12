@@ -578,21 +578,23 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
   callGetFunction(skipActions = false): void {
     this.getFunction.pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.handleData(res, skipActions);
-      },
-      (res: WebsocketError) => {
-        this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
-        if (this.loaderOpen) {
-          this.loader.close();
-          this.loaderOpen = false;
-        }
-        if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
-          this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
-        } else {
-          new EntityUtils().handleError(this, res);
-        }
+      {
+        next: (res) => {
+          this.handleData(res, skipActions);
+        },
+        error: (res: WebsocketError) => {
+          this.isTableEmpty = true;
+          this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
+          if (this.loaderOpen) {
+            this.loader.close();
+            this.loaderOpen = false;
+          }
+          if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
+            this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
+          } else {
+            new EntityUtils().handleError(this, res);
+          }
+        },
       },
     );
   }
@@ -888,19 +890,19 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     this.busy = this.ws.call(
       this.conf.wsDelete,
       this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id],
-    ).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.getData();
         this.excuteDeletion = true;
         if (this.conf.afterDelete) {
           this.conf.afterDelete();
         }
       },
-      (error) => {
+      error: (error) => {
         new EntityUtils().handleWsError(this, error, this.dialogService);
         this.loader.close();
       },
-    );
+    });
   }
 
   doDeleteJob(item: Row): Observable<{ state: JobState } | boolean> {
@@ -995,8 +997,8 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
         if (this.conf.wsMultiDeleteParams) {
           this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
             .pipe(untilDestroyed(this))
-            .subscribe(
-              (res1) => {
+            .subscribe({
+              next: (res1) => {
                 if (res1.state !== JobState.Success) {
                   return;
                 }
@@ -1020,12 +1022,12 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
                   this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
                 }
               },
-              (res1) => {
+              error: (res1) => {
                 new EntityUtils().handleWsError(this, res1, this.dialogService);
                 this.loader.close();
                 this.loaderOpen = false;
               },
-            );
+            });
         }
       } else {
         // rest to do multi-delete

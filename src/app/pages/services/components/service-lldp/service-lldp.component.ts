@@ -72,15 +72,17 @@ export class ServiceLldpComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     this.ws.call('lldp.config').pipe(untilDestroyed(this)).subscribe(
-      (config) => {
-        this.form.patchValue(config);
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-      },
-      (error) => {
-        this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
-        this.cdr.markForCheck();
+      {
+        next: (config) => {
+          this.form.patchValue(config);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.cdr.markForCheck();
+        },
       },
     );
   }
@@ -92,14 +94,17 @@ export class ServiceLldpComponent implements OnInit {
 
     this.ws.call('lldp.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.isFormLoading = false;
-        this.router.navigate(['/services']);
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.router.navigate(['/services']);
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
       });
   }
 

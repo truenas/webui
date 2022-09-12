@@ -144,15 +144,14 @@ export class IdmapListComponent implements EntityTableConfig {
         name: 'delete',
         icon: 'delete',
         onClick: (row: IdmapRow) => {
-          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
-            () => {},
-            (err: WebsocketError) => {
+          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe({
+            error: (err: WebsocketError) => {
               new EntityUtils().handleWsError(this.entityList, err);
             },
-            () => {
+            complete: () => {
               this.entityList.getData();
             },
-          );
+          });
         },
       });
     }

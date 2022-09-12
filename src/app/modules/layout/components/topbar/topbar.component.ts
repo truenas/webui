@@ -303,16 +303,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.userCheckInPrompted = false;
       this.loader.open();
-      this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
-        this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
-        this.loader.close();
-        this.snackbar.success(
-          this.translate.instant(network_interfaces_helptext.checkin_complete_message),
-        );
-        this.waitingNetworkCheckin = false;
-      }, (err) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
+      this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
+          this.loader.close();
+          this.snackbar.success(
+            this.translate.instant(network_interfaces_helptext.checkin_complete_message),
+          );
+          this.waitingNetworkCheckin = false;
+        },
+        error: (err) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, err, this.dialogService);
+        },
       });
     });
   }

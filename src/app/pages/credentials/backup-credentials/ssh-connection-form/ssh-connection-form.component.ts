@@ -164,15 +164,17 @@ export class SshConnectionFormComponent {
     this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
       .pipe(untilDestroyed(this))
       .subscribe(
-        (remoteHostKey) => {
-          this.loader.close();
-          this.form.patchValue({
-            remote_host_key: remoteHostKey,
-          });
-        },
-        (error) => {
-          this.loader.close();
-          this.errorHandler.handleWsFormError(error, this.form);
+        {
+          next: (remoteHostKey) => {
+            this.loader.close();
+            this.form.patchValue({
+              remote_host_key: remoteHostKey,
+            });
+          },
+          error: (error) => {
+            this.loader.close();
+            this.errorHandler.handleWsFormError(error, this.form);
+          },
         },
       );
   }
@@ -186,8 +188,8 @@ export class SshConnectionFormComponent {
 
     request$.pipe(
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.isLoading = false;
         if (this.data?.dialog) {
           if (this.dialogRef) {
@@ -197,12 +199,12 @@ export class SshConnectionFormComponent {
           this.slideIn.close();
         }
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);
       },
-    );
+    });
   }
 
   private prepareSetupRequest(): Observable<unknown> {

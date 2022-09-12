@@ -78,8 +78,8 @@ export class SelectPresetModalComponent implements OnInit {
       },
     }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (presets) => {
+      .subscribe({
+        next: (presets) => {
           this.presets = presets;
           this.presetOptions$ = of(presets.map((preset) => ({
             label: preset.name,
@@ -87,11 +87,11 @@ export class SelectPresetModalComponent implements OnInit {
           })));
           this.loader.close();
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.dialogService.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   onContinuePressed(): void {

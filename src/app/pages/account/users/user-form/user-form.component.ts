@@ -193,19 +193,22 @@ export class UserFormComponent {
       switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
       map((users) => users[0]),
       untilDestroyed(this),
-    ).subscribe((user) => {
-      if (this.isNew) {
-        this.store$.dispatch(userAdded({ user }));
-      } else {
-        this.store$.dispatch(userChanged({ user }));
-      }
-      this.isFormLoading = false;
-      this.slideIn.close();
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (user) => {
+        if (this.isNew) {
+          this.store$.dispatch(userAdded({ user }));
+        } else {
+          this.store$.dispatch(userChanged({ user }));
+        }
+        this.isFormLoading = false;
+        this.slideIn.close();
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 

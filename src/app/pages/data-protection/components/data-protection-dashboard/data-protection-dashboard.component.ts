@@ -607,26 +607,28 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .call('replication.run', [row.id])
                 .pipe(untilDestroyed(this))
                 .subscribe(
-                  (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task started'),
-                      this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
-                      true,
-                    );
-                    this.job
-                      .getJobStatus(jobId)
-                      .pipe(untilDestroyed(this))
-                      .subscribe((job: Job) => {
-                        row.state = { state: job.state };
-                        row.job = job;
-                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
-                          this.refreshTable(TaskCardId.Replication);
-                        }
-                        this.jobStates[job.id] = job.state;
-                      });
-                  },
-                  (err) => {
-                    new EntityUtils().handleWsError(this, err);
+                  {
+                    next: (jobId: number) => {
+                      this.dialog.info(
+                        this.translate.instant('Task started'),
+                        this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
+                        true,
+                      );
+                      this.job
+                        .getJobStatus(jobId)
+                        .pipe(untilDestroyed(this))
+                        .subscribe((job: Job) => {
+                          row.state = { state: job.state };
+                          row.job = job;
+                          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+                            this.refreshTable(TaskCardId.Replication);
+                          }
+                          this.jobStates[job.id] = job.state;
+                        });
+                    },
+                    error: (err) => {
+                      new EntityUtils().handleWsError(this, err);
+                    },
                   },
                 );
             });
@@ -668,8 +670,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               this.ws
                 .call('cloudsync.sync', [row.id])
                 .pipe(untilDestroyed(this))
-                .subscribe(
-                  (jobId: number) => {
+                .subscribe({
+                  next: (jobId: number) => {
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
@@ -687,10 +689,10 @@ export class DataProtectionDashboardComponent implements OnInit {
                         this.jobStates[job.id] = job.state;
                       });
                   },
-                  (err) => {
+                  error: (err) => {
                     new EntityUtils().handleWsError(this, err);
                   },
-                );
+                });
             });
         },
       },
@@ -711,15 +713,17 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .call('cloudsync.abort', [row.id])
                 .pipe(untilDestroyed(this))
                 .subscribe(
-                  () => {
-                    this.dialog.info(
-                      this.translate.instant('Task Stopped'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
-                      true,
-                    );
-                  },
-                  (err) => {
-                    new EntityUtils().handleWsError(this, err);
+                  {
+                    next: () => {
+                      this.dialog.info(
+                        this.translate.instant('Task Stopped'),
+                        this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
+                        true,
+                      );
+                    },
+                    error: (err) => {
+                      new EntityUtils().handleWsError(this, err);
+                    },
                   },
                 );
             });
@@ -741,8 +745,8 @@ export class DataProtectionDashboardComponent implements OnInit {
               this.ws
                 .call('cloudsync.sync', [row.id, { dry_run: true }])
                 .pipe(untilDestroyed(this))
-                .subscribe(
-                  (jobId: number) => {
+                .subscribe({
+                  next: (jobId: number) => {
                     this.dialog.info(
                       this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
@@ -760,10 +764,10 @@ export class DataProtectionDashboardComponent implements OnInit {
                         this.jobStates[job.id] = job.state;
                       });
                   },
-                  (err) => {
+                  error: (err) => {
                     new EntityUtils().handleWsError(this, err);
                   },
-                );
+                });
             });
         },
       },
@@ -804,26 +808,28 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .call('rsynctask.run', [row.id])
                 .pipe(untilDestroyed(this))
                 .subscribe(
-                  (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task Started'),
-                      this.translate.instant('Rsync task <i>{ taskName }</i> started.', { taskName: `${row.remotehost} – ${row.remotemodule}` }),
-                      true,
-                    );
-                    this.job
-                      .getJobStatus(jobId)
-                      .pipe(untilDestroyed(this))
-                      .subscribe((job: Job) => {
-                        row.state = { state: job.state };
-                        row.job = job;
-                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
-                          this.refreshTable(TaskCardId.Rsync);
-                        }
-                        this.jobStates[job.id] = job.state;
-                      });
-                  },
-                  (err) => {
-                    new EntityUtils().handleWsError(this, err);
+                  {
+                    next: (jobId: number) => {
+                      this.dialog.info(
+                        this.translate.instant('Task Started'),
+                        this.translate.instant('Rsync task <i>{ taskName }</i> started.', { taskName: `${row.remotehost} – ${row.remotemodule}` }),
+                        true,
+                      );
+                      this.job
+                        .getJobStatus(jobId)
+                        .pipe(untilDestroyed(this))
+                        .subscribe((job: Job) => {
+                          row.state = { state: job.state };
+                          row.job = job;
+                          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+                            this.refreshTable(TaskCardId.Rsync);
+                          }
+                          this.jobStates[job.id] = job.state;
+                        });
+                    },
+                    error: (err) => {
+                      new EntityUtils().handleWsError(this, err);
+                    },
                   },
                 );
             });
@@ -936,14 +942,14 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.ws
       .call(updateCall, [row.id, { [param]: row[param] }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (updatedEntity) => {
+      .subscribe({
+        next: (updatedEntity) => {
           row[param] = updatedEntity[param];
         },
-        (err) => {
+        error: (err) => {
           row[param] = !row[param];
           new EntityUtils().handleWsError(this, err, this.dialog);
         },
-      );
+      });
   }
 }

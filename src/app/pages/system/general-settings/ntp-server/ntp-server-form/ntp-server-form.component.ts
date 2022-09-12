@@ -84,14 +84,17 @@ export class NtpServerFormComponent {
       request$ = this.ws.call('system.ntpserver.update', [this.editingServer.id, body]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.errorHandler.handleWsFormError(error, this.formGroup);
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+      },
     });
   }
 }
