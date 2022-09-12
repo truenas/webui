@@ -157,8 +157,8 @@ def navigate_to_system_setting_and_click_misc(driver):
 @then('the Advanced page should open')
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Cron Jobs")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Advanced"]')
+    assert wait_on_element(driver, 7, '//h3[text()="System Dataset Pool"]')
 
 
 @then('click on System Dataset')
