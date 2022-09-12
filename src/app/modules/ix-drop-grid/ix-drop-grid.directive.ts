@@ -4,10 +4,11 @@ import {
   ComponentFactoryResolver,
   Directive,
   EventEmitter,
-  Inject, Injector,
+  Inject,
   Input,
   OnInit,
   Output,
+  ReflectiveInjector,
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -134,7 +135,8 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
   }
 
   private createPlaceholder(): IxDropGridPlaceholderComponent {
-    const injector = Injector.create({ providers: [{ provide: ixDropGridDirectiveToken, useValue: this }] });
-    return this.viewContainerRef.createComponent(IxDropGridPlaceholderComponent, { index: 0, injector }).instance;
+    const factory = this.resolver.resolveComponentFactory(IxDropGridPlaceholderComponent);
+    const injector = ReflectiveInjector.resolveAndCreate([{ provide: ixDropGridDirectiveToken, useValue: this }]);
+    return this.viewContainerRef.createComponent(factory, 0, injector).instance;
   }
 }
