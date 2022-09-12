@@ -118,7 +118,7 @@ def pytest_runtest_makereport(item):
         error_xpath = '//h1[normalize-space(text())="Error"]'
         failed_xpath = '//h1[normalize-space(text())="FAILED"]'
         download_xpath = '//h1[normalize-space(text())="Error Downloading File"]'
-        validation_error = '//h1[normalize-space(text())="FAILED"]'
+        validation_error = '//h1[normalize-space(text())="ValidationErrors"]'
         # This looks for plugins install error box and will close the dialog.
         if element_exist(error_xpath) or element_exist(failed_xpath) or element_exist(download_xpath) or element_exist(validation_error):
             web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
