@@ -13,6 +13,15 @@
         [routerLink]="['/apps']"
       >{{ 'Manage Apps Settings' | translate }}</a>
     </div>
+    <div class="details-item" *ngIf="isSystemDataset">
+      <ix-icon class="icon" name="ix:truenas_scale_logomark"></ix-icon>
+      <div class="label">{{ 'System Dataset' | translate }}:</div>
+      <div class="system-dataset value">{{ 'This dataset is used by the system' | translate }}</div>
+      <a
+        class="action"
+        [routerLink]="['/system', 'advanced']"
+      >{{ 'Manage Advanced Settings' | translate }}</a>
+    </div>
     <div class="details-item" *ngIf="hasChildrenWithShares">
       <mat-icon class="icon">share</mat-icon>
       <div class="label">{{ 'Child Shares' | translate }}:</div>
