@@ -129,4 +129,13 @@ describe('RolesCardComponent', () => {
       'This dataset is used to store Kubernetes config and other container related data',
     );
   });
+
+  it('shows system dataset row', () => {
+    spectator.component.dataset.name = 'system-dataset';
+    spectator.component.systemDataset = 'system-dataset';
+    spectator.detectChanges();
+    expect(spectator.query('.system-dataset.value')).toHaveText(
+      'This dataset is used by the system',
+    );
+  });
 });
