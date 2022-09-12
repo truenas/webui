@@ -210,7 +210,7 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    driver.refresh()
+    # driver.refresh()
     assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodeb") and @class="mat-list-item-content"]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
     # 30 second to let the system get ready for the next step.
