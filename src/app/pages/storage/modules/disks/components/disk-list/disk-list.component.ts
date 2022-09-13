@@ -170,9 +170,9 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     this.dialogService.confirm({
       title: this.translate.instant('Warning'),
       message: this.translate.instant(
-        'This disk is part of the exported zpool {zpool}. Wiping this disk will make {zpool} unable\
-        to import. You will lose any and all data in {zpool}. Are you sure you want to wipe this disk?',
-        { zpool: '\'' + unusedDisk.exported_zpool + '\'' },
+        'This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\
+        to import. You will lose any and all data in {pool}. Are you sure you want to wipe this disk?',
+        { pool: '\'' + unusedDisk.exported_zpool + '\'' },
       ),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.matDialog.open(DiskWipeDialogComponent, {

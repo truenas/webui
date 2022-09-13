@@ -56,10 +56,10 @@ export class ReplaceDiskDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.setupExportedZpoolWarningForUnusedDisks();
+    this.setupExportedPoolWarningForUnusedDisks();
   }
 
-  setupExportedZpoolWarningForUnusedDisks(): void {
+  setupExportedPoolWarningForUnusedDisks(): void {
     this.form.get('replacement').valueChanges.pipe(untilDestroyed(this)).subscribe(
       this.warnAboutExportedPoolForUnusedDiskIfNeeded,
     );
@@ -80,9 +80,9 @@ export class ReplaceDiskDialogComponent implements OnInit {
     this.dialogService.warn(
       this.translate.instant('Warning'),
       this.translate.instant(
-        'This disk is part of the exported zpool {zpool}. Wiping this disk will make {zpool} unable\
-        to import. You will lose any and all data in {zpool}. Are you sure you want to use this disk?',
-        { zpool: '\'' + unusedDisk.exported_zpool + '\'' },
+        'This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\
+        to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before reusing/repurposing this disk.',
+        { pool: '\'' + unusedDisk.exported_zpool + '\'' },
       ),
     );
   }

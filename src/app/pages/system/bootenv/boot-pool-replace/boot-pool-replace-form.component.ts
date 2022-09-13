@@ -62,16 +62,16 @@ export class BootPoolReplaceFormComponent implements OnInit {
       this.pk = params['pk'];
     });
 
-    this.setupWarningForExportedZpoolForUnusedDisks();
+    this.setupWarningForExportedPoolForUnusedDisks();
   }
 
-  setupWarningForExportedZpoolForUnusedDisks(): void {
+  setupWarningForExportedPoolForUnusedDisks(): void {
     this.form.get(this.dev.fcName).valueChanges.pipe(untilDestroyed(this)).subscribe(
-      this.warnExportedZpoolsForUnusedDisksIfNeeded,
+      this.warnExportedPoolsForUnusedDisksIfNeeded,
     );
   }
 
-  warnExportedZpoolsForUnusedDisksIfNeeded = (disk: string): void => {
+  warnExportedPoolsForUnusedDisksIfNeeded = (disk: string): void => {
     const unusedDisk = this.findDiskFromUnusedDisks(disk);
     if (unusedDisk?.exported_zpool) {
       this.showWarningAboutExportedPoolForDisk(unusedDisk);
@@ -86,9 +86,8 @@ export class BootPoolReplaceFormComponent implements OnInit {
     this.dialogService.warn(
       this.translate.instant('Warning'),
       this.translate.instant(
-        'This disk is part of the exported zpool {zpool}. Reusing this disk will make {zpool} unable\
-        to import. You will lose any and all data in {zpool}. Are you sure you want to use this disk?',
-        { zpool: '\'' + unusedDisk.exported_zpool + '\'' },
+        'This disk is part of the exported pool {pool}. Reusing this disk will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure any sensitive data in {pool} is backed up before reusing/repurposing this disk.',
+        { pool: '\'' + unusedDisk.exported_zpool + '\'' },
       ),
     );
   }
