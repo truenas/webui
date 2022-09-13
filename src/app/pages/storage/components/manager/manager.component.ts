@@ -76,7 +76,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   poolError: string = null;
   loaderOpen = false;
   help = helptext;
-  disksNamesWithExportedZpoolsAlreadyWarnedFor: string[] = [];
+  disksNamesWithExportedPoolsAlreadyWarnedFor: string[] = [];
 
   submitTitle: string = this.translate.instant('Create');
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
@@ -502,7 +502,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
     this.getDuplicableDisks();
 
-    this.updateDisksWithExportedZpoolWarningFlags(this.selected);
+    this.updateDisksWithExportedPoolWarningFlags(this.selected);
   }
 
   getDuplicableDisks(): void {
@@ -735,38 +735,38 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   onSelect({ selected }: { selected: ManagerDisk[] }): void {
-    this.handleWarningAboutExportedZpoolDisks(selected);
+    this.handleWarningAboutExportedPoolDisks(selected);
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }
 
-  handleWarningAboutExportedZpoolDisks(selectedDisks: ManagerDisk[]): void {
-    if (this.shouldWarnAboutExportedZpoolForLastSelectedDisk(selectedDisks)) {
-      this.showWarningAboutExportedZpoolForDisk(selectedDisks[selectedDisks.length - 1]);
+  handleWarningAboutExportedPoolDisks(selectedDisks: ManagerDisk[]): void {
+    if (this.shouldWarnAboutExportedPoolForLastSelectedDisk(selectedDisks)) {
+      this.showWarningAboutExportedPoolForDisk(selectedDisks[selectedDisks.length - 1]);
     }
-    this.updateDisksWithExportedZpoolWarningFlags(selectedDisks);
+    this.updateDisksWithExportedPoolWarningFlags(selectedDisks);
   }
 
-  updateDisksWithExportedZpoolWarningFlags(selectedDisks: ManagerDisk[]): void {
-    const selectedDisksWithExportedZpoolsAttached = selectedDisks.filter((selectedDisk) => selectedDisk.exported_zpool);
-    this.disksNamesWithExportedZpoolsAlreadyWarnedFor = selectedDisksWithExportedZpoolsAttached.map(
+  updateDisksWithExportedPoolWarningFlags(selectedDisks: ManagerDisk[]): void {
+    const selectedDisksWithExportedPoolsAttached = selectedDisks.filter((selectedDisk) => selectedDisk.exported_zpool);
+    this.disksNamesWithExportedPoolsAlreadyWarnedFor = selectedDisksWithExportedPoolsAttached.map(
       (selectedDisk) => selectedDisk.devname,
     );
   }
 
-  showWarningAboutExportedZpoolForDisk(lastSelectedItem: ManagerDisk): void {
+  showWarningAboutExportedPoolForDisk(lastSelectedItem: ManagerDisk): void {
     this.dialog.warn(
       this.translate.instant('Warning'),
       this.translate.instant(helptext.exported_pool_warning, { pool: '\'' + lastSelectedItem.exported_zpool + '\'' }),
     );
   }
 
-  shouldWarnAboutExportedZpoolForLastSelectedDisk(selectedDisks: ManagerDisk[]): boolean {
+  shouldWarnAboutExportedPoolForLastSelectedDisk(selectedDisks: ManagerDisk[]): boolean {
     if (!selectedDisks.length) {
       return false;
     }
     const lastSelectedDisk = selectedDisks[selectedDisks.length - 1];
-    const wasAlreadyWarnedAboutThisDisk = this.disksNamesWithExportedZpoolsAlreadyWarnedFor.find(
+    const wasAlreadyWarnedAboutThisDisk = this.disksNamesWithExportedPoolsAlreadyWarnedFor.find(
       (warningDisk) => warningDisk === lastSelectedDisk.devname,
     );
     return lastSelectedDisk.exported_zpool && !wasAlreadyWarnedAboutThisDisk;
