@@ -6,11 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -94,7 +94,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     },
   }];
 
-  protected unused: Disk[] = [];
+  protected unusedDisks: Disk[] = [];
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
@@ -141,22 +141,44 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       }
     }
 
-    const devMatch = this.unused.filter((dev) => dev.name === parentRow.name);
+    const devMatch = this.unusedDisks.filter((dev) => dev.name === parentRow.name);
     if (devMatch.length > 0) {
       actions.push({
         id: parentRow.name,
         icon: 'delete_sweep',
         name: 'wipe',
         label: this.translate.instant('Wipe'),
-        onClick: (disk) => {
-          this.matDialog.open(DiskWipeDialogComponent, {
-            data: disk.name,
-          });
+        onClick: (disk): void => {
+          const unusedDisk: Partial<UnusedDisk> = this.unusedDisks.find(
+            (unusedDisk) => unusedDisk.devname === disk.devname,
+          );
+          if (unusedDisk?.exported_zpool) {
+            this.showWarningAboutExportedZpoolForDisk(unusedDisk);
+          } else {
+            this.matDialog.open(DiskWipeDialogComponent, {
+              data: disk.name,
+            });
+          }
         },
       });
     }
 
     return actions as EntityTableAction[];
+  }
+
+  showWarningAboutExportedZpoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant(
+        'This disk is part of the exported zpool {zpool}. Wiping this disk will make {zpool} unable\
+        to import. You will lose any and all data in {zpool}. Are you sure you want to wipe this disk?',
+        { zpool: '\'' + unusedDisk.exported_zpool + '\'' },
+      ),
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.matDialog.open(DiskWipeDialogComponent, {
+        data: unusedDisk.name,
+      });
+    });
   }
 
   dataHandler(entityList: EntityTableComponent): void {
@@ -175,7 +197,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       this.ws.call('smart.test.disk_choices'),
     ]).pipe(
       map(([unusedDisks, disksThatSupportSmart]) => {
-        this.unused = unusedDisks;
+        this.unusedDisks = unusedDisks;
         this.smartDiskChoices = disksThatSupportSmart;
         return true;
       }),

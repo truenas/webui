@@ -8,8 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +22,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
   isFormLoading = false;
   routeSuccess: string[] = ['system', 'boot', 'status'];
   pk: string;
+  unusedDisks: UnusedDisk[] = [];
 
   form = this.fb.group({
     dev: ['', Validators.required],
@@ -30,8 +32,9 @@ export class BootPoolReplaceFormComponent implements OnInit {
     fcName: 'dev',
     label: this.translate.instant(helptextSystemBootenv.replace_name_placeholder),
     options: this.ws.call('disk.get_unused').pipe(
-      map((disks) => {
-        const options = disks.map((disk) => ({
+      map((unusedDisks) => {
+        this.unusedDisks = unusedDisks;
+        const options = unusedDisks.map((disk) => ({
           label: disk.name,
           value: disk.name,
         }));
@@ -52,12 +55,43 @@ export class BootPoolReplaceFormComponent implements OnInit {
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
+
+    this.setupWarningForExportedZpoolForUnusedDisks();
+  }
+
+  setupWarningForExportedZpoolForUnusedDisks(): void {
+    this.form.get(this.dev.fcName).valueChanges.pipe(untilDestroyed(this)).subscribe(
+      this.warnExportedZpoolsForUnusedDisksIfNeeded,
+    );
+  }
+
+  warnExportedZpoolsForUnusedDisksIfNeeded = (disk: string): void => {
+    const unusedDisk = this.findDiskFromUnusedDisks(disk);
+    if (unusedDisk?.exported_zpool) {
+      this.showWarningAboutExportedZpoolForDisk(unusedDisk);
+    }
+  };
+
+  findDiskFromUnusedDisks(diskName: string): UnusedDisk {
+    return this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+  }
+
+  showWarningAboutExportedZpoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
+    this.dialogService.warn(
+      this.translate.instant('Warning'),
+      this.translate.instant(
+        'This disk is part of the exported zpool {zpool}. Reusing this disk will make {zpool} unable\
+        to import. You will lose any and all data in {zpool}. Are you sure you want to use this disk?',
+        { zpool: '\'' + unusedDisk.exported_zpool + '\'' },
+      ),
+    );
   }
 
   onSubmit(): void {
