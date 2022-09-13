@@ -3331,7 +3331,7 @@
   "Standard (Secure)": "Стандарт (безпечний)",
   "Standby": "Резервний",
   "Standby {controller}.": "Очікування {controller}.",
-  "Start": "Запуститии",
+  "Start": "Запустити",
   "Start Automatically": "Автоматичний запуск",
   "Start Scrub": "Почати перевірку",
   "Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.": "Почати пробне тестування цього завдання хмарної синхронізації? Система підключиться до постачальника хмарних послуг і імітує передачу файлу. Дані не надсилатимуться та не отримуватимуться.",
