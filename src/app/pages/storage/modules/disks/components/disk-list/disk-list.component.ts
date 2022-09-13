@@ -94,7 +94,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     },
   }];
 
-  protected unusedDisks: Disk[] = [];
+  protected unusedDisks: UnusedDisk[] = [];
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
@@ -226,8 +226,16 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
     return disks.map((disk) => ({
       ...disk,
-      pool: disk.pool || this.translate.instant('N/A'),
+      pool: disk.pool || this.getExportedPoolNameForDiskIfApplicable(disk),
     }));
+  }
+
+  getExportedPoolNameForDiskIfApplicable(disk: Disk): string {
+    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.devname === disk.devname);
+    if (unusedDisk?.exported_zpool) {
+      return unusedDisk.exported_zpool + ' (' + this.translate.instant('Exported') + ')';
+    }
+    return this.translate.instant('N/A');
   }
 
   manualTest(selected: Disk | Disk[]): void {

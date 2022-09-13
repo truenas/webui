@@ -35,12 +35,11 @@ export class BootPoolReplaceFormComponent implements OnInit {
       map((unusedDisks) => {
         this.unusedDisks = unusedDisks;
         const options = unusedDisks.map((disk) => ({
-          label: disk.name,
+          label: disk.name + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : ''),
           value: disk.name,
         }));
 
         return [
-          { label: '-', value: null },
           ...options,
         ];
       }),

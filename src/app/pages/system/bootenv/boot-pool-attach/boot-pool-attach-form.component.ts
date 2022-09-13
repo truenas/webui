@@ -40,7 +40,10 @@ export class BootPoolAttachFormComponent implements OnInit {
       }),
       map((unusedDisks) => {
         return unusedDisks.map((disk) => ({
-          label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})`,
+          label: (
+            `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})`
+            + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : '')
+          ),
           value: disk.name,
         }));
       }),

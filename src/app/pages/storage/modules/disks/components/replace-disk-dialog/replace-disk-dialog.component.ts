@@ -37,7 +37,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
       this.unusedDisks = unusedDisks;
     }),
     map((disks) => disks.map((disk) => ({
-      label: disk.devname,
+      label: disk.devname + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : ''),
       value: disk.identifier,
     }))),
   );

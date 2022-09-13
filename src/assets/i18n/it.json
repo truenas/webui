@@ -1219,6 +1219,7 @@
   "Export/Disconnect Pool": "",
   "Export/disconnect pool: '": "",
   "Export/disconnect pool: {pool}": "",
+  "Exported": "",
   "Exporting Pool": "",
   "Exporting/disconnecting will continue after services have been managed.": "",
   "Expose zilstat via SNMP": "",

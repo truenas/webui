@@ -112,7 +112,10 @@ export class ExtendDialogComponent implements OnInit {
         this.unusedDisks = disks;
         this.unusedDiskOptions$ = of(
           disks.map((disk) => ({
-            label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
+            label: (
+              disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')'
+              + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : '')
+            ),
             value: disk.name,
           })),
         );
