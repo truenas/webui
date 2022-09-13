@@ -404,6 +404,8 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       } else {
         data.netbiosalias = [];
       }
+    } else {
+      data.netbiosalias = [];
     }
     if (data.kerberos_principal) {
       data.bindpw = '';
