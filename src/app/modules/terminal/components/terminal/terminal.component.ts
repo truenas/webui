@@ -1,12 +1,14 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
+import { filter } from 'rxjs/operators';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -14,7 +16,10 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
+import { AppState } from 'app/store';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -49,6 +54,9 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private translate: TranslateService,
     private layoutService: LayoutService,
+    private store$: Store<AppState>,
+    private cdr: ChangeDetectorRef,
+    public core: CoreService,
   ) {}
 
   ngOnInit(): void {
@@ -65,6 +73,26 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
         this.reconnect();
       });
     }
+
+    this.store$.pipe(
+      waitForPreferences,
+      filter((preferences) => Boolean(preferences.sidenavStatus)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (this.shellConnected) {
+        // 300ms waiting for sidenav width to be set
+        setTimeout(() => { this.resizeTerm(); }, 300);
+      }
+    });
+
+    this.core.register({
+      observerClass: this,
+      eventName: 'MediaChange',
+    }).pipe(untilDestroyed(this)).subscribe(() => {
+      if (this.shellConnected) {
+        setTimeout(() => { this.resizeTerm(); }, 300);
+      }
+    });
   }
 
   initShell(): void {
@@ -143,6 +171,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
         this.xterm.focus();
       });
     }
+    this.cdr.detectChanges();
     return true;
   }
 
