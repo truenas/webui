@@ -269,7 +269,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       if (!config.pool) {
         this.chartItems = {};
         this.showLoadStatus(EmptyType.FirstUse);
-        this.viewCatalog();
       } else {
         this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((kubernetesStarted) => {
           if (!kubernetesStarted) {

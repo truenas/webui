@@ -13,14 +13,12 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
 import helptext from 'app/helptext/apps/apps';
-import { ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { CommonAppsToolbarButtonsComponent } from 'app/pages/applications/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
@@ -47,7 +45,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
-    private commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
+    commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
 
   catalogApps: CatalogApp[] = [];
   filteredCatalogNames: string[] = [];
@@ -88,7 +86,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCatalogs();
-    this.checkForConfiguredPool();
+    this.loadPoolSet();
 
     this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
@@ -197,17 +195,6 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   onSearch(query: string): void {
     this.filterString = query;
     this.filterApps();
-  }
-
-  checkForConfiguredPool(): void {
-    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      if (config.pool) {
-        this.selectedPool = config.pool;
-      } else {
-        this.commonAppsToolbarButtons.onChoosePool();
-        this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: ApplicationTab.AvailableApps });
-      }
-    });
   }
 
   loadPoolSet(): void {
