@@ -43,7 +43,7 @@ describe('InterfaceFormComponent', () => {
       netmask: 24,
     }],
     description: 'Main NIC',
-    ipv4_dhcp: true,
+    ipv4_dhcp: false,
     ipv6_auto: false,
     mtu: 1500,
   } as NetworkInterface;
@@ -245,6 +245,26 @@ describe('InterfaceFormComponent', () => {
         { width: '600px' },
       );
     });
+
+    it('hides Aliases when either DHCP or Autoconfigure IPv6 is enabled', async () => {
+      let aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      expect(aliasesList).toBeTruthy();
+
+      await form.fillForm({
+        DHCP: true,
+      });
+
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      expect(aliasesList).toBeNull();
+
+      await form.fillForm({
+        DHCP: false,
+        'Autoconfigure IPv6': true,
+      });
+
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      expect(aliasesList).toBeNull();
+    });
   });
 
   describe('edit', () => {
@@ -254,7 +274,7 @@ describe('InterfaceFormComponent', () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Name: 'enp0s6',
-        DHCP: true,
+        DHCP: false,
         'Autoconfigure IPv6': false,
         Description: 'Main NIC',
         MTU: '1500',
