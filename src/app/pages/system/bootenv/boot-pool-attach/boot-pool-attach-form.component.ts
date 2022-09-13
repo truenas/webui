@@ -79,11 +79,11 @@ export class BootPoolAttachFormComponent implements OnInit {
   warnForExportedZpoolsForUnusedDisksIfNeeded = (diskName: string): void => {
     const unusedDisk = this.findDiskFromUnusedDisks(diskName);
     if (unusedDisk?.exported_zpool) {
-      this.showWarningAboutExportedZpoolForDisk(unusedDisk);
+      this.showWarningAboutExportedPoolForDisk(unusedDisk);
     }
   };
 
-  showWarningAboutExportedZpoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
+  showWarningAboutExportedPoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
     this.dialogService.warn(
       this.translate.instant('Warning'),
       this.translate.instant(

@@ -153,7 +153,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
             (unusedDisk) => unusedDisk.devname === disk.devname,
           );
           if (unusedDisk?.exported_zpool) {
-            this.showWarningAboutExportedZpoolForDisk(unusedDisk);
+            this.showWarningAboutExportedPoolForDisk(unusedDisk);
           } else {
             this.matDialog.open(DiskWipeDialogComponent, {
               data: disk.name,
@@ -166,7 +166,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     return actions as EntityTableAction[];
   }
 
-  showWarningAboutExportedZpoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
+  showWarningAboutExportedPoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
     this.dialogService.confirm({
       title: this.translate.instant('Warning'),
       message: this.translate.instant(
