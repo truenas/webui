@@ -15,8 +15,8 @@ from pytest_bdd import (
     parsers
 )
 
-import pytest
-pytestmark = [pytest.mark.debug_test]
+# import pytest
+# pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1128.feature', 'Verify Box credentials can be added')
