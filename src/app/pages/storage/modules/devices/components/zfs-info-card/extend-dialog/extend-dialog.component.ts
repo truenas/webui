@@ -68,7 +68,7 @@ export class ExtendDialogComponent implements OnInit {
   showWarningAboutExportedZpoolForDisk(unusedDisk: UnusedDisk): void {
     this.dialogService.warn(
       this.translate.instant('Warning'),
-      this.translate.instant(helptext.exported_zpool_warning, { zpool: '\'' + unusedDisk.exported_zpool + '\'' }),
+      this.translate.instant(helptext.exported_pool_warning, { pool: '\'' + unusedDisk.exported_zpool + '\'' }),
     );
   }
 

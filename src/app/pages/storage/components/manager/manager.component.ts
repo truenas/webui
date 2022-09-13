@@ -757,7 +757,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   showWarningAboutExportedZpoolForDisk(lastSelectedItem: ManagerDisk): void {
     this.dialog.warn(
       this.translate.instant('Warning'),
-      this.translate.instant(helptext.exported_zpool_warning, { zpool: '\'' + lastSelectedItem.exported_zpool + '\'' }),
+      this.translate.instant(helptext.exported_pool_warning, { pool: '\'' + lastSelectedItem.exported_zpool + '\'' }),
     );
   }
 
