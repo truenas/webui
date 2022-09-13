@@ -695,7 +695,22 @@ export class DatasetFormComponent implements FormConfiguration {
               }
 
               return errors;
+            },
+          ],
+          relation: [
+            {
+              action: RelationAction.Disable,
+              when: [{
+                name: 'special_small_block_size_inherit',
+                value: true,
+              }],
             }],
+        },
+        {
+          type: 'checkbox',
+          name: 'special_small_block_size_inherit',
+          placeholder: helptext.dataset_form_inherit,
+          value: true,
         },
         {
           type: 'select',
@@ -735,6 +750,7 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
+    'special_small_block_size_inherit',
     'checksum',
     'acltype',
     'aclmode',
@@ -846,6 +862,11 @@ export class DatasetFormComponent implements FormConfiguration {
         data[field] = this.originalSize[field];
       }
     });
+
+    if (data.special_small_block_size_inherit) {
+      data.special_small_block_size = '';
+    }
+    delete data.special_small_block_size_inherit;
 
     return data;
   }
@@ -1416,22 +1437,15 @@ export class DatasetFormComponent implements FormConfiguration {
     if (!field) {
       return true;
     }
-    if (
-      !value
+
+    return !value
       || !field.source
       || field.source === ZfsPropertySource.Inherited
-      || field.source === ZfsPropertySource.Default
-    ) {
-      return true;
-    }
-    return false;
+      || field.source === ZfsPropertySource.Default;
   }
 
   resourceTransformIncomingRestData(wsResponse: Dataset): DatasetFormData {
     this.dataset = wsResponse;
-    if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
-      delete wsResponse.special_small_block_size;
-    }
     const quotaWarning = this.getFieldValueOrNone(wsResponse.quota_warning)
       ? this.getFieldValueOrNone(wsResponse.quota_warning)
       : this.warning;
@@ -1457,6 +1471,11 @@ export class DatasetFormComponent implements FormConfiguration {
       this.convertHumanStringToNum(sizeValues[field], field);
       this.originalHumanSize[field] = this.humanReadable[field];
     });
+    let specialSmallBlockSize: number = this.originalHumanSize['special_small_block_size'] as number;
+    const specialSmallBlockSizeInherit = this.isInherited(wsResponse.special_small_block_size, specialSmallBlockSize);
+    if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
+      specialSmallBlockSize = null;
+    }
 
     const returnValue: DatasetFormData = {
       name: wsResponse.name,
@@ -1490,7 +1509,8 @@ export class DatasetFormComponent implements FormConfiguration {
       snapdev: this.getFieldValueOrRaw(wsResponse.snapdev),
       snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
       sync: this.getFieldValueOrRaw(wsResponse.sync),
-      special_small_block_size: this.originalHumanSize['special_small_block_size'] as number,
+      special_small_block_size_inherit: specialSmallBlockSizeInherit,
+      special_small_block_size: specialSmallBlockSize,
     };
 
     if (
@@ -1521,9 +1541,6 @@ export class DatasetFormComponent implements FormConfiguration {
   // TODO: Similar to addSubmit.
   editSubmit(body: any): Observable<Dataset> {
     const data = this.sendAsBasicOrAdvanced(body);
-    if (data['special_small_block_size'] === 0) {
-      delete data.special_small_block_size;
-    }
 
     delete (data.quota_warning_inherit);
     delete (data.quota_critical_inherit);
@@ -1540,9 +1557,6 @@ export class DatasetFormComponent implements FormConfiguration {
 
   addSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data['special_small_block_size'] === 0) {
-      delete data.special_small_block_size;
-    }
 
     if (data.quota_warning_inherit) {
       delete (data.quota_warning);

@@ -41,5 +41,6 @@ export interface DatasetFormData {
   refquota_critical: WithInherit<number>;
   refquota_critical_inherit: boolean;
   special_small_block_size: number;
+  special_small_block_size_inherit: boolean;
   checksum: DatasetChecksum;
 }
