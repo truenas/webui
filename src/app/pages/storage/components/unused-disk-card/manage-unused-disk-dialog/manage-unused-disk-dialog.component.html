@@ -7,8 +7,8 @@
       <li *ngFor="let disk of groupedDisks">
         {{ disk.formattedDisk }}
         <ix-warning
-          *ngIf="disk.exportedZpool"
-          [message]="getWarningText(disk.exportedZpool, disk.disksCount)"
+          *ngIf="disk.exportedPool"
+          [message]="getWarningText(disk.exportedPool, disk.disksCount)"
         ></ix-warning>
       </li>
     </ul>

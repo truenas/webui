@@ -63,21 +63,21 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     this.utils = new WidgetUtils();
   }
 
-  get groupedDisks(): { formattedDisk: string; exportedZpool: string; disksCount: number }[] {
+  get groupedDisks(): { formattedDisk: string; exportedPool: string; disksCount: number }[] {
     const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
       return {
         detailedDisk: `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
-        exportedZpool: disk.exported_zpool,
+        exportedPool: disk.exported_zpool,
       };
     });
-    const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithZpoolName) => {
-      return diskDetailsWithZpoolName.detailedDisk + diskDetailsWithZpoolName.exportedZpool;
+    const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
+      return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
     });
     const groupDiskFormats = Object.keys(groupDisks).map((format: string) => {
       return {
         formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
         disksCount: groupDisks[format].length,
-        exportedZpool: groupDisks[format][0].exportedZpool,
+        exportedPool: groupDisks[format][0].exportedPool,
       };
     });
     return groupDiskFormats;
@@ -108,18 +108,18 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     }
   }
 
-  getWarningText(exportedZpool: string, disksCount: number): string {
+  getWarningText(exportedPool: string, disksCount: number): string {
     if (disksCount === 1) {
-      return this.getWarningForOneDisk(exportedZpool);
+      return this.getWarningForOneDisk(exportedPool);
     }
-    return this.getWarningForMultipleDisks(exportedZpool);
+    return this.getWarningForMultipleDisks(exportedPool);
   }
 
-  getWarningForOneDisk(exportedZpool: string): string {
-    return this.translate.instant('This disk is part of the exported zpool {zpool}', { zpool: '\'' + exportedZpool + '\'' });
+  getWarningForOneDisk(exportedPool: string): string {
+    return this.translate.instant('This disk is part of the exported pool {pool}', { pool: '\'' + exportedPool + '\'' });
   }
 
-  getWarningForMultipleDisks(exportedZpool: string): string {
-    return this.translate.instant('These disks are part of the exported zpool {zpool}', { zpool: '\'' + exportedZpool + '\'' });
+  getWarningForMultipleDisks(exportedPool: string): string {
+    return this.translate.instant('These disks are part of the exported pool {pool}', { pool: '\'' + exportedPool + '\'' });
   }
 }
