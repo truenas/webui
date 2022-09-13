@@ -28,7 +28,7 @@
     <button *ngIf="canOfflineDisk" mat-stroked-button (click)="onOffline()">{{ 'Offline' | translate }}</button>
     <button *ngIf="canOnlineDisk" mat-stroked-button (click)="onOnline()">{{ 'Online' | translate }}</button>
   </mat-card-actions>
-  <mat-card-actions>
+  <mat-card-actions *ngIf="isMirror">
     <button mat-stroked-button (click)="onExtend()">{{ 'Extend' | translate }}</button>
     <!-- TODO: May have conditions when removing a mirror is not allowed -->
     <button mat-stroked-button (click)="onRemove()">{{ 'Remove' | translate }}</button>
