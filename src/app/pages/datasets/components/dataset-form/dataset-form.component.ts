@@ -28,8 +28,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -40,7 +42,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -771,9 +773,6 @@ export class DatasetFormComponent implements FormConfiguration {
 
   setBasicMode(isBasicMode: boolean): void {
     this.isBasicMode = isBasicMode;
-    if (this.isParentEncrypted && !this.isEncryptionInherited) {
-      _.find(this.fieldConfig, { name: 'encryption' }).isHidden = isBasicMode;
-    }
     _.find(this.fieldSets, { class: 'dataset' }).label = !isBasicMode;
     _.find(this.fieldSets, { class: 'refdataset' }).label = !isBasicMode;
     _.find(this.fieldSets, { name: 'quota_divider' }).divider = !isBasicMode;
@@ -901,6 +900,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -918,7 +918,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = this.systemGeneralService.getProductType();
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
     if (this.productType === ProductType.ScaleEnterprise) {
@@ -970,9 +970,13 @@ export class DatasetFormComponent implements FormConfiguration {
       this.entityForm.setDisabled('inherit_encryption', true, true);
     } else {
       entityForm.setDisabled('share_type', false, false);
+      entityForm.setDisabled('encryption', this.isEncryptionInherited, this.isEncryptionInherited);
     }
 
-    entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
+    entityForm.formGroup.get('share_type').valueChanges.pipe(
+      filter((shareType) => !!shareType && entityForm.isNew),
+      untilDestroyed(this),
+    ).subscribe((shareType) => {
       const caseControl = entityForm.formGroup.get('casesensitivity');
       if (shareType === 'SMB') {
         aclControl.setValue(AclMode.Restricted);
@@ -999,7 +1003,7 @@ export class DatasetFormComponent implements FormConfiguration {
       )
       .subscribe((options) => {
         this.recordsizeField.options = options;
-      });
+      }, this.handleError);
 
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
       const currentSize = this.formatter.convertHumanStringToNum(recordSize);
@@ -1050,6 +1054,10 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
+  handleError = (error: WebsocketError | Job): void => {
+    new EntityUtils().handleWsError(this.entityForm, error, this.dialogService);
+  };
+
   paramMap: {
     volid?: string;
     pk?: string;
@@ -1081,20 +1089,20 @@ export class DatasetFormComponent implements FormConfiguration {
       for (const key in choices) {
         compression.options.push({ label: key, value: choices[key] });
       }
-    });
+    }, this.handleError);
 
     this.ws.call('pool.dataset.checksum_choices').pipe(untilDestroyed(this)).subscribe((checksumChoices) => {
       const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
       for (const key in checksumChoices) {
         checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
       }
-    });
+    }, this.handleError);
 
     if (this.parent) {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
         this.minimumRecommendedRecordsize = recommendedSize;
-      });
+      }, this.handleError);
 
       this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe(
         (pkDataset) => {
@@ -1141,8 +1149,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
                 }
               }
-            });
-            _.find(this.fieldConfig, { name: 'encryption' }).isHidden = true;
+            }, this.handleError);
             const inheritEncryptionControl = this.entityForm.formGroup.controls['inherit_encryption'];
             const encryptionControl = this.entityForm.formGroup.controls['encryption'];
             const encryptionTypeControl = this.entityForm.formGroup.controls['encryption_type'];
@@ -1157,26 +1164,22 @@ export class DatasetFormComponent implements FormConfiguration {
               this.isEncryptionInherited = inherit;
               if (inherit) {
                 allEncryptionFields.forEach((field) => {
-                  this.entityForm.setDisabled(field, inherit, inherit);
+                  this.entityForm.setDisabled(field, true, true);
                 });
-                _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
+                this.entityForm.setDisabled('encryption', true, true);
               }
               if (!inherit) {
-                this.entityForm.setDisabled('encryption_type', inherit, inherit);
-                this.entityForm.setDisabled('algorithm', inherit, inherit);
+                this.entityForm.setDisabled('encryption_type', false, false);
+                this.entityForm.setDisabled('algorithm', false, false);
                 if (this.parentHasPassphrase) { // keep it hidden if it passphrase
                   _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
                 }
-                const key = (this.encryptionType === 'key');
-                this.entityForm.setDisabled('passphrase', key, key);
-                this.entityForm.setDisabled('confirm_passphrase', key, key);
-                this.entityForm.setDisabled('pbkdf2iters', key, key);
-                this.entityForm.setDisabled('generate_key', !key, !key);
-                if (this.isParentEncrypted) {
-                  _.find(this.fieldConfig, { name: 'encryption' }).isHidden = this.isBasicMode;
-                } else {
-                  _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
-                }
+                const isKeyEncryptionType = (this.encryptionType === 'key');
+                this.entityForm.setDisabled('passphrase', isKeyEncryptionType, isKeyEncryptionType);
+                this.entityForm.setDisabled('confirm_passphrase', isKeyEncryptionType, isKeyEncryptionType);
+                this.entityForm.setDisabled('pbkdf2iters', isKeyEncryptionType, isKeyEncryptionType);
+                this.entityForm.setDisabled('generate_key', !isKeyEncryptionType, !isKeyEncryptionType);
+                this.entityForm.setDisabled('encryption', false, false);
               }
             });
             encryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
@@ -1388,9 +1391,9 @@ export class DatasetFormComponent implements FormConfiguration {
               entityForm.formGroup.controls['recordsize'].setValue(recordsizeValue);
               entityForm.formGroup.controls['snapdev'].setValue(snapdevValue);
               this.parentDataset = parentDataset[0];
-            });
+            }, this.handleError);
           }
-        },
+        }, this.handleError,
       );
     }
   }
@@ -1644,7 +1647,7 @@ export class DatasetFormComponent implements FormConfiguration {
                     { queryParams: { default: parentPath } },
                   );
                 }
-              });
+              }, this.handleError);
             } else {
               this.modalService.closeSlideIn();
             }
@@ -1653,10 +1656,11 @@ export class DatasetFormComponent implements FormConfiguration {
           this.modalService.closeSlideIn();
         }
         this.modalService.refreshTable();
-      });
-    }, (error) => {
+      }, this.handleError);
+    },
+    (error) => {
       this.loader.close();
-      new EntityUtils().handleWsError(this.entityForm, error);
+      this.handleError(error);
     });
   }
 

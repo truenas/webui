@@ -193,6 +193,7 @@ mat-tab-group {
   }
 
   button {
+    flex-shrink: 0;
     margin-bottom: 10px !important;
     margin-left: 5px !important;
   }

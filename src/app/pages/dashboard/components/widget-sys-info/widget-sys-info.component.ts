@@ -117,7 +117,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         },
       );
     }
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
         if (hasFailover) {
           this.updateMethod = 'failover.upgrade';

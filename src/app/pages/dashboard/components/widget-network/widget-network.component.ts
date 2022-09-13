@@ -173,7 +173,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   ngOnInit(): void {
-    this.availableNics = this.nics.filter((nic) => nic.state.link_state === LinkState.Up);
+    this.availableNics = this.nics.filter((nic) => nic.state.link_state !== LinkState.Down);
 
     this.updateGridInfo();
     this.updateMapInfo();

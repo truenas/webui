@@ -9,11 +9,11 @@
         class="loader-bar"
         [loading]="isLoading$ | async"
       ></ix-fake-progress-bar>
-  
+
       <div class="dataset-tree-search">
         <ix-search-input [disabled]="!dataSource" (search)="onSearch($event)"></ix-search-input>
       </div>
-  
+
       <div class="dataset-tree-wrapper">
         <div class="dataset-tree-inner">
           <div class="dataset-tree-header">
@@ -28,7 +28,7 @@
             <div>{{ 'Encryption' | translate }}</div>
             <div>{{ 'Roles' | translate }}</div>
           </div>
-  
+
           <ix-tree class="dataset-tree" [dataSource]="dataSource" [treeControl]="treeControl">
             <ix-tree-node
               *ixTreeNodeDef="let dataset; dataSource: dataSource"
@@ -43,7 +43,7 @@
               <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
-  
+
             <ix-nested-tree-node
               *ixTreeNodeDef="let dataset; dataSource: dataSource, when: hasNestedChild"
               [ixTreeNodeDefDataSource]="dataSource"
@@ -64,29 +64,27 @@
                     {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
                   </mat-icon>
                 </button>
-  
+
                 <ix-dataset-node [dataset]="dataset" [isSystemDataset]="isSystemDataset(dataset)"></ix-dataset-node>
                 <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
               </div>
-  
+
               <ng-container *ngIf="treeControl.isExpanded(dataset)" ixTreeNodeOutlet></ng-container>
             </ix-nested-tree-node>
           </ix-tree>
         </div>
       </div>
     </div>
-  
-    <div class="details-container" [class.details-container-mobile]="showMobileDetails"
-      ixDetailsHeight
-      ixDetailsHeightParentClass="rightside-content-hold"
-      [hasConsoleFooter]="hasConsoleFooter"
-      [headerHeight]="headerHeight"
-      [footerHeight]="footerHeight"
+
+    <div
+      class="details-container"
+      [class.details-container-mobile]="showMobileDetails"
+      ixDetailsHeight="rightside-content-hold"
     >
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
-
+        [systemDataset]="systemDataset"
         (closeMobileDetails)="closeMobileDetails()"
       ></ix-dataset-details-panel>
     </div>

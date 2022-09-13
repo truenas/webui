@@ -19,7 +19,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
-import { DialogService, WebSocketService } from 'app/services/';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/';
 import { LayoutService } from 'app/services/layout.service';
 
 /**
@@ -39,7 +39,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
   protected editCall = 'alertclasses.update' as const;
   protected isEntity = true;
   fieldSets: FieldSets;
-  readonly productType = window.localStorage.getItem('product_type') as ProductType;
+  readonly productType = this.systemGeneralService.getProductType();
   fieldConfig: FieldConfig[] = [];
   protected settingOptions: Option[] = [];
   protected warningOptions: Option[] = [
@@ -67,6 +67,7 @@ export class AlertConfigComponent implements OnInit, AfterViewInit {
     protected translate: TranslateService,
     private layoutService: LayoutService,
     private snackbarService: SnackbarService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {

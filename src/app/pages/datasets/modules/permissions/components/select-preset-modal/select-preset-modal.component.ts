@@ -8,7 +8,6 @@ import { Observable, of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   SelectPresetModalConfig,
@@ -90,7 +89,7 @@ export class SelectPresetModalComponent implements OnInit {
         },
         (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
         },
       );
   }

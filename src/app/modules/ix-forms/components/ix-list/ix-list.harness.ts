@@ -1,5 +1,6 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxListItemHarness } from 'app/modules/ix-forms/components/ix-list/ix-list-item/ix-list-item.harness';
 import {
   IxFormBasicValueType,
@@ -21,8 +22,11 @@ export class IxListHarness extends ComponentHarness {
   }
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor('label')();
-    return label.text({ exclude: '.required' });
+    const label = await this.locatorForOptional(IxLabelHarness)();
+    if (!label) {
+      return '';
+    }
+    return label.getLabel();
   }
 
   async pressAddButton(): Promise<void> {

@@ -14,7 +14,7 @@ import {
 import { ipv4Validator, ipv6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -139,7 +139,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
-    label: '',
+    label: helptext.outbound_activity,
     tooltip: '',
     options: of([
       // Mismatch between enum and label is expected.
@@ -165,7 +165,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   outboundNetworkValue = {
     fcName: 'outbound_network_value',
-    label: '',
+    label: helptext.outbound_network_value.placeholder,
     tooltip: helptext.outbound_network_value.tooltip,
     options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
@@ -203,6 +203,7 @@ export class NetworkConfigurationComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
@@ -234,7 +235,7 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.hostnameB.hidden = !isHa;
         this.hostnameVirtual.hidden = !isHa;

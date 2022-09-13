@@ -12,7 +12,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import { DialogService, LanguageService, WebSocketService } from 'app/services';
+import {
+  DialogService, LanguageService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('NetworkConfigurationComponent', () => {
@@ -71,6 +73,7 @@ describe('NetworkConfigurationComponent', () => {
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),
+      mockProvider(SystemGeneralService),
     ],
   });
 
@@ -97,7 +100,7 @@ describe('NetworkConfigurationComponent', () => {
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
       'Inherit domain from DHCP': false,
-      'Allow All': 'Allow All',
+      'Outbound Activity': 'Allow All',
       'HTTP Proxy': '',
       'Enable Netwait Feature': false,
       'Host Name Database': [],

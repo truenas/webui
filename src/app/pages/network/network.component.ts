@@ -36,7 +36,7 @@ import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interfa
 import {
   AppLoaderService,
   DialogService,
-  StorageService,
+  StorageService, SystemGeneralService,
   WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -202,6 +202,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
@@ -216,9 +217,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
+      this.getInterfaces();
       this.checkInterfacePendingChanges();
     });
 
+    this.getInterfaces();
     this.checkInterfacePendingChanges();
     this.core
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
@@ -236,7 +239,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         this.hasPendingChanges = false;
       });
 
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
@@ -261,51 +264,67 @@ export class NetworkComponent implements OnInit, OnDestroy {
     });
   }
 
-  checkInterfacePendingChanges(): void {
+  private async checkInterfacePendingChanges(): Promise<void> {
+    let hasPendingChanges = await this.getPendingChanges();
+    let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
+
+    if (hasPendingChanges && checkinWaitingSeconds > 0) {
+      await this.cancelCommit();
+      hasPendingChanges = await this.getPendingChanges();
+      checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
+    }
+
+    this.hasPendingChanges = hasPendingChanges;
+    this.handleWaitingCheckin(checkinWaitingSeconds);
+  }
+
+  private getInterfaces(): void {
     if (this.interfaceTableConf.tableComponent) {
       this.interfaceTableConf.tableComponent.getData();
     }
-    this.checkPendingChanges();
-    this.checkWaitingCheckin();
   }
 
-  checkPendingChanges(): void {
-    this.ws
-      .call('interface.has_pending_changes')
+  private getCheckinWaitingSeconds(): Promise<number> {
+    return this.ws.call('interface.checkin_waiting')
       .pipe(untilDestroyed(this))
-      .subscribe((hasPendingChanges) => {
-        this.hasPendingChanges = hasPendingChanges;
-      });
+      .toPromise();
   }
 
-  checkWaitingCheckin(): void {
-    this.ws
-      .call('interface.checkin_waiting')
+  private getPendingChanges(): Promise<boolean> {
+    return this.ws.call('interface.has_pending_changes')
       .pipe(untilDestroyed(this))
-      .subscribe((seconds) => {
-        if (seconds !== null) {
-          if (seconds > 0 && this.checkinRemaining === null) {
-            this.checkinRemaining = Math.round(seconds);
-            this.checkinInterval = setInterval(() => {
-              if (this.checkinRemaining > 0) {
-                this.checkinRemaining -= 1;
-              } else {
-                this.checkinRemaining = null;
-                this.checkinWaiting = false;
-                clearInterval(this.checkinInterval);
-                window.location.reload(); // should just refresh after the timer goes off
-              }
-            }, 1000);
-          }
-          this.checkinWaiting = true;
-        } else {
-          this.checkinWaiting = false;
-          this.checkinRemaining = null;
-          if (this.checkinInterval) {
+      .toPromise();
+  }
+
+  private async cancelCommit(): Promise<void> {
+    await this.ws.call('interface.cancel_rollback')
+      .pipe(untilDestroyed(this))
+      .toPromise();
+  }
+
+  private handleWaitingCheckin(seconds: number): void {
+    if (seconds !== null) {
+      if (seconds > 0 && this.checkinRemaining === null) {
+        this.checkinRemaining = Math.round(seconds);
+        this.checkinInterval = setInterval(() => {
+          if (this.checkinRemaining > 0) {
+            this.checkinRemaining -= 1;
+          } else {
+            this.checkinRemaining = null;
+            this.checkinWaiting = false;
             clearInterval(this.checkinInterval);
+            window.location.reload(); // should just refresh after the timer goes off
           }
-        }
-      });
+        }, 1000);
+      }
+      this.checkinWaiting = true;
+    } else {
+      this.checkinWaiting = false;
+      this.checkinRemaining = null;
+      if (this.checkinInterval) {
+        clearInterval(this.checkinInterval);
+      }
+    }
   }
 
   commitPendingChanges(): void {
@@ -348,7 +367,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
                 .pipe(untilDestroyed(this))
                 .subscribe(
-                  () => {
+                  async () => {
                     this.core.emit({
                       name: 'NetworkInterfacesChanged',
                       data: { commit: true, checkin: false },
@@ -356,7 +375,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                     });
                     this.interfaceTableConf.tableComponent.getData();
                     this.loader.close();
-                    this.checkWaitingCheckin();
+                    this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
                   },
                   (err) => {
                     this.loader.close();

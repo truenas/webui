@@ -1,4 +1,4 @@
-import { UntypedFormGroup } from '@angular/forms';
+import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
@@ -435,6 +435,43 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue({ a: 1 })).toEqual({ a: 1 });
       expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
+    });
+  });
+
+  describe('restoreKeysFromFormGroup()', () => {
+    it('restores keys from form group', () => {
+      const config = {
+        noObjectList: ['test1', 'test2', 'test3'],
+        objectList: [{ nestedList: ['test4', 'test5'] }],
+        object: { nestedList: ['test6', 'test7'] },
+      };
+      const form = new FormGroup({
+        noObjectList: new FormArray([
+          new FormControl({ key1: '' }),
+          new FormControl({ key1: '' }),
+          new FormControl({ key1: '' }),
+        ]),
+        objectList: new FormArray([
+          new FormGroup({
+            nestedList: new FormArray([
+              new FormControl({ key2: '' }),
+              new FormControl({ key2: '' }),
+            ]),
+          }),
+        ]),
+        object: new FormGroup({
+          nestedList: new FormArray([
+            new FormControl({ key3: '' }),
+            new FormControl({ key3: '' }),
+          ]),
+        }),
+      });
+      const result = service.restoreKeysFromFormGroup(config, form);
+      expect(result).toEqual({
+        noObjectList: [{ key1: 'test1' }, { key1: 'test2' }, { key1: 'test3' }],
+        objectList: [{ nestedList: [{ key2: 'test4' }, { key2: 'test5' }] }],
+        object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },
+      });
     });
   });
 });

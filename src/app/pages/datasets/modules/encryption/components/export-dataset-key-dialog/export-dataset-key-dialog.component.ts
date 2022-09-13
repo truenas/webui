@@ -6,7 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
@@ -49,7 +48,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         this.dialogRef.close();
       }, (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.errorReportMiddleware(error);
       });
   }
 
@@ -68,7 +67,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         },
         (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
         },
       );
   }

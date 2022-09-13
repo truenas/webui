@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 
 describe('IxExplorerComponent', () => {
   const mockTreeMock = {
@@ -37,7 +37,7 @@ describe('IxExplorerComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
-      MockComponent(TooltipComponent),
+      MockComponent(IxLabelComponent),
       MockComponent(TreeComponent),
     ],
   });
@@ -91,26 +91,16 @@ describe('IxExplorerComponent', () => {
         .toHaveExactText('Please select a directory starting with an A');
     });
 
-    it('renders a label when it is provided', () => {
-      spectator.setInput('label', 'Directory');
-
-      expect(spectator.query('.label')).toHaveText('Directory');
-    });
-
-    it('renders a tooltip next to a label when it and the label are provided', () => {
-      spectator.setInput('tooltip', 'Select target directory');
-      spectator.setInput('label', 'Directory');
-
-      const tooltip = spectator.query(TooltipComponent);
-      expect(tooltip.header).toBe('Directory');
-      expect(tooltip.message).toBe('Select target directory');
-    });
-
-    it('shows an asterisk when label is provided and required is true', () => {
-      spectator.setInput('label', 'Directory');
+    it('renders a label and passes properties to it', () => {
+      spectator.setInput('label', 'Select dataset');
       spectator.setInput('required', true);
+      spectator.setInput('tooltip', 'Enter the location of the system.');
 
-      expect(spectator.query('.label')).toHaveText('Directory *');
+      const label = spectator.query(IxLabelComponent);
+      expect(label).toExist();
+      expect(label.label).toBe('Select dataset');
+      expect(label.required).toBe(true);
+      expect(label.tooltip).toBe('Enter the location of the system.');
     });
   });
 
