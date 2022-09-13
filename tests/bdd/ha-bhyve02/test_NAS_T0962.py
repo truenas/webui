@@ -366,11 +366,13 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page(driver):
     driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
     time.sleep(1)
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Updating Dataset ACL")]')
 
 
 @then(parsers.parse('click on the "{dataset_name}" 3 dots button, select View Permissions'))
 def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
     """click on the "my_ad_dataset" 3 dots button, select View Permissions."""
+
     assert wait_on_element(driver, 15, f'//div[contains(text(),"{dataset_name}")]')
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
