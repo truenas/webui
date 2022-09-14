@@ -4,15 +4,25 @@
 
 <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
 
-<form [formGroup]="form" class="ix-form-container" (submit)="startExportDisconnectJob()">
+<form
+  class="ix-form-container"
+  [formGroup]="form"
+  (submit)="startExportDisconnectJob()"
+>
   <div mat-dialog-content class="export-disconnect-modal-content">
     <div class="warnings-block">
-      <p *ngIf="showSysDatasetWarning" class="full-width" [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></p>
+      <p
+        *ngIf="showSysDatasetWarning"
+        class="full-width"
+        [innerHTML]="helptext.exportDialog.warningSysDataset | translate"
+      ></p>
+
       <p
         *ngIf="showPoolDetachWarning"
         class="full-width"
         [innerHTML]="helptext.exportDialog.warning | translate: { pool: pool.name }"
       ></p>
+
       <p
         *ngIf="showUnknownStatusDetachWarning"
         class="full-width"
@@ -20,9 +30,15 @@
       ></p>
     </div>
 
-    <div *ngIf="attachments.length || process.knownProcesses.length || process.unknownProcesses.length" class="full-width pool-summary">
+    <div
+      *ngIf="attachments.length || process.knownProcesses.length || process.unknownProcesses.length"
+      class="full-width pool-summary"
+    >
       <div *ngIf="attachments.length" class="attachments">
-        {{ 'These services depend on pool {name} and will be disrupted if the pool is detached:' | translate: { name: pool.name } }}
+        {{
+          'These services depend on pool {name} and will be disrupted if the pool is detached:'
+            | translate: { name: pool.name }
+        }}
 
         <ul class="services">
           <li *ngFor="let service of attachments">
@@ -51,7 +67,8 @@
         {{ 'These unknown processes are using the pool:' }}
         <ul>
           <li *ngFor="let process of process.unknownProcesses">
-            {{ process.pid || ('Unknown PID' | translate) }} - {{ process.cmdline?.substring(0, 40) }}
+            {{ process.pid || ('Unknown PID' | translate) }} -
+            {{ process.cmdline?.substring(0, 40) }}
           </li>
         </ul>
 
@@ -66,15 +83,18 @@
         formControlName="destroy"
         [label]="helptext.exportDialog.destroy | translate"
       ></ix-checkbox>
+
       <ix-checkbox
         formControlName="cascade"
         [label]="helptext.exportDialog.cascade | translate"
       ></ix-checkbox>
+
       <ix-checkbox
         formControlName="confirm"
         [label]="confirmLabelText"
         [required]="true"
       ></ix-checkbox>
+
       <ix-input
         *ngIf="form.value.destroy"
         formControlName="nameInput"
@@ -85,9 +105,22 @@
 
   <div mat-dialog-actions>
     <span fxFlex></span>
-    <button type="button" mat-button class="mat-button mat-accent action-btn" (click)="cancel()" name="cancel_button">{{'Cancel' | translate}}</button>
-    <button type="submit" mat-button class="mat-button mat-primary"
-      [disabled]="form.invalid || isFormLoading">
+
+    <button
+      type="button"
+      mat-button
+      class="mat-button mat-accent action-btn"
+      (click)="cancel()"
+      name="cancel_button"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      type="submit"
+      mat-button
+      class="mat-button mat-primary"
+      [disabled]="form.invalid || isFormLoading"
+    >
       {{ 'Export/Disconnect' | translate }}
     </button>
   </div>

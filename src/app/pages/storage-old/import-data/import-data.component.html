@@ -39,15 +39,19 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid"
           color="primary"
-        >{{ 'Import' | translate }}</button>
+          [disabled]="form.invalid"
+        >
+          {{ 'Import' | translate }}
+        </button>
         <button
           *ngIf="canViewImportLog"
           mat-button
           type="button"
           (click)="viewImportLog()"
-        >{{ 'View Import Log' | translate }}</button>
+        >
+          {{ 'View Import Log' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

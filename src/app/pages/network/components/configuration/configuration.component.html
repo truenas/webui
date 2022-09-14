@@ -1,7 +1,11 @@
-<ix-modal-header [title]="helptext.title | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="helptext.title | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
 <mat-card class="card">
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset [title]="helptext.hostname_and_domain | translate">
           <ix-input
@@ -9,28 +13,33 @@
             [label]="hostname.label | translate"
             [tooltip]="hostname.tooltip | translate"
           ></ix-input>
+
           <ix-input
             *ngIf="!hostnameB.hidden"
             [formControlName]="hostnameB.fcName"
             [label]="hostnameB.label | translate"
             [tooltip]="hostnameB.tooltip | translate"
           ></ix-input>
+
           <ix-input
             *ngIf="!hostnameVirtual.hidden"
             [formControlName]="hostnameVirtual.fcName"
             [label]="hostnameVirtual.label | translate"
             [tooltip]="hostnameVirtual.tooltip | translate"
           ></ix-input>
+
           <ix-checkbox
             [formControlName]="inheritDhcp.fcName"
             [label]="inheritDhcp.label | translate"
             [tooltip]="inheritDhcp.tooltip | translate"
           ></ix-checkbox>
+
           <ix-input
             [formControlName]="domain.fcName"
             [label]="domain.label | translate"
             [tooltip]="domain.tooltip | translate"
           ></ix-input>
+
           <ix-chips
             [formControlName]="domains.fcName"
             [label]="domains.label | translate"
@@ -45,11 +54,13 @@
             [label]="netbios.label | translate"
             [tooltip]="netbios.tooltip | translate"
           ></ix-checkbox>
+
           <ix-checkbox
             [formControlName]="mdns.fcName"
             [label]="mdns.label | translate"
             [tooltip]="mdns.tooltip | translate"
           ></ix-checkbox>
+
           <ix-checkbox
             [formControlName]="wsd.fcName"
             [label]="wsd.label | translate"
@@ -65,11 +76,13 @@
             [label]="nameserver1.label | translate"
             [tooltip]="nameserver1.tooltip | translate"
           ></ix-input>
+
           <ix-input
             [formControlName]="nameserver2.fcName"
             [label]="nameserver2.label | translate"
             [tooltip]="nameserver2.tooltip | translate"
           ></ix-input>
+
           <ix-input
             [formControlName]="nameserver3.fcName"
             [label]="nameserver3.label | translate"
@@ -82,6 +95,7 @@
             [label]="ipv4gateway.label | translate"
             [tooltip]="ipv4gateway.tooltip | translate"
           ></ix-input>
+
           <ix-input
             [formControlName]="ipv6gateway.fcName"
             [label]="ipv6gateway.label | translate"
@@ -99,6 +113,7 @@
             [tooltip]="outboundNetworkActivity.tooltip | translate"
             [options]="outboundNetworkActivity.options"
           ></ix-radio-group>
+
           <ix-select
             *ngIf="!outboundNetworkValue.hidden"
             class="outbound-network-value"
@@ -109,17 +124,20 @@
             [multiple]="true"
           ></ix-select>
         </ix-fieldset>
+
         <ix-fieldset [title]="helptext.other | translate">
           <ix-input
             [formControlName]="httpproxy.fcName"
             [label]="httpproxy.label | translate"
             [tooltip]="httpproxy.tooltip | translate"
           ></ix-input>
+
           <ix-checkbox
             [formControlName]="netwaitEnabled.fcName"
             [label]="netwaitEnabled.label | translate"
             [tooltip]="netwaitEnabled.tooltip | translate"
           ></ix-checkbox>
+
           <ix-chips
             *ngIf="!netwaitIp.hidden"
             [formControlName]="netwaitIp.fcName"
@@ -127,6 +145,7 @@
             [placeholder]="netwaitIp.label | translate"
             [tooltip]="netwaitIp.tooltip | translate"
           ></ix-chips>
+
           <ix-chips
             [formControlName]="hosts.fcName"
             [label]="hosts.label | translate"
@@ -140,8 +159,8 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
+          [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>

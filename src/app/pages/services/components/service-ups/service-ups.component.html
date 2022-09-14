@@ -1,7 +1,11 @@
 <mat-card class="card">
-  <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar
+    *ngIf="isFormLoading"
+    mode="indeterminate"
+  ></mat-progress-bar>
+
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset [title]="helptext.ups_fieldset_general | translate">
           <ix-input
@@ -10,12 +14,14 @@
             [tooltip]="tooltips.identifier | translate"
             [required]="true"
           ></ix-input>
+
           <ix-select
             formControlName="mode"
             [label]="labels.mode | translate"
             [options]="modeOptions$"
             [tooltip]="tooltips.mode | translate"
           ></ix-select>
+
           <ix-input
             *ngIf="!isMasterMode"
             formControlName="remotehost"
@@ -23,14 +29,16 @@
             [tooltip]="tooltips.remotehost | translate"
             [required]="true"
           ></ix-input>
+
           <ix-input
             *ngIf="!isMasterMode"
             formControlName="remoteport"
+            type="number"
             [label]="labels.remoteport | translate"
             [tooltip]="tooltips.remoteport | translate"
             [required]="true"
-            type="number"
           ></ix-input>
+
           <ix-combobox
             *ngIf="isMasterMode"
             formControlName="driver"
@@ -39,6 +47,7 @@
             [provider]="providers.driver"
             [required]="true"
           ></ix-combobox>
+
           <ix-combobox
             formControlName="port"
             [label]="labels.port | translate"
@@ -47,6 +56,7 @@
             [required]="isMasterMode"
           ></ix-combobox>
         </ix-fieldset>
+
         <ix-fieldset [title]="helptext.ups_fieldset_monitor | translate">
           <ix-input
             formControlName="monuser"
@@ -54,18 +64,21 @@
             [tooltip]="tooltips.monuser | translate"
             [required]="true"
           ></ix-input>
+
           <ix-input
             formControlName="monpwd"
+            type="password"
             [label]="labels.monpwd | translate"
             [tooltip]="tooltips.monpwd | translate"
             [required]="true"
-            type="password"
           ></ix-input>
+
           <ix-textarea
             formControlName="extrausers"
             [label]="labels.extrausers | translate"
             [tooltip]="tooltips.extrausers | translate"
           ></ix-textarea>
+
           <ix-checkbox
             formControlName="rmonitor"
             [label]="labels.rmonitor | translate"
@@ -82,17 +95,20 @@
             [options]="shutdownOptions$"
             [tooltip]="tooltips.shutdown | translate"
           ></ix-select>
+
           <ix-input
             formControlName="shutdowntimer"
+            type="number"
             [label]="labels.shutdowntimer | translate"
             [tooltip]="tooltips.shutdowntimer | translate"
-            type="number"
           ></ix-input>
+
           <ix-input
             formControlName="shutdowncmd"
             [label]="labels.shutdowncmd | translate"
             [tooltip]="tooltips.shutdowncmd | translate"
           ></ix-input>
+
           <ix-checkbox
             formControlName="powerdown"
             [label]="labels.powerdown | translate"
@@ -105,26 +121,30 @@
         <ix-fieldset [title]="helptext.ups_fieldset_other | translate">
           <ix-input
             formControlName="nocommwarntime"
+            type="number"
             [label]="labels.nocommwarntime | translate"
             [tooltip]="tooltips.nocommwarntime | translate"
-            type="number"
           ></ix-input>
+
           <ix-input
             formControlName="hostsync"
+            type="number"
             [label]="labels.hostsync | translate"
             [tooltip]="tooltips.hostsync | translate"
-            type="number"
           ></ix-input>
+
           <ix-input
             formControlName="description"
             [label]="labels.description | translate"
             [tooltip]="tooltips.description | translate"
           ></ix-input>
+
           <ix-textarea
             formControlName="options"
             [label]="labels.options | translate"
             [tooltip]="tooltips.options | translate"
           ></ix-textarea>
+
           <ix-textarea
             formControlName="optionsupsd"
             [label]="labels.optionsupsd | translate"
@@ -137,14 +157,15 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          color="accent"
-          (click)="onCancel()"
-        >{{ 'Cancel' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button mat-button color="accent" (click)="onCancel()">
+          {{ 'Cancel' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

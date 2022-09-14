@@ -2,9 +2,10 @@
   [title]="isNew ? ('Add Interface' | translate) : ('Edit Interface' | translate)"
   [loading]="isLoading"
 ></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Interface Settings' | translate">
         <ix-select
           *ngIf="isNew"
@@ -14,6 +15,7 @@
           [options]="interfaceTypes$"
           [tooltip]="helptext.int_type_tooltip"
         ></ix-select>
+
         <ix-input
           formControlName="name"
           [label]="'Name' | translate"
@@ -21,16 +23,19 @@
           [required]="true"
           [readonly]="!isNew"
         ></ix-input>
+
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
           [tooltip]="helptext.int_description_tooltip"
         ></ix-input>
+
         <ix-checkbox
           formControlName="ipv4_dhcp"
           [label]="'DHCP' | translate"
           [tooltip]="helptext.int_dhcp_tooltip"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="ipv6_auto"
           [label]="'Autoconfigure IPv6' | translate"
@@ -55,6 +60,7 @@
           [options]="lagProtocols$"
           [required]="true"
         ></ix-select>
+
         <ix-select
           *ngIf="isLacpLag || isLoadBalanceLag"
           formControlName="xmit_hash_policy"
@@ -62,6 +68,7 @@
           [required]="true"
           [options]="xmitHashPolicies$"
         ></ix-select>
+
         <ix-select
           *ngIf="isLacpLag"
           formControlName="lacpdu_rate"
@@ -69,6 +76,7 @@
           [required]="true"
           [options]="lacpduRates$"
         ></ix-select>
+
         <ix-select
           formControlName="lag_ports"
           [label]="'Link Aggregation Interfaces' | translate"
@@ -87,6 +95,7 @@
           [options]="vlanParentInterfaces$"
           [tooltip]="helptext.vlan_pint_tooltip"
         ></ix-select>
+
         <ix-input
           formControlName="vlan_tag"
           [label]="'VLAN Tag' | translate"
@@ -94,6 +103,7 @@
           [required]="true"
           type="number"
         ></ix-input>
+
         <ix-select
           formControlName="vlan_pcp"
           [label]="'Priority Code Point' | translate"
@@ -108,6 +118,7 @@
           [label]="'Critical' | translate"
           [tooltip]="helptext.failover_critical_tooltip"
         ></ix-checkbox>
+
         <ix-select
           formControlName="failover_group"
           [label]="'Failover Group' | translate"
@@ -118,15 +129,16 @@
 
       <ix-fieldset [title]="'Other Settings' | translate">
         <ix-input
+          type="number"
           formControlName="mtu"
           [label]="'MTU' | translate"
           [tooltip]="helptext.mtu_tooltip"
-          type="number"
         ></ix-input>
+
         <ix-list
+          formArrayName="aliases"
           [empty]="form.controls.aliases.controls.length === 0"
           [label]="'Aliases' | translate"
-          formArrayName="aliases"
           (add)="addAlias()"
         >
           <ix-list-item
@@ -142,6 +154,7 @@
                 [required]="true"
                 [tooltip]="helptext.alias_address_tooltip"
               ></ix-ip-input-with-netmask>
+
               <ng-container *ngIf="isHa">
                 <ix-input
                   formControlName="failover_address"
@@ -149,6 +162,7 @@
                   [required]="true"
                   [tooltip]="helptext.failover_alias_address_tooltip"
                 ></ix-input>
+
                 <ix-input
                   formControlName="failover_virtual_address"
                   [label]="'Virtual IP Address (Failover Address)' | translate"
@@ -164,10 +178,12 @@
       <div class="form-actions">
         <button
           mat-button
-          [disabled]="form.invalid || isLoading"
           type="submit"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

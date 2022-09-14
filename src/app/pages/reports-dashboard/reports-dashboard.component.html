@@ -26,12 +26,26 @@
     <div>
       <mat-icon>warning</mat-icon>
     </div>
-    <div>{{ timeDiffWarning }} {{ 'NAS/browser time mismatch can lead to the reporting data display misbehavior.' | translate }}</div>
+    <div>
+      {{ timeDiffWarning }}
+
+      {{
+        'NAS/browser time mismatch can lead to the reporting data display misbehavior.'
+          | translate
+      }}
+    </div>
   </div>
   <!-- Cards Container -->
-  <cdk-virtual-scroll-viewport itemSize="325" templateCacheSize="4" (scrolledIndexChange)="nextBatch($event)">
+  <cdk-virtual-scroll-viewport
+    itemSize="325"
+    templateCacheSize="4"
+    (scrolledIndexChange)="nextBatch($event)"
+  >
     <!-- Report Cards -->
-    <div class="report-container" *cdkVirtualFor="let key of visibleReports; let i = index;">
+    <div
+      class="report-container"
+      *cdkVirtualFor="let key of visibleReports; let i = index"
+    >
       <ix-report
         *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0"
         [report]="activeReports[key]"
@@ -48,4 +62,3 @@
   </cdk-virtual-scroll-viewport>
   <!-- /Cards Container -->
 </div>
-

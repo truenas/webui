@@ -2,10 +2,8 @@
   <pre #messageContainer class="messages">{{ lines$ | async }}</pre>
 </div>
 <div mat-dialog-actions>
-  <button
-    mat-button
-    matDialogClose="false"
-    class="close-button"
-  >{{ 'Close' | translate }}</button>
+  <button mat-button matDialogClose="false" class="close-button">
+    {{ 'Close' | translate }}
+  </button>
 </div>
 <div id="placeholder"></div>

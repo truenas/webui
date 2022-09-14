@@ -29,10 +29,10 @@
     [ngClass]="{ has_toggle_pw: config.togglePw }"
   >
     <mat-spinner
+      *ngIf="config.isLoading"
       diameter="30"
       class="form-input-spinner"
       id="{{ config.name }}_form-input-spinner"
-      *ngIf="config.isLoading"
     >
     </mat-spinner>
     <div *ngIf="config.maskValue">
@@ -40,14 +40,15 @@
         {{ 'Enter' | translate }} <strong>{{ config.maskValue }}</strong>
         {{ 'below to confirm.' | translate }}
       </p>
+
       <p [ngStyle]="{ position: 'relative', top: '15px', opacity: '.38' }">
         {{ config.maskValue }}
       </p>
     </div>
     <div class="input-container">
-      <span *ngIf="config.searchable" class="searchable"
-        ><mat-icon>search</mat-icon></span
-      >
+      <span *ngIf="config.searchable" class="searchable">
+        <mat-icon>search</mat-icon>
+      </span>
       <input
         autocomplete="new-password"
         ix-auto
@@ -87,19 +88,19 @@
       ix-auto-identifier="{{ config.name }}_toggle-pw"
       (click)="togglePassword()"
     >
-      <i class="material-icons" matTooltip="Hide" *ngIf="showPassword"
-        >visibility</i
-      >
-      <i class="material-icons" matTooltip="Show" *ngIf="!showPassword"
-        >visibility_off</i
-      >
+      <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">
+        visibility
+      </i>
+      <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">
+        visibility_off
+      </i>
     </button>
   </div>
 
   <ng-template #elseBlock>
-    <span [style.margin-right.px]="10">{{
-      config.placeholder | translate
-    }}</span>
+    <span [style.margin-right.px]="10">
+      {{ config.placeholder | translate }}
+    </span>
     <input type="file" id="fileInput" (change)="changeListener($event)" />
   </ng-template>
 
@@ -108,14 +109,17 @@
       [control]="group.controls[config.name]"
       [config]="config"
     ></ix-form-errors>
+
     <mat-error *ngIf="config['hasErrors']">
-      <div [innerHTML]="config['errors']"></div
-    ></mat-error>
-    <mat-error *ngIf="config.warnings"
-      ><div [innerHTML]="config.warnings | translate"></div
-    ></mat-error>
-    <mat-hint *ngIf="config.hint"
-      ><div [innerHTML]="config.hint | translate"></div
-    ></mat-hint>
+      <div [innerHTML]="config['errors']"></div>
+    </mat-error>
+
+    <mat-error *ngIf="config.warnings">
+      <div [innerHTML]="config.warnings | translate"></div>
+    </mat-error>
+
+    <mat-hint *ngIf="config.hint">
+      <div [innerHTML]="config.hint | translate"></div>
+    </mat-hint>
   </div>
 </div>

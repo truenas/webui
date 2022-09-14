@@ -1,13 +1,21 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{config.name}}"
+  id="{{ config.name }}"
+  ix-auto
+  ix-auto-type="readfile"
+  ix-auto-identifier="{{ config.placeholder }}"
   class="dynamic-field form-readfile"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
-  ix-auto ix-auto-type="readfile" ix-auto-identifier="{{config.placeholder}}"
 >
-  <input type="file" id="input" (change)="changeListener($event)">
-  <ix-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
-  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+  <input type="file" id="input" (change)="changeListener($event)" />
+
+  <ix-tooltip
+    *ngIf="config.tooltip"
+    [header]="config.placeholder"
+    [message]="config.tooltip"
+  ></ix-tooltip>
+
+  <mat-error *ngIf="config['hasErrors']">{{ config['errors'] }}</mat-error>
 </div>

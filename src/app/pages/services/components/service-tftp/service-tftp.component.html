@@ -1,7 +1,11 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <mat-progress-bar
+      *ngIf="isFormLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <ix-fieldset [title]="'Path' | translate">
           <ix-explorer
@@ -11,6 +15,7 @@
             [nodeProvider]="treeNodeProvider"
           ></ix-explorer>
         </ix-fieldset>
+
         <ix-fieldset [title]="'Connection' | translate">
           <ix-select
             formControlName="host"
@@ -18,12 +23,14 @@
             [tooltip]="tooltips.host"
             [options]="hosts$"
           ></ix-select>
+
           <ix-input
             formControlName="port"
             [label]="'Port' | translate"
             [tooltip]="tooltips.port"
             type="number"
           ></ix-input>
+
           <ix-combobox
             formControlName="username"
             [label]="'Username' | translate"
@@ -40,12 +47,14 @@
             [tooltip]="tooltips.umask"
             [hideOthersPermissions]="true"
           ></ix-permissions>
+
           <ix-checkbox
             formControlName="newfiles"
             [label]="'Allow New Files' | translate"
             [tooltip]="tooltips.newfiles"
           ></ix-checkbox>
         </ix-fieldset>
+
         <ix-fieldset [title]="'Other Options' | translate">
           <ix-textarea
             formControlName="options"
@@ -59,15 +68,15 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
 
-        <button
-          mat-button
-          type="button"
-          [routerLink]="['/services']"
-        >{{ 'Cancel' | translate }}</button>
+        <button mat-button type="button" [routerLink]="['/services']">
+          {{ 'Cancel' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

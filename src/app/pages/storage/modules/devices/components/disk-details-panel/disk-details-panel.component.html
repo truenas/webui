@@ -3,8 +3,8 @@
     <div class="mobile-prefix">
       <a class="mobile-back-button">
         <ix-icon
-        name="mdi-chevron-left"
-        (click)="onCloseMobileDetails()"
+          name="mdi-chevron-left"
+          (click)="onCloseMobileDetails()"
         ></ix-icon>
       </a>
       {{ 'Details for' | translate }}
@@ -34,7 +34,10 @@
     ></ix-zfs-info-card>
 
     <ng-container *ngIf="isTopologyDisk">
-      <ix-hardware-disk-encryption [topologyDisk]="topologyItem | cast"></ix-hardware-disk-encryption>
+      <ix-hardware-disk-encryption
+        [topologyDisk]="topologyItem | cast"
+      ></ix-hardware-disk-encryption>
+
       <ix-smart-info-card
         [topologyDisk]="topologyItem | cast"
         [disk]="disk"
