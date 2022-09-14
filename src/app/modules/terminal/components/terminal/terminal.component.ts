@@ -34,6 +34,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('terminal', { static: true }) container: ElementRef;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
+  waitParentChanges = 300;
   fontSize = 14;
   fontName = 'Inconsolata';
   xterm: Terminal;
@@ -80,8 +81,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.shellConnected) {
-        // 300ms waiting for sidenav width to be set
-        setTimeout(() => { this.resizeTerm(); }, 300);
+        setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
       }
     });
 
@@ -90,7 +90,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
       eventName: 'MediaChange',
     }).pipe(untilDestroyed(this)).subscribe(() => {
       if (this.shellConnected) {
-        setTimeout(() => { this.resizeTerm(); }, 300);
+        setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
       }
     });
   }
