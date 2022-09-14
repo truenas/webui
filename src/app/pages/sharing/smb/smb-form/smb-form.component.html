@@ -111,9 +111,7 @@
         ></ix-checkbox>
         <ix-checkbox
           formControlName="aapl_name_mangling"
-          [label]="
-            helptextSharingSmb.placeholder_aapl_name_mangling | translate
-          "
+          [label]="helptextSharingSmb.placeholder_aapl_name_mangling | translate"
           [tooltip]="helptextSharingSmb.tooltip_aapl_name_mangling | translate"
         ></ix-checkbox>
         <ix-checkbox
@@ -143,8 +141,6 @@
         ></ix-textarea>
       </ix-fieldset>
       <div class="form-actions">
-        {{ form.invalid ? 'inval' : 'val' }}
-        {{ isLoading ? 'loading' : 'noload' }}
         <button
           mat-button
           type="submit"
@@ -158,11 +154,7 @@
           type="button"
           (click)="this.isAdvancedMode = !this.isAdvancedMode"
         >
-          {{
-            isAdvancedMode
-              ? ('Basic Options' | translate)
-              : ('Advanced Options' | translate)
-          }}
+          {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
       </div>
     </form>

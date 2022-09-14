@@ -411,14 +411,7 @@ export class SmbFormComponent implements OnInit {
                 const datasetId = sharePath.replace('/mnt/', '');
                 const poolName = datasetId.split('/')[0];
                 this.router.navigate(
-                  ['/'].concat([
-                    'storage',
-                    'id',
-                    poolName,
-                    'dataset',
-                    'acl',
-                    datasetId,
-                  ]),
+                  ['/'].concat(['storage', 'id', poolName, 'dataset', 'acl', datasetId]),
                   { queryParams: { homeShare } },
                 );
               }
