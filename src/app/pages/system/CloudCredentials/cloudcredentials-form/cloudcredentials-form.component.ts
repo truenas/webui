@@ -29,7 +29,7 @@ export class CloudCredentialsFormComponent {
   protected pk: any;
   protected keyID: number;
 
-  protected selectedProvider = 'S3';
+  protected selectedProvider = 'STORJ_IX';
   protected credentialsOauth = false;
   protected oauthURL: any;
 
@@ -759,6 +759,56 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'SFTP',
+              }],
+            },
+          ],
+        },
+        // storj
+        {
+          type: 'button',
+          name: 'signup-STORJ_IX',
+          inputType: 'button',
+          label: T('Signup for account'),
+          value: '',
+          customEventMethod: () => {
+            window.open('https://ix.storj.io/');
+          },
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'STORJ_IX',
+              }],
+            },
+          ],
+        },
+        {
+          type: 'input',
+          name: 'access_key_id-STORJ_IX',
+          placeholder: helptext.storj.access_key_id,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'STORJ_IX',
+              }],
+            },
+          ],
+        },
+        {
+          type: 'input',
+          name: 'secret_access_key-STORJ_IX',
+          placeholder: helptext.storj.secret_access_key,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'STORJ_IX',
               }],
             },
           ],
