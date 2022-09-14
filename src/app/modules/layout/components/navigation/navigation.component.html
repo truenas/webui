@@ -24,9 +24,9 @@
         >
           <span
             class="menu-item-tooltip"
-            id="{{ item.name }}"
             matTooltipPosition="right"
-            [matTooltip]="item.tooltip"
+            [matTooltip]="item.tooltip | translate"
+            [id]="item.name"
           ></span>
           <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
@@ -42,7 +42,7 @@
           <span
             class="menu-item-tooltip"
             matTooltipPosition="right"
-            [matTooltip]="item.tooltip"
+            [matTooltip]="item.tooltip | translate"
           ></span>
           <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>
@@ -60,7 +60,7 @@
           <span
             class="menu-item-tooltip"
             matTooltipPosition="right"
-            [matTooltip]="item.tooltip"
+            [matTooltip]="item.tooltip | translate"
           ></span>
           <ix-icon [name]="item.icon"></ix-icon>
           <span>{{ item.name | translate }}</span>

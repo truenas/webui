@@ -329,7 +329,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   getLinkState(nic: BaseNetworkInterface): LinkState {
-    if (!nic?.state?.aliases?.length) { return null; }
     if (nic.state.name in this.nicInfoMap) {
       return this.nicInfoMap[nic.state.name].state || LinkState.Down;
     }
