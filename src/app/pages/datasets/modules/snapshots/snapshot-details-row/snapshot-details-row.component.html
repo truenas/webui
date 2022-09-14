@@ -27,6 +27,15 @@
         </ng-container>
       </dd>
     </div>
+    <div class="details-row" fxLayout="row">
+      <dt>{{ 'Retention' | translate }}:</dt>
+      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+      <dd *ngIf="!isLoading">
+        <ng-container *ngIf="snapshotInfo?.retention?.datetime?.$date; else notAvailable">
+          {{ snapshotInfo.retention.datetime.$date | formatDateTime }}
+        </ng-container>
+      </dd>
+    </div>
   </dl>
 
   <mat-divider></mat-divider>
