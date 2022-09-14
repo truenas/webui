@@ -406,6 +406,11 @@ target="_blank">OpenStack credentials file</a>.'),
     tooltip: T('SSH Host to connect to.'),
   },
 
+  storj: {
+    access_key_id: T('Access Key ID'),
+    secret_access_key: T('Secret Access Key'),
+  },
+
   port_sftp: {
     placeholder: T('Port'),
     tooltip: T(

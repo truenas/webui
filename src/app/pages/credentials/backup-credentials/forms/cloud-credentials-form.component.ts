@@ -48,7 +48,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   private rowNum: number;
   title = helptext.formTitle;
 
-  protected selectedProvider = CloudsyncProviderName.AmazonS3;
+  protected selectedProvider = CloudsyncProviderName.Storj;
   protected credentialsOauth = false;
   protected oauthUrl: string;
   hideSaveBtn = true;
@@ -851,6 +851,46 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               when: [{
                 name: 'provider',
                 value: CloudsyncProviderName.Sftp,
+              }],
+            },
+          ],
+        },
+        // storj
+        {
+          type: 'button',
+          name: 'signup-STORJ_IX',
+          customEventActionLabel: this.translate.instant('Signup for account'),
+          value: '',
+          customEventMethod: () => {
+            window.open('https://ix.storj.io/');
+          },
+        },
+        {
+          type: 'input',
+          name: 'access_key_id-STORJ_IX',
+          placeholder: helptext.storj.access_key_id,
+          required: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'provider',
+                value: CloudsyncProviderName.Storj,
+              }],
+            },
+          ],
+        },
+        {
+          type: 'input',
+          name: 'secret_access_key-STORJ_IX',
+          placeholder: helptext.storj.secret_access_key,
+          required: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'provider',
+                value: CloudsyncProviderName.Storj,
               }],
             },
           ],
