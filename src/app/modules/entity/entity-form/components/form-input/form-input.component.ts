@@ -1,6 +1,4 @@
-import {
-  Component, ViewChild,
-} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -10,7 +8,10 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 
 @Component({
   templateUrl: './form-input.component.html',
-  styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.scss'],
+  styleUrls: [
+    './form-input.component.scss',
+    '../dynamic-field/dynamic-field.scss',
+  ],
 })
 export class FormInputComponent implements Field {
   @ViewChild('fileInput', { static: true }) fileInput: HTMLInputElement;
@@ -21,9 +22,10 @@ export class FormInputComponent implements Field {
   showPassword = false;
   private hasPasteEvent = false;
 
-  constructor(public translate: TranslateService,
-    private formService: EntityFormService) {
-  }
+  constructor(
+    public translate: TranslateService,
+    private formService: EntityFormService,
+  ) {}
 
   changeListener($event: Event): void {
     this.readFile($event.target as HTMLInputElement);
@@ -81,34 +83,47 @@ export class FormInputComponent implements Field {
     }
 
     if (this.config.inputType === 'number') {
-      const numberValue = this.group.controls[this.config.name].value * 1;
-      this.group.controls[this.config.name].setValue(numberValue);
+      const numberValue = this.group.controls[this.config.name].value;
+
       if (this.config.min !== undefined && numberValue < this.config.min) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
-          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + String(this.config.min),
+          manualValidateErrorMsg:
+            globalHelptext.invalidInputValueWithMin + String(this.config.min),
         });
       }
 
       if (this.config.max !== undefined && numberValue > this.config.max) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
-          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + String(this.config.max),
+          manualValidateErrorMsg:
+            globalHelptext.invalidInputValueWithMax + String(this.config.max),
         });
       }
     }
   }
 
   hasValue(): boolean {
-    return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
+    return (
+      this.group.controls[this.config.name].value
+      && this.group.controls[this.config.name].value.toString().length
+    );
   }
 
   shouldShowResetInput(): boolean {
-    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password' && !this.config.disabled;
+    return (
+      this.hasValue()
+      && !this.config.readonly
+      && !this.config.togglePw
+      && this.config.inputType !== 'password'
+      && !this.config.disabled
+    );
   }
 
   resetInput(): void {
-    this.group.controls[this.config.name].setValue('');
+    this.group.controls[this.config.name].setValue(
+      this.config.inputType === 'number' ? null : '',
+    );
   }
 
   onPaste(event: ClipboardEvent): void {
@@ -126,7 +141,25 @@ export class FormInputComponent implements Field {
     }
   }
 
-  onInput(): void {
+  onInput(event: Event): void {
+    const inputValue = (event as MessageEvent).data;
+
+    if (this.config.inputType === 'number') {
+      if (this.config.errors) {
+        this.config.errors = null;
+      }
+
+      if (!this.shouldShowResetInput() && !inputValue !== null) {
+        this.group.controls[this.config.name].setErrors({
+          pattern: true,
+        });
+      }
+
+      if (inputValue === null) {
+        this.group.controls[this.config.name].setValue(null);
+      }
+    }
+
     if (this.hasPasteEvent) {
       this.hasPasteEvent = false;
     } else {

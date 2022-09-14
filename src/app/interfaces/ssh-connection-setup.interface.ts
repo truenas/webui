@@ -18,6 +18,7 @@ export interface SshConnectionSetup {
     connect_timeout: number;
     cipher: CipherType;
     token?: string;
+    otp_token?: string;
   };
 }
 
@@ -33,6 +34,7 @@ export interface SshSemiAutomaticSetup {
   token?: string;
   password?: string;
   username?: string;
+  otp_token?: string;
   private_key: number;
   cipher?: CipherType;
   connect_timeout?: number;

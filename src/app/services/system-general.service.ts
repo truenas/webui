@@ -26,7 +26,7 @@ export class SystemGeneralService {
   updateIsDone$ = new Subject();
 
   get isEnterprise(): boolean {
-    return this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise;
+    return this.getProductType() === ProductType.ScaleEnterprise;
   }
 
   toggleSentryInit(): void {
@@ -46,6 +46,10 @@ export class SystemGeneralService {
         });
       }
     });
+  }
+
+  getProductType(): ProductType {
+    return this.window.localStorage.getItem('product_type') as ProductType;
   }
 
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());

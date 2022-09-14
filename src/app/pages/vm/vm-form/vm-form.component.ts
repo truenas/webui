@@ -23,7 +23,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService,
   DialogService,
-  StorageService,
+  StorageService, SystemGeneralService,
   VmService,
   WebSocketService,
 } from 'app/services';
@@ -49,7 +49,7 @@ export class VmFormComponent implements FormConfiguration {
   private gpus: Device[];
   private isolatedGpuPciIds: string[];
   private maxVcpus: number;
-  private productType = window.localStorage.getItem('product_type') as ProductType;
+  private productType = this.systemGeneralService.getProductType();
   queryCallOption: [Partial<QueryFilter<VirtualMachine>>?] = [];
 
   fieldConfig: FieldConfig[] = [];
@@ -248,6 +248,7 @@ export class VmFormComponent implements FormConfiguration {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   preInit(entityForm: EntityFormComponent): void {

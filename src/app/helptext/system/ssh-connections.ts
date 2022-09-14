@@ -54,4 +54,6 @@ export default {
   password_placeholder: T('Password'),
   password_tooltip: T('User account password for logging into the \
  remote system.'),
+  otp_placeholder: T('One-Time Password (if necessary)'),
+  otp_tooltip: T('One-Time Password if two factor authentication is enabled.'),
 };

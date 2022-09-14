@@ -1,0 +1,86 @@
+@import '../../../../../assets/styles/scss-imports/splitview';
+
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+.topbar {
+  background-color: var(--topbar) !important;
+  color: var(--topbar-txt) !important;
+}
+
+.ix-logo:focus-visible,
+.topbar button:focus-visible {
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  outline-width: 0;
+}
+
+.ix-logo {
+  cursor: pointer;
+  fill: none !important;
+  height: 48px;
+  position: relative;
+  right: -10px;
+  top: 4px;
+  width: 175px;
+}
+
+.ix-logo.ix_full_logo,
+.ix-logo.ix_logomark {
+  fill: var(--topbar-txt) !important;
+}
+
+.ix-logo.xs {
+  height: 50px;
+  right: 0;
+  width: 50px;
+}
+
+.topbar-button-right {
+  &.overflow-visible {
+    overflow: visible;
+  }
+}
+
+.mobile-logo {
+  display: none;
+  overflow: hidden;
+  width: 100%;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: flex;
+    place-content: center;
+  }
+
+  .mobile-logo-container {
+    height: 48px;
+    position: relative;
+    width: 200px;
+  }
+
+  .logomark {
+    left: 10px;
+    position: absolute;
+    top: 10px;
+    transform: scale(1.7);
+  }
+
+  .logotype {
+    left: 85px;
+    position: absolute;
+    top: 13px;
+    transform: scale(4.2);
+  }
+
+}

@@ -1,3 +1,4 @@
+import { PlatformLocation } from '@angular/common';
 import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
@@ -27,7 +28,10 @@ export class ModalService {
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
-  ) {}
+    private location: PlatformLocation,
+  ) {
+    this.location.onPopState(() => this.closeSlideIn());
+  }
 
   refreshTable(): void {
     this.refreshTable$.next();

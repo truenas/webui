@@ -31,22 +31,12 @@ describe('DatasetRolesCellComponent', () => {
     ixIcon = await loader.getHarness(IxIconHarness).catch(() => undefined);
   }
 
-  it('shows "Root Dataset" when dataset on the first level', async () => {
-    await setupTest({ name: 'root' } as DatasetDetails, false);
-
-    expect(spectator.query('span')).toHaveExactText('Root Dataset');
-  });
-
   it('shows "System Dataset" when dataset is marked as system', async () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
-    expect(spectator.query('span')).toHaveExactText('System Dataset');
-  });
-
-  it('shows "Root & System Dataset" when the root dataset is marked as system', async () => {
-    await setupTest({ name: 'root' } as DatasetDetails, true);
-
-    expect(spectator.query('span')).toHaveExactText('Root & System Dataset');
+    expect(await ixIcon.getNamespace()).toBe('ix');
+    expect(await ixIcon.getName()).toBe('truenas_scale_logomark');
+    expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 
   it('shows "Applications" icon and tooltip when dataset has name `ix-applications`', async () => {
@@ -63,6 +53,13 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getName()).toBe('apps');
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by: app1, app2');
+  });
+
+  it('shows "VM" icon and tooltip when dataset has vms', async () => {
+    await setupTest({ name: 'root', vms: [{ name: 'vm1', path: '' }, { name: 'vm1', path: '' }, { name: 'vm2', path: '' }] } as DatasetDetails, false);
+
+    expect(await ixIcon.getName()).toBe('computer');
+    expect(spectator.query(MatTooltip).message).toBe('This dataset is used by: vm1, vm2');
   });
 
   it('shows "Share" icon when dataset or children has shares', async () => {

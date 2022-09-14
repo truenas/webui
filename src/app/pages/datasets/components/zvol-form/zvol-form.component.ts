@@ -17,8 +17,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig,
@@ -459,7 +461,7 @@ export class ZvolFormComponent implements FormConfiguration {
               encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
             }
           }
-        });
+        }, this.handleError);
         _.find(this.fieldConfig, { name: 'encryption' }).isHidden = true;
         const inheritEncryptionControl = this.entityForm.formGroup.controls['inherit_encryption'];
         const encryptionControl = this.entityForm.formGroup.controls['encryption'];
@@ -620,7 +622,7 @@ export class ZvolFormComponent implements FormConfiguration {
         this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
           this.entityForm.formGroup.controls['volblocksize'].setValue(recommendedSize);
           this.minimumRecommendedBlockSize = recommendedSize;
-        });
+        }, this.handleError);
       } else {
         let parentDataset: string | string[] = pkDatasets[0].name.split('/');
         parentDataset.pop();
@@ -706,10 +708,14 @@ export class ZvolFormComponent implements FormConfiguration {
           } else {
             entityForm.formGroup.controls['snapdev'].setValue(pkDatasets[0].snapdev.value);
           }
-        });
+        }, this.handleError);
       }
-    });
+    }, this.handleError);
   }
+
+  handleError = (error: WebsocketError | Job): void => {
+    new EntityUtils().handleWsError(this.entityForm, error, this.dialogService);
+  };
 
   blurVolsize(): void {
     if (this.entityForm) {
@@ -828,14 +834,14 @@ export class ZvolFormComponent implements FormConfiguration {
           this.modalService.refreshTable();
         }, (eres) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this.entityForm, eres);
+          this.handleError(eres);
         });
       } else {
         this.loader.close();
         this.dialogService.info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
         this.modalService.closeSlideIn();
       }
-    });
+    }, this.handleError);
   }
 
   customSubmit(body: any): void {
@@ -848,7 +854,7 @@ export class ZvolFormComponent implements FormConfiguration {
         this.modalService.refreshTable();
       }, (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, error);
+        this.handleError(error);
       });
     } else {
       this.editSubmit(body);

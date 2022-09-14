@@ -21,7 +21,6 @@
 
     <div id="open-source" *appLet="systemType | mapValue: productTypeLabels as product" [innerHtml]="helptext.opensource | translate: { product } "></div>
   </div>
-
 </div>
 
 <div mat-dialog-actions id="actions">
@@ -37,6 +36,5 @@
     >
       {{ helptext.actionBtnText.about | translate | uppercase }}
     </button>
-
   </div>
 </div>

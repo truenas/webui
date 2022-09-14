@@ -16,12 +16,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, pluck } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +68,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     private datasetStore: DatasetTreeStore,
     private router: Router,
     protected translate: TranslateService,
+    private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
   ) { }
 
@@ -79,7 +82,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe((systemDataset) => {
       this.systemDataset = systemDataset;
-    });
+    }, this.handleError);
 
     this.isLoading$
       .pipe(untilDestroyed(this))
@@ -88,6 +91,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       });
   }
+
+  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+    this.dialogService.errorReportMiddleware(error);
+  };
 
   isSystemDataset(dataset: DatasetDetails): boolean {
     return isRootDataset(dataset) && this.systemDataset === dataset.name;
@@ -134,13 +141,14 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
             this.router.navigate(['/datasets', firstNode.id]);
           }
         },
+        this.handleError,
       );
 
     this.datasetStore.selectedBranch$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((selectedBranch: DatasetDetails[]) => {
         selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
-      });
+      }, this.handleError);
   }
 
   private listenForRouteChanges(): void {
@@ -180,7 +188,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   createPool(): void {
-    this.router.navigate(['/storage2/create']);
+    this.router.navigate(['/storage', 'create']);
   }
 
   // Expose hidden details on mobile

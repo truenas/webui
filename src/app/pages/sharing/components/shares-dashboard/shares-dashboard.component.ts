@@ -33,7 +33,7 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
-  IscsiService,
+  IscsiService, SystemGeneralService,
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
@@ -90,6 +90,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.getInitialServiceStatus();
   }
@@ -414,7 +415,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                   const rowName = row.path.replace('/mnt/', '');
                   const poolName = rowName.split('/')[0];
                   const datasetId = rowName;
-                  const productType = window.localStorage.getItem('product_type') as ProductType;
+                  const productType = this.systemGeneralService.getProductType();
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
                       if (isLocked) {
