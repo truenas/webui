@@ -18,8 +18,8 @@ from pytest_bdd import (
     parsers
 )
 
-import pytest
-pytestmark = [pytest.mark.debug_test]
+# import pytest
+# pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1141.feature', 'Verify Google Drive Cloud Sync task works')

@@ -106,7 +106,7 @@ def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url
 @then('enter the <user_name> click Next and enter the <password> click Next')
 def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
     """enter the <user_name> click Next and enter the <password> click Next."""
-    assert wait_on_element(driver, 5, '//h3[text()="Sign in to your Backblaze account"]')
+    assert wait_on_element(driver, 5, '//h3[text()="Welcome Back"]')
     time.sleep(1)
     assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
@@ -114,7 +114,7 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
     assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 10, '//p[@class="user-email"]')
+    assert wait_on_element(driver, 10, f'//p[@class="user-email" and contains(text(),"{user_name}")]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Password"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
     time.sleep(1)
