@@ -864,6 +864,15 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           customEventMethod: () => {
             window.open('https://ix.storj.io/');
           },
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'provider',
+                value: CloudsyncProviderName.Storj,
+              }],
+            },
+          ],
         },
         {
           type: 'input',
