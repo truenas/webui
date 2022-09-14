@@ -55,6 +55,11 @@ export const helptext_system_cloudcredentials = {
     ),
   },
 
+  storj: {
+    access_key_id: T('Access Key ID'),
+    secret_access_key: T('Secret Access Key'),
+  },
+
   max_upload_parts_s3: {
     placeholder: T('Maximum Upload Parts'),
     tooltip: T('Define the maximum number of chunks for a multipart upload. This can \
