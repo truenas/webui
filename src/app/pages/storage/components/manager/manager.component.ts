@@ -572,6 +572,21 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     return true;
   }
 
+  handleSelectAll(selectFn: (flag: boolean) => void, allSelectedFlag: boolean): void {
+    if (allSelectedFlag) {
+      for (const disk of this.disks) {
+        if (this.shouldWarnAboutExportedPool(disk)) {
+          this.dialog.warn(
+            this.translate.instant('Warning'),
+            this.translate.instant(helptext.exported_pool_warning, { pool: `'${disk.exported_zpool}'` }),
+          );
+        }
+      }
+    }
+    this.updateExportedPoolWarningFlags(allSelectedFlag ? this.disks : []);
+    selectFn(allSelectedFlag);
+  }
+
   checkSubmit(): void {
     let disknumErr: string = this.disknumErrorConfirmMessage;
     if (!this.isNew) {
@@ -771,7 +786,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       const lastSelectedItem = selectedDisks[selectedDisks.length - 1];
       this.dialog.warn(
         this.translate.instant('Warning'),
-        this.translate.instant(helptext.exported_pool_warning, { pool: '\'' + lastSelectedItem.exported_zpool + '\'' }),
+        this.translate.instant(helptext.exported_pool_warning, { pool: `'${lastSelectedItem.exported_zpool}'` }),
       );
     }
     this.updateExportedPoolWarningFlags(selectedDisks);
