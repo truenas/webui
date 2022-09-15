@@ -1,12 +1,14 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
           formControlName="all_disks"
           [label]="'All Disks' | translate"
         ></ix-checkbox>
+
         <ix-select
           *ngIf="!(isAllDisksSelected$ | async)"
           formControlName="disks"
@@ -15,17 +17,20 @@
           [multiple]="true"
           [options]="diskOptions$"
         ></ix-select>
+
         <ix-select
           formControlName="type"
           [label]="'Type' | translate"
           [tooltip]="tooltips.type | translate"
           [options]="typeOptions$"
         ></ix-select>
+
         <ix-input
           formControlName="desc"
           [label]="'Description' | translate"
           [tooltip]="tooltips.desc | translate"
         ></ix-input>
+
         <ix-scheduler
           formControlName="schedule"
           [label]="'Schedule' | translate"
@@ -40,7 +45,9 @@
           type="submit"
           [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

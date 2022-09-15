@@ -4,67 +4,129 @@
     <button
       mat-icon-button
       id="sidenavToggle"
-      (click)="toggleCollapse()"
-      [matTooltip]="tooltips.toggle_collapse | translate"
       matTooltipPosition="right"
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="sidenavToggle"
-    ><mat-icon>menu</mat-icon></button>
+      [matTooltip]="tooltips.toggle_collapse | translate"
+      (click)="toggleCollapse()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
 
     <span fxFlex></span>
 
     <a class="mobile-logo" routerLink="/">
       <div class="mobile-logo-container">
-        <ix-icon name="ix:truenas_scale_logomark_color" class="logomark"></ix-icon>
-        <ix-icon name="ix:truenas_scale_logotype_color" class="logotype"></ix-icon>
+        <ix-icon
+          name="ix:truenas_scale_logomark_color"
+          class="logomark"
+        ></ix-icon>
+
+        <ix-icon
+          name="ix:truenas_scale_logotype_color"
+          class="logotype"
+        ></ix-icon>
       </div>
     </a>
 
     <div class="topbar-mobile-footer">
       <div class="ix-systems-logo-icon">
         <mat-icon
-          (click)="openIx()"
-          [svgIcon]="getLogoIcon()"
           alt="iXsystems logo"
           class="ix-logo {{ screenSize }} {{ getLogoIcon() }}"
           tabindex="0"
+          [svgIcon]="getLogoIcon()"
+          (click)="openIx()"
         ></mat-icon>
       </div>
 
       <ix-truecommand-button></ix-truecommand-button>
 
       <!-- finish update -->
-      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update"
-              [matTooltip]="tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()"
-              class="topbar-button-right" ix-auto ix-auto-type="button" ix-auto-identifier="upgradeWaiting">
+      <button
+        *ngIf="upgradeWaitingToFinish"
+        mat-icon-button
+        id="finish-update"
+        class="topbar-button-right"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="upgradeWaiting"
+        [matTooltip]="tooltips.upgrade_waiting | translate"
+        (click)="upgradePendingDialog()"
+      >
         <mat-icon class="movement">update</mat-icon>
       </button>
       <!--loading icon-->
-      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="tooltips.update | translate"
-              (click)="showUpdateDialog()" class="topbar-button-right" ix-auto ix-auto-type="button"
-              ix-auto-identifier="updateRunning">
+      <button
+        *ngIf="updateIsRunning"
+        mat-icon-button
+        id="update-running"
+        class="topbar-button-right"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="updateRunning"
+        [matTooltip]="tooltips.update | translate"
+        (click)="showUpdateDialog()"
+      >
         <mat-icon class="movement">system_update_alt</mat-icon>
       </button>
-      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network"
-              [matTooltip]="tooltips.pending_network_changes | translate" (click)="showNetworkChangesPending()"
-              class="topbar-button-right" ix-auto ix-auto-type="button" ix-auto-identifier="networkPending">
+      <button
+        *ngIf="pendingNetworkChanges"
+        mat-icon-button
+        id="network"
+        class="topbar-button-right"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="networkPending"
+        [matTooltip]="tooltips.pending_network_changes | translate"
+        (click)="showNetworkChangesPending()"
+      >
         <mat-icon class="movement">device_hub</mat-icon>
       </button>
-      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="tooltips.resilvering | translate"
-              (click)="showResilveringDetails()" class="topbar-button-right" ix-auto ix-auto-type="button"
-              ix-auto-identifier="resilvering">
+      <button
+        *ngIf="showResilvering"
+        mat-icon-button
+        id="resilver"
+        class="topbar-button-right"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="resilvering"
+        [matTooltip]="tooltips.resilvering | translate"
+        (click)="showResilveringDetails()"
+      >
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
       <!-- HA Status -->
       <span *ngIf="isFailoverLicensed && haStatusText">
-        <button *ngIf="haDisabledReasons.length === 0" mat-icon-button id="ha" [matTooltip]="haStatusText | translate"
-                class="topbar-button-right" (click)="showHaStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+        <button
+          *ngIf="haDisabledReasons.length === 0"
+          mat-icon-button
+          id="ha"
+          class="topbar-button-right"
+          ix-auto
+          ix-auto-type="button"
+          ix-auto-identifier="haStatus"
+          [matTooltip]="haStatusText | translate"
+          (click)="showHaStatus()"
+        >
           <mat-icon svgIcon="ix:ha_enabled"></mat-icon>
         </button>
-        <button *ngIf="haDisabledReasons.length > 0" mat-icon-button id="ha" [matTooltip]="haStatusText | translate"
-                class="topbar-button-right" (click)="showHaStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
-          <mat-icon *ngIf="haDisabledReasons[0] === FailoverDisabledReason.NoSystemReady; else HADisabled" svgIcon="ix:ha_reconnecting">
+        <button
+          *ngIf="haDisabledReasons.length > 0"
+          mat-icon-button
+          id="ha"
+          class="topbar-button-right"
+          ix-auto
+          ix-auto-type="button"
+          ix-auto-identifier="haStatus"
+          [matTooltip]="haStatusText | translate"
+          (click)="showHaStatus()"
+        >
+          <mat-icon
+            *ngIf="haDisabledReasons[0] === FailoverDisabledReason.NoSystemReady; else HADisabled"
+            svgIcon="ix:ha_reconnecting"
+          >
           </mat-icon>
           <ng-template #HADisabled>
             <mat-icon svgIcon="ix:ha_disabled"></mat-icon>
@@ -88,13 +150,13 @@
           matBadgeSize="small"
           matBadgeColor="warn"
           [matBadgeHidden]="alertBadgeCount === 0"
-        >notifications</mat-icon>
+        >
+          notifications
+        </mat-icon>
       </button>
 
       <ix-user-menu></ix-user-menu>
       <ix-power-menu></ix-power-menu>
     </div>
-
   </mat-toolbar-row>
 </mat-toolbar>
-

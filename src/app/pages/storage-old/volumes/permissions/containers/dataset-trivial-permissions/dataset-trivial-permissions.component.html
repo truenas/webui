@@ -40,6 +40,7 @@
             [tooltip]="tooltips.applyGroup | translate"
           ></ix-checkbox>
         </ix-fieldset>
+
         <ix-fieldset [title]="'Access' | translate" class="access-fields">
           <ix-permissions
             formControlName="mode"
@@ -48,6 +49,7 @@
           ></ix-permissions>
         </ix-fieldset>
       </div>
+
       <div class="advanced-fields">
         <ix-fieldset [title]="'Advanced' | translate">
           <ix-checkbox
@@ -70,22 +72,24 @@
           mat-button
           class="save-button"
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          [routerLink]="['/storage-old']"
-        >{{ 'Cancel' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+        <button mat-button type="button" [routerLink]="['/storage-old']">
+          {{ 'Cancel' | translate }}
+        </button>
 
         <button
           *ngIf="canSetAcl"
-          class="set-acl-button"
           mat-button
+          class="set-acl-button"
           type="button"
           (click)="onSetAclPressed()"
-        >{{ 'Set ACL' | translate }}</button>
+        >
+          {{ 'Set ACL' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

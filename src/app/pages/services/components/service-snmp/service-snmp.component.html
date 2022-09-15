@@ -1,7 +1,11 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <mat-progress-bar
+      *ngIf="isFormLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <ix-fieldset [title]="'General Options' | translate">
           <ix-input
@@ -9,37 +13,43 @@
             [label]="'Location' | translate"
             [tooltip]="tooltips.location | translate"
           ></ix-input>
+
           <ix-input
             formControlName="contact"
+            type="email"
             [label]="'Contact' | translate"
             [tooltip]="tooltips.contact | translate"
-            type="email"
           ></ix-input>
+
           <ix-input
             formControlName="community"
             [label]="'Community' | translate"
             [tooltip]="tooltips.community | translate"
           ></ix-input>
         </ix-fieldset>
+
         <ix-fieldset [title]="'SNMP v3 Options' | translate">
           <ix-checkbox
             formControlName="v3"
             [label]="'SNMP v3 Support' | translate"
             [tooltip]="tooltips.v3 | translate"
           ></ix-checkbox>
+
           <ng-container *ngIf="isV3SupportEnabled">
             <ix-input
               formControlName="v3_username"
               [label]="'Username' | translate"
               [tooltip]="tooltips.v3_username | translate"
             ></ix-input>
+
             <ix-select
               formControlName="v3_authtype"
+              emptyValue=""
               [options]="authtypeOptions$"
               [label]="'Authentication Type' | translate"
               [tooltip]="tooltips.v3_authtype | translate"
-              emptyValue=""
             ></ix-select>
+
             <ix-input
               formControlName="v3_password"
               type="password"
@@ -47,12 +57,14 @@
               [required]="true"
               [tooltip]="tooltips.v3_password | translate"
             ></ix-input>
+
             <ix-select
               formControlName="v3_privproto"
               [options]="privprotoOptions$"
               [label]="'Privacy Protocol' | translate"
               [tooltip]="tooltips.v3_privproto | translate"
             ></ix-select>
+
             <ix-input
               formControlName="v3_privpassphrase"
               type="password"
@@ -62,17 +74,20 @@
           </ng-container>
         </ix-fieldset>
       </div>
+
       <ix-fieldset [title]="'Other Options' | translate">
         <ix-textarea
           formControlName="options"
           [label]="'Auxiliary Parameters' | translate"
           [tooltip]="tooltips.options | translate"
         ></ix-textarea>
+
         <ix-checkbox
           formControlName="zilstat"
           [label]="'Expose zilstat via SNMP' | translate"
           [tooltip]="tooltips.zilstat | translate"
         ></ix-checkbox>
+
         <ix-select
           formControlName="loglevel"
           [options]="logLevelOptions$"
@@ -85,15 +100,15 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
 
-        <a
-          mat-button
-          type="button"
-          [routerLink]="['/services']"
-        >{{ 'Cancel' | translate }}</a>
+        <a mat-button type="button" [routerLink]="['/services']">
+          {{ 'Cancel' | translate }}
+        </a>
       </div>
     </form>
   </mat-card-content>

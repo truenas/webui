@@ -1,13 +1,17 @@
-<ix-modal-header [title]="'Kerberos Settings' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Kerberos Settings' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-textarea
           formControlName="appdefaults_aux"
           [label]="'Appdefaults Auxiliary Parameters' | translate"
           [tooltip]="tooltips.appdefaults_aux"
         ></ix-textarea>
+
         <ix-textarea
           formControlName="libdefaults_aux"
           [label]="'Libdefaults Auxiliary Parameters' | translate"
@@ -19,9 +23,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

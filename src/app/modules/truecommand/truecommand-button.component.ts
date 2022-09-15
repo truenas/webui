@@ -31,6 +31,18 @@ export class TruecommandButtonComponent implements OnInit {
   private isTcStatusOpened = false;
   private tcStatusDialogRef: MatDialogRef<TruecommandStatusModalComponent>;
 
+  get tcsStatusMatBadge(): string {
+    if (this.tcStatus.status === TrueCommandStatus.Connected) {
+      return 'check';
+    }
+
+    if (this.tcStatus.status === TrueCommandStatus.Failed) {
+      return 'priority_high';
+    }
+
+    return '';
+  }
+
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,

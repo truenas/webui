@@ -11,15 +11,19 @@
       <mat-icon>edit</mat-icon>
     </a>
 
-    <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
+    <span
+      class="action"
+      [attr.title]="'Close' | translate"
+      (click)="onCloseClicked()"
+    >
       <mat-icon>cancel</mat-icon>
     </span>
   </div>
 
   <mat-spinner
     *ngIf="isLoading; else loaded"
-    [diameter]="40"
     class="spinner"
+    [diameter]="40"
   ></mat-spinner>
 
   <ng-template #loaded>
@@ -41,15 +45,23 @@
     </div>
 
     <div *ngIf="acl" class="permissions">
-      <ix-old-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></ix-old-trivial-permissions>
+      <ix-old-trivial-permissions
+        *ngIf="acl.trivial; else nonTrivial"
+        [stat]="stat"
+      ></ix-old-trivial-permissions>
 
       <ng-template #nonTrivial>
         <ng-container [ngSwitch]="acl.acltype">
-          <ix-old-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl | cast"></ix-old-posix-permissions>
-          <ix-old-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl | cast"></ix-old-nfs-permissions>
+          <ix-old-posix-permissions
+            *ngSwitchCase="AclType.Posix1e"
+            [acl]="acl | cast"
+          ></ix-old-posix-permissions>
+          <ix-old-nfs-permissions
+            *ngSwitchCase="AclType.Nfs4"
+            [acl]="acl | cast"
+          ></ix-old-nfs-permissions>
         </ng-container>
       </ng-template>
     </div>
   </ng-template>
 </mat-card>
-

@@ -20,15 +20,14 @@
   </form>
 </div>
 <div mat-dialog-actions class="buttons">
-  <button
-    mat-button
-    matDialogClose
-  >{{ 'Cancel' | translate }}</button>
+  <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
   <button
     mat-button
     color="primary"
     matDialogClose
     [disabled]="form.invalid"
     (click)="onContinuePressed()"
-  >{{ 'Continue' | translate }}</button>
+  >
+    {{ 'Continue' | translate }}
+  </button>
 </div>
