@@ -1,4 +1,8 @@
 <h1 matDialogTitle>{{ title }}</h1>
+<div *ngIf="data.exportedZpool">
+  <ix-warning [message]="'This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\
+  to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before wiping this disk.' | translate: { pool: '\'' + data.exportedZpool + '\'' }"></ix-warning>
+</div>
 <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
   <ix-select
     formControlName="wipe_method"

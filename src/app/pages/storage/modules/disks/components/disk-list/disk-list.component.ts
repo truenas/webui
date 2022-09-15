@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { forkJoin, of } from 'rxjs';
-import { catchError, filter, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -152,33 +152,17 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           const unusedDisk: Partial<UnusedDisk> = this.unusedDisks.find(
             (unusedDisk) => unusedDisk.devname === disk.devname,
           );
-          if (unusedDisk?.exported_zpool) {
-            this.showWarningAboutExportedPoolForDisk(unusedDisk);
-          } else {
-            this.matDialog.open(DiskWipeDialogComponent, {
-              data: disk.name,
-            });
-          }
+          this.matDialog.open(DiskWipeDialogComponent, {
+            data: {
+              diskName: disk.name,
+              exportedZpool: unusedDisk?.exported_zpool,
+            },
+          });
         },
       });
     }
 
     return actions as EntityTableAction[];
-  }
-
-  showWarningAboutExportedPoolForDisk(unusedDisk: Partial<UnusedDisk>): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Warning'),
-      message: this.translate.instant(
-        'This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\
-        to import. You will lose any and all data in {pool}. Are you sure you want to wipe this disk?',
-        { pool: '\'' + unusedDisk.exported_zpool + '\'' },
-      ),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.matDialog.open(DiskWipeDialogComponent, {
-        data: unusedDisk.name,
-      });
-    });
   }
 
   dataHandler(entityList: EntityTableComponent): void {
