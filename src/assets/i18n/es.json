@@ -2108,7 +2108,7 @@
   "Number of Cores": "",
   "Number of Graph Points": "",
   "Number of Threads": "",
-  "Number of bytes in GiB": "",
+  "Number of bytes": "",
   "Number of days to renew certificate before expiring.": "",
   "Number of objects that can be owned by each of the selected groups.  Entering <code>0</code> (zero) allows unlimited objects.": "",
   "Number of objects that can be owned by each of the selected users.  Entering <code>0</code> (zero) allows unlimited objects.": "",

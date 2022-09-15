@@ -32,6 +32,7 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import {
@@ -147,6 +148,7 @@ export class SmbFormComponent implements OnInit {
   });
 
   constructor(
+    public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private formBuilder: UntypedFormBuilder,
     private ws: WebSocketService,
@@ -411,7 +413,14 @@ export class SmbFormComponent implements OnInit {
                 const datasetId = sharePath.replace('/mnt/', '');
                 const poolName = datasetId.split('/')[0];
                 this.router.navigate(
-                  ['/'].concat(['storage', 'id', poolName, 'dataset', 'acl', datasetId]),
+                  ['/'].concat([
+                    'storage',
+                    'id',
+                    poolName,
+                    'dataset',
+                    'acl',
+                    datasetId,
+                  ]),
                   { queryParams: { homeShare } },
                 );
               }

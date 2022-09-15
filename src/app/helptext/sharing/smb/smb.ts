@@ -50,7 +50,7 @@ export const helptextSharingSmb = {
   tooltip_timemachine: T('Enable Time Machine backups on this share.'),
 
   placeholder_timemachine_quota: T('Time Machine Quota'),
-  tooltip_timemachine_quota: T('Number of bytes in GiB'),
+  tooltip_timemachine_quota: T('Number of bytes'),
 
   placeholder_afp: T('Legacy AFP Compatibility'),
   tooltip_afp: T(

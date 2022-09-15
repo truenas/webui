@@ -87,9 +87,10 @@
         <div [hidden]="!form.get('timemachine').value">
           <ix-input
             formControlName="timemachine_quota"
-            type="number"
             [label]="helptextSharingSmb.placeholder_timemachine_quota | translate"
             [tooltip]="helptextSharingSmb.tooltip_timemachine_quota | translate"
+            [format]="formatter.memorySizeFormatting"
+            [parse]="formatter.memorySizeParsing"
           ></ix-input>
         </div>
         <ix-checkbox
