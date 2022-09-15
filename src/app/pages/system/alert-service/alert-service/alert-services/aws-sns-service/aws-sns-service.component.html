@@ -1,27 +1,30 @@
 <ng-container [formGroup]="form">
   <ix-input
-    [label]="'AWS Region' | translate"
     formControlName="region"
+    [label]="'AWS Region' | translate"
     [required]="true"
     [tooltip]="helptext.AWSSNS_region_tooltip | translate"
   ></ix-input>
+
   <ix-input
-    [label]="'ARN' | translate"
     formControlName="topic_arn"
+    [label]="'ARN' | translate"
     [required]="true"
     [tooltip]="helptext.AWSSNS_topic_arn_tooltip | translate"
   ></ix-input>
+
   <ix-input
-    [label]="'Key ID' | translate"
     formControlName="aws_access_key_id"
+    [label]="'Key ID' | translate"
     [required]="true"
     [tooltip]="helptext.AWSSNS_aws_access_key_id_tooltip | translate"
   ></ix-input>
+
   <ix-input
-    [label]="'Secret Key' | translate"
     formControlName="aws_secret_access_key"
-    [required]="true"
     type="password"
+    [label]="'Secret Key' | translate"
+    [required]="true"
     [tooltip]="helptext.AWSSNS_aws_secret_access_key_tooltip | translate"
   ></ix-input>
 </ng-container>

@@ -12,16 +12,16 @@
   ></ix-select>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="button"
-      [matDialogClose]="false"
-    >{{ 'Cancel' | translate }}</button>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
     <button
       mat-button
       type="submit"
-      [disabled]="!newDiskControl.valid"
       color="primary"
-    >{{ 'Extend' | translate }}</button>
+      [disabled]="!newDiskControl.valid"
+    >
+      {{ 'Extend' | translate }}
+    </button>
   </div>
 </form>

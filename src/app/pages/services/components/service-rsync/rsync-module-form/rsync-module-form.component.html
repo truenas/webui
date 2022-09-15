@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <div class="column">
           <ix-fieldset [title]="'General' | translate">
@@ -11,6 +12,7 @@
               [required]="true"
               [tooltip]="tooltips.name | translate"
             ></ix-input>
+
             <ix-explorer
               formControlName="path"
               [label]="'Path' | translate"
@@ -18,11 +20,13 @@
               [tooltip]="tooltips.path | translate"
               [nodeProvider]="treeNodeProvider"
             ></ix-explorer>
+
             <ix-input
               formControlName="comment"
               [label]="'Comment' | translate"
               [tooltip]="tooltips.comment | translate"
             ></ix-input>
+
             <ix-checkbox
               formControlName="enabled"
               [label]="'Enabled' | translate"
@@ -47,29 +51,34 @@
               [options]="modeOptions$"
               [tooltip]="tooltips.mode | translate"
             ></ix-select>
+
             <ix-input
               formControlName="maxconn"
               [label]="'Max Connections' | translate"
               [tooltip]="tooltips.maxconn | translate"
               type="number"
             ></ix-input>
+
             <ix-combobox
               formControlName="user"
               [label]="'User' | translate"
               [tooltip]="tooltips.user | translate"
               [provider]="userProvider"
             ></ix-combobox>
+
             <ix-combobox
               formControlName="group"
               [label]="'Group' | translate"
               [tooltip]="tooltips.group | translate"
               [provider]="groupProvider"
             ></ix-combobox>
+
             <ix-chips
               formControlName="hostsallow"
               [label]="'Hosts Allow' | translate"
               [tooltip]="tooltips.hostsallow | translate"
             ></ix-chips>
+
             <ix-chips
               formControlName="hostsdeny"
               [label]="'Hosts Deny' | translate"
@@ -83,9 +92,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

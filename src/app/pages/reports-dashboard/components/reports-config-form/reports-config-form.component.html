@@ -1,27 +1,35 @@
-<ix-modal-header [title]="'Reports Config' | translate" [loading]="isFormLoading"></ix-modal-header>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<ix-modal-header
+  [title]="'Reports Config' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
     <ix-slide-toggle
       formControlName="cpu_in_percentage"
       [label]="'Report CPU usage in percent' | translate"
       [tooltip]="tooltips.cpu_in_percentage | translate"
     ></ix-slide-toggle>
+
     <ix-slide-toggle
       formControlName="graphite_separateinstances"
       [label]="'Graphite Separate Instances' | translate"
       [tooltip]="tooltips.graphite_separateinstances | translate"
     ></ix-slide-toggle>
+
     <ix-input
       formControlName="graphite"
       [label]="'Remote Graphite Server Hostname' | translate"
       [tooltip]="tooltips.graphite | translate"
     ></ix-input>
+
     <ix-input
       formControlName="graph_age"
       type="number"
       [label]="'Graph Age in Months' | translate"
       [tooltip]="tooltips.graph_age | translate"
     ></ix-input>
+
     <ix-input
       formControlName="graph_points"
       type="number"
@@ -34,14 +42,14 @@
     <button
       mat-button
       type="submit"
-      [disabled]="form.invalid || isFormLoading"
       color="primary"
-    >{{ 'Save' | translate }}</button>
+      [disabled]="form.invalid || isFormLoading"
+    >
+      {{ 'Save' | translate }}
+    </button>
 
-    <button
-      mat-button
-      type="button"
-      (click)="onReset()"
-    >{{ 'Reset to Defaults' | translate }}</button>
+    <button mat-button type="button" (click)="onReset()">
+      {{ 'Reset to Defaults' | translate }}
+    </button>
   </div>
 </form>
