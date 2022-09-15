@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Register Default Gateway' | translate }}</h1>
 
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
     <ix-fieldset>
       <ix-input
@@ -13,16 +13,12 @@
   </div>
 
   <div mat-dialog-actions>
-    <button
-      mat-button
-      type="button"
-      [matDialogClose]="false"
-    >{{ 'Cancel' | translate }}</button>
-    <button
-      mat-button
-      type="submit"
-      color="primary"
-      [disabled]="form.invalid"
-    >{{ 'Register' | translate }}</button>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Register' | translate }}
+    </button>
   </div>
 </form>

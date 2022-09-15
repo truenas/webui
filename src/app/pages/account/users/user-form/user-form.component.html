@@ -1,5 +1,6 @@
 <ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset [title]="'Identification' | translate">
     <div fxLayout="row" fxLayoutGap="16px">
       <div fxFlex="50%">
@@ -9,6 +10,7 @@
           [tooltip]="tooltips.full_name | translate"
           [required]="true"
         ></ix-input>
+
         <ix-input
           formControlName="username"
           [label]="'Username' | translate"
@@ -16,31 +18,35 @@
           [hint]="getUsernameHint()"
           [required]="true"
         ></ix-input>
+
         <ix-input
           formControlName="email"
           [label]="'Email' | translate"
           [tooltip]="tooltips.email | translate"
         ></ix-input>
       </div>
+
       <div fxFlex="50%">
         <ix-slide-toggle
           formControlName="password_disabled"
           [label]="'Disable Password' | translate"
           [tooltip]="tooltips.password_disabled | translate"
         ></ix-slide-toggle>
+
         <ix-input
           formControlName="password"
+          type="password"
           [label]="'Password' | translate"
           [tooltip]="(isNew ? tooltips.password : tooltips.password_edit) | translate"
           [required]="isNew"
-          type="password"
         ></ix-input>
+
         <ix-input
           formControlName="password_conf"
+          type="password"
           [label]="'Confirm Password' | translate"
           [tooltip]="!isNew ? (tooltips.password_conf_edit | translate) : null"
           [required]="isNew"
-          type="password"
         ></ix-input>
       </div>
     </div>
@@ -53,17 +59,19 @@
       <div fxFlex="50%">
         <ix-input
           formControlName="uid"
+          type="number"
           [label]="'UID' | translate"
           [tooltip]="tooltips.uid | translate"
           [required]="true"
-          type="number"
         ></ix-input>
+
         <ix-slide-toggle
           formControlName="group_create"
           [label]="'Create New Primary Group' | translate"
           [tooltip]="tooltips.group_create | translate"
         ></ix-slide-toggle>
       </div>
+
       <div fxFlex="50%">
         <ix-select
           formControlName="groups"
@@ -72,6 +80,7 @@
           [options]="groupOptions$"
           [multiple]="true"
         ></ix-select>
+
         <ix-combobox
           formControlName="group"
           [label]="'Primary Group' | translate"
@@ -93,6 +102,7 @@
           [tooltip]="tooltips.home | translate"
           [nodeProvider]="treeNodeProvider"
         ></ix-explorer>
+
         <ix-permissions
           formControlName="home_mode"
           [label]="'Home Directory Permissions' | translate"
@@ -100,6 +110,7 @@
         ></ix-permissions>
       </ix-fieldset>
     </div>
+
     <div fxFlex="50%">
       <ix-fieldset [title]="'Authentication' | translate">
         <ix-textarea
@@ -107,22 +118,26 @@
           [label]="'SSH Public Key' | translate"
           [tooltip]="tooltips.sshpubkey | translate"
         ></ix-textarea>
+
         <ix-combobox
           formControlName="shell"
           [label]="'Shell' | translate"
           [tooltip]="tooltips.shell | translate"
           [provider]="shellProvider"
         ></ix-combobox>
+
         <ix-checkbox
           formControlName="locked"
           [label]="'Lock User' | translate"
           [tooltip]="tooltips.locked | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="sudo"
           [label]="'Permit Sudo' | translate"
           [tooltip]="tooltips.sudo | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="smb"
           [label]="'Samba Authentication' | translate"
@@ -136,14 +151,18 @@
     <button
       mat-button
       type="submit"
-      [disabled]="form.invalid || isFormLoading"
       color="primary"
-    >{{ 'Save' | translate }}</button>
+      [disabled]="form.invalid || isFormLoading"
+    >
+      {{ 'Save' | translate }}
+    </button>
     <button
       *ngIf="!isNew"
       mat-button
       type="button"
       (click)="onDownloadSshPublicKey()"
-    >{{ 'Download SSH Public Key' | translate }}</button>
+    >
+      {{ 'Download SSH Public Key' | translate }}
+    </button>
   </div>
 </form>

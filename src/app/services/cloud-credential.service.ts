@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { WebSocketService } from './ws.service';
@@ -22,7 +22,7 @@ export class CloudCredentialService {
   }
 
   getCloudsyncCredentials(): Promise<CloudsyncCredential[]> {
-    return this.ws.call('cloudsync.credentials.query').toPromise();
+    return lastValueFrom(this.ws.call('cloudsync.credentials.query'));
   }
 
   getByte(data: string): number {

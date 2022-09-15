@@ -9,34 +9,40 @@
   <table [class.disabled]="isDisabled">
     <tr>
       <td></td>
-      <td><span class="header-label">{{"Read" | translate}}</span></td>
-      <td><span class="header-label">{{"Write" | translate}}</span></td>
-      <td><span class="header-label">{{"Execute" | translate}}</span></td>
+      <td>
+        <span class="header-label">{{ 'Read' | translate }}</span>
+      </td>
+      <td>
+        <span class="header-label">{{ 'Write' | translate }}</span>
+      </td>
+      <td>
+        <span class="header-label">{{ 'Execute' | translate }}</span>
+      </td>
     </tr>
     <tr>
       <td>
-        <span class="header-label">{{"User" | translate}}</span>
+        <span class="header-label">{{ 'User' | translate }}</span>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="ownerRead"
           (change)="toggleOwnerRead()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="ownerWrite"
           (change)="toggleOwnerWrite()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="ownerExec"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
@@ -44,28 +50,28 @@
     </tr>
     <tr>
       <td>
-        <span class="header-label">{{"Group" | translate}}</span>
+        <span class="header-label">{{ 'Group' | translate }}</span>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="groupRead"
           (change)="toggleGroupRead()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="groupWrite"
           (change)="toggleGroupWrite()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="groupExec"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
@@ -73,28 +79,28 @@
     </tr>
     <tr *ngIf="!hideOthersPermissions">
       <td>
-        <span class="header-label">{{"Other" | translate}}</span>
+        <span class="header-label">{{ 'Other' | translate }}</span>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="otherRead"
           (change)="toggleOtherRead()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="otherWrite"
           (change)="toggleOtherWrite()"
         ></mat-checkbox>
       </td>
       <td>
         <mat-checkbox
-          [disabled]="isDisabled"
           color="primary"
+          [disabled]="isDisabled"
           [checked]="otherExec"
           (change)="toggleOtherExec()"
         ></mat-checkbox>

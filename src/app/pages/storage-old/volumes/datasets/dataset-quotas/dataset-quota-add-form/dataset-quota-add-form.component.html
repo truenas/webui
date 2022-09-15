@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Set Quotas' | translate">
         <ix-input
           formControlName="data_quota"
@@ -10,6 +11,7 @@
           [format]="formatter.memorySizeFormatting"
           [parse]="formatter.memorySizeParsing"
         ></ix-input>
+
         <ix-input
           formControlName="obj_quota"
           [label]="objectQuotaLabel | translate"
@@ -49,7 +51,9 @@
           mat-button
           color="primary"
           [disabled]="form.invalid || isLoading"
-        >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

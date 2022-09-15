@@ -2,4 +2,10 @@
   <span [innerHTML]="label"></span>
   <span *ngIf="required" class="required">*</span>
 </label>
-<ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
+
+<ix-tooltip
+  *ngIf="tooltip"
+  class="tooltip"
+  [header]="label"
+  [message]="tooltip"
+></ix-tooltip>

@@ -292,21 +292,21 @@ export class ChartFormComponent implements OnDestroy {
     }
 
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(this.onSuccess);
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
   }
 
-  onFailure = (failedJob: Job<null, unknown[]>): void => {
+  onFailure(failedJob: Job<null, unknown[]>): void {
     if (failedJob.exc_info && failedJob.exc_info.extra) {
       new EntityUtils().handleWsError(this, failedJob);
     } else {
       this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
     }
-  };
+  }
 
-  onSuccess = (): void => {
+  onSuccess(): void {
     this.dialogService.closeAllDialogs();
     this.slideInService.close();
-  };
+  }
 }

@@ -1,7 +1,11 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <mat-progress-bar
+      *ngIf="isFormLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'NetBIOS' | translate">
         <ix-input
           formControlName="netbiosname"
@@ -9,6 +13,7 @@
           [tooltip]="tooltips.netbiosname | translate"
           [required]="true"
         ></ix-input>
+
         <ix-input
           formControlName="netbiosname_b"
           [label]="'NetBIOS Name (TrueNAS Controller 2)' | translate"
@@ -16,26 +21,31 @@
           [required]="true"
           [hidden]="!hasSecondController"
         ></ix-input>
+
         <ix-chips
           formControlName="netbiosalias"
           [label]="'NetBIOS Alias' | translate"
           [tooltip]="tooltips.netbiosalias | translate"
         ></ix-chips>
+
         <ix-input
           formControlName="workgroup"
           [label]="'Workgroup' | translate"
           [tooltip]="tooltips.workgroup | translate"
         ></ix-input>
+
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
           [tooltip]="tooltips.description | translate"
         ></ix-input>
+
         <ix-checkbox
           formControlName="enable_smb1"
           [label]="'Enable SMB1 support' | translate"
           [tooltip]="tooltips.enable_smb1 | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="ntlmv1_auth"
           [label]="'NTLMv1 Auth' | translate"
@@ -50,49 +60,58 @@
           [tooltip]="tooltips.unixcharset | translate"
           [options]="unixCharsetOptions$"
         ></ix-select>
+
         <ix-select
           formControlName="loglevel"
           [label]="'Log Level' | translate"
           [tooltip]="tooltips.loglevel | translate"
           [options]="logLevelOptions$"
         ></ix-select>
+
         <ix-checkbox
           formControlName="syslog"
           [label]="'Use Syslog Only' | translate"
           [tooltip]="tooltips.syslog | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="localmaster"
           [label]="'Local Master' | translate"
           [tooltip]="tooltips.localmaster | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="aapl_extensions"
           [label]="'Enable Apple SMB2/3 Protocol Extensions' | translate"
           [tooltip]="tooltips.aapl_extensions | translate"
         ></ix-checkbox>
+
         <ix-combobox
           formControlName="admin_group"
           [label]="'Administrators Group' | translate"
           [tooltip]="tooltips.admin_group"
           [provider]="adminGroupProvider"
         ></ix-combobox>
+
         <ix-select
           formControlName="guest"
           [label]="'Guest Account' | translate"
           [tooltip]="tooltips.guest | translate"
           [options]="guestAccountOptions$"
         ></ix-select>
+
         <ix-input
           formControlName="filemask"
           [label]="'File Mask' | translate"
           [tooltip]="tooltips.filemask | translate"
         ></ix-input>
+
         <ix-input
           formControlName="dirmask"
           [label]="'Directory Mask' | translate"
           [tooltip]="tooltips.dirmask | translate"
         ></ix-input>
+
         <ix-select
           formControlName="bindip"
           [label]="'Bind IP Addresses' | translate"
@@ -100,6 +119,7 @@
           [options]="bindIpAddressOptions$"
           [multiple]="true"
         ></ix-select>
+
         <ix-textarea
           formControlName="smb_options"
           [label]="'Auxiliary Parameters' | translate"
@@ -111,19 +131,23 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          (click)="onCancel()"
-        >{{ 'Cancel' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          (click)="onAdvancedSettingsToggled()"
-        >{{ isBasicMode ? ('Advanced Settings' | translate) : ('Basic Settings' | translate) }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="onCancel()">
+          {{ 'Cancel' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="onAdvancedSettingsToggled()">
+          {{
+            isBasicMode
+              ? ('Advanced Settings' | translate)
+              : ('Basic Settings' | translate)
+          }}
+        </button>
       </div>
     </form>
   </mat-card-content>

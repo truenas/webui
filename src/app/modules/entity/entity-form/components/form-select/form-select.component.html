@@ -1,10 +1,10 @@
 <div
-  id="{{ config.name }}"
   class="form-element dynamic-field form-select {{ config.inlineLabel ? 'inline-label' : 'not' }}"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
   [hidden]="config.isHidden"
+  [attr.id]="config.name"
 >
   <div class="label-container" *ngIf="config.placeholder || config.tooltip">
     <ng-container *ngIf="config.inlineLabel">
@@ -20,11 +20,9 @@
       [message]="config.tooltip"
     ></ix-tooltip>
 
-    <a
-      *ngIf="config.linkText"
-      (click)="linkClicked()"
-      class="link"
-    >{{ config.linkText | translate }}<mat-icon style="font-size: x-small;">open_in_new</mat-icon>
+    <a *ngIf="config.linkText" (click)="linkClicked()" class="link">
+      {{ config.linkText | translate }}
+      <mat-icon style="font-size: x-small">open_in_new</mat-icon>
     </a>
   </div>
 
@@ -32,30 +30,35 @@
     <div class="label half-width">{{ config.inlineLabel }}</div>
   </ng-container>
   <mat-form-field
-    [ngClass]="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
     value="fromFormField"
     #field
+    [ngClass]="{
+      'full-width': !config.inlineLabel,
+      'half-width': config.inlineLabel
+    }"
   >
     <mat-spinner
+      *ngIf="config.isLoading"
       diameter="40"
       class="form-select-spinner"
       id="{{ config.name }}_form-select-spinner"
-      *ngIf="config.isLoading"
     >
     </mat-spinner>
     <mat-select
       #selectTrigger
+      ix-auto
+      ix-auto-type="select"
+      ix-auto-identifier="{{ config.placeholder }}"
       [value]="formValue"
       [formControlName]="config.name"
       [multiple]="config.multiple"
       [required]="config.required"
       (selectionChange)="onChangeOption($event)"
-      ix-auto
-      ix-auto-type="select"
-      ix-auto-identifier="{{ config.placeholder }}"
     >
       <mat-select-trigger *ngIf="config.multiple">
-        <span *ngFor="let value of customTriggerValue; last as isLast"> {{ value }}{{ isLast ? '' : ', ' }} </span>
+        <span *ngFor="let value of customTriggerValue; last as isLast">
+          {{ value }}{{ isLast ? '' : ', ' }}
+        </span>
       </mat-select-trigger>
 
       <ng-container *ngIf="formReady">
@@ -63,15 +66,19 @@
           <!-- if disabled -->
           <mat-option
             *ngIf="option.disable && !option.hiddenFromDisplay"
-            [value]="option.value"
             disabled
             ix-auto
             ix-auto-type="option"
             ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
+            [value]="option.value"
           >
             <span *ngIf="config.multiple">
-              <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              <mat-icon *ngIf="selectStates[i]" class="fn-checked">
+                check_circle
+              </mat-icon>
+              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">
+                remove
+              </mat-icon>
             </span>
             {{ option.label | translate }}
           </mat-option>
@@ -79,16 +86,20 @@
           <!-- else -->
           <mat-option
             *ngIf="!option?.disable"
-            [value]="option.value"
-            (click)="onToggleSelect(option)"
             ix-auto
             ix-auto-type="option"
             ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
+            [value]="option.value"
             [class.text-wrap]="config.enableTextWrapForOptions"
+            (click)="onToggleSelect(option)"
           >
             <span *ngIf="config.multiple">
-              <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              <mat-icon *ngIf="selectStates[i]" class="fn-checked">
+                check_circle
+              </mat-icon>
+              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">
+                remove
+              </mat-icon>
             </span>
             {{ option.label | translate }}
 
@@ -118,8 +129,17 @@
   </mat-form-field>
 
   <div class="margin-for-error">
-    <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
-    <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+    <ix-form-errors
+      [control]="group.controls[config.name]"
+      [config]="config"
+    ></ix-form-errors>
+
+    <mat-error *ngIf="config['hasErrors']">
+      <div [innerHTML]="config['errors']"></div>
+    </mat-error>
+
+    <mat-error *ngIf="config.warnings">
+      <div [innerHTML]="config.warnings | translate"></div>
+    </mat-error>
   </div>
 </div>

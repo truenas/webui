@@ -401,7 +401,7 @@ export class SmbFormComponent implements OnInit {
             }
             return this.restartCifsServiceIfNecessary();
           }),
-          switchMap(this.shouldRedirectToAclEdit),
+          switchMap(() => this.shouldRedirectToAclEdit()),
           untilDestroyed(this),
         ).subscribe({
           next: (redirect) => {
@@ -479,7 +479,7 @@ export class SmbFormComponent implements OnInit {
     );
   };
 
-  shouldRedirectToAclEdit = (): Observable<boolean> => {
+  shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     return this.ws.call('filesystem.stat', [sharePath]).pipe(
@@ -489,7 +489,7 @@ export class SmbFormComponent implements OnInit {
         );
       }),
     );
-  };
+  }
 
   startAndEnableService = (cifsService: Service): Observable<boolean> => {
     const dialog = this.dialog.confirm({

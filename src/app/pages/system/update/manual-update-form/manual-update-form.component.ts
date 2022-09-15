@@ -184,13 +184,13 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.prefailure.pipe(
       tap(() => dialogRef.close(false)),
       untilDestroyed(this),
-    ).subscribe(this.handleUpdatePreFailure);
+    ).subscribe((error) => this.handleUpdatePreFailure(error));
 
     dialogRef.componentInstance.failure.pipe(
       take(1),
       tap(() => dialogRef.close(false)),
       untilDestroyed(this),
-    ).subscribe(this.handleUpdateFailure);
+    ).subscribe((error) => this.handleUpdateFailure(error));
 
     dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading$.next(false);
@@ -243,14 +243,14 @@ export class ManualUpdateFormComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe(() => {});
   }
 
-  handleUpdatePreFailure = (prefailure: HttpErrorResponse): void => {
+  handleUpdatePreFailure(prefailure: HttpErrorResponse): void {
     this.isFormLoading$.next(false);
     this.dialogService.errorReport(
       helptext.manual_update_error_dialog.message,
       `${prefailure.status.toString()} ${prefailure.statusText}`,
     );
     this.cdr.markForCheck();
-  };
+  }
 
   handleUpdateFailure = (failure: Job<null, unknown[]>): void => {
     this.isFormLoading$.next(false);

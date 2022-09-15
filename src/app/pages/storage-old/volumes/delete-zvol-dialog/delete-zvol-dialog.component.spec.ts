@@ -139,9 +139,9 @@ describe('DeleteZvolDialogComponent', () => {
 
   it('asks to force delete a zvol if it cannot be deleted because device is busy', async () => {
     const mockWebsocket = spectator.inject(MockWebsocketService);
-    jest.spyOn(mockWebsocket, 'call').mockImplementationOnce(() => throwError({
+    jest.spyOn(mockWebsocket, 'call').mockImplementationOnce(() => throwError(() => ({
       reason: 'Device busy',
-    }));
+    })));
 
     await confirmAndDelete();
 

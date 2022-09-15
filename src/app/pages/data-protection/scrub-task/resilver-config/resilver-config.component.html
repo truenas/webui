@@ -1,25 +1,32 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <mat-progress-bar
+      *ngIf="isFormLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Resilver Priority' | translate">
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
           [tooltip]="tooltips.enabled"
         ></ix-checkbox>
+
         <ix-select
           formControlName="begin"
           [label]="'Begin' | translate"
           [options]="timeOptions$"
           [tooltip]="tooltips.begin"
         ></ix-select>
+
         <ix-select
           formControlName="end"
           [label]="'End' | translate"
           [options]="timeOptions$"
           [tooltip]="tooltips.end"
         ></ix-select>
+
         <ix-select
           formControlName="weekday"
           [label]="'Days of the Week' | translate"
@@ -36,7 +43,9 @@
           type="submit"
           [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>
