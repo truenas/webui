@@ -44,7 +44,7 @@ export class DiskWipeDialogComponent {
     private translate: TranslateService,
     private matDialog: MatDialog,
     private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedZpool: string },
+    @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
 
   get title(): string {

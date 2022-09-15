@@ -155,7 +155,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           this.matDialog.open(DiskWipeDialogComponent, {
             data: {
               diskName: disk.name,
-              exportedZpool: unusedDisk?.exported_zpool,
+              exportedPool: unusedDisk?.exported_zpool,
             },
           });
         },
