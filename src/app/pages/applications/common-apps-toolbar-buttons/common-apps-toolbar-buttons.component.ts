@@ -48,6 +48,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
     dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.core.emit({ name: 'RefreshAppsTab' });
+      this.loadIfPoolSet();
     });
   }
 
@@ -77,6 +78,7 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close();
         this.core.emit({ name: 'RefreshAppsTab' });
+        this.loadIfPoolSet();
         this.snackbar.success(
           this.translate.instant('Pool has been unset.'),
         );

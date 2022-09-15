@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -19,12 +20,12 @@ import network_interfaces_helptext from 'app/helptext/network/interfaces/interfa
 import helptext from 'app/helptext/topbar';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
-import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { ResilverProgressDialogComponent } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+import {
+  ResilverProgressDialogComponent,
+} from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -55,7 +56,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: PoolScan;
   updateDialog: MatDialogRef<UpdateDialogComponent>;
   haStatusText: string;
   haDisabledReasons: FailoverDisabledReason[] = [];
@@ -165,17 +165,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'Resilvering',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
-      if (evt.data.scan.state === PoolScanState.Finished) {
-        this.showResilvering = false;
-        this.resilveringDetails = null;
-      } else {
-        this.resilveringDetails = evt.data;
-        this.showResilvering = true;
+    this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((resilverJob) => {
+      const scan = resilverJob.fields.scan;
+      if (scan.function !== PoolScanFunction.Resilver) {
+        return;
       }
+
+      this.showResilvering = scan.state !== PoolScanState.Finished;
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
