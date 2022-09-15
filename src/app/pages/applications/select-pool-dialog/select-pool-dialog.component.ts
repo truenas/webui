@@ -120,7 +120,7 @@ export class SelectPoolDialogComponent implements OnInit {
       if (!confirmed) {
         return;
       }
-      this.router.navigate(['storage', 'manager']);
+      this.router.navigate(['/storage', 'create']);
     });
   }
 }
