@@ -120,6 +120,10 @@ export class SmbFormComponent implements OnInit {
     );
   }
 
+  get timemachineQuota(): boolean {
+    return this.form.get('timemachine_quota').value;
+  }
+
   form = this.formBuilder.group({
     path: ['', Validators.required],
     name: ['', [Validators.required]],
@@ -135,7 +139,7 @@ export class SmbFormComponent implements OnInit {
     hostsdeny: [[] as string[]],
     home: [false],
     timemachine: [false],
-    timemachine_quota: [0],
+    timemachine_quota: [],
     afp: [false],
     shadowcopy: [false],
     recyclebin: [false],
@@ -380,14 +384,17 @@ export class SmbFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
     const smbShare = this.form.value;
+
+    if (!this.timemachineQuota) {
+      delete smbShare.timemachine_quota;
+    }
+
     let request$: Observable<unknown>;
+
     if (this.isNew) {
       request$ = this.ws.call('sharing.smb.create', [smbShare]);
     } else {
-      request$ = this.ws.call('sharing.smb.update', [
-        this.existingSmbShare.id,
-        smbShare,
-      ]);
+      request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
     request$.pipe(
