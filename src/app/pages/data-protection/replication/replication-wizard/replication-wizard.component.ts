@@ -1591,8 +1591,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     if (payload[0].datasets.length > 0) {
-      this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
+      this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe({
+        next: (res) => {
           this.eligibleSnapshots = res.eligible;
           const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
           let spanClass = 'info-paragraph';
@@ -1606,12 +1606,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           }
           this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${res.eligible}</b> snapshots found. ${snapexpl}</span>`;
         },
-        (err) => {
+        error: (err) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
           new EntityUtils().handleWsError(this, err);
         },
-      );
+      });
     } else {
       this.eligibleSnapshots = 0;
       this.snapshotsCountField.paraText = '';

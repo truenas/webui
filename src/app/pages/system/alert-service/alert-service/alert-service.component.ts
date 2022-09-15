@@ -121,8 +121,8 @@ export class AlertServiceComponent implements OnInit {
 
     this.ws.call('alertservice.test', [payload])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (wasAlertSent) => {
+      .subscribe({
+        next: (wasAlertSent) => {
           this.isLoading = false;
           this.cdr.detectChanges();
           if (wasAlertSent) {
@@ -134,12 +134,12 @@ export class AlertServiceComponent implements OnInit {
             );
           }
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.errorHandler.handleWsFormError(error, this.commonForm);
         },
-      );
+      });
   }
 
   onSubmit(): void {
@@ -154,18 +154,19 @@ export class AlertServiceComponent implements OnInit {
 
     request$
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.snackbar.success(this.translate.instant('Alert service saved'));
           this.slideInService.close();
-        }, (error) => {
+        },
+        error: (error) => {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.errorHandler.handleWsFormError(error, this.commonForm);
         },
-      );
+      });
   }
 
   private generatePayload(): AlertServiceEdit {

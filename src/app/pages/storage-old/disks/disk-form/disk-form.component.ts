@@ -109,18 +109,18 @@ export class DiskFormComponent implements OnInit {
     this.isLoading = true;
     this.ws.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
           this.dialogService.info(helptext.dialog_title, helptext.dialog_msg_save_success, true);
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

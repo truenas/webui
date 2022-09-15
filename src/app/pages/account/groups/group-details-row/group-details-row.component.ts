@@ -63,14 +63,14 @@ export class GroupDetailsRowComponent {
       },
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);
-        this.ws.call('group.delete', [group.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-          () => {
+        this.ws.call('group.delete', [group.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
             this.update.emit();
           },
-          (err) => {
+          error: (err) => {
             new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
           },
-        );
+        });
       },
     };
 

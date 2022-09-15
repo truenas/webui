@@ -138,8 +138,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       this.storageService.filesystemStat(this.datasetPath),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        ([datasets, stat]) => {
+      .subscribe({
+        next: ([datasets, stat]) => {
           this.isLoading = false;
           this.aclType = datasets[0].acltype.value as AclType;
           this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
@@ -149,11 +149,11 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
             group: stat.group,
           });
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialog);
         },
-      );
+      });
   }
 
   private preparePayload(): DatasetPermissionsUpdate {

@@ -892,13 +892,16 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   customSubmit(data: any): void {
     this.loader.open();
-    this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.modalService.refreshTable();
-      this.modalService.closeSlideIn();
-    }, (error) => {
-      this.loader.close();
-      this.dialogService.errorReport(this.translate.instant('Error creating CA.'), error.reason, error.trace.formatted);
+    this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loader.close();
+        this.modalService.refreshTable();
+        this.modalService.closeSlideIn();
+      },
+      error: (error) => {
+        this.loader.close();
+        this.dialogService.errorReport(this.translate.instant('Error creating CA.'), error.reason, error.trace.formatted);
+      },
     });
   }
 }

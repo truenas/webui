@@ -529,17 +529,20 @@ export class ZvolWizardComponent implements WizardConfiguration {
     this.loader.open();
 
     if (this.isNew) {
-      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
-        this.loader.close();
-        this.modalService.closeSlideIn().then((closed) => {
-          if (closed) {
-            this.parent = null;
-          }
-        });
-        this.modalService.refreshTable();
-      }, (error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this.entityWizard, error);
+      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          this.modalService.closeSlideIn().then((closed) => {
+            if (closed) {
+              this.parent = null;
+            }
+          });
+          this.modalService.refreshTable();
+        },
+        error: (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this.entityWizard, error);
+        },
       });
     }
   }

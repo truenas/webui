@@ -143,12 +143,15 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.Group, filter],
-    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
-      this.isLoading = false;
-      this.createDataSource(quotas);
-      this.checkInvalidQuotas();
-    }, () => {
-      this.emptyOrErrorConfig = this.errorConfig;
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (quotas: DatasetQuota[]) => {
+        this.isLoading = false;
+        this.createDataSource(quotas);
+        this.checkInvalidQuotas();
+      },
+      error: () => {
+        this.emptyOrErrorConfig = this.errorConfig;
+      },
     });
   }
 
@@ -209,12 +212,15 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       this.loader.open();
       this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
         .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          this.loader.close();
-          this.getGroupQuotas();
-        }, (err) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+        .subscribe({
+          next: () => {
+            this.loader.close();
+            this.getGroupQuotas();
+          },
+          error: (err) => {
+            this.loader.close();
+            new EntityUtils().handleWsError(this, err, this.dialogService);
+          },
         });
     });
   }
@@ -240,16 +246,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([row])])),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.loader.close();
         this.getGroupQuotas();
       },
-      (err) => {
+      error: (err) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 
   filter(query: string): void {

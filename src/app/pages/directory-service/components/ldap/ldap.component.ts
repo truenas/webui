@@ -94,20 +94,20 @@ export class LdapComponent implements OnInit {
 
   onRebuildCachePressed(): void {
     this.isLoading = true;
-    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.isLoading = false;
         this.snackbar.success(
           this.translate.instant(helptext.ldap_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         new EntityUtils().handleWsError(this, error, this.dialogService);
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   onManageCertificatesClicked(): void {
@@ -121,8 +121,8 @@ export class LdapComponent implements OnInit {
 
     this.ws.call('ldap.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (update) => {
+      .subscribe({
+        next: (update) => {
           this.isLoading = false;
           this.cdr.markForCheck();
 
@@ -132,12 +132,12 @@ export class LdapComponent implements OnInit {
             this.slideInService.close();
           }
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private loadFormValues(): void {
@@ -145,18 +145,18 @@ export class LdapComponent implements OnInit {
 
     this.ws.call('ldap.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue(config);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private showStartingJob(jobId: number): void {

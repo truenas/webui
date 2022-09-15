@@ -83,14 +83,14 @@ export class InitiatorFormComponent implements OnInit {
   ) { }
 
   getConnectedInitiators(): void {
-    this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+    this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
         this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err);
       },
-    );
+    });
   }
 
   ngOnInit(): void {
@@ -118,8 +118,8 @@ export class InitiatorFormComponent implements OnInit {
     if (this.pk) {
       this.ws.call(this.queryCall, this.customFilter as [[QueryFilter<IscsiInitiatorGroup>]])
         .pipe(untilDestroyed(this))
-        .subscribe(
-          (res) => {
+        .subscribe({
+          next: (res) => {
             for (const i in res[0]) {
               const ctrl = this.formGroup.controls[i];
               if (ctrl) {
@@ -134,10 +134,10 @@ export class InitiatorFormComponent implements OnInit {
               this.formGroup.controls['all'].setValue(true);
             }
           },
-          (err) => {
+          error: (err) => {
             new EntityUtils().handleWsError(this, err);
           },
-        );
+        });
     }
   }
 
@@ -158,16 +158,16 @@ export class InitiatorFormComponent implements OnInit {
     }
 
     this.loader.open();
-    submitFunction.pipe(untilDestroyed(this)).subscribe(
-      () => {
+    submitFunction.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
-      (err) => {
+      error: (err) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, err);
       },
-    );
+    });
   }
 
   goBack(): void {

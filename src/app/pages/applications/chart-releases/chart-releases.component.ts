@@ -569,37 +569,40 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
-      this.appLoaderService.close();
-      this.podDetails = { ...consoleChoices };
-      this.podList = Object.keys(this.podDetails);
-      if (this.podList.length === 0) {
-        this.dialogService.confirm({
-          title: helptext.podConsole.nopod.title,
-          message: helptext.podConsole.nopod.message,
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Close'),
-          hideCancel: true,
-        });
-      } else {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
+      next: (consoleChoices) => {
+        this.appLoaderService.close();
+        this.podDetails = { ...consoleChoices };
+        this.podList = Object.keys(this.podDetails);
+        if (this.podList.length === 0) {
+          this.dialogService.confirm({
+            title: helptext.podConsole.nopod.title,
+            message: helptext.podConsole.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: this.translate.instant('Close'),
+            hideCancel: true,
+          });
+        } else {
         // Pods
-        const podsConfig = this.choosePod.fieldConfig[0] as FormSelectConfig;
-        podsConfig.value = this.podList[0];
-        podsConfig.options = this.podList.map((item) => ({
-          label: item,
-          value: item,
-        }));
-        // Containers
-        const containerConfig = this.choosePod.fieldConfig[1] as FormSelectConfig;
-        containerConfig.value = this.podDetails[this.podList[0]][0];
-        containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
-          label: item,
-          value: item,
-        }));
-        this.dialogService.dialogForm(this.choosePod, true);
-      }
-    }, () => {
-      this.appLoaderService.close();
+          const podsConfig = this.choosePod.fieldConfig[0] as FormSelectConfig;
+          podsConfig.value = this.podList[0];
+          podsConfig.options = this.podList.map((item) => ({
+            label: item,
+            value: item,
+          }));
+          // Containers
+          const containerConfig = this.choosePod.fieldConfig[1] as FormSelectConfig;
+          containerConfig.value = this.podDetails[this.podList[0]][0];
+          containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
+            label: item,
+            value: item,
+          }));
+          this.dialogService.dialogForm(this.choosePod, true);
+        }
+      },
+      error: () => {
+        this.appLoaderService.close();
+      },
     });
   }
 
@@ -608,37 +611,40 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
-      this.appLoaderService.close();
-      this.podDetails = { ...consoleChoices };
-      this.podList = Object.keys(this.podDetails);
-      if (this.podList.length === 0) {
-        this.dialogService.confirm({
-          title: helptext.podConsole.nopod.title,
-          message: helptext.podConsole.nopod.message,
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Close'),
-          hideCancel: true,
-        });
-      } else {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
+      next: (consoleChoices) => {
+        this.appLoaderService.close();
+        this.podDetails = { ...consoleChoices };
+        this.podList = Object.keys(this.podDetails);
+        if (this.podList.length === 0) {
+          this.dialogService.confirm({
+            title: helptext.podConsole.nopod.title,
+            message: helptext.podConsole.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: this.translate.instant('Close'),
+            hideCancel: true,
+          });
+        } else {
         // Pods
-        const podsConfig = this.choosePodForLogs.fieldConfig[0] as FormSelectConfig;
-        podsConfig.value = this.podList[0];
-        podsConfig.options = this.podList.map((item) => ({
-          label: item,
-          value: item,
-        }));
-        // Containers
-        const containerConfig = this.choosePodForLogs.fieldConfig[1] as FormSelectConfig;
-        containerConfig.value = this.podDetails[this.podList[0]][0];
-        containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
-          label: item,
-          value: item,
-        }));
-        this.dialogService.dialogForm(this.choosePodForLogs, true);
-      }
-    }, () => {
-      this.appLoaderService.close();
+          const podsConfig = this.choosePodForLogs.fieldConfig[0] as FormSelectConfig;
+          podsConfig.value = this.podList[0];
+          podsConfig.options = this.podList.map((item) => ({
+            label: item,
+            value: item,
+          }));
+          // Containers
+          const containerConfig = this.choosePodForLogs.fieldConfig[1] as FormSelectConfig;
+          containerConfig.value = this.podDetails[this.podList[0]][0];
+          containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
+            label: item,
+            value: item,
+          }));
+          this.dialogService.dialogForm(this.choosePodForLogs, true);
+        }
+      },
+      error: () => {
+        this.appLoaderService.close();
+      },
     });
   }
 

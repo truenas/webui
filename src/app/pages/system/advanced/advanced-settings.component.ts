@@ -96,8 +96,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                 filter((run) => !!run),
                 switchMap(() => this.ws.call('cronjob.run', [row.id])),
               )
-              .pipe(untilDestroyed(this)).subscribe(
-                () => {
+              .pipe(untilDestroyed(this)).subscribe({
+                next: () => {
                   const message = row.enabled
                     ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
                     : this.translate.instant('This job will not run again until it is enabled.');
@@ -107,8 +107,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                     true,
                   );
                 },
-                (err: WebsocketError) => new EntityUtils().handleError(this, err),
-              );
+                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              });
           },
         },
       ];

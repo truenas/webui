@@ -80,14 +80,14 @@ export class UserDetailsRowComponent {
       },
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);
-        this.ws.call('user.delete', [user.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-          () => {
+        this.ws.call('user.delete', [user.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
             this.update.emit();
           },
-          (err) => {
+          error: (err) => {
             new EntityUtils().handleWsError(this, err, this.dialogService);
           },
-        );
+        });
       },
     };
 

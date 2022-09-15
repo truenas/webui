@@ -106,17 +106,17 @@ export class SmbAclComponent {
     const acl = this.getAclEntriesFromForm();
     this.ws.call('smb.sharesec.update', [this.shareAclId, { share_acl: acl }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.slideIn.close();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private requireSidOrDomainAndName = this.validatorService.withMessage(
@@ -137,8 +137,8 @@ export class SmbAclComponent {
     this.isLoading = true;
     this.ws.call('smb.sharesec.query', [[['share_name', '=', shareName]]])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (shareAcls) => {
+      .subscribe({
+        next: (shareAcls) => {
           this.shareAclId = shareAcls[0].id;
           shareAcls[0].share_acl.forEach((ace, i) => {
             this.addAce();
@@ -153,11 +153,11 @@ export class SmbAclComponent {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        () => {
+        error: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private getAclEntriesFromForm(): SmbSharesecAceUpdate[] {

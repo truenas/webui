@@ -131,13 +131,15 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('boot.scrub')),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.close();
-      this.snackbar.success(this.translate.instant('Scrub Started'));
-    },
-    (websocketError: WebsocketError) => {
-      new EntityUtils().handleWsError(this, websocketError, this.dialog);
-      this.loader.close();
+    ).subscribe({
+      next: () => {
+        this.loader.close();
+        this.snackbar.success(this.translate.instant('Scrub Started'));
+      },
+      error: (websocketError: WebsocketError) => {
+        new EntityUtils().handleWsError(this, websocketError, this.dialog);
+        this.loader.close();
+      },
     });
   }
 
@@ -185,16 +187,17 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
     this.ws.call('bootenv.query').pipe(
       untilDestroyed(this),
-    ).subscribe(
-      (bootenvs) => {
+    ).subscribe({
+      next: (bootenvs) => {
         this.createDataSource(bootenvs);
-      }, () => {
+      },
+      error: () => {
         this.createDataSource();
         this.isLoading$.next(false);
         this.isError$.next(true);
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   doActivate(bootenv: Bootenv): void {
@@ -207,14 +210,16 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('bootenv.activate', [bootenv.id])),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.getBootEnvironments();
-      this.loader.close();
-      this.checkboxColumn.clearSelection();
-    },
-    (error: WebsocketError) => {
-      new EntityUtils().handleWsError(this, error, this.dialog);
-      this.loader.close();
+    ).subscribe({
+      next: () => {
+        this.getBootEnvironments();
+        this.loader.close();
+        this.checkboxColumn.clearSelection();
+      },
+      error: (error: WebsocketError) => {
+        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.loader.close();
+      },
     });
   }
 
@@ -229,14 +234,16 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
           untilDestroyed(this),
         ).subscribe(
-          () => {
-            this.getBootEnvironments();
-            this.loader.close();
-            this.checkboxColumn.clearSelection();
-          },
-          (error: WebsocketError) => {
-            new EntityUtils().handleWsError(this, error, this.dialog);
-            this.loader.close();
+          {
+            next: () => {
+              this.getBootEnvironments();
+              this.loader.close();
+              this.checkboxColumn.clearSelection();
+            },
+            error: (error: WebsocketError) => {
+              new EntityUtils().handleWsError(this, error, this.dialog);
+              this.loader.close();
+            },
           },
         );
       });
@@ -250,14 +257,16 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         tap(() => this.loader.open()),
         switchMap(() => this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }])),
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.getBootEnvironments();
-        this.loader.close();
-        this.checkboxColumn.selection.clear();
-      },
-      (error: WebsocketError) => {
-        new EntityUtils().handleWsError(this, error, this.dialog);
-        this.loader.close();
+      ).subscribe({
+        next: () => {
+          this.getBootEnvironments();
+          this.loader.close();
+          this.checkboxColumn.selection.clear();
+        },
+        error: (error: WebsocketError) => {
+          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.loader.close();
+        },
       });
     }
   }

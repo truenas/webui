@@ -4,9 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  noop, of, Subject, Subscription,
-} from 'rxjs';
+import { of, Subject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -258,15 +256,14 @@ export class ChartFormComponent implements OnDestroy {
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
     const deleteField$: Subject<string> = new Subject();
-    deleteField$.pipe(untilDestroyed(this)).subscribe(
-      (fieldTobeDeleted) => {
+    deleteField$.pipe(untilDestroyed(this)).subscribe({
+      next: (fieldTobeDeleted) => {
         this.deleteFieldFromData(data, fieldTobeDeleted);
       },
-      noop,
-      () => {
+      complete: () => {
         this.saveData(data);
       },
-    );
+    });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
     deleteField$.complete();

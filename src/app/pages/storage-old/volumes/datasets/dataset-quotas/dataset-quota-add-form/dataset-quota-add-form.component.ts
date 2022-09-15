@@ -104,18 +104,18 @@ export class DatasetQuotaAddFormComponent {
     const quotas = this.getQuotas();
     this.ws.call('pool.dataset.set_quota', [this.datasetId, quotas])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.slideIn.close();
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 
   private getQuotas(): SetDatasetQuota[] {

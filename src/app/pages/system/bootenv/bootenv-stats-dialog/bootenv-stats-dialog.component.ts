@@ -58,15 +58,18 @@ export class BootenvStatsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('boot.set_scrub_interval', [interval])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.dialogRef.close();
-        this.snackbar.success(
-          this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
-        );
-      }, (error) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.dialogRef.close();
+          this.snackbar.success(
+            this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
+          );
+        },
+        error: (error) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -80,16 +83,16 @@ export class BootenvStatsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('boot.get_state')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (state) => {
+      .subscribe({
+        next: (state) => {
           this.state = state;
           this.loader.close();
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.dialogRef.close();
           (new EntityUtils()).errorReport(error, this.dialog);
         },
-      );
+      });
   }
 }

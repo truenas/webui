@@ -52,18 +52,18 @@ export class SystemDatasetPoolComponent implements OnInit {
 
     this.ws.call('systemdataset.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.isFormLoading = false;
           this.form.patchValue(config);
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onSubmit(): void {

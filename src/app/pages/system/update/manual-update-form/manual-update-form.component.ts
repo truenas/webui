@@ -116,16 +116,16 @@ export class ManualUpdateFormComponent implements OnInit {
 
   checkForUpdateRunning(): void {
     this.ws.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
-      .pipe(untilDestroyed(this)).subscribe(
-        (jobs) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (jobs) => {
           if (jobs && jobs.length > 0) {
             this.showRunningUpdate(jobs[0].id);
           }
         },
-        (err) => {
+        error: (err) => {
           console.error(err);
         },
-      );
+      });
   }
 
   showRunningUpdate(jobId: number): void {

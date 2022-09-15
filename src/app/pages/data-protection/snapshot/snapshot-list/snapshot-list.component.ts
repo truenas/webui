@@ -118,17 +118,17 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     row.enabled = !row.enabled;
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (task) => {
+      .subscribe({
+        next: (task) => {
           if (!task) {
             row.enabled = !row.enabled;
           }
         },
-        (err) => {
+        error: (err) => {
           row.enabled = !row.enabled;
           new EntityUtils().handleWsError(this, err, this.dialogService);
         },
-      );
+      });
   }
 
   doAdd(): void {

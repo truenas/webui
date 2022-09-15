@@ -47,18 +47,21 @@ export class CatalogAddFormComponent {
     this.isFormLoading = true;
     this.ws.call('catalog.create', [values as CatalogCreate])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.dialogService.info(
-          helptext.catalogForm.dialog.title,
-          helptext.catalogForm.dialog.message,
-        );
-        this.slideInService.close();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.dialogService.info(
+            helptext.catalogForm.dialog.title,
+            helptext.catalogForm.dialog.message,
+          );
+          this.slideInService.close();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
       });
   }
 }

@@ -51,33 +51,33 @@ export class ManageDiskSedDialogComponent implements OnInit {
 
     this.ws.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (disks) => {
+      .subscribe({
+        next: (disks) => {
           this.loader.close();
           this.disk = disks[0];
           this.passwordControl.setValue(this.disk.passwd);
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.dialogService.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   setNewPassword(password: string): void {
     this.loader.open();
     this.ws.call('disk.update', [this.disk.identifier, { passwd: password }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.loader.close();
           this.dialogRef.close(true);
           this.snackbar.success(this.translate.instant('SED password updated.'));
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.dialogService.errorReportMiddleware(error);
         },
-      );
+      });
   }
 }

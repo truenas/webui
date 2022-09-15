@@ -23,7 +23,7 @@ export class SystemGeneralService {
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
-  updateIsDone$ = new Subject();
+  updateIsDone$ = new Subject<void>();
 
   get isEnterprise(): boolean {
     return this.getProductType() === ProductType.ScaleEnterprise;

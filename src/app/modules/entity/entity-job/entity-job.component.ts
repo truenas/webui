@@ -145,8 +145,8 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   submit(): void {
     let subscriptionId: string = null;
     this.ws.job(this.method, this.args)
-      .pipe(untilDestroyed(this)).subscribe(
-        (job) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (job) => {
           this.job = job;
           this.showAbortButton = this.job.abortable;
           if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
@@ -159,10 +159,10 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.aborted.emit(this.job);
           }
         },
-        () => {
+        error: () => {
           this.failure.emit(this.job);
         },
-        () => {
+        complete: () => {
           if (this.job.state === JobState.Success) {
             this.success.emit(this.job);
           } else if (this.job.state === JobState.Failed) {
@@ -173,46 +173,50 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
           }
         },
-      );
+      });
   }
 
   wspostWithProgressUpdates(path: string, options: unknown): void {
     this.showHttpProgress = true;
     this.http.post(path, options, { reportProgress: true, observe: 'events' })
       .pipe(untilDestroyed(this))
-      .subscribe((event: HttpEvent<Job>) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          const eventTotal = event.total ? event.total : 0;
-          let progress = 0;
-          if (eventTotal !== 0) {
-            progress = Math.round(event.loaded / eventTotal * 100);
+      .subscribe({
+        next: (event: HttpEvent<Job>) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const eventTotal = event.total ? event.total : 0;
+            let progress = 0;
+            if (eventTotal !== 0) {
+              progress = Math.round(event.loaded / eventTotal * 100);
+            }
+            this.uploadPercentage = progress;
+          } else if (event.type === HttpEventType.Response) {
+            this.showHttpProgress = false;
+            this.job = event.body;
+            if (this.job && (this.job as any).job_id) {
+              this.jobId = (this.job as any).job_id;
+            }
+            this.wsshow();
           }
-          this.uploadPercentage = progress;
-        } else if (event.type === HttpEventType.Response) {
+        },
+        error: (err: HttpErrorResponse) => {
           this.showHttpProgress = false;
-          this.job = event.body;
-          if (this.job && (this.job as any).job_id) {
-            this.jobId = (this.job as any).job_id;
-          }
-          this.wsshow();
-        }
-      },
-      (err: HttpErrorResponse) => {
-        this.showHttpProgress = false;
-        this.prefailure.emit(err);
+          this.prefailure.emit(err);
+        },
       });
   }
 
   wspost(path: string, options: unknown): void {
-    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe((res: Job) => {
-      this.job = res;
-      if (this.job && (this.job as any).job_id) {
-        this.jobId = (this.job as any).job_id;
-      }
-      this.wsshow();
-    },
-    (err: HttpErrorResponse) => {
-      this.prefailure.emit(err);
+    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe({
+      next: (res: Job) => {
+        this.job = res;
+        if (this.job && (this.job as any).job_id) {
+          this.jobId = (this.job as any).job_id;
+        }
+        this.wsshow();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.prefailure.emit(err);
+      },
     });
   }
 

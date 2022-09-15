@@ -107,16 +107,20 @@ export class DeviceListComponent implements EntityTableConfig {
           customSubmit: (entityDialog: EntityDialogComponent) => {
             const value = entityDialog.formValue;
             this.loader.open();
-            this.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
-              entityDialog.dialogRef.close(true);
-              this.loader.close();
-              this.entityList.getData();
-            }, () => {
-              this.loader.close();
-            }, () => {
-              entityDialog.dialogRef.close(true);
-              this.loader.close();
-              this.entityList.getData();
+            this.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe({
+              next: () => {
+                entityDialog.dialogRef.close(true);
+                this.loader.close();
+                this.entityList.getData();
+              },
+              error: () => {
+                this.loader.close();
+              },
+              complete: () => {
+                entityDialog.dialogRef.close(true);
+                this.loader.close();
+                this.entityList.getData();
+              },
             });
           },
         };
