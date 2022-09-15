@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 
 export default {
   dialogFormFields: {
@@ -72,6 +73,6 @@ export default {
     err_title: T('Error Extending Vdev'),
     err_msg: T('Could not extend Vdev.'),
   },
-  exported_pool_warning: T('This disk is part of the exported pool {pool}. Adding this disk to a new or existing pool will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.'),
+  exported_pool_warning: helptext.exported_pool_warning,
 
 };
