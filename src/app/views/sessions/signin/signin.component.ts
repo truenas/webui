@@ -103,7 +103,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sysGeneralService.getProductType$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((productType) => {
+    ).subscribe((productType: ProductType) => {
       this.productType = productType;
       this.isLogoReady = true;
       if ([ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType)) {
