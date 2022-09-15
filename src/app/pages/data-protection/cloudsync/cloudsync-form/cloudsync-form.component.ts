@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
 import { Overwrite } from 'utility-types';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -552,7 +552,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (bucket === '') {
       delete data.attributes.bucket;
     }
-    return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
+    return lastValueFrom(this.ws.call('cloudsync.list_directory', [data])).then(
       (listing) => {
         this.setBucketError(null);
 

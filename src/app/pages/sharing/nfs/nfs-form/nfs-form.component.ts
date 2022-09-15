@@ -194,11 +194,11 @@ export class NfsFormComponent implements OnInit {
             );
 
             return undefined;
-          },
+          }),
           catchError((error) => {
             this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
             return EMPTY;
-          })),
+          }),
         );
       }),
     );

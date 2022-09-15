@@ -52,7 +52,7 @@ export class SystemGeneralService {
     return this.window.localStorage.getItem('product_type') as ProductType;
   }
 
-  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: true, bufferSize: 1 }));
 
   /**
    * OAuth token for JIRA access

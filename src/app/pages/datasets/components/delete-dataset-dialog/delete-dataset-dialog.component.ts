@@ -63,7 +63,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
             return this.askToForceDelete();
           }
 
-          return throwError(error);
+          return throwError(() => error);
         }),
         untilDestroyed(this),
       )

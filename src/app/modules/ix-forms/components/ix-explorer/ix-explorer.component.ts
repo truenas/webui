@@ -12,7 +12,7 @@ import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
 } from '@circlon/angular-tree-component';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { lastValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -67,7 +67,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    getChildren: (node) => this.loadChildren(node).toPromise(),
+    getChildren: (node) => lastValueFrom(this.loadChildren(node)),
     actionMapping: this.actionMapping,
     useTriState: false,
   };

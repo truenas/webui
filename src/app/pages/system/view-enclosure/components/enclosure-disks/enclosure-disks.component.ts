@@ -630,7 +630,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   destroyEnclosure(): void {
     if (!this.enclosure) { return; }
-    this.enclosure.events.unsubscribe();
     this.container.removeChild(this.enclosure.container);
     this.enclosure.destroy();
   }
