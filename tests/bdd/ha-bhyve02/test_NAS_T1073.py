@@ -92,6 +92,7 @@ def when_twofactor_authentication_is_enabled_logout(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="option__Log Out"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Log Out"]').click()
     assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 60, '//p[contains(.,"HA is enabled")]')
 
 
 @then('verify the Two-Factor Authentication code entry is visible')
@@ -125,7 +126,6 @@ def enable_twofactor_authentication_with_api(driver):
 def on_the_dashboard_click_on_failover_initiate_failover(driver):
     """on the dashboard, click on failover INITIATE FAILOVER."""
     # scroll up the side menu
-    assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
@@ -143,5 +143,5 @@ def wait_on_the_login_to_appear(driver):
     """wait on the login to appear."""
     assert wait_on_element(driver, 60, '//input[@placeholder="Username"]')
     # wait for HA is enabled to avoid UI refreshing
-    # driver.refresh()
+    driver.refresh()
     assert wait_on_element(driver, 60, '//p[contains(.,"HA is enabled")]')
