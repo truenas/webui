@@ -167,6 +167,10 @@ export class InterfaceFormComponent implements OnInit {
     return this.form.get('lag_protocol').value === LinkAggregationProtocol.LoadBalance;
   }
 
+  get canHaveAliases(): boolean {
+    return !this.form.value.ipv4_dhcp && !this.form.value.ipv6_auto;
+  }
+
   ngOnInit(): void {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
@@ -217,8 +221,8 @@ export class InterfaceFormComponent implements OnInit {
       ? this.ws.call('interface.create', [params])
       : this.ws.call('interface.update', [this.existingInterface.id, params]);
 
-    request$.pipe(untilDestroyed(this)).subscribe(
-      () => {
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
         this.slideInService.close();
@@ -234,12 +238,12 @@ export class InterfaceFormComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);
       },
-    );
+    });
   }
 
   private validateNameOnTypeChange(): void {

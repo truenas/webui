@@ -202,19 +202,25 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
                 stripacl: true,
               },
             }]);
-            dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
-              dialogRef.close();
-              this.router.navigate(['/datasets']);
-            }, (error) => {
-              dialogRef.close();
-              this.dialog.errorReportMiddleware(error);
+            dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
+              next: () => {
+                dialogRef.close();
+                this.router.navigate(['/datasets']);
+              },
+              error: (error) => {
+                dialogRef.close();
+                this.dialog.errorReportMiddleware(error);
+              },
             });
-            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((error) => {
-              dialogRef.close();
-              this.dialog.errorReportMiddleware(error);
-            }, (error) => {
-              dialogRef.close();
-              this.dialog.errorReportMiddleware(error);
+            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
+              next: (error) => {
+                dialogRef.close();
+                this.dialog.errorReportMiddleware(error);
+              },
+              error: (error) => {
+                dialogRef.close();
+                this.dialog.errorReportMiddleware(error);
+              },
             });
             dialogRef.componentInstance.submit();
           },
@@ -249,19 +255,25 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
 
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
-        dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
-          dialogRef.close();
-          this.router.navigate(['/datasets']);
-        }, (error) => {
-          dialogRef.close();
-          this.dialog.errorReportMiddleware(error);
+        dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
+          next: () => {
+            dialogRef.close();
+            this.router.navigate(['/datasets']);
+          },
+          error: (error) => {
+            dialogRef.close();
+            this.dialog.errorReportMiddleware(error);
+          },
         });
-        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((error) => {
-          dialogRef.close();
-          this.dialog.errorReportMiddleware(error);
-        }, (error) => {
-          dialogRef.close();
-          this.dialog.errorReportMiddleware(error);
+        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
+          next: (error) => {
+            dialogRef.close();
+            this.dialog.errorReportMiddleware(error);
+          },
+          error: (error) => {
+            dialogRef.close();
+            this.dialog.errorReportMiddleware(error);
+          },
         });
         dialogRef.componentInstance.submit();
       }),

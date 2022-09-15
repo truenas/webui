@@ -71,16 +71,19 @@ export class NtpServerListComponent implements OnInit {
 
     this.ws.call('system.ntpserver.query').pipe(
       untilDestroyed(this),
-    ).subscribe((servers) => {
-      this.loading = false;
-      this.error = false;
-      this.createDataSource(servers);
-      this.cdr.markForCheck();
-    }, () => {
-      this.loading = false;
-      this.error = true;
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (servers) => {
+        this.loading = false;
+        this.error = false;
+        this.createDataSource(servers);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.loading = false;
+        this.error = true;
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 

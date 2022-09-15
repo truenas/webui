@@ -60,12 +60,15 @@ export class DashboardPoolComponent implements OnInit {
         // TODO: https://ixsystems.atlassian.net/browse/NAS-117846
         delay(this.index * 400),
         untilDestroyed(this),
-      ).subscribe((disks) => {
-        this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
-        this.areDisksLoading = false;
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      ).subscribe({
+        next: (disks) => {
+          this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
+          this.areDisksLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
   }
 

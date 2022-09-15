@@ -127,7 +127,7 @@ export class TableComponent<Row = Record<string, any>> implements OnInit, AfterV
   entityEmptyLarge = false;
   enableViewMore = false;
   loaderOpen = false;
-  afterGetDataHook$ = new Subject();
+  afterGetDataHook$ = new Subject<void>();
 
   idProp = 'id';
 

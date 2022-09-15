@@ -54,38 +54,42 @@ export class AlertConfigFormComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('alert.list_categories').pipe(untilDestroyed(this)).subscribe((categories) => {
-      this.categories = categories;
+    this.ws.call('alert.list_categories').pipe(untilDestroyed(this)).subscribe({
+      next: (categories) => {
+        this.categories = categories;
 
-      if (categories.length) {
-        this.selectedCategory = categories[0];
-      }
+        if (categories.length) {
+          this.selectedCategory = categories[0];
+        }
 
-      categories.forEach((category) => {
-        category.classes.forEach((cls) => {
-          this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
-            level: cls.level,
-            policy: AlertPolicy.Immediately,
-          }));
-          this.form.controls[cls.id].controls.level.defaultValue = cls.level;
-          this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
+        categories.forEach((category) => {
+          category.classes.forEach((cls) => {
+            this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
+              level: cls.level,
+              policy: AlertPolicy.Immediately,
+            }));
+            this.form.controls[cls.id].controls.level.defaultValue = cls.level;
+            this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
+          });
         });
-      });
 
-      this.ws.call('alertclasses.config').pipe(untilDestroyed(this)).subscribe(
-        (alertConfig) => {
-          this.form.patchValue(alertConfig.classes);
-          this.isFormLoading = false;
-        },
-        (error: WebsocketError) => {
-          this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialog);
-        },
-      );
-    },
-    (error: WebsocketError) => {
-      this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, error, this.dialog);
+        this.ws.call('alertclasses.config').pipe(untilDestroyed(this)).subscribe(
+          {
+            next: (alertConfig) => {
+              this.form.patchValue(alertConfig.classes);
+              this.isFormLoading = false;
+            },
+            error: (error: WebsocketError) => {
+              this.isFormLoading = false;
+              new EntityUtils().handleWsError(this, error, this.dialog);
+            },
+          },
+        );
+      },
+      error: (error: WebsocketError) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(this, error, this.dialog);
+      },
     });
   }
 
@@ -111,8 +115,7 @@ export class AlertConfigFormComponent implements OnInit {
     }
 
     this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe(
-      () => this.snackbarService.success(this.translate.instant('Settings saved')),
-      (error) => new EntityUtils().handleWsError(this, error, this.dialog),
+      { next: () => this.snackbarService.success(this.translate.instant('Settings saved')), error: (error) => new EntityUtils().handleWsError(this, error, this.dialog) },
     ).add(() => this.isFormLoading = false);
   }
 }

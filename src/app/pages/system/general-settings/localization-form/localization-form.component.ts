@@ -140,17 +140,20 @@ export class LocalizationFormComponent {
     }));
     delete body.date_format;
     delete body.time_format;
-    this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.store$.dispatch(generalConfigUpdated());
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-      this.setTimeOptions(body.timezone);
-      this.langService.setLanguage(body.language);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-      this.cdr.markForCheck();
+    this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.store$.dispatch(generalConfigUpdated());
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+        this.setTimeOptions(body.timezone);
+        this.langService.setLanguage(body.language);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

@@ -106,12 +106,15 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.store$.pipe(
       select(selectUsers),
       untilDestroyed(this),
-    ).subscribe((users) => {
-      this.createDataSource(users);
-      this.cdr.markForCheck();
-    }, () => {
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (users) => {
+        this.createDataSource(users);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 

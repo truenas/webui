@@ -106,81 +106,87 @@ export class ExportDisconnectModalComponent implements OnInit {
       restart_services: this.restartServices,
     }]);
     entityJobRef.componentInstance.submit();
-    entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.dialogRef.close(true);
+    entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.dialogRef.close(true);
 
-      const message = this.translate.instant('Successfully exported/disconnected {pool}.', { pool: this.pool.name });
-      const destroyed = this.translate.instant('All data on that pool was destroyed.');
-      if (!value.destroy) {
-        this.dialogService.info(helptext.exportDisconnect, message);
-      } else {
-        this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed);
-      }
-      entityJobRef.close(true);
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+        const message = this.translate.instant('Successfully exported/disconnected {pool}.', { pool: this.pool.name });
+        const destroyed = this.translate.instant('All data on that pool was destroyed.');
+        if (!value.destroy) {
+          this.dialogService.info(helptext.exportDisconnect, message);
+        } else {
+          this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed);
+        }
+        entityJobRef.close(true);
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
-    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failureData) => {
-      let conditionalErrMessage = '';
-      if (failureData.error) {
-        if (failureData.exc_info.extra && failureData.exc_info.extra['code'] === 'control_services') {
-          this.dialogRef.close(true);
-          this.isFormLoading = false;
-          entityJobRef.close(true);
-          const stopMsg = this.translate.instant(helptext.exportMessages.onfail.stopServices);
-          const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
-          const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
-          // TODO: Extract to template
-          if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
-            conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-            (failureData.exc_info.extra.stop_services as string[]).forEach((item) => {
-              conditionalErrMessage += `<br>- ${item}`;
-            });
-          }
-          if ((failureData.exc_info.extra.restart_services as string[]).length > 0) {
+    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
+      next: (failureData) => {
+        let conditionalErrMessage = '';
+        if (failureData.error) {
+          if (failureData.exc_info.extra && failureData.exc_info.extra['code'] === 'control_services') {
+            this.dialogRef.close(true);
+            this.isFormLoading = false;
+            entityJobRef.close(true);
+            const stopMsg = this.translate.instant(helptext.exportMessages.onfail.stopServices);
+            const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
+            const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
+            // TODO: Extract to template
             if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
-              conditionalErrMessage += '<br><br>';
+              conditionalErrMessage += '<div class="warning-box">' + stopMsg;
+              (failureData.exc_info.extra.stop_services as string[]).forEach((item) => {
+                conditionalErrMessage += `<br>- ${item}`;
+              });
             }
-            conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-            (failureData.exc_info.extra.restart_services as string[]).forEach((item) => {
-              conditionalErrMessage += `<br>- ${item}`;
+            if ((failureData.exc_info.extra.restart_services as string[]).length > 0) {
+              if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
+                conditionalErrMessage += '<br><br>';
+              }
+              conditionalErrMessage += '<div class="warning-box">' + restartMsg;
+              (failureData.exc_info.extra.restart_services as string[]).forEach((item) => {
+                conditionalErrMessage += `<br>- ${item}`;
+              });
+            }
+            conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
+            this.dialogService.confirm({
+              title: helptext.exportError,
+              message: conditionalErrMessage,
+              hideCheckBox: true,
+              buttonMsg: helptext.exportMessages.onfail.continueAction,
+            }).pipe(
+              filter(Boolean),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.restartServices = true;
+              this.startExportDisconnectJob();
             });
+          } else if ((failureData as any).extra && (failureData as any).extra['code'] === 'unstoppable_processes') {
+            this.dialogRef.close(true);
+            this.isFormLoading = false;
+            const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
+            conditionalErrMessage = msg + (failureData as any).extra['processes'];
+            entityJobRef.close(true);
+            this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
+          } else {
+            this.dialogRef.close(true);
+            this.isFormLoading = false;
+            entityJobRef.close(true);
+            this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
           }
-          conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
-          this.dialogService.confirm({
-            title: helptext.exportError,
-            message: conditionalErrMessage,
-            hideCheckBox: true,
-            buttonMsg: helptext.exportMessages.onfail.continueAction,
-          }).pipe(
-            filter(Boolean),
-            untilDestroyed(this),
-          ).subscribe(() => {
-            this.restartServices = true;
-            this.startExportDisconnectJob();
-          });
-        } else if ((failureData as any).extra && (failureData as any).extra['code'] === 'unstoppable_processes') {
-          this.dialogRef.close(true);
-          this.isFormLoading = false;
-          const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-          conditionalErrMessage = msg + (failureData as any).extra['processes'];
-          entityJobRef.close(true);
-          this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
         } else {
           this.dialogRef.close(true);
           this.isFormLoading = false;
           entityJobRef.close(true);
           this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
         }
-      } else {
-        this.dialogRef.close(true);
-        this.isFormLoading = false;
-        entityJobRef.close(true);
-        this.dialogService.errorReport(helptext.exportError, failureData.error, failureData.exception);
-      }
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 
@@ -193,16 +199,18 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.ws.call('systemdataset.config'),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(([attachments, processes, systemConfig]) => {
-        this.loader.close();
-        this.attachments = attachments;
-        this.processes = processes;
-        this.systemConfig = systemConfig;
-        this.prepareForm();
-      },
-      (error) => {
-        this.loader.close();
-        this.dialogService.errorReport(helptext.exportError, error.reason, error.trace.formatted);
+      .subscribe({
+        next: ([attachments, processes, systemConfig]) => {
+          this.loader.close();
+          this.attachments = attachments;
+          this.processes = processes;
+          this.systemConfig = systemConfig;
+          this.prepareForm();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogService.errorReport(helptext.exportError, error.reason, error.trace.formatted);
+        },
       });
   }
 

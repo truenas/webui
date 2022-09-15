@@ -79,17 +79,18 @@ export class ReportsConfigFormComponent implements OnInit {
       }),
       switchMap((body) => this.ws.call('reporting.update', [body])),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideIn.close();
-      }, (error) => {
+      },
+      error: (error) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   private confirmClearReportHistoryIfNeeded(): Observable<ReportingConfigUpdate> {

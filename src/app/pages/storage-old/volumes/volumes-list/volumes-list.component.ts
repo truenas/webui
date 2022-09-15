@@ -227,87 +227,90 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     combineLatest([
       this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]),
       this.ws.call(this.datasetQuery, this.datasetQueryOptions),
-    ]).pipe(untilDestroyed(this)).subscribe(([pools, datasets]) => {
-      this.zfsPoolRows = pools.map((originalPool) => {
-        const pool = { ...originalPool } as VolumesListPool;
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([pools, datasets]) => {
+        this.zfsPoolRows = pools.map((originalPool) => {
+          const pool = { ...originalPool } as VolumesListPool;
 
-        /* Filter out system datasets */
-        const pChild = datasets.find((set) => set.name === pool.name);
-        if (pChild) {
-          pChild.children = pChild.children.filter((child: Dataset) => {
-            return !child.name.includes(`${pool.name}/.system`) && !child.name.includes(`${pool.name}/.glusterfs`);
-          });
-        }
-        pool.children = pChild ? [{ ...pChild } as unknown as VolumesListDataset] : [];
+          /* Filter out system datasets */
+          const pChild = datasets.find((set) => set.name === pool.name);
+          if (pChild) {
+            pChild.children = pChild.children.filter((child: Dataset) => {
+              return !child.name.includes(`${pool.name}/.system`) && !child.name.includes(`${pool.name}/.glusterfs`);
+            });
+          }
+          pool.children = pChild ? [{ ...pChild } as unknown as VolumesListDataset] : [];
 
-        pool.volumesListTableConfig = new VolumesListTableConfig(
-          this,
-          this.router,
-          String(pool.id),
-          datasets,
-          this.mdDialog,
-          this.ws,
-          this.dialogService,
-          this.loader,
-          this.translate,
-          this.storage,
-          pool,
-        );
-        pool.type = 'zpool';
+          pool.volumesListTableConfig = new VolumesListTableConfig(
+            this,
+            this.router,
+            String(pool.id),
+            datasets,
+            this.mdDialog,
+            this.ws,
+            this.dialogService,
+            this.loader,
+            this.translate,
+            this.storage,
+            pool,
+          );
+          pool.type = 'zpool';
 
-        if (pool.children && pool.children[0]) {
-          try {
-            pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
-            if (pool.children[0].is_encrypted_root) {
-              this.hasEncryptedRoot[pool.name] = true;
-            }
-            pool.children[0].available_parsed = this.storage.convertBytesToHumanReadable(
-              pool.children[0].available.parsed || 0,
-            );
-            pool.children[0].used_parsed = this.storage.convertBytesToHumanReadable(
-              pool.children[0].used.parsed || 0,
-            );
-            pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
-            pool.children[0].has_encrypted_children = false;
-            for (const ds of datasets) {
-              if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
-                pool.children[0].has_encrypted_children = true;
-                break;
+          if (pool.children && pool.children[0]) {
+            try {
+              pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
+              if (pool.children[0].is_encrypted_root) {
+                this.hasEncryptedRoot[pool.name] = true;
               }
+              pool.children[0].available_parsed = this.storage.convertBytesToHumanReadable(
+                pool.children[0].available.parsed || 0,
+              );
+              pool.children[0].used_parsed = this.storage.convertBytesToHumanReadable(
+                pool.children[0].used.parsed || 0,
+              );
+              pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
+              pool.children[0].has_encrypted_children = false;
+              for (const ds of datasets) {
+                if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
+                  pool.children[0].has_encrypted_children = true;
+                  break;
+                }
+              }
+            } catch (error: unknown) {
+              pool.availStr = String(pool.children[0].available.parsed);
+              pool.children[0].available_parsed = 'Unknown';
+              pool.children[0].used_parsed = 'Unknown';
             }
-          } catch (error: unknown) {
-            pool.availStr = String(pool.children[0].available.parsed);
-            pool.children[0].available_parsed = 'Unknown';
-            pool.children[0].used_parsed = 'Unknown';
+
+            try {
+              const usedPercent = pool.children[0].used.parsed
+              / (pool.children[0].used.parsed + pool.children[0].available.parsed);
+              pool.usedStr = `${filesize(pool.children[0].used.parsed, { standard: 'iec' })} (${Math.round(usedPercent * 100)}%)`;
+            } catch (error: unknown) {
+              pool.usedStr = String(pool.children[0].used.parsed);
+            }
           }
 
-          try {
-            const usedPercent = pool.children[0].used.parsed
-              / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-            pool.usedStr = `${filesize(pool.children[0].used.parsed, { standard: 'iec' })} (${Math.round(usedPercent * 100)}%)`;
-          } catch (error: unknown) {
-            pool.usedStr = String(pool.children[0].used.parsed);
-          }
+          return pool;
+        });
+
+        this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
+
+        if (this.zfsPoolRows.length === 1) {
+          this.expanded = true;
         }
 
-        return pool;
-      });
+        this.paintMe = true;
 
-      this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
+        this.showDefaults = true;
+        this.showSpinner = false;
+      },
+      error: (error) => {
+        this.showDefaults = true;
+        this.showSpinner = false;
 
-      if (this.zfsPoolRows.length === 1) {
-        this.expanded = true;
-      }
-
-      this.paintMe = true;
-
-      this.showDefaults = true;
-      this.showSpinner = false;
-    }, (error) => {
-      this.showDefaults = true;
-      this.showSpinner = false;
-
-      this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), error.message, error.stack);
+        this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), error.message, error.stack);
+      },
     });
   }
 

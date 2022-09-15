@@ -42,28 +42,31 @@ export class LicenseComponent {
     this.isFormLoading = true;
 
     const { license } = this.form.value;
-    this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
-      window.localStorage.setItem('upgrading_status', 'upgrading');
-      this.slideInService.close();
-      this.cdr.markForCheck();
-      setTimeout(() => {
-        this.dialogService.confirm({
-          title: helptext.update_license.reload_dialog_title,
-          message: helptext.update_license.reload_dialog_message,
-          hideCheckBox: true,
-          buttonMsg: helptext.update_license.reload_dialog_action,
-          hideCancel: true,
-          disableClose: true,
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          document.location.reload();
-        });
-      }, 200);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
+        window.localStorage.setItem('upgrading_status', 'upgrading');
+        this.slideInService.close();
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.dialogService.confirm({
+            title: helptext.update_license.reload_dialog_title,
+            message: helptext.update_license.reload_dialog_message,
+            hideCheckBox: true,
+            buttonMsg: helptext.update_license.reload_dialog_action,
+            hideCancel: true,
+            disableClose: true,
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            document.location.reload();
+          });
+        }, 200);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

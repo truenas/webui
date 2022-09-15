@@ -153,18 +153,18 @@ export class EmailComponent implements OnInit {
 
     this.ws.call('mail.update', [update])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Email settings updated.'));
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 
   private loadEmailConfig(): void {
@@ -173,8 +173,8 @@ export class EmailComponent implements OnInit {
 
     this.ws.call('mail.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.isLoading = false;
           this.form.patchValue(config);
           if (config.oauth?.client_id) {
@@ -183,12 +183,12 @@ export class EmailComponent implements OnInit {
           }
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error);
         },
-      );
+      });
   }
 
   private sendTestEmail(): void {
