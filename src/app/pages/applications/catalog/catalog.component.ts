@@ -13,18 +13,16 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
 import helptext from 'app/helptext/apps/apps';
-import { ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { CommonAppsToolbarButtonsComponent } from 'app/pages/applications/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
-import { SelectPoolDialogComponent } from 'app/pages/applications/select-pool-dialog/select-pool-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -46,6 +44,8 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
+    commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
 
   catalogApps: CatalogApp[] = [];
   filteredCatalogNames: string[] = [];
@@ -86,7 +86,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCatalogs();
-    this.checkForConfiguredPool();
+    this.loadPoolSet();
 
     this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
@@ -197,14 +197,9 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterApps();
   }
 
-  checkForConfiguredPool(): void {
+  loadPoolSet(): void {
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
-      if (config.pool) {
-        this.selectedPool = config.pool;
-      } else {
-        this.mdDialog.open(SelectPoolDialogComponent);
-        this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: ApplicationTab.AvailableApps });
-      }
+      this.selectedPool = config.pool || '';
     });
   }
 
