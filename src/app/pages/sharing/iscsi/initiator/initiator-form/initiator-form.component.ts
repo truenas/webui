@@ -44,7 +44,7 @@ export class InitiatorFormComponent implements OnInit {
       name: 'initiators',
       placeholder: helptextSharingIscsi.initiator_form_placeholder_initiators,
       tooltip: helptextSharingIscsi.initiator_form_tooltip_initiators,
-      customEventMethod: (parent) => {
+      customEventMethod: (parent: any) => {
         for (const selected of parent.source.selectedOptions.selected) {
           parent.listControl.value.add(selected.value.initiator);
         }

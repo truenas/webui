@@ -104,7 +104,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     return tasks.map((task) => {
       return {
         ...task,
-        ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
+        ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
         task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };
     });
@@ -144,7 +144,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         },
       },
       {
-        actionName: (parentrow as any).description,
+        actionName: 'restore',
         id: 'restore',
         name: 'restore',
         label: this.translate.instant('Restore'),

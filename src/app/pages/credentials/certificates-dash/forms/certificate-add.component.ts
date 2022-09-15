@@ -707,7 +707,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.currentStep = stepper.selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
+  getSummaryValueLabel(fieldConfig: FieldConfig, value: unknown): unknown {
     if (fieldConfig.type === 'select') {
       const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {

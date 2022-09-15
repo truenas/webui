@@ -583,15 +583,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }];
   }
 
-  openvpnDataSourceHelper(res: any[]): any[] {
-    return res.filter((item) => {
-      if (item.service.includes('openvpn_')) {
-        item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
-        return item;
-      }
-
-      return undefined;
-    });
+  openvpnDataSourceHelper(services: Service[]): (Service & { service_label: string })[] {
+    return services
+      .filter((item) => item.service.includes('openvpn_'))
+      .map((item) => ({
+        ...item,
+        service_label: item.service.charAt(8).toUpperCase() + item.service.slice(9),
+      }));
   }
 
   getOpenVpnActions(): AppTableAction[] {
@@ -600,7 +598,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: 'stop',
       matTooltip: this.translate.instant('Stop'),
       onChanging: false,
-      onClick: (row: any) => {
+      onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
         row.onChanging = true;
         this.ws
           .call('service.stop', [row.service, { silent: false }])
@@ -638,7 +636,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       icon: 'play_arrow',
       name: 'start',
       matTooltip: this.translate.instant('Start'),
-      onClick: (row: any) => {
+      onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
         row.onChanging = true;
         this.ws
           .call('service.start', [row.service, { silent: false }])

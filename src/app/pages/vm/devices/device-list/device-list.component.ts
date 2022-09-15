@@ -60,8 +60,8 @@ export class DeviceListComponent implements EntityTableConfig {
     private slideIn: IxSlideInService,
   ) {}
 
-  isActionVisible(actionId: string, row: VmDevice): boolean {
-    return !(actionId === 'delete' && (row as any).id === true);
+  isActionVisible(actionId: string): boolean {
+    return actionId !== 'delete';
   }
 
   getActions(row: VmDevice): EntityTableAction<VmDevice>[] {

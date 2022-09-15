@@ -226,7 +226,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   deleteFieldFromData(
-    data: any,
+    data: ChartFormValues,
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');

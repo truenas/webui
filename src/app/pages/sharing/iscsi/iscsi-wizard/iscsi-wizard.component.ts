@@ -801,7 +801,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   async customSubmit(value: any): Promise<void> {
     this.loader.open();
     let toStop = false;
-    const createdItems: any = {
+    const createdItems: Record<string, number> = {
       zvol: null,
       extent: null,
       auth: null,

@@ -9,9 +9,9 @@ import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { DataProtectionTaskState } from './data-protection-task-state.interface';
 
 export interface ReplicationTask {
@@ -59,7 +59,7 @@ export interface ReplicationTask {
   source_datasets?: string[];
   source_datasets_from: string;
   speed_limit?: number;
-  ssh_credentials?: SshCredentials | number[];
+  ssh_credentials?: KeychainSshCredentials;
   state: DataProtectionTaskState;
   target_dataset: string;
   target_dataset_from: string;
@@ -75,7 +75,7 @@ export interface ReplicationCreate {
   name: string;
   direction: Direction;
   transport: TransportMode;
-  ssh_credentials?: SshCredentials | number[];
+  ssh_credentials?: number;
   netcat_active_side?: NetcatMode;
   netcat_active_side_listen_address?: string;
   netcat_active_side_port_max?: number;
@@ -93,7 +93,7 @@ export interface ReplicationCreate {
   encryption_key?: string;
   encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
-  periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
+  periodic_snapshot_tasks?: number[];
   naming_schema?: string[];
   also_include_naming_schema?: string[];
   name_regex?: string;
