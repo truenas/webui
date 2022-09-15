@@ -137,19 +137,19 @@ export class TableService {
     const params = table.tableConf.getDeleteCallParams ? table.tableConf.getDeleteCallParams(item, id) : [id];
 
     if (!table.tableConf.deleteCallIsJob) {
-      this.ws.call(table.tableConf.deleteCall, params).pipe(untilDestroyed(this)).subscribe(
-        () => {
+      this.ws.call(table.tableConf.deleteCall, params).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
           this.getData(table);
           if (table.tableConf.afterDelete) {
             table.tableConf.afterDelete();
           }
         },
-        (error: WebsocketError) => {
+        error: (error: WebsocketError) => {
           new EntityUtils().handleWsError(this, error, this.dialog);
           this.loader.close();
           table.loaderOpen = false;
         },
-      );
+      });
     } else {
       this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Deleting...') } });
       this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall, params);

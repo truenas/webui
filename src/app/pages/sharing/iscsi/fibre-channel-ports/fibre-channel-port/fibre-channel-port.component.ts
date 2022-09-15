@@ -90,16 +90,18 @@ export class FibreChannelPortComponent implements OnInit {
     private dialogService: DialogService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
-    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      targetField.options = targets.map((target) => {
-        return {
-          label: target.name,
-          value: target.id,
-        };
-      });
-    },
-    (err) => {
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe({
+      next: (targets) => {
+        targetField.options = targets.map((target) => {
+          return {
+            label: target.name,
+            value: target.id,
+          };
+        });
+      },
+      error: (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
     });
   }
 
@@ -144,18 +146,18 @@ export class FibreChannelPortComponent implements OnInit {
       value['target'] = null;
     }
     this.loader.open();
-    this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.dialogService.info(
           this.translate.instant('Updated'),
           this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }),
         );
       },
-      (err) => {
+      error: (err) => {
         this.loader.close();
         this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
       },
-    );
+    });
   }
 }

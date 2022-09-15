@@ -144,13 +144,16 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.User, filter],
-    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
-      this.isLoading = false;
-      this.createDataSource(quotas);
-      this.checkInvalidQuotas();
-    }, (error) => {
-      this.emptyOrErrorConfig = this.errorConfig;
-      this.handleError(error);
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (quotas: DatasetQuota[]) => {
+        this.isLoading = false;
+        this.createDataSource(quotas);
+        this.checkInvalidQuotas();
+      },
+      error: (error) => {
+        this.emptyOrErrorConfig = this.errorConfig;
+        this.handleError(error);
+      },
     });
   }
 
@@ -171,11 +174,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.User, this.invalidFilter],
-    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
-      if (quotas?.length) {
-        this.invalidQuotas = quotas;
-      }
-    }, this.handleError);
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (quotas: DatasetQuota[]) => {
+        if (quotas?.length) {
+          this.invalidQuotas = quotas;
+        }
+      },
+      error: this.handleError,
+    });
   }
 
   toggleDisplay(): void {
@@ -214,12 +220,15 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       this.loader.open();
       this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
         .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          this.loader.close();
-          this.getUserQuotas();
-        }, (error) => {
-          this.loader.close();
-          this.handleError(error);
+        .subscribe({
+          next: () => {
+            this.loader.close();
+            this.getUserQuotas();
+          },
+          error: (error) => {
+            this.loader.close();
+            this.handleError(error);
+          },
         });
     });
   }
@@ -245,16 +254,16 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([row])])),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.loader.close();
         this.getUserQuotas();
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         this.handleError(error);
       },
-    );
+    });
   }
 
   filter(value: string): void {

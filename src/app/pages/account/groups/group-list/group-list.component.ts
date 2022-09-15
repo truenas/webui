@@ -105,12 +105,15 @@ export class GroupListComponent implements OnInit, AfterViewInit {
     this.store$.pipe(
       select(selectGroups),
       untilDestroyed(this),
-    ).subscribe((groups) => {
-      this.createDataSource(groups);
-      this.cdr.markForCheck();
-    }, () => {
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (groups) => {
+        this.createDataSource(groups);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 

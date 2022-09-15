@@ -122,13 +122,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.showSuccessDialog();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -149,13 +152,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('pool.dataset.change_key', [this.data.dataset.id, body])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.showSuccessDialog();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -168,8 +174,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
     this.ws.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (datasets: Dataset[]) => {
+      .subscribe({
+        next: (datasets: Dataset[]) => {
           this.loader.close();
           const pbkdf2iters = datasets[0].pbkdf2iters;
 
@@ -181,11 +187,11 @@ export class EncryptionOptionsDialogComponent implements OnInit {
             pbkdf2iters: Number(pbkdf2iters.rawvalue),
           });
         },
-        (error: WebsocketError) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
           this.dialog.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   private setFormValues(): void {

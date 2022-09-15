@@ -76,12 +76,15 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     this.store.loadApiKeys();
     this.store.apiKeys$.pipe(
       untilDestroyed(this),
-    ).subscribe((apiKeys) => {
-      this.createDataSource(apiKeys);
-      this.cdr.markForCheck();
-    }, () => {
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (apiKeys) => {
+        this.createDataSource(apiKeys);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 

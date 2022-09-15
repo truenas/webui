@@ -108,18 +108,18 @@ export class ServiceFtpComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('ftp.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onToggleAdvancedOptions(): void {
@@ -134,8 +134,8 @@ export class ServiceFtpComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('ftp.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue({
             ...config,
             filemask: invertUmask(config.filemask),
@@ -145,12 +145,12 @@ export class ServiceFtpComponent implements OnInit {
           this.setRootLoginWarning();
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private setRootLoginWarning(): void {

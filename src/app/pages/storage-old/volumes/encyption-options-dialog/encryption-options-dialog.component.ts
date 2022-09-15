@@ -107,13 +107,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('pool.dataset.inherit_parent_encryption_properties', [this.data.row.id])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.showSuccessDialog();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -134,13 +137,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('pool.dataset.change_key', [this.data.row.id, body])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.showSuccessDialog();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 

@@ -83,8 +83,8 @@ export class SelectPoolDialogComponent implements OnInit {
       this.appService.getPoolList(),
     ]))
       .pipe(untilDestroyed(this))
-      .subscribe(
-        ([config, pools]) => {
+      .subscribe({
+        next: ([config, pools]) => {
           this.loader.close();
           this.selectedPool = config.pool;
           this.form.patchValue({
@@ -101,12 +101,12 @@ export class SelectPoolDialogComponent implements OnInit {
             this.showNoPoolsWarning();
           }
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.dialogRef.close(false);
         },
-      );
+      });
   }
 
   private showNoPoolsWarning(): void {
@@ -120,7 +120,7 @@ export class SelectPoolDialogComponent implements OnInit {
       if (!confirmed) {
         return;
       }
-      this.router.navigate(['storage', 'manager']);
+      this.router.navigate(['/storage', 'create']);
     });
   }
 }

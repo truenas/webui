@@ -138,18 +138,18 @@ export class NfsFormComponent implements OnInit {
         switchMap(() => this.checkIfNfsServiceIsEnabled()),
         untilDestroyed(this),
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private checkForNfsSecurityField(): void {
@@ -194,11 +194,11 @@ export class NfsFormComponent implements OnInit {
             );
 
             return undefined;
-          },
+          }),
           catchError((error) => {
             this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
             return EMPTY;
-          })),
+          }),
         );
       }),
     );

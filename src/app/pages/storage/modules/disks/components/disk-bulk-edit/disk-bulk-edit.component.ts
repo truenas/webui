@@ -119,8 +119,8 @@ export class DiskBulkEditComponent {
       { n: req.length });
     this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])
-      .pipe(untilDestroyed(this)).subscribe(
-        (job) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (job) => {
           if (job.state !== JobState.Success) {
             return;
           }
@@ -140,11 +140,11 @@ export class DiskBulkEditComponent {
             this.snackbarService.success(successText);
           }
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

@@ -4,7 +4,7 @@
       {{ 'S.M.A.R.T. Info for {disk}' | translate: { disk: topologyDisk.disk } }}
     </h3>
 
-    <!-- TODO: Hide for disks with no SMART support after https://jira.ixsystems.com/browse/NAS-116969 -->
+    <!-- TODO: Hide for disks with no SMART support after https://ixsystems.atlassian.net/browse/NAS-116969 -->
     <button mat-button (click)="onManualTest()">
       {{ 'Run Manual Test' | translate }}
     </button>

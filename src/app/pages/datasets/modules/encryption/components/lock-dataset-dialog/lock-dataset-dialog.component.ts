@@ -40,18 +40,24 @@ export class LockDatasetDialogComponent {
     );
     jobDialogRef.componentInstance.setCall('pool.dataset.lock', [this.dataset.id, { force_umount: force }]);
     jobDialogRef.componentInstance.submit();
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      jobDialogRef.close();
-      this.dialogRef.close(true);
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        jobDialogRef.close();
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
-    jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
-      jobDialogRef.close();
-      this.dialogRef.close(true);
-      this.dialogService.errorReport(job.error, job.state, job.exception);
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
+      next: (job) => {
+        jobDialogRef.close();
+        this.dialogRef.close(true);
+        this.dialogService.errorReport(job.error, job.state, job.exception);
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 }

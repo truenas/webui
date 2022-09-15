@@ -1122,10 +1122,12 @@ export class VmWizardComponent implements WizardConfiguration {
           finalIsolatedPciIds.push(gpuValue);
         }
       }
-      this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
-        (res) => res,
-        (err: Job<null, unknown[]>) => new EntityUtils().handleWsError(this.entityWizard, err),
-      );
+      this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (res) => res,
+          error: (err: Job<null, unknown[]>) => new EntityUtils().handleWsError(this.entityWizard, err),
+        });
     }
     if (value.hdd_path) {
       for (const device of vmPayload['devices']) {
@@ -1140,32 +1142,37 @@ export class VmWizardComponent implements WizardConfiguration {
 
       const devices: VmDeviceUpdate[] = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload as VirtualMachineUpdate]).pipe(untilDestroyed(this)).subscribe((newVm) => {
-        const observables: Observable<unknown>[] = [];
-        for (const device of devices) {
-          device.vm = newVm.id;
-          observables.push(this.ws.call('vm.device.create', [device]).pipe(
-            map((res) => res),
-            catchError((err) => {
-              err.device = { ...device };
-              throw err;
-            }),
-          ));
-        }
-        combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.loader.close();
-            this.modalService.closeSlideIn();
-          },
-          (error: WebsocketError & { device: VmDevice }) => {
-            setTimeout(() => {
-              this.deleteVm(newVm.id, error);
-            }, 1000);
-          },
-        );
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
+      this.ws.call('vm.create', [vmPayload as VirtualMachineUpdate]).pipe(untilDestroyed(this)).subscribe({
+        next: (newVm) => {
+          const observables: Observable<unknown>[] = [];
+          for (const device of devices) {
+            device.vm = newVm.id;
+            observables.push(this.ws.call('vm.device.create', [device]).pipe(
+              map((res) => res),
+              catchError((err) => {
+                err.device = { ...device };
+                throw err;
+              }),
+            ));
+          }
+          combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
+            {
+              next: () => {
+                this.loader.close();
+                this.modalService.closeSlideIn();
+              },
+              error: (error: WebsocketError & { device: VmDevice }) => {
+                setTimeout(() => {
+                  this.deleteVm(newVm.id, error);
+                }, 1000);
+              },
+            },
+          );
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
+        },
       });
     } else {
       for (const device of vmPayload['devices']) {
@@ -1189,39 +1196,44 @@ export class VmWizardComponent implements WizardConfiguration {
 
       const devices: VmDeviceUpdate[] = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload as VirtualMachineUpdate]).pipe(untilDestroyed(this)).subscribe((newVm) => {
-        const observables: Observable<unknown>[] = [];
-        for (const device of devices) {
-          device.vm = newVm.id;
-          observables.push(this.ws.call('vm.device.create', [device]).pipe(
-            map((res) => res),
-            catchError((err) => {
-              err.device = { ...device };
-              throw err;
-            }),
-          ));
-        }
-        combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.loader.close();
-            this.modalService.closeSlideIn();
-          },
-          (error: WebsocketError & { device: VmDevice }) => {
-            setTimeout(() => {
-              this.deleteVm(newVm.id, error);
-            }, 1000);
-          },
-        );
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
+      this.ws.call('vm.create', [vmPayload as VirtualMachineUpdate]).pipe(untilDestroyed(this)).subscribe({
+        next: (newVm) => {
+          const observables: Observable<unknown>[] = [];
+          for (const device of devices) {
+            device.vm = newVm.id;
+            observables.push(this.ws.call('vm.device.create', [device]).pipe(
+              map((res) => res),
+              catchError((err) => {
+                err.device = { ...device };
+                throw err;
+              }),
+            ));
+          }
+          combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
+            {
+              next: () => {
+                this.loader.close();
+                this.modalService.closeSlideIn();
+              },
+              error: (error: WebsocketError & { device: VmDevice }) => {
+                setTimeout(() => {
+                  this.deleteVm(newVm.id, error);
+                }, 1000);
+              },
+            },
+          );
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
+        },
       });
     }
   }
 
   deleteVm(id: number, error: WebsocketError & { device: VmDevice }): void {
-    this.ws.call('vm.delete', [id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('vm.delete', [id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.dialogService.errorReport(
           this.translate.instant('Error creating VM.'),
@@ -1232,7 +1244,7 @@ export class VmWizardComponent implements WizardConfiguration {
           error.trace.formatted,
         );
       },
-      (err: Job<null, unknown[]> | WebsocketError) => {
+      error: (err: Job<null, unknown[]> | WebsocketError) => {
         this.loader.close();
         this.dialogService.errorReport(
           this.translate.instant('Error creating VM.'),
@@ -1244,6 +1256,6 @@ export class VmWizardComponent implements WizardConfiguration {
         );
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 }

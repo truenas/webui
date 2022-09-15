@@ -39,8 +39,8 @@ export class LeaveDomainDialogComponent {
 
     this.ws.job('activedirectory.leave', [params as LeaveActiveDirectory])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (job) => {
+      .subscribe({
+        next: (job) => {
           if (job.state !== JobState.Success) {
             return;
           }
@@ -52,10 +52,10 @@ export class LeaveDomainDialogComponent {
           this.loader.close();
           this.dialogRef.close(true);
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           new EntityUtils().handleWsError(helptext.ad_leave_domain_dialog.error, error, this.dialogService);
         },
-      );
+      });
   }
 }

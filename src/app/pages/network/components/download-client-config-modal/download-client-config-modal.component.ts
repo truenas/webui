@@ -45,17 +45,17 @@ export class DownloadClientConfigModalComponent {
         }),
         untilDestroyed(this),
       )
-      .subscribe(
-        (key) => {
+      .subscribe({
+        next: (key) => {
           this.loader.close();
           this.dialogRef.close();
           this.storageService.downloadText(key, 'openVPNClientConfig.ovpn');
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   certificatesLinkClicked(): void {

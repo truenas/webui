@@ -79,18 +79,18 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     this.websocket.call('zfs.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),
-    ).subscribe(
-      (snapshot) => {
+    ).subscribe({
+      next: (snapshot) => {
         this.publicSnapshot = snapshot;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.dialogService.errorReportMiddleware(error);
       },
-    );
+    });
   }
 
   onSubmit(): void {
@@ -104,13 +104,16 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     this.websocket.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(
       tap(() => this.loader.open()),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.close();
-      this.wasDatasetRolledBack = true;
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.loader.close();
-      this.errorHandler.handleWsFormError(error, this.form);
+    ).subscribe({
+      next: () => {
+        this.loader.close();
+        this.wasDatasetRolledBack = true;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.loader.close();
+        this.errorHandler.handleWsFormError(error, this.form);
+      },
     });
   }
 }

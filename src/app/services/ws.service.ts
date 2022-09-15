@@ -173,14 +173,13 @@ export class WebSocketService {
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K | '*'): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    const source = Observable.create((observer: Subscriber<ApiEventDirectory[K]['response']>) => {
+    return new Observable((observer) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
         this.subscriptions.set(name, [observer]);
       }
     });
-    return source;
   }
 
   unsubscribe(observer: any): void {
@@ -279,7 +278,7 @@ export class WebSocketService {
     const params: LoginParams = otpToken
       ? [username, password, otpToken]
       : [username, password];
-    return Observable.create((observer: Subscriber<boolean>) => {
+    return new Observable((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });

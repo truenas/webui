@@ -63,14 +63,17 @@ export class CatalogEditFormComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('catalog.update', [this.editingCatalog.id, values as CatalogUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.slideInService.close();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.slideInService.close();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
       });
   }
 }

@@ -5,7 +5,7 @@ import {
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { DatasetRecordSize, DatasetSync, DatasetType } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
@@ -300,7 +300,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
     this.isNew = true;
 
-    await this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).toPromise().then((pkDataset) => {
+    await lastValueFrom(this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]])).then((pkDataset) => {
       const children = (pkDataset[0].children);
       entityWizard.setDisabled('name', false, 1);
       if (children.length > 0) {
@@ -529,17 +529,20 @@ export class ZvolWizardComponent implements WizardConfiguration {
     this.loader.open();
 
     if (this.isNew) {
-      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
-        this.loader.close();
-        this.modalService.closeSlideIn().then((closed) => {
-          if (closed) {
-            this.parent = null;
-          }
-        });
-        this.modalService.refreshTable();
-      }, (error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this.entityWizard, error);
+      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          this.modalService.closeSlideIn().then((closed) => {
+            if (closed) {
+              this.parent = null;
+            }
+          });
+          this.modalService.refreshTable();
+        },
+        error: (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this.entityWizard, error);
+        },
       });
     }
   }

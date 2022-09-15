@@ -107,8 +107,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
       hostname,
       username,
       password,
-    }]).pipe(untilDestroyed(this)).subscribe(
-      (res: MatchDatastoresWithDatasets) => {
+    }]).pipe(untilDestroyed(this)).subscribe({
+      next: (res: MatchDatastoresWithDatasets) => {
         this.isLoading = false;
         this.filesystemList = res.filesystems;
         this.datastoreList = res.datastores;
@@ -128,7 +128,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
@@ -138,7 +138,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         }
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   onSubmit(): void {
@@ -175,13 +175,16 @@ export class VmwareSnapshotFormComponent implements OnInit {
         })
         : of(true)
     ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      request$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.isLoading = false;
-        this.slideInService.close();
-      }, (error) => {
-        this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      request$.pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.slideInService.close();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
       });
     });
   }
