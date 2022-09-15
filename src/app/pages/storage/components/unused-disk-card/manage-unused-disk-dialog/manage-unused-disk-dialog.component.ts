@@ -63,7 +63,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     this.utils = new WidgetUtils();
   }
 
-  get groupedDisks(): { formattedDisk: string; exportedPool: string; disksCount: number }[] {
+  get groupedDisks(): { formattedDisk: string; exportedPool: string }[] {
     const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
       return {
         detailedDisk: `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
@@ -76,7 +76,6 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     const groupDiskFormats = Object.keys(groupDisks).map((format: string) => {
       return {
         formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
-        disksCount: groupDisks[format].length,
         exportedPool: groupDisks[format][0].exportedPool,
       };
     });
@@ -108,18 +107,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     }
   }
 
-  getWarningText(exportedPool: string, disksCount: number): string {
-    if (disksCount === 1) {
-      return this.getWarningForOneDisk(exportedPool);
-    }
-    return this.getWarningForMultipleDisks(exportedPool);
-  }
-
-  getWarningForOneDisk(exportedPool: string): string {
-    return this.translate.instant('This disk is part of the exported pool {pool}', { pool: '\'' + exportedPool + '\'' });
-  }
-
-  getWarningForMultipleDisks(exportedPool: string): string {
-    return this.translate.instant('These disks are part of the exported pool {pool}', { pool: '\'' + exportedPool + '\'' });
+  getWarningText(exportedPool: string): string {
+    return `(${exportedPool})`;
   }
 }
