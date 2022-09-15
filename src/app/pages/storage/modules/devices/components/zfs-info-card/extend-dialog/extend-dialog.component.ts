@@ -47,28 +47,23 @@ export class ExtendDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUnusedDisks();
-    this.setupWarningForUnusedDisksWithExportedPoolsAttached();
+    this.setupWarningForExportedPools();
   }
 
-  setupWarningForUnusedDisksWithExportedPoolsAttached(): void {
-    this.newDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe(this.warnAboutExportedPoolForDiskIfRequired);
+  setupWarningForExportedPools(): void {
+    this.newDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      this.warnAboutExportedPoolForDiskIfRequired.bind(this),
+    );
   }
 
-  warnAboutExportedPoolForDiskIfRequired = (diskName: string): void => {
-    const disk = this.findDisk(diskName);
-    if (disk.exported_zpool) {
-      this.showWarningAboutExportedPoolForDisk(disk);
+  warnAboutExportedPoolForDiskIfRequired(diskName: string): void {
+    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+    if (!unusedDisk?.exported_zpool) {
+      return;
     }
-  };
-
-  findDisk(diskName: string): UnusedDisk {
-    return this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
-  }
-
-  showWarningAboutExportedPoolForDisk(unusedDisk: UnusedDisk): void {
     this.dialogService.warn(
       this.translate.instant('Warning'),
-      this.translate.instant(helptext.exported_pool_warning, { pool: '\'' + unusedDisk.exported_zpool + '\'' }),
+      this.translate.instant(helptext.exported_pool_warning, { pool: `'${unusedDisk.exported_zpool}'` }),
     );
   }
 
@@ -111,13 +106,13 @@ export class ExtendDialogComponent implements OnInit {
       .subscribe((disks) => {
         this.unusedDisks = disks;
         this.unusedDiskOptions$ = of(
-          disks.map((disk) => ({
-            label: (
-              disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')'
-              + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : '')
-            ),
-            value: disk.name,
-          })),
+          disks.map((disk) => {
+            const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+            return {
+              label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
+              value: disk.name,
+            };
+          }),
         );
 
         this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
