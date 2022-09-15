@@ -68,7 +68,7 @@ export class PreferencesEffects {
     withLatestFrom(this.store$.select(selectPreferencesState)),
     switchMap(([, state]) => {
       if (!state.areLoaded) {
-        return throwError('Attempting to save user preferences before they were loaded.');
+        return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
       return this.ws.call('user.set_attribute', [rootUserId, 'preferences', state.preferences]);

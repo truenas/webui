@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { take } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -120,7 +120,7 @@ describe('DevicesStore', () => {
         selectedNodeGuid: 'guid1',
       } as DevicesState);
 
-      const selectedBranch = await spectator.service.selectedBranch$.pipe(take(1)).toPromise();
+      const selectedBranch = await firstValueFrom(spectator.service.selectedBranch$);
       expect(selectedBranch).toEqual([
         expect.objectContaining({ guid: 'data' }),
         expect.objectContaining({ guid: 'guid1' }),

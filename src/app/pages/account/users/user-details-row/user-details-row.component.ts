@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -57,9 +58,11 @@ export class UserDetailsRowComponent {
 
   async doDelete(user: User): Promise<void> {
     this.loader.open();
-    const showCheckboxIfLastMember = await this.ws.call('group.query', [[['id', '=', user.group.id]]]).pipe(
-      map((groups) => (groups.length ? groups[0].users.length === 1 : false)),
-    ).toPromise();
+    const showCheckboxIfLastMember = await lastValueFrom(
+      this.ws.call('group.query', [[['id', '=', user.group.id]]]).pipe(
+        map((groups) => (groups.length ? groups[0].users.length === 1 : false)),
+      ),
+    );
 
     const confirmOptions: DialogFormConfiguration = {
       title: this.translate.instant('Delete User'),

@@ -1,6 +1,6 @@
 /**
  * This makes sure that there is no weird nodejs code present in dist build.
- * See https://jira.ixsystems.com/browse/NAS-110478 for more details.
+ * See https://ixsystems.atlassian.net/browse/NAS-110478 for more details.
  */
 const exec = require('child_process').exec;
 
