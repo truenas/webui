@@ -228,19 +228,19 @@ export class IpmiFormComponent implements OnInit {
       call$ = this.ws.call('ipmi.update', [this.idIpmi, ipmiUpdate]);
     }
     call$.pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.slideInService.close();
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 }

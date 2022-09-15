@@ -1165,8 +1165,8 @@ export class ReplicationFormComponent implements FormConfiguration {
 
     this.ws
       .call('replication.count_eligible_manual_snapshots', [payload])
-      .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (res) => {
           this.formMessage.type = res.eligible === 0 ? 'warning' : 'info';
           this.formMessage.content = this.translate.instant(
             '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
@@ -1177,11 +1177,11 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
           );
         },
-        (err) => {
+        error: (err) => {
           this.formMessage.content = '';
           new EntityUtils().handleWsError(this, err);
         },
-      );
+      });
   }
 
   afterInit(entityForm: EntityFormComponent): void {

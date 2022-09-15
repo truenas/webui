@@ -50,13 +50,16 @@ export class SnapshotCloneDialogComponent implements OnInit {
       dataset_dst: this.datasetName,
     }])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.wasDatasetCloned = true;
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.wasDatasetCloned = true;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 

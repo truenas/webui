@@ -108,45 +108,54 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadAlerts(): void {
-    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe((alerts) => {
-      this.diskState.alerts = alerts.length;
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe({
+      next: (alerts) => {
+        this.diskState.alerts = alerts.length;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 
   private loadSmartTasks(): void {
     const disks = Object.keys(this.diskDictionary);
-    this.ws.call('smart.test.results', [[['disk', 'in', disks]]]).pipe(untilDestroyed(this)).subscribe((testResults) => {
-      testResults.forEach((testResult) => {
-        const tests = testResult?.tests ?? [];
-        const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-        this.diskState.smartTests = this.diskState.smartTests + results.length;
-      });
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    this.ws.call('smart.test.results', [[['disk', 'in', disks]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (testResults) => {
+        testResults.forEach((testResult) => {
+          const tests = testResult?.tests ?? [];
+          const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
+          this.diskState.smartTests = this.diskState.smartTests + results.length;
+        });
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 
   private loadTemperatures(): void {
-    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe((tempAggregates) => {
-      const temperatures = Object.values(tempAggregates);
+    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe({
+      next: (tempAggregates) => {
+        const temperatures = Object.values(tempAggregates);
 
-      const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
-      const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);
-      const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
-      const avgSum = avgValues.reduce((a, b) => a + b, 0);
+        const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
+        const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);
+        const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
+        const avgSum = avgValues.reduce((a, b) => a + b, 0);
 
-      this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : null;
-      this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : null;
-      this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : null;
-      this.diskState.unit = TemperatureUnit.Celsius;
-      this.diskState.symbolText = '°';
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+        this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : null;
+        this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : null;
+        this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : null;
+        this.diskState.unit = TemperatureUnit.Celsius;
+        this.diskState.symbolText = '°';
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 }

@@ -55,15 +55,15 @@ export class CloudsyncRestoreDialogComponent {
 
     this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.loader.close();
           this.dialogRef.close();
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

@@ -66,20 +66,20 @@ export class SnapshotAddFormComponent implements OnInit {
       this.getNamingSchemaOptions(),
     ]).pipe(
       untilDestroyed(this),
-    ).subscribe(
-      ([datasetOptions, namingSchemaOptions]) => {
+    ).subscribe({
+      next: ([datasetOptions, namingSchemaOptions]) => {
         this.datasetOptions$ = of(datasetOptions);
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading = false;
         this.form.get('name').markAsTouched();
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   setDataset(datasetId: string): void {
@@ -101,14 +101,17 @@ export class SnapshotAddFormComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('zfs.snapshot.create', [params]).pipe(
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.slideIn.close(null, true);
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.slideIn.close(null, true);
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 

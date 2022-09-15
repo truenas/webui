@@ -276,39 +276,45 @@ export class CertificatesDashComponent implements OnInit {
           const isCsr = rowinner.cert_type_CSR;
           const path = isCsr ? rowinner.csr_path : rowinner.certificate_path;
           const fileName = `${rowinner.name}.${isCsr ? 'csr' : 'crt'}`;
-          this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
-            ([, url]) => {
+          this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
               const mimetype = 'application/x-x509-user-cert';
               this.storage.streamDownloadFile(url, fileName, mimetype)
                 .pipe(untilDestroyed(this))
-                .subscribe((file) => {
-                  this.storage.downloadBlob(file, fileName);
-                }, (err) => {
-                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
-                    helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                .subscribe({
+                  next: (file) => {
+                    this.storage.downloadBlob(file, fileName);
+                  },
+                  error: (err) => {
+                    this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                      helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  },
                 });
             },
-            (err) => {
+            error: (err) => {
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
           const keyName = rowinner.name + '.key';
-          this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe(
-            ([, url]) => {
+          this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
               const mimetype = 'text/plain';
               this.storage.streamDownloadFile(url, keyName, mimetype)
                 .pipe(untilDestroyed(this))
-                .subscribe((file) => {
-                  this.storage.downloadBlob(file, keyName);
-                }, (err) => {
-                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
-                    helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                .subscribe({
+                  next: (file) => {
+                    this.storage.downloadBlob(file, keyName);
+                  },
+                  error: (err) => {
+                    this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                      helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  },
                 });
             },
-            (err) => {
+            error: (err) => {
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         },
       },
     ];

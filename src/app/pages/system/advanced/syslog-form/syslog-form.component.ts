@@ -127,8 +127,8 @@ export class SyslogFormComponent implements OnInit {
       this.ws.call('system.advanced.config'),
       this.ws.call('systemdataset.config'),
     ]).pipe(untilDestroyed(this))
-      .subscribe(
-        ([advancedConfig, { syslog }]) => {
+      .subscribe({
+        next: ([advancedConfig, { syslog }]) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.form.patchValue({
@@ -138,10 +138,10 @@ export class SyslogFormComponent implements OnInit {
             syslog,
           });
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 }

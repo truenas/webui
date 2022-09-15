@@ -1580,45 +1580,48 @@ export class DatasetFormComponent implements FormConfiguration {
     this.loader.open();
 
     const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
-    return operation$.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
-      this.loader.close();
-      this.modalService.closeSlideIn();
-      const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
-        if (!isTrivial) {
-          this.dialogService.confirm({
-            title: helptext.afterSubmitDialog.title,
-            message: helptext.afterSubmitDialog.message,
-            hideCheckBox: true,
-            buttonMsg: helptext.afterSubmitDialog.actionBtn,
-            cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-            if (confirmed) {
-              this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
-                if (acltype === AclType.Posix1e) {
-                  this.router.navigate(
-                    ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                    { queryParams: { default: parentPath } },
-                  );
-                } else {
-                  this.router.navigate(
-                    ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                    { queryParams: { default: parentPath } },
-                  );
-                }
-              });
-            } else {
-              this.modalService.closeSlideIn();
-            }
-          });
-        } else {
-          this.modalService.closeSlideIn();
-        }
-        this.modalService.refreshTable();
-      });
-    }, (error) => {
-      this.loader.close();
-      new EntityUtils().handleWsError(this.entityForm, error);
+    return operation$.pipe(untilDestroyed(this)).subscribe({
+      next: (restPostResp) => {
+        this.loader.close();
+        this.modalService.closeSlideIn();
+        const parentPath = `/mnt/${this.parent}`;
+        this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
+          if (!isTrivial) {
+            this.dialogService.confirm({
+              title: helptext.afterSubmitDialog.title,
+              message: helptext.afterSubmitDialog.message,
+              hideCheckBox: true,
+              buttonMsg: helptext.afterSubmitDialog.actionBtn,
+              cancelMsg: helptext.afterSubmitDialog.cancelBtn,
+            }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+              if (confirmed) {
+                this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
+                  if (acltype === AclType.Posix1e) {
+                    this.router.navigate(
+                      ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
+                      { queryParams: { default: parentPath } },
+                    );
+                  } else {
+                    this.router.navigate(
+                      ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
+                      { queryParams: { default: parentPath } },
+                    );
+                  }
+                });
+              } else {
+                this.modalService.closeSlideIn();
+              }
+            });
+          } else {
+            this.modalService.closeSlideIn();
+          }
+          this.modalService.refreshTable();
+        });
+      },
+      error: (error) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this.entityForm, error);
+      },
     });
   }
 

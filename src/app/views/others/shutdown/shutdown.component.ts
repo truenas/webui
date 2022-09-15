@@ -36,20 +36,18 @@ export class ShutdownComponent implements OnInit {
     // Replace URL so that we don't shutdown again if page is refreshed.
     this.location.replaceState('/session/signin');
 
-    this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe(
-      () => {
-      },
-      (error) => { // error on shutdown
+    this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe({
+      error: (error) => { // error on shutdown
         this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);
           });
       },
-      () => {
+      complete: () => {
         this.ws.prepareShutdown();
       },
-    );
+    });
     // fade to black after 60 sec on shut down
     setTimeout(() => {
       const overlay = document.getElementById('overlay');

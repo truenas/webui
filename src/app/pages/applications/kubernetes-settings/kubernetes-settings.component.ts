@@ -89,8 +89,8 @@ export class KubernetesSettingsComponent implements OnInit {
     forkJoin([
       this.ws.call('kubernetes.config'),
       this.appService.getContainerConfig(),
-    ]).pipe(untilDestroyed(this)).subscribe(
-      ([kubernetesConfig, containerConfig]) => {
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([kubernetesConfig, containerConfig]) => {
         this.form.patchValue({
           ...kubernetesConfig,
           enable_container_image_update: containerConfig.enable_image_updates,
@@ -100,12 +100,12 @@ export class KubernetesSettingsComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
-    );
+    });
   }
 
   onSubmit(): void {

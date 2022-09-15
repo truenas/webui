@@ -73,18 +73,18 @@ export class ServiceNfsComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('nfs.update', [params])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onCancel(): void {
@@ -94,18 +94,18 @@ export class ServiceNfsComponent implements OnInit {
   private loadConfig(): void {
     this.ws.call('nfs.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private setFieldDependencies(): void {

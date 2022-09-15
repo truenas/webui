@@ -88,15 +88,17 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
       ])),
       untilDestroyed(this),
-    ).subscribe(([userQuotas, groupQuotas]) => {
-      this.userQuotas = userQuotas.length;
-      this.groupQuotas = groupQuotas.length;
-      this.isLoadingQuotas = false;
-      this.cdr.markForCheck();
-    },
-    (error) => {
-      this.dialogService.errorReportMiddleware(error);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: ([userQuotas, groupQuotas]) => {
+        this.userQuotas = userQuotas.length;
+        this.groupQuotas = groupQuotas.length;
+        this.isLoadingQuotas = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -108,12 +110,15 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       }),
       take(1),
       untilDestroyed(this),
-    ).subscribe((dataset) => {
-      this.inheritedQuotasDataset = dataset;
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (dataset) => {
+        this.inheritedQuotasDataset = dataset;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+        this.cdr.markForCheck();
+      },
     });
   }
 

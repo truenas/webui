@@ -75,16 +75,19 @@ export class DiskWipeDialogComponent {
       'disk.wipe',
       [this.diskName, this.form.value.wipe_method],
     );
-    jobComponent.success.pipe(untilDestroyed(this)).subscribe(() => {
-      jobDialogRef.close();
-      this.dialogRef.close();
-      this.dialogService.generalDialog({
-        title: this.title,
-        message: helptext.diskWipeDialogForm.infoContent,
-        hideCancel: true,
-      });
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    jobComponent.success.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        jobDialogRef.close();
+        this.dialogRef.close();
+        this.dialogService.generalDialog({
+          title: this.title,
+          message: helptext.diskWipeDialogForm.infoContent,
+          hideCancel: true,
+        });
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
 
     jobComponent.submit();
