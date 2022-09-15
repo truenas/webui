@@ -58,21 +58,24 @@ export class ImportPoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe((importablePoolFindJob) => {
-      if (importablePoolFindJob.state !== JobState.Success) {
-        return;
-      }
+    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
+      next: (importablePoolFindJob) => {
+        if (importablePoolFindJob.state !== JobState.Success) {
+          return;
+        }
 
-      this.isLoading = false;
-      const result: PoolFindResult[] = importablePoolFindJob.result;
-      const opts = result.map((pool) => ({
-        label: `${pool.name} | ${pool.guid}`,
-        value: pool.guid,
-      } as Option));
-      this.pool.options = of(opts);
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+        this.isLoading = false;
+        const result: PoolFindResult[] = importablePoolFindJob.result;
+        const opts = result.map((pool) => ({
+          label: `${pool.name} | ${pool.guid}`,
+          value: pool.guid,
+        } as Option));
+        this.pool.options = of(opts);
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 
@@ -88,20 +91,26 @@ export class ImportPoolComponent implements OnInit {
     dialogRef.componentInstance.setDescription(this.translate.instant('Importing Pool...'));
     dialogRef.componentInstance.setCall('pool.import_pool', [{ guid: this.formGroup.value.guid }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(true);
-      this.isLoading = false;
-      this.slideInService.close();
-      this.modalService.refreshTable();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        dialogRef.close(true);
+        this.isLoading = false;
+        this.slideInService.close();
+        this.modalService.refreshTable();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failureData) => {
-      dialogRef.close(false);
-      this.isLoading = false;
-      this.errorReport(failureData);
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
+      next: (failureData) => {
+        dialogRef.close(false);
+        this.isLoading = false;
+        this.errorReport(failureData);
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 

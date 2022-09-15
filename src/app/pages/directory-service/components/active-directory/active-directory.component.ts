@@ -95,20 +95,20 @@ export class ActiveDirectoryComponent implements OnInit {
 
   onRebuildCachePressed(): void {
     this.isLoading = true;
-    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.isLoading = false;
         this.snackbarService.success(
           this.translate.instant(helptext.activedirectory_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         new EntityUtils().handleWsError(this, error, this.dialogService);
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   onLeaveDomainPressed(): void {
@@ -131,8 +131,8 @@ export class ActiveDirectoryComponent implements OnInit {
 
     this.ws.call('activedirectory.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (update) => {
+      .subscribe({
+        next: (update) => {
           this.isLoading = false;
           this.cdr.markForCheck();
 
@@ -142,12 +142,12 @@ export class ActiveDirectoryComponent implements OnInit {
             this.slideInService.close();
           }
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private loadFormValues(): void {
@@ -158,17 +158,17 @@ export class ActiveDirectoryComponent implements OnInit {
       this.loadDirectoryConfig(),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   private loadDirectoryState(): Observable<void> {

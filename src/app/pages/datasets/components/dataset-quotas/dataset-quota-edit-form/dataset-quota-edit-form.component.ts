@@ -87,8 +87,8 @@ export class DatasetQuotaEditFormComponent {
     const params = [['id', '=', id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
     this.isFormLoading = true;
     this.ws.call('pool.dataset.get_quota', [datasetId, quotaType, params])
-      .pipe(untilDestroyed(this)).subscribe(
-        (quotas) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (quotas) => {
           this.datasetQuota = quotas[0];
           this.isFormLoading = false;
           this.form.patchValue({
@@ -97,12 +97,13 @@ export class DatasetQuotaEditFormComponent {
             obj_quota: this.datasetQuota.obj_quota,
           });
           this.cdr.markForCheck();
-        }, (error) => {
+        },
+        error: (error) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onSubmit(): void {
@@ -137,14 +138,17 @@ export class DatasetQuotaEditFormComponent {
       this.isFormLoading = true;
       this.ws.call('pool.dataset.set_quota', [this.datasetId, payload])
         .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          this.isFormLoading = false;
-          this.slideIn.close();
-          this.cdr.markForCheck();
-        }, (error) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-          this.errorHandler.handleWsFormError(error, this.form);
+        .subscribe({
+          next: () => {
+            this.isFormLoading = false;
+            this.slideIn.close();
+            this.cdr.markForCheck();
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.cdr.markForCheck();
+            this.errorHandler.handleWsFormError(error, this.form);
+          },
         });
     });
   }

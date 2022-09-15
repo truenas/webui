@@ -91,15 +91,18 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
 
     this.ws.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.store$.dispatch(advancedConfigUpdated());
-      this.modal.close();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.store$.dispatch(advancedConfigUpdated());
+        this.modal.close();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

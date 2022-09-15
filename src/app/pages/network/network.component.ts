@@ -366,8 +366,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
               this.ws
                 .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
                 .pipe(untilDestroyed(this))
-                .subscribe(
-                  async () => {
+                .subscribe({
+                  next: async () => {
                     this.core.emit({
                       name: 'NetworkInterfacesChanged',
                       data: { commit: true, checkin: false },
@@ -377,11 +377,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
                     this.loader.close();
                     this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
                   },
-                  (err) => {
+                  error: (err) => {
                     this.loader.close();
                     new EntityUtils().handleWsError(this, err, this.dialog);
                   },
-                );
+                });
             }
           });
       });
@@ -423,8 +423,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.ws
       .call('interface.checkin')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
           this.loader.close();
           this.snackbar.success(
@@ -435,11 +435,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
           clearInterval(this.checkinInterval);
           this.checkinRemaining = null;
         },
-        (err) => {
+        error: (err) => {
           this.loader.close();
           new EntityUtils().handleWsError(this, err, this.dialog);
         },
-      );
+      });
   }
 
   rollbackPendingChanges(): void {
@@ -457,8 +457,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
           this.ws
             .call('interface.rollback')
             .pipe(untilDestroyed(this))
-            .subscribe(
-              () => {
+            .subscribe({
+              next: () => {
                 this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
                 this.interfaceTableConf.tableComponent.getData();
                 this.hasPendingChanges = false;
@@ -468,11 +468,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
                   this.translate.instant(helptext.changes_rolled_back),
                 );
               },
-              (err) => {
+              error: (err) => {
                 this.loader.close();
                 new EntityUtils().handleWsError(this, err, this.dialog);
               },
-            );
+            });
         }
       });
   }
@@ -605,8 +605,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
         this.ws
           .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
-          .subscribe(
-            (res) => {
+          .subscribe({
+            next: (res) => {
               if (res) {
                 this.dialog.info(
                   this.translate.instant('Service failed to stop'),
@@ -621,7 +621,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 row.onChanging = false;
               }
             },
-            (err) => {
+            error: (err) => {
               row.onChanging = false;
               this.dialog.errorReport(
                 this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
@@ -631,7 +631,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 err.trace.formatted,
               );
             },
-          );
+          });
       },
     },
     {
@@ -643,8 +643,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
         this.ws
           .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
-          .subscribe(
-            (res) => {
+          .subscribe({
+            next: (res) => {
               if (res) {
                 row.state = ServiceStatus.Running;
                 row.onChanging = false;
@@ -659,7 +659,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 row.onChanging = false;
               }
             },
-            (err) => {
+            error: (err) => {
               row.onChanging = false;
               this.dialog.errorReport(
                 this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
@@ -669,7 +669,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 err.trace.formatted,
               );
             },
-          );
+          });
       },
     }];
   }
@@ -700,8 +700,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.loader.open();
     this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (interfaces) => {
+      .subscribe({
+        next: (interfaces) => {
           this.loader.close();
           if (!interfaces[0]) {
             return;
@@ -710,10 +710,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
           const form = this.slideInService.open(InterfaceFormComponent);
           form.setInterfaceForEdit(interfaces[0]);
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           new EntityUtils().handleWsError(this, error);
         },
-      );
+      });
   }
 }

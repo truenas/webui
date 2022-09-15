@@ -45,15 +45,15 @@ export class SignCsrDialogComponent {
 
     this.ws.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.loader.close();
           this.dialogRef.close();
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

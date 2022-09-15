@@ -41,45 +41,48 @@ export class ReportsService implements OnDestroy {
 
     this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
       const chartId = (evt.sender as ReportComponent).chartId;
-      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((reportingData) => {
-        let res;
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
+        next: (reportingData) => {
+          let res;
 
-        // If requested, we truncate trailing null values
-        if (evt.data.truncate) {
-          const truncated = this.truncateData(reportingData[0].data);
-          res = Object.assign([], reportingData);
-          res[0].data = truncated;
-        } else {
-          res = reportingData;
-        }
+          // If requested, we truncate trailing null values
+          if (evt.data.truncate) {
+            const truncated = this.truncateData(reportingData[0].data);
+            res = Object.assign([], reportingData);
+            res[0].data = truncated;
+          } else {
+            res = reportingData;
+          }
 
-        const commands = [
-          {
-            command: 'optimizeLegend',
-            input: res[0],
-          },
-          {
-            command: 'convertAggregations',
-            input: '|',
-            options: [evt.data.report.vertical_label], // units
-          },
-        ];
+          const commands = [
+            {
+              command: 'optimizeLegend',
+              input: res[0],
+            },
+            {
+              command: 'convertAggregations',
+              input: '|',
+              options: [evt.data.report.vertical_label], // units
+            },
+          ];
 
-        // We average out cputemps for v11.3.
-        // Move this to backend for 12.
-        if (evt.data.report.name === 'cputemp') {
+          // We average out cputemps for v11.3.
+          // Move this to backend for 12.
+          if (evt.data.report.name === 'cputemp') {
           // Do a complete replacement instead...
-          const repl = [{
-            command: 'avgCpuTempReport',
-            input: res[0],
-          }];
+            const repl = [{
+              command: 'avgCpuTempReport',
+              input: res[0],
+            }];
 
-          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: chartId });
-        } else {
-          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
-        }
-      }, (err: WebsocketError) => {
-        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
+            this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: chartId });
+          } else {
+            this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
+          }
+        },
+        error: (err: WebsocketError) => {
+          this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
+        },
       });
     });
 

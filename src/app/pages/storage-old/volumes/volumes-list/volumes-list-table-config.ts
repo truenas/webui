@@ -126,19 +126,22 @@ export class VolumesListTableConfig implements EntityTableConfig {
           this.loader.open();
           const fileName = 'dataset_' + row1.name + '_keys.json';
           const mimetype = 'application/json';
-          this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-            this.loader.close();
-            const url = res[1];
-            this.storageService.streamDownloadFile(url, fileName, mimetype)
-              .pipe(untilDestroyed(this, 'destroy'))
-              .subscribe((file) => {
-                if (res !== null && (res[1]) !== '') {
-                  this.storageService.downloadBlob(file, fileName);
-                }
-              });
-          }, (error) => {
-            this.loader.close();
-            new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe({
+            next: (res) => {
+              this.loader.close();
+              const url = res[1];
+              this.storageService.streamDownloadFile(url, fileName, mimetype)
+                .pipe(untilDestroyed(this, 'destroy'))
+                .subscribe((file) => {
+                  if (res !== null && (res[1]) !== '') {
+                    this.storageService.downloadBlob(file, fileName);
+                  }
+                });
+            },
+            error: (error) => {
+              this.loader.close();
+              new EntityUtils().handleWsError(this, error, this.dialogService);
+            },
           });
         },
       });
@@ -240,21 +243,23 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.ws.call('systemdataset.config'),
             ]).pipe(
               untilDestroyed(this, 'destroy'),
-            ).subscribe(([attachments, processes, systemConfig]) => {
-              this.loader.close();
+            ).subscribe({
+              next: ([attachments, processes, systemConfig]) => {
+                this.loader.close();
 
-              this.openDetachModal(row1, attachments, processes, systemConfig)
-                .pipe(
-                  filter(Boolean),
-                  untilDestroyed(this, 'destroy'),
-                )
-                .subscribe(() => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-            },
-            (err) => {
-              this.loader.close();
-              this.dialogService.errorReport(helptext.exportError, err.reason, err.trace.formatted);
+                this.openDetachModal(row1, attachments, processes, systemConfig)
+                  .pipe(
+                    filter(Boolean),
+                    untilDestroyed(this, 'destroy'),
+                  )
+                  .subscribe(() => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+              },
+              error: (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(helptext.exportError, err.reason, err.trace.formatted);
+              },
             });
           } else {
             this.openDetachModal(row1)
@@ -300,14 +305,16 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 ).subscribe(() => {
                   this.loader.open();
                   this.ws.call('pool.scrub', [row1.id, PoolScrubAction.Stop]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                    () => {
-                      this.loader.close();
-                      const msg = this.translate.instant('Stopping scrub on pool');
-                      this.dialogService.info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, true);
-                    },
-                    (err) => {
-                      this.loader.close();
-                      new EntityUtils().handleWsError(this, err, this.dialogService);
+                    {
+                      next: () => {
+                        this.loader.close();
+                        const msg = this.translate.instant('Stopping scrub on pool');
+                        this.dialogService.info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, true);
+                      },
+                      error: (err) => {
+                        this.loader.close();
+                        new EntityUtils().handleWsError(this, err, this.dialogService);
+                      },
                     },
                   );
                 });
@@ -370,30 +377,32 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 payload.push({ geli: { passphrase: entityDialog.formValue['passphrase'] } });
               }
               this.ws.job('pool.expand', payload).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                (res) => {
-                  this.loader.close();
-                  if (res.error) {
-                    if (res.exc_info && res.exc_info.extra) {
-                      (res as any).extra = res.exc_info.extra;
+                {
+                  next: (res) => {
+                    this.loader.close();
+                    if (res.error) {
+                      if (res.exc_info && res.exc_info.extra) {
+                        (res as any).extra = res.exc_info.extra;
+                      }
+                      new EntityUtils().handleWsError(this, res, this.dialogService);
                     }
-                    new EntityUtils().handleWsError(this, res, this.dialogService);
-                  }
-                  if (res.state === JobState.Success) {
-                    if (entityDialog) {
-                      entityDialog.dialogRef.close(true);
+                    if (res.state === JobState.Success) {
+                      if (entityDialog) {
+                        entityDialog.dialogRef.close(true);
+                      }
+                      this.dialogService.generalDialog({
+                        title: helptext.expand_pool_success_dialog.title,
+                        icon: 'info',
+                        is_html: true,
+                        message: this.translate.instant('Successfully expanded pool <i>{poolName}</i>', { poolName: row1.name }),
+                        hideCancel: true,
+                      });
                     }
-                    this.dialogService.generalDialog({
-                      title: helptext.expand_pool_success_dialog.title,
-                      icon: 'info',
-                      is_html: true,
-                      message: this.translate.instant('Successfully expanded pool <i>{poolName}</i>', { poolName: row1.name }),
-                      hideCancel: true,
-                    });
-                  }
-                },
-                (err) => {
-                  this.loader.close();
-                  new EntityUtils().handleWsError(this, err, this.dialogService);
+                  },
+                  error: (err) => {
+                    this.loader.close();
+                    new EntityUtils().handleWsError(this, err, this.dialogService);
+                  },
                 },
               );
             };
@@ -424,22 +433,24 @@ export class VolumesListTableConfig implements EntityTableConfig {
               ).subscribe(() => {
                 this.loader.open();
                 this.ws.call('pool.upgrade', [rowData.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                  () => {
-                    this.dialogService.info(
-                      this.translate.instant('Upgraded'),
-                      this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
-                    ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
-                      this.parentVolumesListComponent.repaintMe();
-                    });
+                  {
+                    next: () => {
+                      this.dialogService.info(
+                        this.translate.instant('Upgraded'),
+                        this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
+                      ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
+                        this.parentVolumesListComponent.repaintMe();
+                      });
+                    },
+                    error: (res) => {
+                      this.dialogService.errorReport(
+                        this.translate.instant('Error Upgrading Pool {poolName}', { poolName: row1.name }),
+                        res.message,
+                        res.stack,
+                      );
+                    },
+                    complete: () => this.loader.close(),
                   },
-                  (res) => {
-                    this.dialogService.errorReport(
-                      this.translate.instant('Error Upgrading Pool {poolName}', { poolName: row1.name }),
-                      res.message,
-                      res.stack,
-                    );
-                  },
-                  () => this.loader.close(),
                 );
               });
             },
@@ -567,19 +578,22 @@ export class VolumesListTableConfig implements EntityTableConfig {
           onClick: (row1: VolumesListDataset) => {
             this.loader.open();
 
-            this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
-              this.loader.close();
-              // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService
-                .info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id)
-                .pipe(untilDestroyed(this, 'destroy'))
-                .subscribe(() => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-            }, (res) => {
-              this.loader.close();
-              const msg = this.translate.instant('Error Promoting dataset ');
-              this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
+            this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe({
+              next: () => {
+                this.loader.close();
+                // Showing info here because there is no feedback on list parent for this if promoted.
+                this.dialogService
+                  .info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id)
+                  .pipe(untilDestroyed(this, 'destroy'))
+                  .subscribe(() => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+              },
+              error: (res) => {
+                this.loader.close();
+                const msg = this.translate.instant('Error Promoting dataset ');
+                this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
+              },
             });
           },
         });
@@ -738,19 +752,22 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   untilDestroyed(this, 'destroy'),
                 ).subscribe(() => {
                   this.loader.open();
-                  this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                    this.loader.close();
-                    const url = res[1];
-                    this.storageService.streamDownloadFile(url, fileName, mimetype)
-                      .pipe(untilDestroyed(this, 'destroy'))
-                      .subscribe((file) => {
-                        if (res !== null) {
-                          this.storageService.downloadBlob(file, fileName);
-                        }
-                      });
-                  }, (error) => {
-                    this.loader.close();
-                    new EntityUtils().handleWsError(this, error, this.dialogService);
+                  this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe({
+                    next: (res) => {
+                      this.loader.close();
+                      const url = res[1];
+                      this.storageService.streamDownloadFile(url, fileName, mimetype)
+                        .pipe(untilDestroyed(this, 'destroy'))
+                        .subscribe((file) => {
+                          if (res !== null) {
+                            this.storageService.downloadBlob(file, fileName);
+                          }
+                        });
+                    },
+                    error: (error) => {
+                      this.loader.close();
+                      new EntityUtils().handleWsError(this, error, this.dialogService);
+                    },
                   });
                 });
               });

@@ -85,18 +85,18 @@ export class CertificateAcmeAddComponent {
     this.cdr.markForCheck();
     this.ws.call('certificate.create', [payload])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideIn.close();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 
   private loadDomains(): void {
@@ -105,19 +105,19 @@ export class CertificateAcmeAddComponent {
 
     this.ws.call('certificate.get_domain_names', [this.csr.id])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (domains) => {
+      .subscribe({
+        next: (domains) => {
           this.domains = domains;
           domains.forEach((domain) => this.addDomainControls(domain));
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   private addDomainControls(domain: string): void {

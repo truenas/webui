@@ -390,64 +390,52 @@ export class SmbFormComponent implements OnInit {
       ]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.getCifsService()
-          .pipe(
-            switchMap((cifsService) => {
-              if (cifsService.state === ServiceStatus.Stopped) {
-                return this.startAndEnableService(cifsService);
-              }
-              return this.restartCifsServiceIfNecessary();
-            }),
-            switchMap(this.shouldRedirectToAclEdit),
-            untilDestroyed(this),
-          )
-          .subscribe(
-            (redirect) => {
-              this.isLoading = false;
-              this.cdr.markForCheck();
-              if (redirect) {
-                const sharePath: string = this.form.get('path').value;
-                const homeShare = this.form.get('home').value;
-                const datasetId = sharePath.replace('/mnt/', '');
-                const poolName = datasetId.split('/')[0];
-                this.router.navigate(
-                  ['/'].concat([
-                    'storage',
-                    'id',
-                    poolName,
-                    'dataset',
-                    'acl',
-                    datasetId,
-                  ]),
-                  { queryParams: { homeShare } },
-                );
-              }
-              this.slideInService.close();
-            },
-            (err) => {
-              if (err.reason.includes('[ENOENT]')) {
-                this.dialog.closeAllDialogs();
-              } else {
-                this.dialog.errorReport(
-                  err.error,
-                  err.reason,
-                  err.trace.formatted,
-                );
-              }
-              this.isLoading = false;
-              this.cdr.markForCheck();
-              this.slideInService.close();
-            },
-          );
+    request$.pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getCifsService().pipe(
+          switchMap((cifsService) => {
+            if (cifsService.state === ServiceStatus.Stopped) {
+              return this.startAndEnableService(cifsService);
+            }
+            return this.restartCifsServiceIfNecessary();
+          }),
+          switchMap(this.shouldRedirectToAclEdit),
+          untilDestroyed(this),
+        ).subscribe({
+          next: (redirect) => {
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            if (redirect) {
+              const sharePath: string = this.form.get('path').value;
+              const homeShare = this.form.get('home').value;
+              const datasetId = sharePath.replace('/mnt/', '');
+              const poolName = datasetId.split('/')[0];
+              this.router.navigate(['/'].concat(
+                ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
+              ), { queryParams: { homeShare } });
+            }
+            this.slideInService.close();
+          },
+          error: (err) => {
+            if (err.reason.includes('[ENOENT]')) {
+              this.dialog.closeAllDialogs();
+            } else {
+              this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+            }
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            this.slideInService.close();
+          },
+        });
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);
       },
-    );
+    });
   }
 
   restartCifsServiceIfNecessary(): Observable<unknown> {

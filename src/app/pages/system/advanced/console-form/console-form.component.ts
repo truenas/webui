@@ -68,19 +68,19 @@ export class ConsoleFormComponent implements OnInit {
 
     this.ws.call('system.advanced.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
 
     this.subscriptions.push(
       this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$),
@@ -92,15 +92,18 @@ export class ConsoleFormComponent implements OnInit {
     this.isFormLoading = true;
     const values = this.form.value;
 
-    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.store$.dispatch(advancedConfigUpdated());
-      this.cdr.markForCheck();
-      this.slideInService.close();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.store$.dispatch(advancedConfigUpdated());
+        this.cdr.markForCheck();
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

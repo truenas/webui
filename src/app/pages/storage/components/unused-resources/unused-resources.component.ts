@@ -24,11 +24,14 @@ export class UnusedResourcesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
-      this.unusedDisks = disks;
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.dialogService.errorReportMiddleware(error);
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe({
+      next: (disks) => {
+        this.unusedDisks = disks;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 }

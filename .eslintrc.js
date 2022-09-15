@@ -248,6 +248,7 @@ module.exports = {
           "functions": false,
           "methods": false,
         }],
+        "rxjs/prefer-observer": ["error"],
         "id-length": ["error", {
           exceptions: ['a', 'b', 'x', 'y', '_', 'i', 'n'],
           properties: 'never',

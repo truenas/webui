@@ -75,16 +75,16 @@ export class ManualTestDialogComponent {
 
     this.ws.call('smart.test.manual_test', [params])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (startedTests) => {
+      .subscribe({
+        next: (startedTests) => {
           this.startedTests = startedTests;
           this.cdr.markForCheck();
         },
-        (err) => {
+        error: (err) => {
           new EntityUtils().handleWsError(this, err, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private setDisksBySupport(): void {

@@ -119,12 +119,15 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     this.store$.pipe(
       select(selectSnapshots),
       untilDestroyed(this),
-    ).subscribe((snapshots) => {
-      this.createDataSource(snapshots);
-      this.cdr.markForCheck();
-    }, () => {
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (snapshots) => {
+        this.createDataSource(snapshots);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -203,15 +206,15 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       tap(() => this.loader.open()),
       switchMap(() => this.websocket.call('zfs.snapshot.delete', [snapshot.name])),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.loader.close();
       },
-      (error: WebsocketError) => {
+      error: (error: WebsocketError) => {
         console.error(error);
         this.loader.close();
       },
-    );
+    });
   }
 
   doBatchDelete(snapshots: ZfsSnapshot[]): void {

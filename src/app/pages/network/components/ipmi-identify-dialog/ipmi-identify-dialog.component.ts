@@ -60,16 +60,16 @@ export class IpmiIdentifyDialogComponent {
 
     this.ws.call('ipmi.identify', [params])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.loader.close();
           this.dialogRef.close();
           this.snackbar.success(successMessage);
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

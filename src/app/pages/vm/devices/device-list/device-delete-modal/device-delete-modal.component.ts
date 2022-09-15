@@ -93,16 +93,16 @@ export class DeviceDeleteModalComponent implements OnInit {
       },
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.dialogRef.close(true);
           this.loader.close();
         },
-        (err) => {
+        error: (err) => {
           new EntityUtils().handleWsError(this, err, this.dialogService);
           this.loader.close();
         },
-      );
+      });
   }
 
   onDestroyCheckedStateChanged($event: unknown): void {

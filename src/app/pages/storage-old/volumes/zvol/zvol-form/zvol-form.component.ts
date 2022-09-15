@@ -794,13 +794,16 @@ export class ZvolFormComponent implements FormConfiguration {
       }
 
       if (!this.editData.volsize || this.editData.volsize >= roundedVolSize) {
-        this.ws.call('pool.dataset.update', [this.parent, this.editData]).pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.modalService.closeSlideIn();
-          this.modalService.refreshTable();
-        }, (eres) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this.entityForm, eres);
+        this.ws.call('pool.dataset.update', [this.parent, this.editData]).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.loader.close();
+            this.modalService.closeSlideIn();
+            this.modalService.refreshTable();
+          },
+          error: (eres) => {
+            this.loader.close();
+            new EntityUtils().handleWsError(this.entityForm, eres);
+          },
         });
       } else {
         this.loader.close();
@@ -814,13 +817,16 @@ export class ZvolFormComponent implements FormConfiguration {
     this.loader.open();
 
     if (this.isNew) {
-      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
-        this.loader.close();
-        this.modalService.closeSlideIn();
-        this.modalService.refreshTable();
-      }, (error) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this.entityForm, error);
+      this.addSubmit(body).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          this.modalService.closeSlideIn();
+          this.modalService.refreshTable();
+        },
+        error: (error) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this.entityForm, error);
+        },
       });
     } else {
       this.editSubmit(body);
