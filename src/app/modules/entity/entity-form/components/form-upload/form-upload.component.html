@@ -1,6 +1,5 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-input form-element"
   ix-auto
   ix-auto-type="file-uploader"
@@ -8,6 +7,7 @@
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>

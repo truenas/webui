@@ -1,11 +1,11 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-input form-element"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-pwtoggle]="config.togglePw"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <div *ngIf="config.placeholder" class="label-container">
     <label class="label input-text">
@@ -88,10 +88,10 @@
       ix-auto-identifier="{{ config.name }}_toggle-pw"
       (click)="togglePassword()"
     >
-      <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">
+      <i *ngIf="showPassword"  class="material-icons" matTooltip="Hide">
         visibility
       </i>
-      <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">
+      <i *ngIf="!showPassword" class="material-icons" matTooltip="Show">
         visibility_off
       </i>
     </button>

@@ -300,10 +300,7 @@
                      Unknown {{ temperatures.symbolText }}
                     <ix-tooltip
                       [header]="'Temperature data missing.' | translate"
-                      [message]="
-                        'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here'
-                          | translate
-                      "
+                      [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate"
                     >
                     </ix-tooltip>
                   </div>
@@ -320,10 +317,7 @@
                   <ix-tooltip
                     *ngIf="!temperatures.values[diskName]"
                     [header]="'Temperature data missing.' | translate"
-                    [message]="
-                      'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here'
-                        | translate
-                    "
+                    [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate"
                   >
                   </ix-tooltip>
                 </li>

@@ -1,10 +1,10 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-input"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <mat-form-field class="full-width">
     <input

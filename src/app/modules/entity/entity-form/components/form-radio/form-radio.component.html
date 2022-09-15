@@ -1,10 +1,10 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field mat-radio"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>

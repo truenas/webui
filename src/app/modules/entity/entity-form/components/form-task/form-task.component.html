@@ -1,12 +1,12 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="form-task"
-  [formGroup]="group"
-  [ngClass]="fieldShow"
   ix-auto
   ix-auto-type="task"
   ix-auto-identifier="{{ config.placeholder }}"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [attr.id]="config.name"
 >
   <label class="form-task-label">{{ config.placeholder | translate }}</label>
   <br />

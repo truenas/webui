@@ -31,12 +31,6 @@
     [class]="tcStatus.status"
     svgIcon="ix:truecommand_logo_white"
     matBadgeSize="small"
-    [matBadge]="
-      tcStatus.status === TrueCommandStatus.Connected
-        ? 'check'
-        : tcStatus.status === TrueCommandStatus.Failed
-        ? 'priority_high'
-        : ''
-    "
+    [matBadge]="tcsStatusMatBadge"
   ></mat-icon>
 </button>

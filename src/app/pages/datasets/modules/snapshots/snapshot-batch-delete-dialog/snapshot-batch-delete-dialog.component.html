@@ -7,10 +7,7 @@
 >
   <p>
     <strong>
-      {{
-        'The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?'
-          | translate: { n: total }
-      }}
+      {{ 'The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?' | translate: { n: total } }}
     </strong>
   </p>
 
@@ -90,10 +87,7 @@
 
 <ng-template #errorMessage>
   <p>
-    {{
-      'Warning: {n} of {total} snapshots could not be deleted.'
-        | translate: { n: jobErrors.length, total }
-    }}
+    {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
   </p>
   <p>{{ getErrorMessage() }}</p>
 </ng-template>

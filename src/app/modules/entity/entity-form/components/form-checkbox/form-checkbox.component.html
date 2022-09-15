@@ -1,11 +1,11 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-checkbox form-element {{ config.inlineLabel ? 'inline-label' : 'not' }}"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
   [class.expanded-height]="config.expandedHeight"
+  [attr.id]="config.name"
 >
   <ng-container *ngIf="config.inlineLabel">
     <div class="label half-width"></div>

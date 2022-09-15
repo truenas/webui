@@ -1,13 +1,13 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-permissions form-element"
-  [formGroup]="group"
-  [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
   ix-auto
   ix-auto-type="permissions"
   ix-auto-identifier="{{ config.placeholder }}"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [attr.id]="config.name"
 >
   <div class="top">
     <label>

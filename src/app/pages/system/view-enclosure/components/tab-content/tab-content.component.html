@@ -4,7 +4,7 @@
     *ngFor="let header of data.header; let i = index"
     [matColumnDef]="data.header[i]"
   >
-    <th mat-header-cell *matHeaderCellDef>{{ header }}</th>
+    <th *matHeaderCellDef mat-header-cell>{{ header }}</th>
     <td mat-cell *matCellDef="let element">{{ element.data[header] }}</td>
   </ng-container>
 

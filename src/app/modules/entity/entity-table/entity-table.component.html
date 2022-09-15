@@ -132,21 +132,17 @@
           </ng-container>
 
           <!-- Expansion Chevrons -->
-          <ng-container
-            *ngIf="column == 'expansion-chevrons'"
-            matColumnDef="{{ column }}"
-            stickyEnd
-          >
+          <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{ column }}" stickyEnd>
             <th
+              *matHeaderCellDef
               class="expansion-chevrons-column"
               mat-header-cell
-              *matHeaderCellDef
               [ngClass]="{ 'sticky-border-left': isTableOverflow() }"
             ></th>
             <td
+              *matCellDef="let element"
               class="expansion-chevrons-column"
               mat-cell
-              *matCellDef="let element"
               [ngClass]="{ 'sticky-border-left': isTableOverflow() }"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
@@ -218,7 +214,7 @@
             matColumnDef="{{ column }}"
             sticky
           >
-            <th class="multiselect-column" mat-header-cell *matHeaderCellDef>
+            <th class="multiselect-column" *matHeaderCellDef mat-header-cell>
               <mat-checkbox
                 color="primary"
                 ix-auto
@@ -361,7 +357,7 @@
             *ngIf="['path', 'paths'].includes(column) && isInteractive(column)"
             matColumnDef="{{ column }}"
           >
-            <th mat-header-cell *matHeaderCellDef>
+            <th *matHeaderCellDef mat-header-cell>
               {{ currentColumns[i].name | translate }}
             </th>
             <td

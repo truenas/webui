@@ -1,11 +1,11 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-input form-element"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-pwtoggle]="config.togglePw"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <div class="label-container">
     <label class="label">

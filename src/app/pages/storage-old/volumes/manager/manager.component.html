@@ -290,10 +290,7 @@
               />
             </mat-form-field>
             <mat-error *ngIf="isEncrypted" class="adjust-upward">
-              {{
-                'Adding Vdevs to an encrypted pool resets the passphrase and recovery key!'
-                  | translate
-              }}
+              {{ 'Adding Vdevs to an encrypted pool resets the passphrase and recovery key!' | translate }}
             </mat-error>
             <div>
               <div class="button-bar">

@@ -10,7 +10,7 @@
   <mat-card-content>
     <table ix-table class="mat-elevation-z0" [dataSource]="dataSource">
       <ng-container matColumnDef="address">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Address' | translate }}</th>
+        <th *matHeaderCellDef mat-header-cell>{{ 'Address' | translate }}</th>
         <td
           mat-cell
           *matCellDef="let server; dataSource: dataSource"
@@ -20,7 +20,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="burst">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Burst' | translate }}</th>
+        <th *matHeaderCellDef mat-header-cell>{{ 'Burst' | translate }}</th>
         <td
           mat-cell
           *matCellDef="let server; dataSource: dataSource"
@@ -30,7 +30,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="iburst">
-        <th mat-header-cell *matHeaderCellDef>{{ 'IBurst' | translate }}</th>
+        <th *matHeaderCellDef mat-header-cell>{{ 'IBurst' | translate }}</th>
         <td
           mat-cell
           *matCellDef="let server; dataSource: dataSource"
@@ -40,7 +40,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="prefer">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Prefer' | translate }}</th>
+        <th *matHeaderCellDef mat-header-cell>{{ 'Prefer' | translate }}</th>
         <td
           mat-cell
           *matCellDef="let server; dataSource: dataSource"
@@ -50,7 +50,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="minpoll">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Min Poll' | translate }}</th>
+        <th *matHeaderCellDef mat-header-cell>{{ 'Min Poll' | translate }}</th>
         <td
           mat-cell
           *matCellDef="let server; dataSource: dataSource"
@@ -60,7 +60,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="maxpoll">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Max Poll' | translate }}</th>
+        <th *matHeaderCellDef mat-header-cell>{{ 'Max Poll' | translate }}</th>
         <td
           mat-cell
           *matCellDef="let server; dataSource: dataSource"
@@ -71,7 +71,7 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
+        <th *matHeaderCellDef mat-header-cell></th>
         <td mat-cell *matCellDef="let server; dataSource: dataSource">
           <button
             mat-icon-button

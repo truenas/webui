@@ -39,10 +39,7 @@
       class="full-width pool-summary"
     >
       <div *ngIf="data.attachments.length" class="attachments">
-        {{
-          'These services depend on pool {name} and will be disrupted if the pool is detached:'
-            | translate: { name: data.pool.name }
-        }}
+        {{ 'These services depend on pool {name} and will be disrupted if the pool is detached:' | translate: { name: data.pool.name } }}
 
         <ul class="services">
           <li *ngFor="let service of data.attachments">

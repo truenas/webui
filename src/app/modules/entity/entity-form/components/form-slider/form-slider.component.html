@@ -1,12 +1,12 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="entity-slider"
   ix-auto
   ix-auto-type="slider"
   ix-auto-identifier="{{ config.placeholder }}"
   [formGroup]="group"
   [ngClass]="fieldShow"
+  [attr.id]="config.name"
 >
   <label>{{ config.placeholder | translate }}</label>
   <mat-slider

@@ -1,9 +1,9 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="toggle-button"
   [formGroup]="group"
   [ngClass]="fieldShow"
+  [attr.id]="config.name"
 >
   <label>{{ config.placeholder | translate }}</label>
   <br />

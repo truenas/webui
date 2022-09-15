@@ -1,6 +1,5 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   fxLayout="column"
   class="dynamic-field form-list"
   ix-auto
@@ -9,6 +8,7 @@
   [formGroup]="group"
   [ngClass]="fieldShow"
   [ngClass]="{ box: config.box, 'sub-box': !config.box }"
+  [attr.id]="config.name"
 >
   <div
     fxLayout="row"

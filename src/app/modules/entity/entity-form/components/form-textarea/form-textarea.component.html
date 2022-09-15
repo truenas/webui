@@ -1,13 +1,13 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-textarea form-element"
   ix-auto
   ix-auto-type="textarea"
   ix-auto-identifier="{{ config.placeholder }}"
-  [formGroup]="group"
-  [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
+  [ngClass]="fieldShow"
+  [formGroup]="group"
+  [attr.id]="config.name"
 >
   <div class="label-container">
     <label class="label text-input">

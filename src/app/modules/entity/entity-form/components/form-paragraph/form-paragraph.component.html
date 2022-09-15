@@ -1,11 +1,11 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{ config.name }}"
   class="dynamic-field form-textarea paragraph"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [style.width]="config.width ? config.width : 'auto'"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <div fxLayoutAlign="start start" fxLayoutGap="8px">
     <mat-icon

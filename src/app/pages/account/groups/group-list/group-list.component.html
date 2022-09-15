@@ -36,7 +36,7 @@
         [fixedLayout]="true"
       >
         <ng-container matColumnDef="group">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
             {{ 'Group' | translate }}
           </th>
           <td mat-cell *matCellDef="let group; dataSource: dataSource">
@@ -45,7 +45,7 @@
         </ng-container>
 
         <ng-container matColumnDef="gid">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
             {{ 'GID' | translate }}
           </th>
           <td mat-cell *matCellDef="let group; dataSource: dataSource">
@@ -54,7 +54,7 @@
         </ng-container>
 
         <ng-container matColumnDef="builtin">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
             {{ 'Builtin' | translate }}
           </th>
           <td mat-cell *matCellDef="let group; dataSource: dataSource">
@@ -63,7 +63,7 @@
         </ng-container>
 
         <ng-container matColumnDef="sudo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
             {{ 'Permit Sudo' | translate }}
           </th>
           <td mat-cell *matCellDef="let group; dataSource: dataSource">
@@ -72,7 +72,7 @@
         </ng-container>
 
         <ng-container matColumnDef="smb">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
             {{ 'Samba Authentication' | translate }}
           </th>
           <td mat-cell *matCellDef="let group; dataSource: dataSource">

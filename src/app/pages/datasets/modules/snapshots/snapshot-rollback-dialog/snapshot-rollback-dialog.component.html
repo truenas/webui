@@ -33,10 +33,7 @@
     </ix-fieldset>
 
     <p
-      [innerHTML]="
-        '<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.'
-          | translate
-      "
+      [innerHTML]="'<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.' | translate"
     ></p>
 
     <div class="form-actions">

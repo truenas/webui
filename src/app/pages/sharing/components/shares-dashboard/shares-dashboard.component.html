@@ -7,19 +7,19 @@
     [conf]="webdavTableConf"
   >
     <ng-container
-      headerCustomContent
       *ngTemplateOutlet="
         webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
         context: { status: webdavServiceStatus, count: webdavHasItems }
       "
+      headerCustomContent
     ></ng-container>
 
     <ng-container
-      headerCustomActions
       *ngTemplateOutlet="
         extraAction;
         context: { tableExtraActions: webdavTableConf?.tableExtraActions }
       "
+      headerCustomActions
     ></ng-container>
   </ix-expandable-table>
 
@@ -31,11 +31,11 @@
     [conf]="nfsTableConf"
   >
     <ng-container
-      headerCustomContent
       *ngTemplateOutlet="
         nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
         context: { status: nfsServiceStatus, count: nfsHasItems }
       "
+      headerCustomContent
     ></ng-container>
 
     <ng-container
@@ -55,19 +55,19 @@
     [conf]="smbTableConf"
   >
     <ng-container
-      headerCustomContent
       *ngTemplateOutlet="
         smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
         context: { status: smbServiceStatus, count: smbHasItems }
       "
+      headerCustomContent
     ></ng-container>
 
     <ng-container
-      headerCustomActions
       *ngTemplateOutlet="
         extraAction;
         context: { tableExtraActions: smbTableConf?.tableExtraActions }
       "
+      headerCustomActions
     ></ng-container>
   </ix-expandable-table>
 
@@ -79,19 +79,19 @@
     [conf]="iscsiTableConf"
   >
     <ng-container
-      headerCustomContent
       *ngTemplateOutlet="
         iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
         context: { status: iscsiServiceStatus, count: iscsiHasItems }
       "
+      headerCustomContent
     ></ng-container>
 
     <ng-container
-      headerCustomActions
       *ngTemplateOutlet="
         extraAction;
         context: { tableExtraActions: iscsiTableConf?.tableExtraActions }
       "
+      headerCustomActions
     ></ng-container>
   </ix-expandable-table>
 
@@ -116,15 +116,15 @@
     <div id="customActions" *ngIf="tableExtraActions">
       <button
         mat-icon-button
-        [matMenuTriggerFor]="rowActions"
         aria-label="Table Actions of Expandable Table"
+        [matMenuTriggerFor]="rowActions"
       >
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #rowActions="matMenu">
         <button
-          mat-menu-item
           *ngFor="let action of tableExtraActions"
+          mat-menu-item
           (click)="action.onClick()"
         >
           {{ action.label | translate }}

@@ -2,10 +2,7 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p *ngIf="!isJobCompleted">
     <strong>
-      {{
-        'The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?'
-          | translate: { n: bulkItems.size }
-      }}
+      {{ 'The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
     </strong>
   </p>
   <p *ngIf="isJobCompleted">
