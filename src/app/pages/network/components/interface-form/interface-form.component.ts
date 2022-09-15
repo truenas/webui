@@ -167,6 +167,10 @@ export class InterfaceFormComponent implements OnInit {
     return this.form.get('lag_protocol').value === LinkAggregationProtocol.LoadBalance;
   }
 
+  get canHaveAliases(): boolean {
+    return !this.form.value.ipv4_dhcp && !this.form.value.ipv6_auto;
+  }
+
   ngOnInit(): void {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();

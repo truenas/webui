@@ -124,6 +124,7 @@
           type="number"
         ></ix-input>
         <ix-list
+          *ngIf="canHaveAliases"
           [empty]="form.controls.aliases.controls.length === 0"
           [label]="'Aliases' | translate"
           formArrayName="aliases"
