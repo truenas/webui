@@ -123,8 +123,6 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     """click on System Dataset Configure button and close the popup."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
     assert wait_on_element(driver, 7, '//h3[contains(text(),"System Dataset Pool")]')
-    element = driver.find_element_by_xpath('//h3[contains(text(),"System Dataset Pool")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]').click()
     assert wait_on_element(driver, 5, '//h1[contains(.,"Warning")]')
