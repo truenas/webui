@@ -68,11 +68,11 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   setupExportedPoolWarning(): void {
     this.form.get('replacement').valueChanges.pipe(untilDestroyed(this)).subscribe(
-      this.warnAboutExportedPool,
+      this.warnAboutExportedPool.bind(this),
     );
   }
 
-  warnAboutExportedPool = (diskIdentifier: string): void => {
+  warnAboutExportedPool(diskIdentifier: string): void {
     const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.identifier === diskIdentifier);
     if (!unusedDisk?.exported_zpool) {
       return;
@@ -85,7 +85,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
         { pool: `'${unusedDisk.exported_zpool}'` },
       ),
     );
-  };
+  }
 
   onSubmit(): void {
     const jobDialogRef = this.matDialog.open(EntityJobComponent, {
