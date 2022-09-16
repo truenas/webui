@@ -84,17 +84,17 @@ export class CertificateEditComponent {
 
     this.ws.call('certificate.update', [this.certificate.id, this.form.value])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

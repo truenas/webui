@@ -62,8 +62,8 @@ export class ProactiveComponent implements OnInit {
 
     this.ws.call('support.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
@@ -71,12 +71,13 @@ export class ProactiveComponent implements OnInit {
           this.snackbar.success(
             this.translate.instant(helptext.proactive.dialog_mesage),
           );
-        }, (error) => {
+        },
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private loadConfig(): void {
@@ -88,8 +89,8 @@ export class ProactiveComponent implements OnInit {
       this.ws.call('support.is_available_and_enabled'),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        ([config, isAvailable, isEnabled]) => {
+      .subscribe({
+        next: ([config, isAvailable, isEnabled]) => {
           this.isLoading = false;
           this.cdr.markForCheck();
 
@@ -102,13 +103,13 @@ export class ProactiveComponent implements OnInit {
             enabled: isEnabled,
           });
         },
-        (error) => {
+        error: (error) => {
           this.isFormDisabled = true;
           this.form.disable();
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   supportUnavailable(): void {

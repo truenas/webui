@@ -524,15 +524,15 @@ export class SharesDashboardComponent implements AfterViewInit {
         return;
     }
 
-    this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
-      (updatedEntity) => {
+    this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe({
+      next: (updatedEntity) => {
         row[param] = updatedEntity[param];
       },
-      (err: WebsocketError) => {
+      error: (err: WebsocketError) => {
         row[param] = !row[param];
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 
   updateTableServiceStatus(service: Service): void {
@@ -566,43 +566,46 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
           this.ws.call(rpc, [service.service, { silent: false }])
             .pipe(untilDestroyed(this))
-            .subscribe((hasChanged: boolean) => {
-              if (hasChanged) {
-                if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-                  this.dialog.warn(
-                    this.translate.instant('Service failed to stop'),
-                    this.translate.instant(
-                      'The {service} service failed to stop.',
-                      { service: serviceNames.get(service.service) || service.service },
-                    ),
-                  );
+            .subscribe({
+              next: (hasChanged: boolean) => {
+                if (hasChanged) {
+                  if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
+                    this.dialog.warn(
+                      this.translate.instant('Service failed to stop'),
+                      this.translate.instant(
+                        'The {service} service failed to stop.',
+                        { service: serviceNames.get(service.service) || service.service },
+                      ),
+                    );
+                  }
+                  service.state = ServiceStatus.Running;
+                } else {
+                  if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
+                    this.dialog.warn(
+                      this.translate.instant('Service failed to start'),
+                      this.translate.instant(
+                        'The {service} service failed to start.',
+                        { service: serviceNames.get(service.service) || service.service },
+                      ),
+                    );
+                  }
+                  service.state = ServiceStatus.Stopped;
                 }
-                service.state = ServiceStatus.Running;
-              } else {
-                if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-                  this.dialog.warn(
-                    this.translate.instant('Service failed to start'),
-                    this.translate.instant(
-                      'The {service} service failed to start.',
-                      { service: serviceNames.get(service.service) || service.service },
-                    ),
-                  );
-                }
-                service.state = ServiceStatus.Stopped;
-              }
-              this.updateTableServiceStatus(service);
-            }, (error) => {
-              let message = this.translate.instant(
-                'Error starting service {serviceName}.',
-                { serviceName: serviceNames.get(service.service) || service.service },
-              );
-              if (rpc === 'service.stop') {
-                message = this.translate.instant(
-                  'Error stopping service {serviceName}.',
+                this.updateTableServiceStatus(service);
+              },
+              error: (error) => {
+                let message = this.translate.instant(
+                  'Error starting service {serviceName}.',
                   { serviceName: serviceNames.get(service.service) || service.service },
                 );
-              }
-              this.dialog.errorReport(message, error.reason, error.trace.formatted);
+                if (rpc === 'service.stop') {
+                  message = this.translate.instant(
+                    'Error stopping service {serviceName}.',
+                    { serviceName: serviceNames.get(service.service) || service.service },
+                  );
+                }
+                this.dialog.errorReport(message, error.reason, error.trace.formatted);
+              },
             });
         },
       },

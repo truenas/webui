@@ -60,23 +60,26 @@ export class ApiKeyFormDialogComponent implements OnInit {
 
     request$
       .pipe(untilDestroyed(this))
-      .subscribe((apiKey) => {
-        if (this.isNew) {
-          this.store.apiKeyAdded(apiKey);
-        } else {
-          this.store.apiKeyEdited(apiKey);
-        }
-        this.loader.close();
-        this.dialogRef.close(true);
+      .subscribe({
+        next: (apiKey) => {
+          if (this.isNew) {
+            this.store.apiKeyAdded(apiKey);
+          } else {
+            this.store.apiKeyEdited(apiKey);
+          }
+          this.loader.close();
+          this.dialogRef.close(true);
 
-        if (apiKey.key) {
-          this.matDialog.open(KeyCreatedDialogComponent, {
-            data: apiKey.key,
-          });
-        }
-      }, (error) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+          if (apiKey.key) {
+            this.matDialog.open(KeyCreatedDialogComponent, {
+              data: apiKey.key,
+            });
+          }
+        },
+        error: (error) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 }

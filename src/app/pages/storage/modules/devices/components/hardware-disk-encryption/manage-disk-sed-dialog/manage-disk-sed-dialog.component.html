@@ -13,17 +13,19 @@
       type="submit"
       [disabled]="passwordControl.invalid"
       color="primary"
-    >{{ 'Save' | translate }}</button>
+    >
+      {{ 'Save' | translate }}
+    </button>
     <button
       *ngIf="disk?.passwd"
       mat-button
       type="button"
       (click)="onClearPassword()"
-    >{{ 'Clear SED Password' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      [matDialogClose]="false"
-    >{{ 'Cancel' | translate }}</button>
+    >
+      {{ 'Clear SED Password' | translate }}
+    </button>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
   </div>
 </form>

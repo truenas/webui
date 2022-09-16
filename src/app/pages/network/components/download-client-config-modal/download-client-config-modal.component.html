@@ -6,6 +6,7 @@
         {{ 'Manage Certificates' | translate }}
       </a>
     </div>
+
     <ix-select
       [formControl]="selectControl"
       [label]="'Client Certificate' | translate"
@@ -14,15 +15,15 @@
     ></ix-select>
   </div>
 </div>
+
 <div mat-dialog-actions class="buttons">
-  <button
-    mat-button
-    matDialogClose
-  >{{ 'Cancel' | translate }}</button>
+  <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
   <button
     mat-button
     color="primary"
     [disabled]="selectControl.invalid"
     (click)="onSave()"
-  >{{ 'Save' | translate }}</button>
+  >
+    {{ 'Save' | translate }}
+  </button>
 </div>

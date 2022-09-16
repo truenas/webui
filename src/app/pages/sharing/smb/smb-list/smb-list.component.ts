@@ -137,8 +137,8 @@ export class SmbListComponent implements EntityTableConfig {
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
           const datasetId = rowName;
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-            (isLocked) => {
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({
+            next: (isLocked) => {
               if (isLocked) {
                 this.lockedPathDialog(row.path);
               } else if (this.productType.includes(ProductType.Scale)) {
@@ -150,11 +150,12 @@ export class SmbListComponent implements EntityTableConfig {
                   ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]),
                 );
               }
-            }, (err) => {
+            },
+            error: (err) => {
               this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
-          );
+          });
         },
       },
       {
@@ -175,14 +176,14 @@ export class SmbListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: SmbShare): void {
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (share) => {
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+      next: (share) => {
         row.enabled = share.enabled;
       },
-      (err) => {
+      error: (err) => {
         row.enabled = !row.enabled;
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 }

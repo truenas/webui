@@ -15,6 +15,7 @@ import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
 import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -313,7 +314,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
+    const now = await lastValueFrom(this.reportsService.getServerTime().pipe(untilDestroyed(this)));
 
     let startDate: Date;
     let endDate: Date;

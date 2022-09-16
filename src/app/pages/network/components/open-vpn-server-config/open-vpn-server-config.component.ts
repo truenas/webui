@@ -111,17 +111,17 @@ export class OpenVpnServerConfigComponent implements OnInit {
     };
     this.ws.call('openvpn.server.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   certificatesLinkClicked(): void {
@@ -132,18 +132,21 @@ export class OpenVpnServerConfigComponent implements OnInit {
   onRenewStaticKey(): void {
     this.loader.open();
 
-    this.services.renewStaticKey().pipe(untilDestroyed(this)).subscribe((config) => {
-      const download = Object.entries(config)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join('\n');
-      this.loader.close();
-      this.form.patchValue({
-        tls_crypt_auth: config.tls_crypt_auth,
-      });
-      this.storageService.downloadText(download, 'openVPNStatic.key');
-    }, (error) => {
-      this.loader.close();
-      new EntityUtils().handleWsError(this, error, this.dialogService);
+    this.services.renewStaticKey().pipe(untilDestroyed(this)).subscribe({
+      next: (config) => {
+        const download = Object.entries(config)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join('\n');
+        this.loader.close();
+        this.form.patchValue({
+          tls_crypt_auth: config.tls_crypt_auth,
+        });
+        this.storageService.downloadText(download, 'openVPNStatic.key');
+      },
+      error: (error) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+      },
     });
   }
 
@@ -155,8 +158,8 @@ export class OpenVpnServerConfigComponent implements OnInit {
     this.isLoading = true;
     this.ws.call('openvpn.server.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue({
             ...config,
             server: `${config.server}/${config.netmask}`,
@@ -164,12 +167,12 @@ export class OpenVpnServerConfigComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   private setFormRelations(): void {

@@ -1,7 +1,7 @@
-import {
-  fakeAsync, flush, tick,
-} from '@angular/core/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
@@ -11,7 +11,6 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -45,6 +44,8 @@ describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
   let websocket: MockWebsocketService;
   let matDialog: MatDialog;
+  let loader: HarnessLoader;
+  let rootLoader: HarnessLoader;
   const acl = {
     acltype: AclType.Nfs4,
     trivial: false,
@@ -114,6 +115,8 @@ describe('DatasetAclEditorComponent', () => {
     spectator = createComponent();
     websocket = spectator.inject(MockWebsocketService);
     matDialog = spectator.inject(MatDialog);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
   });
 
   describe('preset modal', () => {
@@ -125,8 +128,9 @@ describe('DatasetAclEditorComponent', () => {
       jest.restoreAllMocks();
     });
 
-    it('shows preset modal if user presses "Use Preset"', () => {
-      spectator.click(byButton('Use ACL Preset'));
+    it('shows preset modal if user presses "Use Preset"', async () => {
+      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use ACL Preset' }));
+      await usePresetButton.click();
 
       expect(matDialog.open).toHaveBeenCalledWith(
         SelectPresetModalComponent,
@@ -162,19 +166,17 @@ describe('DatasetAclEditorComponent', () => {
   });
 
   describe('editing', () => {
-    it('strips ACL when "Strip ACL" button is pressed', fakeAsync(() => {
-      spectator.click(byButton('Strip ACL'));
-      tick();
+    it('strips ACL when "Strip ACL" button is pressed', async () => {
+      const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
+      await stripButton.click();
 
       spectator.click(spectator.query(
         byText('Remove the ACL and permissions from child datasets of the current dataset'),
         { root: true },
       ));
 
-      spectator.click(spectator.query(
-        byButton('Strip ACLs'),
-        { root: true },
-      ));
+      const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
+      await confirmButton.click();
 
       expect(websocket.job).toHaveBeenCalledWith('filesystem.setacl', [{
         dacl: [],
@@ -186,11 +188,11 @@ describe('DatasetAclEditorComponent', () => {
         path: '/mnt/pool/dataset',
       }]);
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets']);
-      flush();
-    }));
+    });
 
-    it('adds another ace when Add item is pressed', () => {
-      spectator.click(byButton('Add Item'));
+    it('adds another ace when Add item is pressed', async () => {
+      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
+      await addAceButton.click();
 
       const items = spectator.queryAll('ix-permissions-item');
       expect(items).toHaveLength(4);
@@ -211,8 +213,9 @@ describe('DatasetAclEditorComponent', () => {
       jest.restoreAllMocks();
     });
 
-    it('saves acl items when Save Access Control List is pressed', () => {
-      spectator.click(byButton('Save Access Control List'));
+    it('saves acl items when Save Access Control List is pressed', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+      await saveButton.click();
 
       expect(store.saveAcl).toHaveBeenCalledWith({
         recursive: false,
@@ -225,9 +228,8 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     // TODO: Doesn't work because of entryComponents. Try again after upgrading Angular.
-    xit('shows a warning when `recursive` checkbox is pressed', fakeAsync(() => {
+    xit('shows a warning when `recursive` checkbox is pressed', async () => {
       spectator.click(byText('Apply permissions recursively'));
-      tick();
 
       expect(spectator.query('.mat-dialog-container', { root: true })).toExist();
 
@@ -236,11 +238,13 @@ describe('DatasetAclEditorComponent', () => {
         { root: true },
       ));
 
-      spectator.click(spectator.query(byButton('Continue'), { root: true }));
+      const continueButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
+      await continueButton.click();
 
-      spectator.click(byButton('Save Access Control List'));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+      await saveButton.click();
 
       expect(store.saveAcl).toHaveBeenCalledWith(234);
-    }));
+    });
   });
 });

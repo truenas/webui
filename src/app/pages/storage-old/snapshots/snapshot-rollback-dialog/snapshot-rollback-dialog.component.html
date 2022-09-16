@@ -10,11 +10,16 @@
     class="ix-form-container"
     (submit)="onSubmit()"
   >
-    <p [innerHTML]="'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate: {
-      snapshot: publicSnapshot.snapshot_name,
-      dataset: publicSnapshot.dataset,
-      datetime: publicSnapshot.properties.creation.parsed.$date | formatDateTime
-    }"></p>
+    <p
+      [innerHTML]="
+        'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
+          : {
+              snapshot: publicSnapshot.snapshot_name,
+              dataset: publicSnapshot.dataset,
+              datetime: publicSnapshot.properties.creation.parsed.$date | formatDateTime
+            }
+      "
+    ></p>
 
     <ix-fieldset>
       <ix-radio-group
@@ -27,7 +32,9 @@
       ></ix-radio-group>
     </ix-fieldset>
 
-    <p [innerHTML]="'<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.' | translate"></p>
+    <p
+      [innerHTML]="'<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.' | translate"
+    ></p>
 
     <div class="form-actions">
       <ix-checkbox
@@ -40,20 +47,22 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid"
           color="primary"
-        >{{ 'Rollback' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          matDialogClose
-        >{{ 'Cancel' | translate }}</button>
+          [disabled]="form.invalid"
+        >
+          {{ 'Rollback' | translate }}
+        </button>
+        <button mat-button type="button" matDialogClose>
+          {{ 'Cancel' | translate }}
+        </button>
       </div>
     </div>
   </form>
 </ng-template>
 <ng-template #successMessage>
-  <p>{{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot_name } }}</p>
+  <p>
+    {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot_name } }}
+  </p>
 
   <div class="form-actions">
     <div class="form-buttons">
@@ -63,12 +72,12 @@
         color="primary"
         matDialogClose
         [routerLink]="['/storage-old', 'snapshots']"
-      >{{ 'Go to Storage' | translate }}</a>
-      <button
-        mat-button
-        type="button"
-        matDialogClose
-      >{{ 'Close' | translate }}</button>
+      >
+        {{ 'Go to Storage' | translate }}
+      </a>
+      <button mat-button type="button" matDialogClose>
+        {{ 'Close' | translate }}
+      </button>
     </div>
   </div>
 </ng-template>

@@ -148,13 +148,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.Group, filter],
-    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
-      this.isLoading = false;
-      this.createDataSource(quotas);
-      this.checkInvalidQuotas();
-    }, (error) => {
-      this.emptyOrErrorConfig = this.errorConfig;
-      this.handleError(error);
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (quotas: DatasetQuota[]) => {
+        this.isLoading = false;
+        this.createDataSource(quotas);
+        this.checkInvalidQuotas();
+      },
+      error: (error) => {
+        this.emptyOrErrorConfig = this.errorConfig;
+        this.handleError(error);
+      },
     });
   }
 
@@ -171,11 +174,14 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     this.ws.call(
       'pool.dataset.get_quota',
       [this.datasetId, DatasetQuotaType.Group, this.invalidFilter],
-    ).pipe(untilDestroyed(this)).subscribe((quotas: DatasetQuota[]) => {
-      if (quotas?.length) {
-        this.invalidQuotas = quotas;
-      }
-    }, this.handleError);
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: (quotas: DatasetQuota[]) => {
+        if (quotas?.length) {
+          this.invalidQuotas = quotas;
+        }
+      },
+      error: this.handleError,
+    });
   }
 
   toggleDisplay(): void {
@@ -215,12 +221,15 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       this.loader.open();
       this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
         .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          this.loader.close();
-          this.getGroupQuotas();
-        }, (error) => {
-          this.loader.close();
-          this.handleError(error);
+        .subscribe({
+          next: () => {
+            this.loader.close();
+            this.getGroupQuotas();
+          },
+          error: (error) => {
+            this.loader.close();
+            this.handleError(error);
+          },
         });
     });
   }
@@ -246,16 +255,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([row])])),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.loader.close();
         this.getGroupQuotas();
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         this.dialogService.errorReportMiddleware(error);
       },
-    );
+    });
   }
 
   filter(query: string): void {

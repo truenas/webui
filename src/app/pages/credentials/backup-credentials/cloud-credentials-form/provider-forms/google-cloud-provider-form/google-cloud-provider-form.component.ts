@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
+import { from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import {
@@ -33,7 +32,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
           return of('');
         }
 
-        return fromPromise(files[0].text());
+        return from(files[0].text());
       }),
       untilDestroyed(this),
     ).subscribe((credentials) => {

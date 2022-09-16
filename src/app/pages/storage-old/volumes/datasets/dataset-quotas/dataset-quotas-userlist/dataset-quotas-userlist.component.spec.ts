@@ -4,7 +4,9 @@ import { TemplateRef } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, ReplaySubject, Subject } from 'rxjs';
+import {
+  BehaviorSubject, of, Subject,
+} from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -64,7 +66,7 @@ describe('DatasetQuotasUserlistComponent', () => {
         snapshot: { params: { pk: 'Test' } },
       }),
       mockProvider(LayoutService, {
-        pageHeaderUpdater$: new ReplaySubject<TemplateRef<unknown>>(),
+        pageHeaderUpdater$: new BehaviorSubject<TemplateRef<unknown>>(null),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

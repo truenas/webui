@@ -1,8 +1,10 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -15,6 +17,7 @@ import { WebSocketService, DialogService } from 'app/services';
 
 describe('SelectPresetModalComponent', () => {
   let spectator: Spectator<SelectPresetModalComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: SelectPresetModalComponent,
     imports: [
@@ -59,7 +62,7 @@ describe('SelectPresetModalComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('filesystem.default_acl_choices', ['/mnt/pool/dataset']);
   });
 
-  it('shows an option to Create a custom ACL if param is passed in data', () => {
+  it('shows an option to Create a custom ACL if param is passed in data', async () => {
     spectator = createComponent({
       providers: [
         {
@@ -71,8 +74,10 @@ describe('SelectPresetModalComponent', () => {
         },
       ],
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.click(spectator.query(byText('Create a custom ACL')));
-    spectator.click(byButton('Continue'));
+    const continueButton = await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
+    await continueButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });

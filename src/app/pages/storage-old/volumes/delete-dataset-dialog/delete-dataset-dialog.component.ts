@@ -63,23 +63,26 @@ export class DeleteDatasetDialogComponent implements OnInit {
             return this.askToForceDelete();
           }
 
-          return throwError(error);
+          return throwError(() => error);
         }),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.loader.close();
-        this.dialogRef.close(true);
-      }, (error) => {
-        this.dialog.errorReport(
-          this.translate.instant(
-            'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
-          ),
-          error.reason,
-          error.stack,
-        );
-        this.loader.close();
-        this.dialogRef.close(true);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.dialogRef.close(true);
+        },
+        error: (error) => {
+          this.dialog.errorReport(
+            this.translate.instant(
+              'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
+            ),
+            error.reason,
+            error.stack,
+          );
+          this.loader.close();
+          this.dialogRef.close(true);
+        },
       });
   }
 
@@ -108,16 +111,19 @@ export class DeleteDatasetDialogComponent implements OnInit {
       this.ws.call('pool.dataset.attachments', [this.dataset.id]),
       this.ws.call('pool.dataset.processes', [this.dataset.id]),
     ]).pipe(untilDestroyed(this))
-      .subscribe(([attachments, processes]) => {
-        this.attachments = attachments;
-        this.setProcesses(processes);
+      .subscribe({
+        next: ([attachments, processes]) => {
+          this.attachments = attachments;
+          this.setProcesses(processes);
 
-        this.cdr.markForCheck();
-        this.loader.close();
-      }, (error) => {
-        this.loader.close();
-        this.dialogRef.close(false);
-        (new EntityUtils()).errorReport(error, this.dialog);
+          this.cdr.markForCheck();
+          this.loader.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogRef.close(false);
+          (new EntityUtils()).errorReport(error, this.dialog);
+        },
       });
   }
 

@@ -114,8 +114,8 @@ export class DatasetCapacitySettingsComponent {
 
     this.ws.call('pool.dataset.update', [this.dataset.id, payload])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
@@ -123,12 +123,12 @@ export class DatasetCapacitySettingsComponent {
           this.slideIn.close();
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private setFormRelations(): void {

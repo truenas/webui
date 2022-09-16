@@ -480,8 +480,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loader.open();
       this.loaderOpen = true;
       this.submitFunction(value)
-        .pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+        .pipe(untilDestroyed(this)).subscribe({
+          next: (res) => {
             this.loader.close();
             this.loaderOpen = false;
 
@@ -518,7 +518,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               });
             }
           },
-          (res) => {
+          error: (res) => {
             this.loader.close();
             this.loaderOpen = false;
             if (this.conf.errorReport) {
@@ -529,7 +529,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               new EntityUtils().handleError(this, res);
             }
           },
-        );
+        });
     }
   }
 

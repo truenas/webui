@@ -84,16 +84,16 @@ export class SaveConfigDialogComponent {
         );
       }),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.loader.close();
         this.dialogRef.close(true);
       },
-      (error) => {
+      error: (error) => {
         new EntityUtils().handleWsError(this, error, this.dialog);
         this.loader.close();
         this.dialogRef.close(false);
       },
-    );
+    });
   }
 }

@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge } from 'rxjs';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { DockerImagesListComponent } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -27,11 +28,13 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
   @ViewChild(DockerImagesListComponent, { static: false }) private dockerImagesTab: DockerImagesListComponent;
   selectedTab = ApplicationTab.InstalledApps;
+  isChooseInit = false;
 
   constructor(
     private core: CoreService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
+    private appService: ApplicationsService,
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +49,13 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.refreshTab();
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
+      if (!config.pool) {
+        this.selectedTab = ApplicationTab.AvailableApps;
+      } else {
+        this.isChooseInit = true;
+      }
+    });
   }
 
   updateTab(evt: ApplicationUserEvent): void {
@@ -61,6 +71,11 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
         break;
       case ApplicationTab.AvailableApps:
         this.catalogTab.loadCatalogs();
+        this.catalogTab.loadPoolSet();
+        if (!this.isChooseInit) {
+          this.catalogTab.commonAppsToolbarButtons.onChoosePool();
+          this.isChooseInit = true;
+        }
         break;
       case ApplicationTab.Catalogs:
         this.manageCatalogTab.refresh();

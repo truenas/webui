@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, lastValueFrom, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -167,20 +167,22 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   prerequisite(): Promise<boolean> {
-    return forkJoin([
-      this.ws.call('disk.get_unused'),
-      this.ws.call('smart.test.disk_choices'),
-    ]).pipe(
-      map(([unusedDisks, disksThatSupportSmart]) => {
-        this.unused = unusedDisks;
-        this.smartDiskChoices = disksThatSupportSmart;
-        return true;
-      }),
-      catchError((error) => {
-        new EntityUtils().handleWsError(this, error);
-        return of(false);
-      }),
-    ).toPromise();
+    return lastValueFrom(
+      forkJoin([
+        this.ws.call('disk.get_unused'),
+        this.ws.call('smart.test.disk_choices'),
+      ]).pipe(
+        map(([unusedDisks, disksThatSupportSmart]) => {
+          this.unused = unusedDisks;
+          this.smartDiskChoices = disksThatSupportSmart;
+          return true;
+        }),
+        catchError((error) => {
+          new EntityUtils().handleWsError(this, error);
+          return of(false);
+        }),
+      ),
+    );
   }
 
   afterInit(entityList: EntityTableComponent): void {

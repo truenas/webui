@@ -1,7 +1,14 @@
-<ix-modal-header [title]="'Isolated GPU PCI Id\'s' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Isolated GPU PCI Id\'s' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup"
+      (submit)="onSubmit()"
+    >
       <ix-fieldset>
         <ix-select
           formControlName="isolated_gpu_pci_ids"
@@ -16,9 +23,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="formGroup.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="formGroup.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

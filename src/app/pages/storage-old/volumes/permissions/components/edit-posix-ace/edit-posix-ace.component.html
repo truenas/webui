@@ -28,14 +28,15 @@
 
     <ix-checkbox-list
       formControlName="permissions"
+      inlineFieldFlex="33%"
       [label]="'Permissions' | translate"
       [tooltip]="tooltips.permissions | translate"
       [options]="permissions$"
       [inlineFields]="true"
-      inlineFieldFlex="33%"
     ></ix-checkbox-list>
 
     <div class="label">{{ 'Flags' }}</div>
+
     <ix-checkbox
       class="default-checkbox"
       formControlName="default"

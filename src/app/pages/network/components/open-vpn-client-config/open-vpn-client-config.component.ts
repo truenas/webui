@@ -108,37 +108,37 @@ export class OpenVpnClientConfigComponent implements OnInit {
 
     this.ws.call('openvpn.client.update', [this.form.value as OpenvpnClientConfigUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private loadConfig(): void {
     this.isLoading = true;
     this.ws.call('openvpn.client.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue({
             ...config,
           });
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   certificatesLinkClicked(): void {

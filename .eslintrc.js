@@ -24,6 +24,7 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:rxjs/recommended"
       ],
       "plugins": [
         "rxjs",
@@ -165,6 +166,8 @@ module.exports = {
         // Other temporary disables
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
+        "rxjs/no-implicit-any-catch": ["off"],
+        "rxjs/no-nested-subscribe": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
@@ -248,6 +251,7 @@ module.exports = {
           "functions": false,
           "methods": false,
         }],
+        "rxjs/prefer-observer": ["error"],
         "id-length": ["error", {
           exceptions: ['a', 'b', 'x', 'y', '_', 'i', 'n'],
           properties: 'never',

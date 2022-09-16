@@ -7,7 +7,9 @@
     <div class="details-item">
       <span class="label">{{ 'SED Password' | translate }}:</span>
       <ng-container *ngIf="hasDiskEncryption$ | async as diskEncryption">
-        <ngx-skeleton-loader *ngIf="diskEncryption.isLoading"></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          *ngIf="diskEncryption.isLoading"
+        ></ngx-skeleton-loader>
         <span *ngIf="diskEncryption.value !== undefined" class="value">
           {{ diskEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
         </span>
@@ -16,13 +18,17 @@
           Error
         </ng-container>
       </ng-container>
-      <a (click)="onManageSedPassword()">{{ 'Manage SED Password' | translate }}</a>
+      <a (click)="onManageSedPassword()">
+        {{ 'Manage SED Password' | translate }}
+      </a>
     </div>
 
     <div class="details-item">
       <span class="label">{{ 'Global SED Password' | translate }}:</span>
       <ng-container *ngIf="hasGlobalEncryption$ | async as globalEncryption">
-        <ngx-skeleton-loader *ngIf="globalEncryption.isLoading"></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          *ngIf="globalEncryption.isLoading"
+        ></ngx-skeleton-loader>
         <span *ngIf="globalEncryption.value !== undefined" class="value">
           {{ globalEncryption.value ? ('Password is set' | translate) : ('Password is not set' | translate) }}
         </span>
@@ -31,8 +37,9 @@
           Error
         </ng-container>
       </ng-container>
-      <a [routerLink]="['/system/advanced']">{{ 'Manage Global SED Password' | translate }}</a>
+      <a [routerLink]="['/system/advanced']">
+        {{ 'Manage Global SED Password' | translate }}
+      </a>
     </div>
   </mat-card-content>
 </mat-card>
-

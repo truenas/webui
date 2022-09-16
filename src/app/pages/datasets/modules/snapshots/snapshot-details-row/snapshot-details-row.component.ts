@@ -46,18 +46,18 @@ export class SnapshotDetailsRowComponent implements OnInit {
     this.ws.call('zfs.snapshot.query', [[['id', '=', this.snapshot.name]], { extra: { retention: true } }]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),
-    ).subscribe(
-      (snapshot) => {
+    ).subscribe({
+      next: (snapshot) => {
         this.snapshotInfo = snapshot;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
-    );
+    });
   }
 
   doClone(snapshot: ZfsSnapshot): void {
@@ -78,13 +78,12 @@ export class SnapshotDetailsRowComponent implements OnInit {
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('zfs.snapshot.delete', [snapshot.name])),
       untilDestroyed(this),
-    ).subscribe(
-      () => this.loader.close(),
-      (error: WebsocketError) => {
+    ).subscribe({
+      next: () => this.loader.close(),
+      error: (error: WebsocketError) => {
         this.dialogService.errorReportMiddleware(error);
         this.loader.close();
       },
-      () => this.loader.close(),
-    );
+    });
   }
 }
