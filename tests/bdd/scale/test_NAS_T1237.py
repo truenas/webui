@@ -264,6 +264,6 @@ def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(d
     driver.find_element_by_xpath('//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit POSIX.1e ACL")]')
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit ACL")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"/mnt/tank/rt-acl-test-1/share")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]')
