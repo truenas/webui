@@ -1,7 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
-from function import wait_on_element, is_element_present, wait_on_element_disappear
+from function import wait_on_element, wait_on_element_disappear
 import time
 from pytest_bdd import (
     given,
