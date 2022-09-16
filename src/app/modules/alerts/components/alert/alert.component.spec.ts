@@ -91,7 +91,7 @@ describe('AlertComponent', () => {
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    expect(alert.dateTimeElement).toHaveText('Jan 10 2022 10:36 (America/Alaska)');
+    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toEqual('Jan 10 2022 10:36 (America/Alaska)');
 
     const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);
