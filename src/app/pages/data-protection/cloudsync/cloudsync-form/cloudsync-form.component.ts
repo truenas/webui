@@ -88,6 +88,12 @@ export class CloudsyncFormComponent {
   bucketInputPlaceholder = helptext.bucket_input_placeholder;
   bucketInputTooltip = helptext.bucket_input_tooltip;
 
+  readonly transferModeTooltip = `
+    ${helptext.transfer_mode_warning_sync}<br><br>
+    ${helptext.transfer_mode_warning_copy}<br><br>
+    ${helptext.transfer_mode_warning_move}
+  `;
+
   readonly helptext = helptext;
 
   readonly directionOptions$ = of([
@@ -104,7 +110,7 @@ export class CloudsyncFormComponent {
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
       return options.map((option) => (
-        { label: option.name + ' (' + option.provider + ')', value: option.id }
+        { label: `${option.name} (${option.provider})`, value: option.id }
       ));
     }),
     untilDestroyed(this),

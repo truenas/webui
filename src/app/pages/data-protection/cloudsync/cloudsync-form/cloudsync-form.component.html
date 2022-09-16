@@ -23,7 +23,7 @@
             *ngIf="form.controls.transfer_mode.enabled"
             formControlName="transfer_mode"
             [label]="helptext.transfer_mode_placeholder | translate"
-            [tooltip]="helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move | translate"
+            [tooltip]="transferModeTooltip | translate"
             [required]="true"
             [options]="transferModeOptions$"
           ></ix-select>
@@ -52,7 +52,7 @@
 
         <ix-fieldset [title]="helptext.fieldset_remote | translate" class="fieldset">
           <a [routerLink]="['/', 'credentials', 'backup-credentials']" (click)="slideInService.close()">
-            <div class='link'>
+            <div class="link">
               {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
             </div>
           </a>
@@ -162,7 +162,7 @@
             [tooltip]="helptext.encryption_tooltip | translate"
             [options]="encryptionOptions$"
           ></ix-select>
-          <div class="advanced-title"> {{ helptext.advanced_remote_options }} </div>
+          <div class="advanced-title">{{ helptext.advanced_remote_options | translate }}</div>
           <ix-select
             *ngIf="form.controls.storage_class.enabled"
             formControlName="storage_class"
