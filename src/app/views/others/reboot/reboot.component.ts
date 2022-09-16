@@ -49,8 +49,6 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
-
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/session/signin');
 
@@ -58,23 +56,21 @@ export class RebootComponent implements OnInit {
     this.location.replaceState('/session/signin');
 
     this.dialog.closeAll();
-    this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe(
-      () => {
-      },
-      (error) => { // error on reboot
+    this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe({
+      error: (error) => { // error on reboot
         this.dialogService.errorReport(error.error, error.reason, error.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);
           });
       },
-      () => { // show reboot screen
+      complete: () => { // show reboot screen
         this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWsConnected();
         }, 3000);
       },
-    );
+    });
   }
 }

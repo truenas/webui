@@ -48,27 +48,30 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.store.state$
       .pipe(untilDestroyed(this))
-      .subscribe((state) => {
-        this.isLoading = state.isLoading;
-        this.acl = state.acl;
-        this.stat = state.stat;
+      .subscribe({
+        next: (state) => {
+          this.isLoading = state.isLoading;
+          this.acl = state.acl;
+          this.stat = state.stat;
 
-        // TODO: Move elsewhere
-        if (this.acl && this.acl.acl && this.acl.acltype === AclType.Nfs4) {
-          for (const acl of this.acl.acl) {
-            if (acl.tag === NfsAclTag.Owner && acl.who === null) {
-              acl.who = this.acl.uid.toString();
-            }
-            if ((acl.tag === NfsAclTag.Group || acl.tag === NfsAclTag.UserGroup) && acl.who === null) {
-              acl.who = this.acl.gid.toString();
+          // TODO: Move elsewhere
+          if (this.acl && this.acl.acl && this.acl.acltype === AclType.Nfs4) {
+            for (const acl of this.acl.acl) {
+              if (acl.tag === NfsAclTag.Owner && acl.who === null) {
+                acl.who = this.acl.uid.toString();
+              }
+              if ((acl.tag === NfsAclTag.Group || acl.tag === NfsAclTag.UserGroup) && acl.who === null) {
+                acl.who = this.acl.gid.toString();
+              }
             }
           }
-        }
 
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.isLoading = false;
-        this.dialogService.errorReportMiddleware(error);
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
   }
 

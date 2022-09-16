@@ -3,35 +3,26 @@
 
   <div class="controls">
     <button
-      [title]="'Settings' | translate"
       mat-icon-button
+      [title]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
     >
       <mat-icon>settings</mat-icon>
     </button>
     <mat-menu #alertSettingsMenu="matMenu">
-      <a
-        mat-menu-item
-        (click)="navigateTo(['/system', 'alertsettings'])"
-      >
+      <a mat-menu-item (click)="navigateTo(['/system', 'alertsettings'])">
         {{ 'Alert Settings' | translate }}
       </a>
-      <a
-        mat-menu-item
-        (click)="navigateTo(['/system', 'alertservice'])"
-      >
+      <a mat-menu-item (click)="navigateTo(['/system', 'alertservice'])">
         {{ 'Alert Services' | translate }}
       </a>
-      <a
-        mat-menu-item
-        (click)="navigateTo(['/system', 'email'])"
-      >
+      <a mat-menu-item (click)="navigateTo(['/system', 'email'])">
         {{ 'Email' | translate }}
       </a>
     </mat-menu>
     <button
-      [title]="'Close panel' | translate"
       mat-icon-button
+      [title]="'Close panel' | translate"
       (click)="onPanelClosed()"
     >
       <mat-icon>clear</mat-icon>
@@ -51,7 +42,7 @@
   <div *ngIf="error$ | async as error" class="error">
     <mat-icon class="icon" color="accent">warning</mat-icon>
     <h4 class="message">
-      <span class="error-word">{{'Error:' | translate}}</span>
+      <span class="error-word">{{ 'Error:' | translate }}</span>
       {{ error }}
     </h4>
   </div>
@@ -67,21 +58,14 @@
         <div
           *ngFor="let alert of unreadAlerts; last as last; trackBy: trackByAlertId"
           class="alert"
-          [class.alert-last]="last"
           role="listitem"
+          [class.alert-last]="last"
         >
-          <ix-alert
-            [alert]="alert"
-            [isHa]="isHa"
-          ></ix-alert>
+          <ix-alert [alert]="alert" [isHa]="isHa"></ix-alert>
         </div>
       </div>
 
-      <button
-        matRipple
-        class="button-row"
-        (click)="onDismissAll()"
-      >
+      <button matRipple class="button-row" (click)="onDismissAll()">
         {{ 'Dismiss All Alerts' | translate }}
       </button>
     </ng-template>
@@ -93,13 +77,10 @@
         <div
           *ngFor="let alert of dismissedAlerts; last as last; trackBy: trackByAlertId"
           class="alert"
-          [class.alert-last]="last"
           role="listitem"
+          [class.alert-last]="last"
         >
-          <ix-alert
-            [alert]="alert"
-            [isHa]="isHa"
-          ></ix-alert>
+          <ix-alert [alert]="alert" [isHa]="isHa"></ix-alert>
         </div>
       </div>
 

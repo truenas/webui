@@ -4,9 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  noop, of, Subject, Subscription,
-} from 'rxjs';
+import { of, Subject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -159,6 +157,7 @@ export class ChartFormComponent implements OnDestroy {
       });
       this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length > 0);
       if (!this.isNew) {
+        this.config = this.appSchemaService.restoreKeysFromFormGroup(this.config, this.form);
         this.form.patchValue(this.config);
       }
     } catch (error: unknown) {
@@ -257,15 +256,14 @@ export class ChartFormComponent implements OnDestroy {
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
     const deleteField$: Subject<string> = new Subject();
-    deleteField$.pipe(untilDestroyed(this)).subscribe(
-      (fieldTobeDeleted) => {
+    deleteField$.pipe(untilDestroyed(this)).subscribe({
+      next: (fieldTobeDeleted) => {
         this.deleteFieldFromData(data, fieldTobeDeleted);
       },
-      noop,
-      () => {
+      complete: () => {
         this.saveData(data);
       },
-    );
+    });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
     deleteField$.complete();
@@ -294,21 +292,21 @@ export class ChartFormComponent implements OnDestroy {
     }
 
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(this.onSuccess);
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
   }
 
-  onFailure = (failedJob: Job<null, unknown[]>): void => {
+  onFailure(failedJob: Job<null, unknown[]>): void {
     if (failedJob.exc_info && failedJob.exc_info.extra) {
       new EntityUtils().handleWsError(this, failedJob);
     } else {
       this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
     }
-  };
+  }
 
-  onSuccess = (): void => {
+  onSuccess(): void {
     this.dialogService.closeAllDialogs();
     this.slideInService.close();
-  };
+  }
 }

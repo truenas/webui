@@ -48,28 +48,26 @@ export class FailoverComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
-
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/session/signin');
 
     this.dialog.closeAll();
     // TODO: Check if next and error should trade places
-    this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe(
-      (res: any) => { // error on reboot
+    this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
+      next: (res: any) => { // error on reboot
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);
           });
       },
-      () => { // show reboot screen
+      error: () => { // show reboot screen
         this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWsConnected();
         }, 1000);
       },
-    );
+    });
   }
 }

@@ -106,8 +106,8 @@ export class RsyncTaskListComponent implements EntityTableConfig {
         }).pipe(untilDestroyed(this)).subscribe((run: boolean) => {
           if (run) {
             row.state = { state: JobState.Running };
-            this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
-              (jobId: number) => {
+            this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe({
+              next: (jobId: number) => {
                 this.dialog.info(
                   this.translate.instant('Task Started'),
                   'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
@@ -118,10 +118,10 @@ export class RsyncTaskListComponent implements EntityTableConfig {
                   row.job = job;
                 });
               },
-              (err) => {
+              error: (err) => {
                 new EntityUtils().handleWsError(this, err);
               },
-            );
+            });
           }
         });
       },

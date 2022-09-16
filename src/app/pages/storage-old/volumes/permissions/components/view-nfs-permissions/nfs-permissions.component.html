@@ -1,4 +1,6 @@
-<div class="title">{{ 'Click an item to view NFSv4 permissions' | translate }}</div>
+<div class="title">
+  {{ 'Click an item to view NFSv4 permissions' | translate }}
+</div>
 
 <cdk-accordion>
   <cdk-accordion-item
@@ -12,10 +14,7 @@
       [item]="permissionItems[i]"
       (click)="accordionItem.toggle()"
     ></ix-old-permissions-item>
-    <div
-      *ngIf="permissionDetails[i] as details"
-      class="permission-details"
-    >
+    <div *ngIf="permissionDetails[i] as details" class="permission-details">
       <div class="details-section">
         <div class="details-title">
           {{ details.arePermissionsBasic ? ('Permissions Basic' | translate) : ('Permissions Advanced' | translate) }}
@@ -41,4 +40,3 @@
     </div>
   </cdk-accordion-item>
 </cdk-accordion>
-

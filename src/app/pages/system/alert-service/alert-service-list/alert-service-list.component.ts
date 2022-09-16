@@ -88,16 +88,16 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   onCheckboxChange(row: AlertService): void {
     row.enabled = !row.enabled;
     this.ws.call('alertservice.update', [row.id, { enabled: row.enabled }])
-      .pipe(untilDestroyed(this)).subscribe(
-        (alertService) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (alertService) => {
           if (!alertService) {
             row.enabled = !row.enabled;
           }
         },
-        (err) => {
+        error: (err) => {
           row.enabled = !row.enabled;
           new EntityUtils().handleWsError(this, err, this.dialogService);
         },
-      );
+      });
   }
 }

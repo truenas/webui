@@ -1,16 +1,18 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Group' | translate">
         <ix-input
           formControlName="tag"
+          type="number"
           [label]="'Group ID' | translate"
           [tooltip]="tooltips.tag | translate"
           [required]="true"
-          type="number"
         ></ix-input>
       </ix-fieldset>
+
       <ix-fieldset [title]="'User' | translate">
         <ix-input
           formControlName="user"
@@ -18,38 +20,43 @@
           [required]="true"
           [tooltip]="tooltips.user"
         ></ix-input>
+
         <ix-input
           formControlName="secret"
-          [label]="'Secret' | translate"
           type="password"
+          [label]="'Secret' | translate"
           [required]="true"
           [tooltip]="tooltips.secret"
         ></ix-input>
+
         <ix-input
           formControlName="secret_confirm"
-          [label]="'Secret (Confirm)' | translate"
           type="password"
+          [label]="'Secret (Confirm)' | translate"
           [required]="true"
         ></ix-input>
       </ix-fieldset>
+
       <ix-fieldset [title]="'Peer User' | translate">
         <ix-input
           formControlName="peeruser"
           [label]="'Peer User' | translate"
           [tooltip]="tooltips.peeruser"
         ></ix-input>
+
         <ix-input
           formControlName="peersecret"
-          [label]="'Peer Secret' | translate"
           type="password"
+          [label]="'Peer Secret' | translate"
           [required]="isPeerUserSet()"
           [tooltip]="tooltips.peersecret"
         ></ix-input>
+
         <ix-input
           formControlName="peersecret_confirm"
+          type="password"
           [label]="'Peer Secret (Confirm)' | translate"
           [required]="isPeerUserSet()"
-          type="password"
         ></ix-input>
       </ix-fieldset>
 
@@ -57,9 +64,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import {
-  filter, first, mapTo, switchMap, tap,
+  filter, first, map, switchMap, tap,
 } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
@@ -79,17 +79,18 @@ export class ReportsConfigFormComponent implements OnInit {
       }),
       switchMap((body) => this.ws.call('reporting.update', [body])),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.slideIn.close();
-      }, (error) => {
+      },
+      error: (error) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   private confirmClearReportHistoryIfNeeded(): Observable<ReportingConfigUpdate> {
@@ -103,7 +104,7 @@ export class ReportsConfigFormComponent implements OnInit {
             buttonMsg: helptext.dialog.action,
           }).pipe(
             filter(Boolean),
-            mapTo(({ confirm_rrd_destroy: true, ...body })),
+            map(() => ({ confirm_rrd_destroy: true, ...body })),
           );
         }
 

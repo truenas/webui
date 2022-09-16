@@ -1,38 +1,57 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <button
-      mat-button
-      color="primary"
-      (click)="refresh()"
-    >{{ 'Refresh' | translate }}</button>
+    <button mat-button color="primary" (click)="refresh()">
+      {{ 'Refresh' | translate }}
+    </button>
   </ix-page-title-header>
 </ng-template>
 
 <div class="material mat-card mat-card-table">
   <div>
     <mat-list *ngIf="poolScan">
-      <mat-list-item><b>{{poolScan.function || 'SCAN'}}</b></mat-list-item>
-      <mat-list-item>{{'Status' | translate}}:
-        {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested' | translate}}
+      <mat-list-item
+        ><b>{{ poolScan.function || 'SCAN' }}</b></mat-list-item
+      >
+      <mat-list-item
+        >{{ 'Status' | translate }}:
+        {{ poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : ('None requested' | translate) }}
       </mat-list-item>
       <mat-list-item *ngIf="poolScan.state === PoolScanState.Scanning">
-        {{ 'Completed' | translate }}: {{ poolScan.percentage | number:'2.0-2' }}%
+        {{ 'Completed' | translate }}:
+        {{ poolScan.percentage | number: '2.0-2' }}%
       </mat-list-item>
-      <mat-list-item *ngIf="poolScan.total_secs_left != null">{{ 'Time Remaining' | translate }}:
+      <mat-list-item *ngIf="poolScan.total_secs_left != null"
+        >{{ 'Time Remaining' | translate }}:
         <span class="time-remaining" *ngIf="timeRemaining.days > 0">
-          {{ timeRemaining.days }} {{ timeRemaining.days === 1 ? 'day' : 'days' | translate }}, </span>
+          {{ timeRemaining.days }}
+          {{ timeRemaining.days === 1 ? 'day' : ('days' | translate) }},
+        </span>
         <span class="time-remaining" *ngIf="timeRemaining.hours > 0 || timeRemaining.days > 0">
-          {{timeRemaining.hours}} {{ timeRemaining.hours === 1 ? 'hour' : 'hours' | translate }}, </span>
+          {{ timeRemaining.hours }}
+          {{ timeRemaining.hours === 1 ? 'hour' : ('hours' | translate) }},
+        </span>
         <span class="time-remaining" *ngIf="timeRemaining.minutes > 0 || timeRemaining.hours > 0">
-          {{timeRemaining.minutes}} {{ timeRemaining.minutes === 1 ? 'minute' : 'minutes' | translate }}, </span>
+          {{ timeRemaining.minutes }}
+          {{ timeRemaining.minutes === 1 ? 'minute' : ('minutes' | translate) }},
+        </span>
         <span class="time-remaining" *ngIf="timeRemaining.seconds || timeRemaining.seconds === 0">
-          {{timeRemaining.seconds}} {{ timeRemaining.seconds === 1 ? 'second' :'seconds' | translate }}</span>
+          {{ timeRemaining.seconds }}
+          {{ timeRemaining.seconds === 1 ? 'second' : ('seconds' | translate) }}</span
+        >
       </mat-list-item>
-      <mat-list-item *ngIf="poolScan.errors != null">{{'Errors' | translate}}: {{poolScan.errors}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.start_time?.$date">{{'Date' | translate}}: {{poolScan.start_time.$date | formatDateTime}}</mat-list-item>
+      <mat-list-item *ngIf="poolScan.errors != null">
+        {{ 'Errors' | translate }}: {{ poolScan.errors }}
+      </mat-list-item>
+      <mat-list-item *ngIf="poolScan.start_time?.$date">
+        {{ 'Date' | translate }}:
+        {{ poolScan.start_time.$date | formatDateTime }}
+      </mat-list-item>
     </mat-list>
   </div>
   <div>
-    <ix-entity-tree-table *ngIf="treeTableConfig.tableData && treeTableConfig.tableData.length > 0" [conf]="treeTableConfig"></ix-entity-tree-table>
+    <ix-entity-tree-table
+      *ngIf="treeTableConfig.tableData && treeTableConfig.tableData.length > 0"
+      [conf]="treeTableConfig"
+    ></ix-entity-tree-table>
   </div>
 </div>

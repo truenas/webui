@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -532,15 +533,17 @@ export class IscsiWizardComponent implements WizardConfiguration {
     const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormComboboxConfig;
     // get device options
     this.loader.open(this.translate.instant('Loading devices. Please wait.'));
-    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.loader.close();
-      for (const i in res) {
-        diskField.options.push({ label: res[i], value: i });
-      }
-    },
-    (res) => {
-      this.loader.close();
-      new EntityUtils().handleWsError(this.entityWizard, res);
+    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
+        this.loader.close();
+        for (const i in res) {
+          diskField.options.push({ label: res[i], value: i });
+        }
+      },
+      error: (res) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this.entityWizard, res);
+      },
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
@@ -788,14 +791,14 @@ export class IscsiWizardComponent implements WizardConfiguration {
         }
       },
     );
-    this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe(
-      (recommendedSize) => {
+    this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe({
+      next: (recommendedSize) => {
         this.entityWizard.formArray.get([0]).get('volblocksize').setValue(recommendedSize);
       },
-      () => {
+      error: () => {
         datasetField.hasErrors = true;
       },
-    );
+    });
   }
 
   async customSubmit(value: any): Promise<void> {
@@ -924,7 +927,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         extent: value['extent'],
       };
     }
-    return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
+    return lastValueFrom(this.ws.call((this.createCalls as any)[item], [payload]));
   }
 
   rollBack(items: Record<string, unknown>): void {

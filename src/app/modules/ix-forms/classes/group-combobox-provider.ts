@@ -14,19 +14,21 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     const offset = this.page * this.pageSize;
 
     return this.userService.groupQueryDsCache(filterValue, false, offset)
-      .pipe(map(this.groupQueryResToOptions));
+      .pipe(map((groups) => this.groupQueryResToOptions(groups)));
   }
 
-  groupQueryResToOptions = (groups: Group[]): Option[] => groups.map((group) => {
-    return { label: group.group, value: group.group };
-  });
+  groupQueryResToOptions(groups: Group[]): Option[] {
+    return groups.map((group) => {
+      return { label: group.group, value: group.group };
+    });
+  }
 
   nextPage(filterValue: string): Observable<Option[]> {
     this.page++;
     const offset = this.page * this.pageSize;
     return this.userService.groupQueryDsCache(filterValue, false, offset)
       .pipe(
-        map(this.groupQueryResToOptions),
+        map((groups) => this.groupQueryResToOptions(groups)),
       );
   }
 

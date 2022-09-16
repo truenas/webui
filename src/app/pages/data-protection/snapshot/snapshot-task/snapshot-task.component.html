@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <div class="column">
           <ix-fieldset [title]="'Dataset' | translate">
@@ -12,12 +13,14 @@
               [required]="true"
               [options]="datasetOptions$"
             ></ix-select>
+
             <ix-chips
               formControlName="exclude"
               [label]="labels.exclude | translate"
               [placeholder]="labels.exclude | translate"
               [tooltip]="tooltips.exclude | translate"
             ></ix-chips>
+
             <ix-checkbox
               formControlName="recursive"
               [label]="labels.recursive | translate"
@@ -30,11 +33,12 @@
             <div class="input-group">
               <ix-input
                 formControlName="lifetime_value"
+                type="number"
                 [label]="labels.lifetime | translate"
                 [tooltip]="tooltips.lifetime | translate"
                 [required]="true"
-                type="number"
               ></ix-input>
+
               <ix-select
                 formControlName="lifetime_unit"
                 [label]="'Unit' | translate"
@@ -47,12 +51,14 @@
               [label]="labels.naming_schema | translate"
               [tooltip]="tooltips.naming_schema | translate"
             ></ix-input>
+
             <ix-scheduler
               formControlName="schedule"
               [label]="labels.schedule | translate"
               [tooltip]="tooltips.schedule | translate"
               [required]="true"
             ></ix-scheduler>
+
             <ix-select
               *ngIf="isTimeMode"
               formControlName="begin"
@@ -61,6 +67,7 @@
               [required]="true"
               [options]="timeOptions$"
             ></ix-select>
+
             <ix-select
               *ngIf="isTimeMode"
               formControlName="end"
@@ -69,11 +76,13 @@
               [required]="true"
               [options]="timeOptions$"
             ></ix-select>
+
             <ix-checkbox
               formControlName="allow_empty"
               [label]="labels.allow_empty | translate"
               [tooltip]="tooltips.allow_empty | translate"
             ></ix-checkbox>
+
             <ix-checkbox
               formControlName="enabled"
               [label]="labels.enabled | translate"
@@ -87,8 +96,8 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
+          [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>

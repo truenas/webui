@@ -124,8 +124,8 @@ export class ReplicationListComponent implements EntityTableConfig {
             hideCheckBox: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             row.state = { state: JobState.Running };
-            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
-              (jobId: number) => {
+            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe({
+              next: (jobId: number) => {
                 this.dialog.info(
                   this.translate.instant('Task started'),
                   this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
@@ -136,10 +136,10 @@ export class ReplicationListComponent implements EntityTableConfig {
                   row.job = job;
                 });
               },
-              (err) => {
+              error: (err) => {
                 new EntityUtils().handleWsError(this.entityList, err);
               },
-            );
+            });
           });
         },
       },
@@ -238,18 +238,18 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: ReplicationTaskUi): void {
-    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
         row.enabled = res.enabled;
         if (!res) {
           row.enabled = !row.enabled;
         }
       },
-      (err) => {
+      error: (err) => {
         row.enabled = !row.enabled;
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 
   doAdd(): void {

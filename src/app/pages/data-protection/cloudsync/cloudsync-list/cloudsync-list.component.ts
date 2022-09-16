@@ -144,8 +144,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this cloud sync now?'), hideCheckBox: true })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               row.state = { state: JobState.Running };
-              this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
-                (jobId: number) => {
+              this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe({
+                next: (jobId: number) => {
                   this.dialog.info(
                     this.translate.instant('Task Started'),
                     this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
@@ -156,10 +156,10 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     row.job = job;
                   });
                 },
-                (err) => {
+                error: (err) => {
                   new EntityUtils().handleWsError(this.entityList, err);
                 },
-              );
+              });
             });
         },
       },
@@ -177,18 +177,18 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
-                () => {
+              this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe({
+                next: () => {
                   this.dialog.info(
                     this.translate.instant('Task Stopped'),
                     this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
                     true,
                   );
                 },
-                (wsErr) => {
+                error: (wsErr) => {
                   new EntityUtils().handleWsError(this.entityList, wsErr);
                 },
-              );
+              });
             });
         },
       },
@@ -206,8 +206,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
-                (jobId: number) => {
+              this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe({
+                next: (jobId: number) => {
                   this.dialog.info(
                     this.translate.instant('Task Started'),
                     this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
@@ -218,10 +218,10 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     row.job = job;
                   });
                 },
-                (err) => {
+                error: (err) => {
                   new EntityUtils().handleWsError(this.entityList, err);
                 },
-              );
+              });
             });
         },
       },

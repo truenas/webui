@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +18,6 @@ import {
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
@@ -40,7 +39,7 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
-import { NetworkService, WebSocketService } from 'app/services';
+import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -137,7 +136,7 @@ export class InterfaceFormComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
-    @Inject(WINDOW) private window: Window,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   get isNew(): boolean {
@@ -166,6 +165,10 @@ export class InterfaceFormComponent implements OnInit {
 
   get isLoadBalanceLag(): boolean {
     return this.form.get('lag_protocol').value === LinkAggregationProtocol.LoadBalance;
+  }
+
+  get canHaveAliases(): boolean {
+    return !this.form.value.ipv4_dhcp && !this.form.value.ipv6_auto;
   }
 
   ngOnInit(): void {
@@ -218,8 +221,8 @@ export class InterfaceFormComponent implements OnInit {
       ? this.ws.call('interface.create', [params])
       : this.ws.call('interface.update', [this.existingInterface.id, params]);
 
-    request$.pipe(untilDestroyed(this)).subscribe(
-      () => {
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
         this.slideInService.close();
@@ -235,12 +238,12 @@ export class InterfaceFormComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);
       },
-    );
+    });
   }
 
   private validateNameOnTypeChange(): void {
@@ -264,7 +267,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private loadFailoverStatus(): void {
-    if (this.window.localStorage.getItem('product_type') !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
       return;
     }
 

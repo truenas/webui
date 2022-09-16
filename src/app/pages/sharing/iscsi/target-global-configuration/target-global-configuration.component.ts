@@ -85,16 +85,16 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   private loadFormValues(): void {
     this.setLoading(true);
 
-    this.ws.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe(
-      (config) => {
+    this.ws.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
+      next: (config) => {
         this.form.patchValue(config);
         this.setLoading(false);
       },
-      (error) => {
+      error: (error) => {
         new EntityUtils().handleWsError(this, error, this.dialog);
         this.setLoading(false);
       },
-    );
+    });
   }
 
   private checkIfServiceShouldBeEnabled(): Observable<unknown> {

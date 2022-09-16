@@ -148,14 +148,14 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // TODO: This block does nothing.
   getData(): void {
-    this.ws.call(this._conf.queryCall).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+    this.ws.call(this._conf.queryCall).pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
         this.treeTableService.buildTree(res);
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 
   expandNode(rootNode: TreeNode): void {

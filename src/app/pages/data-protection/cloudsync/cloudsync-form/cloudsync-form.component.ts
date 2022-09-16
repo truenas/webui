@@ -253,25 +253,27 @@ export class CloudsyncFormComponent {
                   this.bucketInputTooltip = helptext.bucket_input_tooltip;
                 }
 
-                this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe(() => {
-                  this.isLoading = false;
-                  this.form.controls.bucket.enable();
-                  this.form.controls.bucket_input.disable();
-                },
-                (err) => {
-                  this.isLoading = false;
-                  this.form.controls.bucket.disable();
-                  this.form.controls.bucket_input.enable();
-                  this.dialog.closeAllDialogs();
-                  this.dialog.confirm({
-                    title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-                    message: err.reason,
-                    hideCheckBox: true,
-                    buttonMsg: this.translate.instant('Fix Credential'),
-                  }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                    const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
-                    this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
-                  });
+                this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
+                  next: () => {
+                    this.isLoading = false;
+                    this.form.controls.bucket.enable();
+                    this.form.controls.bucket_input.disable();
+                  },
+                  error: (err) => {
+                    this.isLoading = false;
+                    this.form.controls.bucket.disable();
+                    this.form.controls.bucket_input.enable();
+                    this.dialog.closeAllDialogs();
+                    this.dialog.confirm({
+                      title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
+                      message: err.reason,
+                      hideCheckBox: true,
+                      buttonMsg: this.translate.instant('Fix Credential'),
+                    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                      const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
+                      this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+                    });
+                  },
                 });
               } else {
                 this.form.controls.bucket.disable();
@@ -656,13 +658,16 @@ export class CloudsyncFormComponent {
       request$ = this.ws.call('cloudsync.update', [this.editingTask.id, payload]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }
