@@ -1,7 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -15,16 +15,19 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='LDAP_Dataset')
 @scenario('features/NAS-T1126.feature', 'Create a new dataset with the LDAP user and group permissions')
 def test_create_a_new_dataset_with_the_ldap_user_and_group_permissions():
     """Create a new dataset with the LDAP user and group permissions."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['LDAP_SETUP', 'tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -56,7 +59,7 @@ def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()   
+    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
 
 
 @then(parsers.parse('the Dataset window should open, input dataset name "{dataset_name}" and click save'))
@@ -91,12 +94,12 @@ def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_
     assert wait_on_element(driver, 5, '//input[@data-placeholder="User"]', 'inputable')
     driver.find_element_by_xpath('//input[@data-placeholder="User"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="User"]').send_keys('eturgeon')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')    
+    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"eturgeon")]').click()
     assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('eturgeon')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')    
+    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"eturgeon")]').click()
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Apply User"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
@@ -104,7 +107,7 @@ def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')    
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
 

@@ -1,12 +1,10 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from function import(
+import pytest
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -15,16 +13,19 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='encrypted_pool')
 @scenario('features/NAS-T1242.feature', 'Verify an encrypted pool can be created')
 def test_verify_an_encrypted_pool_can_be_created():
     """Verify an encrypted pool can be created."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -58,6 +59,7 @@ def the_pools_page_appears_click_create_pool(driver):
     assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
 
+
 @then('the Pool Manager appears, enter encrypted_tank for pool name')
 def the_pool_manager_appears_enter_encrypted_tank_for_pool_name(driver):
     """the Pool Manager appears, enter encrypted_tank for pool name."""
@@ -65,15 +67,16 @@ def the_pool_manager_appears_enter_encrypted_tank_for_pool_name(driver):
     assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('encrypted_tank')
 
+
 @then('click encryption and confirm popup')
 def click_encryption_and_confirm_popup(driver):
     """click encryption and confirm popup."""
     assert wait_on_element(driver, 10, '//mat-checkbox[@id="pool-manager__encryption-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__encryption-checkbox"]').click()
     assert wait_on_element(driver, 10, '//mat-checkbox[@id="confirm-dialog__confirm-checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="confirm-dialog__confirm-checkbox"]').click()    
+    driver.find_element_by_xpath('//mat-checkbox[@id="confirm-dialog__confirm-checkbox"]').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__I UNDERSTAND"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__I UNDERSTAND"]').click() 
+    driver.find_element_by_xpath('//button[@ix-auto="button__I UNDERSTAND"]').click()
 
 
 @then('click a drive checkbox and press the right arrow')
@@ -85,7 +88,6 @@ def click_a_drive_checkbox_and_press_the_right_arrow(driver):
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
-
 
 
 @then('click create confirm the warning checkbox and click CREATE POOL')
@@ -107,6 +109,7 @@ def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     assert wait_on_element(driver, 30, '//button[contains(text(),"Done")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Done")]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+
 
 @then('the pool should be listed on the storage page')
 def the_pool_should_be_listed_on_the_storage_page(driver):

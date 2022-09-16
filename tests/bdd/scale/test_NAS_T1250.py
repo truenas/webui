@@ -1,13 +1,11 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -17,6 +15,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Set_Group')
 @scenario('features/NAS-T1250.feature', 'Verify that you can create a new group')
 def test_verify_that_you_can_create_a_new_group():
     """Verify that you can create a new group."""
@@ -56,7 +55,7 @@ def on_the_groups_page_close_the_note_and_click_add(driver):
     """on the Groups page, close the note and click Add."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
     assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()  
+    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()

@@ -4,15 +4,10 @@
 
 import time
 import glob
-import sys
 import os
-import zipfile
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear,
-    attribute_value_exist,
     word_xor
 )
 from pytest_bdd import (
@@ -52,17 +47,17 @@ def you_should_be_on_the_dashboard_click_on_directory_services_in_the_side_menu(
     """you should be on the dashboard, click on Directory Services in the side menu."""
     time.sleep(2)
     # temp fix for 1st start popup bug
-    #assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
-    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    #driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    #assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    #assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    #driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    # assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
+    # assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    # driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    # assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    # assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    # driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     # / temp fix for 1st start popup bug
     time.sleep(1)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable') 
+    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
 
 
@@ -77,6 +72,7 @@ def click_on_advanced_and_kerberos_keytab_add(driver):
     time.sleep(1)
     driver.find_element_by_xpath('//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]').click()
 
+
 @then(parsers.parse('decode the tabfile with "{tabfile_string}"'))
 def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     """decode the tabfile with tabfile_string."""
@@ -90,7 +86,7 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     datafile = open(os.path.expanduser(tabfile_path), 'rb').read()
     tab_result = word_xor(datafile, tabfile_string)
     time.sleep(2)
-    open('KEYTABNAME.KEYTAB','wb').write(tab_result)
+    open('KEYTABNAME.KEYTAB', 'wb').write(tab_result)
 
 
 @then('name the keytab and upload the file and click save')
@@ -109,7 +105,7 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     keytab_file = sorted(glob.glob(keytab_file_path))[-1]
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
-    #save
+    # save
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
 
@@ -119,7 +115,7 @@ def verify_that_the_file_was_accepted_and_utilized(driver):
     time.sleep(1)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Kerberos Keytab")]//div[contains(text(),"keytab_test")]')
 
-    ## return to dashboard
+    # return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     time.sleep(1)

@@ -1,7 +1,8 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-from function import(
+import pytest
+from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
@@ -14,6 +15,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Certificate_Authority ')
 @scenario('features/NAS-T1260.feature', 'Verify a certificate authority can be created')
 def test_verify_a_certificate_authority_can_be_created():
     """Verify a certificate authority can be created."""

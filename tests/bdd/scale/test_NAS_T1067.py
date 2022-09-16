@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -14,6 +15,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='First_User')
 @scenario('features/NAS-T1067.feature', 'Create a new user call ericbsd')
 def test_create_a_new_user_call_ericbsd():
     """Create a new user call ericbsd."""
@@ -47,13 +49,13 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_and_cl
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
-    
+
 @when('the Users page should open, click on the "Add" Button')
 def the_users_page_should_open_click_on_the_add_button(driver):
     """the Users page should open, click on the "Add" Button."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()  
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
