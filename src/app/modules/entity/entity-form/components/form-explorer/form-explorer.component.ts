@@ -28,7 +28,7 @@ export class FormExplorerComponent implements Field, OnInit {
   config: FormExplorerConfig;
   group: UntypedFormGroup;
   fieldShow: string;
-  nodes: any; // TODO: Likely ListdirChild[]
+  nodes: (Partial<ListdirChild> & { mountpoint?: string })[];
 
   private rootSelectable: boolean;
 

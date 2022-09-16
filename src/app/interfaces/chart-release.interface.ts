@@ -167,5 +167,5 @@ export interface ChartSchema {
     };
   };
   supported: boolean;
-  values: any;
+  values: { [key: string]: ChartFormValue };
 }

@@ -14,7 +14,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, pluck } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -159,7 +159,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   private listenForRouteChanges(): void {
     this.activatedRoute.params.pipe(
-      pluck('datasetId'),
+      map((params) => params.datasetId),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((datasetId: string) => {

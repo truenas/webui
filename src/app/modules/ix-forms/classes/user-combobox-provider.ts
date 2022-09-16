@@ -15,20 +15,22 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
     return this.userService.userQueryDsCache(filterValue, offset)
       .pipe(
-        map(this.userQueryResToOptions),
+        map((users) => this.userQueryResToOptions(users)),
       );
   }
 
-  userQueryResToOptions: (users: User[]) => Option[] = (users): Option[] => users.map((user) => {
-    return { label: user.username, value: user.username };
-  });
+  userQueryResToOptions(users: User[]): Option[] {
+    return users.map((user) => {
+      return { label: user.username, value: user.username };
+    });
+  }
 
   nextPage(filterValue: string): Observable<Option[]> {
     this.page++;
     const offset = this.page * this.pageSize;
     return this.userService.userQueryDsCache(filterValue, offset)
       .pipe(
-        map(this.userQueryResToOptions),
+        map((users) => this.userQueryResToOptions(users)),
       );
   }
 

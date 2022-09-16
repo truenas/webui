@@ -8,7 +8,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
-import { combineLatest, Subscription } from 'rxjs';
+import { combineLatest, lastValueFrom, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
@@ -193,7 +193,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
-    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map((config) => config.pool)).toPromise();
+    this.systemdatasetPool = await lastValueFrom(
+      this.ws.call('systemdataset.config').pipe(map((config) => config.pool)),
+    );
 
     this.store$.pipe(
       waitForSystemInfo,
@@ -352,5 +354,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     } else {
       this.slideIn.open(FileTicketFormComponent);
     }
+  }
+
+  // TODO: Works around Typescript issue: https://github.com/microsoft/TypeScript/issues/15300
+  asRecord(row: VolumesListPool): Record<string, unknown> {
+    return row as unknown as Record<string, unknown>;
   }
 }

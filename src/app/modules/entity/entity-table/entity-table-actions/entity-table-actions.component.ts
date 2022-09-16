@@ -11,7 +11,7 @@ import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.
 })
 export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() entity: EntityTableComponent;
-  @Input() row: any;
+  @Input() row: Record<string, unknown>;
   @Input() iconName = 'more_vert';
   @Input() action: string;
   @Input() groups = false;

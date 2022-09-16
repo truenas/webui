@@ -21,7 +21,7 @@ export class JobService {
   ) {}
 
   getJobStatus(jobId: number): Observable<Job> {
-    const source = Observable.create((observer: Observer<Job>) => {
+    return new Observable((observer: Observer<Job>) => {
       this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
         if (event.id === jobId) {
           observer.next(event.fields);
@@ -31,7 +31,6 @@ export class JobService {
         }
       });
     });
-    return source;
   }
 
   showLogs(job: Job, title?: string, cancelMsg?: string): void {

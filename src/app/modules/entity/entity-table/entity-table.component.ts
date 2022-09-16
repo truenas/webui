@@ -11,7 +11,7 @@ import {
   TemplateRef,
   ViewChild,
   ChangeDetectorRef,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -698,8 +698,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
-      // TODO: Replacing with elementRef breaks things
-      const parentNode = (this.entitytable as any)._elementRef.nativeElement.parentNode;
+      // Hack to access the private property _elementRef. Do not replace with elementRef.
+      const parentNode = (this.entitytable as unknown as { _elementRef: ElementRef })
+        ._elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;

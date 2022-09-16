@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { lastValueFrom, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -285,21 +285,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   private getCheckinWaitingSeconds(): Promise<number> {
-    return this.ws.call('interface.checkin_waiting')
-      .pipe(untilDestroyed(this))
-      .toPromise();
+    return lastValueFrom(
+      this.ws.call('interface.checkin_waiting'),
+    );
   }
 
   private getPendingChanges(): Promise<boolean> {
-    return this.ws.call('interface.has_pending_changes')
-      .pipe(untilDestroyed(this))
-      .toPromise();
+    return lastValueFrom(
+      this.ws.call('interface.has_pending_changes'),
+    );
   }
 
   private async cancelCommit(): Promise<void> {
-    await this.ws.call('interface.cancel_rollback')
-      .pipe(untilDestroyed(this))
-      .toPromise();
+    await lastValueFrom(
+      this.ws.call('interface.cancel_rollback'),
+    );
   }
 
   private handleWaitingCheckin(seconds: number): void {

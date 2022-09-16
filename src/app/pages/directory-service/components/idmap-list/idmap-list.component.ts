@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { lastValueFrom } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap.enum';
@@ -88,18 +89,20 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   prerequisite(): Promise<boolean> {
-    return this.ws.call('directoryservices.get_state').pipe(
-      tap((state) => {
-        if (state.ldap !== DirectoryServiceState.Disabled) {
-          this.queryCallOption = [[['name', '=', IdmapName.DsTypeLdap]]];
-        } else if (state.activedirectory !== DirectoryServiceState.Disabled) {
-          this.queryCallOption = [[['name', '!=', IdmapName.DsTypeLdap]]];
-        } else {
-          this.queryCallOption = undefined;
-        }
-      }),
-      map(() => true),
-    ).toPromise();
+    return lastValueFrom(
+      this.ws.call('directoryservices.get_state').pipe(
+        tap((state) => {
+          if (state.ldap !== DirectoryServiceState.Disabled) {
+            this.queryCallOption = [[['name', '=', IdmapName.DsTypeLdap]]];
+          } else if (state.activedirectory !== DirectoryServiceState.Disabled) {
+            this.queryCallOption = [[['name', '!=', IdmapName.DsTypeLdap]]];
+          } else {
+            this.queryCallOption = undefined;
+          }
+        }),
+        map(() => true),
+      ),
+    );
   }
 
   getAddActions(): EntityTableAction[] {

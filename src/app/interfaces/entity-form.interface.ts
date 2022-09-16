@@ -19,7 +19,7 @@ export interface FormConfiguration {
   isCreateJob?: boolean;
   isEditJob?: boolean;
   queryCall?: ApiMethod;
-  queryCallOption?: any[];
+  queryCallOption?: unknown[];
   queryKey?: string; // use this to define your id for websocket call
   isNew?: boolean;
   pk?: number | string;

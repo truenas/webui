@@ -159,7 +159,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     this.isSidenavOpen = !this.isMobile;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
     if (!this.isMobile) {
-      // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
+      // TODO: This is hack to resolve issue described here: https://ixsystems.atlassian.net/browse/NAS-110404
       setTimeout(() => {
         this.sideNav.open();
       });

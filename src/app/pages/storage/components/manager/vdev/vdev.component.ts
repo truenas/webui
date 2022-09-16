@@ -26,7 +26,7 @@ export class VdevComponent implements OnInit {
   @Input() index: number;
   @Input() group: string;
   @Input() manager: ManagerComponent;
-  @Input() initialValues: any = {};
+  @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;

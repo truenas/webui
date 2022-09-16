@@ -5,6 +5,7 @@ import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -1207,7 +1208,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         type: KeychainCredentialType.SshKeyPair,
         attributes: data['sshkeypair'],
       };
-      return this.ws.call(this.createCalls[item], [payload]).toPromise();
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
 
     if (item === 'ssh_credentials') {
@@ -1237,7 +1238,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       for (const i of this.semiSshFieldGroup) {
         payload[i] = data[i];
       }
-      return this.ws.call(this.createCalls[sshCreateItem], [payload]).toPromise();
+      return lastValueFrom(this.ws.call(this.createCalls[sshCreateItem], [payload]));
     }
 
     if (item === 'periodic_snapshot_tasks') {
@@ -1256,7 +1257,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         };
         await this.isSnapshotTaskExist(payload).then((tasks) => {
           if (tasks.length === 0) {
-            snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
+            snapshotPromises.push(
+              lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
+            );
           } else {
             this.existSnapshotTasks.push(...tasks.map((task) => task.id));
           }
@@ -1273,7 +1276,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
           recursive: data['recursive'] ? data['recursive'] : false,
         };
-        snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
+        snapshotPromises.push(
+          lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
+        );
       }
       return Promise.all(snapshotPromises);
     }
@@ -1547,7 +1552,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       host: value['host'],
       port: value['port'],
     };
-    return this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).toPromise();
+    return lastValueFrom(this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]));
   }
 
   genTaskName(): void {
@@ -1618,20 +1623,22 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  async isSnapshotTaskExist(payload: {
+  isSnapshotTaskExist(payload: {
     dataset: string;
     schedule: Schedule;
     naming_schema?: string;
   }): Promise<PeriodicSnapshotTask[]> {
-    return this.ws.call('pool.snapshottask.query', [[
-      ['dataset', '=', payload['dataset']],
-      ['schedule.minute', '=', payload['schedule']['minute']],
-      ['schedule.hour', '=', payload['schedule']['hour']],
-      ['schedule.dom', '=', payload['schedule']['dom']],
-      ['schedule.month', '=', payload['schedule']['month']],
-      ['schedule.dow', '=', payload['schedule']['dow']],
-      ['naming_schema', '=', payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema],
-    ]]).toPromise();
+    return lastValueFrom(
+      this.ws.call('pool.snapshottask.query', [[
+        ['dataset', '=', payload['dataset']],
+        ['schedule.minute', '=', payload['schedule']['minute']],
+        ['schedule.hour', '=', payload['schedule']['hour']],
+        ['schedule.dom', '=', payload['schedule']['dom']],
+        ['schedule.month', '=', payload['schedule']['month']],
+        ['schedule.dow', '=', payload['schedule']['dow']],
+        ['naming_schema', '=', payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema],
+      ]]),
+    );
   }
 
   toggleNamingSchemaOrRegex(): void {

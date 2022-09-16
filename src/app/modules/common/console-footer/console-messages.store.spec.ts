@@ -1,6 +1,5 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { firstValueFrom, of } from 'rxjs';
 import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
 import { WebSocketService } from 'app/services';
 
@@ -26,7 +25,7 @@ describe('ConsoleMessagesStore', () => {
 
     expect(spectator.inject(WebSocketService).sub)
       .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500', expect.any(String));
-    const state = await spectator.service.state$.pipe(take(1)).toPromise();
+    const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({
       lines: [
         '[12:34] Line 1.',
@@ -39,13 +38,13 @@ describe('ConsoleMessagesStore', () => {
 
   it('lines$ - returns lines joined with new line from state', async () => {
     spectator.service.subscribeToMessageUpdates();
-    const lines = await spectator.service.lines$.pipe(take(1)).toPromise();
+    const lines = await firstValueFrom(spectator.service.lines$);
     expect(lines).toEqual('[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
   });
 
   it('lastThreeLogLines$ - returns last three lines joined with new line from state', async () => {
     spectator.service.subscribeToMessageUpdates();
-    const lines = await spectator.service.lastThreeLogLines$.pipe(take(1)).toPromise();
+    const lines = await firstValueFrom(spectator.service.lastThreeLogLines$);
     expect(lines).toEqual('[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
   });
 

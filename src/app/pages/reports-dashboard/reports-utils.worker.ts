@@ -20,7 +20,7 @@ export interface ReportingData {
   step: number;
   data: number[][];
   aggregations: {
-    [key in ReportingAggregationKeys]: string[];
+    [key in ReportingAggregationKeys]: (string | number)[];
   };
 }
 
@@ -155,21 +155,21 @@ function formatValue(value: number, units: string): string | number {
   return output;
 }
 
-function convertAggregations(input: any, labelY?: string): any {
+function convertAggregations(input: ReportingData, labelY?: string): ReportingData {
   const output = { ...input };
   const units = inferUnits(labelY);
   const keys = Object.keys(output.aggregations);
 
-  keys.forEach((key) => {
-    (output.aggregations[key] as any[]).forEach((value, index) => {
-      output.aggregations[key][index] = formatValue(value, units);
+  keys.forEach((key: ReportingAggregationKeys) => {
+    (output.aggregations[key]).forEach((value, index) => {
+      output.aggregations[key][index] = formatValue(value as number, units);
     });
   });
   return output;
 }
 
-function optimizeLegend(input: ReportingData): any {
-  const output: { legend: string[] } = input;
+function optimizeLegend(input: ReportingData): ReportingData {
+  const output = input;
   // Do stuff
   switch (input.name) {
     case 'upsbatterycharge':
@@ -266,8 +266,8 @@ function optimizeLegend(input: ReportingData): any {
   return output;
 }
 
-function avgCpuTempReport(report: ReportingData): any {
-  const output = { ...report } as any;
+function avgCpuTempReport(report: ReportingData): ReportingData {
+  const output = { ...report };
   // Handle Data
   output.data = avgFromReportData(report.data);
 
@@ -276,8 +276,8 @@ function avgCpuTempReport(report: ReportingData): any {
 
   // Handle Aggregations
   const keys = Object.keys(output.aggregations);
-  keys.forEach((key) => {
-    output.aggregations[key] = [arrayAvg(output.aggregations[key])];
+  keys.forEach((key: ReportingAggregationKeys) => {
+    output.aggregations[key] = [arrayAvg(output.aggregations[key] as number[])];
   });
 
   return output;
@@ -313,7 +313,7 @@ const commands = {
     const output = optimizeLegend(input);
     return output;
   },
-  convertAggregations: (input: any, options?: [string]) => {
+  convertAggregations: (input: ReportingData, options?: [string]) => {
     const output = options ? convertAggregations(input, ...options) : input;
     if (!options) {
       console.warn('You must specify a label to parse. (Usually the Y axis label). Returning input value instead');

@@ -100,7 +100,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private resources = PIXI.loader.resources;
   container: Container;
   failedDisks: DiskFailure[] = [];
-  subenclosure: any; // Declare rear and internal enclosure visualizations here
+  subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
   view: string = EnclosureLocation.Front;
@@ -630,7 +630,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   destroyEnclosure(): void {
     if (!this.enclosure) { return; }
-    this.enclosure.events.unsubscribe();
     this.container.removeChild(this.enclosure.container);
     this.enclosure.destroy();
   }
