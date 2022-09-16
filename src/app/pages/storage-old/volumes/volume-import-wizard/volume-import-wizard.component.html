@@ -1,7 +1,14 @@
-<ix-modal-header [title]="helptext.import_title" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="helptext.import_title"
+  [loading]="isFormLoading"
+></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup"
+      (submit)="onSubmit()"
+    >
       <ix-fieldset [title]="helptext.import_label | translate">
         <ix-select
           [formControlName]="pool.fcName"
@@ -15,9 +22,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="formGroup.invalid || isFormLoading"
           color="primary"
-        >{{ 'Import' | translate }}</button>
+          [disabled]="formGroup.invalid || isFormLoading"
+        >
+          {{ 'Import' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

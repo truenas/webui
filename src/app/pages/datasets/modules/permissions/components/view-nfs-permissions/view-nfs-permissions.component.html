@@ -1,4 +1,6 @@
-<div class="title">{{ 'Click an item to view NFSv4 permissions' | translate }}</div>
+<div class="title">
+  {{ 'Click an item to view NFSv4 permissions' | translate }}
+</div>
 
 <cdk-accordion>
   <cdk-accordion-item
@@ -12,16 +14,20 @@
       [item]="permissionItems[i]"
       (click)="accordionItem.toggle()"
     ></ix-permissions-item>
-    <div
-      *ngIf="permissionDetails[i] as details"
-      class="permission-details"
-    >
+    <div *ngIf="permissionDetails[i] as details" class="permission-details">
       <div class="details-section">
         <div class="details-title">
-          {{ details.arePermissionsBasic ? ('Permissions Basic' | translate) : ('Permissions Advanced' | translate) }}
+          {{
+            details.arePermissionsBasic
+              ? ('Permissions Basic' | translate)
+              : ('Permissions Advanced' | translate)
+          }}
         </div>
         <ul class="details-items">
-          <li *ngFor="let permission of details.permissions" class="details-item">
+          <li
+            *ngFor="let permission of details.permissions"
+            class="details-item"
+          >
             <mat-icon class="icon">check_circle</mat-icon>
             {{ permission }}
           </li>
@@ -29,7 +35,11 @@
       </div>
       <div *ngIf="details.flags.length" class="details-section">
         <div class="details-title">
-          {{ details.areFlagsBasic ? ('Flags Basic' | translate) : ('Flags Advanced' | translate) }}
+          {{
+            details.areFlagsBasic
+              ? ('Flags Basic' | translate)
+              : ('Flags Advanced' | translate)
+          }}
         </div>
         <ul class="details-items">
           <li *ngFor="let flag of details.flags" class="details-item">
@@ -41,4 +51,3 @@
     </div>
   </cdk-accordion-item>
 </cdk-accordion>
-

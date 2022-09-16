@@ -4,10 +4,18 @@
       {{ 'ZFS Health' | translate }}
 
       <ng-container [ngSwitch]="true">
-        <mat-icon *ngSwitchCase="pool.healthy" class="pool-icon icon-online">check_circle</mat-icon>
-        <mat-icon *ngSwitchCase="pool.status === PoolStatus.Degraded" class="pool-icon icon-warning">warning</mat-icon>
-        <mat-icon *ngSwitchCase="pool.status === PoolStatus.Faulted" class="pool-icon icon-faulted">help</mat-icon>
-        <mat-icon *ngSwitchDefault class="pool-icon icon-error">cancel</mat-icon>
+        <mat-icon *ngSwitchCase="pool.healthy" class="pool-icon icon-online">
+          check_circle
+        </mat-icon>
+        <mat-icon *ngSwitchCase="pool.status === PoolStatus.Degraded" class="pool-icon icon-warning">
+          warning
+        </mat-icon>
+        <mat-icon *ngSwitchCase="pool.status === PoolStatus.Faulted" class="pool-icon icon-faulted">
+          help
+        </mat-icon>
+        <mat-icon *ngSwitchDefault class="pool-icon icon-error">
+          cancel
+        </mat-icon>
       </ng-container>
     </h3>
 
@@ -15,20 +23,21 @@
       *ngIf="!isScanRunning; else runningScanControls"
       mat-button
       (click)="onStartScrub()"
-    >{{ 'Scrub' | translate }}</button>
+    >
+      {{ 'Scrub' | translate }}
+    </button>
 
     <ng-template #runningScanControls>
       <button
         *ngIf="isScanScrub; else disabledButton"
         mat-button
         (click)="onStopScrub()"
-      >{{ 'Stop Scrub' | translate }}</button>
+      >
+        {{ 'Stop Scrub' | translate }}
+      </button>
 
       <ng-template #disabledButton>
-        <button
-          mat-button
-          disabled
-        >{{ 'Scrub' | translate }}</button>
+        <button mat-button disabled>{{ 'Scrub' | translate }}</button>
       </ng-template>
     </ng-template>
   </mat-card-header>
@@ -44,10 +53,12 @@
       <div class="value">{{ totalZfsErrors | number }}</div>
     </div>
 
-    <div *ngIf="(hasScrubTask$ | async) as hasScrubTask" class="details-item">
+    <div *ngIf="hasScrubTask$ | async as hasScrubTask" class="details-item">
       <div class="label">{{ 'Scheduled Scrub Task' | translate }}:</div>
       <div class="value">
-        <ngx-skeleton-loader *ngIf="hasScrubTask.isLoading"></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          *ngIf="hasScrubTask.isLoading"
+        ></ngx-skeleton-loader>
         <ng-container *ngIf="hasScrubTask.value !== undefined">
           {{ hasScrubTask.value ? ('Set' | translate) : ('Not Set' | translate) }}
         </ng-container>
@@ -56,27 +67,36 @@
           Error
         </ng-container>
       </div>
-      <a [routerLink]="['/data-protection/scrub']">{{ 'View All Scrub Tasks' | translate }}</a>
+      <a [routerLink]="['/data-protection/scrub']">
+        {{ 'View All Scrub Tasks' | translate }}
+      </a>
     </div>
 
     <div class="details-item">
       <div class="label">{{ 'Auto TRIM' | translate }}:</div>
-      <div class="value">{{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}</div>
-      <a class="action" (click)="onEditAutotrim()">{{ 'Edit Auto TRIM' | translate }}</a>
+      <div class="value">
+        {{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
+      </div>
+      <a class="action" (click)="onEditAutotrim()">
+        {{ 'Edit Auto TRIM' | translate }}
+      </a>
     </div>
 
     <ng-container *ngIf="scan?.function">
       <div *ngIf="isScanRunning; else scanResults" class="scan-in-progress">
         <div class="scan-description">
           <span class="scan-label">
-            {{ isScanScrub ? ('Scrub In Progress' | translate) : ( 'Resilvering' | translate) }}:
+            {{ isScanScrub ? ('Scrub In Progress' | translate) : ('Resilvering' | translate) }}:
           </span>
           {{ scan.percentage / 100 | percent: '1.2-2' }}
         </div>
         <div *ngIf="scan.total_secs_left" class="time-left">
           {{ timeLeftString }}
         </div>
-        <mat-progress-bar [value]="scan.percentage" class="progress"></mat-progress-bar>
+        <mat-progress-bar
+          [value]="scan.percentage"
+          class="progress"
+        ></mat-progress-bar>
       </div>
 
       <ng-template #scanResults>

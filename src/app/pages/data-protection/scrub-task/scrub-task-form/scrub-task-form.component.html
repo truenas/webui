@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
           formControlName="pool"
@@ -10,24 +11,28 @@
           [required]="true"
           [options]="poolOptions$"
         ></ix-select>
+
         <ix-input
           formControlName="threshold"
+          type="number"
           [label]="'Threshold Days' | translate"
           [required]="true"
-          type="number"
           [tooltip]="tooltips.threshold | translate"
         ></ix-input>
+
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
           [tooltip]="tooltips.description | translate"
         ></ix-input>
+
         <ix-scheduler
           formControlName="schedule"
           [label]="'Schedule' | translate"
           [tooltip]="tooltips.schedule | translate"
           [required]="true"
         ></ix-scheduler>
+
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
@@ -39,9 +44,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

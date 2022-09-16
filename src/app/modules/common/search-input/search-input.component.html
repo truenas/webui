@@ -1,4 +1,6 @@
-<span class="prefix-icon"><mat-icon>search</mat-icon></span>
+<span class="prefix-icon">
+  <mat-icon>search</mat-icon>
+</span>
 <input
   #searchInput
   matInput
@@ -6,7 +8,11 @@
   [disabled]="disabled"
   [placeholder]="'Search' | translate"
   (input)="onInput(searchInput.value)"
+/>
+<span
+  *ngIf="shouldShowReset"
+  class="reset-icon reset-input"
+  (click)="onResetInput()"
 >
-<span *ngIf="shouldShowReset" (click)="onResetInput()" class="reset-icon reset-input">
   <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 </span>

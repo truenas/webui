@@ -72,12 +72,16 @@
           type="submit"
           [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
         <button
           mat-button
           type="button"
           [routerLink]="['/datasets', datasetId]"
-        >{{ 'Cancel' | translate }}</button>
+        >
+          {{ 'Cancel' | translate }}
+        </button>
 
         <button
           *ngIf="canSetAcl"
@@ -85,7 +89,9 @@
           mat-button
           type="button"
           (click)="onSetAclPressed()"
-        >{{ 'Set ACL' | translate }}</button>
+        >
+          {{ 'Set ACL' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

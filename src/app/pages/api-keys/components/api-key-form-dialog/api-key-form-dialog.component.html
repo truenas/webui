@@ -1,13 +1,14 @@
 <h1 matDialogTitle>
   {{ isNew ? ('Add API Key' | translate) : ('Edit API Key' | translate) }}
 </h1>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="name"
     [label]="'Name' | translate"
     [required]="true"
     [tooltip]="tooltips.name | translate"
   ></ix-input>
+
   <ix-checkbox
     *ngIf="!isNew"
     formControlName="reset"
@@ -16,16 +17,11 @@
   ></ix-checkbox>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="submit"
-      [disabled]="form.invalid"
-      color="primary"
-    >{{ 'Save' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Cancel' | translate }}</button>
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Save' | translate }}
+    </button>
+    <button mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
   </div>
 </form>

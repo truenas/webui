@@ -8,32 +8,47 @@
 >
   <div class="job-item-body" (click)="clickable && open()">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
-      <span class="job-description">{{ job.description ? job.description : job.method }}</span>
-      <small class="job-progress-percent" *ngIf="job.state === JobState.Running">{{ job.progress.percent || 0 | number: '1.2-2' }}%</small>
+      <span class="job-description">
+        {{ job.description ? job.description : job.method }}
+      </span>
+      <small class="job-progress-percent" *ngIf="job.state === JobState.Running">
+        {{ job.progress.percent || 0 | number: '1.2-2' }}%
+      </small>
     </div>
 
     <mat-progress-bar
       *ngIf="job.state === JobState.Running"
+      class="job-progress"
       [value]="job.progress.percent"
       [mode]="job.progress.percent ? 'determinate' : 'indeterminate'"
-      class="job-progress"
     ></mat-progress-bar>
 
     <div [ngSwitch]="job.state">
       <ng-container *ngSwitchCase="JobState.Running">
-        <div class="job-progress-description" *ngIf="job?.progress?.description">{{ job.progress.description }}</div>
+        <div class="job-progress-description" *ngIf="job?.progress?.description">
+          {{ job.progress.description }}
+        </div>
         <div class="job-time" *ngIf="!job?.progress?.description">
-          {{ 'Started' | translate }}: <strong>{{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}</strong>
+          {{ 'Started' | translate }}:
+          <strong>
+            {{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}
+          </strong>
         </div>
       </ng-container>
       <ng-container *ngSwitchCase="JobState.Waiting">
         <div class="job-time">
-          {{ 'Waiting' | translate }}: <strong>{{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}</strong>
+          {{ 'Waiting' | translate }}:
+          <strong>
+            {{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}
+          </strong>
         </div>
       </ng-container>
       <ng-container *ngSwitchCase="JobState.Failed">
         <div class="job-time">
-          {{ 'Stopped' | translate }}: <strong>{{ job.time_finished?.$date ? (job.time_finished.$date | formatDateTime) : '–' }}</strong>
+          {{ 'Stopped' | translate }}:
+          <strong>
+            {{ job.time_finished?.$date ? (job.time_finished.$date | formatDateTime) : '–' }}
+          </strong>
         </div>
       </ng-container>
     </div>
@@ -46,7 +61,11 @@
     type="button"
     (click)="abort()"
   >
-    <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle" class="job-icon-abort"></mat-icon>
+    <mat-icon
+      fontSet="mdi-set"
+      fontIcon="mdi-close-circle"
+      class="job-icon-abort"
+    ></mat-icon>
   </button>
 
   <button
@@ -64,7 +83,9 @@
     type="button"
     [disabled]="true"
   >
-    <mat-icon [matTooltip]="job.error" matTooltipPosition="left" class="job-icon-failed">warning</mat-icon>
+    <mat-icon matTooltipPosition="left" class="job-icon-failed" [matTooltip]="job.error">
+      warning
+    </mat-icon>
   </button>
 
   <button

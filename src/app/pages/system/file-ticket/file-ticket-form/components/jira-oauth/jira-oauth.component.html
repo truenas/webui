@@ -5,36 +5,46 @@
   class="action-button"
   [disabled]="hasValue()"
   [color]="value ? 'accent' : 'primary'"
->{{ (hasValue() ? 'Logged In To Jira' : 'Login to Jira') | translate }}</button>
+>
+  {{ (hasValue() ? 'Logged In To Jira' : 'Login to Jira') | translate }}
+</button>
 
 <div class="full-width container has-tooltip hidden">
   <div *ngIf="label" class="label-container">
     <label class="label">
-      {{label}}
+      {{ label }}
       <span *ngIf="required" class="required">*</span>
     </label>
-    <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
+    <ix-tooltip
+      *ngIf="tooltip"
+      class="tooltip"
+      [header]="label"
+      [message]="tooltip"
+    ></ix-tooltip>
   </div>
 
-  <div class="outlined input-container" [class.has-reset-button]="shouldShowResetInput()">
+  <div
+    class="outlined input-container"
+    [class.has-reset-button]="shouldShowResetInput()"
+  >
     <input
       matInput
       [value]="value"
       [placeholder]="placeholder"
-      (blur)="onTouch()"
       [readonly]="readonly"
       [disabled]="disabled"
-    >
+      (blur)="onTouch()"
+    />
     <span *ngIf="shouldShowResetInput()" class="reset-input">
       <mat-icon
-        [matTooltip]="'Reset the token' | translate"
-        (click)="resetInput()"
         fontSet="mdi-set"
         fontIcon="mdi-close-circle"
+        [matTooltip]="'Reset the token' | translate"
+        (click)="resetInput()"
       ></mat-icon>
     </span>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 </div>

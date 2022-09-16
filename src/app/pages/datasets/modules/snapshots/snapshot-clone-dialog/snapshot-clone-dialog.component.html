@@ -1,8 +1,8 @@
 <h1 matDialogTitle>{{ 'Clone to New Dataset' | translate }}</h1>
 <form
   *ngIf="!wasDatasetCloned; else successMessage"
-  [formGroup]="form"
   class="ix-form-container"
+  [formGroup]="form"
   (submit)="onSubmit()"
 >
   <ix-input
@@ -13,17 +13,13 @@
   ></ix-input>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="submit"
-      [disabled]="form.invalid"
-      color="primary"
-    >{{ 'Clone' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Cancel' | translate }}</button>
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Clone' | translate }}
+    </button>
+
+    <button mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
   </div>
 </form>
 <ng-template #successMessage>
@@ -36,11 +32,12 @@
       color="primary"
       matDialogClose
       [routerLink]="['/storage']"
-    >{{ 'Go to Storage' | translate }}</a>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Close' | translate }}</button>
+    >
+      {{ 'Go to Storage' | translate }}
+    </a>
+
+    <button mat-button type="button" matDialogClose>
+      {{ 'Close' | translate }}
+    </button>
   </div>
 </ng-template>
