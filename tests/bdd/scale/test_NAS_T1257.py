@@ -15,6 +15,7 @@ from pytest_bdd import (
     then,
     when
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1257.feature', 'Verify the ssh host key stay the same after reboot')
@@ -24,8 +25,9 @@ def test_verify_the_ssh_host_key_stay_the_same_after_reboot(driver):
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

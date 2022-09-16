@@ -12,6 +12,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1243.feature', 'Verify that changing an encryption key format to PASSPHRASE functions')
@@ -20,8 +21,9 @@ def test_verify_that_changing_an_encryption_key_format_to_passphrase_functions()
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['encrypted_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -58,7 +60,7 @@ def the_pools_page_appears_click_the_three_dots_for_the_encrypted_pool(driver):
 def click_encryption_options(driver):
     """click encryption Options."""
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Encryption Options"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Encryption Options"]').click()  
+    driver.find_element_by_xpath('//button[normalize-space(text())="Encryption Options"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Edit Encryption Options")]')
 
 
@@ -92,7 +94,7 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     assert wait_on_element_disappear(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]')
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Confirm"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm"]').click()   
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
@@ -108,13 +110,13 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Lock"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Lock Dataset encrypted_tank")]')
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()       
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()   
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__LOCK"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__LOCK"]').click()
 
@@ -127,9 +129,8 @@ def unlock_the_pool(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Unlock"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
-    
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")

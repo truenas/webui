@@ -17,6 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1124.feature', 'Create an smb share with the tank ACL dataset')
@@ -49,8 +50,9 @@ def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['AD_Setup', 'AD_tank_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

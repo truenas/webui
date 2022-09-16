@@ -14,6 +14,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1122.feature', 'Add an ACL Item and verify is preserve on the system ACL dataset')
@@ -22,8 +23,9 @@ def test_add_an_acl_item_and_verify_is_preserve_on_the_system_acl_dataset():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

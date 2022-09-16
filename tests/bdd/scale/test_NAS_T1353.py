@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present
@@ -11,16 +12,19 @@ from pytest_bdd import (
     then,
     when
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='App_Catalog')
 @scenario('features/NAS-T1353.feature', 'Apps Page - Validate adding a Catalog')
 def test_apps_page__validate__adding_truecharts():
     """Apps Page - Validate  adding TrueCharts."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

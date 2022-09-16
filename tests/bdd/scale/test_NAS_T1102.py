@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -13,16 +14,19 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='system_pool')
 @scenario('features/NAS-T1102.feature', 'Creating new pool and set it as a system dataset')
 def test_creating_new_pool_and_set_it_as_a_system_dataset():
     """Creating new pool and set it as a system dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

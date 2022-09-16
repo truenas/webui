@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -14,16 +15,19 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='nopeer1_zvol')
 @scenario('features/NAS-T1138.feature', 'Create a 1gb zvol call nopeer1 for the no peer iscsi test case')
 def test_create_a_1gb_zvol_call_nopeer1_for_the_no_peer_iscsi_test_case():
     """Create a 1gb zvol call nopeer1 for the no peer iscsi test case."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -59,7 +63,7 @@ def click_on_the_tank_three_dots_button_select_add_zvol_and_the_add_zvol_page_sh
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Zvol"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Zvol"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Add Zvol"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//h3[text()="Add Zvol"]')
 

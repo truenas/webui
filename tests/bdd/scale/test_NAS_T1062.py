@@ -20,6 +20,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='Setup_SSH')
 @scenario('features/NAS-T1062.feature', 'Verify SSH Access with root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with root works."""

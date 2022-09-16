@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
@@ -15,6 +16,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Certificate_Signin')
 @scenario('features/NAS-T1258.feature', 'Verify a Certificate Signing Request can be created')
 def test_verify_a_certificate_signing_request_can_be_created():
     """Verify a Certificate Signing Request can be created."""
