@@ -89,6 +89,9 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
     if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
         assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
+        if wait_on_element(driver, 3, '//span[text()="SMB Service"]'):
+            assert wait_on_element(driver, 5, '//button[span/text()="Close"]', 'clickable')
+            driver.find_element_by_xpath('//button[span/text()="Close"]').click()
 
 
 @then('the ldapsmbshare should be added to the Shares list')
