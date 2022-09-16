@@ -172,12 +172,15 @@ ix-dataset-details-panel {
   width: 100%;
 }
 
-.dataset-tree-search {
-  background-color: var(--bg2);
-  padding: 16px;
+.sticky-header {
   position: sticky;
   top: -15px;
   z-index: 1;
+}
+
+.dataset-tree-search {
+  background-color: var(--bg2);
+  padding: 16px;
 }
 
 .dataset-tree-wrapper {
@@ -203,19 +206,14 @@ ix-dataset-details-panel {
 
 .dataset-tree-header {
   @include grid-row();
+
   align-items: center;
   background: var(--bg1);
-
   border-bottom: 2px solid var(--lines);
   color: var(--fg2);
-
-  // Override default fraction based values to avoid misaligned columns
   grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
   padding-left: 48px;
-  position: sticky;
-  top: 52px;
-  z-index: 2;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;
