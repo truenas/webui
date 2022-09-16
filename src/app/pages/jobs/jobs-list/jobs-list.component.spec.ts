@@ -108,8 +108,8 @@ describe('JobsListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'State', 'ID', 'Started', 'Finished', 'Arguments/Logs'],
-      ['highlight_offcloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'ViewDownload Logs'],
-      ['check_circle_outlinecloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View'],
+      ['highlight_off  cloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View  Download Logs'],
+      ['check_circle_outline  cloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View'],
     ];
 
     expect(cells).toEqual(expectedRows);
