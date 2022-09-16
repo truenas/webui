@@ -15,7 +15,7 @@ from pytest_bdd import (
 )
 
 
-@pytest.mark.dependency(name='Certificate_Authority ')
+@pytest.mark.dependency(name='Certificate_Authority')
 @scenario('features/NAS-T1260.feature', 'Verify a certificate authority can be created')
 def test_verify_a_certificate_authority_can_be_created():
     """Verify a certificate authority can be created."""
