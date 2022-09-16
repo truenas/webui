@@ -1,3 +1,4 @@
+import { ZfsSnapshotRetentionSource } from 'app/enums/zfs-snapshot-retention-source.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
@@ -12,7 +13,7 @@ export interface ZfsSnapshot {
   };
   retention?: {
     datetime: ApiTimestamp;
-    source: string;
+    source: ZfsSnapshotRetentionSource;
     periodic_snapshot_task_id?: number;
   };
   snapshot_name: string;

@@ -66,7 +66,7 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(rows[0]).toHaveText('Used: 1.49 TiB');
     expect(rows[1]).toHaveText('Date created: 2021-11-05 10:52:06');
     expect(rows[2]).toHaveText('Referenced: 1.49 TiB');
-    expect(rows[3]).toHaveText('Retention: 2021-11-05 10:52:06');
+    expect(rows[3]).toHaveText('Retention: Will be automatically destroyed at 2021-11-05 10:52:06 by periodic snapshot task');
   });
 
   it('should open clone dialog when `Clone To New Dataset` button click', async () => {

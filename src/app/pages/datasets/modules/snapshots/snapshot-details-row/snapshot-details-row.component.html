@@ -31,8 +31,18 @@
       <dt>{{ 'Retention' | translate }}:</dt>
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">
-        <ng-container *ngIf="snapshotInfo?.retention?.datetime?.$date; else notAvailable">
-          {{ snapshotInfo.retention.datetime.$date | formatDateTime }}
+        <ng-container *ngIf="snapshotInfo?.retention?.datetime?.$date">
+          <ng-container *ngIf="snapshotInfo?.retention?.periodic_snapshot_task_id">
+            {{ 'Will be automatically destroyed at {datetime} by periodic snapshot task' | translate:
+              { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
+          </ng-container>
+          <ng-container *ngIf="!snapshotInfo?.retention?.periodic_snapshot_task_id">
+            {{ 'Is planned to be automatically destroyed at {datetime}' | translate:
+              { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="!snapshotInfo?.retention?.datetime?.$date">
+          {{ 'Will not be destroyed automatically' | translate }}
         </ng-container>
       </dd>
     </div>
