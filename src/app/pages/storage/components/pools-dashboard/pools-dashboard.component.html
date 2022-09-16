@@ -1,40 +1,46 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <button
-      mat-button
-      (click)="onImportPool()"
-    >{{ 'Import Pool' | translate }}</button>
+    <button mat-button (click)="onImportPool()">
+      {{ 'Import Pool' | translate }}
+    </button>
 
-    <a
-      mat-button
-      [routerLink]="['/storage', 'disks']"
-    >{{ 'Disks' | translate }}</a>
+    <a mat-button [routerLink]="['/storage', 'disks']">
+      {{ 'Disks' | translate }}
+    </a>
 
-    <a
-      mat-button
-      color="primary"
-      [routerLink]="['/storage', 'create']"
-    >{{ 'Create Pool' | translate }}</a>
+    <a mat-button color="primary" [routerLink]="['/storage', 'create']">
+      {{ 'Create Pool' | translate }}
+    </a>
   </ix-page-title-header>
 </ng-template>
 
 <ng-container *ngIf="isEmptyPools && !isLoading; else poolContainer">
-  <div class="entity-empty-wrapper" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+  <div
+    class="entity-empty-wrapper"
+    fxFlex="100%"
+    fxLayout="row"
+    fxLayoutAlign="center center"
+    fxLayoutGap="32px"
+  >
     <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
   </div>
 </ng-container>
 
 <ng-template #poolContainer>
   <div fxFlex="100%" fxLayout="column">
-    <ix-unused-resources *ngIf="!isEmptyPools" [pools]="pools$ | async"></ix-unused-resources>
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-117820 -->
+    <ix-unused-resources
+      *ngIf="!isEmptyPools"
+      [pools]="pools$ | async"
+    ></ix-unused-resources>
 
     <ix-dashboard-pool
       *ngFor="let pool of pools$ | async; let i = index"
+      class="pool"
       [index]="i"
       [pool]="pool"
       [isLoading]="arePoolsLoading$ | async"
       [rootDataset]="rootDatasets[pool.name]"
-      class="pool"
     ></ix-dashboard-pool>
   </div>
 </ng-template>

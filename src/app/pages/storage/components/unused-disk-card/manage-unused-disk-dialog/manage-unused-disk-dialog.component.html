@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Add To Pool' | translate }}</h1>
 
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
     <h4>{{ 'Unassigned Disks' | translate }}</h4>
     <ul class="unused-disks">
@@ -21,6 +21,7 @@
         [options]="toPoolOptions$"
       >
       </ix-radio-group>
+
       <ix-select
         *ngIf="isExistingMode"
         formControlName="pool"
@@ -32,16 +33,12 @@
   </div>
 
   <div mat-dialog-actions>
-    <button
-      mat-button
-      type="button"
-      [matDialogClose]="false"
-    >{{ 'Cancel' | translate }}</button>
-    <button
-      mat-button
-      type="submit"
-      color="primary"
-      [disabled]="form.invalid"
-    >{{ 'Add Disks' | translate }}</button>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Add Disks' | translate }}
+    </button>
   </div>
 </form>

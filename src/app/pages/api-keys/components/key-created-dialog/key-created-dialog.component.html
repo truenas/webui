@@ -13,13 +13,9 @@
 </div>
 
 <div class="form-actions">
-  <button
-    mat-button
-    color="primary"
-    (click)="onCopyPressed()"
-  >{{ 'Copy to Clipboard' | translate }}</button>
-  <button
-    mat-button
-    matDialogClose
-  >{{ 'Close' | translate }}</button>
+  <button mat-button color="primary" (click)="onCopyPressed()">
+    {{ 'Copy to Clipboard' | translate }}
+  </button>
+
+  <button mat-button matDialogClose>{{ 'Close' | translate }}</button>
 </div>

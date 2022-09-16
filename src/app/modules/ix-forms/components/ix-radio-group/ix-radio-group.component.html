@@ -21,7 +21,14 @@
     <mat-radio-button [value]="option.value">
       {{ option.label }}
     </mat-radio-button>
-    <ix-tooltip *ngIf="option.tooltip" [header]="option.label" class="tooltip" [message]="option.tooltip"></ix-tooltip>
+
+    <ix-tooltip
+      *ngIf="option.tooltip"
+      class="tooltip"
+      [header]="option.label"
+      [message]="option.tooltip"
+    ></ix-tooltip>
   </div>
 </mat-radio-group>
+
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

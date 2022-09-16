@@ -6,7 +6,6 @@
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
 >
-
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
     <ix-tooltip
@@ -18,35 +17,45 @@
   </div>
 
   <mat-selection-list
-    [formControlName]="config.name"
-    id="{{config.name}}_selectionlist"
-    [fxLayout]="selectionListLayout"
-    ix-auto ix-auto-type="selection-list" ix-auto-identifier="config.name"
-    (selectionChange)="onChangeSelectedItems($event)"
+    id="{{ config.name }}_selectionlist"
+    ix-auto
+    ix-auto-type="selection-list"
+    ix-auto-identifier="config.name"
     class="form-selection-list"
+    [formControlName]="config.name"
+    [fxLayout]="selectionListLayout"
+    (selectionChange)="onChangeSelectedItems($event)"
   >
-
     <ng-container *ngFor="let option of config.options">
-
       <mat-list-option
         checkboxPosition="before"
-        [value]="option.value"
-        [fxFlex.gt-md]="listOptionFlex" fxFlex="100%"
-        id="{{config.name}}_{{option.value}}_listoption"
+        fxFlex="100%"
+        id="{{ config.name }}_{{ option.value }}_listoption"
         color="primary"
         class="form-checkbox"
-        ix-auto ix-auto-type="list-option" ix-auto-identifier="{{config.name}}_{{option.label}}"
+        ix-auto
+        ix-auto-type="list-option"
+        ix-auto-identifier="{{ config.name }}_{{ option.label }}"
+        [value]="option.value"
+        [fxFlex.gt-md]="listOptionFlex"
       >
         {{ option.label | translate }}
       </mat-list-option>
 
-      <ix-tooltip class="list-option-tooltip" *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></ix-tooltip>
-
+      <ix-tooltip
+        *ngIf="option.tooltip"
+        class="list-option-tooltip"
+        [header]="config.placeholder"
+        [message]="option.tooltip"
+      ></ix-tooltip>
     </ng-container>
-
   </mat-selection-list>
 
-  <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-  <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+  <mat-error *ngIf="config['hasErrors']">
+    <div [innerHTML]="config['errors']"></div>
+  </mat-error>
 
+  <mat-error *ngIf="config.warnings">
+    <div [innerHTML]="config.warnings | translate"></div>
+  </mat-error>
 </div>

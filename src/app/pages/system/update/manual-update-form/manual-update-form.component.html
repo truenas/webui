@@ -1,10 +1,15 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading$ | async" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <ix-fieldset>
+    <mat-progress-bar
+      *ngIf="isFormLoading$ | async"
+      mode="indeterminate"
+    ></mat-progress-bar>
 
-        <p><b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}</p>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <p>
+          <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
+        </p>
 
         <ix-select
           formControlName="filelocation"
@@ -23,22 +28,22 @@
           [acceptedFiles]="'.tar,.update'"
         ></ix-file-input>
         <ix-checkbox
+          *ngIf="!isHa && systemService.isEnterprise"
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
           [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
-          *ngIf="!isHa && systemService.isEnterprise"
         ></ix-checkbox>
-
       </ix-fieldset>
 
       <div class="form-actions">
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || (isFormLoading$ | async)"
           color="primary"
-        >{{ 'Apply Update' | translate }}</button>
-
+          [disabled]="form.invalid || (isFormLoading$ | async)"
+        >
+          {{ 'Apply Update' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

@@ -14,7 +14,9 @@
         {{ config.hideMinutes ? ('Hours' | translate) : ('Minutes/Hours' | translate) }}
         <ix-tooltip [message]="tooltips.general | translate"></ix-tooltip>
       </h4>
-      <div class="no-spaces-hint">({{ 'Separate values with commas, and without spaces.' | translate }})</div>
+      <div class="no-spaces-hint">
+        ({{ 'Separate values with commas, and without spaces.' | translate }})
+      </div>
 
       <ix-input
         *ngIf="!config.hideMinutes"
@@ -24,6 +26,7 @@
         [label]="'Minutes' | translate"
         [tooltip]="tooltips.minutes | translate"
       ></ix-input>
+
       <ix-input
         class="input"
         formControlName="hours"
@@ -44,8 +47,12 @@
         [tooltip]="tooltips.days | translate"
       ></ix-input>
 
-      <div *ngIf="hasOrConditionExplanation$ | async" class="or-condition-explanation">
+      <div
+        *ngIf="hasOrConditionExplanation$ | async"
+        class="or-condition-explanation"
+      >
         <div class="line"></div>
+
         <div class="or-label">
           {{ 'or' | translate }}
           <ix-tooltip [message]="tooltips.orTooltip | translate"></ix-tooltip>
@@ -60,7 +67,9 @@
           color="primary"
           class="weekend"
           [formControlName]="weekday.value"
-        >{{ weekday.label }}</mat-checkbox>
+        >
+          {{ weekday.label }}
+        </mat-checkbox>
       </div>
     </section>
 
@@ -73,17 +82,21 @@
           color="primary"
           class="month"
           [formControlName]="month.value"
-        >{{ month.label }}</mat-checkbox>
+        >
+          {{ month.label }}
+        </mat-checkbox>
       </div>
     </section>
 
     <div class="form-actions">
       <button
         mat-button
-        [disabled]="form.invalid"
         color="primary"
+        [disabled]="form.invalid"
         (click)="onDone()"
-      >{{ 'Done' | translate }}</button>
+      >
+        {{ 'Done' | translate }}
+      </button>
     </div>
   </form>
 </div>
@@ -93,4 +106,3 @@
   [startTime]="config.startTime"
   [endTime]="config.endTime"
 ></ix-scheduler-preview-column>
-

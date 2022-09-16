@@ -1,27 +1,73 @@
-<ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
+<ng-template
+  [ngTemplateOutlet]="templateTop"
+  [ngTemplateOutletContext]="this"
+></ng-template>
 <p *ngIf="!hasConf">
-  Please <button mat-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to set up configuration first.
+  Please
+  <button
+    mat-button
+    color="primary"
+    class="btn btn-link"
+    type="button"
+    (click)="goConf()"
+  >
+    Click here
+  </button>
+  to set up configuration first.
 </p>
 <mat-card class="form-card">
   <div class="mat-content">
-
     <mat-spinner
       *ngIf="showSpinner"
       #entityspinner
-      [diameter]='40'
       id="entity-table-spinner"
+      [diameter]="40"
     ></mat-spinner>
 
-    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
-      <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
+    <form
+      [formGroup]="formGroup"
+      class="form-wrap"
+      #entityForm="ngForm"
+      (ngSubmit)="onSubmit($event)"
+    >
+      <div
+        *ngIf="fieldSets"
+        class="fieldset-container fieldset-display-default"
+      >
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
-          <div [ngClass]="[fieldSet.class ? fieldSet.class : '', isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset']" class="entity-form fieldset divider-{{fieldSet.divider}}"
-                  fxLayout="row wrap" fxLayoutGap.gt-sm="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width?fieldSets[i].width:'100%'}} - 16px)">
+          <div
+            [ngClass]="[
+              fieldSet.class ? fieldSet.class : '',
+              isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
+            ]"
+            class="entity-form fieldset divider-{{ fieldSet.divider }}"
+            fxLayout="row wrap"
+            fxLayoutGap.gt-sm="24px"
+            fxLayoutAlign="start start"
+            fxFlex="100%"
+            fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
+          >
             <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
-            <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">{{fieldSet.name | translate}}</h4>
-            <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width?field.width:'100%'}} - 16px)"
-                    [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
-              <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'"></div>
+            <h4
+              *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)"
+              class="fieldset-label"
+            >
+              {{ fieldSet.name | translate }}
+            </h4>
+            <div
+              *ngFor="let field of fieldSet.config; let ii = index"
+              fxFlex="100%"
+              fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
+              id="{{ fieldSet.name }}-{{ ii }}"
+              [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+            >
+              <div
+                id="form_field_{{ field.name }}"
+                dynamicField
+                [config]="field"
+                [group]="formGroup"
+                [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
+              ></div>
             </div>
           </div>
         </ng-container>
@@ -31,43 +77,55 @@
             id="save_button"
             class="btn btn-block btn-warning mat-primary"
             type="submit"
-            mat-button color="primary"
+            mat-button
+            ix-auto-type="button"
+            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+            color="primary"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
             [ix-auto]=""
-            ix-auto-type="button"
-            ix-auto-identifier="{{saveSubmitText | uppercase}}"
-          >{{saveSubmitText | translate}}</button>
+          >
+            {{ saveSubmitText | translate }}
+          </button>
           <button
             *ngIf="conf.routeSuccess"
             id="goback_button"
             class="btn btn-block btn-lg"
             type="button"
-            (click)="goBack()"
-            mat-button color="default"
-            [ix-auto]=""
+            mat-button
+            color="default"
             ix-auto-type="button"
             ix-auto-identifier="CANCEL"
-          >{{"Cancel" | translate}}</button>
+            [ix-auto]=""
+            (click)="goBack()"
+          >
+            {{ 'Cancel' | translate }}
+          </button>
           <span *ngFor="let custBtn of conf.customActions">
             <button
               *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
-              id="cust_button_{{custBtn.name}}"
+              id="cust_button_{{ custBtn.name }}"
+              mat-button
+              class="mat-basic"
+              ix-auto-type="button"
+              ix-auto-identifier="{{ custBtn.name | uppercase }}"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
-              mat-button class="mat-basic"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
               [type]="custBtn.buttonType ? custBtn.buttonType : 'button'"
-              (click)="custBtn['function'] ? custBtn['function']() : null"
               [ix-auto]=""
-              ix-auto-type="button"
-              ix-auto-identifier="{{custBtn.name | uppercase}}"
-            >{{custBtn.name | translate}}</button>
+              (click)="custBtn['function'] ? custBtn['function']() : null"
+            >
+              {{ custBtn.name | translate }}
+            </button>
           </span>
           <span *ngIf="conf.compactCustomActions">
             <button
               name="compactCustomActions"
               mat-icon-button
               [matMenuTriggerFor]="keymenu"
-              ix-auto ix-auto-type="button" ix-auto-identifier="keymenu" type="button"
+              ix-auto
+              ix-auto-type="button"
+              ix-auto-identifier="keymenu"
+              type="button"
             >
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -77,11 +135,14 @@
                   *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(action.id)"
                   name="action.id"
                   mat-menu-item
-                  (click)="action['function']()"
-                  ix-auto ix-auto-type="option" ix-auto-identifier="action.name"
+                  ix-auto
+                  ix-auto-type="option"
+                  ix-auto-identifier="action.name"
                   [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(action.id) : action.disabled"
+                  (click)="action['function']()"
                 >
-                  {{ action.name | translate}}</button>
+                  {{ action.name | translate }}
+                </button>
               </span>
             </mat-menu>
           </span>
@@ -93,16 +154,32 @@
             [ix-auto]=""
             ix-auto-type="button"
             ix-auto-identifier="DELETE"
-          >{{"Delete" | translate}}</button>
+          >
+            {{ 'Delete' | translate }}
+          </button>
           <!-- </div> -->
           <div id="success-msg-wrapper">
-            <div *ngIf="success && entityForm.form.dirty === false" type="success" id="successfully_updated">{{successMessage | translate}}</div>
+            <div
+              *ngIf="success && entityForm.form.dirty === false"
+              type="success"
+              id="successfully_updated"
+            >
+              {{ successMessage | translate }}
+            </div>
           </div>
         </mat-card-actions>
       </div>
       <!-- <div class="btn-group btn-group-justified"> -->
     </form>
-    <span *ngIf="conf.formMessage" id="form_message" class="form-message" [ngClass]="conf.formMessage.type" [innerHTML]="conf.formMessage.content | translate"></span>
-    <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
+    <span
+      *ngIf="conf.formMessage"
+      id="form_message"
+      class="form-message"
+      [ngClass]="conf.formMessage.type"
+      [innerHTML]="conf.formMessage.content | translate"
+    ></span>
+    <mat-error *ngIf="error" type="danger" id="error_message">
+      <div [innerHTML]="error"></div>
+    </mat-error>
   </div>
 </mat-card>

@@ -1,20 +1,20 @@
 <ng-container matColumnDef="select">
-  <th mat-header-cell *matHeaderCellDef [style.width.px]="40">
+  <th *matHeaderCellDef mat-header-cell [style.width.px]="40">
     <mat-checkbox
       color="primary"
-      (change)="onChange($event)"
       [checked]="isChecked$ | async"
       [indeterminate]="isIndeterminate$ | async"
       [aria-label]="checkboxLabel()"
+      (change)="onChange($event)"
     ></mat-checkbox>
   </th>
   <td mat-cell *matCellDef="let item; dataSource: getDataSource()" [style.width.px]="40">
     <mat-checkbox
       color="primary"
-      (click)="$event.stopPropagation()"
-      (change)="$event ? selection.toggle(item) : null"
       [checked]="selection.isSelected(item)"
       [aria-label]="checkboxLabel(item)"
+      (click)="$event.stopPropagation()"
+      (change)="$event ? selection.toggle(item) : null"
     ></mat-checkbox>
   </td>
 </ng-container>
