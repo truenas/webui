@@ -14,6 +14,7 @@ export enum CloudsyncProviderName {
   MicrosoftOnedrive = 'ONEDRIVE',
   OpenstackSwift = 'OPENSTACK_SWIFT',
   Pcloud = 'PCLOUD',
+  Storj = 'STORJ_IX',
   Sftp = 'SFTP',
   Webdav = 'WEBDAV',
   Yandex = 'YANDEX',
