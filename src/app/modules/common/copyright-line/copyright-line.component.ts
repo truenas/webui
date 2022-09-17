@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { SystemGeneralService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-copyright-line',
@@ -21,7 +20,6 @@ export class CopyrightLineComponent {
   readonly productTypeLabels = productTypeLabels;
 
   constructor(
-    private localeService: LocaleService,
     private systemGeneral: SystemGeneralService,
   ) { }
 }

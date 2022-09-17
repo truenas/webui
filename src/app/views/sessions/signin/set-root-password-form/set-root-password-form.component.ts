@@ -64,16 +64,16 @@ export class SetRootPasswordFormComponent implements OnInit {
         // TODO: Handle login error.
       }),
       untilDestroyed(this),
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.signinStore.setLoadingState(false);
         this.signinStore.handleSuccessfulLogin();
       },
-      (error) => {
+      error: (error) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },
-    );
+    });
   }
 
   private checkForEc2Environment(): void {

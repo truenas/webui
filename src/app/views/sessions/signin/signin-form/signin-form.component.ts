@@ -57,8 +57,8 @@ export class SigninFormComponent implements OnInit {
       ? this.ws.login(formValues.username, formValues.password, formValues.otp)
       : this.ws.login(formValues.username, formValues.password);
 
-    request$.pipe(untilDestroyed(this)).subscribe(
-      (wasLoggedIn) => {
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: (wasLoggedIn) => {
         this.signinStore.setLoadingState(false);
 
         if (!wasLoggedIn) {
@@ -68,11 +68,11 @@ export class SigninFormComponent implements OnInit {
 
         this.signinStore.handleSuccessfulLogin();
       },
-      (error) => {
+      error: (error) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },
-    );
+    });
   }
 
   private checkForTwoFactor(): void {
