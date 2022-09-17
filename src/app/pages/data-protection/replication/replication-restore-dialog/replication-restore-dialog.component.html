@@ -1,7 +1,7 @@
 <h1 matDialogTitle>
   {{ 'Restore Replication Task' | translate }}
 </h1>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="name"
     [label]="'Name' | translate"
@@ -18,16 +18,12 @@
   ></ix-explorer>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="submit"
-      [disabled]="form.invalid"
-      color="primary"
-    >{{ 'Restore' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Cancel' | translate }}</button>
+    <button mat-button color="primary" type="submit" [disabled]="form.invalid">
+      {{ 'Restore' | translate }}
+    </button>
+
+    <button mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
   </div>
 </form>

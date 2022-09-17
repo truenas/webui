@@ -67,15 +67,18 @@ export class CreateSnapshotDialogComponent implements OnInit {
 
     this.ws.call('zfs.snapshot.create', [params])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.snackbar.success(
-          this.translate.instant('Snapshot successfully taken.'),
-        );
-        this.loader.close();
-        this.dialogRef.close();
-      }, (error) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.snackbar.success(
+            this.translate.instant('Snapshot successfully taken.'),
+          );
+          this.loader.close();
+          this.dialogRef.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 

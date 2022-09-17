@@ -4,6 +4,10 @@
 
 <div class="cards">
   <ng-container *ngIf="unusedDisks.length">
-    <ix-unused-disk-card class=".unused-resources" [pools]="pools" [unusedDisks]="unusedDisks"></ix-unused-disk-card>
+    <ix-unused-disk-card
+      class=".unused-resources"
+      [pools]="pools"
+      [unusedDisks]="unusedDisks"
+    ></ix-unused-disk-card>
   </ng-container>
-</div>  
+</div>

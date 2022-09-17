@@ -38,17 +38,17 @@ export class ReplicationFormComponent implements OnInit {
 
     this.ws.call('replication.config.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   setupForm(group: ReplicationConfig): void {
@@ -64,14 +64,17 @@ export class ReplicationFormComponent implements OnInit {
       max_parallel_replication_tasks: maxTasks && maxTasks > 0 ? maxTasks : null,
     };
     this.isFormLoading = true;
-    this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-    }, (res) => {
-      this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, res);
-      this.cdr.markForCheck();
+    this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+      },
+      error: (res) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(this, res);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

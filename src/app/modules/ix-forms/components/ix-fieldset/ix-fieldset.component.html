@@ -1,10 +1,18 @@
 <fieldset>
   <div *ngIf="title" class="title-container">
     <legend class="title">
-      {{title}}
+      {{ title }}
     </legend>
-    <ix-tooltip *ngIf="tooltip" [header]="title" class="tooltip" [message]="tooltip"></ix-tooltip>
+
+    <ix-tooltip
+      *ngIf="tooltip"
+      class="tooltip"
+      [header]="title"
+      [message]="tooltip"
+    ></ix-tooltip>
   </div>
+
   <ng-content></ng-content>
+
   <mat-divider *ngIf="divider" class="divider" inset></mat-divider>
 </fieldset>

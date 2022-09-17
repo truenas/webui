@@ -40,7 +40,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/storage-old/volumes/datasets/dataset-form/dataset-form-data.interface';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -897,6 +897,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -914,7 +915,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = this.systemGeneralService.getProductType();
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
     if (this.productType === ProductType.ScaleEnterprise) {
@@ -1579,45 +1580,48 @@ export class DatasetFormComponent implements FormConfiguration {
     this.loader.open();
 
     const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
-    return operation$.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
-      this.loader.close();
-      this.modalService.closeSlideIn();
-      const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
-        if (!isTrivial) {
-          this.dialogService.confirm({
-            title: helptext.afterSubmitDialog.title,
-            message: helptext.afterSubmitDialog.message,
-            hideCheckBox: true,
-            buttonMsg: helptext.afterSubmitDialog.actionBtn,
-            cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-            if (confirmed) {
-              this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
-                if (acltype === AclType.Posix1e) {
-                  this.router.navigate(
-                    ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                    { queryParams: { default: parentPath } },
-                  );
-                } else {
-                  this.router.navigate(
-                    ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                    { queryParams: { default: parentPath } },
-                  );
-                }
-              });
-            } else {
-              this.modalService.closeSlideIn();
-            }
-          });
-        } else {
-          this.modalService.closeSlideIn();
-        }
-        this.modalService.refreshTable();
-      });
-    }, (error) => {
-      this.loader.close();
-      new EntityUtils().handleWsError(this.entityForm, error);
+    return operation$.pipe(untilDestroyed(this)).subscribe({
+      next: (restPostResp) => {
+        this.loader.close();
+        this.modalService.closeSlideIn();
+        const parentPath = `/mnt/${this.parent}`;
+        this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
+          if (!isTrivial) {
+            this.dialogService.confirm({
+              title: helptext.afterSubmitDialog.title,
+              message: helptext.afterSubmitDialog.message,
+              hideCheckBox: true,
+              buttonMsg: helptext.afterSubmitDialog.actionBtn,
+              cancelMsg: helptext.afterSubmitDialog.cancelBtn,
+            }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+              if (confirmed) {
+                this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
+                  if (acltype === AclType.Posix1e) {
+                    this.router.navigate(
+                      ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
+                      { queryParams: { default: parentPath } },
+                    );
+                  } else {
+                    this.router.navigate(
+                      ['/', 'storage-old', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
+                      { queryParams: { default: parentPath } },
+                    );
+                  }
+                });
+              } else {
+                this.modalService.closeSlideIn();
+              }
+            });
+          } else {
+            this.modalService.closeSlideIn();
+          }
+          this.modalService.refreshTable();
+        });
+      },
+      error: (error) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this.entityForm, error);
+      },
     });
   }
 

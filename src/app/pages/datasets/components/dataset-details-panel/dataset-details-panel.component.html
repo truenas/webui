@@ -1,11 +1,10 @@
 <div class="header">
   <h3 class="title">
-
     <div class="mobile-prefix">
-      <a [routerLink]="['/datasets']" class="mobile-back-button">
-        <ix-icon 
-        name="mdi-chevron-left"
-        (click)="onCloseMobileDetails()"
+      <a class="mobile-back-button" [routerLink]="['/datasets']">
+        <ix-icon
+          name="mdi-chevron-left"
+          (click)="onCloseMobileDetails()"
         ></ix-icon>
       </a>
       {{ 'Details for' | translate }}
@@ -21,18 +20,14 @@
     </div>
   </h3>
 
-
   <div class="add-buttons">
-    <ng-container *ngIf="!dataset.locked && !isZvol" >
-      <button
-        mat-button
-        (click)="onAddZvol()"
-      >{{ 'Add Zvol' | translate }}</button>
-      <button
-        mat-button
-        color="primary"
-        (click)="onAddDataset()"
-      >{{ 'Add Dataset' | translate }}</button>
+    <ng-container *ngIf="!dataset.locked && !isZvol">
+      <button mat-button (click)="onAddZvol()">
+        {{ 'Add Zvol' | translate }}
+      </button>
+      <button mat-button color="primary" (click)="onAddDataset()">
+        {{ 'Add Dataset' | translate }}
+      </button>
     </ng-container>
   </div>
 </div>
@@ -41,8 +36,8 @@
   <div class="scroll-window">
     <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
     <ix-dataset-capacity-management-card
-      [dataset]="dataset"
       *ngIf="isCapacityAllowed"
+      [dataset]="dataset"
     ></ix-dataset-capacity-management-card>
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
@@ -54,6 +49,7 @@
       *ngIf="datasetHasRoles"
       [dataset]="dataset"
       [hasChildrenWithShares]="datasetHasChildrenWithShares"
+      [systemDataset]="systemDataset"
     ></ix-roles-card>
     <ix-permissions-card
       *ngIf="hasPermissions && !dataset.locked"

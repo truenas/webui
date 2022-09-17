@@ -49,17 +49,19 @@ export class IxFileUploadService {
       reportProgress: true,
     });
 
-    this.http.request(req).pipe(untilDestroyed(this)).subscribe((event: HttpEvent<unknown>) => {
-      if (event.type === HttpEventType.UploadProgress) {
-        this.fileUploadProgress$.next(event);
-      } else if (event instanceof HttpResponse) {
-        if (event.statusText === 'OK') {
-          this.fileUploadSuccess$.next(event);
+    this.http.request(req).pipe(untilDestroyed(this)).subscribe({
+      next: (event: HttpEvent<unknown>) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.fileUploadProgress$.next(event);
+        } else if (event instanceof HttpResponse) {
+          if (event.statusText === 'OK') {
+            this.fileUploadSuccess$.next(event);
+          }
         }
-      }
-    },
-    (error: HttpErrorResponse) => {
-      this.fileUploadProgress$.error(error);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.fileUploadProgress$.error(error);
+      },
     });
   }
 

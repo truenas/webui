@@ -9,7 +9,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
  *
  * Note that config and parent are [at]Input properties in the implemeting class.
  */
-export interface EntityRowDetails<T = any, U = EntityTableComponent> extends Component {
+export interface EntityRowDetails<T = unknown, U = EntityTableComponent> extends Component {
   entityName: string;
   config: T;
   parent: U;

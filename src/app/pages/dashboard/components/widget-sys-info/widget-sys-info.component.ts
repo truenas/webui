@@ -107,17 +107,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         this.haStatus = haStatus.status;
       });
     } else {
-      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe(
-        (systemInfo) => {
+      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
+        next: (systemInfo) => {
           this.processSysInfo(systemInfo);
-        }, (error) => {
+        },
+        error: (error) => {
           console.error('System Info not available', error);
-        }, () => {
+        },
+        complete: () => {
           this.checkForUpdate();
         },
-      );
+      });
     }
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
         if (hasFailover) {
           this.updateMethod = 'failover.upgrade';
@@ -128,16 +130,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (jobs) => {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (jobs) => {
         if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
         }
       },
-      (err) => {
+      error: (err) => {
         console.error(err);
       },
-    );
+    });
   }
 
   ngOnDestroy(): void {

@@ -42,7 +42,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -900,6 +900,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected translate: TranslateService,
     protected formatter: IxFormatterService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -917,7 +918,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = this.systemGeneralService.getProductType();
     const aclControl = entityForm.formGroup.get('aclmode');
     this.entityForm = entityForm;
     if (this.productType === ProductType.ScaleEnterprise) {
@@ -1000,9 +1001,12 @@ export class DatasetFormComponent implements FormConfiguration {
         singleArrayToOptions(),
         untilDestroyed(this),
       )
-      .subscribe((options) => {
-        this.recordsizeField.options = options;
-      }, this.handleError);
+      .subscribe({
+        next: (options) => {
+          this.recordsizeField.options = options;
+        },
+        error: this.handleError,
+      });
 
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
       const currentSize = this.formatter.convertHumanStringToNum(recordSize);
@@ -1083,28 +1087,37 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
-    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
-      for (const key in choices) {
-        compression.options.push({ label: key, value: choices[key] });
-      }
-    }, this.handleError);
+    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe({
+      next: (choices) => {
+        const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+        for (const key in choices) {
+          compression.options.push({ label: key, value: choices[key] });
+        }
+      },
+      error: this.handleError,
+    });
 
-    this.ws.call('pool.dataset.checksum_choices').pipe(untilDestroyed(this)).subscribe((checksumChoices) => {
-      const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-      for (const key in checksumChoices) {
-        checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
-      }
-    }, this.handleError);
+    this.ws.call('pool.dataset.checksum_choices').pipe(untilDestroyed(this)).subscribe({
+      next: (checksumChoices) => {
+        const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
+        for (const key in checksumChoices) {
+          checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
+        }
+      },
+      error: this.handleError,
+    });
 
     if (this.parent) {
       const root = this.parent.split('/')[0];
-      this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((recommendedSize) => {
-        this.minimumRecommendedRecordsize = recommendedSize;
-      }, this.handleError);
+      this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe({
+        next: (recommendedSize) => {
+          this.minimumRecommendedRecordsize = recommendedSize;
+        },
+        error: this.handleError,
+      });
 
-      this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe(
-        (pkDataset) => {
+      this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe({
+        next: (pkDataset) => {
           this.isParentEncrypted = pkDataset[0].encrypted;
           let inheritEncryptPlaceholder: string = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
           if (this.isParentEncrypted) {
@@ -1141,14 +1154,17 @@ export class DatasetFormComponent implements FormConfiguration {
               parentAlgorithm = pkDataset[0].encryption_algorithm.value;
               encryptionAlgorithmControl.setValue(parentAlgorithm);
             }
-            this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
-              encryptionAlgorithmConfig.options = [];
-              for (const algorithm in algorithms) {
-                if (algorithms.hasOwnProperty(algorithm)) {
-                  encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
+            this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
+              next: (algorithms) => {
+                encryptionAlgorithmConfig.options = [];
+                for (const algorithm in algorithms) {
+                  if (algorithms.hasOwnProperty(algorithm)) {
+                    encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
+                  }
                 }
-              }
-            }, this.handleError);
+              },
+              error: this.handleError,
+            });
             const inheritEncryptionControl = this.entityForm.formGroup.controls['inherit_encryption'];
             const encryptionControl = this.entityForm.formGroup.controls['encryption'];
             const encryptionTypeControl = this.entityForm.formGroup.controls['encryption_type'];
@@ -1292,108 +1308,118 @@ export class DatasetFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['recordsize'].setValue(inherit);
             entityForm.formGroup.controls['snapdev'].setValue(inherit);
           } else {
-            this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe((parentDataset) => {
-              this.parentDataset = parentDataset[0];
-              const currentDataset = _.find(this.parentDataset.children, { name: this.pk });
-              if (currentDataset.hasOwnProperty('recordsize') && currentDataset['recordsize'].value) {
-                const config = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
-                _.find(config.options, { value: currentDataset['recordsize'].value })['hiddenFromDisplay'] = false;
-              }
-              const editSync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
-              const editCompression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
-              const editDeduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
-              const editExec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
-              const editReadonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
-              const editAtime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
-              const editRecordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
-              const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-              const editSnapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
+            this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe({
+              next: (parentDataset) => {
+                this.parentDataset = parentDataset[0];
+                const currentDataset = _.find(this.parentDataset.children, { name: this.pk });
+                if (currentDataset.hasOwnProperty('recordsize') && currentDataset['recordsize'].value) {
+                  const config = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
+                  _.find(config.options, { value: currentDataset['recordsize'].value })['hiddenFromDisplay'] = false;
+                }
+                const editSync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
+                const editCompression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+                const editDeduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+                const editExec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
+                const editReadonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
+                const editAtime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
+                const editRecordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
+                const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
+                const editSnapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
 
-              const editSyncCollection: Option[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: inherit }];
-              editSync.options = editSyncCollection.concat(editSync.options);
+                const editSyncCollection: Option[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: inherit }];
+                editSync.options = editSyncCollection.concat(editSync.options);
 
-              const editCompressionCollection: Option[] = [{ label: `Inherit (${this.parentDataset.compression.rawvalue})`, value: inherit }];
-              editCompression.options = editCompressionCollection.concat(editCompression.options);
+                const editCompressionCollection: Option[] = [{ label: `Inherit (${this.parentDataset.compression.rawvalue})`, value: inherit }];
+                editCompression.options = editCompressionCollection.concat(editCompression.options);
 
-              const editDeduplicationCollection: Option[] = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: inherit }];
-              editDeduplication.options = editDeduplicationCollection.concat(editDeduplication.options);
+                const editDeduplicationCollection: Option[] = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: inherit }];
+                editDeduplication.options = editDeduplicationCollection.concat(editDeduplication.options);
 
-              const editExecCollection: Option[] = [{ label: `Inherit (${this.parentDataset.exec.rawvalue})`, value: inherit }];
-              editExec.options = editExecCollection.concat(editExec.options);
+                const editExecCollection: Option[] = [{ label: `Inherit (${this.parentDataset.exec.rawvalue})`, value: inherit }];
+                editExec.options = editExecCollection.concat(editExec.options);
 
-              const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: 'INHERIT' }];
-              editChecksum.options = editChecksumCollection.concat(editChecksum.options);
+                const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+                editChecksum.options = editChecksumCollection.concat(editChecksum.options);
 
-              const editReadonlyCollection: Option[] = [{ label: `Inherit (${this.parentDataset.readonly.rawvalue})`, value: inherit }];
-              editReadonly.options = editReadonlyCollection.concat(editReadonly.options);
+                const editReadonlyCollection: Option[] = [{ label: `Inherit (${this.parentDataset.readonly.rawvalue})`, value: inherit }];
+                editReadonly.options = editReadonlyCollection.concat(editReadonly.options);
 
-              const editAtimeCollection: Option[] = [{ label: `Inherit (${this.parentDataset.atime.rawvalue})`, value: inherit }];
-              editAtime.options = editAtimeCollection.concat(editAtime.options);
+                const editAtimeCollection: Option[] = [{ label: `Inherit (${this.parentDataset.atime.rawvalue})`, value: inherit }];
+                editAtime.options = editAtimeCollection.concat(editAtime.options);
 
-              const editSnapdevCollection: Option[] = [{ label: `Inherit (${this.parentDataset.snapdev.rawvalue})`, value: inherit }];
-              editSnapdev.options = editSnapdevCollection.concat(editSnapdev.options);
+                const editSnapdevCollection: Option[] = [{ label: `Inherit (${this.parentDataset.snapdev.rawvalue})`, value: inherit }];
+                editSnapdev.options = editSnapdevCollection.concat(editSnapdev.options);
 
-              const lastChar = this.parentDataset.recordsize.value[this.parentDataset.recordsize.value.length - 1];
-              const formattedLabel = lastChar === 'K' || lastChar === 'M'
-                ? `${this.parentDataset.recordsize.value.slice(0, -1)} ${lastChar}iB`
-                : this.parentDataset.recordsize.value;
-              const editRecordsizeCollection: Option[] = [{ label: `Inherit (${formattedLabel})`, value: inherit }];
-              editRecordsize.options = editRecordsizeCollection.concat(editRecordsize.options);
-              let syncValue = pkDataset[0].sync.value;
-              if (pkDataset[0].sync.source === ZfsPropertySource.Default) {
-                syncValue = inherit;
-              }
-              entityForm.formGroup.controls['sync'].setValue(syncValue);
+                const lastChar = this.parentDataset.recordsize.value[this.parentDataset.recordsize.value.length - 1];
+                const formattedLabel = lastChar === 'K' || lastChar === 'M'
+                  ? `${this.parentDataset.recordsize.value.slice(0, -1)} ${lastChar}iB`
+                  : this.parentDataset.recordsize.value;
+                const editRecordsizeCollection: Option[] = [{ label: `Inherit (${formattedLabel})`, value: inherit }];
+                editRecordsize.options = editRecordsizeCollection.concat(editRecordsize.options);
+                let syncValue = pkDataset[0].sync.value;
+                if (pkDataset[0].sync.source === ZfsPropertySource.Default) {
+                  syncValue = inherit;
+                }
+                entityForm.formGroup.controls['sync'].setValue(syncValue);
 
-              let compressionValue = pkDataset[0].compression.value;
-              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].compression.source)) {
-                compressionValue = inherit;
-              }
-              entityForm.formGroup.controls['compression'].setValue(compressionValue);
+                let compressionValue = pkDataset[0].compression.value;
+                if ([
+                  ZfsPropertySource.Inherited,
+                  ZfsPropertySource.Default,
+                ].includes(pkDataset[0].compression.source)) {
+                  compressionValue = inherit;
+                }
+                entityForm.formGroup.controls['compression'].setValue(compressionValue);
 
-              let deduplicationValue = pkDataset[0].deduplication.value;
-              if (
-                [ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].deduplication.source)
-              ) {
-                deduplicationValue = inherit;
-              }
-              let checksumValue = pkDataset[0].checksum.value;
-              if (pkDataset[0].checksum.source === 'DEFAULT' || pkDataset[0].checksum.source === 'INHERITED') {
-                checksumValue = 'INHERIT';
-              }
-              let execValue = pkDataset[0].exec.value;
-              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].exec.source)) {
-                execValue = inherit;
-              }
-              let readonlyValue = pkDataset[0].readonly.value;
-              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].readonly.source)) {
-                readonlyValue = inherit;
-              }
-              let atimeValue = pkDataset[0].atime.value;
-              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].atime.source)) {
-                atimeValue = inherit;
-              }
-              let recordsizeValue = pkDataset[0].recordsize.value;
-              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].recordsize.source)) {
-                recordsizeValue = inherit;
-              }
-              let snapdevValue = pkDataset[0].snapdev.value;
-              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].snapdev.source)) {
-                snapdevValue = inherit;
-              }
+                let deduplicationValue = pkDataset[0].deduplication.value;
+                if (
+                  [ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].deduplication.source)
+                ) {
+                  deduplicationValue = inherit;
+                }
+                let checksumValue = pkDataset[0].checksum.value;
+                if (pkDataset[0].checksum.source === 'DEFAULT' || pkDataset[0].checksum.source === 'INHERITED') {
+                  checksumValue = 'INHERIT';
+                }
+                let execValue = pkDataset[0].exec.value;
+                if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].exec.source)) {
+                  execValue = inherit;
+                }
+                let readonlyValue = pkDataset[0].readonly.value;
+                if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].readonly.source)) {
+                  readonlyValue = inherit;
+                }
+                let atimeValue = pkDataset[0].atime.value;
+                if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].atime.source)) {
+                  atimeValue = inherit;
+                }
+                let recordsizeValue = pkDataset[0].recordsize.value;
+                if ([
+                  ZfsPropertySource.Inherited,
+                  ZfsPropertySource.Default,
+                ].includes(pkDataset[0].recordsize.source)) {
+                  recordsizeValue = inherit;
+                }
+                let snapdevValue = pkDataset[0].snapdev.value;
+                if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].snapdev.source)) {
+                  snapdevValue = inherit;
+                }
 
-              entityForm.formGroup.controls['deduplication'].setValue(deduplicationValue);
-              entityForm.formGroup.controls['exec'].setValue(execValue);
-              entityForm.formGroup.controls['checksum'].setValue(checksumValue);
-              entityForm.formGroup.controls['readonly'].setValue(readonlyValue);
-              entityForm.formGroup.controls['atime'].setValue(atimeValue);
-              entityForm.formGroup.controls['recordsize'].setValue(recordsizeValue);
-              entityForm.formGroup.controls['snapdev'].setValue(snapdevValue);
-              this.parentDataset = parentDataset[0];
-            }, this.handleError);
+                entityForm.formGroup.controls['deduplication'].setValue(deduplicationValue);
+                entityForm.formGroup.controls['exec'].setValue(execValue);
+                entityForm.formGroup.controls['checksum'].setValue(checksumValue);
+                entityForm.formGroup.controls['readonly'].setValue(readonlyValue);
+                entityForm.formGroup.controls['atime'].setValue(atimeValue);
+                entityForm.formGroup.controls['recordsize'].setValue(recordsizeValue);
+                entityForm.formGroup.controls['snapdev'].setValue(snapdevValue);
+                this.parentDataset = parentDataset[0];
+              },
+              error: this.handleError,
+            });
           }
-        }, this.handleError,
-      );
+        },
+        error: this.handleError,
+      });
     }
   }
 
@@ -1620,46 +1646,54 @@ export class DatasetFormComponent implements FormConfiguration {
     this.loader.open();
 
     const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
-    return operation$.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
-      this.loader.close();
-      this.modalService.closeSlideIn();
-      const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((isTrivial) => {
-        if (!isTrivial) {
-          this.dialogService.confirm({
-            title: helptext.afterSubmitDialog.title,
-            message: helptext.afterSubmitDialog.message,
-            hideCheckBox: true,
-            buttonMsg: helptext.afterSubmitDialog.actionBtn,
-            cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-            if (confirmed) {
-              this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
-                if (acltype === AclType.Posix1e) {
-                  this.router.navigate(
-                    ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                    { queryParams: { default: parentPath } },
-                  );
+    return operation$.pipe(untilDestroyed(this)).subscribe({
+      next: (restPostResp) => {
+        this.loader.close();
+        this.modalService.closeSlideIn();
+        const parentPath = `/mnt/${this.parent}`;
+        this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe({
+          next: (isTrivial) => {
+            if (!isTrivial) {
+              this.dialogService.confirm({
+                title: helptext.afterSubmitDialog.title,
+                message: helptext.afterSubmitDialog.message,
+                hideCheckBox: true,
+                buttonMsg: helptext.afterSubmitDialog.actionBtn,
+                cancelMsg: helptext.afterSubmitDialog.cancelBtn,
+              }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+                if (confirmed) {
+                  this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
+                    next: ({ acltype }) => {
+                      if (acltype === AclType.Posix1e) {
+                        this.router.navigate(
+                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
+                          { queryParams: { default: parentPath } },
+                        );
+                      } else {
+                        this.router.navigate(
+                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
+                          { queryParams: { default: parentPath } },
+                        );
+                      }
+                    },
+                    error: this.handleError,
+                  });
                 } else {
-                  this.router.navigate(
-                    ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                    { queryParams: { default: parentPath } },
-                  );
+                  this.modalService.closeSlideIn();
                 }
-              }, this.handleError);
+              });
             } else {
               this.modalService.closeSlideIn();
             }
-          });
-        } else {
-          this.modalService.closeSlideIn();
-        }
-        this.modalService.refreshTable();
-      }, this.handleError);
-    },
-    (error) => {
-      this.loader.close();
-      this.handleError(error);
+            this.modalService.refreshTable();
+          },
+          error: this.handleError,
+        });
+      },
+      error: (error) => {
+        this.loader.close();
+        this.handleError(error);
+      },
     });
   }
 

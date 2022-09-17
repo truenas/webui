@@ -1,29 +1,24 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
+import { SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 
-export interface DialogData {
-  systemType: ProductType;
-}
-
 @Component({
-  styleUrls: ['./about-dialog.component.scss'],
   templateUrl: './about-dialog.component.html',
+  styleUrls: ['./about-dialog.component.scss'],
 })
 export class AboutDialogComponent {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  systemType: ProductType;
+  systemType = this.systemGeneralService.getProductType();
   helptext = helptext;
   readonly ProductType = ProductType;
   readonly productTypeLabels = productTypeLabels;
 
   constructor(
     public dialogRef: MatDialogRef<AboutDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private localeService: LocaleService,
-  ) {
-    this.systemType = data.systemType;
-  }
+    private systemGeneralService: SystemGeneralService,
+  ) {}
 }

@@ -83,13 +83,15 @@ export class ZfsInfoCardComponent {
       this.loader.open();
       this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.devicesStore.reloadList();
-        this.loader.close();
-      },
-      (error) => {
-        this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+      ).subscribe({
+        next: () => {
+          this.devicesStore.reloadList();
+          this.loader.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
     });
   }
@@ -106,13 +108,15 @@ export class ZfsInfoCardComponent {
       this.loader.open();
       this.ws.call('pool.online', [this.poolId, { label: this.topologyItem.guid }]).pipe(
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.devicesStore.reloadList();
-        this.loader.close();
-      },
-      (error) => {
-        this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+      ).subscribe({
+        next: () => {
+          this.devicesStore.reloadList();
+          this.loader.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
     });
   }
@@ -129,13 +133,15 @@ export class ZfsInfoCardComponent {
       this.loader.open();
       this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.devicesStore.reloadList();
-        this.loader.close();
-      },
-      (error) => {
-        this.loader.close();
-        this.dialogService.errorReportMiddleware(error);
+      ).subscribe({
+        next: () => {
+          this.devicesStore.reloadList();
+          this.loader.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
     });
   }
@@ -158,11 +164,14 @@ export class ZfsInfoCardComponent {
       });
       dialogRef.componentInstance.setCall('pool.remove', [this.poolId, { label: this.topologyItem.guid }]);
       dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        this.devicesStore.reloadList();
-        this.dialogService.closeAllDialogs();
-      }, (error) => {
-        this.dialogService.errorReportMiddleware(error);
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.devicesStore.reloadList();
+          this.dialogService.closeAllDialogs();
+        },
+        error: (error) => {
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
     });
   }

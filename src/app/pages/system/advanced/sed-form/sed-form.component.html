@@ -1,7 +1,11 @@
-<ix-modal-header [title]="title | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="title | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
           formControlName="sed_user"
@@ -9,12 +13,14 @@
           [tooltip]="tooltips.sed_user | translate"
           [options]="sedUserOptions$"
         ></ix-select>
+
         <ix-input
           formControlName="sed_passwd"
           type="password"
           [label]="labels.sed_passwd | translate"
           [tooltip]="tooltips.sed_passwd | translate"
         ></ix-input>
+
         <ix-input
           formControlName="sed_passwd2"
           type="password"
@@ -26,9 +32,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

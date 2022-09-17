@@ -67,8 +67,8 @@ export class FailoverSettingsComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
 
@@ -76,12 +76,12 @@ export class FailoverSettingsComponent implements OnInit {
             this.ws.logout();
           }
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onSyncToPeerPressed(): void {
@@ -105,20 +105,20 @@ export class FailoverSettingsComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.snackbar.success(
             helptextSystemFailover.confirm_dialogs.sync_to_message,
           );
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   onSyncFromPeerPressed(): void {
@@ -136,20 +136,20 @@ export class FailoverSettingsComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.snackbar.success(
             this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_from_message),
           );
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
-      );
+      });
   }
 
   private loadFormValues(): void {
@@ -157,8 +157,8 @@ export class FailoverSettingsComponent implements OnInit {
 
     this.ws.call('failover.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.form.patchValue({
@@ -168,12 +168,12 @@ export class FailoverSettingsComponent implements OnInit {
           this.setFailoverConfirmation();
           this.setFormRelations();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private setFailoverConfirmation(): void {

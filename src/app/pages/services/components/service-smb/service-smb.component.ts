@@ -17,7 +17,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -110,13 +110,14 @@ export class ServiceSmbComponent implements OnInit {
     private translate: TranslateService,
     private userService: UserService,
     private validatorsService: IxValidatorsService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.form.get('netbiosname_b').disable();
   }
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.subscriptions.push(
         this.form.get('netbiosname_b').disabledWhile(
           this.ws.call('failover.licensed').pipe(
@@ -127,18 +128,18 @@ export class ServiceSmbComponent implements OnInit {
       );
     }
 
-    this.ws.call('smb.config').pipe(untilDestroyed(this)).subscribe(
-      (config) => {
+    this.ws.call('smb.config').pipe(untilDestroyed(this)).subscribe({
+      next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isFormLoading = false;
         new EntityUtils().handleWsError(this, error, this.dialogService);
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   onAdvancedSettingsToggled(): void {
@@ -151,14 +152,17 @@ export class ServiceSmbComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('smb.update', [values])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.isFormLoading = false;
-        this.router.navigate(['/services']);
-        this.cdr.markForCheck();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.router.navigate(['/services']);
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
       });
   }
 

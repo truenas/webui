@@ -1,8 +1,17 @@
-<h1 mat-dialog-title class="truecommand-signup-modal-form-title" [innerHTML]="title | translate"></h1>
+<h1
+  mat-dialog-title
+  class="truecommand-signup-modal-form-title"
+  [innerHTML]="title | translate"
+></h1>
 
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-  <div mat-dialog-content ix-auto ix-auto-type="dialog" ix-auto-identifier="title" class="truecommand-signup-modal-form-content">
-
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div
+    mat-dialog-content
+    ix-auto
+    ix-auto-type="dialog"
+    ix-auto-identifier="title"
+    class="truecommand-signup-modal-form-content"
+  >
     <ix-input
       formControlName="api_key"
       [label]="helptext.updateDialog.api_placeholder | translate"
@@ -14,41 +23,52 @@
       [label]="helptext.updateDialog.enabled_placeholder | translate"
       [tooltip]="helptext.updateDialog.enabled_tooltip | translate"
     ></ix-checkbox>
-
   </div>
 
   <div mat-dialog-actions>
-
     <span fxFlex></span>
-      
-    <button mat-button type="button"
+
+    <button
+      mat-button
+      type="button"
       class="mat-button mat-accent action-btn"
       name="Cancel_button"
-      (click)="onCancel()"
-      [ix-auto]=""
       ix-auto-type="button"
-      ix-auto-identifier="{{'Cancel' | uppercase}}"
-    >{{'Cancel' | translate}}</button>
-    
+      ix-auto-identifier="{{ 'Cancel' | uppercase }}"
+      [ix-auto]=""
+      (click)="onCancel()"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
     <span>
-      <button *ngIf="isConnected" mat-button type="button"
-        class="mat-button action-btn" id="cust_button_deregister" 
-        [name]="helptext.tcDeregisterBtn + '_button'"
-        (click)="onDeregister()" 
-        [ix-auto]=""
+      <button
+        *ngIf="isConnected"
+        mat-button
+        type="button"
+        class="mat-button action-btn"
+        id="cust_button_deregister"
         ix-auto-type="button"
-        ix-auto-identifier="{{helptext.tcDeregisterBtn | uppercase}}"
-      >{{helptext.tcDeregisterBtn | translate}}</button>
+        ix-auto-identifier="{{ helptext.tcDeregisterBtn | uppercase }}"
+        [ix-auto]=""
+        [name]="helptext.tcDeregisterBtn + '_button'"
+        (click)="onDeregister()"
+      >
+        {{ helptext.tcDeregisterBtn | translate }}
+      </button>
     </span>
-      
-    <button mat-button type="submit"
+
+    <button
+      mat-button
+      type="submit"
       class="mat-button mat-primary"
+      ix-auto-type="button"
+      ix-auto-identifier="{{ saveButtonText | uppercase }}"
       [name]="saveButtonText + '_button'"
       [disabled]="form.invalid"
       [ix-auto]=""
-      ix-auto-type="button"
-      ix-auto-identifier="{{saveButtonText | uppercase}}"
-    >{{saveButtonText | translate}}</button>
-
+    >
+      {{ saveButtonText | translate }}
+    </button>
   </div>
 </form>

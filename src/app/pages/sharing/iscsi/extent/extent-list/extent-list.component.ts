@@ -130,17 +130,17 @@ export class ExtentListComponent implements EntityTableConfig {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
-        entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
-          () => {
+        entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();
             entityTable.excuteDeletion = true;
           },
-          (err: WebsocketError) => {
+          error: (err: WebsocketError) => {
             entityTable.loader.close();
             new EntityUtils().handleWsError(entityTable, err, entityTable.dialogService);
           },
-        );
+        });
       },
     };
     this.entityTable.dialogService.dialogForm(conf);

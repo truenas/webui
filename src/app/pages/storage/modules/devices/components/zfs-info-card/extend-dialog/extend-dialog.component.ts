@@ -64,8 +64,8 @@ export class ExtendDialogComponent implements OnInit {
 
     this.ws.job('pool.attach', [this.data.poolId, payload])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (job) => {
+      .subscribe({
+        next: (job) => {
           if (job.state !== JobState.Success) {
             return;
           }
@@ -74,27 +74,30 @@ export class ExtendDialogComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
           this.dialogRef.close(true);
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.dialogService.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   private loadUnusedDisks(): void {
     this.ws.call('disk.get_unused')
       .pipe(untilDestroyed(this))
-      .subscribe((disks) => {
-        this.unusedDiskOptions$ = of(
-          disks.map((disk) => ({
-            label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
-            value: disk.name,
-          })),
-        );
+      .subscribe({
+        next: (disks) => {
+          this.unusedDiskOptions$ = of(
+            disks.map((disk) => ({
+              label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
+              value: disk.name,
+            })),
+          );
 
-        this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-      }, (error) => {
-        this.dialogService.errorReportMiddleware(error);
+          this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
+        },
+        error: (error) => {
+          this.dialogService.errorReportMiddleware(error);
+        },
       });
   }
 }

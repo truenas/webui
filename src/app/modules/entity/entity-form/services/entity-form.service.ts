@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
@@ -119,8 +120,9 @@ export class EntityFormService {
       typeFilter = [['type', '=', FileType.Directory]];
     }
 
-    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
-      { order_by: ['name'], limit: 1000 }]).toPromise().then((files) => {
+    return lastValueFrom(
+      this.ws.call('filesystem.listdir', [node.data.name, typeFilter, { order_by: ['name'], limit: 1000 }]),
+    ).then((files) => {
       files = _.sortBy(files, (file) => file.name.toLowerCase());
 
       const children: ListdirChild[] = [];
@@ -152,7 +154,7 @@ export class EntityFormService {
    */
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
     const nodes: ListdirChild[] = [];
-    return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
+    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((res) => {
       res.forEach((filesystem) => {
         const pathArr = filesystem.split('/');
         if (pathArr.length === 1) {

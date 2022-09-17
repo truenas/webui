@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
@@ -83,7 +83,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: of(this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise),
+          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise),
         },
       ],
     },
@@ -137,8 +137,8 @@ export class NavigationService {
 
   constructor(
     private ws: WebSocketService,
-    @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.checkForFailoverSupport();
     this.checkForEnclosureSupport();

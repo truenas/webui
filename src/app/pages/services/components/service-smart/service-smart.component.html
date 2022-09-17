@@ -1,15 +1,20 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <mat-progress-bar
+      *ngIf="isFormLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
         <ix-input
           formControlName="interval"
+          type="number"
           [label]="'Check Interval' | translate"
           [required]="true"
           [tooltip]="tooltips.interval"
-          type="number"
         ></ix-input>
+
         <ix-select
           formControlName="powermode"
           [label]="'Power Mode' | translate"
@@ -17,26 +22,29 @@
           [options]="powermodeOptions$"
           [tooltip]="tooltips.powermode"
         ></ix-select>
+
         <ix-input
           formControlName="difference"
+          type="number"
           [label]="'Difference' | translate"
           [tooltip]="tooltips.difference"
           [required]="true"
-          type="number"
         ></ix-input>
+
         <ix-input
           formControlName="informational"
+          type="number"
           [label]="'Informational' | translate"
           [tooltip]="tooltips.informational"
           [required]="true"
-          type="number"
         ></ix-input>
+
         <ix-input
           formControlName="critical"
+          type="number"
           [label]="'Critical' | translate"
           [tooltip]="tooltips.critical"
           [required]="true"
-          type="number"
         ></ix-input>
       </ix-fieldset>
 
@@ -44,9 +52,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

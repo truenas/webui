@@ -106,18 +106,18 @@ export class ServiceWebdavComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('webdav.config').pipe(untilDestroyed(this)).subscribe(
-      (config: WebdavConfig) => {
+    this.ws.call('webdav.config').pipe(untilDestroyed(this)).subscribe({
+      next: (config: WebdavConfig) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isFormLoading = false;
         new EntityUtils().handleWsError(this, error, this.dialogService);
         this.cdr.markForCheck();
       },
-    );
+    });
 
     this.form.controls.protocol.valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: WebdavProtocol) => {
@@ -165,14 +165,17 @@ export class ServiceWebdavComponent implements OnInit {
 
     const values = this.form.value;
     delete values.password2;
-    this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.router.navigate(['/', 'services']);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/', 'services']);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 

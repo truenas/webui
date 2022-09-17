@@ -24,7 +24,7 @@ export class SystemGeneralService {
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
-  updateIsDone$ = new Subject();
+  updateIsDone$ = new Subject<void>();
 
   // TODO: Load somewhere.
   getProductType(): ProductType {
@@ -54,7 +54,7 @@ export class SystemGeneralService {
     });
   }
 
-  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: true, bufferSize: 1 }));
 
   // TODO: Test caching.
   getCopyrightYear$ = this.ws.call('system.build_time').pipe(

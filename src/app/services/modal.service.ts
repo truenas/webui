@@ -1,3 +1,4 @@
+import { PlatformLocation } from '@angular/common';
 import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
@@ -18,16 +19,19 @@ export class ModalService {
   private modals: ModalComponent[] = [];
 
   private modalTypeOpenedInSlideIn: Type<unknown> = null;
-  readonly refreshTable$ = new Subject();
+  readonly refreshTable$ = new Subject<void>();
   readonly onClose$ = new Subject<{ modalType?: Type<unknown>; response: unknown }>();
-  refreshForm$ = new Subject();
+  refreshForm$ = new Subject<void>();
   getRow$ = new Subject();
   message$ = new Subject<ModalServiceMessage>();
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
-  ) {}
+    private location: PlatformLocation,
+  ) {
+    this.location.onPopState(() => this.closeSlideIn());
+  }
 
   refreshTable(): void {
     this.refreshTable$.next();

@@ -63,20 +63,23 @@ export class FormUploadComponent {
         reportProgress: true,
       });
       this.loader.open();
-      this.http.request(req).pipe(untilDestroyed(this)).subscribe((event) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          const percentDone = Math.round(100 * event.loaded / event.total);
-          this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
-        } else if (event instanceof HttpResponse) {
-          if (event.statusText === 'OK') {
-            this.newMessage(location + '/' + fileBrowser.files[0].name);
-            this.loader.close();
-            this.dialog.info(this.translate.instant('File upload complete'), '');
+      this.http.request(req).pipe(untilDestroyed(this)).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const percentDone = Math.round(100 * event.loaded / event.total);
+            this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
+          } else if (event instanceof HttpResponse) {
+            if (event.statusText === 'OK') {
+              this.newMessage(location + '/' + fileBrowser.files[0].name);
+              this.loader.close();
+              this.dialog.info(this.translate.instant('File upload complete'), '');
+            }
           }
-        }
-      }, (error) => {
-        this.loader.close();
-        this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
+        },
       });
     } else {
       this.dialog.warn(this.translate.instant('Please make sure to select a file'), '');

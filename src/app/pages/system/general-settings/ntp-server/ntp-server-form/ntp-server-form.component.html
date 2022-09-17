@@ -1,7 +1,12 @@
 <ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup"
+      (submit)="onSubmit()"
+    >
       <ix-fieldset [title]="helptext.fieldset | translate">
         <ix-input
           formControlName="address"
@@ -9,33 +14,39 @@
           [tooltip]="helptext.address.tooltip | translate"
           [required]="true"
         ></ix-input>
+
         <ix-checkbox
           formControlName="burst"
           [label]="helptext.burst.label | translate"
           [tooltip]="helptext.burst.tooltip | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="iburst"
           [label]="helptext.iburst.label | translate"
           [tooltip]="helptext.iburst.tooltip | translate"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="prefer"
           [label]="helptext.prefer.label | translate"
           [tooltip]="helptext.prefer.tooltip | translate"
         ></ix-checkbox>
+
         <ix-input
           formControlName="minpoll"
           [label]="helptext.minpoll.label | translate"
           [tooltip]="helptext.minpoll.tooltip | translate"
           [required]="true"
         ></ix-input>
+
         <ix-input
           formControlName="maxpoll"
           [label]="helptext.maxpoll.label | translate"
           [tooltip]="helptext.maxpoll.tooltip | translate"
           [required]="true"
         ></ix-input>
+
         <ix-checkbox
           formControlName="force"
           [label]="helptext.force.label | translate"
@@ -47,9 +58,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="formGroup.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="formGroup.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

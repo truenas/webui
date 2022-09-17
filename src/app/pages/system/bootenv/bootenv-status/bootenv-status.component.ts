@@ -68,17 +68,19 @@ export class BootStatusListComponent implements OnInit {
     this.ws.call('boot.get_state').pipe(
       tap(() => this.isLoading$.next(true)),
       untilDestroyed(this),
-    ).subscribe((poolInstance) => {
-      this.poolInstance = poolInstance;
-      this.createDataSource(poolInstance);
-      this.openGroupNodes();
-      this.isLoading$.next(false);
-      this.cdr.markForCheck();
-    },
-    (err) => {
-      this.isLoading$.next(false);
-      this.cdr.markForCheck();
-      new EntityUtils().handleError(this, err);
+    ).subscribe({
+      next: (poolInstance) => {
+        this.poolInstance = poolInstance;
+        this.createDataSource(poolInstance);
+        this.openGroupNodes();
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+        new EntityUtils().handleError(this, err);
+      },
     });
   }
 
@@ -93,8 +95,8 @@ export class BootStatusListComponent implements OnInit {
   detach(diskPath: string): void {
     const disk = diskPath.substring(5, diskPath.length);
     this.loader.open();
-    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.router.navigate(['/', 'system', 'boot']);
         this.dialog.info(
@@ -102,11 +104,11 @@ export class BootStatusListComponent implements OnInit {
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
       },
-    );
+    });
   }
 
   doAction(event: BootPoolActionEvent): void {

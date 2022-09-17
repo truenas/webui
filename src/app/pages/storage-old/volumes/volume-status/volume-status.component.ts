@@ -30,7 +30,7 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
+import { EntityTreeTable, EntityTreeTableAction } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DiskFormComponent } from 'app/pages/storage-old/disks/disk-form/disk-form.component';
 import { ReplaceDiskDialogComponent, ReplaceDiskDialogData } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
@@ -140,21 +140,23 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
   }
 
   getData(): void {
-    this.ws.call('pool.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
-      this.pool = pools[0];
-      if (!pools[0]) {
-        return;
-      }
+    this.ws.call('pool.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (pools) => {
+        this.pool = pools[0];
+        if (!pools[0]) {
+          return;
+        }
 
-      this.poolScan = pools[0].scan;
-      // subscribe zfs.pool.scan to get scrub job info
-      if (this.poolScan.state === PoolScanState.Scanning) {
-        this.getZfsPoolScan(pools[0].name);
-      }
-      this.dataHandler(pools[0]);
-    },
-    (err) => {
-      new EntityUtils().handleError(this, err);
+        this.poolScan = pools[0].scan;
+        // subscribe zfs.pool.scan to get scrub job info
+        if (this.poolScan.state === PoolScanState.Scanning) {
+          this.getZfsPoolScan(pools[0].name);
+        }
+        this.dataHandler(pools[0]);
+      },
+      error: (err) => {
+        new EntityUtils().handleError(this, err);
+      },
     });
   }
 
@@ -194,7 +196,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
     this.loader.close();
   }
 
-  getAction(data: TopologyItem, category: PoolTopologyCategory, vdevType: TopologyItemType): any {
+  getAction(data: TopologyItem, category: PoolTopologyCategory, vdevType: TopologyItemType): EntityTreeTableAction[] {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -227,16 +229,16 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
         ).subscribe(() => {
           this.loader.open();
           const value = { label: row.guid };
-          this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-            () => {
+          this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe({
+            next: () => {
               this.getData();
               this.loader.close();
             },
-            (err) => {
+            error: (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         });
       },
       isHidden: data.status === 'OFFLINE',
@@ -257,16 +259,16 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
         ).subscribe(() => {
           this.loader.open();
           const value = { label: row.guid };
-          this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-            () => {
+          this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe({
+            next: () => {
               this.getData();
               this.loader.close();
             },
-            (err) => {
+            error: (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         });
       },
       isHidden: !!(data.status === 'ONLINE' || this.pool.encrypt !== 0),
@@ -336,17 +338,17 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
           untilDestroyed(this),
         ).subscribe(() => {
           this.loader.open();
-          this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-            () => {
+          this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe({
+            next: () => {
               this.getData();
               this.getUnusedDisk();
               this.loader.close();
             },
-            (err) => {
+            error: (err) => {
               this.loader.close();
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         });
       },
       isHidden: true,
@@ -374,7 +376,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
     return actions;
   }
 
-  extendAction(): any[] {
+  extendAction(): EntityTreeTableAction[] {
     return [{
       id: 'extend',
       label: helptext.actions_label.extend,
@@ -460,11 +462,11 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
       stats = data.stats;
     }
     if ('type' in data && data.type !== TopologyItemType.Disk) {
-      (data as any).name = data.type;
+      data.name = data.type;
     }
     // use path as the device name if the device name is null
     if (!(data as TopologyDisk).disk || (data as TopologyDisk).disk === null) {
-      (data as any).disk = data.path;
+      (data as TopologyDisk).disk = data.path;
     }
 
     const item: PoolDiskInfo = {
@@ -499,7 +501,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
         const extendAction = this.extendAction();
         node.data.actions[0].actions.push(extendAction[0]);
       }
-      vdevType = (data as any).name;
+      vdevType = data.name as TopologyItemType;
       data.children.forEach((child) => {
         node.children.push(this.parseTopolgy(child, category, vdevType));
       });

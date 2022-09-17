@@ -128,12 +128,15 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     this.store$.pipe(
       select(selectSnapshots),
       untilDestroyed(this),
-    ).subscribe((snapshots) => {
-      this.createDataSource(snapshots);
-      this.cdr.markForCheck();
-    }, () => {
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (snapshots) => {
+        this.createDataSource(snapshots);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 

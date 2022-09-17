@@ -52,7 +52,7 @@ import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.conf
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
-import { Temperature } from 'app/services/disk-temperature.service';
+import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -100,7 +100,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private resources = PIXI.loader.resources;
   container: Container;
   failedDisks: DiskFailure[] = [];
-  subenclosure: any; // Declare rear and internal enclosure visualizations here
+  subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
   view: string = EnclosureLocation.Front;
@@ -177,8 +177,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     protected ws: WebSocketService,
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
+    protected diskTemperatureService: DiskTemperatureService,
   ) {
     this.themeUtils = new ThemeUtils();
+    this.diskTemperatureService.listenForTemperatureUpdates();
 
     core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const chassisView = this.view === 'rear' ? this.chassis.rear : this.chassis.front;
@@ -628,7 +630,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   destroyEnclosure(): void {
     if (!this.enclosure) { return; }
-    this.enclosure.events.unsubscribe();
     this.container.removeChild(this.enclosure.container);
     this.enclosure.destroy();
   }

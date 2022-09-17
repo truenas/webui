@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -91,7 +92,7 @@ describe('SftpProviderFormComponent', () => {
       'Private Key': 'Generate New',
     });
 
-    await spectator.component.beforeSubmit().toPromise();
+    await lastValueFrom(spectator.component.beforeSubmit());
 
     const websocket = spectator.inject(WebSocketService);
     expect(websocket.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
