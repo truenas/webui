@@ -355,4 +355,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.slideIn.open(FileTicketFormComponent);
     }
   }
+
+  // TODO: Works around Typescript issue: https://github.com/microsoft/TypeScript/issues/15300
+  asRecord(row: VolumesListPool): Record<string, unknown> {
+    return row as unknown as Record<string, unknown>;
+  }
 }

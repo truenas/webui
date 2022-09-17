@@ -538,6 +538,7 @@ export class VmWizardComponent implements WizardConfiguration {
   private gpus: Device[];
   private isolatedGpuPciIds: string[];
   private productType = this.systemGeneralService.getProductType();
+  private wasFormInitialized = false;
 
   constructor(
     protected ws: WebSocketService,
@@ -574,6 +575,7 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
+    this.wasFormInitialized = true;
     this.ws.call('vm.query').pipe(untilDestroyed(this)).subscribe((vms) => {
       vms.forEach((i) => this.namesInUse.push(i.name));
     });
@@ -915,23 +917,27 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   cpuValidator(name: string): ValidatorFn {
-    // TODO: setTimeout breaks typing
-    return (): any => {
+    return () => {
+      if (!this.wasFormInitialized) {
+        return;
+      }
       const cpuConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
-      setTimeout(() => {
-        const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
-          ? { validCPU: true }
-          : null;
+      const vcpus = this.getFormControlFromFieldName('vcpus').value;
+      const cores = this.getFormControlFromFieldName('cores').value;
+      const threads = this.getFormControlFromFieldName('threads').value;
 
-        if (errors) {
-          cpuConfig.hasErrors = true;
-          cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
-        } else {
-          cpuConfig.hasErrors = false;
-          cpuConfig.warnings = '';
-        }
-        return errors;
-      }, 100);
+      const errors = vcpus * cores * threads > this.maxVcpus
+        ? { validCPU: true }
+        : null;
+
+      if (errors) {
+        cpuConfig.hasErrors = true;
+        cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
+      } else {
+        cpuConfig.hasErrors = false;
+        cpuConfig.warnings = '';
+      }
+      return errors;
     };
   }
 
@@ -1033,7 +1039,6 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
-    vmPayload['autoloader'] = value.autoloader;
     vmPayload['autostart'] = value.autostart;
     if (value.iso_path && value.iso_path !== undefined) {
       vmPayload['devices'] = [

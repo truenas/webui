@@ -19,7 +19,7 @@ export class EntityTreeTableService {
     return tree;
   }
 
-  buildTable(data: any, expandAll = false): TreeNode[] {
+  buildTable(data: TreeNode[], expandAll = false): TreeNode[] {
     // Converts a Tree structure to a flat list
     const flatList: TreeNode[] = [];
 
@@ -82,7 +82,7 @@ export class EntityTreeTableService {
     return clone;
   }
 
-  filteredTable(key: string, value: string, data: any, preserveExpansion = false): TreeNode[] {
+  filteredTable(key: string, value: string, data: TreeNode[], preserveExpansion = false): TreeNode[] {
     // let flattened = this.buildTable(...args); // ES6 way not working?
     const flattened = preserveExpansion ? this.buildTable(data) : this.buildTable(data, true);
 
@@ -104,13 +104,13 @@ export class EntityTreeTableService {
   }
 
   // Do we still need this?
-  getNode(item: any): TreeNode {
-    const nodeData: any = {};
+  getNode(item: Record<string, any>): TreeNode {
+    const nodeData: Record<string, unknown> = {};
     for (const prop in item) {
       nodeData[prop] = item[prop];
     }
 
-    const nodeChildren = [];
+    const nodeChildren: unknown[] = [];
     for (const child in item.children) {
       nodeChildren.push(this.getNode(item.children[child]));
     }
