@@ -381,7 +381,7 @@ export class SmbFormComponent implements OnInit {
     this.cdr.markForCheck();
     const smbShare = this.form.value;
 
-    if (!smbShare.timemachine_quota) {
+    if (!smbShare.timemachine_quota || !smbShare.timemachine) {
       delete smbShare.timemachine_quota;
     }
 
