@@ -624,7 +624,9 @@ export class DatasetFormComponent implements FormConfiguration {
             const value = event.event.value;
             if (value === DatasetAclType.Nfsv4) {
               aclModeFormControl.setValue(AclMode.Passthrough);
-              this.entityForm.setDisabled('aclmode', false, false);
+              if (!this.isRootDataset(this.parent)) {
+                this.entityForm.setDisabled('aclmode', false, false);
+              }
             } else if (value === DatasetAclType.Posix || value === DatasetAclType.Off) {
               aclModeFormControl.setValue(AclMode.Discard);
               this.entityForm.setDisabled('aclmode', true, false);
@@ -647,15 +649,6 @@ export class DatasetFormComponent implements FormConfiguration {
             { label: this.translate.instant('Discard'), value: AclMode.Discard },
           ],
           value: AclMode.Inherit,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'acltype',
-                value: DatasetAclType.Inherit,
-              }],
-            },
-          ],
         },
         {
           type: 'select',
@@ -907,7 +900,9 @@ export class DatasetFormComponent implements FormConfiguration {
     const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
     const value = entityForm.formGroup.get('acltype').value;
     if (value === DatasetAclType.Nfsv4) {
-      this.entityForm.setDisabled('aclmode', false, false);
+      if (!this.isRootDataset(this.parent)) {
+        this.entityForm.setDisabled('aclmode', false, false);
+      }
     } else if (value === DatasetAclType.Posix || value === DatasetAclType.Off) {
       aclModeFormControl.setValue(AclMode.Discard);
       this.entityForm.setDisabled('aclmode', true, false);
@@ -950,6 +945,11 @@ export class DatasetFormComponent implements FormConfiguration {
         this.entityForm.formGroup.get('checksum').setValue(DatasetChecksum.Sha512);
       }
     });
+
+    if (this.isRootDataset(this.parent)) {
+      this.entityForm.setDisabled('acltype', true, false);
+      this.entityForm.setDisabled('aclmode', true, false);
+    }
 
     if (!this.parent) {
       _.find(this.fieldConfig, { name: 'quota_warning_inherit' }).placeholder = helptext.dataset_form_default;
@@ -1147,6 +1147,8 @@ export class DatasetFormComponent implements FormConfiguration {
           }
 
           if (this.isNew) {
+            this.entityForm.setDisabled('aclmode', true, false);
+
             const encryptionAlgorithmConfig = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
             const encryptionAlgorithmControl = this.entityForm.formGroup.controls['algorithm'];
             let parentAlgorithm;
@@ -1450,6 +1452,10 @@ export class DatasetFormComponent implements FormConfiguration {
       return true;
     }
     return false;
+  }
+
+  isRootDataset(path: string): boolean {
+    return path && path.split('/').length === 1;
   }
 
   resourceTransformIncomingRestData(wsResponse: Dataset): DatasetFormData {
