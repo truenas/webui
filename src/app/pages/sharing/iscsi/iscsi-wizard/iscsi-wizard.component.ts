@@ -7,13 +7,23 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { lastValueFrom } from 'rxjs';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
-import { IscsiExtentType } from 'app/enums/iscsi.enum';
+import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { IscsiInterface } from 'app/interfaces/iscsi.interface';
+import {
+  IscsiAuthAccess,
+  IscsiAuthAccessUpdate,
+  IscsiExtent,
+  IscsiExtentUpdate,
+  IscsiInitiatorGroup,
+  IscsiInterface, IscsiPortal, IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate,
+  IscsiTargetUpdate,
+} from 'app/interfaces/iscsi.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
@@ -27,6 +37,31 @@ import {
 } from 'app/services';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
+interface CreatedItems {
+  zvol: string;
+  extent: number;
+  auth: number;
+  portal: number;
+  initiator: number;
+  target: number;
+  associateTarget: number;
+}
+
+type CreatedItem =
+  | IscsiExtent
+  | IscsiTarget
+  | IscsiAuthAccess
+  | IscsiInitiatorGroup
+  | Dataset
+  | IscsiTargetExtent
+  | IscsiPortal;
+
+type Summary = {
+  listen: IscsiInterface[];
+} & {
+  [name: string]: string;
+};
+
 @UntilDestroy()
 @Component({
   template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
@@ -36,7 +71,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   routeSuccess: string[] = ['sharing', 'iscsi'];
   isLinear = true;
   summaryTitle = 'iSCSI Summary';
-  summaryObj: { [name: string]: any } = {
+  summaryObj: Summary = {
     name: null,
     type: null,
     path: null,
@@ -491,7 +526,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     initiator: 'iscsi.initiator.delete',
     target: 'iscsi.target.delete',
     associateTarget: 'iscsi.targetextent.delete',
-  };
+  } as const;
 
   protected createCalls = {
     zvol: 'pool.dataset.create',
@@ -501,7 +536,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     initiator: 'iscsi.initiator.create',
     target: 'iscsi.target.create',
     associateTarget: 'iscsi.targetextent.create',
-  };
+  } as const;
 
   constructor(
     private iscsiService: IscsiService,
@@ -671,7 +706,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
   }
 
-  getSummary(): { [key: string]: string | { [key: string]: string } } {
+  getSummary(): { [key: string]: string | { [key: string]: string | string[] } } {
     const summary = {
       Name: this.summaryObj.name,
       Extent: {
@@ -785,7 +820,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           this.zvolFieldGroup.forEach((fieldName) => {
             if (fieldName in datasets[0]) {
               const controller = this.entityWizard.formArray.get([0]).get(fieldName);
-              controller.setValue((datasets[0][fieldName as keyof Dataset] as any).value);
+              controller.setValue((datasets[0][fieldName as keyof Dataset] as ZfsProperty<unknown>).value);
             }
           });
         }
@@ -804,7 +839,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
   async customSubmit(value: any): Promise<void> {
     this.loader.open();
     let toStop = false;
-    const createdItems: any = {
+    const createdItems: CreatedItems = {
       zvol: null,
       extent: null,
       auth: null,
@@ -814,7 +849,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       associateTarget: null,
     };
 
-    for (const item in createdItems) {
+    for (const createdItem in createdItems) {
+      const item = createdItem as keyof CreatedItems;
       if (!toStop) {
         if (!(
           (item === 'zvol' && value['disk'] !== 'NEW')
@@ -825,13 +861,18 @@ export class IscsiWizardComponent implements WizardConfiguration {
           await this.doCreate(value, item).then(
             (res) => {
               if (item === 'zvol') {
-                value['disk'] = 'zvol/' + res.id.replace(' ', '+');
+                value['disk'] = 'zvol/' + (res as Dataset).id.replace(' ', '+');
               } else if (item === 'auth') {
-                value['discovery_authgroup'] = res.tag;
+                value['discovery_authgroup'] = (res as IscsiAuthAccess).tag;
               } else {
                 value[item] = res.id;
               }
-              createdItems[item] = res.id;
+
+              if (item === 'zvol') {
+                createdItems[item] = res.id as string;
+              } else {
+                createdItems[item] = res.id as number;
+              }
             },
             (err) => {
               new EntityUtils().handleWsError(this, err, this.dialogService);
@@ -855,18 +896,19 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
-  doCreate(value: any, item: string): Promise<any> {
-    let payload: any;
+  doCreate(value: any, item: keyof CreatedItems): Promise<CreatedItem> {
     if (item === 'zvol') {
-      payload = {
+      const payload = {
         name: value['dataset'] + '/' + value['name'],
-        type: 'VOLUME',
+        type: DatasetType.Volume,
         volblocksize: value['volblocksize'],
         volsize: this.getRoundVolsize(value),
       };
+
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'portal') {
-      payload = {
+      const payload = {
         comment: value['name'],
         discovery_authgroup: value['discovery_authgroup'],
         discovery_authmethod: value['discovery_authmethod'],
@@ -875,21 +917,23 @@ export class IscsiWizardComponent implements WizardConfiguration {
       if (payload['discovery_authgroup'] === '') {
         delete payload['discovery_authgroup'];
       }
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'auth') {
-      payload = {
+      const payload = {
         tag: value['tag'],
         user: value['user'],
         secret: value['secret'],
-      };
+      } as IscsiAuthAccessUpdate;
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'extent') {
-      payload = {
+      let payload = {
         name: value['name'],
         type: value['type'],
-      };
-      if (payload.type === 'FILE') {
-        this.fileFieldGroup.forEach((field) => {
+      } as IscsiExtentUpdate;
+      if (payload.type === IscsiExtentType.File) {
+        this.fileFieldGroup.forEach((field: 'path' | 'filesize') => {
           if (field === 'filesize') {
             value[field] = this.storageService.convertHumanStringToNum(value[field], true);
             payload[field] = value[field] === 0 ? value[field] : (value[field] + (512 - value[field] % 512));
@@ -901,42 +945,48 @@ export class IscsiWizardComponent implements WizardConfiguration {
         payload['disk'] = value['disk'];
       }
       payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value['usefor'] }).values);
+
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'initiator') {
-      payload = {
+      const payload = {
         initiators: value['initiators'],
         comment: value['name'],
       };
+
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'target') {
-      payload = {
+      const payload = {
         name: value['name'],
         groups: [
           {
             portal: value['portal'],
             initiator: value['initiator'] ? value['initiator'] : null,
-            authmethod: 'NONE', // default value for now
+            authmethod: IscsiAuthMethod.None, // default value for now
             auth: null, // default value for now
           },
         ],
-      };
+      } as IscsiTargetUpdate;
+
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'associateTarget') {
-      payload = {
+      const payload = {
         target: value['target'],
         extent: value['extent'],
-      };
+      } as IscsiTargetExtentUpdate;
+      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
-    return lastValueFrom(this.ws.call((this.createCalls as any)[item], [payload]));
   }
 
-  rollBack(items: Record<string, unknown>): void {
-    Object.entries(items).forEach(([type, id]) => {
+  rollBack(items: CreatedItems): void {
+    Object.entries(items).forEach(([type, id]: [keyof CreatedItems, number]) => {
       if (id === null) {
         return;
       }
 
-      this.ws.call((this.deleteCalls as any)[type], [id]).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call(this.deleteCalls[type], [id]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           console.info('rollback ' + type, res);
         },

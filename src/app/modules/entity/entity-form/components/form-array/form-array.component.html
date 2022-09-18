@@ -3,15 +3,15 @@
   ix-auto
   ix-auto-type="array"
   ix-auto-identifier="{{ config.placeholder }}"
-  [formGroup]="group.controls[config.name]"
+  [formGroup]="group.controls[config.name] | cast"
   [attr.id]="config.name"
 >
-  <fieldset class="formarray-fieldset" *ngFor="let array of group.controls[config.name]['controls']; let i = index">
+  <fieldset class="formarray-fieldset" *ngFor="let array of asFormArray(group.controls[config.name]).controls; let i = index">
     <ng-container
       *ngFor="let field of config.formarray"
       dynamicField
       [config]="field"
-      [group]="group.controls[config.name].controls[i]"
+      [group]="asFormArray(group.controls[config.name]).controls[i] | cast"
     ></ng-container>
   </fieldset>
 

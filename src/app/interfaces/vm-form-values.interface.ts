@@ -33,5 +33,9 @@ export interface VmFormValues {
   vcpus: number;
   volsize: string;
   wait: boolean;
-  [key: string]: any;
+  cpuset: string;
+  nodeset: string;
+  pin_vcpus: boolean;
+  hyperv_enlightenments: boolean;
+  trust_guest_rx_filters: boolean;
 }
