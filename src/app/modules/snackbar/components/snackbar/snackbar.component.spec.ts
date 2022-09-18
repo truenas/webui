@@ -27,6 +27,6 @@ describe('SnackbarComponent', () => {
   });
 
   it('shows an icon when it is set in config', () => {
-    expect(spectator.query('.icon')).toHaveExactText('error');
+    expect(spectator.query('.icon')).toHaveText('error');
   });
 });

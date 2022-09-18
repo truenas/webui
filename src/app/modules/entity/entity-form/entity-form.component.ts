@@ -50,7 +50,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   formGroup: UntypedFormGroup;
   fieldConfig: FieldConfig[];
   resourceName: string;
-  getFunction: any;
+  getFunction: Observable<any>;
   submitFunction = this.editCall;
   isNew = false;
   hasConf = true;
@@ -247,7 +247,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       if (!this.conf.queryCall) {
-        this.getFunction = this.noGetFunction();
+        this.getFunction = undefined;
       } else if (this.conf.queryCall) {
         if (this.pk) {
           let pk = this.pk;
@@ -274,7 +274,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
-        this.getFunction.pipe(untilDestroyed(this)).subscribe((res: any) => {
+        this.getFunction.pipe(untilDestroyed(this)).subscribe((res) => {
           if (res.data) {
             this.data = res.data;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
@@ -364,10 +364,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.blurEvent) {
       this.conf.blurEvent(this);
     }
-  }
-
-  noGetFunction(): void {
-
   }
 
   ngOnChanges(): void {

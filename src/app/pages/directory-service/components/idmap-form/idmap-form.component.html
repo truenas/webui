@@ -1,7 +1,7 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" v (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
           formControlName="name"
