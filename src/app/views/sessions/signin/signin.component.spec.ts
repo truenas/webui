@@ -57,6 +57,7 @@ describe('SigninComponent', () => {
         hasFailover$,
         canLogin$,
         isLoading$: of(false),
+        init: jest.fn(),
       }),
     ],
   });
@@ -68,6 +69,10 @@ describe('SigninComponent', () => {
     hasFailover$.next(false);
     canLogin$.next(true);
     isConnected$.next(true);
+  });
+
+  it('initializes SigninStore on component init', () => {
+    expect(spectator.inject(SigninStore).init).toHaveBeenCalled();
   });
 
   describe('disconnected', () => {
