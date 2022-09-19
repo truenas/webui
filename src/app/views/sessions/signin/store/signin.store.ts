@@ -178,7 +178,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   }
 
-  private getRedirectUrl(): string {
+  getRedirectUrl(): string {
     if (this.ws.redirectUrl) {
       return this.ws.redirectUrl;
     }

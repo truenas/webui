@@ -1,6 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { TestScheduler } from 'rxjs/testing';
+import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
@@ -20,9 +21,7 @@ describe('PoolsDashboardStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).toEqual(expected);
-    });
+    testScheduler = getTestScheduler();
   });
 
   it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {
