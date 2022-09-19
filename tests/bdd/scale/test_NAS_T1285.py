@@ -17,7 +17,7 @@ from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
-@pytest.mark.dependency(name='App_inital_setup')
+@pytest.mark.dependency(name='App_initial_setup')
 @scenario('features/NAS-T1285.feature', 'Apps Page Validation')
 def test_apps_page_validation():
     """Apps Page Validation."""
