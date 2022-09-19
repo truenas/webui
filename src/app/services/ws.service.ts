@@ -254,7 +254,7 @@ export class WebSocketService {
    */
   unsub(api: string, subscriptionId: string): void {
     const nom = api.replace('.', '_');
-    if (this.pendingSubs[nom].observers[subscriptionId]) {
+    if (this.pendingSubs[nom]?.observers?.[subscriptionId]) {
       this.send({ id: subscriptionId, msg: ApiEventMessage.UnSub });
       this.pendingSubs[nom].observers[subscriptionId].unsubscribe();
       delete this.pendingSubs[nom].observers[subscriptionId];

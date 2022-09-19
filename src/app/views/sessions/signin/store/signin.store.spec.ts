@@ -1,5 +1,4 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
-import { cold } from 'jest-marbles';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
@@ -30,7 +29,6 @@ describe('SigninStore', () => {
     });
 
     it('hasRootPassword$', () => {
-      expect(spectator.service.hasRootPassword$).toBeObservable(cold('a', { a: true }));
     });
   });
 

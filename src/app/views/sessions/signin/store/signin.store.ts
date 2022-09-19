@@ -51,8 +51,8 @@ export class SigninStore extends ComponentStore<SigninState> {
   });
 
   private readonly tokenLifetime = 300;
-  private readonly statusSubscriptionId = UUID.UUID();
-  private readonly disabledReasonsSubscriptionId = UUID.UUID();
+  private statusSubscriptionId: string;
+  private disabledReasonsSubscriptionId: string;
 
   constructor(
     private ws: WebSocketService,
@@ -102,8 +102,12 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => this.generateToken()),
     tapResponse(
       () => {
-        this.ws.unsub('failover.status', this.statusSubscriptionId);
-        this.ws.unsub('failover.disabled_reasons', this.disabledReasonsSubscriptionId);
+        if (this.statusSubscriptionId) {
+          this.ws.unsub('failover.status', this.statusSubscriptionId);
+        }
+        if (this.disabledReasonsSubscriptionId) {
+          this.ws.unsub('failover.disabled_reasons', this.disabledReasonsSubscriptionId);
+        }
         this.router.navigateByUrl(this.getRedirectUrl());
       },
       (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
@@ -227,10 +231,12 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private subscribeToFailoverUpdates(): void {
     // TODO: https://ixsystems.atlassian.net/browse/NAS-118104
+    this.statusSubscriptionId = UUID.UUID();
     this.ws.sub<FailoverStatus>('failover.status', this.statusSubscriptionId)
       .pipe(untilDestroyed(this))
       .subscribe((status) => this.setFailoverStatus(status));
 
+    this.disabledReasonsSubscriptionId = UUID.UUID();
     this.ws.sub<FailoverDisabledReason[]>('failover.disabled.reasons', this.disabledReasonsSubscriptionId)
       .pipe(untilDestroyed(this))
       .subscribe((disabledReasons) => this.setFailoverDisabledReasons(disabledReasons));
