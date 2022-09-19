@@ -119,17 +119,6 @@ export class LocaleService {
     return [format(date, `${this.dateFormat}`), format(date, `${this.timeFormat}`)];
   }
 
-  // TODO: Bye Bye
-  getCopyrightYearFromBuildTime(): string {
-    const buildTime = localStorage.getItem('buildtime')?.trim();
-    if (!buildTime) {
-      return '';
-    }
-
-    const buildTimeInMillis = parseInt(buildTime);
-    return new Date(buildTimeInMillis).getFullYear().toString();
-  }
-
   formatDateTimeToDateFns(format: string): string {
     let dateFnsFormat = format
       .replace('YYYY', 'yyyy')

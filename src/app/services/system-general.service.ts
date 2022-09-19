@@ -56,11 +56,11 @@ export class SystemGeneralService {
 
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: true, bufferSize: 1 }));
 
-  // TODO: Test caching.
   getCopyrightYear$ = this.ws.call('system.build_time').pipe(
     map((buildTime) => {
       return fromUnixTime(buildTime.$date / 1000).getFullYear();
     }),
+    shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
   /**

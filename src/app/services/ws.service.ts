@@ -20,18 +20,16 @@ import { Job } from 'app/interfaces/job.interface';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  private authStatus$ = new Subject<boolean>();
   onCloseSubject$ = new Subject<boolean>();
 
   socket: WebSocket;
   isConnected$ = new BehaviorSubject(false);
   loggedIn = false;
   @LocalStorage() token: string;
-
   redirectUrl = '';
   shuttingdown = false;
 
-  private pendingMessages: unknown[] = [];
+  private authStatus$ = new Subject<boolean>();
   private pendingCalls = new Map<string, {
     method: ApiMethod;
     args: unknown;
@@ -44,6 +42,7 @@ export class WebSocketService {
       };
     };
   } = {};
+  private pendingMessages: unknown[] = [];
 
   private protocol: string;
   private remote: string;
