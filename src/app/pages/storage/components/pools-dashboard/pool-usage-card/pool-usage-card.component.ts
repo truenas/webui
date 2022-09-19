@@ -1,11 +1,12 @@
 import {
-  Component, Input,
+  Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 export enum UsageHealthLevel {
   Warn = 'warn',
@@ -21,11 +22,22 @@ const maxPct = 80;
   templateUrl: './pool-usage-card.component.html',
   styleUrls: ['./pool-usage-card.component.scss'],
 })
-export class PoolUsageCardComponent {
+export class PoolUsageCardComponent implements OnInit {
   @Input() poolState: Pool;
   @Input() rootDataset: Dataset;
 
   readonly usageHealthLevel = UsageHealthLevel;
+  chartLowCapacityColor: string;
+  chartFillColor: string;
+  chartBlankColor: string;
+
+  constructor(public themeService: ThemeService) {}
+
+  ngOnInit(): void {
+    this.chartBlankColor = this.themeService.currentTheme()['bg1'];
+    this.chartFillColor = this.themeService.currentTheme().primary;
+    this.chartLowCapacityColor = this.themeService.currentTheme().red;
+  }
 
   get isLowCapacity(): boolean {
     return this.usedPercentage >= maxPct;
