@@ -24,7 +24,6 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -44,11 +43,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   product = productText.product;
   isHaInfoReady = false;
   checkingStatus = false;
-
-  _copyrightYear = '';
-  get copyrightYear(): string {
-    return window.localStorage?.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
-  }
 
   tokenObservable: Subscription;
   haInterval: Interval;
@@ -78,8 +72,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   reasonText = helptext.ha_disabled_reasons;
   haStatusText = this.translate.instant('Checking HA status');
   haStatus = false;
-  truecommandIp: string;
-  protected truecommandUrl: string;
 
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
@@ -94,7 +86,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: UntypedFormBuilder,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService,
   ) {
     const haStatus = window.sessionStorage.getItem('ha_status');
     if (haStatus && haStatus === 'true') {
@@ -115,18 +106,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.getHaStatus();
         }, 6000);
       } else if (this.canLogin()) {
-        this.checkBuildtime();
         this.loginToken();
       }
       window.localStorage.setItem('product_type', this.productType);
-    });
-
-    this.ws.call('truecommand.connected').pipe(
-      filter((connectionState) => connectionState.connected),
-      untilDestroyed(this),
-    ).subscribe((connectionState) => {
-      this.truecommandIp = connectionState.truecommand_ip;
-      this.truecommandUrl = connectionState.truecommand_url;
     });
   }
 
@@ -141,7 +123,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     if (this.canLogin()) {
-      this.checkBuildtime();
       this.loginToken();
     }
 
@@ -212,17 +193,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  checkBuildtime(): void {
-    this.ws.call('system.build_time').pipe(untilDestroyed(this)).subscribe((buildTime) => {
-      const buildtime = String(buildTime.$date);
-      const previousBuildtime = window.localStorage.getItem('buildtime');
-      if (buildtime !== previousBuildtime) {
-        window.localStorage.setItem('buildtime', buildtime);
-        this._copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-      }
-    });
-  }
-
   canLogin(): boolean {
     if (this.isLogoReady && this.connected()
       && [FailoverStatus.Single, FailoverStatus.Master].includes(this.failoverStatus)
@@ -282,7 +252,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
                 window.sessionStorage.setItem('ha_status', this.haStatus.toString());
                 if (this.canLogin()) {
-                  this.checkBuildtime();
                   this.loginToken();
                 }
               },
@@ -295,7 +264,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             });
           } else if (this.canLogin()) {
-            this.checkBuildtime();
             this.loginToken();
           }
         },
@@ -402,22 +370,5 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.translate.instant('close'),
       { duration: 4000, verticalPosition: 'bottom' },
     );
-  }
-
-  openIx(): void {
-    window.open('https://www.ixsystems.com/', '_blank');
-  }
-
-  goToTrueCommand(): void {
-    this.dialogService.generalDialog({
-      title: helptext.tcDialog.title,
-      message: helptext.tcDialog.message,
-      is_html: true,
-      confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        window.open(this.truecommandUrl);
-      }
-    });
   }
 }

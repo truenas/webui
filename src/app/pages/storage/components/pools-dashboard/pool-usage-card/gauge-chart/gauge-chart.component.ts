@@ -7,9 +7,18 @@ import {
   HostBinding,
   AfterViewInit,
 } from '@angular/core';
-import { Chart, ChartDataSets, ChartOptions } from 'chart.js';
+import {
+  Chart, ChartDataSets, ChartOptions,
+} from 'chart.js';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
+
+interface ChartElement {
+  transition: (easing: number) => {
+    draw: () => void;
+  };
+  _view: Chart.DoughnutModel;
+}
 
 Chart.defaults.roundedDoughnut = Chart.helpers.clone(Chart.defaults.doughnut);
 Chart.controllers.roundedDoughnut = Chart.controllers.doughnut.extend({
@@ -17,8 +26,8 @@ Chart.controllers.roundedDoughnut = Chart.controllers.doughnut.extend({
     const ctx = this.chart.chart.ctx;
 
     const easingDecimal = ease || 1;
-    let tmpView: { [attribute: string]: string | number };
-    Chart.helpers.each(this.getMeta().data, (chartElem: any, index: number) => {
+    let tmpView: Chart.DoughnutModel;
+    Chart.helpers.each(this.getMeta().data, (chartElem: ChartElement, index: number) => {
       if (index === 2) {
         return;
       }

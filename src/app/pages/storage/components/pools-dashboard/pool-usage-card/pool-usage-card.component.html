@@ -4,20 +4,31 @@
       {{ 'Usage' | translate }}
 
       <ng-container [ngSwitch]="health">
-        <mat-icon *ngSwitchCase="usageHealthLevel.Safe" class="pool-icon icon-online">check_circle</mat-icon>
-        <mat-icon *ngSwitchCase="usageHealthLevel.Warn" class="pool-icon icon-warning">warning</mat-icon>
-        <mat-icon *ngSwitchCase="usageHealthLevel.Error" class="pool-icon icon-faulted">cancel</mat-icon>
-        <mat-icon *ngSwitchDefault class="pool-icon icon-error">cancel</mat-icon>
+        <mat-icon *ngSwitchCase="usageHealthLevel.Safe" class="pool-icon icon-online">
+          check_circle
+        </mat-icon>
+        <mat-icon *ngSwitchCase="usageHealthLevel.Warn" class="pool-icon icon-warning">
+          warning
+        </mat-icon>
+        <mat-icon *ngSwitchCase="usageHealthLevel.Error" class="pool-icon icon-faulted">
+          cancel
+        </mat-icon>
+        <mat-icon *ngSwitchDefault class="pool-icon icon-error">
+          cancel
+        </mat-icon>
       </ng-container>
     </h3>
 
-    <a
-      mat-button
-      [routerLink]="['/', 'datasets', poolState.name]"
-    >{{ 'Manage Datasets' | translate }}</a>
+    <a mat-button [routerLink]="['/', 'datasets', poolState.name]">
+      {{ 'Manage Datasets' | translate }}
+    </a>
   </mat-card-header>
 
-  <mat-card-content fxLayout="row" fxFlex="100" fxLayoutAlign="space-around center">
+  <mat-card-content
+    fxLayout="row"
+    fxFlex="100"
+    fxLayoutAlign="space-around center"
+  >
     <div class="left" fxLayout="column" fxLayoutAlign="center center">
       <ix-gauge-chart
         [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
@@ -30,7 +41,9 @@
       ></ix-gauge-chart>
       <div fxLayout="row" class="warning-container" *ngIf="isLowCapacity">
         <!-- <mat-icon class="pool-icon icon-warning">warning</mat-icon> -->
-        <span> <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }} </span>
+        <span>
+          <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
+        </span>
       </div>
     </div>
 
@@ -47,7 +60,7 @@
             <span class="used-caption" fxLayoutAlign="start center">
               <b>{{ 'Used' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset?.used.parsed | filesize: { standard: 'iec' } ) || ('Unknown' | translate) }}
+                {{ (rootDataset?.used.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
@@ -63,16 +76,19 @@
             <span class="snapshots-caption" fxLayoutAlign="start center">
               <b>{{ 'Used by Snapshots' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset?.usedbysnapshots?.parsed | filesize: { standard: 'iec' } ) || ('Unknown' | translate) }}
+                {{ (rootDataset?.usedbysnapshots?.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
         </ul>
       </div>
-      <a class="link"
+      <a
+        class="link"
         [routerLink]="['/reportsdashboard', 'disk']"
         [queryParams]="{ disks }"
-      >{{ 'View Disk Space Reports' | translate }}</a>
+      >
+        {{ 'View Disk Space Reports' | translate }}
+      </a>
     </div>
   </mat-card-content>
 </mat-card>

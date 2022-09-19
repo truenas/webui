@@ -224,7 +224,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   deleteFieldFromData(
-    data: any,
+    data: ChartFormValues,
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
@@ -269,7 +269,7 @@ export class ChartFormComponent implements OnDestroy {
     deleteField$.complete();
   }
 
-  saveData(data: any): void {
+  saveData(data: ChartFormValues): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,

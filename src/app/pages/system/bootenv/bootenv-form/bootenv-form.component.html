@@ -1,14 +1,20 @@
 <ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup"
+      (submit)="onSubmit()"
+    >
       <ix-fieldset [title]="'Settings' | translate">
         <ix-input
           formControlName="name"
           [label]="'Name' | translate"
           [required]="true"
           [tooltip]="tooltips.name"
-          ></ix-input>
+        ></ix-input>
+
         <ng-container *ngIf="operation === Operations.Clone">
           <ix-input
             formControlName="source"
@@ -26,7 +32,9 @@
           type="submit"
           [disabled]="formGroup.invalid || isFormLoading"
           color="primary"
-          >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

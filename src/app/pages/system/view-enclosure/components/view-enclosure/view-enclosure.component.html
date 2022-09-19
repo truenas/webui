@@ -1,10 +1,15 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
     <button mat-button [matMenuTriggerFor]="elementsMenu">
-      {{ 'Elements' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      {{ 'Elements' | translate }}
+      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
     </button>
     <mat-menu #elementsMenu="matMenu">
-      <button *ngFor="let view of views" mat-menu-item (click)="changeView(view.id)">
+      <button
+        *ngFor="let view of views"
+        mat-menu-item
+        (click)="changeView(view.id)"
+      >
         <span>{{ view.alias | translate }}</span>
       </button>
     </mat-menu>
@@ -12,23 +17,36 @@
 </ng-template>
 
 <ng-container *ngIf="errors.length == 0">
-  <div *ngIf="system && system.enclosures && systemManufacturer && systemManufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap">
-
+  <div
+    *ngIf="system && system.enclosures && systemManufacturer && systemManufacturer == 'ixsystems'"
+    class="page-viewport"
+    fxLayout="row wrap"
+  >
     <!-- Persistent Visualizer -->
-    <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )">
-
+    <div
+      class="main-content"
+      fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )"
+    >
       <div>
-        <mat-spinner [diameter]="40" *ngIf="spinner" class="spinner"></mat-spinner>
+        <mat-spinner
+          [diameter]="40"
+          *ngIf="spinner"
+          class="spinner"
+        ></mat-spinner>
       </div>
 
       <ng-container *ngIf="supportedHardware">
-        <div *ngIf="!system.platform.includes('MINI'); else mini" class="enclosure-disks-wrapper">
+        <div
+          *ngIf="!system.platform.includes('MINI'); else mini"
+          class="enclosure-disks-wrapper"
+        >
           <ix-enclosure-disks
             *ngIf="events && system && system.pools && selectedEnclosure"
             [controller-events]="events"
             [current-tab]="currentView"
             [system-profiler]="system"
-            [selected-enclosure]="selectedEnclosure">
+            [selected-enclosure]="selectedEnclosure"
+          >
           </ix-enclosure-disks>
         </div>
 
@@ -39,7 +57,8 @@
               [controller-events]="events"
               [current-tab]="currentView"
               [system-profiler]="system"
-              [selected-enclosure]="selectedEnclosure">
+              [selected-enclosure]="selectedEnclosure"
+            >
             </ix-enclosure-disks-mini>
           </div>
         </ng-template>
@@ -47,11 +66,25 @@
     </div>
 
     <!-- Enclosure Selector -->
-    <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="showEnclosureSelector && events && system && system.pools && system.enclosures && system.enclosures.length > 1 && supportedHardware" class="enclosure-selector">
+    <div
+      fxFlex="240px"
+      fxFlex.lt-lg="180px"
+      #navigation
+      *ngIf="showEnclosureSelector && events && system && system.pools && system.enclosures && system.enclosures.length > 1 && supportedHardware"
+      class="enclosure-selector"
+    >
       <ng-container *ngFor="let enclosure of system.profile; let i = index">
-        <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }}">
-          <div *ngIf="system.enclosures[enclosure.enclosureKey].label == system.enclosures[enclosure.enclosureKey].name">{{enclosure.model}} ({{i}})</div>
-          <div *ngIf="system.enclosures[enclosure.enclosureKey].label !== system.enclosures[enclosure.enclosureKey].name">{{system.enclosures[enclosure.enclosureKey].label}} ({{i}})</div>
+        <div
+          *ngIf="enclosure.enclosureKey != system.rearIndex"
+          (click)="selectEnclosure(i)"
+          class="enclosure enclosure-{{ i }} {{ selectedEnclosure.enclosureKey == i ? 'active' : '' }}"
+        >
+          <div *ngIf="system.enclosures[enclosure.enclosureKey].label == system.enclosures[enclosure.enclosureKey].name">
+            {{ enclosure.model }} ({{ i }})
+          </div>
+          <div *ngIf="system.enclosures[enclosure.enclosureKey].label !== system.enclosures[enclosure.enclosureKey].name">
+            {{ system.enclosures[enclosure.enclosureKey].label }} ({{ i }})
+          </div>
         </div>
       </ng-container>
     </div>
@@ -62,18 +95,23 @@
   <div class="error mat-card">
     <h3 class="error-header">
       <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-      {{errors[0].name}}
+      {{ errors[0].name }}
     </h3>
 
     <div class="error-message">
-      {{errors[0].message}}.
-      <br>
+      {{ errors[0].message }}.
+      <br />
       {{ 'Please visit our support page for help.' | translate }}
     </div>
 
     <div class="error-footer">
-      <button mat-button color="primary" (click)="router.navigate(['/system/support'])">{{ 'CONTACT SUPPORT' | translate }}</button>
+      <button
+        mat-button
+        color="primary"
+        (click)="router.navigate(['/system/support'])"
+      >
+        {{ 'CONTACT SUPPORT' | translate }}
+      </button>
     </div>
   </div>
 </ng-container>
-

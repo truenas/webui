@@ -1,21 +1,22 @@
 <section class="preview-header">
   <h4 class="crontab-header">
     {{ 'Schedule Preview' | translate }}
-    <button class="close-btn" mat-icon-button [matDialogClose]><mat-icon>cancel</mat-icon></button>
+    <button class="close-btn" mat-icon-button [matDialogClose]>
+      <mat-icon>cancel</mat-icon>
+    </button>
   </h4>
   <div class="crontab">{{ crontab }}</div>
   <div class="crontab-explanation">{{ crontab | crontabExplanation }}</div>
 </section>
 
 <div class="calendar">
-  <mat-calendar
-    #calendar
-    [dateClass]="getSelectedDateClass"
-  ></mat-calendar>
+  <mat-calendar #calendar [dateClass]="getSelectedDateClass"></mat-calendar>
 </div>
 
 <div class="schedule-list">
-  <div class="timezone-message"><strong>{{ "System Time Zone:" | translate }}</strong> {{ timezone }}</div>
+  <div class="timezone-message">
+    <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone }}
+  </div>
 
   <ix-scheduler-date-examples
     *ngIf="cronPreview && !isPastMonth"

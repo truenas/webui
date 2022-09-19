@@ -4,7 +4,8 @@
   </ix-page-title-header>
 </ng-template>
 
-<div class="wrapper"
+<div
+  class="wrapper"
   gdGap="8px"
   gdRows="fit-content(30vh)"
   gdColumns="50% auto"
@@ -14,7 +15,6 @@
   gdAreas.lt-lg="system-card system-card | data-card1 data-card2 | ntp-card ntp-card"
   gdAreas.lt-md="system-card | data-card1 | data-card2 | ntp-card"
 >
-
   <mat-card class="system-card" gdArea="system-card">
     <mat-toolbar-row class="title-bar">
       <h3>{{ supportTitle | translate }}</h3>
@@ -23,11 +23,17 @@
     <ix-support></ix-support>
   </mat-card>
 
-  <mat-card class="data-card{{i+1}}" gdArea="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
+  <mat-card
+    *ngFor="let card of dataCards; index as i"
+    class="data-card{{ i + 1 }}"
+    gdArea="data-card{{ i + 1 }}"
+  >
     <mat-toolbar-row>
       <h3>{{ card.title | translate }}</h3>
       <div class="actions action-icon">
-        <button mat-button color="default" (click)="doAdd(card.id)">{{ 'Settings' | translate }}</button>
+        <button mat-button color="default" (click)="doAdd(card.id)">
+          {{ 'Settings' | translate }}
+        </button>
       </div>
     </mat-toolbar-row>
 

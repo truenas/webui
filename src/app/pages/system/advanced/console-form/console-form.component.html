@@ -1,30 +1,38 @@
-<ix-modal-header [title]="'Console' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Console' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
           formControlName="consolemenu"
           [label]="'Show Text Console without Password Prompt' | translate"
           [tooltip]="tooltips.consolemenu"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="serialconsole"
           [label]="'Enable Serial Console' | translate"
           [tooltip]="tooltips.serialconsole"
         ></ix-checkbox>
+
         <ix-select
           formControlName="serialport"
           [label]="'Serial Port' | translate"
           [tooltip]="tooltips.serialport"
           [options]="serialPortOptions$"
         ></ix-select>
+
         <ix-select
           formControlName="serialspeed"
           [label]="'Serial Speed' | translate"
           [tooltip]="tooltips.serialport"
           [options]="serialSpeedOptions$"
         ></ix-select>
+
         <ix-textarea
           formControlName="motd"
           [label]="'MOTD Banner' | translate"
@@ -36,9 +44,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

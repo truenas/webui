@@ -9,14 +9,20 @@
     <ng-container *ngIf="supportedDisks.length">
       <div class="prompt">{{ 'Run manual test on disks:' }}</div>
       <ul class="disks">
-        <li *ngFor="let disk of supportedDisks">{{ disk.name }} ({{ disk.serial }})</li>
+        <li *ngFor="let disk of supportedDisks">
+          {{ disk.name }} ({{ disk.serial }})
+        </li>
       </ul>
     </ng-container>
 
     <ng-container *ngIf="unsupportedDisks.length">
-      <div class="prompt">{{ 'These disks do not support SMART tests:' | translate }}</div>
+      <div class="prompt">
+        {{ 'These disks do not support SMART tests:' | translate }}
+      </div>
       <ul class="disks">
-        <li *ngFor="let disk of unsupportedDisks">{{ disk.name }} ({{ disk.serial }})</li>
+        <li *ngFor="let disk of unsupportedDisks">
+          {{ disk.name }} ({{ disk.serial }})
+        </li>
       </ul>
     </ng-container>
   </div>
@@ -33,12 +39,13 @@
       type="submit"
       [disabled]="form.invalid || !supportedDisks.length"
       color="primary"
-    >{{ 'Start' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Cancel' | translate }}</button>
+    >
+      {{ 'Start' | translate }}
+    </button>
+
+    <button mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
   </div>
 </form>
 <ng-template #showResults>
@@ -54,11 +61,10 @@
       </ng-template>
     </div>
   </div>
+
   <div class="form-actions">
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Close' | translate }}</button>
+    <button mat-button type="button" matDialogClose>
+      {{ 'Close' | translate }}
+    </button>
   </div>
 </ng-template>

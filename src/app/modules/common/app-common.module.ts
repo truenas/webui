@@ -50,6 +50,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ConsoleFooterComponent } from './console-footer/console-footer.component';
+import { CopyrightLineComponent } from './copyright-line/copyright-line.component';
 
 @NgModule({
   imports: [
@@ -97,6 +98,7 @@ import { ConsoleFooterComponent } from './console-footer/console-footer.componen
     RedirectDialogComponent,
     SearchInputComponent,
     UpdateDialogComponent,
+    CopyrightLineComponent,
     ResilverProgressDialogComponent,
     AuthLayoutComponent,
     AdminLayoutComponent,
@@ -109,6 +111,7 @@ import { ConsoleFooterComponent } from './console-footer/console-footer.componen
   ],
   exports: [
     SearchInputComponent,
+    CopyrightLineComponent,
     ModalComponent,
   ],
 })

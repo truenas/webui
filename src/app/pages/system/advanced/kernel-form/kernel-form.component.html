@@ -1,13 +1,18 @@
-<ix-modal-header [title]="'Kernel' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Kernel' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
           formControlName="autotune"
           [label]="'Enable Autotune' | translate"
           [tooltip]="tooltips.autotune"
         ></ix-checkbox>
+
         <ix-checkbox
           formControlName="debugkernel"
           [label]="'Enable Debug Kernel' | translate"
@@ -21,9 +26,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>
