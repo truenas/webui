@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -29,7 +30,7 @@ describe('BootPoolReplaceFormComponent', () => {
             name: 'sdb',
           },
         ] as UnusedDisk[]),
-        mockCall('boot.replace'),
+        mockJob('boot.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(FormErrorHandlerService),
     ],
@@ -53,6 +54,6 @@ describe('BootPoolReplaceFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('boot.replace', ['sda3', 'sdb']);
+    expect(ws.job).toHaveBeenCalledWith('boot.replace', ['sda3', 'sdb']);
   });
 });

@@ -65,7 +65,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
 
     const payload = this.pk.substring(5, this.pk.length);
     const { dev } = this.form.value;
-    this.ws.call('boot.replace', [payload, dev]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.job('boot.replace', [payload, dev]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
