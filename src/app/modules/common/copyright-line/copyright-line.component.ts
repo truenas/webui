@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { SystemGeneralService } from 'app/services';
 

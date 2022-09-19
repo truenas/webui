@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+import { productTypeLabels } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
 import { SystemGeneralService } from 'app/services';
 
@@ -11,7 +11,6 @@ import { SystemGeneralService } from 'app/services';
 export class AboutDialogComponent {
   systemType = this.systemGeneralService.getProductType();
   helptext = helptext;
-  readonly ProductType = ProductType;
   readonly productTypeLabels = productTypeLabels;
 
   constructor(
