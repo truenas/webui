@@ -91,9 +91,15 @@ def click_the_three_dots_icon_for_nextcloud(driver):
     """click the three dots icon for nextcloud."""
     assert wait_on_element(driver, 10, '//th[text()="Tags"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"Items per page:")]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"nextcloud")]')
-    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+    if wait_on_element(driver, 3, '//div[contains(text(),"nextcloud")]'):
+        assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+        driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+    else:
+        assert wait_on_element(driver, 20, '//button[@aria-label="Next page"]', 'clickable')
+        driver.find_element_by_xpath('//button[@aria-label="Next page"]').click()
+        assert wait_on_element(driver, 5, '//div[contains(text(),"nextcloud")]')
+        assert wait_on_element(driver, 5, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+        driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
 
 
 @then('click delete')
