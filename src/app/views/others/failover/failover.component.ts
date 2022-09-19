@@ -3,12 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
@@ -16,25 +14,14 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./failover.component.scss'],
 })
 export class FailoverComponent implements OnInit {
-  productType: ProductType;
-  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-
-  readonly productTypeLabels = productTypeLabels;
-
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
-    private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService,
     private location: Location,
-  ) {
-    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
-      this.productType = productType;
-    });
-  }
+  ) {}
 
   isWsConnected(): void {
     if (this.ws.connected) {

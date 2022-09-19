@@ -6,7 +6,6 @@ import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +17,6 @@ import { LocaleService } from 'app/services/locale.service';
   ],
 })
 export class WidgetHelpComponent extends WidgetComponent implements OnInit {
-  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   systemType: ProductType;
   helptext = helptext;
   readonly ProductType = ProductType;
@@ -26,7 +24,6 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   screenType = 'Desktop'; // Desktop || Mobile
 
   constructor(
-    private localeService: LocaleService,
     public mediaObserver: MediaObserver,
     private sysGenService: SystemGeneralService,
     public translate: TranslateService,

@@ -12,7 +12,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import {
+  DisconnectedMessageComponent,
+} from 'app/views/sessions/signin/disconnected-message/disconnected-message.component';
+import {
+  TrueCommandStatusComponent,
+} from 'app/views/sessions/signin/true-command-status/true-command-status.component';
 import { sessionsRoutes } from './sessions.routing';
 import { SigninComponent } from './signin/signin.component';
 
@@ -33,7 +40,12 @@ import { SigninComponent } from './signin/signin.component';
     TranslateModule,
     RouterModule.forChild(sessionsRoutes),
     CoreComponents,
+    AppCommonModule,
   ],
-  declarations: [SigninComponent],
+  declarations: [
+    SigninComponent,
+    DisconnectedMessageComponent,
+    TrueCommandStatusComponent,
+  ],
 })
 export class SessionsModule { }

@@ -218,7 +218,7 @@
               </div>
             </div>
 
-            <span *ngIf=" productSupportsHa && failoverStatus != FailoverStatus.Single">
+            <span *ngIf="productSupportsHa && failoverStatus != FailoverStatus.Single">
               <div class="ha-status">
                 <div class="ha-status-txt">
                   <p>{{ haStatusText }}</p>
@@ -240,44 +240,14 @@
               </div>
             </span>
 
-            <div
-              *ngIf="truecommandIp"
-              class="truecommand"
-              (click)="goToTrueCommand()"
-            >
-              <img
-                id="truecommand-logo"
-                src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg"
-              />
-              <span class="truecommand-txt">
-                {{ 'TrueCommand IP' | translate }}: {{ truecommandIp }}
-              </span>
-            </div>
-
-            <div class="copyright-line">
-              <span class="copyright-txt">
-                TrueNAS {{ productType | mapValue: productTypeLabels }} ® ©
-                {{ copyrightYear }}
-              </span>
-              <img
-                id="full-logo"
-                src="assets/images/ix_logo_full.png"
-                (click)="openIx()"
-              />
-            </div>
+            <ix-true-command-status></ix-true-command-status>
+            <ix-copyright-line class="copyright" [withIxLogo]="true"></ix-copyright-line>
           </div>
         </div>
-        <div class="disconnected" [hidden]="connected() && isLogoReady">
-          <div *ngIf="product" class="disconnected-content">
-            <div class="fake-icon">?</div>
-            <p *ngIf="!haStatus">
-              {{ 'Connecting to {product}' | translate: { product } }}
-              {{ '... Make sure the {product} system is powered on and connected to the network.' | translate: { product } }}
-            </p>
-            <p *ngIf="haStatus">
-              {{ 'Waiting for Active TrueNAS controller to come up...' | translate }}
-            </p>
-          </div>
+        <div *ngIf="!connected() || !isLogoReady" class="disconnected">
+          <ix-disconnected-message
+            [hasFailover]="haStatus"
+          ></ix-disconnected-message>
         </div>
       </mat-card-content>
     </mat-card>
