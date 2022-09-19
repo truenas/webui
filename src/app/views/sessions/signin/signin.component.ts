@@ -7,7 +7,6 @@ import { map } from 'rxjs/operators';
 import { WebSocketService } from 'app/services/ws.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
-// TODO: Test mobile
 @UntilDestroy()
 @Component({
   templateUrl: './signin.component.html',

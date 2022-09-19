@@ -1,4 +1,4 @@
-<!-- TODO: This is stupid -->
+<!-- FIXME: Needed because if mat-form-field is not used anywhere, default matInput styles are no loaded -->
 <mat-form-field style="display: none;"><input matInput></mat-form-field>
 
 <div class="page-wrap height-100 login-form">
@@ -31,6 +31,7 @@
 
             <ng-container *ngIf="failover$ | async as failover">
               <ix-failover-status
+                class="failover-status"
                 *ngIf="hasFailover$ | async"
                 [status]="failover.status"
                 [failoverIps]="failover.ips"

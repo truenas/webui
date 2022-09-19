@@ -2,7 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
@@ -12,6 +13,7 @@ import { WebSocketService } from 'app/services';
 import {
   SetRootPasswordFormComponent,
 } from 'app/views/sessions/signin/set-root-password-form/set-root-password-form.component';
+import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SetRootPasswordFormComponent', () => {
   let spectator: Spectator<SetRootPasswordFormComponent>;
@@ -29,11 +31,16 @@ describe('SetRootPasswordFormComponent', () => {
         mockCall('user.set_root_password'),
         mockCall('system.environment', SystemEnvironment.Default),
       ]),
+      mockProvider(SigninStore, {
+        setLoadingState: jest.fn(),
+        handleSuccessfulLogin: jest.fn(),
+      }),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
+    jest.spyOn(spectator.inject(MockWebsocketService), 'login').mockReturnValue(of(null));
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });
@@ -48,7 +55,7 @@ describe('SetRootPasswordFormComponent', () => {
     await submitButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.set_root_password', ['12345678']);
-    // TODO: And something else
+    expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
   });
 
   it('checks environment status and shows EC2 Instance ID when environment is EC2', async () => {
