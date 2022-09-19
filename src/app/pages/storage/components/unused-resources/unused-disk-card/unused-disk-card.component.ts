@@ -4,7 +4,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManageUnusedDiskDialogComponent,
-} from 'app/pages/storage/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
+} from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 
 @Component({
   selector: 'ix-unused-disk-card',

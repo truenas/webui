@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
-import { AddToPoolType, ManageUnusedDiskDialogResource } from './manage-unused-disk-dialog.interface';
+import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
 @UntilDestroy()
 @Component({
