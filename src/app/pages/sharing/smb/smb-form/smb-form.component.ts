@@ -382,7 +382,7 @@ export class SmbFormComponent implements OnInit {
     const smbShare = this.form.value;
 
     if (!smbShare.timemachine_quota || !smbShare.timemachine) {
-      delete smbShare.timemachine_quota;
+      smbShare.timemachine_quota = 0;
     }
 
     let request$: Observable<unknown>;
