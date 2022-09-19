@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import {
   combineLatest, forkJoin, Observable, of,
 } from 'rxjs';
@@ -50,6 +51,8 @@ export class SigninStore extends ComponentStore<SigninState> {
   });
 
   private readonly tokenLifetime = 300;
+  private readonly statusSubscriptionId = UUID.UUID();
+  private readonly disabledReasonsSubscriptionId = UUID.UUID();
 
   constructor(
     private ws: WebSocketService,
@@ -98,7 +101,11 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
     switchMap(() => this.generateToken()),
     tapResponse(
-      () => this.router.navigateByUrl(this.getRedirectUrl()),
+      () => {
+        this.ws.unsub('failover.status', this.statusSubscriptionId);
+        this.ws.unsub('failover.disabled_reasons', this.disabledReasonsSubscriptionId);
+        this.router.navigateByUrl(this.getRedirectUrl());
+      },
       (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
     ),
   ));
@@ -110,6 +117,30 @@ export class SigninStore extends ComponentStore<SigninState> {
       { duration: 4000, verticalPosition: 'bottom' },
     );
   }
+
+  private setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
+    ...state,
+    failover: {
+      ...state.failover,
+      disabledReasons,
+    },
+  }));
+
+  private setFailoverStatus = this.updater((state, failover: FailoverStatus) => ({
+    ...state,
+    failover: {
+      ...(state.failover || {}),
+      status: failover,
+    },
+  }));
+
+  private setFailoverIps = this.updater((state, ips: string[]) => ({
+    ...state,
+    failover: {
+      ...state.failover,
+      ips,
+    },
+  }));
 
   private loginWithToken(): Observable<unknown> {
     return this.ws.loginToken(this.ws.token).pipe(
@@ -165,17 +196,15 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private loadFailoverStatus(): Observable<unknown> {
-    // TODO: Subscribe to updates.
     return this.ws.call('failover.status').pipe(
       switchMap((status) => {
-        this.patchState({
-          failover: { status },
-        });
+        this.setFailoverStatus(status);
 
         if (status === FailoverStatus.Single) {
           return of(null);
         }
 
+        this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
       }),
     );
@@ -189,18 +218,21 @@ export class SigninStore extends ComponentStore<SigninState> {
       .pipe(
         tap(
           ([ips, reasons]) => {
-            this.patchState((state) => {
-              return {
-                ...state,
-                failover: {
-                  ...state.failover,
-                  ips,
-                  disabledReasons: reasons,
-                },
-              };
-            });
+            this.setFailoverDisabledReasons(reasons);
+            this.setFailoverIps(ips);
           },
         ),
       );
+  }
+
+  private subscribeToFailoverUpdates(): void {
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-118104
+    this.ws.sub<FailoverStatus>('failover.status', this.statusSubscriptionId)
+      .pipe(untilDestroyed(this))
+      .subscribe((status) => this.setFailoverStatus(status));
+
+    this.ws.sub<FailoverDisabledReason[]>('failover.disabled.reasons', this.disabledReasonsSubscriptionId)
+      .pipe(untilDestroyed(this))
+      .subscribe((disabledReasons) => this.setFailoverDisabledReasons(disabledReasons));
   }
 }

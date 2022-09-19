@@ -40,6 +40,7 @@ describe('SetRootPasswordFormComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    jest.spyOn(spectator.inject(MockWebsocketService), 'login').mockReturnValue(of(null));
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
 

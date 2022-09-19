@@ -59,15 +59,17 @@ export class SetRootPasswordFormComponent implements OnInit {
       : this.ws.call('user.set_root_password', [formValues.password]);
 
     request$.pipe(
-      switchMap(() => {
-        return this.ws.login('root', formValues.password);
-        // TODO: Handle login error.
-      }),
+      switchMap(() => this.ws.login('root', formValues.password)),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (wasLoggedIn) => {
         this.signinStore.setLoadingState(false);
-        this.signinStore.handleSuccessfulLogin();
+
+        if (wasLoggedIn) {
+          this.signinStore.handleSuccessfulLogin();
+        } else {
+          this.signinStore.showSnackbar(this.translate.instant('Login error. Please try again.'));
+        }
       },
       error: (error) => {
         this.errorHandler.handleWsFormError(error, this.form);
