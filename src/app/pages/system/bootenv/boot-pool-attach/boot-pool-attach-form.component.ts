@@ -34,7 +34,7 @@ export class BootPoolAttachFormComponent {
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
         return disks.map((disk) => ({
-          label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})`,
+          label: `${disk.name} (${filesize(disk.size, { standard: 'iec' })})`,
           value: disk.name,
         }));
       }),

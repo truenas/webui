@@ -28,6 +28,7 @@ describe('BootPoolReplaceFormComponent', () => {
         mockCall('disk.get_unused', [
           {
             name: 'sdb',
+            size: 10737418240,
           },
         ] as UnusedDisk[]),
         mockJob('boot.replace', fakeSuccessfulJob()),
@@ -48,7 +49,7 @@ describe('BootPoolReplaceFormComponent', () => {
   it('sends an update payload to websocket when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Member Disk': 'sdb',
+      'Member Disk': 'sdb (10 GiB)',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

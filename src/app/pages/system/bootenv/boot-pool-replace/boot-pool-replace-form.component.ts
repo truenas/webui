@@ -6,6 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -32,7 +33,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
         const options = disks.map((disk) => ({
-          label: disk.name,
+          label: `${disk.name} (${filesize(disk.size, { standard: 'iec' })})`,
           value: disk.name,
         }));
 
