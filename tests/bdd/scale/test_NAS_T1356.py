@@ -51,6 +51,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('when the Apps page loads, open available applications')
@@ -203,6 +204,7 @@ def confirm_installation_is_successful(driver):
     time.sleep(1)
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
     assert wait_on_element(driver, 1200, '//mat-card[contains(.,"plex-test")]')
     time.sleep(2)
     if is_element_present(driver, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]') is False:

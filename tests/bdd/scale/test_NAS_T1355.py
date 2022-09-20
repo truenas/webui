@@ -56,6 +56,7 @@ def make_sure_the_installed_tab_is_open(driver):
     if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('click three dots icon for Chia and select delete')
