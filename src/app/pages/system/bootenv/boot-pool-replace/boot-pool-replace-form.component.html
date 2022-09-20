@@ -1,12 +1,9 @@
 <mat-card class="card">
-  <mat-progress-bar
-    *ngIf="isFormLoading"
-    mode="indeterminate"
-  ></mat-progress-bar>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
+          [required]="true"
           [formControlName]="dev.fcName"
           [label]="dev.label"
           [options]="dev.options"
@@ -18,7 +15,7 @@
           mat-button
           type="submit"
           color="primary"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid"
         >
           {{ 'Save' | translate }}
         </button>

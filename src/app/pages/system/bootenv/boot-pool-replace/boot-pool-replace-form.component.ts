@@ -1,15 +1,15 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -19,7 +19,6 @@ import { WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootPoolReplaceFormComponent implements OnInit {
-  isFormLoading = false;
   routeSuccess: string[] = ['system', 'boot', 'status'];
   pk: string;
 
@@ -32,27 +31,21 @@ export class BootPoolReplaceFormComponent implements OnInit {
     label: this.translate.instant(helptextSystemBootenv.replace_name_placeholder),
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
-        const options = disks.map((disk) => ({
+        return disks.map((disk) => ({
           label: `${disk.name} (${filesize(disk.size, { standard: 'iec' })})`,
           value: disk.name,
         }));
-
-        return [
-          { label: '-', value: null },
-          ...options,
-        ];
       }),
     ),
   };
 
   constructor(
     private fb: FormBuilder,
-    protected router: Router,
-    protected route: ActivatedRoute,
+    private dialog: MatDialog,
+    private router: Router,
+    private route: ActivatedRoute,
     private translate: TranslateService,
-    protected ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
@@ -62,21 +55,20 @@ export class BootPoolReplaceFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    const oldDisk = this.pk;
+    const { dev: newDisk } = this.form.value;
 
-    const payload = this.pk.substring(5, this.pk.length);
-    const { dev } = this.form.value;
-    this.ws.job('boot.replace', [payload, dev]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.router.navigate(this.routeSuccess);
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: {
+        disableClose: true,
+        title: this.translate.instant('Replacing Boot Pool Disk'),
       },
-      error: (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
-      },
+    });
+    dialogRef.componentInstance.setCall('boot.replace', [oldDisk, newDisk]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
+      this.router.navigate(this.routeSuccess);
     });
   }
 
