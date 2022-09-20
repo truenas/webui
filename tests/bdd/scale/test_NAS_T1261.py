@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -14,6 +15,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Internal_Certificate')
 @scenario('features/NAS-T1261.feature', 'Verify an internal certificate can be created')
 def test_verify_an_internal_certificate_can_be_created():
     """Verify an internal certificate can be created."""
@@ -59,7 +61,7 @@ def click_on_certificate_add(driver):
 @then('set name and type and click next')
 def set_name_and_type_and_click_next(driver):
     """set name and type and click next."""
-    assert wait_on_element(driver, 10, '//h3[contains(text(),"Add Certificate")]')       
+    assert wait_on_element(driver, 10, '//h3[contains(text(),"Add Certificate")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('cert1')

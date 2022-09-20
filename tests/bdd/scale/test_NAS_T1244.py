@@ -1,13 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from function import(
+from function import (
     wait_on_element,
-    is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    is_element_present
 )
 from pytest_bdd import (
     given,
@@ -15,6 +11,8 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
+
 
 @scenario('features/NAS-T1244.feature', 'Verify locking and unlocking volume using passphrase')
 def test_verify_locking_and_unlocking_volume_using_passphrase():
@@ -22,8 +20,9 @@ def test_verify_locking_and_unlocking_volume_using_passphrase():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['encrypted_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -56,17 +55,17 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Lock"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Lock Dataset encrypted_tank")]')
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()       
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()   
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__LOCK"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__LOCK"]').click()
 
-    assert wait_on_element(driver, 10, '//mat-icon[@fonticon="mdi-lock"]')    
+    assert wait_on_element(driver, 10, '//mat-icon[@fonticon="mdi-lock"]')
 
 
 @then('enter 1234abcd and verify that an error shows')
@@ -76,9 +75,8 @@ def enter_1234abcd_and_verify_that_an_error_shows(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Unlock"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
-    
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("1234abcd")
@@ -97,7 +95,6 @@ def enter_abcd1234_and_confirm(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-
 
 
 @then('unlock the pool')

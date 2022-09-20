@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -12,16 +13,19 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='First_User_Home')
 @scenario('features/NAS-T1091.feature', 'Add a home directory to a user')
 def test_add_a_home_directory_to_a_user():
     """Add a home directory to a user."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['First_User', 'tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
