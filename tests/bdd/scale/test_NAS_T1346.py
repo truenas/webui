@@ -184,6 +184,6 @@ def confirm_installation_is_successful(driver):
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
             assert wait_on_element_disappear(driver, 30, '//mat-spinner')
-            assert wait_on_element(driver, 600, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
+            assert wait_on_element(driver, 900, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 600, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 900, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
