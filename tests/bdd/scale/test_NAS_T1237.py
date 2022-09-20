@@ -15,6 +15,7 @@ from pytest_bdd import (
     when,
     parsers,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1237.feature', 'Verify Recursive and Transverse ACL Options')
@@ -23,8 +24,9 @@ def test_verify_recursive_and_transverse_acl_options():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -56,7 +58,7 @@ def create_1st_dataset_rtacltest1(driver, dataset_name):
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()  
+    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
@@ -76,7 +78,7 @@ def create_2nd_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()  
+    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
@@ -154,7 +156,7 @@ def create_3rd_dataset_rtacltest3(driver, dataset_name):
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()  
+    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
@@ -262,6 +264,6 @@ def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(d
     driver.find_element_by_xpath('//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit POSIX.1e ACL")]')
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit ACL")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"/mnt/tank/rt-acl-test-1/share")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]')

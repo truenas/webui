@@ -13,17 +13,20 @@ from pytest_bdd import (
     when,
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='App_initial_setup')
 @scenario('features/NAS-T1285.feature', 'Apps Page Validation')
 def test_apps_page_validation():
     """Apps Page Validation."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -75,9 +78,8 @@ def when_choose_a_pool_for_apps_appear_select_pool(driver):
 @then('the Available Applications Tab loads')
 def the_available_applications_tab_loads(driver):
     """the Available Applications Tab loads."""
-    # used for local testing, so you dont have to unset and reset the pool every time
-    # assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    # driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
     assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
 

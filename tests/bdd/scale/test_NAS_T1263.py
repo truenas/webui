@@ -90,19 +90,17 @@ def set_cert_options_and_click_next(driver):
 @then('set extra constraints and click next')
 def set_extra_constraints_and_click_next(driver):
     """set extra constraints and click next."""
-    
     cert2c_path = os.getcwd() + '/cert2c'
     cert2c = Path(cert2c_path).read_text()
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__Certificate"]//textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__Certificate"]//textarea').clear()
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__Certificate"]//textarea').send_keys(cert2c)   
+    driver.find_element_by_xpath('//div[@ix-auto="textarea__Certificate"]//textarea').send_keys(cert2c)
 
     cert2k_path = os.getcwd() + '/cert2k'
     cert2k = Path(cert2k_path).read_text()
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__Private Key"]//textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__Private Key"]//textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__Private Key"]//textarea').send_keys(cert2k)
-    
     assert wait_on_element(driver, 10, '//div[contains(.,"Extra Constraints") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
     driver.find_element_by_xpath('//div[contains(.,"Extra Constraints") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
 

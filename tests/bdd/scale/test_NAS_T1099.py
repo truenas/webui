@@ -20,6 +20,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 localHome = os.path.expanduser('~')
 dotsshPath = localHome + '/.ssh'
@@ -45,8 +46,9 @@ def test_add_a_ssh_key_to_a_user_and_verify_it_works():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['First_User', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

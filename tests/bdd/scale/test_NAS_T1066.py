@@ -19,6 +19,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='Set_Interface')
 @scenario('features/NAS-T1066.feature', 'Set interface')
 def test_set_interface():
     """Set interface."""
