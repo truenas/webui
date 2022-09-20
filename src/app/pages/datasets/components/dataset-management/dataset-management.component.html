@@ -24,25 +24,23 @@
         ></ix-search-input>
       </div>
 
-      <div class="sticky-header">
-        <div class="dataset-tree-header">
-          <div>
-            <span class="dataset-name-header">
-              {{ 'Dataset Name' | translate }}
-            </span>
-          </div>
-          <div>
-            {{ 'Used' | translate }}
-            /
-            {{ 'Available' | translate }}
-          </div>
-          <div>{{ 'Encryption' | translate }}</div>
-          <div>{{ 'Roles' | translate }}</div>
-        </div>
-      </div>
-
       <div class="dataset-tree-wrapper">
         <div class="dataset-tree-inner">
+          <div class="dataset-tree-header">
+            <div>
+              <span class="dataset-name-header">
+                {{ 'Dataset Name' | translate }}
+              </span>
+            </div>
+            <div>
+              {{ 'Used' | translate }}
+              /
+              {{ 'Available' | translate }}
+            </div>
+            <div>{{ 'Encryption' | translate }}</div>
+            <div>{{ 'Roles' | translate }}</div>
+          </div>
+
           <ix-tree
             class="dataset-tree"
             [dataSource]="dataSource"

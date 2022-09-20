@@ -172,12 +172,6 @@ ix-dataset-details-panel {
   width: 100%;
 }
 
-.sticky-header {
-  position: sticky;
-  top: -15px;
-  z-index: 1;
-}
-
 .dataset-tree-search {
   background-color: var(--bg2);
   padding: 16px;
@@ -316,4 +310,9 @@ $padding-left: 8px;
       }
     }
   }
+}
+
+ix-tree {
+  max-height: calc(100vh - 330px);
+  overflow: auto;
 }
