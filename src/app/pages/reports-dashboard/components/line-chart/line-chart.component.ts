@@ -145,7 +145,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         return '';
       },
       series: () => {
-        const series: any = {};
+        const series: { [item: string]: { plotter: typeof smoothPlotter } } = {};
         this.data.legend.forEach((item) => {
           series[item] = { plotter: smoothPlotter };
         });

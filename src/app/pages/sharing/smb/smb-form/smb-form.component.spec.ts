@@ -392,6 +392,7 @@ describe('SmbFormComponent', () => {
       durablehandle: true,
       fsrvp: false,
       auxsmbconf: '',
+      timemachine_quota: 0,
     }]);
 
     expect(websocket.call).toHaveBeenCalledWith('service.query');

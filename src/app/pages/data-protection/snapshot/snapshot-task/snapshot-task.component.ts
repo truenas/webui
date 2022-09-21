@@ -7,7 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import {
+  PeriodicSnapshotTask,
+  PeriodicSnapshotTaskCreate,
+  PeriodicSnapshotTaskUpdate,
+} from 'app/interfaces/periodic-snapshot-task.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -126,11 +130,11 @@ export class SnapshotTaskComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.snapshottask.create', [params]);
+      request$ = this.ws.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     } else {
       request$ = this.ws.call('pool.snapshottask.update', [
         this.editingTask.id,
-        params,
+        params as PeriodicSnapshotTaskUpdate,
       ]);
     }
 

@@ -19,22 +19,9 @@ import { Job } from 'app/interfaces/job.interface';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  private authStatus$: Subject<boolean>;
-  onCloseSubject$: Subject<boolean>;
-  onOpenSubject$: Subject<boolean>;
-  pendingCalls: Map<string, {
-    method: ApiMethod;
-    args: unknown;
-    observer: Subscriber<unknown>;
-  }>;
-  pendingSubs: {
-    [name: string]: {
-      observers: {
-        [id: string]: Subscriber<unknown>;
-      };
-    };
-  } = {};
-  pendingMessages: unknown[] = [];
+  onCloseSubject$ = new Subject<boolean>();
+  onOpenSubject$ = new Subject<boolean>();
+
   socket: WebSocket;
   connected = false;
   loggedIn = false;
@@ -42,16 +29,29 @@ export class WebSocketService {
   redirectUrl = '';
   shuttingdown = false;
 
-  protocol: string;
-  remote: string;
+  private authStatus$ = new Subject<boolean>();
+  private pendingCalls = new Map<string, {
+    method: ApiMethod;
+    args: unknown;
+    observer: Subscriber<unknown>;
+  }>();
+  private pendingSubs: {
+    [name: string]: {
+      observers: {
+        [id: string]: Subscriber<unknown>;
+      };
+    };
+  } = {};
+  private pendingMessages: unknown[] = [];
 
-  subscriptions = new Map<string, Observer<unknown>[]>();
+  private protocol: string;
+  private remote: string;
 
-  constructor(protected router: Router) {
-    this.authStatus$ = new Subject<boolean>();
-    this.onOpenSubject$ = new Subject();
-    this.onCloseSubject$ = new Subject();
-    this.pendingCalls = new Map();
+  private subscriptions = new Map<string, Observer<unknown>[]>();
+
+  constructor(
+    protected router: Router,
+  ) {
     this.protocol = window.location.protocol;
     this.remote = environment.remote;
     this.connect();

@@ -97,12 +97,10 @@
               ></ix-select>
             </ng-template>
 
-            <ix-explorer
+            <ix-input
               formControlName="remotepath"
               [label]="'Remote Path' | translate"
-              [nodeProvider]="treeNodeProvider"
-              [tooltip]="helptext.rsync_mode_tooltip"
-            ></ix-explorer>
+            ></ix-input>
 
             <ix-checkbox
               formControlName="validate_rpath"

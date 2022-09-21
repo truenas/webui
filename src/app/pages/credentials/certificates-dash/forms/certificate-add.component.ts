@@ -9,7 +9,10 @@ import { Subscription } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
+import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
+import {
+  Certificate, CertificateProfile, CertificateExtension, CertificationExtensionAttribute,
+} from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
@@ -707,7 +710,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.currentStep = stepper.selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
+  getSummaryValueLabel(fieldConfig: FieldConfig, value: unknown): unknown {
     if (fieldConfig.type === 'select') {
       const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {
@@ -873,26 +876,27 @@ export class CertificateAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type) => {
-            Object.keys(value['cert_extensions'][type]).forEach((prop) => {
+          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
+            Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
+              const extension = value['cert_extensions'][type] as CertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
-                if (reset && ctrl.value === value['cert_extensions'][type][prop]) {
+                if (reset && ctrl.value === extension[prop]) {
                   ctrl.setValue(undefined);
                 } else if (!reset) {
-                  ctrl.setValue(value['cert_extensions'][type][prop]);
+                  ctrl.setValue(extension[prop]);
                 }
               } else {
                 ctrl = this.getField(type);
                 const config = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
-                if (reset && value['cert_extensions'][type][prop] === true && optionIndex > -1) {
+                if (reset && extension[prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);
                   ctrl.setValue(config);
                 } else if (!reset) {
-                  if (value['cert_extensions'][type][prop] === true && optionIndex === -1) {
+                  if (extension[prop] === true && optionIndex === -1) {
                     config.push(prop);
-                  } else if (value['cert_extensions'][type][prop] === false && optionIndex > -1) {
+                  } else if (extension[prop] === false && optionIndex > -1) {
                     config.splice(optionIndex, 1);
                   }
                   ctrl.setValue(config);
@@ -987,7 +991,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         AuthorityKeyIdentifier: {},
         ExtendedKeyUsage: {},
         KeyUsage: {},
-      };
+      } as CertificateExtensions;
       Object.keys(data).forEach((key) => {
         if (!key.startsWith('BasicConstraints') && !key.startsWith('AuthorityKeyIdentifier') && !key.startsWith('ExtendedKeyUsage') && !key.startsWith('KeyUsage')) {
           return;

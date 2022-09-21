@@ -42,15 +42,8 @@
 </div>
 
 <div mat-dialog-actions id="actions">
-  <div fxFlex="50%" fxFlex.xs="100" class="copyright-txt">
-    TrueNAS {{ systemType | mapValue: productTypeLabels }}® ©
-    {{ copyrightYear }} -
-    <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc.">
-      iXsystems, Inc
-    </a>
-    .
-  </div>
-  <div id="button-wrapper" fxFlex="50%" fxFlex.xs="100">
+  <ix-copyright-line class="copyright-txt"></ix-copyright-line>
+  <div id="button-wrapper">
     <button
       mat-button
       class="mat-button mat-primary"

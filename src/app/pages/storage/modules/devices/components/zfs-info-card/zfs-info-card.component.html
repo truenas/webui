@@ -23,6 +23,10 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="isDisk">
+    <button *ngIf="canExtendDisk" mat-stroked-button (click)="onExtend()">
+      {{ 'Extend' | translate }}
+    </button>
+
     <button *ngIf="canRemoveDisk" mat-stroked-button (click)="onRemove()">
       {{ 'Remove' | translate }}
     </button>

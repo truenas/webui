@@ -17,7 +17,21 @@ export interface PeriodicSnapshotTask {
   vmware_sync: boolean;
 }
 
-export type PeriodSnapshotTaskUpdate = Partial<Omit<PeriodicSnapshotTask, 'id' | 'state' | 'vmware_sync'>>;
+export interface PeriodicSnapshotTaskCreate {
+  dataset: string;
+  recursive: boolean;
+  exclude?: string[];
+  lifetime_value: number;
+  lifetime_unit: LifetimeUnit;
+  naming_schema: string;
+  schedule: Schedule;
+  allow_empty?: boolean;
+  enabled?: boolean;
+}
+
+export interface PeriodicSnapshotTaskUpdate extends PeriodicSnapshotTaskCreate {
+  fixate_removal_date?: boolean;
+}
 
 export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   keepfor: string;

@@ -60,24 +60,12 @@
         >
           {{ hostname }}
         </div>
-        <div>
-          TrueNAS {{ productType$ | async | mapValue: productTypeLabels }}&reg;
-        </div>
-        <div>
-          &copy; {{ copyrightYear }} &ndash;
-          <a
-            href="http://www.ixsystems.com"
-            target="_blank"
-            title="iXsystems, Inc.">
-            iXsystems, Inc
-          </a>
-          .
-        </div>
+        <ix-copyright-line class="copyright-line"></ix-copyright-line>
       </div>
       <div
         *ngIf="isSidenavCollapsed"
         class="sidenav-copyright-icon"
-        matTooltip="TrueNAS {{productType$ | async | mapValue: productTypeLabels}}® © {{ copyrightYear }} by iXsystems Inc."
+        matTooltip="TrueNAS {{productType$ | async | mapValue: productTypeLabels}}® © {{ copyrightYear$ | async }} by iXsystems Inc."
         matTooltipPosition="right"
       >
         <mat-icon>copyright</mat-icon>
