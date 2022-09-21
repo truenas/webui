@@ -37,7 +37,6 @@ const mixedDev = 'Mixed Capacity VDEVs';
 export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() diskDictionary: { [key: string]: Disk } = {};
-  @Input() loading = true;
   readonly topologyHealthLevel = TopologyHealthLevel;
   private utils: WidgetUtils;
 
@@ -63,10 +62,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    if (!this.loading) {
-      this.checkVolumeHealth(this.poolState);
-      this.parseTopology(this.poolState.topology);
-    }
+    this.checkVolumeHealth(this.poolState);
+    this.parseTopology(this.poolState.topology);
   }
 
   ngOnChanges(): void {

@@ -7,8 +7,8 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManageUnusedDiskDialogComponent,
-} from 'app/pages/storage/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
-import { UnusedDiskCardComponent } from './unused-disk-card.component';
+} from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
+import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
 
 describe('UnusedDiskCardComponent', () => {
   let spectator: Spectator<UnusedDiskCardComponent>;

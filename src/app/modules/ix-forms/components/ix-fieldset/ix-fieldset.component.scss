@@ -1,6 +1,9 @@
 fieldset {
   border: none;
   margin: 0;
+
+  // Needed to prevent overflow of flexbox children with white-space: nowrap
+  min-width: 0;
 }
 
 .title-container {

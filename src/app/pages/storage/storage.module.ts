@@ -32,26 +32,26 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
+import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
+import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
 import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
 import { VdevComponent } from 'app/pages/storage/components/manager/vdev/vdev.component';
-import { GaugeChartComponent } from 'app/pages/storage/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
-import { PoolUsageCardComponent } from 'app/pages/storage/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
 import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
-import { TopologyCardComponent } from 'app/pages/storage/components/pools-dashboard/topology-card/topology-card.component';
 import {
   ManageUnusedDiskDialogComponent,
-} from 'app/pages/storage/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
-import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-disk-card/unused-disk-card.component';
+} from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
+import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { routing } from 'app/pages/storage/storage.routing';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
+import { DiskHealthCardComponent } from './components/dashboard-pool/disk-health-card/disk-health-card.component';
 import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
-import { DiskHealthCardComponent } from './components/disk-health-card/disk-health-card.component';
-import { AutotrimDialogComponent } from './components/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
-import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-card.component';
+import { AutotrimDialogComponent } from './components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 
 @NgModule({
   imports: [

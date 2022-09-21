@@ -36,7 +36,6 @@ export enum DiskHealthLevel {
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
-  @Input() loading = true;
   @Input() diskDictionary: { [key: string]: Disk } = {};
 
   readonly diskHealthLevel = DiskHealthLevel;
@@ -63,10 +62,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    if (this.loading) {
-      return;
-    }
-
     this.checkVolumeHealth(this.poolState);
     this.loadAlerts();
     this.loadSmartTasks();

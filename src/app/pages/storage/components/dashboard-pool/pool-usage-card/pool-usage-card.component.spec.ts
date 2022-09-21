@@ -5,8 +5,8 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { GaugeChartComponent } from 'app/pages/storage/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
-import { PoolUsageCardComponent } from 'app/pages/storage/components/pools-dashboard/pool-usage-card/pool-usage-card.component';
+import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
+import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
