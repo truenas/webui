@@ -23,7 +23,6 @@ import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors
 import { WebSocketService, SystemGeneralService, LanguageService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
-import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -47,7 +46,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
   isOpen = false;
   menuName: string;
   subs: SubMenuItem[];
-  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+  copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
 
   headerPortalOutlet: TemplatePortal = null;
 
@@ -69,7 +68,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     protected ws: WebSocketService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     private viewContainerRef: ViewContainerRef,

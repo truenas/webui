@@ -1,7 +1,16 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
 } from '@angular/core';
-import { ControlValueAccessor, UntypedFormControl, NgControl } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  UntypedFormControl,
+  NgControl,
+} from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -88,7 +97,9 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   invalidMessage(): string {
-    return this.translate.instant('Value must be a {type}', { type: this.type });
+    return this.translate.instant('Value must be a {type}', {
+      type: this.type,
+    });
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -100,7 +111,12 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   shouldShowResetInput(): boolean {
-    return !this.isDisabled && this.hasValue() && this.type !== 'password' && !this.readonly;
+    return (
+      !this.isDisabled
+      && this.hasValue()
+      && this.type !== 'password'
+      && !this.readonly
+    );
   }
 
   getType(): string {

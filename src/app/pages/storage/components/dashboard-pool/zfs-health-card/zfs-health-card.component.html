@@ -4,16 +4,32 @@
       {{ 'ZFS Health' | translate }}
 
       <ng-container [ngSwitch]="true">
-        <mat-icon *ngSwitchCase="pool.healthy" class="pool-icon icon-online">
+        <mat-icon
+          *ngSwitchCase="pool.healthy"
+          class="pool-icon icon-online"
+          [matTooltip]="'Everything is fine' | translate"
+        >
           check_circle
         </mat-icon>
-        <mat-icon *ngSwitchCase="pool.status === PoolStatus.Degraded" class="pool-icon icon-warning">
+        <mat-icon
+          *ngSwitchCase="pool.status === PoolStatus.Degraded"
+          class="pool-icon icon-warning"
+          [matTooltip]="'Degraded' | translate"
+        >
           warning
         </mat-icon>
-        <mat-icon *ngSwitchCase="pool.status === PoolStatus.Faulted" class="pool-icon icon-faulted">
+        <mat-icon
+          *ngSwitchCase="pool.status === PoolStatus.Faulted"
+          class="pool-icon icon-faulted"
+          [matTooltip]="'Faulted' | translate"
+        >
           help
         </mat-icon>
-        <mat-icon *ngSwitchDefault class="pool-icon icon-error">
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
           cancel
         </mat-icon>
       </ng-container>

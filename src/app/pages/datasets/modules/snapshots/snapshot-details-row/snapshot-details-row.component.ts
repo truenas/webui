@@ -43,7 +43,7 @@ export class SnapshotDetailsRowComponent implements OnInit {
   }
 
   getSnapshotInfo(): void {
-    this.ws.call('zfs.snapshot.query', [[['id', '=', this.snapshot.name]]]).pipe(
+    this.ws.call('zfs.snapshot.query', [[['id', '=', this.snapshot.name]], { extra: { retention: true } }]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),
     ).subscribe({
