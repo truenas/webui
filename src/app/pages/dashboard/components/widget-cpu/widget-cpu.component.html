@@ -66,9 +66,8 @@
         >
           <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
             <ix-view-chart-gauge
-              *ngIf="cpuAvg && cpuAvg.data; else loader"
+              *ngIf="isCpuAvgReady; else loader"
               [config]="cpuAvg"
-              #load
             ></ix-view-chart-gauge>
           </div>
 

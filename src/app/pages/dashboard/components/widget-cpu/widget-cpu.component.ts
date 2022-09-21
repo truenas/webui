@@ -19,7 +19,7 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeConfig, GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -73,6 +73,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   legendIndex: number;
 
   labels: string[] = [];
+  isCpuAvgReady = false;
   protected currentTheme: Theme;
   private utils: ThemeUtils;
   private dataSubscription: Subscription;
@@ -140,10 +141,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {
+  parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length);
-    const usageColumn: (string | number)[] = ['Usage'];
-    let temperatureColumn: (string | number)[] = ['Temperature'];
+    const usageColumn: GaugeData = ['Usage'];
+    let temperatureColumn: GaugeData = ['Temperature'];
     const temperatureValues = [];
 
     // Filter out stats per thread
@@ -214,9 +215,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.coresChartInit();
   }
 
-  setCpuLoadData(data: (string | number)[]): void {
+  setCpuLoadData(data: GaugeData): void {
+    this.onCpuAvgChanged(this.cpuAvg?.data, data);
+  }
+
+  private onCpuAvgChanged(oldData: GaugeData, newData: GaugeData): void {
     const config = {
-      data,
+      data: newData,
       units: '%',
       diameter: 136,
       fontSize: 28,
@@ -224,6 +229,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       subtitle: this.translate.instant('Avg Usage'),
     } as GaugeConfig;
     this.cpuAvg = config;
+    this.isCpuAvgReady = Boolean(oldData);
   }
 
   setPreferences(form: NgForm): void {
@@ -324,7 +330,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.renderChart();
   }
 
-  protected makeDatasets(data: (string | number)[][]): ChartDataSets[] {
+  protected makeDatasets(data: GaugeData[]): ChartDataSets[] {
     const datasets: ChartDataSets[] = [];
     const labels: string[] = [];
     for (let i = 0; i < this.threadCount; i++) {
