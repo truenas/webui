@@ -415,7 +415,7 @@ export class ZvolFormComponent implements FormConfiguration {
       this.encryptedParent = pkDatasets[0].encrypted;
       this.encryptionAlgorithm = pkDatasets[0].encryption_algorithm.value;
       const children = (pkDatasets[0].children);
-      if (children.length > 0) {
+      if (children.length) {
         children.forEach((child) => {
           this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
         });

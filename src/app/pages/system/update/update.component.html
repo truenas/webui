@@ -131,7 +131,7 @@
           <td>{{ p.operation }}</td>
           <td>{{ p.name }}</td>
         </tr>
-        <tr *ngIf="packages.length == 0">
+        <tr *ngIf="packages.length === 0">
           <td>{{ 'No update found.' | translate }}</td>
         </tr>
       </tbody>

@@ -47,7 +47,7 @@
       [class.loading]="!tableConf.tableComponent"
     >
       <table
-        *ngIf="dataSource && dataSource.length > 0"
+        *ngIf="dataSource?.length"
         mat-table
         class="table-component"
         [dataSource]="displayedDataSource"
@@ -133,7 +133,7 @@
                     (click)="$event.stopPropagation(); onButtonClick(element)"
                   >
                     {{ element[column.prop].state }}
-                    <div *ngIf="element[column.prop].warnings?.length > 0" class="label-warning-icon">
+                    <div *ngIf="element[column.prop].warnings?.length" class="label-warning-icon">
                       <mat-icon
                         fontSet="mdi-set"
                         fontIcon="mdi-alert"

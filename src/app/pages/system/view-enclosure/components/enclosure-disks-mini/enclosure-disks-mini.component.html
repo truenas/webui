@@ -39,7 +39,7 @@
       <!-- LEGEND -->
       <div class="header-container" id="legend">
         <h3 class="header">{{ 'Pools' | translate }}</h3>
-        <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+        <div *ngIf="enclosurePools.length; else noPools" class="legend">
           <div class="legend-item" *ngFor="let pool of enclosurePools; let i = index">
             <div
               class="swatch"

@@ -11,7 +11,7 @@ export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncV
 
       return undefined;
     });
-    return selectedInvalidOptions.length > 0
+    return selectedInvalidOptions.length
       ? { invalidOptionSelected: true, invalidOptins: selectedInvalidOptions }
       : null;
   });

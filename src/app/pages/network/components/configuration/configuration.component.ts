@@ -325,7 +325,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
     const params = {
       ...values,
-      hosts: values.hosts.length > 0 ? values.hosts.join('\n') : '',
+      hosts: values.hosts.length ? values.hosts.join('\n') : '',
       activity,
       service_announcement: serviceAnnouncement,
     };

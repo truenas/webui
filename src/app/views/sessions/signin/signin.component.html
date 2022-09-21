@@ -229,7 +229,7 @@
                   </span>
                   <span *ngIf="isHaInfoReady">
                     <p>{{ failoverStatuses[failoverStatus] }}</p>
-                    <span *ngIf="failoverIps.length > 0">
+                    <span *ngIf="failoverIps.length">
                       <p>
                         {{ 'Active IP Addresses' | translate }}:
                         {{ failoverIps.join(', ') }}

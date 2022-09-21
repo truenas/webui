@@ -16,7 +16,7 @@
   </ix-page-title-header>
 </ng-template>
 
-<ng-container *ngIf="errors.length == 0">
+<ng-container *ngIf="errors.length === 0">
   <div
     *ngIf="system && system.enclosures && systemManufacturer && systemManufacturer == 'ixsystems'"
     class="page-viewport"
@@ -91,7 +91,7 @@
   </div>
 </ng-container>
 
-<ng-container *ngIf="errors.length > 0">
+<ng-container *ngIf="errors.length">
   <div class="error mat-card">
     <h3 class="error-header">
       <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>

@@ -113,7 +113,7 @@ export class ChassisView {
       .add(this.model + '_drivetray_handle', this.driveTrayHandlePath);
 
     // LOAD ALT UNIFORM ASSETS
-    if (this.altDriveTraySlots.length > 0) {
+    if (this.altDriveTraySlots.length) {
       if (!this.altDriveTrayBackgroundPath || !this.altDriveTrayHandlePath) {
         console.error('Alt drive tray slots listed but no assets declared!');
       }
@@ -161,7 +161,7 @@ export class ChassisView {
     for (let i = 0; i < this.totalDriveTrays; i++) {
       const slot: number = this.slotRange.start + i;
 
-      const dt = this.altDriveTraySlots.length > 0 && this.altDriveTraySlots.includes(slot)
+      const dt = this.altDriveTraySlots.length && this.altDriveTraySlots.includes(slot)
         ? this.makeDriveTray(true) : this.makeDriveTray();
 
       dt.id = slot.toString(); // Slot

@@ -8,7 +8,7 @@
     >
       <mat-card-content #carouselparent>
         <mat-toolbar-row
-          class="view-{{ path.length > 0 ? currentSlideName : 'Pool' }}"
+          class="view-{{ path.length ? currentSlideName : 'Pool' }}"
           [class.drag-handle]="showReorderHandle"
         >
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -279,7 +279,7 @@
                         s
                       </span>
                       <mat-icon
-                        *ngIf="poolState.topology.data.length > 0"
+                        *ngIf="poolState.topology.data.length"
                         class="next-slide"
                         ix-auto
                         ix-auto-type="button"
@@ -298,7 +298,7 @@
                       <strong>{{ 'Caches' | translate }}: </strong>&nbsp;&nbsp;
                       {{ poolState.topology.cache.length }}
                       <mat-icon
-                        *ngIf="poolState.topology.cache.length > 0"
+                        *ngIf="poolState.topology.cache.length"
                         class="next-slide"
                         ix-auto
                         ix-auto-type="button"
@@ -317,7 +317,7 @@
                       <strong>{{ 'Spares' | translate }}: </strong>&nbsp;&nbsp;
                       {{ poolState.topology.spare.length }}
                       <mat-icon
-                        *ngIf="poolState.topology.spare.length > 0"
+                        *ngIf="poolState.topology.spare.length"
                         class="next-slide"
                         ix-auto
                         ix-auto-type="button"
@@ -336,7 +336,7 @@
                       <strong>{{ 'Logs' | translate }}: </strong>&nbsp;&nbsp;
                       {{ poolState.topology.log.length }}
                       <mat-icon
-                        *ngIf="poolState.topology.log.length > 0"
+                        *ngIf="poolState.topology.log.length"
                         class="next-slide"
                         ix-auto
                         ix-auto-type="button"
@@ -546,7 +546,7 @@
             </mat-list>
 
             <!-- Dynamic disk details-->
-            <ng-container *ngIf="currentDiskDetailsKeys.length > 0">
+            <ng-container *ngIf="currentDiskDetailsKeys.length">
               <div class="list-subheader">
                 {{ 'Advanced Details' | translate }}
               </div>

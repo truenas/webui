@@ -83,7 +83,7 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
     this.dragging = true;
     const b = div.querySelector('.draggable:active');
     const chosenItems = div.querySelectorAll('.chosen');
-    if (chosenItems.length > 0 && b) {
+    if (chosenItems.length && b) {
       b.insertAdjacentHTML('afterbegin',
         `<div id="counter" style="background: red; color: white; border-radius: 50%;
         width:20px; height: 20px; text-align: center; font-weight: 700;

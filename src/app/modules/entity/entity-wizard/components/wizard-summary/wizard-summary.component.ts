@@ -16,7 +16,7 @@ export class WizardSummaryComponent {
   @Input() summary: Record<string, unknown>;
 
   isAutoSummary(): boolean {
-    if (this.summary && Object.keys(this.summary).length > 0) {
+    if (this.summary && Object.keys(this.summary).length) {
       return false;
     }
     return true;
@@ -33,7 +33,7 @@ export class WizardSummaryComponent {
       result = false;
       for (const key in fieldValue) {
         const subValue = fieldValue[key];
-        if ((!Array.isArray(subValue) && subValue !== undefined) || (Array.isArray(subValue) && subValue.length > 0)) {
+        if ((!Array.isArray(subValue) && subValue !== undefined) || (Array.isArray(subValue) && subValue.length)) {
           result = true;
           break;
         }

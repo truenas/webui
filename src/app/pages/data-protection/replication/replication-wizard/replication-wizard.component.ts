@@ -1152,7 +1152,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     }
 
-    if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
+    if (task.schedule || task.periodic_snapshot_tasks.length) {
       const taskData = task.periodic_snapshot_tasks[0] || task;
       task['schedule_method'] = ScheduleMethod.Cron;
       task['schedule_picker'] = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
@@ -1351,7 +1351,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         (res) => {
           let hasBadSnapshots = false;
           for (const ds in res) {
-            if (res[ds].length > 0) {
+            if (res[ds].length) {
               hasBadSnapshots = true;
               break;
             }
@@ -1595,7 +1595,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       payload[0].name_regex = nameRegexFormControl.value;
     }
 
-    if (payload[0].datasets.length > 0) {
+    if (payload[0].datasets.length) {
       this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe({
         next: (res) => {
           this.eligibleSnapshots = res.eligible;

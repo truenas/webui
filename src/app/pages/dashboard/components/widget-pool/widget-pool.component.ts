@@ -80,7 +80,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get currentSlideIndex(): number {
-    return this.path.length > 0 ? parseInt(this.currentSlide) : Number(this.title);
+    return this.path.length ? parseInt(this.currentSlide) : Number(this.title);
   }
 
   get currentSlideName(): string {
@@ -163,7 +163,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngOnInit(): void {
-    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
+    this.title = this.path.length && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
     this.tpl = this.overview;
   }
 
@@ -244,7 +244,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
       if ((!currentName || currentName === 'unknown') && disks.length === 0) {
         this.currentDiskDetails = null;
-      } else if (currentName && disks.length > 0 && currentName === disks[0].name) {
+      } else if (currentName && disks.length && currentName === disks[0].name) {
         delete disks[0].enclosure;
         delete disks[0].name;
         delete disks[0].devname;

@@ -205,7 +205,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.hasLicense = true;
     });
 
-    while (this.zfsPoolRows.length > 0) {
+    while (this.zfsPoolRows.length) {
       this.zfsPoolRows.pop();
     }
 

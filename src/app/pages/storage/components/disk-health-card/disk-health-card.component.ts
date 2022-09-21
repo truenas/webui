@@ -146,9 +146,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
         const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
         const avgSum = avgValues.reduce((a, b) => a + b, 0);
 
-        this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : null;
-        this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : null;
-        this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : null;
+        this.diskState.highestTemperature = maxValues.length ? Math.max(...maxValues) : null;
+        this.diskState.lowestTemperature = minValues.length ? Math.min(...minValues) : null;
+        this.diskState.averageTemperature = avgValues.length ? avgSum / avgValues.length : null;
         this.diskState.unit = TemperatureUnit.Celsius;
         this.diskState.symbolText = '°';
         this.cdr.markForCheck();

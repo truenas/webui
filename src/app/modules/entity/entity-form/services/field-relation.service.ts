@@ -172,7 +172,7 @@ export class FieldRelationService {
   }
 
   setRelation(config: FieldConfig, formGroup: UntypedFormGroup): void {
-    if (config.relation && config.relation.length > 0) {
+    if (config.relation?.length) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
         const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
@@ -217,7 +217,7 @@ export class FieldRelationService {
     formGroup: UntypedFormGroup,
     options: { emitEvent: boolean } = { emitEvent: true },
   ): void {
-    if (config.relation && config.relation.length > 0) {
+    if (config.relation?.length) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
         const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);

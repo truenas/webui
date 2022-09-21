@@ -326,7 +326,7 @@ export class StorageService {
     } else {
       match = hstr.match(/^(\d+)/);
     }
-    if (match && match.length > 1) {
+    if (match?.length > 1) {
       num = match[1];
     } else {
       // leading number is required

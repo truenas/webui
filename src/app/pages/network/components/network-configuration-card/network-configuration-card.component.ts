@@ -52,7 +52,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   get additionalDomains(): string {
-    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '---';
+    return this.config.domains.length ? this.config.domains.join(', ') : '---';
   }
 
   get outboundNetwork(): string {

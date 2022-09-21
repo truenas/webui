@@ -141,7 +141,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {
-    this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length > 0);
+    this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length);
     const usageColumn: (string | number)[] = ['Usage'];
     let temperatureColumn: (string | number)[] = ['Temperature'];
     const temperatureValues = [];

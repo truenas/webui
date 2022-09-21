@@ -149,7 +149,7 @@ export class VdevComponent implements OnInit {
       }
     }
     if (this.group === 'data') {
-      if (this.disks.length > 0 && this.disks.length < this.mindisks[this.type]) {
+      if (this.disks.length && this.disks.length < this.mindisks[this.type]) {
         this.error = this.translate.instant(
           'This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.',
           { n: this.mindisks[this.type] },
@@ -215,7 +215,7 @@ export class VdevComponent implements OnInit {
   }
 
   remove(): void {
-    while (this.disks.length > 0) {
+    while (this.disks.length) {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);

@@ -19,7 +19,7 @@
   </mat-card>
 </ng-template>
 
-<div *ngIf="zfsPoolRows.length > 0" class="pools-container">
+<div *ngIf="zfsPoolRows.length" class="pools-container">
   <mat-accordion [multi]="true" class="pools">
     <mat-expansion-panel
       *ngFor="let row of zfsPoolRows; let pool = index"
@@ -83,7 +83,7 @@
 
       <div class="entity-tree-table-container">
         <ix-entity-tree-table
-          *ngIf="row.volumesListTableConfig.tableData?.length > 0"
+          *ngIf="row.volumesListTableConfig.tableData?.length"
           [conf]="row.volumesListTableConfig"
           [expandRootNodes]="true"
         ></ix-entity-tree-table>

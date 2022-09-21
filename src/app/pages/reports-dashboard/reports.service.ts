@@ -115,7 +115,7 @@ export class ReportsService implements OnDestroy {
         finished = true;
       }
       index--;
-    } while (!finished && data.length > 0);
+    } while (!finished && data.length);
 
     return data;
   }

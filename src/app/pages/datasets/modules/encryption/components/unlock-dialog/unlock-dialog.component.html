@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 <div mat-dialog-content id="unlock-msg">
   <div class="message-content">
-    <div class="errors-content" *ngIf="errorDatasets.length > 0">
+    <div class="errors-content" *ngIf="errorDatasets.length">
       <mat-divider></mat-divider>
       <p>{{ errorsMessage | translate }}</p>
       <div *ngFor="let dataset of errorDatasets" class="row">
@@ -13,7 +13,7 @@
         <i class="material-icons red-icon">cancel</i>
       </div>
     </div>
-    <div class="skipped-content" *ngIf="skippedDatasets.length > 0">
+    <div class="skipped-content" *ngIf="skippedDatasets.length">
       <mat-divider></mat-divider>
       <p>{{ skippedMessage | translate }}</p>
       <div *ngFor="let dataset of skippedDatasets" class="row">
@@ -22,7 +22,7 @@
         <i class="material-icons red-icon">cancel</i>
       </div>
     </div>
-    <div class="unlock-content" *ngIf="unlockDatasets.length > 0">
+    <div class="unlock-content" *ngIf="unlockDatasets.length">
       <mat-divider></mat-divider>
       <p>{{ unlockMessage | translate }}</p>
       <div *ngFor="let dataset of unlockDatasets" class="row">

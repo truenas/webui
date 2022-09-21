@@ -39,7 +39,7 @@ export class PageTitleService {
 
   emitTitleFromRoute(): void {
     const breadcrumbs = this.routePartsService.routeParts;
-    if (breadcrumbs.length > 0) {
+    if (breadcrumbs.length) {
       this.title$.next(breadcrumbs[breadcrumbs.length - 1].title || '');
     }
   }

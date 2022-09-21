@@ -216,7 +216,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
             this.nfsExpandableState = ExpandableTableState.Collapsed;
-            if (data.length > 0) {
+            if (data.length) {
               this.nfsHasItems = 1;
               this.nfsExpandableState = ExpandableTableState.Expanded;
             }
@@ -260,7 +260,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
             this.iscsiExpandableState = ExpandableTableState.Collapsed;
-            if (data.length > 0) {
+            if (data.length) {
               this.iscsiHasItems = 1;
               this.iscsiExpandableState = ExpandableTableState.Expanded;
             }
@@ -321,7 +321,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
             this.webdavExpandableState = ExpandableTableState.Collapsed;
-            if (data.length > 0) {
+            if (data.length) {
               this.webdavHasItems = 1;
               this.webdavExpandableState = ExpandableTableState.Expanded;
             }
@@ -367,7 +367,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;
             this.smbExpandableState = ExpandableTableState.Collapsed;
-            if (data.length > 0) {
+            if (data.length) {
               this.smbHasItems = 1;
               this.smbExpandableState = ExpandableTableState.Expanded;
             }

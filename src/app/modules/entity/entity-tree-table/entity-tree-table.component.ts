@@ -167,7 +167,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       this.treeDataSource,
     );
 
-    if (this.filter.value.length > 0) {
+    if (this.filter.value.length) {
       this.tableDataSource = this.treeTableService.filteredTable(
         this.filter.column, this.filter.value, this.treeDataSource, true,
       );
@@ -179,7 +179,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   filterNodes(key: string, value: string): void {
-    if (value.length > 0) {
+    if (value.length) {
       this.tableDataSource = this.treeTableService.filteredTable(key, value, this.treeDataSource);
     } else {
       this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource);

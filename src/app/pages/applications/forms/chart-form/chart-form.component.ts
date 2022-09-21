@@ -155,7 +155,7 @@ export class ChartFormComponent implements OnDestroy {
           this.addFormSchema(question, question.group);
         }
       });
-      this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length > 0);
+      this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length);
       if (!this.isNew) {
         this.config = this.appSchemaService.restoreKeysFromFormGroup(this.config, this.form);
         this.form.patchValue(this.config);

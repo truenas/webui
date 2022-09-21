@@ -136,14 +136,14 @@ export class ExportDisconnectModalComponent implements OnInit {
             const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
             const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
             // TODO: Extract to template
-            if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
+            if ((failureData.exc_info.extra.stop_services as string[]).length) {
               conditionalErrMessage += '<div class="warning-box">' + stopMsg;
               (failureData.exc_info.extra.stop_services as string[]).forEach((item) => {
                 conditionalErrMessage += `<br>- ${item}`;
               });
             }
-            if ((failureData.exc_info.extra.restart_services as string[]).length > 0) {
-              if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
+            if ((failureData.exc_info.extra.restart_services as string[]).length) {
+              if ((failureData.exc_info.extra.stop_services as string[]).length) {
                 conditionalErrMessage += '<br><br>';
               }
               conditionalErrMessage += '<div class="warning-box">' + restartMsg;

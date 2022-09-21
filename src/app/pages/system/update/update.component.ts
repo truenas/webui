@@ -103,7 +103,7 @@ export class UpdateComponent implements OnInit {
     this.store$.pipe(waitForSystemInfo)
       .pipe(untilDestroyed(this))
       .subscribe((sysInfo) => {
-        this.isHaLicensed = !!(sysInfo.license && sysInfo.license.system_serial_ha.length > 0);
+        this.isHaLicensed = !!(sysInfo.license && sysInfo.license.system_serial_ha.length);
       });
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
@@ -126,7 +126,7 @@ export class UpdateComponent implements OnInit {
           for (const i in trains.trains) {
             this.trains.push({ name: i, description: trains.trains[i].description });
           }
-          if (this.trains.length > 0) {
+          if (this.trains.length) {
             this.singleDescription = this.trains[0].description;
           }
 
@@ -173,7 +173,7 @@ export class UpdateComponent implements OnInit {
   checkForUpdateRunning(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
       next: (jobs) => {
-        if (jobs && jobs.length > 0) {
+        if (jobs?.length) {
           this.isUpdateRunning = true;
           this.showRunningUpdate(jobs[0].id);
         }
@@ -257,7 +257,7 @@ export class UpdateComponent implements OnInit {
 
   pendingupdates(): void {
     this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
-      if (pending.length !== 0) {
+      if (pending.length) {
         this.updateDownloaded = true;
       }
     });

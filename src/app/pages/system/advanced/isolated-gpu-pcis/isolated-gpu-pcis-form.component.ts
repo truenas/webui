@@ -68,7 +68,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
         let message = '';
         const atLeastOneGpu = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
         const noGpuAvailable = this.translate.instant('With your selection, no GPU is available for the host to consume.');
-        if (prevSelectedGpus.length > 0) {
+        if (prevSelectedGpus.length) {
           const gpus = '<li>' + prevSelectedGpus.map((gpu) => gpu.description).join('</li><li>') + '</li>';
 
           const selectedGpu = this.translate.instant('<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>', { gpus });

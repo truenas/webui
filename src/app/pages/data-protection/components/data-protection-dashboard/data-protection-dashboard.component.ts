@@ -893,7 +893,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
-      } else if (row.state.warnings && row.state.warnings.length > 0) {
+      } else if (row.state.warnings?.length) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';

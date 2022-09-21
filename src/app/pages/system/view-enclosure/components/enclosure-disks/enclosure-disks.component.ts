@@ -133,7 +133,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const disks = value && value.disks ? Object.keys(this.selectedVdev.disks) : null;
 
     // Sort the disks by slot number
-    if (disks && disks.length > 1) {
+    if (disks?.length > 1) {
       disks.sort((a, b) => value.slots[a] - value.slots[b]);
     }
     this.selectedVdevDisks = disks;

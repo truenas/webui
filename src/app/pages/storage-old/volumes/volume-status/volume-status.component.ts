@@ -532,7 +532,7 @@ export class VolumeStatusComponent implements OnInit, AfterViewInit {
           node.children.push(this.parseTopolgy(vdev, category));
         }
       });
-      if (category !== 'data' && pool.topology[category].length > 0) {
+      if (category !== 'data' && pool.topology[category].length) {
         node.children.push(topoNode);
       }
     }

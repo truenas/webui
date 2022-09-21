@@ -360,7 +360,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     let reasons = '<ul>\n';
     let isWarning = false;
     let haStatus: string;
-    if (this.haDisabledReasons.length > 0) {
+    if (this.haDisabledReasons.length) {
       haStatus = helptext.ha_status_text_disabled;
       isWarning = true;
       this.haDisabledReasons.forEach((reason) => {

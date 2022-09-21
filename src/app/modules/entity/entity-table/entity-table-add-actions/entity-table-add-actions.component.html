@@ -25,7 +25,7 @@
       <span
         class="reset-icon-wrapper"
         matSuffix
-        [class.invisible]="!filterValue || filterValue.length == 0"
+        [class.invisible]="!filterValue?.length"
       >
         <mat-icon
           fontSet="mdi-set"
@@ -37,7 +37,7 @@
   </form>
 
   <!-- START COLUMN FILTER -->
-  <div *ngIf="entity.columnFilter && entity.allColumns && entity.allColumns.length > 0">
+  <div *ngIf="entity.columnFilter && entity.allColumns?.length">
     <button
       mat-button
       color="default"

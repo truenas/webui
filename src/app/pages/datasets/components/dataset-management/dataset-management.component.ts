@@ -178,7 +178,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   private sortDatasetsByName(datasets: DatasetDetails[]): void {
     datasets.forEach((dataset) => {
-      if (dataset.children.length > 0) {
+      if (dataset.children.length) {
         dataset.children.sort((a, b) => {
           const na = a.name.toLowerCase();
           const nb = b.name.toLowerCase();

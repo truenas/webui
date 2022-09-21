@@ -111,7 +111,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="expansion-content">
-        <div *ngIf="chartEvents.length > 0; else no_event">
+        <div *ngIf="chartEvents.length; else no_event">
           <div
             *ngFor="let event of chartEvents; let i = index"
             fxLayout="row"

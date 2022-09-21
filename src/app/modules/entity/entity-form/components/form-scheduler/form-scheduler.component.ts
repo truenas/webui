@@ -21,7 +21,7 @@ export class FormSchedulerComponent implements Field, OnInit {
   ngOnInit(): void {
     this.formControl = this.group.controls[this.config.name] as UntypedFormControl;
 
-    if (this.config.options && this.config.options.length === 2) {
+    if (this.config.options?.length === 2) {
       this.setTimeBoundaries();
     }
 

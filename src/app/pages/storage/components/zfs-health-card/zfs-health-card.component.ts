@@ -167,7 +167,7 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
 
   private loadScrubTaskStatus(): void {
     this.hasScrubTask$ = this.ws.call('pool.scrub.query', [[['pool_name', '=', this.pool.name]]]).pipe(
-      map((scrubTasks) => scrubTasks.length > 0),
+      map((scrubTasks) => !!scrubTasks.length),
       toLoadingState(),
     );
   }

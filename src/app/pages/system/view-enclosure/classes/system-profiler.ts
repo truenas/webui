@@ -200,7 +200,7 @@ export class SystemProfiler {
       if (vdev.children.length === 0 && isTopologyDisk(vdev)) {
         const name = vdev.disk;
         metadata.disks[name] = -1; // no children so we use this as placeholder
-      } else if (vdev.children.length > 0) {
+      } else if (vdev.children.length) {
         vdev.children.forEach((disk, dIndex) => {
           if (disk.device && disk.status !== 'REMOVED') {
             const name = disk.disk;
@@ -309,14 +309,14 @@ export class SystemProfiler {
     if (this.rearIndex && index === this.rearIndex) { index = this.headIndex; }
     const raw = this.enclosures[index].elements.filter((item) => item.name === 'SAS Expander');
 
-    if (raw.length > 0) {
+    if (raw.length) {
       return raw[0].elements;
     }
     return raw;
   }
 
   rawCapacity(): number {
-    if (!this.diskData || this.diskData.length === 0) { return; }
+    if (!this.diskData?.length) { return; }
     let capacity = 0;
     this.diskData.forEach((disk: any) => {
       if (disk.vdev && disk.vdev.topology === 'data') {

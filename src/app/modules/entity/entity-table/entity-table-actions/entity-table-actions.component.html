@@ -79,7 +79,7 @@
       <ng-template #groupMenu>
         <span *ngFor="let group of actions">
           <div
-            *ngIf="group.actions && group.actions.length > 0"
+            *ngIf="group.actions?.length"
             class="group-menu-header"
           >
             <mat-divider></mat-divider>

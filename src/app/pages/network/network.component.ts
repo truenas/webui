@@ -332,7 +332,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
       .subscribe((services) => {
-        if (services.length > 0) {
+        if (services.length) {
           const ips: string[] = [];
           services.forEach((item) => {
             if ((item as any)['system-service']) {
@@ -388,7 +388,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   checkInNow(): void {
-    if (this.affectedServices.length > 0) {
+    if (this.affectedServices.length) {
       this.dialog
         .confirm({
           title: helptext.services_restarted.title,

@@ -230,7 +230,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   hasValue(): boolean {
-    return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
+    return !!this.inputElementRef?.nativeElement?.value?.length;
   }
 
   setDisabledState?(isDisabled: boolean): void {

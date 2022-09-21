@@ -162,7 +162,7 @@
                 class="tbl vdev-option"
                 id="pool-manager__add-cache-button"
                 mat-menu-item
-                [disabled]="vdevs.cache.length > 0"
+                [disabled]="vdevs.cache.length"
                 (click)="addVdev('cache')"
               >
                 <div class="tr">
@@ -187,7 +187,7 @@
                 class="tbl vdev-option"
                 id="pool-manager__add-log-button"
                 mat-menu-item
-                [disabled]="vdevs.log.length > 0"
+                [disabled]="vdevs.log.length"
                 (click)="addVdev('log')"
               >
                 <div class="tr">
@@ -212,7 +212,7 @@
                 class="tbl vdev-option"
                 id="pool-manager__add-spare-button"
                 mat-menu-item
-                [disabled]="vdevs.spares.length > 0"
+                [disabled]="vdevs.spares.length"
                 (click)="addVdev('spares')"
               >
                 <div class="tr">
@@ -234,7 +234,7 @@
                 class="tbl vdev-option"
                 id="pool-manager__add-special-button"
                 mat-menu-item
-                [disabled]="vdevs.special.length > 0"
+                [disabled]="vdevs.special.length"
                 (click)="addVdev('special')"
               >
                 <div class="tr">
@@ -256,7 +256,7 @@
                 mat-menu-item
                 class="tbl vdev-option"
                 id="pool-manager__add-dedup-button"
-                [disabled]="vdevs.dedup.length > 0"
+                [disabled]="vdevs.dedup.length"
                 (click)="addVdev('dedup')"
               >
                 <div class="tr">
@@ -353,7 +353,7 @@
                   class="tbl vdev-option"
                   id="pool-manager__add-cache-button"
                   mat-menu-item
-                  [disabled]="vdevs.cache.length > 0"
+                  [disabled]="vdevs.cache.length"
                   (click)="addVdev('cache')"
                 >
                   <div class="tr">
@@ -378,7 +378,7 @@
                   class="tbl vdev-option"
                   id="pool-manager__add-log-button"
                   mat-menu-item
-                  [disabled]="vdevs.log.length > 0"
+                  [disabled]="vdevs.log.length"
                   (click)="addVdev('log')"
                 >
                   <div class="tr">
@@ -403,7 +403,7 @@
                   class="tbl vdev-option"
                   id="pool-manager__add-spare-button"
                   mat-menu-item
-                  [disabled]="vdevs.spares.length > 0"
+                  [disabled]="vdevs.spares.length"
                   (click)="addVdev('spares')"
                 >
                   <div class="tr">
@@ -425,7 +425,7 @@
                   class="tbl vdev-option"
                   id="pool-manager__add-special-button"
                   mat-menu-item
-                  [disabled]="vdevs.special.length > 0"
+                  [disabled]="vdevs.special.length"
                   (click)="addVdev('special')"
                 >
                   <div class="tr">
@@ -445,7 +445,7 @@
                   class="tbl vdev-option"
                   id="pool-manager__add-dedup-button"
                   mat-menu-item
-                  [disabled]="vdevs.dedup.length > 0"
+                  [disabled]="vdevs.dedup.length"
                   (click)="addVdev('dedup')"
                 >
                   <div class="tr">
@@ -680,7 +680,7 @@
               [initialValues]="vdev"
             ></ix-vdev>
           </div>
-          <div *ngIf="vdevs.cache.length > 0">
+          <div *ngIf="vdevs.cache.length">
             <h4 class="vdev-h4">{{ 'Cache VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.cache; let i = index"
@@ -689,7 +689,7 @@
               [index]="i"
             ></ix-vdev>
           </div>
-          <div *ngIf="vdevs.log.length > 0">
+          <div *ngIf="vdevs.log.length">
             <h4 class="vdev-h4">{{ 'Log VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.log; let i = index"
@@ -698,7 +698,7 @@
               [index]="i"
             ></ix-vdev>
           </div>
-          <div *ngIf="vdevs.spares.length > 0">
+          <div *ngIf="vdevs.spares.length">
             <h4 class="vdev-h4">{{ 'Spare VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.spares; let i = index"
@@ -707,7 +707,7 @@
               [index]="i"
             ></ix-vdev>
           </div>
-          <div *ngIf="vdevs.special.length > 0">
+          <div *ngIf="vdevs.special.length">
             <h4 class="vdev-h4">{{ 'Metadata VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.special; let i = index"
@@ -716,7 +716,7 @@
               [index]="i"
             ></ix-vdev>
           </div>
-          <div *ngIf="vdevs.dedup.length > 0">
+          <div *ngIf="vdevs.dedup.length">
             <h4 class="vdev-h4">{{ 'Dedup VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.dedup; let i = index"

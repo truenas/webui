@@ -53,7 +53,7 @@
         </div>
         <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-right dom-overlay list">
           <div class="content">
-            <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+            <div *ngIf="enclosurePools.length; else noPools" class="legend">
               <div *ngFor="let pool of enclosurePools; let i = index">
                 <div
                   class="swatch"
@@ -340,7 +340,7 @@
           </div>
 
           <div
-            *ngIf="system && expanders && expanders.length > 0"
+            *ngIf="system && expanders?.length"
             fxFlex
             class="tiles"
             fxLayout="column"

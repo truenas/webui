@@ -191,8 +191,8 @@
                     [ngClass]="{ clickable: ipAddresses.length > 1 }"
                   >
                     <strong>{{ 'IP Addresses' | translate }}:</strong>
-                    {{ ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length }}
-                    <span *ngIf="ipAddresses.length > 0">
+                    {{ ipAddresses.length ? ipAddresses[0].address : ipAddresses.length }}
+                    <span *ngIf="ipAddresses.length">
                       /{{ ipAddresses[0].netmask }}
                     </span>
                     <span class="more-addresses" *ngIf="ipAddresses.length > 1">
@@ -216,7 +216,7 @@
                     <strong>{{ 'VLANs' | translate }}:</strong>
                     {{ nicState.vlans.length }}
                     <mat-icon
-                      *ngIf="nicState.vlans.length > 0"
+                      *ngIf="nicState.vlans.length"
                       class="next-slide"
                       ix-auto
                       ix-auto-type="button"
@@ -233,7 +233,7 @@
                     <strong>{{ 'Interfaces' | translate }}:</strong>
                     {{ nicState.lagg_ports.length }}
                     <mat-icon
-                      *ngIf="nicState.lagg_ports.length > 0"
+                      *ngIf="nicState.lagg_ports.length"
                       class="next-slide"
                       ix-auto
                       ix-auto-type="button"
@@ -253,7 +253,7 @@
             fxFlex="100"
           >
             <div class="list-subheader">{{ 'Addresses' | translate }}</div>
-            <mat-list *ngIf="nicState && nicState.aliases?.length > 0">
+            <mat-list *ngIf="nicState?.aliases?.length">
               <mat-list-item
                 *ngFor="let ip of nicState.aliases"
                 role="listitem"
@@ -271,7 +271,7 @@
             fxFlex="100"
           >
             <div class="list-subheader">{{ currentSlideName }}</div>
-            <mat-list *ngIf="nicState && nicState.vlans && nicState.vlans?.length > 0">
+            <mat-list *ngIf="nicState?.vlans?.length">
               <mat-list-item
                 *ngFor="let vlan of nicState.vlans; let i = index"
                 role="listitem"
@@ -322,7 +322,7 @@
             fxFlex="100"
           >
             <div class="list-subheader">{{ 'VLAN Addresses' | translate }}</div>
-            <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0">
+            <mat-list *ngIf="nicState && vlanAliases(path[2].index).length">
               <mat-list-item
                 *ngFor="let ip of vlanAliases(path[2].index)"
                 role="listitem"

@@ -24,7 +24,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
 
   private addMessage = this.updater((state, message: string) => {
     const newLines = message.split('\n')
-      .filter((line) => line.trim().length > 0);
+      .filter((line) => line.trim().length);
 
     let lines = [...state.lines, ...newLines];
     lines = lines.slice(-this.maxMessages);

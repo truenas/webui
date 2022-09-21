@@ -252,7 +252,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const carousel = styler(carouselElement);
 
     const startX = viewport.get('x');
-    const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
+    const endX = this.activeMobileWidget.length ? (evt.target as Window).innerWidth * -1 : 0;
 
     if (startX !== endX) {
       carousel.set('x', endX);
@@ -319,7 +319,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       if (typeof this.systemInformation === 'undefined') {
         this.systemInformation = { ...sysInfo } as SystemInfoWithFeatures;
-        if (!this.pools || this.pools.length === 0) {
+        if (!this.pools?.length) {
           this.loadPoolData();
         }
       }
@@ -567,7 +567,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       this.pools = pools;
 
-      if (this.pools.length > 0) {
+      if (this.pools.length) {
         this.loadVolumeData();
       } else {
         this.setVolumeData([]);

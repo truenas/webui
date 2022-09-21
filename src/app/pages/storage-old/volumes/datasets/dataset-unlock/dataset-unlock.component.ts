@@ -221,7 +221,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       }
 
       dialogRef.close();
-      if (job.result && job.result.length > 0) {
+      if (job.result?.length) {
         for (let i = 0; i < job.result.length; i++) {
           if (this.datasets.controls[i] === undefined) {
             const templateListField = _.cloneDeep(this.datasetsField.templateListField);

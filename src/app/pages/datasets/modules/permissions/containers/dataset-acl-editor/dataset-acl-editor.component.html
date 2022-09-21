@@ -115,7 +115,7 @@
                   mat-button
                   color="primary"
                   class="action"
-                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
+                  [disabled]="acesWithError.length || !acl.acl.length || ownerFormGroup.invalid"
                   (click)="onSavePressed()"
                 >
                   {{ 'Save Access Control List' | translate }}

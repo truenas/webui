@@ -185,7 +185,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
   hasDetails = (): boolean => {
     return Boolean(this.conf.rowDetailComponent)
-      || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+      || (this.allColumns.length && this.conf.columns.length !== this.allColumns.length);
   };
 
   isAllSelected = false;
@@ -376,13 +376,13 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   // Filter the table by the filter string.
   filter(filterValue: string): void {
     this.filterValue = filterValue;
-    if (filterValue.length > 0) {
+    if (filterValue.length) {
       this.dataSource.filter = filterValue;
     } else {
       this.dataSource.filter = '';
     }
 
-    if (this.dataSource.filteredData && this.dataSource.filteredData.length) {
+    if (this.dataSource.filteredData?.length) {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
@@ -612,7 +612,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
+          if (res.data.length && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
             res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
           }
         }
@@ -620,7 +620,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     } else if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-        if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
+        if (res.length && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
           res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
         }
       }
@@ -650,7 +650,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       this.paginationPageIndex = 0;
     }
 
-    if (this.currentRows && this.currentRows.length > 0) {
+    if (this.currentRows?.length) {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
@@ -1107,7 +1107,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
   getButtonClass(row: { warnings: unknown[]; state: JobState }): string {
     // Bring warnings to user's attention even if state is finished or successful.
-    if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
+    if (row.warnings?.length) return 'fn-theme-orange';
 
     const state: JobState = row.state;
 
@@ -1207,7 +1207,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0) {
+      if (!preferredCols.length) {
         return;
       }
 

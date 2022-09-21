@@ -468,7 +468,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
           ).pipe(untilDestroyed(this)).subscribe((imagesNotTobeDeleted) => {
             this.appLoaderService.close();
             const imageNames = Object.keys(imagesNotTobeDeleted);
-            if (imageNames.length > 0) {
+            if (imageNames.length) {
               const imageMessage = imageNames.reduce((prev: string, current: string) => {
                 const imageNameIndexed = current;
                 return prev + '<li>' + imageNameIndexed + '</li>';

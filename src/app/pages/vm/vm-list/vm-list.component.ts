@@ -204,7 +204,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   checkDisplay(vm: VirtualMachine | VirtualMachineRow): boolean {
     const devices = vm.devices;
-    if (!devices || devices.length === 0) {
+    if (!devices?.length) {
       return false;
     }
     if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
@@ -219,7 +219,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   displayPort(vm: VirtualMachine): boolean | number {
     const devices = vm.devices;
-    if (!devices || devices.length === 0) {
+    if (!devices?.length) {
       return false;
     }
     if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {

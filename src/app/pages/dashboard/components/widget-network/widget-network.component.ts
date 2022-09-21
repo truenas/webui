@@ -316,7 +316,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
       });
 
-      if (addresses.length > 0) {
+      if (addresses.length) {
         ip = `${addresses[0].address}/${addresses[0].netmask}`;
 
         if (addresses.length >= 2) {

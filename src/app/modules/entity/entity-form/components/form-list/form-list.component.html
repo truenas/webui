@@ -32,7 +32,7 @@
       {{ 'Add' | translate }}
     </button>
   </div>
-  <ng-container *ngIf="listsFromArray?.controls.length > 0; else empty">
+  <ng-container *ngIf="listsFromArray?.controls.length; else empty">
     <div
       *ngFor="let liControl of listsFromArray.controls; let i = index"
       ix-auto

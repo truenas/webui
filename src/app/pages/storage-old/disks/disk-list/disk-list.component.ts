@@ -139,7 +139,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     }
 
     const devMatch = this.unused.filter((dev) => dev.name === parentRow.name);
-    if (devMatch.length > 0) {
+    if (devMatch.length) {
       actions.push({
         id: parentRow.name,
         icon: 'delete_sweep',

@@ -19,12 +19,12 @@ export class UserService {
   constructor(protected ws: WebSocketService) {}
 
   private groupQueryDsCacheByName(name: string): Observable<Group[]> {
-    if (!(name && name.length)) {
+    if (!name?.length) {
       return of([]);
     }
     let queryArgs: QueryFilter<Group>[] = [];
     name = name.trim();
-    if (name.length > 0) {
+    if (name.length) {
       queryArgs = [['name', '=', name]];
     }
     return this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions }]);
@@ -33,7 +33,7 @@ export class UserService {
   groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     let queryArgs: QueryFilter<Group>[] = [];
     search = search.trim();
-    if (search.length > 0) {
+    if (search.length) {
       queryArgs = [['group', '^', search]];
     }
     if (hideBuiltIn) {
@@ -60,7 +60,7 @@ export class UserService {
   userQueryDsCache(search = '', offset = 0): Observable<User[]> {
     let queryArgs: QueryFilter<User>[] = [];
     search = search.trim();
-    if (search.length > 0) {
+    if (search.length) {
       queryArgs = [['username', '^', search]];
     }
     return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset }]);

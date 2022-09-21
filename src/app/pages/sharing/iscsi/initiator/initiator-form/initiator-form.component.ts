@@ -106,7 +106,7 @@ export class InitiatorFormComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     this.fieldConfig.forEach((config) => {
-      if (config.relation.length > 0) {
+      if (config.relation.length) {
         this.setRelation(config);
       }
     });

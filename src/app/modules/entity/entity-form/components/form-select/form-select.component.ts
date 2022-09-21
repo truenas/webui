@@ -67,7 +67,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     }
 
     // if control has a value on init
-    if (this.control.value && this.control.value.length > 0) {
+    if (this.control.value?.length) {
       this.selectedValues = this.control.value;
       // check if any value is invalid
       if (this.config.multiple && this.config.asyncValidation) {
@@ -114,7 +114,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewChecked(): void {
-    if (this.formReady || typeof this.config.options === 'undefined' || !this.config.options || this.config.options.length <= 0) {
+    if (this.formReady || typeof this.config.options === 'undefined' || !this.config.options?.length) {
       return;
     }
 

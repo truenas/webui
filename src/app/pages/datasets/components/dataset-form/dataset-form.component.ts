@@ -1136,7 +1136,7 @@ export class DatasetFormComponent implements FormConfiguration {
           } else {
             this.nameIsCaseInsensitive = true;
           }
-          if (children.length > 0) {
+          if (children.length) {
             children.forEach((child) => {
               if (this.nameIsCaseInsensitive) {
                 this.namesInUse.push(/[^/]*$/.exec(child.name)[0].toLowerCase());

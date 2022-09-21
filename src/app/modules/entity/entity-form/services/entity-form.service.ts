@@ -209,7 +209,7 @@ export class EntityFormService {
       match = value.match(/^(\d+)/);
     }
 
-    if (match && match.length > 0) {
+    if (match?.length) {
       num = match[1];
     } else {
       return NaN;

@@ -53,7 +53,7 @@
       <span fxFlex="25%">{{ 'App' | translate }}</span>
       <span fxFlex="50%">{{ 'Status' | translate }}</span>
     </div>
-    <div *ngIf="filteredItems.length > 0; else empty">
+    <div *ngIf="filteredItems.length; else empty">
       <div
         *ngFor="let item of filteredItems; let i = index"
         class="detail-row value-row"

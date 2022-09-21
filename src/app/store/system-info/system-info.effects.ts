@@ -65,7 +65,7 @@ export class SystemInfoEffects {
         map((failoverDisabledReasons) => {
           const haEnabled = failoverDisabledReasons.length === 0;
 
-          const enabledText = failoverDisabledReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
+          const enabledText = haEnabled ? 'HA Enabled' : 'HA Disabled';
 
           window.sessionStorage.setItem('ha_status', haEnabled.toString());
           return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });

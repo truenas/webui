@@ -84,7 +84,7 @@ export class WebSocketService {
 
   onconnect(): void {
     this.shuttingdown = false;
-    while (this.pendingMessages.length > 0) {
+    while (this.pendingMessages.length) {
       const payload = this.pendingMessages.pop();
       this.send(payload);
     }

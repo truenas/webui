@@ -581,7 +581,7 @@ export class VmWizardComponent implements WizardConfiguration {
     });
 
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && Object.keys(res).length > 0) {
+      if (res && Object.keys(res).length) {
         const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }) as FormSelectConfig;
         Object.keys(res).forEach((address) => {
           bind.options.push({ label: address, value: address });

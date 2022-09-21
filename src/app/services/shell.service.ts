@@ -51,7 +51,7 @@ export class ShellService {
   }
 
   onconnect(): void {
-    while (this.pendingMessages.length > 0) {
+    while (this.pendingMessages.length) {
       const payload = this.pendingMessages.pop();
       this.send(payload);
     }

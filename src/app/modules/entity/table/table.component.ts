@@ -302,7 +302,7 @@ export class TableComponent<Row = Record<string, any>> implements OnInit, AfterV
 
   getButtonClass(row: { warnings: unknown[]; state: JobState }): string {
     // Bring warnings to user's attention even if state is finished or successful.
-    if (row.warnings && row.warnings.length > 0) {
+    if (row.warnings?.length) {
       return 'fn-theme-orange';
     }
 

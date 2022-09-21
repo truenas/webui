@@ -406,7 +406,7 @@ var debug = false;
       let col = colStrings.map(x => Number(x));
       col.shift(col[0]);
       
-      let total = col.length > 0 ? col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue)) : "N/A";
+      let total = col.length ? col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue)) : "N/A";
       let avg = total !== "N/A" ? Number((total / col.length).toFixed(2)) : total;
       let myResult= {
         label:label,
@@ -495,7 +495,7 @@ var debug = false;
       legendLabels.push(legend);
 
       let series = data.series[i];
-      if( typeof(series) !== 'undefined' && series.length > 0 ) {
+      if( typeof(series) !== 'undefined' && series.length ) {
         series.unshift(legend);
       } else {
         series = [legend];

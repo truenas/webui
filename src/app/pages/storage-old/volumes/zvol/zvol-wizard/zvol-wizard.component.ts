@@ -303,7 +303,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     await lastValueFrom(this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]])).then((pkDataset) => {
       const children = (pkDataset[0].children);
       entityWizard.setDisabled('name', false, 1);
-      if (children.length > 0) {
+      if (children.length) {
         children.forEach((child) => {
           this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
         });

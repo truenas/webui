@@ -1,6 +1,6 @@
 <ul
   [class.wizard-ul]="!isRoot"
-  *ngIf="value && isAutoSummary() && fieldConfigs.length > 0"
+  *ngIf="value && isAutoSummary() && fieldConfigs.length"
 >
   <ng-container *ngFor="let fieldConfig of fieldConfigs">
     <li *ngIf="isVisible(fieldConfig)">

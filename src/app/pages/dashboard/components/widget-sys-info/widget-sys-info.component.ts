@@ -132,7 +132,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   checkForRunningUpdate(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
       next: (jobs) => {
-        if (jobs && jobs.length > 0) {
+        if (jobs?.length) {
           this.isUpdateRunning = true;
         }
       },

@@ -2,7 +2,7 @@
   <div class="list-item">
     <h4>{{ 'Arguments' | translate }}</h4>
     <pre>
-      {{ job.arguments.length > 0 ? (job.arguments | json) : ('No arguments are passed' | translate) }}
+      {{ job.arguments.length ? (job.arguments | json) : ('No arguments are passed' | translate) }}
     </pre>
   </div>
 

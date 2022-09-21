@@ -40,7 +40,7 @@ export class TableService {
           table.tableConf.getInOutInfo(res);
         }
         table.dataSource = res;
-        if (!(table.dataSource?.length > 0)) {
+        if (!table.dataSource?.length) {
           table.emptyConf = {
             type: EmptyType.NoPageData,
             large: table.entityEmptyLarge,

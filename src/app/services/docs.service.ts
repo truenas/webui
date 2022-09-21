@@ -21,7 +21,7 @@ export class DocsService {
         const version = runningVersion.split('-');
         version.shift();
         const docVersion = version.join('-');
-        if (version && version.length > 1) {
+        if (version?.length > 1) {
           message = message.replace(/--version--/g, docVersion);
         }
         if (webVersion) {

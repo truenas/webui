@@ -442,7 +442,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (i === 0 && this.isNew) {
           this.firstDataVdevType = vdev.type;
           dataVdevType = vdev.type;
-          if (vdev.disks.length > 0) {
+          if (vdev.disks.length) {
             this.firstDataVdevDisknum = vdev.disks.length;
             this.firstDataVdevDisksize = vdev.disks[0].size;
             this.firstDataVdevDisktype = vdev.disks[0].type;
@@ -454,7 +454,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.canDuplicate = false;
           }
         }
-        if (vdev.disks.length > 0) {
+        if (vdev.disks.length) {
           wasDataDiskFound = true;
           dataVdevDisknum = vdev.disks.length;
           dataVdevType = vdev.type;
@@ -471,7 +471,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.getVdevTypeErrorMsg(dataVdevType);
           }
         }
-      } else if (vdev.disks.length > 0) {
+      } else if (vdev.disks.length) {
         wereAnyDisksFound = true;
       }
       if (vdev.vdevDisksError) {
@@ -615,7 +615,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             }
             disks.push(disk.devname);
           });
-          if (disks.length > 0) {
+          if (disks.length) {
             let type = vdev.type.toUpperCase();
             type = type === 'RAIDZ' ? 'RAIDZ1' : type;
             const group = vdev.group;
@@ -775,7 +775,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
     for (const group in this.vdevs) {
       if (this.vdevs.hasOwnProperty(group)) {
-        while (this.vdevs[group].length > 0) {
+        while (this.vdevs[group].length) {
           this.vdevs[group].pop();
         }
       }
@@ -799,7 +799,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.suggestableDisks.forEach((disk) => {
       this.vdevComponents.first.addDisk(disk);
     });
-    while (this.suggestableDisks.length > 0) {
+    while (this.suggestableDisks.length) {
       this.removeDisk(this.suggestableDisks[0]);
       this.suggestableDisks.shift();
     }

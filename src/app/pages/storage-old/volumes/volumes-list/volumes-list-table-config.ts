@@ -792,7 +792,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     const actions = [{ title: actionsTitle, actions: this.getActions(data) }];
     if (data.type === DatasetType.Filesystem || data.type === DatasetType.Volume) {
       const encryptionActions = this.getEncryptedDatasetActions(data);
-      if (encryptionActions.length > 0) {
+      if (encryptionActions.length) {
         actions.push({ title: this.translate.instant(helptext.encryption_actions_title), actions: encryptionActions });
       }
     }

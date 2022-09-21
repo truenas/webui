@@ -278,7 +278,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loader.close();
         this.tempPodDetails = res;
         let podName;
-        if (Object.keys(this.tempPodDetails).length > 0) {
+        if (Object.keys(this.tempPodDetails).length) {
           podName = Object.keys(this.tempPodDetails)[0];
         } else {
           podName = null;
@@ -301,7 +301,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
           label: item,
           value: item,
         }));
-        if (containers && containers.length > 0) {
+        if (containers?.length) {
           entityDialog.formGroup.controls['containers'].setValue(containers[0]);
         } else {
           entityDialog.formGroup.controls['containers'].setValue(null);

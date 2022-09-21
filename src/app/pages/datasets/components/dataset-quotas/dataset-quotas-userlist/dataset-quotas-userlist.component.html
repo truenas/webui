@@ -12,7 +12,7 @@
       <label>{{ 'Show All Users' | translate }}</label>
     </mat-slide-toggle>
     <button
-      *ngIf="invalidQuotas.length > 0"
+      *ngIf="invalidQuotas.length"
       color="primary"
       mat-button
       [disabled]="isLoading"
