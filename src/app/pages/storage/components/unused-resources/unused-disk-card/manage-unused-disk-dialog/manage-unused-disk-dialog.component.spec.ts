@@ -9,10 +9,10 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { ManageUnusedDiskDialogComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import {
   ManageUnusedDiskDialogResource,
-} from 'app/pages/storage/components/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
-import { ManageUnusedDiskDialogComponent } from './manage-unused-disk-dialog.component';
+} from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
 describe('ManageUnusedDiskDialogComponent', () => {
   let spectator: Spectator<ManageUnusedDiskDialogComponent>;

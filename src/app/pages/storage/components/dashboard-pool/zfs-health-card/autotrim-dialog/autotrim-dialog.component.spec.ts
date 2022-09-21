@@ -14,7 +14,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   AutotrimDialogComponent,
-} from 'app/pages/storage/components/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { WebSocketService } from 'app/services';
 
 describe('AutotrimDialogComponent', () => {
