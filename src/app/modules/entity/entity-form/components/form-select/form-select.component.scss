@@ -31,7 +31,7 @@
   font-size: x-small;
   margin-left: auto;
 
-  mat-icon {
+  .mat-icon {
     line-height: 40px;
     margin-left: 3px;
     margin-right: 1px;
@@ -50,7 +50,7 @@
   right: 0;
 }
 
-.alert-icon mat-icon {
+.alert-icon .mat-icon {
   font-size: 1rem;
   height: auto;
   width: auto;
