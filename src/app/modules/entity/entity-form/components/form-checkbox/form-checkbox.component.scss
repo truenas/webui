@@ -18,6 +18,8 @@ input {
 
 .form-checkbox {
   &.form-element {
+    align-items: center;
+    display: flex;
     margin: 1px 0 22px;
     min-height: 24px;
   }

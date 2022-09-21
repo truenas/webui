@@ -65,7 +65,7 @@ h4 {
 }
 
 .volumeTooltip {
-  display: auto;
+  display: inline-flex;
 }
 
 .estimated-size,
@@ -141,12 +141,6 @@ h4 {
 .adjust-upward {
   bottom: 5px;
   position: relative;
-}
-
-ix-tooltip,
-ix-tooltip.vdevTooltip {
-  position: relative;
-  top: 5px;
 }
 
 @media screen and (max-width: 1399px) {
