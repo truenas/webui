@@ -154,22 +154,10 @@ export default {
     },
 
     rollback_dialog: {
-      title: T('Roll Back'),
       version: {
-        placeholder: T('Version'),
         tooltip: T('Enter the version to roll back to.'),
       },
-      snapshot: {
-        placeholder: T('Roll back snapshots'),
-        tooltip: T('Roll back snapshots of ix_volumes'),
-      },
-      force: {
-        placeholder: T('Force'),
-        tooltip: T('Used for rollback of a chart release and snapshots of ix_volumes'),
-      },
-      action: T('Roll back'),
 
-      msg: T('Roll back '),
       job: T('Rolling back...'),
     },
   },
