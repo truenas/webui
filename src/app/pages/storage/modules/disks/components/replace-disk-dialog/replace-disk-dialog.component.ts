@@ -49,6 +49,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadUnusedDisks();
     this.setupExportedPoolWarning();
   }
 
