@@ -141,6 +141,11 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
   }
   @Input()
   set colorBlank(color: string) {
+    if (!this.themeService.isDarkTheme()) {
+      const altBg2 = this.themeService.currentTheme()['alt-bg2'];
+      this._colorBlank = this.conversionColor(altBg2);
+      return;
+    }
     this._colorBlank = this.conversionColor(color);
   }
 
@@ -153,8 +158,8 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
   @Input() @HostBinding('style.width.px') width = defaultWidth;
 
   @ViewChild('canvas') canvasRef: ElementRef;
-  _colorFill: string;
-  _colorBlank: string;
+  private _colorFill: string;
+  private _colorBlank: string;
   chartData: ChartDataSets[] = [{ data: [] }];
   chartOptions: ChartOptions = {
     responsive: true,
@@ -187,8 +192,8 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
           100 - this.value,
           (gapPercentage / 100) * 2 * [this.value, 100 - this.value].reduce((sum, x) => sum + x, 0),
         ],
-        backgroundColor: [this.colorFill, this.colorBlank, '#0000'],
-        hoverBackgroundColor: [this.colorFill, this.colorBlank, '#0000'],
+        backgroundColor: [this.colorFill, this.colorBlank, '#000000'],
+        hoverBackgroundColor: [this.colorFill, this.colorBlank, '#000000'],
         borderColor: this.colorBlank,
         hoverBorderColor: this.colorBlank,
         type: 'roundedDoughnut',

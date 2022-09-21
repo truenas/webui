@@ -35,8 +35,8 @@ export class PoolUsageCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.chartBlankColor = this.themeService.currentTheme()['bg1'];
-    this.chartFillColor = this.themeService.currentTheme().primary;
-    this.chartLowCapacityColor = this.themeService.currentTheme().red;
+    this.chartFillColor = this.themeService.currentTheme()['primary'];
+    this.chartLowCapacityColor = this.themeService.currentTheme()['red'];
   }
 
   get isLowCapacity(): boolean {
