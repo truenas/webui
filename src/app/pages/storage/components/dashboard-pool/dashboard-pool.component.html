@@ -29,7 +29,7 @@
   >
     <ix-topology-card
       [poolState]="pool"
-      [diskDictionary]="diskDictionary"
+      [disks]="disks"
     ></ix-topology-card>
     <ix-pool-usage-card
       *ngIf="rootDataset"
@@ -39,7 +39,7 @@
     <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
     <ix-disk-health-card
       [poolState]="pool"
-      [diskDictionary]="diskDictionary"
+      [disks]="disks"
     ></ix-disk-health-card>
   </div>
 </div>

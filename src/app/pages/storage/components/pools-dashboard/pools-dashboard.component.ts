@@ -32,7 +32,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   pools$ = this.store.pools$;
-  allDisks: StorageDashboardDisk[] = [];
+  allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
   disks$ = this.store.disks$;
 
   arePoolsLoading$ = this.store.isLoading$;
@@ -98,7 +98,12 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
       ).subscribe(() => this.store.loadDashboard());
 
     this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
-      this.allDisks = disks;
+      for (const disk of disks) {
+        if (!this.allDisksByPool[disk.pool]) {
+          this.allDisksByPool[disk.pool] = [];
+        }
+        this.allDisksByPool[disk.pool].push(disk);
+      }
     });
   }
 
@@ -115,6 +120,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   }
 
   getDisksForPool(pool: Pool): StorageDashboardDisk[] {
-    return this.allDisks.filter((disk) => disk.pool === pool.name);
+    return this.allDisksByPool[pool.name];
   }
 }

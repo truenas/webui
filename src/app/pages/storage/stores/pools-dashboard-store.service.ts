@@ -68,24 +68,26 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
             switchMap(({
               disks, alerts, disksWithTestResults, tempAgg,
             }) => {
+              for (const disk of disks) {
+                disk.smartTests = 0;
+                disk.alerts = [];
+              }
               for (const alert of alerts as Alert[]) {
                 const alertArgs = ((alert.args) as { device: string; message: string });
                 const alertDevice = alertArgs.device.split('/').reverse()[0];
                 const alertDisk = disks.find((disk) => disk.name === alertDevice);
-                alertDisk.alerts = alertDisk.alerts !== undefined ? alertDisk.alerts : [];
                 alertDisk.alerts.push(alert);
               }
               (disksWithTestResults as unknown as StorageDashboardDisk[]).forEach((diskWithResults) => {
                 const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
-                testDisk.smartTests = testDisk.smartTests !== undefined ? testDisk.smartTests : 0;
                 const tests = diskWithResults?.tests ?? [];
                 const testsStillRunning = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-                testDisk.smartTests = testDisk.smartTests + testsStillRunning.length;
+                testDisk.smartTests = testsStillRunning.length;
               });
               const disksWithTempData = Object.keys(tempAgg);
               for (const diskWithTempData of disksWithTempData) {
                 const disk = disks.find((disk) => disk.devname === diskWithTempData);
-                disk.tempAggregates = { ...(tempAgg)[diskWithTempData] };
+                disk.tempAggregates = { ...tempAgg[diskWithTempData] };
               }
               return of(disks);
             }),
