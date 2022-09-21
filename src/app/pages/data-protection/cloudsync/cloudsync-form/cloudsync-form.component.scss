@@ -23,14 +23,17 @@
 a {
   color: var(--primary);
   cursor: pointer;
-  display: flex;
   font-size: x-small;
-  justify-content: flex-end;
   overflow: hidden;
+  position: absolute;
+  right: 4px;
   text-overflow: ellipsis;
+  top: 67px;
   white-space: nowrap;
+  z-index: 1;
 
   ix-icon {
-    font-size: x-small;
+    font-size: 11px;
+    height: 13px;
   }
 }
