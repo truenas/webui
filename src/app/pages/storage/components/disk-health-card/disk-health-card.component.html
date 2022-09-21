@@ -4,16 +4,32 @@
       {{ 'Disk Health' | translate }}
 
       <ng-container [ngSwitch]="diskState.health">
-        <mat-icon *ngSwitchCase="diskHealthLevel.Safe" class="pool-icon icon-online">
+        <mat-icon
+          *ngSwitchCase="diskHealthLevel.Safe"
+          class="pool-icon icon-online"
+          [matTooltip]="'Everything is fine' | translate"
+        >
           check_circle
         </mat-icon>
-        <mat-icon *ngSwitchCase="diskHealthLevel.Warn" class="pool-icon icon-warning">
+        <mat-icon
+          *ngSwitchCase="diskHealthLevel.Warn"
+          class="pool-icon icon-warning"
+          [matTooltip]="'Warning' | translate"
+        >
           warning
         </mat-icon>
-        <mat-icon *ngSwitchCase="diskHealthLevel.Error" class="pool-icon icon-error">
+        <mat-icon
+          *ngSwitchCase="diskHealthLevel.Error"
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
           cancel
         </mat-icon>
-        <mat-icon *ngSwitchDefault class="pool-icon icon-error">
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
           cancel
         </mat-icon>
       </ng-container>

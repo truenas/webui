@@ -4,16 +4,32 @@
       {{ 'Usage' | translate }}
 
       <ng-container [ngSwitch]="health">
-        <mat-icon *ngSwitchCase="usageHealthLevel.Safe" class="pool-icon icon-online">
+        <mat-icon
+          *ngSwitchCase="usageHealthLevel.Safe"
+          [matTooltip]="'Everything is fine' | translate"
+          class="pool-icon icon-online"
+        >
           check_circle
         </mat-icon>
-        <mat-icon *ngSwitchCase="usageHealthLevel.Warn" class="pool-icon icon-warning">
+        <mat-icon
+          *ngSwitchCase="usageHealthLevel.Warn"
+          [matTooltip]="(isLowCapacity ? 'Low Capacity' : 'Warning') | translate"
+          class="pool-icon icon-warning"
+        >
           warning
         </mat-icon>
-        <mat-icon *ngSwitchCase="usageHealthLevel.Error" class="pool-icon icon-faulted">
+        <mat-icon
+          *ngSwitchCase="usageHealthLevel.Error"
+          class="pool-icon icon-faulted"
+          [matTooltip]="'Error' | translate"
+        >
           cancel
         </mat-icon>
-        <mat-icon *ngSwitchDefault class="pool-icon icon-error">
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
           cancel
         </mat-icon>
       </ng-container>
@@ -39,8 +55,7 @@
         [value]="usedPercentage > 100 ? 100 : usedPercentage"
         [style]="isLowCapacity ? 'color: var(--red);' : ''"
       ></ix-gauge-chart>
-      <div fxLayout="row" class="warning-container" *ngIf="isLowCapacity">
-        <!-- <mat-icon class="pool-icon icon-warning">warning</mat-icon> -->
+      <div *ngIf="isLowCapacity" fxLayout="row" class="warning-container">
         <span>
           <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
         </span>
