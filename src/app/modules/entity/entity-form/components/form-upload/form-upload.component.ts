@@ -23,7 +23,6 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;
   fileList: FileList;
   fbrowser: HTMLInputElement;
