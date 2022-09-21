@@ -34,6 +34,7 @@ testem.log
 /typings
 package-lock.json
 .eslintcache
+.angular/cache
 
 # e2e
 /e2e/*.js
