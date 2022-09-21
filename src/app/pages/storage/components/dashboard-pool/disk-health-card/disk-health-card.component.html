@@ -45,14 +45,14 @@
       <div class="label">
         {{ 'Disks temperature related alerts' | translate }}:
       </div>
-      <div class="value" *ngIf="!loading; else skeletonLoader">
+      <div class="value">
         {{ diskState.alerts | number }}
       </div>
     </div>
 
     <div class="details-item">
       <div class="label">{{ 'Highest Temperature' | translate }}:</div>
-      <div class="value" *ngIf="!loading; else skeletonLoader">
+      <div class="value">
         <ng-container *ngIf="diskState.highestTemperature !== null; else noData">
           {{ diskState.highestTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
@@ -62,7 +62,7 @@
 
     <div class="details-item">
       <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
-      <div class="value" *ngIf="!loading; else skeletonLoader">
+      <div class="value">
         <ng-container *ngIf="diskState.lowestTemperature !== null; else noData">
           {{ diskState.lowestTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
@@ -72,7 +72,7 @@
 
     <div class="details-item">
       <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
-      <div class="value" *ngIf="!loading; else skeletonLoader">
+      <div class="value">
         <ng-container
           *ngIf="diskState.averageTemperature !== null; else noData"
         >
@@ -87,17 +87,13 @@
 
     <div class="details-item">
       <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>
-      <div class="value" *ngIf="!loading; else skeletonLoader">
+      <div class="value">
         {{ diskState.smartTests | number }}
       </div>
       <a [routerLink]="['/data-protection/smart']">
         {{ 'View All S.M.A.R.T. Tests' | translate }}
       </a>
     </div>
-
-    <ng-template #skeletonLoader>
-      <ngx-skeleton-loader></ngx-skeleton-loader>
-    </ng-template>
 
     <ng-template #noData>
       {{ 'No Data' | translate }}

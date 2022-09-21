@@ -13,7 +13,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DiskTemperatureAgg, Disk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DiskHealthCardComponent } from 'app/pages/storage/components/disk-health-card/disk-health-card.component';
+import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
 const diskDictionary: { [key: string]: Disk } = {
@@ -81,7 +81,6 @@ describe('DiskHealthCardComponent', () => {
       props: {
         poolState: { id: 1, name: 'DEV' } as Pool,
         diskDictionary,
-        loading: false,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

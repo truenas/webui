@@ -167,6 +167,7 @@ export class RsyncTaskFormComponent implements OnInit {
       ...task,
       schedule: scheduleToCrontab(task.schedule),
       sshconnectmode: task.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
+      ssh_credentials: task.ssh_credentials?.id || null,
     });
   }
 
@@ -184,10 +185,10 @@ export class RsyncTaskFormComponent implements OnInit {
     } else {
       delete values.remotemodule;
       if (values.sshconnectmode === RsyncSshConnectMode.PrivateKey) {
-        delete values.ssh_credentials;
+        values.ssh_credentials = null;
       } else {
-        delete values.remotehost;
-        delete values.remoteport;
+        values.remotehost = null;
+        values.remoteport = null;
       }
     }
     delete values.sshconnectmode;
