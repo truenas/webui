@@ -51,6 +51,7 @@ export interface SmartTestResult {
   remaining: number;
   status: SmartTestResultStatus;
   status_verbose: string;
+  segment_number: number;
 }
 
 export interface ManualSmartTest {

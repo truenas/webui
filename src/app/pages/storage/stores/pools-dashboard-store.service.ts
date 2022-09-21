@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import _ from 'lodash';
-import { forkJoin, Observable } from 'rxjs';
+import {
+  combineLatest, forkJoin, Observable, of,
+} from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
+import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
+import { Alert } from 'app/interfaces/alert.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
@@ -13,18 +18,21 @@ export interface PoolsDashboardState {
   isLoading: boolean;
   pools: Pool[];
   rootDatasets: { [id: string]: Dataset };
+  disks: StorageDashboardDisk[];
 }
 
 const initialState: PoolsDashboardState = {
   isLoading: false,
   pools: [],
   rootDatasets: {},
+  disks: [],
 };
 
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly pools$ = this.select((state) => state.pools);
   readonly isLoading$ = this.select((state) => state.isLoading);
+  readonly disks$ = this.select((state) => state.disks);
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
 
   constructor(
@@ -47,13 +55,49 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         return forkJoin([
           this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]),
           this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
+          this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+            switchMap((disks: StorageDashboardDisk[]) => {
+              const diskNames = disks.map((disk) => disk.name);
+              return combineLatest({
+                disks: of(disks),
+                alerts: this.ws.call('disk.temperature_alerts', [diskNames]),
+                disksWithTestResults: this.ws.call('smart.test.results', [[['disk', 'in', diskNames]]]),
+                tempAgg: this.ws.call('disk.temperature_agg', [diskNames, 14]),
+              });
+            }),
+            switchMap(({
+              disks, alerts, disksWithTestResults, tempAgg,
+            }) => {
+              for (const alert of alerts as Alert[]) {
+                const alertArgs = ((alert.args) as { device: string; message: string });
+                const alertDevice = alertArgs.device.split('/').reverse()[0];
+                const alertDisk = disks.find((disk) => disk.name === alertDevice);
+                alertDisk.alerts = alertDisk.alerts !== undefined ? alertDisk.alerts : [];
+                alertDisk.alerts.push(alert);
+              }
+              (disksWithTestResults as unknown as StorageDashboardDisk[]).forEach((diskWithResults) => {
+                const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
+                testDisk.smartTests = testDisk.smartTests !== undefined ? testDisk.smartTests : 0;
+                const tests = diskWithResults?.tests ?? [];
+                const testsStillRunning = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
+                testDisk.smartTests = testDisk.smartTests + testsStillRunning.length;
+              });
+              const disksWithTempData = Object.keys(tempAgg);
+              for (const diskWithTempData of disksWithTempData) {
+                const disk = disks.find((disk) => disk.devname === diskWithTempData);
+                disk.tempAggregates = { ...(tempAgg)[diskWithTempData] };
+              }
+              return of(disks);
+            }),
+          ),
         ]).pipe(
           tapResponse(
-            ([pools, rootDatasets]) => {
+            ([pools, rootDatasets, disks]) => {
               this.patchState({
                 isLoading: false,
                 pools: this.sorter.tableSorter(pools, 'name', 'asc'),
                 rootDatasets: _.keyBy(rootDatasets, (dataset) => dataset.id),
+                disks,
               });
             },
             (error: WebsocketError) => {

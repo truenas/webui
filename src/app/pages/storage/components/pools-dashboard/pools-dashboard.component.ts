@@ -12,6 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Pool } from 'app/interfaces/pool.interface';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
@@ -30,6 +32,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   pools$ = this.store.pools$;
+  allDisks: StorageDashboardDisk[] = [];
+  disks$ = this.store.disks$;
+
   arePoolsLoading$ = this.store.isLoading$;
   rootDatasets: { [key: string]: Dataset } = {};
 
@@ -91,6 +96,10 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         filter((value) => value.response === true),
         untilDestroyed(this),
       ).subscribe(() => this.store.loadDashboard());
+
+    this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
+      this.allDisks = disks;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -103,5 +112,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   createPool(): void {
     this.router.navigate(['/storage', 'create']);
+  }
+
+  getDisksForPool(pool: Pool): StorageDashboardDisk[] {
+    return this.allDisks.filter((disk) => disk.pool === pool.name);
   }
 }

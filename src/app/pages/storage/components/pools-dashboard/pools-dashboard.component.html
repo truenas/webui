@@ -39,6 +39,7 @@
       class="pool"
       [index]="i"
       [pool]="pool"
+      [disks]="getDisksForPool(pool)"
       [isLoading]="arePoolsLoading$ | async"
       [rootDataset]="rootDatasets[pool.name]"
     ></ix-dashboard-pool>

@@ -13,7 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
@@ -33,6 +33,7 @@ export class DashboardPoolComponent implements OnInit {
   @Input() pool: Pool;
   @Input() rootDataset: Dataset;
   @Input() isLoading: boolean;
+  @Input() disks: StorageDashboardDisk[];
 
   diskDictionary: { [key: string]: Disk } = {};
   areDisksLoading = false;
