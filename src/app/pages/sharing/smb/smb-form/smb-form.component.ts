@@ -76,7 +76,7 @@ export class SmbFormComponent implements OnInit {
   get hasAddedAllowDenyHosts(): boolean {
     const hostsallow = this.form.get('hostsallow').value;
     const hostsdeny = this.form.get('hostsdeny').value;
-    return (
+    return !!(
       (this.isNew && hostsallow?.length)
       || (this.isNew && hostsdeny?.length)
       || this.hasHostAllowDenyChanged(hostsallow, hostsdeny)
