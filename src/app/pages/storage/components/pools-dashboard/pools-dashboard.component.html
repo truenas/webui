@@ -14,7 +14,7 @@
   </ix-page-title-header>
 </ng-template>
 
-<ng-container *ngIf="isEmptyPools && !isLoading; else poolContainer">
+<ng-container *ngIf="isEmptyPools && !(arePoolsLoading$ | async); else poolContainer">
   <div
     class="entity-empty-wrapper"
     fxFlex="100%"
@@ -40,7 +40,7 @@
       [index]="i"
       [pool]="pool"
       [disks]="getDisksForPool(pool)"
-      [isLoading]="arePoolsLoading$ | async"
+      [isLoading]="areDisksLoading$ | async"
       [rootDataset]="rootDatasets[pool.name]"
     ></ix-dashboard-pool>
   </div>

@@ -10,7 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, Observable } from 'rxjs';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
@@ -35,7 +35,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
   disks$ = this.store.disks$;
 
-  arePoolsLoading$ = this.store.isLoading$;
   rootDatasets: { [key: string]: Dataset } = {};
 
   entityEmptyConf: EmptyConfig = {
@@ -53,7 +52,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     },
   };
 
-  isLoading = true;
   isEmptyPools = false;
 
   constructor(
@@ -72,13 +70,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((pools) => {
         this.isEmptyPools = pools.length === 0;
-        this.cdr.markForCheck();
-      });
-
-    this.arePoolsLoading$
-      .pipe(untilDestroyed(this))
-      .subscribe((isLoading) => {
-        this.isLoading = isLoading;
         this.cdr.markForCheck();
       });
 
@@ -105,6 +96,14 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         this.allDisksByPool[disk.pool].push(disk);
       }
     });
+  }
+
+  get arePoolsLoading$(): Observable<boolean> {
+    return this.store.arePoolsLoading$;
+  }
+
+  get areDisksLoading$(): Observable<boolean> {
+    return this.store.areDisksLoading$;
   }
 
   ngAfterViewInit(): void {
