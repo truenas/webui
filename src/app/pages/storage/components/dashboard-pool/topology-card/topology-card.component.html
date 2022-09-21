@@ -4,10 +4,34 @@
       {{ 'Topology' | translate }}
 
       <ng-container [ngSwitch]="topologyState.health">
-        <mat-icon *ngSwitchCase="topologyHealthLevel.Safe" class="pool-icon icon-online">check_circle</mat-icon>
-        <mat-icon *ngSwitchCase="topologyHealthLevel.Warn" class="pool-icon icon-warning">warning</mat-icon>
-        <mat-icon *ngSwitchCase="topologyHealthLevel.Error" class="pool-icon icon-error">cancel</mat-icon>
-        <mat-icon *ngSwitchDefault class="pool-icon icon-error">cancel</mat-icon>
+        <mat-icon
+          *ngSwitchCase="topologyHealthLevel.Safe"
+          [matTooltip]="'Everything is fine' | translate"
+          class="pool-icon icon-online"
+        >
+          check_circle
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="topologyHealthLevel.Warn"
+          class="pool-icon icon-warning"
+          [matTooltip]="'Warning' | translate"
+        >
+          warning
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="topologyHealthLevel.Error"
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
+          cancel
+        </mat-icon>
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Cancel' | translate"
+        >
+          cancel
+        </mat-icon>
       </ng-container>
     </h3>
 
