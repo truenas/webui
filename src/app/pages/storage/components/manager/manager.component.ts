@@ -27,6 +27,7 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
@@ -868,12 +869,22 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   suggestRedundancyLayout(): void {
     this.selected = [];
+    const exportedPoolsDisks: ManagerDisk[] = [];
     this.suggestableDisks.forEach((disk) => {
+      if (disk.exported_zpool) {
+        exportedPoolsDisks.push(disk);
+      }
       this.vdevComponents.first.addDisk(disk);
     });
     while (this.suggestableDisks.length > 0) {
       this.removeDisk(this.suggestableDisks[0]);
       this.suggestableDisks.shift();
+    }
+    if (exportedPoolsDisks.length) {
+      const formattedDisks = exportedPoolsDisks.map(
+        (disk) => ({ diskName: disk.name, exportedPool: disk.exported_zpool }),
+      );
+      this.mdDialog.open(ExportedPoolsDialogComponent, { data: { disks: formattedDisks } });
     }
   }
 

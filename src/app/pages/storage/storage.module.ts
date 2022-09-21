@@ -33,6 +33,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
+import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
 import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
 import { VdevComponent } from 'app/pages/storage/components/manager/vdev/vdev.component';
 import { GaugeChartComponent } from 'app/pages/storage/components/pools-dashboard/pool-usage-card/gauge-chart/gauge-chart.component';
@@ -98,6 +99,7 @@ import { ZfsHealthCardComponent } from './components/zfs-health-card/zfs-health-
     ImportPoolComponent,
     VdevComponent,
     ManagerComponent,
+    ExportedPoolsDialogComponent,
     ManageUnusedDiskDialogComponent,
     ZfsHealthCardComponent,
     UnusedDiskCardComponent,
