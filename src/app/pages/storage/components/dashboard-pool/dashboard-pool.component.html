@@ -1,4 +1,4 @@
-<div *ngIf="!isLoading && !areDisksLoading; else loadingSkeleton">
+<div *ngIf="!isLoading; else loadingSkeleton">
   <div class="pool-header">
     <h2 class="pool-name">{{ pool.name }}</h2>
     <div class="pool-actions">

@@ -34,8 +34,6 @@ export class DashboardPoolComponent {
   @Input() isLoading: boolean;
   @Input() disks: StorageDashboardDisk[];
 
-  areDisksLoading = false;
-
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
