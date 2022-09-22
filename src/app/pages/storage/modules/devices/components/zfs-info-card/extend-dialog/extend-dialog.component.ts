@@ -52,17 +52,17 @@ export class ExtendDialogComponent implements OnInit {
 
   setupWarningForExportedPools(): void {
     this.newDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe(
-      this.warnAboutExportedPoolForDiskIfRequired.bind(this),
+      this.warnForExportedPools.bind(this),
     );
   }
 
-  warnAboutExportedPoolForDiskIfRequired(diskName: string): void {
+  warnForExportedPools(diskName: string): void {
     const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
     if (!unusedDisk?.exported_zpool) {
       return;
     }
     this.dialogService.warn(
-      this.translate.instant('Warning'),
+      this.translate.instant('Warning') + ': ' + unusedDisk.name,
       this.translate.instant(helptext.exported_pool_warning, { pool: `'${unusedDisk.exported_zpool}'` }),
     );
   }

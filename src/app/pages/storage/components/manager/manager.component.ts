@@ -576,9 +576,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   handleSelectAll(selectFn: (flag: boolean) => void, allSelectedFlag: boolean): void {
     if (allSelectedFlag) {
       for (const disk of this.disks) {
-        if (this.shouldWarnAboutExportedPool(disk)) {
+        if (this.shouldWarnForExportedPool(disk)) {
           this.dialog.warn(
-            this.translate.instant('Warning: ' + disk.name),
+            this.translate.instant('Warning') + ': ' + disk.name,
             this.translate.instant(helptext.exported_pool_warning, { pool: `'${disk.exported_zpool}'` }),
           );
         }
@@ -783,10 +783,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   warnAboutExportedPool(selectedDisks: ManagerDisk[]): void {
-    if (selectedDisks.length && this.shouldWarnAboutExportedPool(selectedDisks[selectedDisks.length - 1])) {
+    if (selectedDisks.length && this.shouldWarnForExportedPool(selectedDisks[selectedDisks.length - 1])) {
       const lastSelectedItem = selectedDisks[selectedDisks.length - 1];
       this.dialog.warn(
-        this.translate.instant('Warning'),
+        this.translate.instant('Warning') + ': ' + lastSelectedItem.name,
         this.translate.instant(helptext.exported_pool_warning, { pool: `'${lastSelectedItem.exported_zpool}'` }),
       );
     }
@@ -800,7 +800,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     );
   }
 
-  shouldWarnAboutExportedPool(disk: ManagerDisk): boolean {
+  shouldWarnForExportedPool(disk: ManagerDisk): boolean {
     const lastSelectedDisk = disk;
     const wasAlreadyWarnedAboutThisDisk = this.exportedPoolsWarnings.find(
       (warningDisk) => warningDisk === lastSelectedDisk.devname,
