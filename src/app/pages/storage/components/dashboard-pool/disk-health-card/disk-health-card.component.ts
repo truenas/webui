@@ -1,12 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
-import { DialogService, WebSocketService } from 'app/services';
 
 interface DiskState {
   health: DiskHealthLevel;
@@ -34,7 +33,7 @@ export enum DiskHealthLevel {
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
-  @Input() disks: StorageDashboardDisk[];
+  @Input() disks: StorageDashboardDisk[] = [];
 
   readonly diskHealthLevel = DiskHealthLevel;
 
@@ -49,17 +48,12 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     symbolText: '',
   };
 
-  constructor(
-    private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-  ) { }
-
   ngOnInit(): void {
-    this.checkVolumeHealth(this.poolState);
-    this.loadAlerts();
-    this.loadSmartTasks();
+    this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
+    this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
     this.loadTemperatures();
+
+    this.checkVolumeHealth(this.poolState);
   }
 
   ngOnChanges(): void {
@@ -96,18 +90,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
-  private loadAlerts(): void {
-    this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
-    this.cdr.markForCheck();
-  }
-
-  private loadSmartTasks(): void {
-    for (const disk of this.disks) {
-      this.diskState.smartTests += disk.smartTests;
-    }
-    this.cdr.markForCheck();
-  }
-
   private loadTemperatures(): void {
     let avgSum = 0;
     let avgCounter = 0;
@@ -135,6 +117,5 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     this.diskState.averageTemperature = avgSum / avgCounter;
     this.diskState.unit = TemperatureUnit.Celsius;
     this.diskState.symbolText = '°';
-    this.cdr.markForCheck();
   }
 }
