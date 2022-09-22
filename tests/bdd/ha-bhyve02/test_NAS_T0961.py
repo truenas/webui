@@ -217,9 +217,9 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
     assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodeb") and @class="mat-list-item-content"]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
     # 30 second to let the system get ready for the next step.
-    # ALso triggering a failover directly after chaning a system dataset is
+    # ALso triggering a failover directly after changing a system dataset is
     # not real world scenario
-    time.sleep(60)
+    time.sleep(120)
 
 
 @then('verify the system dataset is dozer on the active node')
@@ -264,7 +264,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodea") and @class="mat-list-item-content"]')
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
-    time.sleep(5)
+    time.sleep(60)
 
 
 @then('verify the system dataset is dozer on the active node after failover')

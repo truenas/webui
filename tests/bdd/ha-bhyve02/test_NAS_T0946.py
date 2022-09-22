@@ -429,9 +429,9 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 15, '//div[contains(text(),"truenas") and @class="mat-list-item-content"]')
-    assert wait_on_element(driver, 15, '//div[contains(text(),"truenas-b") and @class="mat-list-item-content"]')
+    assert wait_on_element(driver, 180, '//div[contains(text(),"truenas-b") and @class="mat-list-item-content"]')
     assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
-    time.sleep(5)
+    time.sleep(120)
 
 
 @then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}"'))
