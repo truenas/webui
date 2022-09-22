@@ -102,7 +102,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.datasetStore.loadDatasets();
     this.setupTree();
     this.listenForRouteChanges();
-    this.listenForSystemdatasetConfig();
+    this.loadSystemDatasetConfig();
     this.listenForLoading();
     this.listenForDatasetScrolling();
   }
@@ -126,7 +126,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.subscription.unsubscribe();
   }
 
-  listenForSystemdatasetConfig(): void {
+  loadSystemDatasetConfig(): void {
     this.ws
       .call('systemdataset.config')
       .pipe(

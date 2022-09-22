@@ -37,6 +37,8 @@
       flex-wrap: wrap;
       gap: $gap;
       height: 100%;
+
+      min-height: 1240px;
       place-content: flex-start;
       width: inherit;
     }
@@ -48,6 +50,8 @@
       flex-wrap: wrap;
       gap: $gap;
       height: 100%;
+
+      min-height: 1240px;
       place-content: flex-start;
       width: inherit;
     }
@@ -58,6 +62,8 @@
       flex-direction: column;
       flex-wrap: wrap;
       gap: $gap;
+      height: 830px;
+
       min-height: unset;
       place-content: flex-start;
       width: calc(3 * ($card-width + $gap));
@@ -74,6 +80,7 @@
     }
 
     @media  (min-width: $breakpoint-flex) and (min-height: 1160px) {
+      height: 960px;
       min-height: unset;
     }
 
