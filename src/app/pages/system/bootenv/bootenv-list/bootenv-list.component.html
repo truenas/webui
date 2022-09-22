@@ -112,8 +112,9 @@
     <th *matHeaderCellDef mat-header-cell mat-sort-header>
       {{ 'Keep' | translate }}
     </th>
-    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
-      <mat-slide-toggle [checked]="bootenv.keep"></mat-slide-toggle>
+    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource" class="keep-td">
+      <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
+      {{ (bootenv.keep ? 'Yes' : 'No') | translate }}
     </td>
   </ng-container>
 
