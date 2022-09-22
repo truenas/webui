@@ -578,7 +578,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       for (const disk of this.disks) {
         if (this.shouldWarnAboutExportedPool(disk)) {
           this.dialog.warn(
-            this.translate.instant('Warning'),
+            this.translate.instant('Warning: ' + disk.name),
             this.translate.instant(helptext.exported_pool_warning, { pool: `'${disk.exported_zpool}'` }),
           );
         }
