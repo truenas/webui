@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
+  OnInit,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,7 +69,7 @@ export type LegendDataWithStackedTotalHtml = dygraphs.LegendData & {
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class ReportComponent extends WidgetComponent implements AfterViewInit, OnInit, OnChanges, OnDestroy {
   // Labels
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
@@ -220,6 +221,13 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;
     });
+  }
+
+  async ngOnInit(): Promise<void> {
+    const zoom = this.zoomLevels[this.timeZoomIndex];
+    const rrdOptions = await this.convertTimespan(zoom.timespan);
+    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   ngOnDestroy(): void {
