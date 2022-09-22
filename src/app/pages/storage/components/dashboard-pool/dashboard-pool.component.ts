@@ -28,7 +28,6 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPoolComponent {
-  @Input() index: number;
   @Input() pool: Pool;
   @Input() rootDataset: Dataset;
   @Input() isLoading: boolean;
