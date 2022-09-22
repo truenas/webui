@@ -16,7 +16,10 @@ import { add, sub } from 'date-fns';
 import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
 import { lastValueFrom } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  delay, filter, map, take,
+} from 'rxjs/operators';
+import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
@@ -31,7 +34,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface DateTime {
@@ -219,6 +222,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;
+    });
+
+    this.store$.pipe(
+      waitForPreferences,
+      filter(() => Boolean(this.lineChart?.chart)),
+      delay(toggleMenuDuration),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.lineChart.chart.resize();
     });
   }
 
