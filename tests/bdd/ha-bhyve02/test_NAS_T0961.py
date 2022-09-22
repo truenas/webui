@@ -91,12 +91,13 @@ def the_pool_manager_page_should_open(driver):
 
 
 @then(parsers.parse('enter {pool_name} for pool name, check the box next to {disk}'))
-def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name, disk):
+def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name):
     """enter dozer for pool name, check the box next to sdb."""
     assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys(pool_name)
-    driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
+    # click the first disk on the list
+    driver.find_element_by_xpath('(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]').click()
 
 
 @then('press right arrow under data vdev, click on the Force checkbox')
