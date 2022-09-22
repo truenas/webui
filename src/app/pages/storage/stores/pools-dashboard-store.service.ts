@@ -126,64 +126,6 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
             }),
           ),
         });
-        // return forkJoin([
-        //   this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]),
-        //   this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
-        //   this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
-        //     switchMap((disks: StorageDashboardDisk[]) => {
-        //       const diskNames = disks.map((disk) => disk.name);
-        //       return combineLatest({
-        //         disks: of(disks),
-        //         alerts: this.ws.call('disk.temperature_alerts', [diskNames]),
-        //         disksWithTestResults: this.ws.call('smart.test.results', [[['disk', 'in', diskNames]]]),
-        //         tempAgg: this.ws.call('disk.temperature_agg', [diskNames, 14]),
-        //       });
-        //     }),
-        //     switchMap(({
-        //       disks, alerts, disksWithTestResults, tempAgg,
-        //     }) => {
-        //       for (const disk of disks) {
-        //         disk.smartTests = 0;
-        //         disk.alerts = [];
-        //       }
-        //       for (const alert of alerts as Alert[]) {
-        //         const alertArgs = ((alert.args) as { device: string; message: string });
-        //         const alertDevice = alertArgs.device.split('/').reverse()[0];
-        //         const alertDisk = disks.find((disk) => disk.name === alertDevice);
-        //         alertDisk.alerts.push(alert);
-        //       }
-        //       (disksWithTestResults as unknown as StorageDashboardDisk[]).forEach((diskWithResults) => {
-        //         const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
-        //         const tests = diskWithResults?.tests ?? [];
-        //         const testsStillRunning = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-        //         testDisk.smartTests = testsStillRunning.length;
-        //       });
-        //       const disksWithTempData = Object.keys(tempAgg);
-        //       for (const diskWithTempData of disksWithTempData) {
-        //         const disk = disks.find((disk) => disk.devname === diskWithTempData);
-        //         disk.tempAggregates = { ...tempAgg[diskWithTempData] };
-        //       }
-        //       return of(disks);
-        //     }),
-        //   ),
-        // ]).pipe(
-        //   tapResponse(
-        //     ([pools, rootDatasets, disks]) => {
-        //       this.patchState({
-        //         arePoolsLoading: false,
-        //         pools: this.sorter.tableSorter(pools, 'name', 'asc'),
-        //         rootDatasets: _.keyBy(rootDatasets, (dataset) => dataset.id),
-        //         disks,
-        //       });
-        //     },
-        //     (error: WebsocketError) => {
-        //       this.patchState({
-        //         arePoolsLoading: false,
-        //       });
-        //       new EntityUtils().handleWsError(this, error, this.dialogService);
-        //     },
-        //   ),
-        // );
       }),
     );
   });
