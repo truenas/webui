@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>{{ helptext.stripACL_dialog.title | translate }}</h1>
+<div mat-dialog-content class="modal-body">
+  <p>{{ helptext.stripACL_dialog.message | translate }}</p>
+
+  <ix-checkbox
+    class="traverse-checkbox"
+    [formControl]="traverseCheckbox"
+    [label]="helptext.stripACL_dialog.traverse_checkbox | translate"
+  ></ix-checkbox>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="warn"
+    (click)="onStrip()"
+  >
+    {{ 'Strip ACLs' | translate }}
+  </button>
+</div>
