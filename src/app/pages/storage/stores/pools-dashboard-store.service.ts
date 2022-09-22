@@ -106,7 +106,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     ).pipe(
       tapResponse((disks: StorageDashboardDisk[]) => {
         this.patchState({
-          disks,
+          disks: [...disks],
           areDisksLoading: false,
         });
       },
@@ -179,7 +179,9 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     const disksWithTempData = Object.keys(tempAgg);
     for (const diskWithTempData of disksWithTempData) {
       const disk = disks.find((disk) => disk.devname === diskWithTempData);
-      disk.tempAggregates = { ...tempAgg[diskWithTempData] };
+      if (disk) {
+        disk.tempAggregates = { ...tempAgg[diskWithTempData] };
+      }
     }
     return of(disks);
   }
