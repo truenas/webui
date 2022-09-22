@@ -65,7 +65,7 @@ h4 {
 }
 
 .volumeTooltip {
-  display: auto;
+  display: inline-flex;
 }
 
 .estimated-size,
@@ -143,12 +143,6 @@ h4 {
   position: relative;
 }
 
-ix-tooltip,
-ix-tooltip.vdevTooltip {
-  position: relative;
-  top: 5px;
-}
-
 @media screen and (max-width: 1399px) {
   .pool {
     margin-bottom: 50px;
@@ -213,7 +207,9 @@ button.vdev-option p {
 }
 
 .encryption-checkbox.inline {
-  padding-top: 50px;
+  align-items: center;
+  display: flex;
+  padding-top: 23px;
 }
 
 .row-details {
