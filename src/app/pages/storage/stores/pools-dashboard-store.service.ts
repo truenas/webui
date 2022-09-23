@@ -61,11 +61,11 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           areDisksLoading: true,
         });
       }),
-      switchMap(() => this.getPoolsAndDisks()),
+      switchMap(() => this.updatePoolsAndDisksState()),
     );
   });
 
-  getPoolsAndDisks(): Observable<{
+  updatePoolsAndDisksState(): Observable<{
     dashboardPools: DashboardPools;
     dashboardDisks: StorageDashboardDisk[];
   }> {
