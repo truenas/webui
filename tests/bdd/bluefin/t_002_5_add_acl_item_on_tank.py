@@ -22,11 +22,11 @@ def test_add_acl_item_on_tank(driver, input, user):
 
    # click Storage on the side menu and click on the "tank_acl_dataset" 3 dots button, select Edit Permissions
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[normalize-space(text())="View Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
 
 
@@ -58,14 +58,14 @@ def test_add_acl_item_on_tank(driver, input, user):
 
 
     # click the Save button, return to the Pools page, click on the "tank_acl_dataset" 3 dots button, select Edit Permissions
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save Access Control List")]', 'clickable')
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"tank_acl_dataset")]')
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 7, '//button[normalize-space(text())="View Permissions"]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[normalize-space(text())="View Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
 
     # the Edit ACL page should open, verify the new ACL item for user ericbsd exists

@@ -19,9 +19,9 @@ def test_apps_page_validation(driver):
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Applications")]')
 
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
+    #assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
+    #driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+    #assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
 
     # the Apps page load, select pool
     assert wait_on_element(driver, 7, '//h1[contains(.,"Choose a pool for Apps")]')
