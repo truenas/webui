@@ -10,7 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, Observable } from 'rxjs';
+import { filter } from 'rxjs';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
@@ -51,6 +51,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
       action: () => this.createPool(),
     },
   };
+
+  arePoolsLoading$ = this.store.arePoolsLoading$;
+  areDisksLoading$ = this.store.areDisksLoading$;
 
   isEmptyPools = false;
 
@@ -96,14 +99,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         this.allDisksByPool[disk.pool].push(disk);
       }
     });
-  }
-
-  get arePoolsLoading$(): Observable<boolean> {
-    return this.store.arePoolsLoading$;
-  }
-
-  get areDisksLoading$(): Observable<boolean> {
-    return this.store.areDisksLoading$;
   }
 
   ngAfterViewInit(): void {
