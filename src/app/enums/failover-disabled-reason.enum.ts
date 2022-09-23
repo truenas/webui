@@ -9,4 +9,7 @@ export enum FailoverDisabledReason {
   MismatchDisks = 'MISMATCH_DISKS',
   NoCriticalInterfaces = 'NO_CRITICAL_INTERFACES',
   NoFenced = 'NO_FENCED',
+  NoJournalSync = 'NO_JOURNAL_SYNC',
+  RemNoJournalSync = 'REM_NO_JOURNAL_SYNC',
+  RemFailoverOngoing = 'REM_FAILOVER_ONGOING',
 }
