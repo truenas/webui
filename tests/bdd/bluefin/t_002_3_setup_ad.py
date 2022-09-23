@@ -100,8 +100,8 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
     # the Active Directory setup should successfully save without an error.
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//h1[text()="Start"]')
-    time.sleep(0.5) #page needs to settle
-    assert wait_on_element(driver, 15, f'//span[text()="{domain.upper()}"]')
+    time.sleep(1) #page needs to settle
+    assert wait_on_element(driver, 30, f'//span[text()="{domain.upper()}"]')
 
 
     # run "{cmd1}" and verify that "{ad_object1}" is in output
