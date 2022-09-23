@@ -1,6 +1,7 @@
 @import '~assets/styles/mixins/grid';
+@import '~assets/styles/scss-imports/splitview';
 
-$level-offset: 24px;
+$level-offset: 25px;
 $padding-left: 8px;
 $columns: 7;
 
@@ -17,31 +18,51 @@ $columns: 7;
   @include grid-row($columns);
   align-items: center;
 
+  grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0 0 0 30px;
+    width: 100%;
+  }
+
   .cell {
     align-items: center;
     display: inline-flex;
     min-height: 48px;
 
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
     &:first-child {
       left: 0;
       position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
     }
 
     &:last-child {
       justify-content: flex-end;
       padding-right: $level-offset;
+      position: sticky;
+      right: 0;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+
+      button {
+        left: 0;
+        position: absolute;
+      }
     }
   }
 
-  .cell-name {
+  .cell-name .name {
+    background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
     font-weight: bold;
-
-    .icon-container {
-      align-items: center;
-      background-color: var(--bg2);
-      display: flex;
-      padding: 5px;
-    }
   }
 
   .cell-status {
@@ -54,6 +75,10 @@ $columns: 7;
       width: 20px;
     }
   }
+
+  .cell-actions {
+    background: linear-gradient(270deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+  }
 }
 
 // TODO: Fragile (at least with css selectors)
@@ -65,8 +90,8 @@ $columns: 7;
     background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
   }
 
-  .tree-node-grid .cell-name .icon-container {
-    background-color: var(--hover-bg);
+  .tree-node-grid .cell-actions {
+    background: linear-gradient(270deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
   }
 }
 
