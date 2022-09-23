@@ -24,7 +24,7 @@ $columns: 7;
   position: relative;
 }
 
-.disk-tree-wrapper {
+.tree-wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -32,7 +32,7 @@ $columns: 7;
   overflow: auto;
 }
 
-.disk-tree-inner {
+.tree-inner {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -53,7 +53,7 @@ $columns: 7;
   z-index: 10;
 }
 
-.disk-tree-header {
+.tree-header {
   @include grid-row($columns);
   align-items: center;
   border-bottom: 2px solid var(--lines);
@@ -95,7 +95,7 @@ $columns: 7;
   }
 }
 
-.disk-nested-tree-root-node {
+.nested-tree-root-node {
   align-items: center;
   border-bottom: 1px solid var(--lines);
   display: flex;

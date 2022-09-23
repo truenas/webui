@@ -3,8 +3,8 @@
   [loading]="isLoading$ | async"
 ></ix-fake-progress-bar>
 
-<div class="disk-tree-wrapper">
-  <div class="disk-tree-inner">
+<div class="tree-wrapper">
+  <div class="tree-inner">
     <mat-accordion *ngIf="poolInstance">
       <mat-expansion-panel class="mat-elevation-z0">
         <mat-expansion-panel-header>
@@ -29,8 +29,8 @@
       </mat-expansion-panel>
     </mat-accordion>
 
-    <div class="disk-tree-header">
-      <div class="disk-name-header">
+    <div class="tree-header">
+      <div class="name-header">
         <span >{{ 'Name' | translate }}</span>
       </div>
       <div>{{ 'Status' | translate }}</div>
@@ -41,7 +41,7 @@
     </div>
 
     <ix-tree
-      class="disk-tree"
+      class="tree"
       [dataSource]="dataSource"
       [treeControl]="treeControl"
     >
@@ -63,7 +63,7 @@
         *ixTreeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
         [ixTreeNodeDefDataSource]="dataSource"
       >
-        <div class="disk-nested-tree-root-node">
+        <div class="nested-tree-root-node">
           <button
             mat-icon-button
             ixTreeNodeToggle
