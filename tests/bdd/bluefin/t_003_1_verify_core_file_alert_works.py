@@ -25,7 +25,7 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
     # on the dashboard, if there is dismiss all notification
     assert wait_on_element(driver, 7, '//h1[text()="Dashboard"]')
     #assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
-    assert wait_on_element(driver, 15, '//mat-icon[text()="notifications"]')
+    assert wait_on_element(driver, 15, '`//mat-icon[contains(text(),"notifications")]`')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
@@ -44,7 +44,7 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
 
 
     # wait for the alert and verify the core files warning alert
-    assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
+    assert wait_on_element(driver, 7, '`//mat-icon[contains(text(),"notifications")]`')
     assert wait_on_element(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
@@ -63,7 +63,7 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
     # click on the core files warning Re-Open and verify the alert is back
     assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]').click()
-    assert wait_on_element(driver, 7, '//mat-icon[text()="warning"]')
+    assert wait_on_element(driver, 7, '//mat-icon[contains(text()="warning")]')
     assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"clear")]').click()
 
