@@ -35,7 +35,7 @@ describe('DiskWipeDialogComponent', () => {
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: 'sda',
+        useValue: { diskName: 'sda' },
       },
     ],
   });
