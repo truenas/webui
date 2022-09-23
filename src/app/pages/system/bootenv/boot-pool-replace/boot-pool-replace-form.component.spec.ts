@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -32,10 +33,12 @@ describe('BootPoolReplaceFormComponent', () => {
         mockCall('boot.replace'),
       ]),
       mockProvider(FormErrorHandlerService),
+      mockProvider(MatDialogRef),
+      {
+        provide: MAT_DIALOG_DATA,
+        useValue: '/dev/sda3',
+      },
     ],
-    params: {
-      pk: '/dev/sda3',
-    },
   });
 
   beforeEach(() => {

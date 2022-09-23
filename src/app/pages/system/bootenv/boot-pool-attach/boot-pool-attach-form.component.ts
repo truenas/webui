@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -49,8 +49,8 @@ export class BootPoolAttachFormComponent {
 
   constructor(
     private fb: FormBuilder,
-    protected router: Router,
     private dialogService: DialogService,
+    private dialogRef: MatDialogRef<BootPoolAttachFormComponent>,
     private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -75,7 +75,7 @@ export class BootPoolAttachFormComponent {
           true,
         )
           .pipe(untilDestroyed(this)).subscribe(() => {
-            this.router.navigate(['system', 'boot']);
+            this.dialogRef.close(true);
           });
       },
       error: (error) => {
@@ -84,9 +84,5 @@ export class BootPoolAttachFormComponent {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  cancel(): void {
-    this.router.navigate(['system', 'boot', 'status']);
   }
 }

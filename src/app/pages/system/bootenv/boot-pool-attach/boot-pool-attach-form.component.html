@@ -1,38 +1,29 @@
-<mat-card class="card">
-  <mat-progress-bar
-    *ngIf="isFormLoading"
-    mode="indeterminate"
-  ></mat-progress-bar>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-select
-          [formControlName]="dev.fcName"
-          [label]="dev.label"
-          [tooltip]="dev.tooltip"
-          [options]="dev.options"
-        ></ix-select>
-        <ix-checkbox
-          [formControlName]="expand.fcName"
-          [label]="expand.label"
-          [tooltip]="expand.tooltip"
-        ></ix-checkbox>
-      </ix-fieldset>
+<h1 matDialogTitle>
+  {{ 'Attach' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <ix-select
+      [formControlName]="dev.fcName"
+      [label]="dev.label"
+      [tooltip]="dev.tooltip"
+      [options]="dev.options"
+      [required]="true"
+    ></ix-select>
+    <ix-checkbox
+      [formControlName]="expand.fcName"
+      [label]="expand.label"
+      [tooltip]="expand.tooltip"
+    ></ix-checkbox>
+  </ix-fieldset>
 
-      <div class="form-actions">
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          [disabled]="form.invalid || isFormLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
+  <div class="form-actions">
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
 
-        <button mat-button color="accent" (click)="cancel()">
-          {{ 'Cancel' | translate }}
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid || isFormLoading">
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</form>
