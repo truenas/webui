@@ -38,6 +38,7 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
     #    """on the dashboard click on the System Settings side menu, then click services."""
