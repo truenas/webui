@@ -31,6 +31,11 @@ const initialState: PoolsDashboardState = {
   disks: [],
 };
 
+interface DashboardPools {
+  pools: Pool[];
+  rootDatasets: Dataset[];
+}
+
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly pools$ = this.select((state) => state.pools);
@@ -61,21 +66,29 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   });
 
   getPoolsAndDisks(): Observable<{
-    dashboardPools: { pools: Pool[]; rootDatasets: Dataset[] };
+    dashboardPools: DashboardPools;
     dashboardDisks: StorageDashboardDisk[];
   }> {
     return forkJoin({
-      dashboardPools: this.getPoolsAndRootDatasets(),
-      dashboardDisks: this.getDisksWithDashboardData(),
+      dashboardPools: this.getPoolsAndRootDatasets().pipe(
+        this.patchStateWithPoolData(),
+      ),
+      dashboardDisks: this.getDisksWithDashboardData().pipe(
+        this.patchStateWithDisksData(),
+      ),
     });
   }
 
-  getPoolsAndRootDatasets(): Observable<{ pools: Pool[]; rootDatasets: Dataset[] }> {
+  getPoolsAndRootDatasets(): Observable<DashboardPools> {
     return combineLatest({
       pools: this.getPools(),
       rootDatasets: this.getRootDatasets(),
-    }).pipe(
-      tapResponse(({ pools, rootDatasets }) => {
+    });
+  }
+
+  patchStateWithPoolData(): (source: Observable<DashboardPools>) => Observable<DashboardPools> {
+    return tapResponse<DashboardPools>(
+      ({ pools, rootDatasets }) => {
         this.patchState({
           arePoolsLoading: false,
           pools: this.sorter.tableSorter(pools, 'name', 'asc'),
@@ -87,7 +100,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           arePoolsLoading: false,
         });
         new EntityUtils().handleWsError(this, error, this.dialogService);
-      }),
+      },
     );
   }
 
@@ -103,8 +116,12 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     return this.getDisks().pipe(
       switchMap(this.getDashboardDataForDisks.bind(this)),
       switchMap(this.getProcessedDisks.bind(this)),
-    ).pipe(
-      tapResponse((disks: StorageDashboardDisk[]) => {
+    );
+  }
+
+  patchStateWithDisksData(): (source: Observable<StorageDashboardDisk[]>) => Observable<StorageDashboardDisk[]> {
+    return tapResponse<StorageDashboardDisk[]>(
+      (disks: StorageDashboardDisk[]) => {
         this.patchState({
           disks: [...disks],
           areDisksLoading: false,
@@ -115,7 +132,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           areDisksLoading: false,
         });
         new EntityUtils().handleWsError(this, error, this.dialogService);
-      }),
+      },
     );
   }
 
