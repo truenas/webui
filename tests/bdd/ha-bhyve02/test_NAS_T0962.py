@@ -224,6 +224,7 @@ def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
     assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    driver.refresh()
     assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
 
 
