@@ -15,8 +15,8 @@ import { TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { BootPoolAttachFormComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-form.component';
-import { BootPoolReplaceFormComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-form.component';
+import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
+import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -89,14 +89,14 @@ export class BootStatusListComponent implements OnInit {
   }
 
   attach(): void {
-    this.mdDialog.open(BootPoolAttachFormComponent)
+    this.mdDialog.open(BootPoolAttachDialogComponent)
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
-    this.mdDialog.open(BootPoolReplaceFormComponent, { data: diskPath })
+    this.mdDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());

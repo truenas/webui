@@ -16,11 +16,11 @@ import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './boot-pool-replace-form.component.html',
-  styleUrls: ['./boot-pool-replace-form.component.scss'],
+  templateUrl: './boot-pool-replace-dialog.component.html',
+  styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootPoolReplaceFormComponent {
+export class BootPoolReplaceDialogComponent {
   isFormLoading = false;
 
   form = this.fb.group({
@@ -53,7 +53,7 @@ export class BootPoolReplaceFormComponent {
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    private dialogRef: MatDialogRef<BootPoolReplaceFormComponent>,
+    private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
   ) {}
 
   onSubmit(): void {

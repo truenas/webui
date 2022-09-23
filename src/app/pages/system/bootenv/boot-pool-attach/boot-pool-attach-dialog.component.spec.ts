@@ -10,15 +10,15 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
-import { BootPoolAttachFormComponent } from './boot-pool-attach-form.component';
+import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
 
-describe('BootPoolAttachFormComponent', () => {
-  let spectator: Spectator<BootPoolAttachFormComponent>;
+describe('BootPoolAttachDialogComponent', () => {
+  let spectator: Spectator<BootPoolAttachDialogComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
-    component: BootPoolAttachFormComponent,
+    component: BootPoolAttachDialogComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

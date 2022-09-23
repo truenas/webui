@@ -15,11 +15,11 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './boot-pool-attach-form.component.html',
-  styleUrls: ['./boot-pool-attach-form.component.scss'],
+  templateUrl: './boot-pool-attach-dialog.component.html',
+  styleUrls: ['./boot-pool-attach-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootPoolAttachFormComponent {
+export class BootPoolAttachDialogComponent {
   isFormLoading = false;
 
   form = this.fb.group({
@@ -50,7 +50,7 @@ export class BootPoolAttachFormComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private dialogRef: MatDialogRef<BootPoolAttachFormComponent>,
+    private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
     private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
