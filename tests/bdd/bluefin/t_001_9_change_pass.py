@@ -43,7 +43,7 @@ def test_change_pass(driver, nas_ip):
 
 
     # the user should not be able to log in ssh with the old password, then try to ssh with the new password for that user
-    time.sleep(1)
+    time.sleep(2) #race condition if we dont give the OS enough time to preform the function first. 
     # check SSH
     global ssh_result1
     ssh_result1 = ssh_cmd('ls /', 'ericbsd', 'testing', nas_ip)

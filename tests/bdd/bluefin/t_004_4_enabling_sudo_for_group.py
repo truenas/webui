@@ -69,7 +69,7 @@ def test_enabling_sudo_for_group(driver, nas_ip):
 
 
     # verify user can ssh in and cannot sudo
-    time.sleep(1) #race condition if we dont give the OS enough time to preform the function first. 
+    time.sleep(2) #race condition if we dont give the OS enough time to preform the function first. 
     global sudo_results
     cmd = 'ls /'
     sudo_results = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
