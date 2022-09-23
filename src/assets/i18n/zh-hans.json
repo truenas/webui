@@ -2129,7 +2129,6 @@
   "Initiators Groups": "发起人组",
   "Initiators allowed access to this system. Enter an <a href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>": "启动程序允许访问此系统。输入<a href=\"https://tools.ietf.org/html/rfc3720\\#section-3.2.6\" target=\"_blank\"> iSCSI合格名称（IQN）</a>，然后单击<i>+</i>将其添加到列表中。例如：<i> iqn.1994-09.org.freebsd：freenas.local </i>",
   "Initiators currently connected to the system. Shown in IQN format with an IP address. Set initiators and click an <b>-></b> (arrow) to add the initiators to either the <i>Allowed Initiators</i> or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected Initiators</i> list.": "当前连接到系统的启动器。以IQN格式显示，并带有IP地址。设置启动器，然后单击<b>-> </b>（箭头）以将启动器添加到<i>允许启动器</i>或<i>授权网络</ i>列表中。单击<i>刷新</i>更新<i>已连接的启动器</i>列表。",
-  "Input the pre-defined S3 bucket to use.": "输入要使用的预定义S3存储桶。",
   "Input the pre-defined container to use.": "输入要使用的预定义容器。",
   "Install": "安装",
   "Install Application": "安装应用",

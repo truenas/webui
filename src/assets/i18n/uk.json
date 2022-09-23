@@ -1900,7 +1900,6 @@
   "Initiators Groups": "Групи ініціаторів",
   "Initiators allowed access to this system. Enter an <a href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>": "Ініціатори, яким дозволено доступ до цієї системи. Введіть <a href=\"https://tools.ietf.org/html/rfc3720\\#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> та натисніть <i>+</i>, щоб додати його до списку. Приклад: <i>iqn.1994-09.org.freebsd:freenas.local</i>",
   "Initiators currently connected to the system. Shown in IQN format with an IP address. Set initiators and click an <b>-></b> (arrow) to add the initiators to either the <i>Allowed Initiators</i> or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected Initiators</i> list.": "Ініціатори наразі підключені до системи. Показано у форматі IQN з IP-адресою. Виберіть ініціатори та натисніть кнопку <b>-></b> (стрілка), щоб додати ініціатори до списків <i>Дозволені ініціатори</i> або <i>Авторизовані мережі</i>. Натискання <i>Оновити</i> оновлює список <i>Підключені ініціатори</i>.",
-  "Input the pre-defined S3 bucket to use.": "Введіть наперед визначений S3 bucket для використання.",
   "Input the pre-defined container to use.": "Введіть попередньо визначений контейнер для використання.",
   "Inquiry": "Запит",
   "Install": "Встановити",

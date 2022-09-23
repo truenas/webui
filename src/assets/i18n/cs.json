@@ -3895,7 +3895,6 @@
   "Initiator Group ID": "Identifikátor skupiny iniciátoru",
   "Initiators": "Iniciátory",
   "Initiators allowed access to this system. Enter an <a href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>": "Initiators allowed access to this system. Enter an <a href=\"https://tools.ietf.org/html/rfc3720\\#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>",
-  "Input the pre-defined S3 bucket to use.": "Zadejte předurčenou S3 nádobu, kterou použít.",
   "Input the pre-defined container to use.": "Zadejte předurčený kontejner, který použít.",
   "Install": "Nainstalovat",
   "Install Manual Update File": "Nainstalovat ze souboru pro ruční aktualizaci",

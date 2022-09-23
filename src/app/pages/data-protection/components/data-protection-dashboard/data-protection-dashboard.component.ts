@@ -323,10 +323,11 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(CloudsyncFormComponent);
+            this.slideInService.open(CloudsyncFormComponent, { wide: true });
           },
           edit: (row: CloudSyncTaskUi) => {
-            this.modalService.openInSlideIn(CloudsyncFormComponent, row.id);
+            const form = this.slideInService.open(CloudsyncFormComponent, { wide: true });
+            form.setTaskForEdit(row);
           },
           onButtonClick: (row: CloudSyncTaskUi) => {
             this.stateButton(row);

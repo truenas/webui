@@ -2673,7 +2673,6 @@
   "Initiators Groups": "Groupes d’initiateurs",
   "Initiators allowed access to this system. Enter an <a href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>": "Les initiateurs ont autorisé l'accès à ce système. Entrez un <a href=\"https://tools.ietf.org/html/rfc3720\\#section-3.2.6\" target=\"_blank\">Nom Qualifié iSCSI (IQN)</a> et cliquez sur <i>+</i> pour l'ajouter à la liste. Exemple : <i>iqn.1994-09.org.freebsd:freenas.local</i>",
   "Initiators currently connected to the system. Shown in IQN format with an IP address. Set initiators and click an <b>-></b> (arrow) to add the initiators to either the <i>Allowed Initiators</i> or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected Initiators</i> list.": "Les initiateurs actuellement connectés au système. Représenté au format IQN avec une adresse IP. Définissez les initiateurs et cliquez sur un <b>-></b> (flèche) pour ajouter les initiateurs aux listes <i>Initiateurs autorisés</i> ou <i>Réseaux autorisés</i>. Cliquez sur <i>Rafraîchir</i> pour mettre à jour la liste des <i>initiateurs connectés</i>.",
-  "Input the pre-defined S3 bucket to use.": "Entrer le bucket S3 prédéfini à utiliser.",
   "Input the pre-defined container to use.": "Entrez le conteneur prédéfini à utiliser.",
   "Install": "Installer",
   "Install Application": "Installer l’application",
