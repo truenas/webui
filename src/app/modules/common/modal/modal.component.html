@@ -6,9 +6,16 @@
       </div>
       <mat-icon fxFlex="10%" id="close-icon" (click)="close()">cancel</mat-icon>
     </div>
-    <ng-container *ngIf="(formOpen && conf && !conf.formType) || (formOpen && conf && conf.formType == 'EntityFormComponent')">
-      <ix-entity-form *ngIf="conf.fieldSets" [conf]="conf" class="slidein-entity-form"></ix-entity-form>
+    <ng-container *ngIf="!wizard; else wizardBlock">
+      <ng-container *appLet="asFormConfig(conf) as formConf">
+        <ng-container *ngIf="(formOpen && formConf && !formConf.formType) || (formOpen && formConf && formConf.formType == 'EntityFormComponent')">
+          <ix-entity-form *ngIf="formConf.fieldSets" [conf]="formConf" class="slidein-entity-form"></ix-entity-form>
+        </ng-container>
+      </ng-container>
     </ng-container>
+    <ng-template #wizardBlock>
+      <ix-entity-wizard [conf]="asWizardConfig(conf)" *ngIf="formOpen" class="slidein-entity-form"></ix-entity-wizard>
+    </ng-template>
   </div>
 </div>
 <div class="jw-modal-background {{id}}-background" (click)="close()"></div>
