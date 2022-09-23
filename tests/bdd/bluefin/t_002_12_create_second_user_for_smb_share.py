@@ -24,28 +24,28 @@ def test_create_second_user_for_smb_share(driver):
     # the users page should open, click add and the add page will open.
     time.sleep(3)
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
-    time.sleep(1)
+    assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
 
 
-    # Input fullname, username, password, confirmpassword, and click save
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('FooTest')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('foo')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    # the Users Add Page should open, input the fields Full Name, Username, Password and click Save')
+    assert wait_on_element(driver, 7, '//h3[contains(.,"Add User")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    """input in the following fields Full Name, Username, and password."""
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="full_name"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').send_keys('FooTest')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys('foo')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing')
+    assert wait_on_element(driver, 7, '//button[span[contains(.,"Save")]]', 'clickable')
+    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
 
-    # the new user should be created and added to the user list.
-    time.sleep(4)
+    # the new User should be created and added to the user list')
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"foo")]')
-

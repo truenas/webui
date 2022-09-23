@@ -96,64 +96,50 @@ def create_smb_share_on_system(driver, nas_ip, root_password, systemsmbpath, sys
 @then(parsers.parse('create smb share on tank with "{tanksmbpath}" "{tanksmbname}" "{tanksmbdescription}" "{mysmbshare}" "{user}" "{password}"'))
 def create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password):
     """test_create_smb_share_on_tank"""
-    import t_002_8_create_smb_share_on_tank
-    t_002_8_create_smb_share_on_tank.test_create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password)
+#    import t_002_8_create_smb_share_on_tank
+#    t_002_8_create_smb_share_on_tank.test_create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password)
 
 
-@then(parsers.parse('setup ldap with {hostname} {base_DN} {bind_DN} {bind_password} {command} {user}'))
-def setup_ldap(driver):
+@then(parsers.parse('setup ldap with "{hostname}" "{base_DN}" "{bind_DN}" "{bind_password}" "{command}" "{user}"'))
+def setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user):
     """setup ldap"""
 #    import t_002_9_setup_ldap
 #    t_002_9_setup_ldap.test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user)
 
 
-@then(parsers.parse('create ldap dataset with {dataset_name} {user}'))
-def create_ldap_dataset(driver):
+@then(parsers.parse('create ldap dataset with "{dataset_name}" "{user}"'))
+def create_ldap_dataset(driver, dataset_name, user):
     """create ldap dataset"""
 #    import t_002_10_create_ldap_dataset
 #    t_002_10_create_ldap_dataset.test_create_ldap_dataset(driver, dataset_name, user)
 
 
-@then(parsers.parse('create smb share on ldap datasetwith {path} {smbsharename} {smbsharedescription} {ldapsmbshare} {ldap_user} {ldap_password}'))
-def create_smb_share_on_ldap_dataset(driver):
+@then(parsers.parse('create smb share on ldap datasetwith "{smb_ldap_path}" "{ldapsmbsharename}" "{ldapsmbsharedescription}" "{ldapsmbshare}" "{ldap_user}" "{ldap_password}"'))
+def create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password):
     """create smb share on ldap dataset"""
 #    import t_002_11_create_smb_share_on_ldap_dataset
-#    t_002_11_create_smb_share_on_ldap_dataset.test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smbsharename, smbsharedescription, ldapsmbshare, ldap_user, ldap_password)
+#    t_002_11_create_smb_share_on_ldap_dataset.test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password)
 
 
 @then('create second user for smb share')
 def create_second_user_for_smb_share(driver):
     """create second user for smb share"""
 #    import t_002_12_create_second_user_for_smb_share
-#    t_002_12_create_second_smb_user_for_share.test_create_second_user_for_smb_share(driver)
+#    t_002_12_create_second_user_for_smb_share.test_create_second_user_for_smb_share(driver)
 
 
-@then(parsers.parse('create wheel dataset with {dataset_name}'))
-def create_wheel_dataset(driver):
-    """create wheel dataset"""
-#    import t_002_13_create_wheel_dataset
-#    t_002_13_create_wheel_dataset.test_create_wheel_dataset(driver, dataset_name)
-
-
-@then(parsers.parse('create wheel smb sharewith {path} {smbname} {description} {wheelname} {user} {password}'))
-def create_wheel_smb_share(driver):
-    """create wheel smb share"""
-#    import t_002_14_create_wheel_smb_share
-#    t_002_14_create_wheel_smb_share.test_create_wheel_smb_share(driver, nas_ip, root_password, path, smbname, description, wheelname, user, password)
-
-
-@then(parsers.parse('create ericbsd dataset with {dataset_name} {user}'))
-def create_ericbsd_dataset(driver):
+@then(parsers.parse('create ericbsd dataset with "{dataset_name}" "{user}"'))
+def create_ericbsd_dataset(driver, dataset_name, user):
     """create ericbsd dataset"""
-#    import t_002_15_test_create_ericbsd_dataset
-#    t_002_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user, group)
+#    import t_002_15_create_ericbsd_dataset
+#    t_002_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user)
 
 
-@then(parsers.parse('create ericbsd smb sharewith {path} {description} {sharenaame} {smbname} {user} {password} {user2} {password2}'))
+@then(parsers.parse('create ericbsd smb sharewith "{path}" "{description}" "{sharenaame}" "{smbname}" "{user}" "{password}" "{user2}" "{password2}"'))
 def create_ericbsd_smb_share(driver):
     """create ericbsd smb share"""
-#    import t_002_16_test_create_ericbsd_smb_share
-#    t_002_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, path, description, sharename, smbname, user, password, user2, password2)
+    import t_002_16_test_create_ericbsd_smb_share
+    t_002_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, path, description, sharename, smbname, user, password, user2, password2)
 
 
 @then(parsers.parse('create zvol for iscsi with {name} {zvol_1G_size}'))

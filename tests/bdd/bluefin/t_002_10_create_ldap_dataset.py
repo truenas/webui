@@ -12,19 +12,15 @@ from function import (
 
 
 
-def test_create_ldap_dataset(driver):
+def test_create_ldap_dataset(driver, dataset_name, user):
     """test_create_ldap_dataset"""
+    # uncomment next line when running test solo since it will be starting at a different page
+    #assert wait_on_element(driver, 10, '//h1[contains(text(),"Dashboard")]')
+    assert wait_on_element(driver, 10, '//h1[contains(text(),"Directory Services")]')
 
 
-   # click on sharing and click add
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
-
-
-    assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
 
 
     # the storage page should open, then click on the tank three dots button, select Add Dataset
@@ -40,8 +36,8 @@ def test_create_ldap_dataset(driver):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
@@ -58,22 +54,36 @@ def test_create_ldap_dataset(driver):
 
     # the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button
     assert wait_on_element(driver, 5, '//mat-card-title[contains(text(),"Unix Permissions Editor")]')
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="User"]', 'inputable')
-    driver.find_element_by_xpath('//input[@data-placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="User"]').send_keys('eturgeon')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')    
-    driver.find_element_by_xpath('//span[contains(text(),"eturgeon")]').click()
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('eturgeon')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')    
-    driver.find_element_by_xpath('//span[contains(text(),"eturgeon")]').click()
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Apply User"]', 'class', 'mat-checkbox-checked')
+
+  
+    assert wait_on_element(driver, 5, f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"User")]//ancestor::ix-combobox//div//input', 'clickable')
+    driver.find_element_by_xpath(f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"User")]//ancestor::ix-combobox//div//input').click()
+    element = driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]')
+    # Scroll to user
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//mat-option//span[contains(text(),"eturgeon")]', 'clickable')    
+    driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]').click()
+
+    assert wait_on_element(driver, 5, f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"Group")]//ancestor::ix-combobox//div//input', 'clickable')
+    driver.find_element_by_xpath(f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"Group")]//ancestor::ix-combobox//div//input').click()
+    element = driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]')
+    # Scroll to user
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//mat-option//span[contains(text(),"eturgeon")]', 'clickable')    
+    driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]').click()
+
+    assert wait_on_element(driver, 5, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]').click()
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]', 'class', 'mat-checkbox-checked')
+        driver.find_element_by_xpath('//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]').click()
+ 
+    assert wait_on_element(driver, 5, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
+        driver.find_element_by_xpath('//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]').click()
+
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')    
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
