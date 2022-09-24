@@ -93,9 +93,13 @@
       </ngx-datatable-column>
       <ngx-datatable-column
         [width]="165"
-        name="{{ 'Disk' | translate }}"
-        prop="devname"
-      ></ngx-datatable-column>
+        name="{{'Disk' | translate}}"
+      >
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+          {{ row.devname }}
+          <ix-warning class="inline-warn" *ngIf="row.exported_zpool" [message]="'('+row.exported_zpool+')'"></ix-warning>
+        </ng-template>
+      </ngx-datatable-column>
       <ngx-datatable-column
         [width]="100"
         name="{{ 'Type' | translate }}"

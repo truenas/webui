@@ -46,6 +46,7 @@ import { ManageCatalogsComponent } from 'app/pages/applications/manage-catalogs/
 import { PodLogsComponent } from 'app/pages/applications/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/applications/pod-shell/pod-shell.component';
 import { SelectPoolDialogComponent } from 'app/pages/applications/select-pool-dialog/select-pool-dialog.component';
+import { ChartRollbackModalComponent } from './chart-rollback-modal/chart-rollback-modal.component';
 import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 
 @NgModule({
@@ -100,6 +101,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     PodShellComponent,
     PullImageFormComponent,
     SelectPoolDialogComponent,
+    ChartRollbackModalComponent,
   ],
   providers: [
     DockerImagesComponentStore,
