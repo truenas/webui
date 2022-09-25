@@ -67,11 +67,6 @@ export interface VmDisplayWebUri {
   uri: string;
 }
 
-export interface VmDisplayResponse {
-  error: unknown;
-  uri: string;
-}
-
 export type VmCloneParams = [
   id: number,
   newName?: string,

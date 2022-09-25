@@ -98,11 +98,9 @@
 }
 
 .sidenav-copyright-txt {
-  bottom: 0;
   font-size: 0.6rem;
   margin: 1rem auto;
   opacity: 0.5;
-  position: absolute;
   text-align: center;
   width: 100%;
 
@@ -161,4 +159,9 @@ ix-jw-modal {
 
 .isdark {
   display: block;
+}
+
+ix-navigation {
+  height: 100%;
+  overflow: auto;
 }

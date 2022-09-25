@@ -1,0 +1,105 @@
+<mat-card class="card" fxLayout="column">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Topology' | translate }}
+
+      <ng-container [ngSwitch]="topologyState.health">
+        <mat-icon
+          *ngSwitchCase="topologyHealthLevel.Safe"
+          [matTooltip]="'Everything is fine' | translate"
+          class="pool-icon icon-online"
+        >
+          check_circle
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="topologyHealthLevel.Warn"
+          class="pool-icon icon-warning"
+          [matTooltip]="'Warning' | translate"
+        >
+          warning
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="topologyHealthLevel.Error"
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
+          cancel
+        </mat-icon>
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Cancel' | translate"
+        >
+          cancel
+        </mat-icon>
+      </ng-container>
+    </h3>
+
+    <button
+      mat-button
+      ix-auto-type="button"
+      (click)="router.navigate(['/storage', this.poolState.id, 'devices'])"
+    >
+      {{ 'Manage Devices' | translate }}
+    </button>
+  </mat-card-header>
+
+  <mat-card-content fxFlex="100">
+    <div class="content-container" fxLayout="column">
+      <div class="vdev-line" fxLayoutAlign="space-between center">
+        <b>{{ 'Data VDEVs' | translate }}</b>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span *ngIf="topologyState.data === mixedDev" class="warning">
+            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+          </span>
+          <span class="vdev-value">{{ topologyState.data }}</span>
+        </div>
+      </div>
+      <div class="vdev-line" fxLayoutAlign="space-between center">
+        <b>{{ 'Metadata VDEVs' | translate }}</b>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span *ngIf="topologyState.metadata === mixedDev" class="warning">
+            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+          </span>
+          <span class="vdev-value">{{ topologyState.metadata }}</span>
+        </div>
+      </div>
+      <div class="vdev-line" fxLayoutAlign="space-between center">
+        <b>{{ 'Log VDEVs' | translate }}</b>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span *ngIf="topologyState.log === mixedDev" class="warning">
+            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+          </span>
+          <span class="vdev-value">{{ topologyState.log }}</span>
+        </div>
+      </div>
+      <div class="vdev-line" fxLayoutAlign="space-between center">
+        <b>{{ 'Cache VDEVs' | translate }}</b>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span *ngIf="topologyState.cache === mixedDev" class="warning">
+            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+          </span>
+          <span class="vdev-value">{{ topologyState.cache }}</span>
+        </div>
+      </div>
+      <div class="vdev-line" fxLayoutAlign="space-between center">
+        <b>{{ 'Spare VDEVs' | translate }}</b>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span *ngIf="topologyState.spare === mixedDev" class="warning">
+            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+          </span>
+          <span class="vdev-value">{{ topologyState.spare }}</span>
+        </div>
+      </div>
+      <div class="vdev-line" fxLayoutAlign="space-between center">
+        <b>{{ 'Dedup VDEVs' | translate }}</b>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span *ngIf="topologyState.dedup === mixedDev" class="warning">
+            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+          </span>
+          <span class="vdev-value">{{ topologyState.dedup }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
