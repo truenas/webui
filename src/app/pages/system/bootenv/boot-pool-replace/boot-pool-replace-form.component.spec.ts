@@ -34,7 +34,7 @@ describe('BootPoolReplaceFormComponent', () => {
       mockProvider(FormErrorHandlerService),
     ],
     params: {
-      pk: '/dev/sda3',
+      pk: 'sda3',
     },
   });
 
