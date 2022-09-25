@@ -1017,6 +1017,7 @@
   "Hide standard output (stdout) from the command.                When unset, any standard output is mailed to the user                account cron used to run the command.": "",
   "Highest Temperature": "",
   "Highest port number of the  active side listen address that is open to connections. The first  available port between the minimum and maximum is used.": "",
+  "Hold": "",
   "Home": "",
   "Host": "",
   "Host Allow": "",

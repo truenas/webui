@@ -63,6 +63,14 @@
     <button mat-button (click)="doRollback(snapshot)">
       <span>{{ 'Rollback' | translate }}</span>
     </button>
+
+    <mat-checkbox
+      color="primary"
+      [checked]="isHold"
+      (change)="doHold()"
+    >
+      {{ 'Hold' | translate }}
+    </mat-checkbox>
   </ix-table-expandable-row>
 </td>
 

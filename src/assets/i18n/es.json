@@ -1512,6 +1512,7 @@
   "Highest Usage:": "",
   "Highest port number of the  active side listen address that is open to connections. The first  available port between the minimum and maximum is used.": "",
   "History": "",
+  "Hold": "",
   "Home": "",
   "Home Directory": "",
   "Home Directory Permissions": "",

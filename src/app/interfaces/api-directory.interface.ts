@@ -987,6 +987,8 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
   'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+  'zfs.snapshot.hold': { params: [string]; response: void };
+  'zfs.snapshot.release': { params: [string]; response: void };
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
