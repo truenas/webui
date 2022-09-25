@@ -14,7 +14,8 @@
     "property-no-unknown": null,
     "selector-pseudo-element-no-unknown": [true, {
       "ignorePseudoElements": ["ng-deep"]
-    }]
+    }],
+    "selector-disallowed-list": ["mat-icon"]
   },
   "ignoreFiles": [
     "src/assets/iconfont/mdi/scss/_functions.scss"

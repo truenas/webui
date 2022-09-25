@@ -27,7 +27,7 @@
   font-size: x-small;
   margin-left: auto;
 
-  mat-icon {
+  .mat-icon {
     align-items: center;
     display: flex;
     line-height: 40px;
@@ -48,7 +48,7 @@
   right: 0;
 }
 
-.alert-icon mat-icon {
+.alert-icon .mat-icon {
   font-size: 1rem;
   height: auto;
   width: auto;

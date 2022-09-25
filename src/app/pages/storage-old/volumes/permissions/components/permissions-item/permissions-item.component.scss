@@ -1,19 +1,15 @@
 :host {
-  align-items: center;
+  align-items: baseline;
   display: flex;
-  padding: 12px 14px;
+  padding: 11px 15px 7px 10px;
 }
 
 .icon {
   align-self: normal;
-  margin-right: 8px;
+  margin-right: 6px;
 
   .mat-icon {
-    float: left;
     font-size: 21px;
-    height: 21px;
-    line-height: 21px;
-    width: 21px;
   }
 }
 
@@ -23,9 +19,7 @@
 
 .permissions {
   font-size: 0.8rem;
-  line-height: 23px;
   margin-left: 20px;
-  min-height: 23px;
   opacity: 0.75;
   text-align: right;
 }
