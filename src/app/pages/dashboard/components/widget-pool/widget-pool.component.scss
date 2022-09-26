@@ -280,6 +280,12 @@ span.capitalize {
   color: var(--red);
 }
 
+.mat-list-item {
+  strong {
+    margin-right: 6px;
+  }
+}
+
 .mat-list-item .error,
 .mat-list-item .warning,
 .mat-list-item .healthy {
