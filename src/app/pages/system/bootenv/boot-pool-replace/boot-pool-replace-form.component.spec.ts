@@ -52,7 +52,7 @@ describe('BootPoolReplaceFormComponent', () => {
   it('sends an update payload to websocket when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Member Disk': 'sdb (10 GiB)',
+      'Member Disk': 'sdb - 10 GiB',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

@@ -6,11 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -33,10 +34,18 @@ export class BootPoolReplaceFormComponent implements OnInit {
     options: this.ws.call('disk.get_unused').pipe(
       map((unusedDisks) => {
         this.unusedDisks = unusedDisks;
-        const options = unusedDisks.map((disk) => ({
-          label: disk.name + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : ''),
-          value: disk.name,
-        }));
+        const options = unusedDisks.map((disk) => {
+          const size = filesize(disk.size, { standard: 'iec' });
+          let label = `${disk.name} - ${size}`;
+          if (disk.exported_zpool) {
+            label += ` (${disk.exported_zpool})`;
+          }
+
+          return {
+            label,
+            value: disk.name,
+          };
+        });
 
         return [
           ...options,
@@ -52,6 +61,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
     private route: ActivatedRoute,
     private translate: TranslateService,
     private ws: WebSocketService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
