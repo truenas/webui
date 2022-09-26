@@ -53,7 +53,7 @@
     <div class="details-item">
       <div class="label">{{ 'Highest Temperature' | translate }}:</div>
       <div class="value">
-        <ng-container *ngIf="diskState.highestTemperature !== null; else noData">
+        <ng-container *ngIf="isHighestTempReady; else noData">
           {{ diskState.highestTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
         </ng-container>
@@ -63,7 +63,7 @@
     <div class="details-item">
       <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
       <div class="value">
-        <ng-container *ngIf="diskState.lowestTemperature !== null; else noData">
+        <ng-container *ngIf="isLowestTempReady; else noData">
           {{ diskState.lowestTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
         </ng-container>
@@ -74,7 +74,7 @@
       <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
       <div class="value">
         <ng-container
-          *ngIf="diskState.averageTemperature !== null; else noData"
+          *ngIf="isAverageTempReady; else noData"
         >
           {{ diskState.averageTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}

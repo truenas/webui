@@ -63,7 +63,6 @@ describe('DashboardPoolComponent', () => {
   beforeEach(fakeAsync(() => {
     spectator = createComponent({
       props: {
-        index: 0,
         pool,
       },
     });

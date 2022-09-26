@@ -1,14 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 
 interface DiskState {
   health: DiskHealthLevel;
@@ -36,7 +33,7 @@ export enum DiskHealthLevel {
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
-  @Input() diskDictionary: { [key: string]: Disk } = {};
+  @Input() disks: StorageDashboardDisk[] = [];
 
   readonly diskHealthLevel = DiskHealthLevel;
 
@@ -51,25 +48,28 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     symbolText: '',
   };
 
-  get disks(): string[] {
-    return getPoolDisks(this.poolState);
-  }
-
-  constructor(
-    private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-  ) { }
-
   ngOnInit(): void {
-    this.checkVolumeHealth(this.poolState);
-    this.loadAlerts();
-    this.loadSmartTasks();
+    this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
+    this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
     this.loadTemperatures();
+
+    this.checkVolumeHealth(this.poolState);
   }
 
   ngOnChanges(): void {
     this.ngOnInit();
+  }
+
+  get isAverageTempReady(): boolean {
+    return this.diskState.averageTemperature !== null && !Number.isNaN(this.diskState.averageTemperature);
+  }
+
+  get isHighestTempReady(): boolean {
+    return this.diskState.highestTemperature !== null && !Number.isNaN(this.diskState.highestTemperature);
+  }
+
+  get isLowestTempReady(): boolean {
+    return this.diskState.lowestTemperature !== null && !Number.isNaN(this.diskState.lowestTemperature);
   }
 
   private checkVolumeHealth(poolState: Pool): void {
@@ -102,55 +102,32 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
-  private loadAlerts(): void {
-    this.ws.call('disk.temperature_alerts', [Object.keys(this.diskDictionary)]).pipe(untilDestroyed(this)).subscribe({
-      next: (alerts) => {
-        this.diskState.alerts = alerts.length;
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
-      },
-    });
-  }
-
-  private loadSmartTasks(): void {
-    const disks = Object.keys(this.diskDictionary);
-    this.ws.call('smart.test.results', [[['disk', 'in', disks]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (testResults) => {
-        testResults.forEach((testResult) => {
-          const tests = testResult?.tests ?? [];
-          const results = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-          this.diskState.smartTests = this.diskState.smartTests + results.length;
-        });
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
-      },
-    });
-  }
-
   private loadTemperatures(): void {
-    this.ws.call('disk.temperature_agg', [Object.keys(this.diskDictionary), 14]).pipe(untilDestroyed(this)).subscribe({
-      next: (tempAggregates) => {
-        const temperatures = Object.values(tempAggregates);
+    let avgSum = 0;
+    let avgCounter = 0;
+    for (const disk of this.disks) {
+      if (!disk.tempAggregates) {
+        continue;
+      }
 
-        const maxValues = temperatures.map((temperature) => temperature.max).filter((value) => value);
-        const minValues = temperatures.map((temperature) => temperature.min).filter((value) => value);
-        const avgValues = temperatures.map((temperature) => temperature.avg).filter((value) => value);
-        const avgSum = avgValues.reduce((a, b) => a + b, 0);
+      if (this.diskState.highestTemperature === null) {
+        this.diskState.highestTemperature = disk.tempAggregates.max;
+      } else {
+        this.diskState.highestTemperature = Math.max(this.diskState.highestTemperature, disk.tempAggregates.max);
+      }
 
-        this.diskState.highestTemperature = maxValues.length > 0 ? Math.max(...maxValues) : null;
-        this.diskState.lowestTemperature = minValues.length > 0 ? Math.min(...minValues) : null;
-        this.diskState.averageTemperature = avgValues.length > 0 ? avgSum / avgValues.length : null;
-        this.diskState.unit = TemperatureUnit.Celsius;
-        this.diskState.symbolText = '°';
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        this.dialogService.errorReportMiddleware(error);
-      },
-    });
+      if (this.diskState.lowestTemperature === null) {
+        this.diskState.lowestTemperature = disk.tempAggregates.min;
+      } else {
+        this.diskState.lowestTemperature = Math.min(this.diskState.lowestTemperature, disk.tempAggregates.min);
+      }
+
+      avgSum += disk.tempAggregates.avg;
+      avgCounter++;
+    }
+
+    this.diskState.averageTemperature = avgSum / avgCounter;
+    this.diskState.unit = TemperatureUnit.Celsius;
+    this.diskState.symbolText = '°';
   }
 }
