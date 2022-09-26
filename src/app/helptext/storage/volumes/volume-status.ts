@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 
 export default {
   dialogFormFields: {
@@ -72,4 +73,6 @@ export default {
     err_title: T('Error Extending Vdev'),
     err_msg: T('Could not extend Vdev.'),
   },
+  exported_pool_warning: helptext.exported_pool_warning,
+
 };

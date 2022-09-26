@@ -232,6 +232,7 @@ describe('RsyncTaskFormComponent', () => {
         remoteport: 45,
         remotepath: '/mnt/path',
         validate_rpath: true,
+        ssh_credentials: null,
       },
     ]);
   });
@@ -256,8 +257,6 @@ describe('RsyncTaskFormComponent', () => {
 
     const existingTaskWithoutModule = { ...existingTask };
     delete existingTaskWithoutModule['remotemodule'];
-    delete existingTaskWithoutModule['remotehost'];
-    delete existingTaskWithoutModule['remoteport'];
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
@@ -265,6 +264,8 @@ describe('RsyncTaskFormComponent', () => {
         ...existingTaskWithoutModule,
         mode: RsyncMode.Ssh,
         ssh_credentials: 1,
+        remotehost: null,
+        remoteport: null,
         remotepath: '/mnt/path',
         validate_rpath: true,
       },

@@ -1,0 +1,109 @@
+<mat-card class="card" fxLayout="column">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Usage' | translate }}
+
+      <ng-container [ngSwitch]="health">
+        <mat-icon
+          *ngSwitchCase="usageHealthLevel.Safe"
+          [matTooltip]="'Everything is fine' | translate"
+          class="pool-icon icon-online"
+        >
+          check_circle
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="usageHealthLevel.Warn"
+          [matTooltip]="(isLowCapacity ? 'Low Capacity' : 'Warning') | translate"
+          class="pool-icon icon-warning"
+        >
+          warning
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="usageHealthLevel.Error"
+          class="pool-icon icon-faulted"
+          [matTooltip]="'Error' | translate"
+        >
+          cancel
+        </mat-icon>
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
+          cancel
+        </mat-icon>
+      </ng-container>
+    </h3>
+
+    <a mat-button [routerLink]="['/', 'datasets', poolState.name]">
+      {{ 'Manage Datasets' | translate }}
+    </a>
+  </mat-card-header>
+
+  <mat-card-content
+    fxLayout="row"
+    fxFlex="100"
+    fxLayoutAlign="space-around center"
+  >
+    <div class="left" fxLayout="column" fxLayoutAlign="center center">
+      <ix-gauge-chart
+        [colorFill]="usedPercentage === 0 ? '#1E1E1E' : isLowCapacity ? '#CE2929' : '#0095D5'"
+        [colorBlank]="'#1E1E1E'"
+        [width]="160"
+        [height]="160"
+        [label]="usedPercentage / 100 | percent: '1.0-1'"
+        [value]="usedPercentage > 100 ? 100 : usedPercentage"
+        [style]="isLowCapacity ? 'color: var(--red);' : ''"
+      ></ix-gauge-chart>
+      <div *ngIf="isLowCapacity" fxLayout="row" class="warning-container">
+        <span>
+          <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
+        </span>
+      </div>
+    </div>
+
+    <div class="right" fxLayout="column" fxLayoutAlign="center center">
+      <div class="captions" fxLayout="column">
+        <span class="capacity-caption" fxLayoutAlign="start center">
+          <b>{{ 'Usable Capacity' | translate }}:</b>
+          <span class="value-caption">
+            {{ capacity | filesize: { standard: 'iec' } }}
+          </span>
+        </span>
+        <ul class="list-caption">
+          <li class="item-caption">
+            <span class="used-caption" fxLayoutAlign="start center">
+              <b>{{ 'Used' | translate }}:</b>
+              <span class="value-caption">
+                {{ (rootDataset?.used.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
+              </span>
+            </span>
+          </li>
+          <li class="item-caption">
+            <span class="available-caption" fxLayoutAlign="start center">
+              <b>{{ 'Available' | translate }}:</b>
+              <span class="value-caption">
+                {{ (rootDataset?.available.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
+              </span>
+            </span>
+          </li>
+          <li class="item-caption">
+            <span class="snapshots-caption" fxLayoutAlign="start center">
+              <b>{{ 'Used by Snapshots' | translate }}:</b>
+              <span class="value-caption">
+                {{ (rootDataset?.usedbysnapshots?.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
+              </span>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <a
+        class="link"
+        [routerLink]="['/reportsdashboard', 'disk']"
+        [queryParams]="{ disks }"
+      >
+        {{ 'View Disk Space Reports' | translate }}
+      </a>
+    </div>
+  </mat-card-content>
+</mat-card>

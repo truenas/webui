@@ -29,7 +29,6 @@
   >
     <ix-topology-card
       [poolState]="pool"
-      [loading]="areDisksLoading"
       [diskDictionary]="diskDictionary"
     ></ix-topology-card>
     <ix-pool-usage-card
@@ -40,7 +39,6 @@
     <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
     <ix-disk-health-card
       [poolState]="pool"
-      [loading]="areDisksLoading"
       [diskDictionary]="diskDictionary"
     ></ix-disk-health-card>
   </div>

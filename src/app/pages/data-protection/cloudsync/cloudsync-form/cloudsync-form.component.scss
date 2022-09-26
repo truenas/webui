@@ -1,0 +1,39 @@
+.fieldsets {
+  display: flex;
+  flex-wrap: wrap;
+
+  .fieldset {
+    width: 50%;
+  }
+}
+
+.advanced-title {
+  margin-top: 40px;
+}
+
+.form-actions {
+  border-top: 1px solid var(--lines);
+  padding: 16px 11px;
+
+  button {
+    margin-right: 8px;
+  }
+}
+
+a {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: x-small;
+  overflow: hidden;
+  position: absolute;
+  right: 4px;
+  text-overflow: ellipsis;
+  top: 67px;
+  white-space: nowrap;
+  z-index: 1;
+
+  ix-icon {
+    font-size: 11px;
+    height: 13px;
+  }
+}
