@@ -13,9 +13,22 @@ import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 
 interface ItemInfo {
-  icon: string;
-  level: string;
+  icon: StatusIcon;
+  level: StatusLevel;
   value: string;
+}
+
+enum StatusLevel {
+  Safe = 'safe',
+  Warn = 'warn',
+  Error = 'error',
+}
+
+enum StatusIcon {
+  Error = 'error',
+  CheckCircle = 'check_circle',
+  MdiAlert = 'mdi-alert',
+  MdiCloseCircle = 'mdi-close-circle',
 }
 
 interface PoolInfo {
@@ -42,8 +55,8 @@ interface PoolInfoMap {
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() pools: Pool[];
   @Input() volumeData: VolumesData;
-  title: string = this.translate.instant('Storage');
 
+  title: string = this.translate.instant('Storage');
   poolInfoMap: PoolInfoMap = {};
   paddingTop = 7;
   paddingLeft = 7;
@@ -115,32 +128,35 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   getStatusItemInfo(pool: Pool): ItemInfo {
-    let level = 'safe';
-    let icon = 'check_circle';
+    let level = StatusLevel.Safe;
+    let icon = StatusIcon.CheckCircle;
     let value = pool.status;
 
     switch (pool.status) {
       case PoolStatus.Online:
         if (!pool.healthy) {
-          level = 'warn';
-          icon = 'mdi-alert';
+          level = StatusLevel.Warn;
+          icon = StatusIcon.MdiAlert;
           value = this.translate.instant('Unhealthy');
         }
         break;
+
       case PoolStatus.Healthy:
         break;
+
       case PoolStatus.Locked:
       case PoolStatus.Unknown:
       case PoolStatus.Offline:
       case PoolStatus.Degraded:
-        level = 'warn';
-        icon = 'error';
+        level = StatusLevel.Warn;
+        icon = StatusIcon.Error;
         break;
+
       case PoolStatus.Faulted:
       case PoolStatus.Unavailable:
       case PoolStatus.Removed:
-        level = 'error';
-        icon = 'mdi-close-circle';
+        level = StatusLevel.Error;
+        icon = StatusIcon.MdiCloseCircle;
         break;
     }
 
@@ -151,21 +167,21 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     };
   }
 
-  percentAsNumber(value: string): number {
+  convertPercentToNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
   }
 
   getUsedSpaceItemInfo(pool: Pool): ItemInfo {
     const volume = this.volumeData[pool.name];
-    let level = 'safe';
-    let icon = 'check_circle';
+    let level = StatusLevel.Safe;
+    let icon = StatusIcon.CheckCircle;
     let value;
 
     if (!volume || !volume.used_pct) {
       value = this.translate.instant('Unknown');
-      level = 'warn';
-      icon = 'error';
+      level = StatusLevel.Warn;
+      icon = StatusIcon.Error;
     } else {
       if (this.cols === 1) {
         value = volume.used_pct;
@@ -177,12 +193,12 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
         });
       }
 
-      if (this.percentAsNumber(volume.used_pct) >= 80) {
-        level = 'warn';
-        icon = 'error';
-      } else {
-        level = 'safe';
-        icon = 'check_circle';
+      if (this.convertPercentToNumber(volume.used_pct) >= 90) {
+        level = StatusLevel.Error;
+        icon = StatusIcon.Error;
+      } else if (this.convertPercentToNumber(volume.used_pct) >= 80) {
+        level = StatusLevel.Warn;
+        icon = StatusIcon.Error;
       }
     }
 
@@ -194,8 +210,8 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
-    let level = 'warn';
-    let icon = 'error';
+    let level = StatusLevel.Warn;
+    let icon = StatusIcon.Error;
     let value: string = this.translate.instant('Unknown');
 
     if (pool && pool.topology) {
@@ -219,11 +235,11 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       });
       if (unhealthy.length === 0) {
         value = '0';
-        level = 'safe';
-        icon = 'check_circle';
+        level = StatusLevel.Safe;
+        icon = StatusIcon.CheckCircle;
       } else {
-        level = 'warn';
-        icon = 'error';
+        level = StatusLevel.Warn;
+        icon = StatusIcon.Error;
         value = unhealthy.length.toString();
       }
 
