@@ -63,10 +63,22 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     this.utils = new WidgetUtils();
   }
 
-  get groupedDisks(): string[] {
-    const diskInfoFormats = this.resource.unusedDisks.map((disk) => `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`);
-    const groupDisks = _.groupBy(diskInfoFormats);
-    const groupDiskFormats = Object.keys(groupDisks).map((format: string) => `${format} x ${groupDisks[format].length}`);
+  get groupedDisks(): { formattedDisk: string; exportedPool: string }[] {
+    const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
+      return {
+        detailedDisk: `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
+        exportedPool: disk.exported_zpool,
+      };
+    });
+    const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
+      return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
+    });
+    const groupDiskFormats = Object.keys(groupDisks).map((format: string) => {
+      return {
+        formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
+        exportedPool: groupDisks[format][0].exportedPool,
+      };
+    });
     return groupDiskFormats;
   }
 
@@ -93,5 +105,9 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     } else {
       this.router.navigate(['/storage', 'create']);
     }
+  }
+
+  getWarningText(exportedPool: string): string {
+    return `(${exportedPool})`;
   }
 }

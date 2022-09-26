@@ -18,23 +18,23 @@
       margin: 3px 0;
     }
 
-    mat-icon.state-success {
+    .mat-icon.state-success {
       color: var(--green);
     }
 
-    mat-icon.state-failed {
+    .mat-icon.state-failed {
       color: var(--red);
     }
 
-    mat-icon.state-running {
+    .mat-icon.state-running {
       color: var(--primary);
     }
 
-    mat-icon.state-waiting {
+    .mat-icon.state-waiting {
       color: var(--accent);
     }
 
-    mat-icon.state-aborted {
+    .mat-icon.state-aborted {
       color: var(--orange);
     }
   }
