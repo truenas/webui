@@ -10,8 +10,9 @@ export function flattenTreeWithFilter<T extends { children?: T[] }>(
   for (const item of items) {
     if (filterFunction(item)) {
       foundItems.push(item);
+    } else {
+      flattenTreeWithFilter(item.children, filterFunction, foundItems);
     }
-    flattenTreeWithFilter(item.children, filterFunction, foundItems);
   }
 
   return foundItems;
