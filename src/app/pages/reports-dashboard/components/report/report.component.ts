@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
+  OnInit,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,7 +17,10 @@ import { add, sub } from 'date-fns';
 import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
 import { lastValueFrom } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  delay, filter, map, take,
+} from 'rxjs/operators';
+import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
@@ -31,7 +35,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 interface DateTime {
@@ -68,7 +72,7 @@ export type LegendDataWithStackedTotalHtml = dygraphs.LegendData & {
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class ReportComponent extends WidgetComponent implements AfterViewInit, OnInit, OnChanges, OnDestroy {
   // Labels
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
@@ -220,6 +224,22 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;
     });
+
+    this.store$.pipe(
+      waitForPreferences,
+      filter(() => Boolean(this.lineChart?.chart)),
+      delay(toggleMenuDuration),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.lineChart.chart.resize();
+    });
+  }
+
+  async ngOnInit(): Promise<void> {
+    const zoom = this.zoomLevels[this.timeZoomIndex];
+    const rrdOptions = await this.convertTimespan(zoom.timespan);
+    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   ngOnDestroy(): void {

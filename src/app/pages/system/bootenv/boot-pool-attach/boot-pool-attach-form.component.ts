@@ -1,15 +1,16 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
+  ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -19,7 +20,7 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['./boot-pool-attach-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootPoolAttachFormComponent {
+export class BootPoolAttachFormComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
@@ -27,18 +28,13 @@ export class BootPoolAttachFormComponent {
     expand: [false],
   });
 
+  unusedDisks: UnusedDisk[] = [];
+
   dev = {
     fcName: 'dev',
     label: this.translate.instant(helptextSystemBootenv.dev_placeholder),
     tooltip: this.translate.instant(helptextSystemBootenv.dev_tooltip),
-    options: this.ws.call('disk.get_unused').pipe(
-      map((disks) => {
-        return disks.map((disk) => ({
-          label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})`,
-          value: disk.name,
-        }));
-      }),
-    ),
+    options: of([]),
   };
 
   expand = {
@@ -56,6 +52,45 @@ export class BootPoolAttachFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
   ) {}
+
+  ngOnInit(): void {
+    this.loadUnusedDisks();
+    this.setupWarningForExportedPools();
+  }
+
+  loadUnusedDisks(): void {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
+      this.unusedDisks = unusedDisks;
+      const unusedDisksOptions = unusedDisks.map((disk) => {
+        const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+        return {
+          label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})${exportedPool}`,
+          value: disk.name,
+        };
+      });
+      this.dev.options = of(unusedDisksOptions);
+    });
+  }
+
+  setupWarningForExportedPools(): void {
+    this.form.get(this.dev.fcName).valueChanges.pipe(untilDestroyed(this)).subscribe(
+      this.warnForExportedPools.bind(this),
+    );
+  }
+
+  warnForExportedPools(diskName: string): void {
+    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+    if (!unusedDisk?.exported_zpool) {
+      return;
+    }
+    this.dialogService.warn(
+      this.translate.instant('Warning') + ': ' + unusedDisk.name,
+      this.translate.instant(
+        'This disk is part of the exported pool {pool}. Reusing this disk will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure any sensitive data in {pool} is backed up before reusing/repusposing this disk.',
+        { pool: `'${unusedDisk.exported_zpool}'` },
+      ),
+    );
+  }
 
   onSubmit(): void {
     this.isFormLoading = true;

@@ -2,6 +2,7 @@ import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface RsyncTask {
@@ -29,12 +30,13 @@ export interface RsyncTask {
   schedule: Schedule;
   times: boolean;
   user: string;
-  ssh_credentials: number;
+  ssh_credentials: KeychainSshCredentials;
 }
 
 export type RsyncTaskUpdate = {
   validate_rpath?: boolean;
-} & Omit<RsyncTask, 'id' | 'job' | 'locked'>;
+  ssh_credentials: number;
+} & Omit<RsyncTask, 'id' | 'job' | 'locked' | 'ssh_credentials'>;
 
 export interface RsyncTaskUi extends RsyncTask {
   cron_schedule: string;
