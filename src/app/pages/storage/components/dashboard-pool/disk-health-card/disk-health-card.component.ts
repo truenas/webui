@@ -60,6 +60,18 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     this.ngOnInit();
   }
 
+  get isAverageTempReady(): boolean {
+    return this.diskState.averageTemperature !== null && Number.isNaN(this.diskState.averageTemperature);
+  }
+
+  get isHighestTempReady(): boolean {
+    return this.diskState.highestTemperature !== null && Number.isNaN(this.diskState.highestTemperature);
+  }
+
+  get isLowestTempReady(): boolean {
+    return this.diskState.lowestTemperature !== null && Number.isNaN(this.diskState.lowestTemperature);
+  }
+
   private checkVolumeHealth(poolState: Pool): void {
     const isError = this.isStatusError(poolState);
     const isWarning = this.isStatusWarning(poolState);
