@@ -61,15 +61,15 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   get isAverageTempReady(): boolean {
-    return this.diskState.averageTemperature !== null && Number.isNaN(this.diskState.averageTemperature);
+    return this.diskState.averageTemperature !== null && !Number.isNaN(this.diskState.averageTemperature);
   }
 
   get isHighestTempReady(): boolean {
-    return this.diskState.highestTemperature !== null && Number.isNaN(this.diskState.highestTemperature);
+    return this.diskState.highestTemperature !== null && !Number.isNaN(this.diskState.highestTemperature);
   }
 
   get isLowestTempReady(): boolean {
-    return this.diskState.lowestTemperature !== null && Number.isNaN(this.diskState.lowestTemperature);
+    return this.diskState.lowestTemperature !== null && !Number.isNaN(this.diskState.lowestTemperature);
   }
 
   private checkVolumeHealth(poolState: Pool): void {
