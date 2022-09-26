@@ -72,7 +72,7 @@
 }
 
 .slide.overview .left {
-  background-image: url('../../../../../assets/images/backgrounds/hard_drive_1.jpg');
+  background-image: url('~assets/images/backgrounds/hard_drive_1.jpg');
   background-size: cover;
   color: #efefef;
 }
@@ -152,7 +152,7 @@ span.error {
 }
 
 span.warn {
-  color: var(--yellow);
+  color: var(--orange);
 }
 
 span.safe {
@@ -273,7 +273,7 @@ span.capitalize {
 }
 
 .warning {
-  color: var(--yellow);
+  color: var(--orange);
 }
 
 .error {
