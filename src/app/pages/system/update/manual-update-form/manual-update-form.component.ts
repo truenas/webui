@@ -162,6 +162,7 @@ export class ManualUpdateFormComponent implements OnInit {
     }
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: helptext.manual_update_action },
+      disableClose: true,
     });
     if (this.isHa) {
       dialogRef.componentInstance.disableProgressValue(true);

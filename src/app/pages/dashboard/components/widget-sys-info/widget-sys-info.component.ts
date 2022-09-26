@@ -148,12 +148,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     }
   }
 
-  get themeAccentColors(): string[] {
-    const theme = this.themeService.currentTheme();
-    this._themeAccentColors = theme.accentColors.map((color) => theme[color]);
-    return this._themeAccentColors;
-  }
-
   get updateBtnStatus(): string {
     if (this.updateAvailable) {
       this._updateBtnStatus = 'default';

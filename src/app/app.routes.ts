@@ -85,11 +85,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Sharing', breadcrumb: 'Sharing' },
   },
   {
-    path: 'storage-old',
-    loadChildren: () => import('./pages/storage-old/storage-old.module').then((module) => module.StorageOldModule),
-    data: { title: 'Storage', breadcrumb: 'Storage' },
-  },
-  {
     path: 'datasets',
     loadChildren: () => import('./pages/datasets/datasets.module').then((module) => module.DatasetsModule),
     data: { title: 'Storage', breadcrumb: 'Storage' },

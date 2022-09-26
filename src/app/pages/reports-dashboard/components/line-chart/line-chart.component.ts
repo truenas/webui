@@ -56,7 +56,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   units = '';
   yLabelPrefix: string;
-  showLegendValues = false;
 
   theme: Theme;
   timeFormat = '%H:%M';

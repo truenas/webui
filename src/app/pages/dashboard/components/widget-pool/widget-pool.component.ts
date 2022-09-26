@@ -55,7 +55,6 @@ enum PoolHealthLevel {
   ],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnChanges {
-  readonly TopologyItemStatus = TopologyItemStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
 
@@ -66,13 +65,24 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
   @ViewChild('diskDetails', { static: false }) diskDetails: TemplateRef<void>;
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
+
   templates: { [template: string]: TemplateRef<void> };
   tpl: TemplateRef<void>;
+  path: Slide[] = [];
+  title: string;
+  displayValue: string;
+  diskSize: string;
+  diskSizeLabel: string;
+  poolHealth: PoolDiagnosis = {
+    isHealthy: true,
+    level: PoolHealthLevel.Safe,
+  };
+  currentDiskDetails: Disk;
 
+  readonly TopologyItemStatus = TopologyItemStatus;
   readonly PoolStatus = PoolStatus;
   readonly PoolTopologyCategory = PoolTopologyCategory;
 
-  // NAVIGATION
   currentSlide = '0';
 
   get currentSlideTopology(): PoolTopologyCategory {
@@ -90,8 +100,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   get previousSlide(): number {
     return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
-
-  path: Slide[] = [];
 
   get totalDisks(): string {
     if (this.poolState && this.poolState.topology) {
@@ -137,17 +145,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return getPoolDisks(this.poolState);
   }
 
-  title: string;
-  voldataavail = false;
-  displayValue: string;
-  diskSize: string;
-  diskSizeLabel: string;
-  poolHealth: PoolDiagnosis = {
-    isHealthy: true,
-    level: PoolHealthLevel.Safe,
-  };
-
-  currentDiskDetails: Disk;
   get currentDiskDetailsKeys(): (keyof Disk)[] {
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
@@ -216,10 +213,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
-    }
-
-    if (!Number.isNaN(this.volumeData.avail)) {
-      this.voldataavail = true;
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
@@ -365,7 +358,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
   }
 
-  percentAsNumber(value: string): number {
+  convertPercentToNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
   }

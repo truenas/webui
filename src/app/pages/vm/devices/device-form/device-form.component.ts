@@ -244,7 +244,8 @@ export class DeviceFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  onSubmit(event: SubmitEvent): void {
+    event.preventDefault();
     this.isLoading = true;
 
     const update: VmDeviceUpdate = {

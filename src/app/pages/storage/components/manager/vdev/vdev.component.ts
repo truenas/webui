@@ -219,10 +219,6 @@ export class VdevComponent implements OnInit {
     this.manager.getCurrentLayout();
   }
 
-  getRawSize(): number {
-    return this.rawSize;
-  }
-
   remove(): void {
     while (this.disks.length) {
       this.manager.addDisk(this.disks.pop());

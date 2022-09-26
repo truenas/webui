@@ -3,7 +3,7 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface Alert {
-  args: string;
+  args: unknown;
   datetime: ApiTimestamp;
   dismissed: boolean;
   formatted: string;

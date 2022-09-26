@@ -915,6 +915,10 @@ export class DatasetFormComponent implements FormConfiguration {
       aclModeFormControl.setValue(AclMode.Inherit);
       this.entityForm.setDisabled('aclmode', true, false);
     }
+    if (!this.parent) {
+      this.entityForm.setDisabled('acltype', true, false);
+      this.entityForm.setDisabled('aclmode', true, false);
+    }
   }
 
   afterInit(entityForm: EntityFormComponent): void {

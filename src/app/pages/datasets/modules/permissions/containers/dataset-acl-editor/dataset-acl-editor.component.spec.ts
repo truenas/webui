@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting, byText,
 } from '@ngneat/spectator/jest';
@@ -34,6 +33,9 @@ import {
 import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
+import {
+  StripAclModalComponent,
+} from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
 import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
@@ -166,28 +168,14 @@ describe('DatasetAclEditorComponent', () => {
   });
 
   describe('editing', () => {
-    it('strips ACL when "Strip ACL" button is pressed', async () => {
+    it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
+      jest.spyOn(matDialog, 'open').mockImplementation();
       const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
       await stripButton.click();
 
-      spectator.click(spectator.query(
-        byText('Remove the ACL and permissions from child datasets of the current dataset'),
-        { root: true },
-      ));
-
-      const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
-      await confirmButton.click();
-
-      expect(websocket.job).toHaveBeenCalledWith('filesystem.setacl', [{
-        dacl: [],
-        options: {
-          recursive: true,
-          stripacl: true,
-          traverse: true,
-        },
-        path: '/mnt/pool/dataset',
-      }]);
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets']);
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
+        data: { path: '/mnt/pool/dataset' },
+      });
     });
 
     it('adds another ace when Add item is pressed', async () => {

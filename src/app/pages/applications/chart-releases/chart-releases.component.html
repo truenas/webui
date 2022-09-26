@@ -180,7 +180,7 @@
           ix-auto-type="option"
           ix-auto-identifier="rollback"
           [disabled]="!item.history || isEmpty(item.history)"
-          (click)="rollback(item.name)"
+          (click)="onRollback(item.name)"
         >
           <mat-icon>replay</mat-icon>
           <span>{{ 'Roll Back' | translate }}</span>

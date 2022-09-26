@@ -92,7 +92,7 @@
         <div *ngIf="poolState && path" class="carousel" #carousel>
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
-              <mat-icon>warning</mat-icon>
+              <ix-icon name="error"></ix-icon>
               <h4>{{ 'Data not available' | translate }}.</h4>
             </div>
           </ng-template>
@@ -142,23 +142,21 @@
                     <div class="pool-status tr">
                       <div class="td label"><strong>Pool Status:</strong></div>
                       <div class="td status-cell">
-                        <span class="capitalize">{{ poolState.status }}</span>
+                        <span class="capitalize">
+                          {{ poolState.status }}
+                        </span>
                         <ng-container [ngSwitch]="poolState.status">
                           <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon">
-                            <mat-icon>lock</mat-icon>
+                            <ix-icon name="lock"></ix-icon>
                           </span>
                           <span *ngSwitchCase="PoolStatus.Online" class="{{ poolHealth.level }} icon">
-                            <mat-icon>
-                              {{ poolHealth.isHealthy ? 'check_circle' : 'warning' }}
-                            </mat-icon>
+                            <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
                           </span>
                           <span *ngSwitchCase="PoolStatus.Healthy" class="{{ poolHealth.level }} icon">
-                            <mat-icon>
-                              {{ poolHealth.isHealthy ? 'check_circle' : 'warning' }}
-                            </mat-icon>
+                            <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
                           </span>
                           <span *ngSwitchDefault class="error icon">
-                            <mat-icon>cancel</mat-icon>
+                            <ix-icon name="cancel"></ix-icon>
                           </span>
                         </ng-container>
                       </div>
@@ -167,7 +165,9 @@
                     <div class="used-space tr">
                       <ng-container *ngIf="!volumeData || !volumeData.used_pct">
                         <div class="td label">
-                          <strong>{{ 'Used Space' | translate }}:</strong>&nbsp;
+                          <strong>
+                            {{ 'Used Space' | translate }}:</strong
+                            >&nbsp;
                         </div>
                         <div class="td">
                           <span class="value-used">Unknown</span>
@@ -176,17 +176,17 @@
 
                       <ng-container *ngIf="volumeData && volumeData.used_pct">
                         <div class="td label">
-                          <strong>{{ 'Used Space' | translate }}:</strong>
+                          <strong>
+                            {{ 'Used Space' | translate
+                          }}:</strong>
                         </div>
 
-                        <div *ngIf="percentAsNumber(volumeData.used_pct) >= 80; else safeSpace" class="td">
-                          &nbsp;
+                        <div *ngIf="convertPercentToNumber(volumeData.used_pct) >= 80; else safeSpace" class="td">
                           <span class="value-used">
                             {{ volumeData.used_pct }}
                           </span>
-                          <span class="error icon">
-                            &nbsp;
-                            <mat-icon class="disk-errors">warning</mat-icon>
+                          <span class="icon {{ convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning' }}">
+                            <ix-icon name="error"></ix-icon>
                           </span>
                         </div>
 
@@ -196,8 +196,7 @@
                               {{ volumeData.used_pct }}
                             </span>
                             <span class="safe icon">
-                              &nbsp;
-                              <mat-icon class="healthy">check_circle</mat-icon>
+                              <ix-icon name="check_circle"></ix-icon>
                             </span>
                           </div>
                         </ng-template>
@@ -214,14 +213,14 @@
                         <span *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
                           Disks
                         </span>
-                        <span class="error icon" *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
-                          &nbsp;<mat-icon class="disk-errors">warning</mat-icon>
+                        <span
+                          *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'"
+                          class="error icon"
+                        >
+                          <ix-icon class="disk-errors" name="error"></ix-icon>
                         </span>
-                        <span class="safe icon" *ngIf="unhealthyDisks.totalErrors == '0'">
-                          &nbsp;
-                          <mat-icon class="healthy">
-                            check_circle
-                          </mat-icon>
+                        <span  *ngIf="unhealthyDisks.totalErrors == '0'" class="safe icon">
+                          <ix-icon class="healthy" name="check_circle"></ix-icon>
                         </span>
                       </div>
                     </div>
@@ -243,18 +242,19 @@
                   </div>
                   <mat-list>
                     <mat-list-item>
-                      <strong>{{ 'Path' | translate }}: </strong>
-                      &nbsp;&nbsp;
+                      <strong>
+                        {{ 'Path' | translate }}:
+                      </strong>
                       {{ poolState.path }}
                     </mat-list-item>
 
                     <mat-list-item>
-                      <strong>{{ 'Available Space' | translate }}: </strong
-                      >&nbsp;&nbsp;
+                      <strong>
+                        {{ 'Available Space' | translate }}:
+                      </strong>
                       <span *ngIf="volumeData && volumeData.used_pct; else unavail">
                         <span class="value">{{ diskSize }}</span>
-                        <span class="value-units">{{ diskSizeLabel }}</span
-                        >&nbsp;&nbsp;
+                        <span class="value-units">{{ diskSizeLabel }}</span>
                       </span>
                       <ng-template #unavail>
                         <span *ngIf="displayValue !== 'Unknown'" class="value">
@@ -272,7 +272,9 @@
                       }"
                       (click)="updateSlide('data', poolState.topology.data.length > 0, 1, undefined, PoolTopologyCategory.Data)"
                     >
-                      <strong>{{ 'Data' | translate }}: </strong>&nbsp;&nbsp;
+                      <strong>
+                        {{ 'Data' | translate }}:
+                      </strong>
                       {{ poolState.topology.data.length }}
                       vdev
                       <span *ngIf="poolState.topology.data.length > 1">
@@ -295,7 +297,9 @@
                       }"
                       (click)="updateSlide('data', poolState.topology.cache.length > 0, 1, 0, PoolTopologyCategory.Cache)"
                     >
-                      <strong>{{ 'Caches' | translate }}: </strong>&nbsp;&nbsp;
+                      <strong>
+                        {{ 'Caches' | translate }}:
+                      </strong>
                       {{ poolState.topology.cache.length }}
                       <mat-icon
                         *ngIf="poolState.topology.cache.length"
@@ -314,7 +318,9 @@
                         clickable: poolState.topology.spare.length > 0
                       }"
                     >
-                      <strong>{{ 'Spares' | translate }}: </strong>&nbsp;&nbsp;
+                      <strong>
+                        {{ 'Spares' | translate }}:
+                      </strong>
                       {{ poolState.topology.spare.length }}
                       <mat-icon
                         *ngIf="poolState.topology.spare.length"
@@ -333,7 +339,9 @@
                       }"
                       (click)="updateSlide('data', poolState.topology.log.length > 0, 1, 0, PoolTopologyCategory.Log)"
                     >
-                      <strong>{{ 'Logs' | translate }}: </strong>&nbsp;&nbsp;
+                      <strong>
+                        {{ 'Logs' | translate }}:
+                      </strong>
                       {{ poolState.topology.log.length }}
                       <mat-icon
                         *ngIf="poolState.topology.log.length"
@@ -365,28 +373,28 @@
                 [ngClass]="{ clickable: true }"
                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, currentSlideTopology, vdev)"
               >
-                <strong>{{ vdev.type }}:</strong>&nbsp;&nbsp; {{ vdev.status }}
+                <strong>
+                  {{ vdev.type
+                  }}:</strong>
+                {{ vdev.status }}
                 <!-- STATUS ICONS -->
                 <span
                   *ngIf="vdev.status === TopologyItemStatus.Online"
                   class="{{ poolHealth.level }} healthy"
                 >
-                  <mat-icon>check_circle</mat-icon>
-                  &nbsp;&nbsp;
+                  <ix-icon name="check_circle"></ix-icon>
                 </span>
                 <span
                   *ngIf="vdev.status !== TopologyItemStatus.Online"
                   class="{{ poolHealth.level }} healthy"
                 >
-                  <mat-icon>warning</mat-icon>
-                  &nbsp;&nbsp;
+                  <ix-icon name="error"></ix-icon>
                 </span>
 
                 <span *ngIf="vdev.type == 'DISK'" class="vdev">
                   <span>
                     {{ trimMultipath(vdev.disk).name }}
                   </span>
-                  &nbsp;&nbsp;
                 </span>
 
                 <span
@@ -400,7 +408,6 @@
                       <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">
                         ,
                       </span>
-                      &nbsp;&nbsp;
                     </div>
                   </span>
                 </span>
@@ -415,11 +422,10 @@
                       <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">
                         ,
                       </span>
-                      &nbsp;&nbsp;
                     </div>
                   </span>
                   <span>
-                    &nbsp;&nbsp; ({{ vdev.children.length - 3 }} more)
+                    ({{ vdev.children.length - 3 }} more)
                   </span>
                 </span>
 
@@ -458,14 +464,14 @@
                   </span>
                   :
                 </strong>
-                &nbsp;&nbsp; {{ disk.status | translate }}
+                {{ disk.status | translate }}
 
                 <!-- STATUS ICONS -->
                 <span *ngIf="disk.status === TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
-                  <mat-icon>check_circle</mat-icon>
+                  <ix-icon name="check_circle"></ix-icon>
                 </span>
                 <span *ngIf="disk.status !== TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
-                  <mat-icon>warning</mat-icon>
+                  <ix-icon name="error"></ix-icon>
                 </span>
 
                 <!-- CHEVRON -->
@@ -491,9 +497,9 @@
                   {{ trimMultipath(path[2].dataSource.disk).fullName }}
                   :
                 </strong>
-                &nbsp;&nbsp; {{ path[2].dataSource.status | translate }}
+                {{ path[2].dataSource.status | translate }}
                 <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
-                  <mat-icon>check_circle</mat-icon>
+                  <ix-icon name="check_circle"></ix-icon>
                 </span>
                 <mat-icon
                   class="next-slide"
@@ -514,33 +520,33 @@
             </div>
             <mat-list>
               <mat-list-item role="listitem">
-                <strong> {{ 'Name' | translate }}:</strong>&nbsp;&nbsp;
+                <strong> {{ 'Name' | translate }}:</strong>
                 {{ path[currentSlideIndex].dataSource.disk }}
               </mat-list-item>
 
               <mat-list-item role="listitem">
-                <strong> GUID:</strong>&nbsp;&nbsp;
+                <strong> GUID:</strong>
                 {{ path[currentSlideIndex].dataSource.guid }}
               </mat-list-item>
               <mat-list-item
                 *ngIf="path[currentSlideIndex].dataSource.stats.read_errors"
                 role="listitem"
               >
-                <strong> {{ 'Read Errors' | translate }}:</strong>&nbsp;&nbsp;
+                <strong> {{ 'Read Errors' | translate }}:</strong>
                 {{ path[currentSlideIndex].dataSource.stats.read_errors }}
               </mat-list-item>
               <mat-list-item
                 *ngIf="path[currentSlideIndex].dataSource.stats.write_errors"
                 role="listitem"
               >
-                <strong> {{ 'Write Errors' | translate }}:</strong>&nbsp;&nbsp;
+                <strong> {{ 'Write Errors' | translate }}:</strong>
                 {{ path[currentSlideIndex].dataSource.stats.write_errors }}
               </mat-list-item>
               <mat-list-item
                 *ngIf="path[currentSlideIndex].dataSource.stats.self_healed"
                 role="listitem"
               >
-                <strong> {{ 'Self Healed' | translate }}:</strong>&nbsp;&nbsp;
+                <strong> {{ 'Self Healed' | translate }}:</strong>
                 {{ path[currentSlideIndex].dataSource.stats.self_healed }}
               </mat-list-item>
             </mat-list>
@@ -553,7 +559,7 @@
               <mat-list>
                 <ng-container *ngFor="let key of currentDiskDetailsKeys">
                   <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
-                    <strong class="detail-key"> {{ key }}:</strong>&nbsp;&nbsp;
+                    <strong class="detail-key"> {{ key }}:</strong>
                     {{ currentDiskDetails[diskKey(key)] }}
                   </mat-list-item>
                 </ng-container>
