@@ -36,12 +36,12 @@
 /*---- Globals -----*/
 html {
   font-size: 87.5% /* 14px */;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
 }
 
 html,
 body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   height: 100%;
   min-height: 100%;
   position: relative;
@@ -51,9 +51,9 @@ body {
   width: 100%;
 }
 
-body:not(.safari-platform) {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+body.safari-platform {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
 body {
