@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -14,6 +14,7 @@ import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -60,7 +61,6 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute,
     private translate: TranslateService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
