@@ -27,6 +27,7 @@ import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-d
 import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
@@ -76,6 +77,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   poolError: string = null;
   loaderOpen = false;
   help = helptext;
+  exportedPoolsWarnings: string[] = [];
 
   submitTitle: string = this.translate.instant('Create');
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
@@ -521,6 +523,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.size = filesize(sizeEstimate, { standard: 'iec' });
 
     this.getDuplicableDisks();
+
+    this.updateExportedPoolWarningFlags(this.selected);
   }
 
   getDuplicableDisks(): void {
@@ -567,6 +571,21 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       return false;
     }
     return true;
+  }
+
+  handleSelectAll(selectFn: (flag: boolean) => void, allSelectedFlag: boolean): void {
+    if (allSelectedFlag) {
+      for (const disk of this.disks) {
+        if (this.shouldWarnForExportedPool(disk)) {
+          this.dialog.warn(
+            this.translate.instant('Warning') + ': ' + disk.name,
+            this.translate.instant(helptext.exported_pool_warning, { pool: `'${disk.exported_zpool}'` }),
+          );
+        }
+      }
+    }
+    this.updateExportedPoolWarningFlags(allSelectedFlag ? this.disks : []);
+    selectFn(allSelectedFlag);
   }
 
   checkSubmit(): void {
@@ -758,8 +777,35 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   onSelect({ selected }: { selected: ManagerDisk[] }): void {
+    this.warnAboutExportedPool(selected);
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
+  }
+
+  warnAboutExportedPool(selectedDisks: ManagerDisk[]): void {
+    if (selectedDisks.length && this.shouldWarnForExportedPool(selectedDisks[selectedDisks.length - 1])) {
+      const lastSelectedItem = selectedDisks[selectedDisks.length - 1];
+      this.dialog.warn(
+        this.translate.instant('Warning') + ': ' + lastSelectedItem.name,
+        this.translate.instant(helptext.exported_pool_warning, { pool: `'${lastSelectedItem.exported_zpool}'` }),
+      );
+    }
+    this.updateExportedPoolWarningFlags(selectedDisks);
+  }
+
+  updateExportedPoolWarningFlags(selectedDisks: ManagerDisk[]): void {
+    const selectedDisksWithPools = selectedDisks.filter((selectedDisk) => selectedDisk.exported_zpool);
+    this.exportedPoolsWarnings = selectedDisksWithPools.map(
+      (selectedDisk) => selectedDisk.devname,
+    );
+  }
+
+  shouldWarnForExportedPool(disk: ManagerDisk): boolean {
+    const lastSelectedDisk = disk;
+    const wasAlreadyWarnedAboutThisDisk = this.exportedPoolsWarnings.find(
+      (warningDisk) => warningDisk === lastSelectedDisk.devname,
+    );
+    return lastSelectedDisk.exported_zpool && !wasAlreadyWarnedAboutThisDisk;
   }
 
   updateFilter(event: KeyboardEvent): void {
@@ -823,12 +869,22 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   suggestRedundancyLayout(): void {
     this.selected = [];
+    const exportedPoolsDisks: ManagerDisk[] = [];
     this.suggestableDisks.forEach((disk) => {
+      if (disk.exported_zpool) {
+        exportedPoolsDisks.push(disk);
+      }
       this.vdevComponents.first.addDisk(disk);
     });
     while (this.suggestableDisks.length > 0) {
       this.removeDisk(this.suggestableDisks[0]);
       this.suggestableDisks.shift();
+    }
+    if (exportedPoolsDisks.length) {
+      const formattedDisks = exportedPoolsDisks.map(
+        (disk) => ({ diskName: disk.name, exportedPool: disk.exported_zpool }),
+      );
+      this.mdDialog.open(ExportedPoolsDialogComponent, { data: { disks: formattedDisks } });
     }
   }
 

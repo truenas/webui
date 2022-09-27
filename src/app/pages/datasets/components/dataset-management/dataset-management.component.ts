@@ -232,7 +232,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
     this.dataSource.filterPredicate = (datasets, query = '') => {
       return flattenTreeWithFilter(datasets, (dataset: DatasetDetails) => {
-        return dataset.id.toLowerCase().includes(query.toLowerCase());
+        return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
   }

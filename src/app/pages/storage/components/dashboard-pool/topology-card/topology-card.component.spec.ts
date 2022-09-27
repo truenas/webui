@@ -1,7 +1,7 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 
@@ -58,21 +58,21 @@ describe('TopologyCardComponent', () => {
             dedup: [],
           },
         } as unknown as Pool,
-        diskDictionary: {
-          sda: { size: 1073741824 * 2 },
-          sdb: { size: 1073741824 * 2 },
-          sdc: { size: 1073741824 * 2 },
-          sdd: { size: 1073741824 * 2 },
-          sde: { size: 1073741824 * 2 },
-          sdf: { size: 1048576 * 5 },
-          sdg: { size: 1048576 * 5 },
-          sdh: { size: 1048576 * 6 },
-          sdi: { size: 1048576 * 6 },
-          sdj: { size: 1048576 * 4 },
-          sdk: { size: 1048576 * 3 },
-          sdl: { size: 1073741824 * 2 },
-          sdm: { size: 1073741824 * 1 },
-        } as unknown as { [key: string]: Disk },
+        disks: [
+          { name: 'sda', devname: 'sda', size: 1073741824 * 2 },
+          { name: 'sdb', devname: 'sdb', size: 1073741824 * 2 },
+          { name: 'sdc', devname: 'sdc', size: 1073741824 * 2 },
+          { name: 'sdd', devname: 'sdd', size: 1073741824 * 2 },
+          { name: 'sde', devname: 'sde', size: 1073741824 * 2 },
+          { name: 'sdf', devname: 'sdf', size: 1048576 * 5 },
+          { name: 'sdg', devname: 'sdg', size: 1048576 * 5 },
+          { name: 'sdh', devname: 'sdh', size: 1048576 * 6 },
+          { name: 'sdi', devname: 'sdi', size: 1048576 * 6 },
+          { name: 'sdj', devname: 'sdj', size: 1048576 * 4 },
+          { name: 'sdk', devname: 'sdk', size: 1048576 * 3 },
+          { name: 'sdl', devname: 'sdl', size: 1073741824 * 2 },
+          { name: 'sdm', devname: 'sdm', size: 1073741824 * 1 },
+        ] as StorageDashboardDisk[],
       },
     });
   });

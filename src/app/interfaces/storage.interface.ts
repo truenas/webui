@@ -5,6 +5,8 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Alert } from 'app/interfaces/alert.interface';
+import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
@@ -93,6 +95,13 @@ export interface Disk {
   transfermode: string;
   type: DiskType;
   zfs_guid: string;
+  tests?: SmartTestResult[];
+}
+
+export interface StorageDashboardDisk extends Disk {
+  alerts: Alert[];
+  smartTests: number;
+  tempAggregates: TemperatureAgg;
 }
 
 /**
@@ -136,6 +145,7 @@ export interface UnusedDisk extends Disk {
   partitions: {
     path: string;
   }[];
+  exported_zpool: string;
 }
 
 /**

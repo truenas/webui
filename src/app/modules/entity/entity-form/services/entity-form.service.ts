@@ -185,13 +185,6 @@ export class EntityFormService {
     });
   }
 
-  clearFormError(fieldConfig: FieldConfig[]): void {
-    fieldConfig.forEach((config) => {
-      config['errors'] = '';
-      config['hasErrors'] = false;
-    });
-  }
-
   phraseInputData(value: any, config: InputUnitConfig): string | number {
     if (!value) {
       return value;

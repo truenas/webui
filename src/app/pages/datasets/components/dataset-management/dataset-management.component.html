@@ -19,7 +19,7 @@
 
       <div class="dataset-tree-search">
         <ix-search-input
-          [disabled]="!dataSource"
+          [disabled]="!dataSource?.data?.length"
           (search)="onSearch($event)"
         ></ix-search-input>
       </div>

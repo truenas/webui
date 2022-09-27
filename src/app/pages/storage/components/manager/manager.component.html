@@ -498,7 +498,7 @@
                     color="primary"
                     id="pool-manager__disks-table-checkall"
                     [checked]="allRowsSelected"
-                    (change)="selectFn(!allRowsSelected)"
+                    (change)="handleSelectAll(selectFn, !allRowsSelected)"
                   ></mat-checkbox>
                 </div>
               </ng-template>
@@ -523,11 +523,14 @@
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column
-              name="{{ 'Disk' | translate }}"
-              prop="devname"
               [width]="165"
-            ></ngx-datatable-column>
-
+              name="{{'Disk' | translate}}"
+            >
+              <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ row.devname }}
+                <ix-warning class="inline-warn" *ngIf="row.exported_zpool" [message]="'('+row.exported_zpool+')'"></ix-warning>
+              </ng-template>
+            </ngx-datatable-column>
             <ngx-datatable-column
               name="{{ 'Type' | translate }}"
               prop="type"

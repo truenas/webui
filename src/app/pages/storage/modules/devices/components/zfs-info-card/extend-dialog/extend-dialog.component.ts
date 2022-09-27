@@ -29,6 +29,7 @@ export interface ExtendDialogParams {
 export class ExtendDialogComponent implements OnInit {
   newDiskControl = new FormControl(null as string, Validators.required);
   unusedDiskOptions$: Observable<Option[]>;
+  unusedDisks: UnusedDisk[] = [];
 
   readonly helptext = helptext;
 
@@ -46,6 +47,24 @@ export class ExtendDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUnusedDisks();
+    this.setupWarningForExportedPools();
+  }
+
+  setupWarningForExportedPools(): void {
+    this.newDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      this.warnForExportedPools.bind(this),
+    );
+  }
+
+  warnForExportedPools(diskName: string): void {
+    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+    if (!unusedDisk?.exported_zpool) {
+      return;
+    }
+    this.dialogService.warn(
+      this.translate.instant('Warning') + ': ' + unusedDisk.name,
+      this.translate.instant(helptext.exported_pool_warning, { pool: `'${unusedDisk.exported_zpool}'` }),
+    );
   }
 
   onSubmit(event: SubmitEvent): void {
@@ -86,11 +105,15 @@ export class ExtendDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (disks) => {
+          this.unusedDisks = disks;
           this.unusedDiskOptions$ = of(
-            disks.map((disk) => ({
-              label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
-              value: disk.name,
-            })),
+            disks.map((disk) => {
+              const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+              return {
+                label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
+                value: disk.name,
+              };
+            }),
           );
 
           this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
