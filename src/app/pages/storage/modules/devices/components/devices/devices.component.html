@@ -23,7 +23,7 @@
 
     <div class="disk-search">
       <ix-search-input
-        [disabled]="!dataSource"
+        [disabled]="!dataSource?.data?.length"
         (search)="onSearch($event)"
       ></ix-search-input>
     </div>

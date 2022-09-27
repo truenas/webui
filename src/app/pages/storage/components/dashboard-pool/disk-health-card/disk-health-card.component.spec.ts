@@ -5,19 +5,18 @@ import {
   createComponentFactory, Spectator, mockProvider, byText,
 } from '@ngneat/spectator/jest';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { DiskTemperatureAgg, Disk } from 'app/interfaces/storage.interface';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
-const diskDictionary: { [key: string]: Disk } = {
-  sdd: {
+const disks: StorageDashboardDisk[] = [
+  {
     advpowermgmt: DiskPowerLevel.Disabled,
     bus: DiskBus.Spi,
     critical: 0,
@@ -48,13 +47,11 @@ const diskDictionary: { [key: string]: Disk } = {
     transfermode: 'Auto',
     type: DiskType.Hdd,
     zfs_guid: '12387051346845729003',
+    alerts: [],
+    tempAggregates: { min: 10, max: 50, avg: 30 },
+    smartTests: 0,
   },
-};
-
-const temperatureAgg = {
-  sda: { min: 10, max: 30, avg: 20 },
-  sdd: { min: 20, max: 50, avg: 40 },
-} as DiskTemperatureAgg;
+];
 
 describe('DiskHealthCardComponent', () => {
   let spectator: Spectator<DiskHealthCardComponent>;
@@ -68,11 +65,6 @@ describe('DiskHealthCardComponent', () => {
     providers: [
       mockProvider(PoolsDashboardStore),
       mockProvider(SnackbarService),
-      mockWebsocket([
-        mockCall('disk.temperature_alerts', []),
-        mockCall('smart.test.results', []),
-        mockCall('disk.temperature_agg', temperatureAgg),
-      ]),
     ],
   });
 
@@ -80,7 +72,7 @@ describe('DiskHealthCardComponent', () => {
     spectator = createComponent({
       props: {
         poolState: { id: 1, name: 'DEV' } as Pool,
-        diskDictionary,
+        disks,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

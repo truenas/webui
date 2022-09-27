@@ -1,8 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,13 +18,11 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './boot-pool-replace-form.component.html',
-  styleUrls: ['./boot-pool-replace-form.component.scss'],
+  templateUrl: './boot-pool-replace-dialog.component.html',
+  styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootPoolReplaceFormComponent implements OnInit {
-  routeSuccess: string[] = ['system', 'boot', 'status'];
-  pk: string;
+export class BootPoolReplaceDialogComponent implements OnInit {
   unusedDisks: UnusedDisk[] = [];
 
   form = this.fb.group({
@@ -55,20 +56,20 @@ export class BootPoolReplaceFormComponent implements OnInit {
   };
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
     private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
+    private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
-    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params['pk'];
-    });
-
     this.setupWarningForExportedPools();
   }
 
@@ -106,11 +107,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.router.navigate(this.routeSuccess);
+      this.dialogRef.close(true);
     });
-  }
-
-  cancel(): void {
-    this.router.navigate(this.routeSuccess);
   }
 }
