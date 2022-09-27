@@ -2,22 +2,23 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, WebSocketService } from 'app/services';
-import { BootPoolAttachFormComponent } from './boot-pool-attach-form.component';
+import { WebSocketService } from 'app/services';
+import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
 
-describe('BootPoolAttachFormComponent', () => {
-  let spectator: Spectator<BootPoolAttachFormComponent>;
+describe('BootPoolReplaceDialogComponent', () => {
+  let spectator: Spectator<BootPoolReplaceDialogComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
-  const createComponent = createComponentFactory({
-    component: BootPoolAttachFormComponent,
+  const createComponent = createRoutingFactory({
+    component: BootPoolReplaceDialogComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
@@ -27,13 +28,16 @@ describe('BootPoolAttachFormComponent', () => {
         mockCall('disk.get_unused', [
           {
             name: 'sdb',
-            size: 10737418240,
           },
         ] as UnusedDisk[]),
-        mockJob('boot.attach'),
+        mockCall('boot.replace'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
+      mockProvider(MatDialogRef),
+      {
+        provide: MAT_DIALOG_DATA,
+        useValue: 'sda3',
+      },
     ],
   });
 
@@ -46,13 +50,12 @@ describe('BootPoolAttachFormComponent', () => {
   it('sends an update payload to websocket when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Member Disk': 'sdb (10 GiB)',
-      'Use all disk space': true,
+      'Member Disk': 'sdb',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.job).toHaveBeenCalledWith('boot.attach', ['sdb', { expand: true }]);
+    expect(ws.call).toHaveBeenCalledWith('boot.replace', ['sda3', 'sdb']);
   });
 });

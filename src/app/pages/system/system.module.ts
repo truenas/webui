@@ -62,9 +62,9 @@ import { SlackServiceComponent } from 'app/pages/system/alert-service/alert-serv
 import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/snmp-trap-service/snmp-trap-service.component';
 import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
 import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { BootPoolAttachFormComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-form.component';
+import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
-import { BootPoolReplaceFormComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-form.component';
+import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
@@ -153,8 +153,8 @@ import { routing } from './system.routing';
     AlertServiceListComponent,
     BootEnvironmentFormComponent,
     BootEnvironmentListComponent,
-    BootPoolAttachFormComponent,
-    BootPoolReplaceFormComponent,
+    BootPoolAttachDialogComponent,
+    BootPoolReplaceDialogComponent,
     BootStatusListComponent,
     ConsoleFormComponent,
     CronFormComponent,

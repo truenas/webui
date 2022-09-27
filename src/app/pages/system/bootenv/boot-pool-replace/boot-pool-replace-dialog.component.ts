@@ -1,8 +1,12 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, OnInit,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,14 +18,12 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './boot-pool-replace-form.component.html',
-  styleUrls: ['./boot-pool-replace-form.component.scss'],
+  templateUrl: './boot-pool-replace-dialog.component.html',
+  styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootPoolReplaceFormComponent implements OnInit {
+export class BootPoolReplaceDialogComponent implements OnInit {
   isFormLoading = false;
-  routeSuccess: string[] = ['system', 'boot', 'status'];
-  pk: string;
   unusedDisks: UnusedDisk[] = [];
 
   form = this.fb.group({
@@ -47,6 +49,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
   };
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
     protected router: Router,
     protected route: ActivatedRoute,
@@ -54,14 +57,11 @@ export class BootPoolReplaceFormComponent implements OnInit {
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
-    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params['pk'];
-    });
-
     this.setupWarningForExportedPools();
   }
 
@@ -94,7 +94,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.router.navigate(this.routeSuccess);
+        this.dialogRef.close(true);
       },
       error: (error) => {
         this.isFormLoading = false;
@@ -102,9 +102,5 @@ export class BootPoolReplaceFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  cancel(): void {
-    this.router.navigate(this.routeSuccess);
   }
 }
