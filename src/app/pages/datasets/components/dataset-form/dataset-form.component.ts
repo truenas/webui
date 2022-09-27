@@ -42,6 +42,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
+import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/name-length-validation';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -141,7 +142,10 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_name_tooltip,
           readonly: true,
           required: true,
-          validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
+          validation: [
+            Validators.required,
+            forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive),
+          ],
         },
         {
           type: 'input',
@@ -1087,6 +1091,15 @@ export class DatasetFormComponent implements FormConfiguration {
       this.pk = this.parent;
       this.isNew = true;
       entityForm.formGroup.controls['parent'].setValue(this.parent);
+      entityForm.formGroup.controls['name'].setValidators(datasetNameTooLong(this.parent));
+      if (this.parent.length >= 200) {
+        this.dialogService.warn(
+          this.translate.instant('Action Not Possible'),
+          this.translate.instant('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.'),
+        ).pipe(untilDestroyed(this)).subscribe(() => {
+          this.modalService.closeSlideIn();
+        });
+      }
       this.fieldSets[0].config[1].readonly = false;
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
