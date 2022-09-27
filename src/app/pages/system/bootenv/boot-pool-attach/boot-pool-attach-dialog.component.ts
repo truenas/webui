@@ -62,9 +62,14 @@ export class BootPoolAttachDialogComponent implements OnInit {
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.unusedDisks = unusedDisks;
       const unusedDisksOptions = unusedDisks.map((disk) => {
-        const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+        const size = filesize(disk.size, { standard: 'iec' });
+        let label = `${disk.name} - ${size}`;
+        if (disk.exported_zpool) {
+          label += ` (${disk.exported_zpool})`;
+        }
+
         return {
-          label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})${exportedPool}`,
+          label,
           value: disk.name,
         };
       });

@@ -2730,6 +2730,7 @@
   "Replace": "Замінити",
   "Replace Disk": "Замінити диск",
   "Replace existing dataset properties with these new defined properties in the replicated files.": "Замініть існуючі властивості набору даних цими новими визначеними властивостями в реплікованих файлах.",
+  "Replacing Boot Pool Disk": "Замінюю диск завантажувального пулу",
   "Replacing Disk": "Замінюю диск",
   "Replacing disk {name}": "Заміна диска {name}",
   "Replacing disk...": "Замінюю диск ...",

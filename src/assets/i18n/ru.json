@@ -3460,6 +3460,7 @@
   "Repeat Data VDev": "Повторить VDev данных",
   "Repeat Vdev": "Повторить VDev",
   "Replace": "Заменить",
+  "Replacing Boot Pool Disk": "Замена диска загрузочного пула",
   "Replacing Disk": "Заменяю диск",
   "Replacing disk...": "Заменяю диск...",
   "Replicate <i>{name}</i> now?": "Реплицировать <i>{name}</i> сейчас?",
