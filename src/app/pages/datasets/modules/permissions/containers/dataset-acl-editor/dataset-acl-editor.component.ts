@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -14,6 +14,9 @@ import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox
 import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
+import {
+  StripAclModalComponent, StripAclModalData,
+} from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
@@ -60,6 +63,7 @@ export class DatasetAclEditorComponent implements OnInit {
 
   constructor(
     private store: DatasetAclEditorStore,
+    private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -116,7 +120,20 @@ export class DatasetAclEditorComponent implements OnInit {
   }
 
   onStripAclPressed(): void {
-    this.store.stripAcl();
+    this.matDialog.open(StripAclModalComponent, {
+      data: {
+        path: this.fullDatasetPath,
+      } as StripAclModalData,
+    })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((wasStripped) => {
+        if (wasStripped) {
+          return;
+        }
+
+        this.router.navigate(['/datasets', this.datasetPath]);
+      });
   }
 
   onSavePressed(): void {

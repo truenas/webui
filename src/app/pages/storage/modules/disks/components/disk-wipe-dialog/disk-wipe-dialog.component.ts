@@ -44,11 +44,11 @@ export class DiskWipeDialogComponent {
     private translate: TranslateService,
     private matDialog: MatDialog,
     private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public diskName: string,
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
+  ) { }
 
   get title(): string {
-    return this.translate.instant('Wipe Disk {name}', { name: this.diskName });
+    return this.translate.instant('Wipe Disk {name}', { name: this.data.diskName });
   }
 
   onSubmit(): void {
@@ -73,7 +73,7 @@ export class DiskWipeDialogComponent {
     jobComponent.setDescription(helptext.diskWipeDialogForm.startDescription);
     jobComponent.setCall(
       'disk.wipe',
-      [this.diskName, this.form.value.wipe_method],
+      [this.data.diskName, this.form.value.wipe_method],
     );
     jobComponent.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {

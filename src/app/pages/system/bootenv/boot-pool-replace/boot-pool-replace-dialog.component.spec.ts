@@ -36,7 +36,7 @@ describe('BootPoolReplaceDialogComponent', () => {
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: '/dev/sda3',
+        useValue: 'sda3',
       },
     ],
   });

@@ -66,11 +66,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return this.dataset.encrypted;
   }
 
-  get parentPath(): string {
-    const parentPath = this.dataset.name.split('/').slice(0, -1).join('/');
-    return `/${parentPath}/`;
-  }
-
   get ownName(): string {
     return this.dataset.name.split('/').slice(-1)[0];
   }

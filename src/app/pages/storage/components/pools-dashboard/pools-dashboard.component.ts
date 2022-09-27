@@ -10,8 +10,10 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter } from 'rxjs';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Pool } from 'app/interfaces/pool.interface';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
@@ -30,7 +32,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   pools$ = this.store.pools$;
-  arePoolsLoading$ = this.store.isLoading$;
+  allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
+  disks$ = this.store.disks$;
+
   rootDatasets: { [key: string]: Dataset } = {};
 
   entityEmptyConf: EmptyConfig = {
@@ -48,7 +52,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
     },
   };
 
-  isLoading = true;
+  arePoolsLoading$ = this.store.arePoolsLoading$;
+  areDisksLoading$ = this.store.areDisksLoading$;
+
   isEmptyPools = false;
 
   constructor(
@@ -70,13 +76,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       });
 
-    this.arePoolsLoading$
-      .pipe(untilDestroyed(this))
-      .subscribe((isLoading) => {
-        this.isLoading = isLoading;
-        this.cdr.markForCheck();
-      });
-
     this.store.rootDatasets$
       .pipe(untilDestroyed(this))
       .subscribe((rootDatasets) => {
@@ -91,6 +90,15 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         filter((value) => value.response === true),
         untilDestroyed(this),
       ).subscribe(() => this.store.loadDashboard());
+
+    this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
+      for (const disk of disks) {
+        if (!this.allDisksByPool[disk.pool]) {
+          this.allDisksByPool[disk.pool] = [];
+        }
+        this.allDisksByPool[disk.pool].push(disk);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -103,5 +111,9 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   createPool(): void {
     this.router.navigate(['/storage', 'create']);
+  }
+
+  getDisksForPool(pool: Pool): StorageDashboardDisk[] {
+    return this.allDisksByPool[pool.name];
   }
 }

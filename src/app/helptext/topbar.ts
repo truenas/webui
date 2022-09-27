@@ -18,6 +18,9 @@ export default {
     [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
     [FailoverDisabledReason.NoFenced]: T('Fenced is not running.'),
+    [FailoverDisabledReason.NoJournalSync]: T('Thread responsible for syncing db transactions not running on this node.'),
+    [FailoverDisabledReason.RemNoJournalSync]: T('Thread responsible for syncing db transactions not running on other node.'),
+    [FailoverDisabledReason.RemFailoverOngoing]: T('Other node is currently processing a failover event.'),
   },
   updateRunning_dialog: {
     title: T('Update in Progress'),

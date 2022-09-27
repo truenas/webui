@@ -24,6 +24,9 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
+import {
+  ChartRollbackModalComponent,
+} from 'app/pages/applications/chart-rollback-modal/chart-rollback-modal.component';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
@@ -52,7 +55,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   @Output() switchTab = new EventEmitter<string>();
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
-  private rollbackChartName: string;
 
   private selectedAppName: string;
   private podList: string[] = [];
@@ -70,25 +72,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       label: this.translate.instant('View Catalog'),
       action: this.viewCatalog.bind(this),
     },
-  };
-
-  rollBackChart: DialogFormConfiguration = {
-    title: helptext.charts.rollback_dialog.title,
-    fieldConfig: [{
-      type: 'select',
-      name: 'item_version',
-      placeholder: helptext.charts.rollback_dialog.version.placeholder,
-      tooltip: helptext.charts.rollback_dialog.version.tooltip,
-      required: true,
-    }, {
-      type: 'checkbox',
-      name: 'rollback_snapshot',
-      placeholder: helptext.charts.rollback_dialog.snapshot.placeholder,
-      tooltip: helptext.charts.rollback_dialog.snapshot.tooltip,
-    }],
-    method_ws: 'chart.release.rollback',
-    saveButtonText: helptext.charts.rollback_dialog.action,
-    customSubmit: (entityDialog) => this.doRollback(entityDialog),
   };
 
   choosePod: DialogFormConfiguration = {
@@ -376,39 +359,20 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     });
   }
 
-  rollback(name: string): void {
-    this.rollbackChartName = name;
-    this.dialogService.dialogForm(this.rollBackChart, true);
-    const rollBackList = Object.keys(this.chartItems[this.rollbackChartName].history);
-    const rollBackConfig = this.rollBackChart.fieldConfig[0] as FormSelectConfig;
-    rollBackConfig.value = rollBackList[0];
-    rollBackConfig.options = rollBackList.map((item) => ({
-      label: item,
-      value: item,
-    }));
-  }
+  onRollback(name: string): void {
+    const chartRelease = this.chartItems[name];
+    this.mdDialog.open(ChartRollbackModalComponent, {
+      data: chartRelease,
+    })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((wasRolledBack) => {
+        if (!wasRolledBack) {
+          return;
+        }
 
-  doRollback(entityDialog: EntityDialogComponent): void {
-    const form = entityDialog.formGroup.controls;
-    const payload = {
-      item_version: form['item_version'].value,
-      rollback_snapshot: form['rollback_snapshot'].value,
-    };
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-      data: {
-        title: helptext.charts.rollback_dialog.job,
-      },
-    });
-    this.dialogRef.componentInstance.setCall('chart.release.rollback', [this.rollbackChartName, payload]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.refreshChartReleases();
-    });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.closeAllDialogs();
-      new EntityUtils().handleWsError(this, error, this.dialogService);
-    });
+        this.refreshChartReleases();
+      });
   }
 
   edit(name: string): void {

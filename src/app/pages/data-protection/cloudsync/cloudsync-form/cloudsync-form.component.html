@@ -1,0 +1,244 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <div class="fieldsets">
+        <ix-fieldset [title]="helptext.fieldset_transfer | translate" class="fieldset">
+          <ix-input
+            *ngIf="form.controls.description.enabled"
+            formControlName="description"
+            [label]="helptext.description_placeholder | translate"
+            [tooltip]="helptext.description_tooltip | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-select
+            *ngIf="form.controls.direction.enabled"
+            formControlName="direction"
+            [label]="helptext.direction_placeholder | translate"
+            [tooltip]="helptext.direction_tooltip | translate"
+            [required]="true"
+            [options]="directionOptions$"
+          ></ix-select>
+          <ix-select
+            *ngIf="form.controls.transfer_mode.enabled"
+            formControlName="transfer_mode"
+            [label]="helptext.transfer_mode_placeholder | translate"
+            [tooltip]="transferModeTooltip | translate"
+            [required]="true"
+            [options]="transferModeOptions$"
+          ></ix-select>
+          <ix-transfer-mode-explanation
+            [mode]="form.controls.transfer_mode.value"
+          ></ix-transfer-mode-explanation>
+          <ix-explorer
+            *ngIf="form.controls.path_destination.enabled"
+            formControlName="path_destination"
+            [label]="helptext.path_placeholder | translate"
+            [tooltip]="helptext.path_tooltip | translate"
+            [required]="true"
+            [nodeProvider]="fileNodeProvider"
+          ></ix-explorer>
+          <ix-explorer
+            *ngIf="form.controls.path_source.enabled"
+            formControlName="path_source"
+            [label]="helptext.path_placeholder | translate"
+            [tooltip]="helptext.path_tooltip | translate"
+            [required]="true"
+            [multiple]="true"
+            [nodeProvider]="fileNodeProvider"
+            [label]="'test'"
+          ></ix-explorer>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="helptext.fieldset_remote | translate" class="fieldset">
+          <a [routerLink]="['/', 'credentials', 'backup-credentials']" (click)="slideInService.close()">
+            <div class="link">
+              {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
+            </div>
+          </a>
+          <ix-select
+            *ngIf="form.controls.credentials.enabled"
+            formControlName="credentials"
+            [label]="helptext.credentials_placeholder | translate"
+            [tooltip]="helptext.credentials_tooltip | translate"
+            [required]="true"
+            [options]="credentialsOptions$"
+          ></ix-select>
+          <ix-select
+            *ngIf="form.controls.bucket.enabled"
+            formControlName="bucket"
+            [label]="bucketPlaceholder | translate"
+            [tooltip]="bucketTooltip| translate"
+            [options]="bucketOptions$"
+          ></ix-select>
+          <ix-input
+            *ngIf="form.controls.bucket_input.enabled"
+            formControlName="bucket_input"
+            [label]="bucketInputPlaceholder | translate"
+            [tooltip]="bucketInputTooltip | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-explorer
+            *ngIf="form.controls.folder_destination.enabled"
+            formControlName="folder_destination"
+            root="/"
+            [label]="helptext.folder_placeholder | translate"
+            [tooltip]="helptext.folder_tooltip | translate"
+            [nodeProvider]="bucketNodeProvider"
+          ></ix-explorer>
+          <ix-explorer
+            *ngIf="form.controls.folder_source.enabled"
+            formControlName="folder_source"
+            root="/"
+            [label]="helptext.folder_placeholder | translate"
+            [tooltip]="helptext.folder_tooltip | translate"
+            [multiple]="true"
+            [nodeProvider]="bucketNodeProvider"
+          ></ix-explorer>
+          <ix-checkbox
+            *ngIf="form.controls.bucket_policy_only.enabled"
+            formControlName="bucket_policy_only"
+            [label]="helptext.bucket_policy_only_placeholder | translate"
+            [tooltip]="helptext.bucket_policy_only_tooltip | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="helptext.fieldset_control | translate" class="fieldset">
+          <ix-scheduler
+            *ngIf="form.controls.cloudsync_picker.enabled"
+            formControlName="cloudsync_picker"
+            [required]="true"
+            [label]="helptext.cloudsync_picker_placeholder | translate"
+            [tooltip]="helptext.cloudsync_picker_tooltip | translate"
+          ></ix-scheduler>
+          <ix-checkbox
+            *ngIf="form.controls.enabled.enabled"
+            formControlName="enabled"
+            [label]="helptext.enabled_placeholder | translate"
+            [tooltip]="helptext.enabled_tooltip | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+        
+        <ix-fieldset [title]="helptext.fieldset_advanced_options | translate" class="fieldset">
+          <ix-checkbox
+            *ngIf="form.controls.snapshot.enabled"
+            formControlName="snapshot"
+            [label]="helptext.snapshot_placeholder | translate"
+            [tooltip]="helptext.snapshot_tooltip | translate"
+          ></ix-checkbox>
+          <ix-checkbox
+            *ngIf="form.controls.create_empty_src_dirs.enabled"
+            formControlName="create_empty_src_dirs"
+            [label]="helptext.empty_src_dirs_placeholder | translate"
+          ></ix-checkbox>
+          <ix-checkbox
+            *ngIf="form.controls.follow_symlinks.enabled"
+            formControlName="follow_symlinks"
+            [label]="helptext.follow_symlinks_placeholder | translate"
+            [tooltip]="helptext.follow_symlinks_tooltip | translate"
+          ></ix-checkbox>
+          <ix-textarea
+            *ngIf="form.controls.pre_script.enabled"
+            formControlName="pre_script"
+            [label]="helptext.pre_script_placeholder | translate"
+            [tooltip]="helptext.pre_script_tooltip | translate"
+          ></ix-textarea>
+          <ix-textarea
+            *ngIf="form.controls.post_script.enabled"
+            formControlName="post_script"
+            [label]="helptext.post_script_placeholder | translate"
+            [tooltip]="helptext.post_script_tooltip | translate"
+          ></ix-textarea>
+          <ix-chips
+            *ngIf="form.controls.exclude.enabled"
+            formControlName="exclude"
+            [label]="helptext.exclude_placeholder | translate"
+            [tooltip]="helptext.exclude_tooltip | translate"
+          ></ix-chips>
+          <ix-select
+            *ngIf="form.controls.task_encryption.enabled"
+            formControlName="task_encryption"
+            [label]="helptext.encryption_placeholder | translate"
+            [tooltip]="helptext.encryption_tooltip | translate"
+            [options]="encryptionOptions$"
+          ></ix-select>
+          <div class="advanced-title">{{ helptext.advanced_remote_options | translate }}</div>
+          <ix-select
+            *ngIf="form.controls.storage_class.enabled"
+            formControlName="storage_class"
+            [label]="helptext.storage_class_placeholder | translate"
+            [tooltip]="helptext.storage_class_tooltip | translate"
+            [options]="storageClassOptions$"
+          ></ix-select>
+          <ix-input
+            *ngIf="form.controls.chunk_size.enabled"
+            formControlName="chunk_size"
+            type="number"
+            [label]="helptext.b2_chunk_size_placeholder | translate"
+            [tooltip]="helptext.b2_chunk_size_tooltip | translate"
+          ></ix-input>
+          <ix-checkbox
+            *ngIf="form.controls.fast_list.enabled"
+            formControlName="fast_list"
+            [label]="helptext.fast_list_placeholder | translate"
+            [tooltip]="helptext.fast_list_tooltip | translate"
+          ></ix-checkbox>
+          <ix-checkbox
+            *ngIf="form.controls.encryption.enabled"
+            formControlName="encryption"
+            [label]="helptext.remote_encryption_placeholder | translate"
+            [tooltip]="helptext.remote_encryption_tooltip | translate"
+          ></ix-checkbox>
+          <ix-checkbox
+            *ngIf="form.controls.filename_encryption.enabled"
+            formControlName="filename_encryption"
+            [label]="helptext.filename_encryption_placeholder | translate"
+            [tooltip]="helptext.filename_encryption_tooltip | translate"
+          ></ix-checkbox>
+          <ix-input
+            *ngIf="form.controls.encryption_password.enabled"
+            formControlName="encryption_password"
+            type="password"
+            [label]="helptext.encryption_password_placeholder | translate"
+            [tooltip]="helptext.encryption_password_tooltip | translate"
+          ></ix-input>
+          <ix-input
+            *ngIf="form.controls.encryption_salt.enabled"
+            formControlName="encryption_salt"
+            type="password"
+            [label]="helptext.encryption_salt_placeholder | translate"
+            [tooltip]="helptext.encryption_salt_tooltip | translate"
+          ></ix-input>
+          <ix-input
+            *ngIf="form.controls.transfers.enabled"
+            formControlName="transfers"
+            type="number"
+            [label]="helptext.transfers_placeholder | translate"
+            [tooltip]="helptext.transfers_tooltip | translate"
+          ></ix-input>
+          <ix-chips
+            *ngIf="form.controls.bwlimit.enabled"
+            formControlName="bwlimit"
+            [label]="helptext.bwlimit_placeholder | translate"
+            [tooltip]="helptext.bwlimit_tooltip | translate"
+          ></ix-chips>
+        </ix-fieldset>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+        <button
+          mat-button
+          type="button"
+          [disabled]="form.invalid || isLoading"
+          (click)="onDryRun()"
+        >{{ helptext.action_button_dry_run | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

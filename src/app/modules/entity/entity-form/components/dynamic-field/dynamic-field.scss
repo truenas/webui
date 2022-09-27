@@ -18,15 +18,16 @@
   width: 100%;
 }
 
-:host mat-icon.paragraph-icon {
+:host .mat-icon.paragraph-icon {
   align-self: center;
   font-size: 40px;
   height: 40px;
+  padding-right: 8px;
   width: 40px;
 }
 
 :host p.large {
-  font-size: 16px;
+  font-size: 13px;
   margin-bottom: 16px;
 }
 
