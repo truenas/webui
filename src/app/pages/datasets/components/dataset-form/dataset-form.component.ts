@@ -1099,6 +1099,13 @@ export class DatasetFormComponent implements FormConfiguration {
         ).pipe(untilDestroyed(this)).subscribe(() => {
           this.modalService.closeSlideIn();
         });
+      } else if (this.parent.split('/').length >= 50) {
+        this.dialogService.warn(
+          this.translate.instant('Action Not Possible'),
+          this.translate.instant('Max dataset nesting in ZFS is limited to 50. We are already at that limit in the parent dataset path. It is not possible to create anymore nested datasets under this path.'),
+        ).pipe(untilDestroyed(this)).subscribe(() => {
+          this.modalService.closeSlideIn();
+        });
       }
       this.fieldSets[0].config[1].readonly = false;
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
