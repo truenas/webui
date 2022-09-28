@@ -28,12 +28,17 @@
   }
 
   .label-icon {
-    font-size: 18px;
+    align-items: center;
+    display: flex;
     left: -12px;
     position: absolute;
 
+    ix-icon {
+      font-size: 18px;
+    }
+
     &.warn {
-      color: var(--yellow);
+      color: var(--orange);
     }
 
     &.danger {

@@ -39,6 +39,12 @@ export class ZfsInfoCardComponent {
     return isTopologyDisk(this.topologyItem);
   }
 
+  get canExtendDisk(): boolean {
+    return this.topologyParentItem.type !== TopologyItemType.Mirror
+      && this.topologyItem.type === TopologyItemType.Disk
+      && this.topologyCategory === PoolTopologyCategory.Data;
+  }
+
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
       && this.topologyCategory !== PoolTopologyCategory.Data;

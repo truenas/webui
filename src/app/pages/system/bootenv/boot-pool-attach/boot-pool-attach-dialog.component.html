@@ -1,0 +1,29 @@
+<h1 matDialogTitle>
+  {{ 'Attach' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <ix-select
+      [formControlName]="dev.fcName"
+      [label]="dev.label"
+      [tooltip]="dev.tooltip"
+      [options]="dev.options"
+      [required]="true"
+    ></ix-select>
+    <ix-checkbox
+      [formControlName]="expand.fcName"
+      [label]="expand.label"
+      [tooltip]="expand.tooltip"
+    ></ix-checkbox>
+  </ix-fieldset>
+
+  <div class="form-actions">
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid || isFormLoading">
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</form>

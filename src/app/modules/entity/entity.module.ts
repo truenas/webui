@@ -43,7 +43,6 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
-import { TreeTableModule } from 'primeng/treetable';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -89,7 +88,6 @@ import { EntityTemplateDirective } from 'app/modules/entity/entity-template.dire
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
-import { EntityTreeTableComponent } from 'app/modules/entity/entity-tree-table/entity-tree-table.component';
 import { WizardSummaryComponent } from 'app/modules/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-table/expandable-table.component';
@@ -148,7 +146,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     CdkTreeModule,
     OverlayModule,
     A11yModule,
-    TreeTableModule,
     NgxFilesizeModule,
     CommonDirectivesModule,
     TooltipModule,
@@ -162,7 +159,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     EntityTableComponent,
     EntityTableRowDetailsComponent,
     EntityRowDetailsComponent,
-    EntityTreeTableComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -212,7 +208,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     EntityFormComponent,
     EntityTableComponent,
     EntityRowDetailsComponent,
-    EntityTreeTableComponent,
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     DynamicFieldDirective,

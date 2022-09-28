@@ -445,7 +445,7 @@ export type ApiDirectory = {
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
-  'disk.temperature_alerts': { params: [disks: string[]]; response: [] };
+  'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Directory Services

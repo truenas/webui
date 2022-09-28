@@ -23,7 +23,6 @@ export class FormIpWithNetmaskComponent implements Field, OnInit {
   netmask = '24';
   netmaskOptions = this.network.getV4Netmasks();
   value: string;
-  netmaskPreset: number;
 
   private ipv6netmaskoptions = this.network.getV6PrefixLength();
   private ipv4netmaskoptions = this.network.getV4Netmasks();

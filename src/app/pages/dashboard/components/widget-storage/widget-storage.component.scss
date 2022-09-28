@@ -90,6 +90,8 @@ mat-grid-tile {
 
         .label {
           margin-right: 6px;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

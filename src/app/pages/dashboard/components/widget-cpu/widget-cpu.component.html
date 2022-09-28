@@ -66,9 +66,8 @@
         >
           <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
             <ix-view-chart-gauge
-              *ngIf="cpuAvg && cpuAvg.data; else loader"
+              *ngIf="isCpuAvgReady; else loader"
               [config]="cpuAvg"
-              #load
             ></ix-view-chart-gauge>
           </div>
 
@@ -89,10 +88,9 @@
                   <strong>{{ 'Cores' | translate }}:</strong>
                 </span>
 
-                &nbsp;&nbsp;{{ coreCount }} {{ 'cores' | translate }}
+                {{ coreCount }} {{ 'cores' | translate }}
 
                 <span *ngIf="hyperthread">
-                  &nbsp;&nbsp;
                   ({{ threadCount }}
                   {{ 'threads' | translate }})
                 </span>
@@ -103,12 +101,12 @@
                   class="label-icon"
                   [ngClass]="{ warn: usageMax < 90, danger: usageMax > 89 }"
                 >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <ix-icon name="error"></ix-icon>
                 </div>
                 <span class="label">
                   <strong> {{ 'Highest Usage' | translate }}: </strong>
                 </span>
-                &nbsp;&nbsp;{{ usageMax }}% &nbsp;
+                {{ usageMax }}% &nbsp;
                 <span class="subtext">
                   ({{
                     usageMaxThreads.length < 2
@@ -128,7 +126,6 @@
                 <span class="label">
                   <strong>{{ 'Hottest' | translate }}:</strong>
                 </span>
-                &nbsp;&nbsp;
                 <ng-container *ngIf="tempAvailable; else notemps">
                   <span>{{ tempMax }}°C &nbsp;</span>
                   <span class="subtext">
@@ -159,12 +156,10 @@
             <mat-list>
               <mat-list-item>
                 <span class="label">{{ 'Model:' | translate }}</span>
-                &nbsp;&nbsp;
                 {{ cpuModel ? cpuModel : 'Unknown CPU' }}
               </mat-list-item>
               <mat-list-item>
                 <span class="label">{{ 'Threads:' | translate }}</span>
-                &nbsp;&nbsp;
                 {{ coreCount }}
               </mat-list-item>
             </mat-list>
@@ -186,7 +181,7 @@
               <ng-container *ngIf="tempAvailable">
                 <mat-list-item>
                   <span class="label">{{ 'Hottest:' | translate }}</span>
-                  &nbsp;&nbsp;{{ tempMax }}°C &nbsp;&nbsp;
+                  {{ tempMax }}°C &nbsp;&nbsp;
                   <span class="subtext">
                     ({{
                       tempMaxThreads.length < 2
@@ -197,7 +192,7 @@
                 </mat-list-item>
                 <mat-list-item>
                   <span class="label">{{ 'Coolest:' | translate }}</span>
-                  &nbsp;&nbsp;{{ tempMin }}°C &nbsp;&nbsp;
+                  {{ tempMin }}°C &nbsp;&nbsp;
                   <span class="subtext">
                     ({{
                       tempMinThreads.length < 2
@@ -209,7 +204,7 @@
               </ng-container>
               <mat-list-item>
                 <span class="label">{{ 'Highest Usage:' | translate }}</span>
-                &nbsp;&nbsp;{{ usageMax }}% &nbsp;&nbsp;
+                {{ usageMax }}% &nbsp;&nbsp;
                 <span class="subtext">
                   ({{
                     usageMaxThreads.length < 2
@@ -220,7 +215,7 @@
               </mat-list-item>
               <mat-list-item>
                 <span class="label">{{ 'Lowest Usage:' | translate }}</span>
-                &nbsp;&nbsp;{{ usageMin }}% &nbsp;&nbsp;
+                {{ usageMin }}% &nbsp;&nbsp;
                 <span class="subtext">
                   ({{
                     usageMinThreads.length < 2

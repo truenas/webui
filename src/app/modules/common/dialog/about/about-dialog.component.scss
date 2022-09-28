@@ -5,7 +5,7 @@
 
 .header {
   background-color: black;
-  background-image: url('../../../../../assets/images/backgrounds/hard_drive_2.jpg');
+  background-image: url('~assets/images/backgrounds/hard_drive_2.jpg');
   background-position-x: 50%;
   background-position-y: 20%;
   background-size: cover;
@@ -72,7 +72,7 @@
   text-align: center;
 }
 
-#findme mat-icon {
+#findme .mat-icon {
   position: relative;
   top: 6px;
 }

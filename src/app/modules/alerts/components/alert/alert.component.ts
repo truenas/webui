@@ -5,15 +5,32 @@ import {
   Input,
   OnChanges,
 } from '@angular/core';
-import { ThemePalette } from '@angular/material/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
+import {
+  dismissAlertPressed,
+  reopenAlertPressed,
+} from 'app/modules/alerts/store/alert.actions';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
+
+enum AlertIcon {
+  Error = 'cancel',
+  Warning = 'error',
+  Info = 'info',
+  NotificationsActive = 'notifications_active',
+  CheckCircle = 'check_circle',
+}
+
+enum AlertLevelColor {
+  Warn = 'warn',
+  Error = 'error',
+  Accent = 'accent',
+  Primary = 'primary',
+}
 
 @UntilDestroy()
 @Component({
@@ -26,7 +43,7 @@ export class AlertComponent implements OnChanges {
   @Input() alert: Alert;
   @Input() isHa: boolean;
 
-  alertLevelColor: ThemePalette;
+  alertLevelColor: AlertLevelColor;
   icon: string;
   iconTooltip: string;
   timezone: string;
@@ -63,28 +80,28 @@ export class AlertComponent implements OnChanges {
     switch (true) {
       case this.alert.dismissed:
         this.alertLevelColor = undefined;
-        this.icon = 'check_circle';
+        this.icon = AlertIcon.CheckCircle;
         this.iconTooltip = this.translate.instant('Dismissed');
         break;
       case [AlertLevel.Error, AlertLevel.Critical].includes(this.alert.level):
-        this.alertLevelColor = 'warn';
-        this.icon = 'error';
+        this.alertLevelColor = AlertLevelColor.Error;
+        this.icon = AlertIcon.Error;
         break;
       case this.alert.level === AlertLevel.Warning:
-        this.alertLevelColor = 'accent';
-        this.icon = 'warning';
+        this.alertLevelColor = AlertLevelColor.Warn;
+        this.icon = AlertIcon.Warning;
         break;
       case this.alert.one_shot:
-        this.icon = 'notifications_active';
+        this.icon = AlertIcon.NotificationsActive;
         this.iconTooltip = this.translate.instant(
           "This is a ONE-SHOT {alertLevel} alert, it won't be dismissed automatically",
           { alertLevel: this.alertLevelLabel },
         );
-        this.alertLevelColor = 'primary';
+        this.alertLevelColor = AlertLevelColor.Primary;
         break;
       default:
-        this.alertLevelColor = 'primary';
-        this.icon = 'info';
+        this.alertLevelColor = AlertLevelColor.Primary;
+        this.icon = AlertIcon.Info;
     }
   }
 }
