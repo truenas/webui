@@ -82,6 +82,7 @@ export interface AppTableConfig<P = unknown> {
    */
   parent: P;
   tableActions?: AppTableHeaderAction[];
+  tableFooterActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];
   confirmDeleteDialog?: AppTableConfirmDeleteDialog;
 
