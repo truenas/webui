@@ -33,11 +33,19 @@
   text-transform: uppercase;
 
   &.warn {
-    color: var(--red);
+    color: var(--orange);
   }
 
   &.accent {
     color: var(--accent);
+  }
+
+  &.primary {
+    color: var(--primary);
+  }
+
+  &.error {
+    color: var(--red);
   }
 }
 

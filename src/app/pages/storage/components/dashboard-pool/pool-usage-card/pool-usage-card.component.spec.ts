@@ -90,10 +90,10 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
 
     spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('warning');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
 
     spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('warning');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
 
     spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
     expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
