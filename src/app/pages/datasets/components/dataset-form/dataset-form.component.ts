@@ -128,7 +128,7 @@ export class DatasetFormComponent implements FormConfiguration {
       label: true,
       config: [
         {
-          type: 'input',
+          type: 'textarea',
           name: 'parent',
           placeholder: helptext.dataset_parent_name_placeholder,
           tooltip: helptext.dataset_parent_name_tooltip,

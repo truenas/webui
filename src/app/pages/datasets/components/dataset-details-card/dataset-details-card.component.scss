@@ -34,3 +34,7 @@
   height: 20px;
   width: 35%;
 }
+
+::ng-deep .custom-tooltip {
+  word-break: break-all;
+}
