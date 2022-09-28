@@ -2,7 +2,7 @@
   class="widget"
   [ngClass]="{
     'double-height': true,
-    xs: screenType === 'Mobile',
+    'xs': screenType === ScreenTypeOption.Mobile,
     'generic-hardware': !productImage,
     'ix-hardware': productImage
   }"
@@ -62,7 +62,7 @@
             >
               <!-- Mobile Only: Exit Widget -->
               <button
-                *ngIf="screenType === 'Mobile'"
+                *ngIf="screenType === ScreenTypeOption.Mobile"
                 class="mat-card-title-text primary-nav"
                 mat-icon-button
                 color="default"

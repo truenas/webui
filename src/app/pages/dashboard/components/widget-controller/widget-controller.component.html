@@ -13,16 +13,16 @@
           </h3>
         </mat-toolbar-row>
 
-        <div *ngIf="screenType === 'Mobile' || 'Desktop'" fxLayout="column" class="mobile">
+        <div fxLayout="column" class="mobile">
           <div *ngIf="!renderedWidgets.length && emptyConfig" fxFlex="65" class="bottom empty">
             <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
           </div>
 
           <div *ngIf="renderedWidgets.length" fxFlex="65" class="bottom">
             <div class="list-subheader">
-              <span class="capitalize"
-                >Widgets ({{ renderedWidgets.length }} items)</span
-              >
+              <span class="capitalize">
+                Widgets ({{ renderedWidgets.length }} items)
+              </span>
             </div>
             <mat-list>
               <ng-container *ngFor="let widget of dashState">
