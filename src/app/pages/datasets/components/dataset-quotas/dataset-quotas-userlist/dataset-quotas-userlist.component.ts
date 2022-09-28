@@ -12,10 +12,14 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -185,52 +189,69 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   toggleDisplay(): void {
-    let title: string = helptext.users.filter_dialog.title_filter;
-    let message: string = helptext.users.filter_dialog.message_filter;
-    let button: string = helptext.users.filter_dialog.button_filter;
-    if (this.useFullFilter) {
-      title = helptext.users.filter_dialog.title_show;
-      message = helptext.users.filter_dialog.message_show;
-      button = helptext.users.filter_dialog.button_show;
-    }
-
-    this.useFullFilter = !this.useFullFilter;
-    this.dialogService.confirm({
-      title,
-      message,
-      hideCheckBox: true,
-      buttonMsg: button,
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-      if (confirmed) {
-        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-        this.getUserQuotas();
-      } else {
-        this.useFullFilter = !this.useFullFilter;
-      }
+    this.getToggleConfirmation().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+      this.getUserQuotas();
+      this.useFullFilter = !this.useFullFilter;
     });
   }
 
+  getToggleConfirmation(): Observable<boolean> {
+    const confirmOptions = this.useFullFilter ? this.getShowConfirmOptions() : this.getFilterConfirmOptions();
+    return this.dialogService.confirm(confirmOptions);
+  }
+
+  getFilterConfirmOptions(): ConfirmOptions {
+    return {
+      title: helptext.users.filter_dialog.title_filter,
+      message: helptext.users.filter_dialog.message_filter,
+      hideCheckBox: true,
+      buttonMsg: helptext.users.filter_dialog.button_filter,
+    };
+  }
+
+  getShowConfirmOptions(): ConfirmOptions {
+    return {
+      title: helptext.users.filter_dialog.title_show,
+      message: helptext.users.filter_dialog.message_show,
+      hideCheckBox: true,
+      buttonMsg: helptext.users.filter_dialog.button_show,
+    };
+  }
+
   removeInvalidQuotas(): void {
-    this.dialogService.confirm({
+    this.getRemovalConfirmation().pipe(
+      filter(Boolean),
+      tap(() => this.loader.open()),
+      switchMap(() => this.setQuota(this.getRemoveQuotaPayload(this.invalidQuotas))),
+      tap(() => {
+        this.loader.close();
+        this.getUserQuotas();
+      }),
+      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+        this.loader.close();
+        this.handleError(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  getRemovalConfirmation(): Observable<boolean> {
+    const confirmOptions: ConfirmOptions = {
       title: this.translate.instant('Remove Invalid Quotas'),
       message: this.translate.instant('This action will set all dataset quotas for the removed or invalid users to 0,\
  virutally removing any dataset quota entires for such users. Are you sure you want to proceed?'),
       buttonMsg: this.translate.instant('Remove'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.loader.open();
-      this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)])
-        .pipe(untilDestroyed(this))
-        .subscribe({
-          next: () => {
-            this.loader.close();
-            this.getUserQuotas();
-          },
-          error: (error) => {
-            this.loader.close();
-            this.handleError(error);
-          },
-        });
-    });
+    };
+    return this.dialogService.confirm(confirmOptions);
+  }
+
+  setQuota(quotas: SetDatasetQuota[]): Observable<void> {
+    return this.ws.call('pool.dataset.set_quota', [this.datasetId, quotas]);
   }
 
   doAdd(): void {
@@ -244,25 +265,29 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   doDelete(row: DatasetQuota): void {
-    this.dialogService.confirm({
+    this.getDeleteConfirmation().pipe(
+      filter(Boolean),
+      tap(() => this.loader.open()),
+      switchMap(() => this.setQuota(this.getRemoveQuotaPayload([row]))),
+      tap(() => {
+        this.loader.close();
+        this.getUserQuotas();
+      }),
+      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+        this.loader.close();
+        this.handleError(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  getDeleteConfirmation(): Observable<boolean> {
+    return this.dialogService.confirm({
       title: this.translate.instant('Delete User Quota'),
       message: this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name: row.name }),
       buttonMsg: this.translate.instant('Delete'),
       hideCheckBox: true,
-    }).pipe(
-      filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([row])])),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-        this.getUserQuotas();
-      },
-      error: (error) => {
-        this.loader.close();
-        this.handleError(error);
-      },
     });
   }
 
