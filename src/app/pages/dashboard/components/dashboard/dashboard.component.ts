@@ -172,18 +172,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkScreenSize(): void {
-    const st = window.innerWidth < 600 ? ScreenTypeOption.Mobile : ScreenTypeOption.Desktop;
+    const currentScreenType = window.innerWidth < 600 ? ScreenTypeOption.Mobile : ScreenTypeOption.Desktop;
 
     // If leaving .xs screen then reset mobile position
-    if (st === ScreenTypeOption.Desktop && this.screenType === ScreenTypeOption.Mobile) {
+    if (currentScreenType === ScreenTypeOption.Desktop && this.screenType === ScreenTypeOption.Mobile) {
       this.onMobileBack();
     }
 
-    if (this.screenType !== st) {
-      this.onScreenSizeChange(st, this.screenType);
+    if (this.screenType !== currentScreenType) {
+      this.onScreenSizeChange(currentScreenType, this.screenType);
     }
 
-    this.screenType = st;
+    this.screenType = currentScreenType;
 
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = this.screenType === ScreenTypeOption.Mobile ? 'hidden' : 'auto';
