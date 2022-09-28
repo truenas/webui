@@ -1,27 +1,8 @@
-.widget-loader {
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
+@import '~assets/styles/mixins/loader';
 
 .mat-card-content {
   height: 100%;
   margin: 0;
-}
-
-.card-title-text {
-  display: table;
-  font-size: 1.42em;
-}
-
-.card-title-items {
-  display: table-row;
-}
-
-.card-title-items div {
-  display: table-cell;
-  vertical-align: middle;
 }
 
 .legend {
@@ -76,7 +57,9 @@ td.legend-label {
 }
 
 .legend .swatch {
+  align-items: center;
   border-radius: 50%;
+  display: inline-flex;
   height: 12px;
   margin-right: 8px;
   width: 12px;
@@ -316,19 +299,15 @@ span.disk-detail-subtitle {
   min-height: 100%;
 }
 
-.zero-state h4 {
-  margin: 8px 0 0 8px;
-}
-
 div.line-chart-tools-wrapper {
-  margin-right: -8px;
-  margin-top: -8px;
+  margin-right: -24px;
   text-align: right;
 }
 
 div.line-chart-tools {
   align-items: center;
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
 
   .mat-icon-button {
@@ -522,6 +501,7 @@ p.value {
 
 .mat-card-title {
   font-size: initial;
+  margin: 0;
 
   h3 {
     display: inline-block;
@@ -533,19 +513,27 @@ p.value {
   }
 }
 
-/* Children get the padding so dividers fit the full width of card */
-.report .mat-card {
-  padding-left: 0;
-  padding-right: 0;
-}
+.report {
+  position: relative;
 
-.report .mat-card-footer,
-.report .mat-toolbar-row,
-.report .legend-wrapper,
-.report .chart-wrapper {
-  margin: 0;
-  padding-left: 32px;
-  padding-right: 32px;
+  /* Children get the padding so dividers fit the full width of card */
+  .mat-card {
+    padding-left: 0;
+    padding-right: 0;
+
+    &.loading {
+      @include background-logo-loader(1);
+      min-height: 325px;
+    }
+  }
+
+  .mat-card-footer,
+  .mat-toolbar-row,
+  .legend-wrapper,
+  .chart-wrapper {
+    margin: 0;
+    padding: 8px 32px;
+  }
 }
 
 .report .legend-wrapper.timestamps {
@@ -581,19 +569,6 @@ p.value {
   width: 100%;
 }
 
-.report .mat-card.zero-state {
-  min-height: 325px;
-  position: relative;
-}
-
-.report .mat-card.zero-state .mat-icon {
-  animation: loading 2s linear infinite;
-  color: var(--fg2);
-  height: 80px;
-  opacity: 0.1;
-  width: auto;
-}
-
 .report .legend-group .report-analytics {
   border: var(--red);
   opacity: 0.75;
@@ -605,6 +580,46 @@ p.value {
   width: 100%;
 }
 
-.text-invisible {
-  opacity: 0;
+::ng-deep .mat-button-toggle-group {
+  $border-color: transparent;
+
+  &.mat-button-toggle-group-appearance-standard {
+    border-color: $border-color;
+
+    .mat-button-toggle + .mat-button-toggle {
+      border-color: $border-color;
+    }
+  }
+
+  .mat-button-toggle-appearance-standard {
+    &.mat-button-toggle-checked {
+      color: var(--fg2);
+    }
+  }
+
+  .mat-button-toggle {
+    background-color: transparent;
+    border-color: $border-color;
+    color: var(--fg2);
+
+    &:hover {
+      background-color: var(--hover-bg);
+    }
+
+    &.mat-button-toggle-disabled {
+      background-color: transparent;
+      color: var(--fg1);
+      opacity: 0.38;
+
+      .mat-button-toggle-button {
+        cursor: not-allowed;
+      }
+    }
+
+    .mat-button-toggle-label-content {
+      line-height: 40px;
+      padding: 0 12px;
+    }
+  }
+
 }

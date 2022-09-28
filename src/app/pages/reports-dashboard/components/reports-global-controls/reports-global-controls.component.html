@@ -1,10 +1,12 @@
 <div class="reports-toolbar">
-  <div
-    class="reports-dash-global-controls"
-    fxLayout="row"
-    fxLayoutAlign="center center"
-  >
-    <ng-container *ngIf="activeTab?.value === ReportTab.Disk">
+  <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center center">
+    <mat-slide-toggle
+      (change)="toggleAutoRefresh()"
+      [checked]="autoRefreshEnabled"
+      [matTooltip]="'Refresh every 15 seconds.' | translate"
+    ><label>{{ 'Auto Refresh' | translate }}</label></mat-slide-toggle>
+
+    <ng-container *ngIf="activeTab?.value === ReportType.Disk">
       <ix-toolbar-multiselect
         class="toolbar-control"
         [config]="devicesControl"
@@ -18,7 +20,7 @@
       ></ix-toolbar-multiselect>
     </ng-container>
 
-    <div *ngIf="activeTab">
+    <ng-container *ngIf="activeTab">
       <button
         mat-button
         color="primary"
@@ -28,8 +30,8 @@
         ix-auto-identifier="tab-selector"
         [matMenuTriggerFor]="categoryMenu"
       >
-        {{ activeTabVerified ? activeTab?.label : ('Loading...' | translate) }}
-        <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+        {{ activeTab.label }}
+        <ix-icon name="arrow_drop_down" class="menu-caret"></ix-icon>
       </button>
 
       <mat-menu #categoryMenu="matMenu" overlapTrigger="false">
@@ -39,30 +41,23 @@
             mat-menu-item
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{ tab.label }}"
+            [ix-auto-identifier]="tab.label"
             (click)="onNavigateToTab(tab)"
-          >
-            {{ tab.label | translate }}
-          </button>
+          >{{ tab.label | translate }}</button>
         </div>
       </mat-menu>
-    </div>
+    </ng-container>
 
-    <div>
-      <button
-        mat-icon-button
-        ix-auto
-        ix-auto-type="button"
-        class="config-form-button"
-        (click)="onShowConfigForm()"
-      >
-        <mat-icon
-          [matTooltip]="'Reports Configuration' | translate"
-          matTooltipPosition="below"
-        >
-          settings
-        </mat-icon>
-      </button>
-    </div>
+    <button
+      mat-icon-button
+      ix-auto
+      ix-auto-type="button"
+      class="config-form-button"
+      (click)="onShowConfigForm()"
+    ><ix-icon
+      name="settings"
+      matTooltipPosition="below"
+      [matTooltip]="'Reports Configuration' | translate"></ix-icon>
+    </button>
   </div>
 </div>

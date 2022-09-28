@@ -10,6 +10,7 @@ import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
+  autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
@@ -64,6 +65,7 @@ export class PreferencesEffects {
       localizationFormSubmitted,
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
+      autoRefreshReportsToggled,
     ),
     withLatestFrom(this.store$.select(selectPreferencesState)),
     switchMap(([, state]) => {

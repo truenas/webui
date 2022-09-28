@@ -51,22 +51,7 @@
       <div *ngFor="let _ of availableWidgets">
         <div class="widget placeholder">
           <div class="card-container front">
-            <mat-card
-              class="front zero-state"
-              fxLayout="row wrap"
-              fxLayoutAlign="center center"
-            >
-              <mat-card-content
-                fxLayout="row wrap"
-                fxLayoutAlign="center center"
-                fxFlex="100"
-              >
-                <mat-icon
-                  class="generic"
-                  svgIcon="ix:truenas_scale_logo_full"
-                ></mat-icon>
-              </mat-card-content>
-            </mat-card>
+            <mat-card [class.loading]="true"></mat-card>
           </div>
         </div>
       </div>
