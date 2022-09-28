@@ -42,6 +42,9 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetFormData } from 'app/pages/datasets/components/dataset-form/dataset-form-data.interface';
+import {
+  specialSmallBlockSizeOptions,
+} from 'app/pages/datasets/components/dataset-form/special-small-block-size-options.contant';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -91,7 +94,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected parentHasPassphrase = false;
 
   protected sizeFields: SizeField[] = [
-    'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
+    'quota', 'refquota', 'reservation', 'refreservation',
   ];
   protected originalSize: { [field in SizeField]?: string } = {};
   protected originalHumanSize: { [field in SizeField]?: string | number } = {};
@@ -670,47 +673,11 @@ export class DatasetFormComponent implements FormConfiguration {
           value: DatasetCaseSensitivity.Sensitive,
         },
         {
-          type: 'input',
+          type: 'select',
           name: 'special_small_block_size',
           placeholder: helptext.dataset_form_special_small_blocks_placeholder,
           tooltip: helptext.dataset_form_special_small_blocks_tooltip,
-          blurEvent: () => this.blurSpecialSmallBlocks(),
-          blurStatus: true,
-          parent: this,
-          validation: [
-            (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((config) => config.name === 'special_small_block_size');
-
-              const size = this.convertHumanStringToNum(control.value, 'special_small_block_size');
-              const errors = control.value && Number.isNaN(size)
-                ? { invalid_byte_string: true }
-                : null;
-
-              if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
-              } else {
-                config.hasErrors = false;
-                config.errors = '';
-              }
-
-              return errors;
-            },
-          ],
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'special_small_block_size_inherit',
-                value: true,
-              }],
-            }],
-        },
-        {
-          type: 'checkbox',
-          name: 'special_small_block_size_inherit',
-          placeholder: helptext.dataset_form_inherit,
-          value: true,
+          options: specialSmallBlockSizeOptions,
         },
         {
           type: 'select',
@@ -750,7 +717,6 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
-    'special_small_block_size_inherit',
     'checksum',
     'acltype',
     'aclmode',
@@ -862,11 +828,6 @@ export class DatasetFormComponent implements FormConfiguration {
         data[field] = this.originalSize[field];
       }
     });
-
-    if (data.special_small_block_size_inherit) {
-      data.special_small_block_size = '';
-    }
-    delete data.special_small_block_size_inherit;
 
     return data;
   }
@@ -1289,14 +1250,19 @@ export class DatasetFormComponent implements FormConfiguration {
             const atime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
             const recordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
             const snapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
+            const specialSmallBlockSize = _.find(this.fieldConfig, { name: 'special_small_block_size' }) as FormSelectConfig;
             const syncInherit: Option[] = [{ label: `Inherit (${pkDataset[0].sync.rawvalue})`, value: inherit }];
             const compressionInherit: Option[] = [{ label: `Inherit (${pkDataset[0].compression.rawvalue})`, value: inherit }];
             const deduplicationInherit: Option[] = [{ label: `Inherit (${pkDataset[0].deduplication.rawvalue})`, value: inherit }];
-            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: 'INHERIT' }];
+            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: inherit }];
             const execInherit: Option[] = [{ label: `Inherit (${pkDataset[0].exec.rawvalue})`, value: inherit }];
             const readonlyInherit: Option[] = [{ label: `Inherit (${pkDataset[0].readonly.rawvalue})`, value: inherit }];
             const atimeInherit: Option[] = [{ label: `Inherit (${pkDataset[0].atime.rawvalue})`, value: inherit }];
             const snapdevInherit: Option[] = [{ label: `Inherit (${pkDataset[0].snapdev.rawvalue})`, value: inherit }];
+            const specialSmallBlockSizeInherit: Option[] = [{
+              label: `Inherit (${pkDataset[0].special_small_block_size.value})`,
+              value: inherit,
+            }];
 
             this.storageService.convertHumanStringToNum(pkDataset[0].recordsize.value);
             const recordsizeInherit: Option[] = [{ label: `Inherit (${this.storageService.humanReadable})`, value: inherit }];
@@ -1322,16 +1288,18 @@ export class DatasetFormComponent implements FormConfiguration {
             atime.options = atimeInherit.concat(atime.options);
             recordsize.options = recordsizeInherit.concat(recordsize.options);
             snapdev.options = snapdevInherit.concat(snapdev.options);
+            specialSmallBlockSize.options = specialSmallBlockSizeInherit.concat(specialSmallBlockSize.options);
 
             entityForm.formGroup.controls['sync'].setValue(inherit);
             entityForm.formGroup.controls['compression'].setValue(inherit);
             entityForm.formGroup.controls['deduplication'].setValue(inherit);
-            entityForm.formGroup.controls['checksum'].setValue('INHERIT');
+            entityForm.formGroup.controls['checksum'].setValue(inherit);
             entityForm.formGroup.controls['exec'].setValue(inherit);
             entityForm.formGroup.controls['readonly'].setValue(inherit);
             entityForm.formGroup.controls['atime'].setValue(inherit);
             entityForm.formGroup.controls['recordsize'].setValue(inherit);
             entityForm.formGroup.controls['snapdev'].setValue(inherit);
+            entityForm.formGroup.controls['special_small_block_size'].setValue(inherit);
           } else {
             this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe({
               next: (parentDataset) => {
@@ -1350,6 +1318,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 const editRecordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
                 const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
                 const editSnapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
+                const specialSmallBlockSize = _.find(this.fieldConfig, { name: 'special_small_block_size' }) as FormSelectConfig;
 
                 const editSyncCollection: Option[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: inherit }];
                 editSync.options = editSyncCollection.concat(editSync.options);
@@ -1374,6 +1343,9 @@ export class DatasetFormComponent implements FormConfiguration {
 
                 const editSnapdevCollection: Option[] = [{ label: `Inherit (${this.parentDataset.snapdev.rawvalue})`, value: inherit }];
                 editSnapdev.options = editSnapdevCollection.concat(editSnapdev.options);
+
+                const specialSmallBlockSizeCollection: Option[] = [{ label: `Inherit (${this.parentDataset.special_small_block_size.value})`, value: inherit }];
+                specialSmallBlockSize.options = specialSmallBlockSizeCollection.concat(specialSmallBlockSize.options);
 
                 const lastChar = this.parentDataset.recordsize.value[this.parentDataset.recordsize.value.length - 1];
                 const formattedLabel = lastChar === 'K' || lastChar === 'M'
@@ -1403,8 +1375,8 @@ export class DatasetFormComponent implements FormConfiguration {
                   deduplicationValue = inherit;
                 }
                 let checksumValue = pkDataset[0].checksum.value;
-                if (pkDataset[0].checksum.source === 'DEFAULT' || pkDataset[0].checksum.source === 'INHERITED') {
-                  checksumValue = 'INHERIT';
+                if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].checksum.source)) {
+                  checksumValue = inherit;
                 }
                 let execValue = pkDataset[0].exec.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].exec.source)) {
@@ -1429,6 +1401,15 @@ export class DatasetFormComponent implements FormConfiguration {
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].snapdev.source)) {
                   snapdevValue = inherit;
                 }
+                let specialSmallBlockSizeValue: number | string = Number(
+                  pkDataset[0].special_small_block_size.rawvalue,
+                );
+                if ([
+                  ZfsPropertySource.Inherited,
+                  ZfsPropertySource.Default,
+                ].includes(pkDataset[0].special_small_block_size.source)) {
+                  specialSmallBlockSizeValue = inherit;
+                }
 
                 entityForm.formGroup.controls['deduplication'].setValue(deduplicationValue);
                 entityForm.formGroup.controls['exec'].setValue(execValue);
@@ -1437,6 +1418,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['atime'].setValue(atimeValue);
                 entityForm.formGroup.controls['recordsize'].setValue(recordsizeValue);
                 entityForm.formGroup.controls['snapdev'].setValue(snapdevValue);
+                entityForm.formGroup.controls['special_small_block_size'].setValue(specialSmallBlockSizeValue);
                 this.parentDataset = parentDataset[0];
               },
               error: this.handleError,
@@ -1500,11 +1482,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.convertHumanStringToNum(sizeValues[field], field);
       this.originalHumanSize[field] = this.humanReadable[field];
     });
-    let specialSmallBlockSize: number = this.originalHumanSize['special_small_block_size'] as number;
-    const specialSmallBlockSizeInherit = this.isInherited(wsResponse.special_small_block_size, specialSmallBlockSize);
-    if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
-      specialSmallBlockSize = null;
-    }
+    const specialSmallBlockSize = Number(wsResponse.special_small_block_size?.rawvalue);
 
     const returnValue: DatasetFormData = {
       name: wsResponse.name,
@@ -1538,7 +1516,6 @@ export class DatasetFormComponent implements FormConfiguration {
       snapdev: this.getFieldValueOrRaw(wsResponse.snapdev),
       snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
       sync: this.getFieldValueOrRaw(wsResponse.sync),
-      special_small_block_size_inherit: specialSmallBlockSizeInherit,
       special_small_block_size: specialSmallBlockSize,
     };
 
@@ -1547,7 +1524,7 @@ export class DatasetFormComponent implements FormConfiguration {
       || sizeValues['refquota']
       || sizeValues['refreservation']
       || sizeValues['reservation']
-      || sizeValues['special_small_block_size']
+      || specialSmallBlockSize
       || !quotaWarningInherit
       || !quotaCriticalInherit
       || !refquotaWarningInherit
