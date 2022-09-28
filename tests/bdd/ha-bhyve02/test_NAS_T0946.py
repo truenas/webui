@@ -311,13 +311,11 @@ def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driv
 @then('navigate to Storage then click the gear icon and click Disks')
 def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
     """navigate to Storage then click the gear icon and click Disks."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage (Deprecated)"]').click()
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 7, '(//button[@ix-auto="button__tab-selector"])[2]', 'clickable')
-    driver.find_element_by_xpath('(//button[@ix-auto="button__tab-selector"])[2]').click()
-    assert wait_on_element(driver, 7, '//a[@ix-auto="button__STORAGE_DISKS"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button__STORAGE_DISKS"]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Disks")]')
+    assert wait_on_element(driver, 7, '//a[*/text()=" Disks "]', 'clickable')
+    driver.find_element_by_xpath('//a[*/text()=" Disks "]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Disks"]')
 
 
 @then('the list of disks should appear in ascending order starting with sda')
