@@ -265,7 +265,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   doDelete(row: DatasetQuota): void {
-    this.getDeleteConfirmation().pipe(
+    this.getDeleteConfirmation(row.name).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
       switchMap(() => this.setQuota(this.getRemoveQuotaPayload([row]))),
@@ -282,10 +282,10 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     ).subscribe();
   }
 
-  getDeleteConfirmation(): Observable<boolean> {
+  getDeleteConfirmation(name: string): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.translate.instant('Delete User Quota'),
-      message: this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name: row.name }),
+      message: this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name }),
       buttonMsg: this.translate.instant('Delete'),
       hideCheckBox: true,
     });
