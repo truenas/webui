@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
+import { EnterpriseLicenseGuard } from 'app/core/guards/enterprise-license.guard';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApplicationsComponent } from 'app/pages/applications//applications.component';
 import { AdminLayoutComponent } from './modules/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './modules/common/layouts/auth-layout/auth-layout.component';
@@ -67,11 +69,13 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'vm',
     loadChildren: () => import('./pages/vm/vm.module').then((module) => module.VmModule),
+    canActivate: [EnterpriseLicenseGuard.requireOnEnterprise(LicenseFeature.Vm)],
     data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' },
   },
   {
     path: 'apps',
     component: ApplicationsComponent,
+    canActivate: [EnterpriseLicenseGuard.requireOnEnterprise(LicenseFeature.Apps)],
     data: { title: 'Applications', breadcrumb: 'Applications' },
   },
   {
