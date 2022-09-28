@@ -1,6 +1,7 @@
 import { EventEmitter, Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
+import { fromUnixTime } from 'date-fns';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
@@ -23,7 +24,7 @@ export class SystemGeneralService {
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
-  updateIsDone$ = new Subject();
+  updateIsDone$ = new Subject<void>();
 
   get isEnterprise(): boolean {
     return this.getProductType() === ProductType.ScaleEnterprise;
@@ -52,7 +53,14 @@ export class SystemGeneralService {
     return this.window.localStorage.getItem('product_type') as ProductType;
   }
 
-  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay());
+  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: true, bufferSize: 1 }));
+
+  getCopyrightYear$ = this.ws.call('system.build_time').pipe(
+    map((buildTime) => {
+      return fromUnixTime(buildTime.$date / 1000).getFullYear();
+    }),
+    shareReplay({ refCount: false, bufferSize: 1 }),
+  );
 
   /**
    * OAuth token for JIRA access

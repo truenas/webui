@@ -56,7 +56,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   units = '';
   yLabelPrefix: string;
-  showLegendValues = false;
 
   theme: Theme;
   timeFormat = '%H:%M';
@@ -145,7 +144,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         return '';
       },
       series: () => {
-        const series: any = {};
+        const series: { [item: string]: { plotter: typeof smoothPlotter } } = {};
         this.data.legend.forEach((item) => {
           series[item] = { plotter: smoothPlotter };
         });

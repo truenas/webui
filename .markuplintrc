@@ -1,14 +1,16 @@
 {
- "parser": {
-   ".html$": "markuplint-angular-parser"
- },
- "rules": {
-   "attr-equal-space-after": "never",
-   "attr-equal-space-before": "never",
-   "indentation": {
-    "value": 2,
-    "severity": "error"
-   }
- },
- "excludeFiles": ["./src/index.html"]
+  "parser": {
+    ".html$": "markuplint-angular-parser"
+  },
+  "rules": {
+    "attr-equal-space-after": "never",
+    "attr-equal-space-before": "never",
+    "indentation": {
+      "value": 2,
+      "severity": "error"
+    }
+  },
+  "excludeFiles": [
+    "./src/index.html"
+  ]
 }

@@ -6,7 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
-import { CertificateProfile } from 'app/interfaces/certificate.interface';
+import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
+import {
+  CertificateExtension,
+  CertificateProfile,
+  CertificationExtensionAttribute,
+} from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
@@ -624,7 +629,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.currentStep = stepper.selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
+  getSummaryValueLabel(fieldConfig: FieldConfig, value: unknown): unknown {
     if (fieldConfig.type === 'select') {
       const option = fieldConfig.options.find((option) => option.value === value);
       if (option) {
@@ -767,26 +772,27 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type) => {
-            Object.keys(value['cert_extensions'][type]).forEach((prop) => {
+          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
+            Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
+              const extension = value['cert_extensions'][type] as CertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
-                if (reset && ctrl.value === value['cert_extensions'][type][prop]) {
+                if (reset && ctrl.value === extension[prop]) {
                   ctrl.setValue(undefined);
                 } else if (!reset) {
-                  ctrl.setValue(value['cert_extensions'][type][prop]);
+                  ctrl.setValue(extension[prop]);
                 }
               } else {
                 ctrl = this.getField(type);
                 const config = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
-                if (reset && value['cert_extensions'][type][prop] === true && optionIndex > -1) {
+                if (reset && extension[prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);
                   ctrl.setValue(config);
                 } else if (!reset) {
-                  if (value['cert_extensions'][type][prop] === true && optionIndex === -1) {
+                  if (extension[prop] === true && optionIndex === -1) {
                     config.push(prop);
-                  } else if (value['cert_extensions'][type][prop] === false && optionIndex > -1) {
+                  } else if (extension[prop] === false && optionIndex > -1) {
                     config.splice(optionIndex, 1);
                   }
                   ctrl.setValue(config);
@@ -858,7 +864,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         AuthorityKeyIdentifier: {},
         ExtendedKeyUsage: {},
         KeyUsage: {},
-      };
+      } as CertificateExtensions;
       Object.keys(data).forEach((key) => {
         if (!key.startsWith('BasicConstraints') && !key.startsWith('AuthorityKeyIdentifier') && !key.startsWith('ExtendedKeyUsage') && !key.startsWith('KeyUsage')) {
           return;
@@ -892,13 +898,16 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   customSubmit(data: any): void {
     this.loader.open();
-    this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.modalService.refreshTable();
-      this.modalService.closeSlideIn();
-    }, (error) => {
-      this.loader.close();
-      this.dialogService.errorReport(this.translate.instant('Error creating CA.'), error.reason, error.trace.formatted);
+    this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loader.close();
+        this.modalService.refreshTable();
+        this.modalService.closeSlideIn();
+      },
+      error: (error) => {
+        this.loader.close();
+        this.dialogService.errorReport(this.translate.instant('Error creating CA.'), error.reason, error.trace.formatted);
+      },
     });
   }
 }

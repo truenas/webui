@@ -3,12 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
 } from 'app/modules/entity/entity-table/entity-table.component';
@@ -60,8 +57,8 @@ export class DeviceListComponent implements EntityTableConfig {
     private slideIn: IxSlideInService,
   ) {}
 
-  isActionVisible(actionId: string, row: VmDevice): boolean {
-    return !(actionId === 'delete' && (row as any).id === true);
+  isActionVisible(actionId: string): boolean {
+    return actionId !== 'delete';
   }
 
   getActions(row: VmDevice): EntityTableAction<VmDevice>[] {
@@ -84,43 +81,6 @@ export class DeviceListComponent implements EntityTableConfig {
       label: this.translate.instant('Delete'),
       onClick: (device: VmDevice) => {
         this.deviceDelete(device);
-      },
-    });
-    actions.push({
-      id: row.id,
-      name: 'reorder',
-      icon: 'reorder',
-      label: this.translate.instant('Change Device Order'),
-      onClick: (row1: VmDevice) => {
-        const conf: DialogFormConfiguration = {
-          title: this.translate.instant('Change Device Order'),
-          message: this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row1.dtype} ${row1.id}` }),
-          fieldConfig: [{
-            type: 'input',
-            name: 'order',
-          },
-          ],
-          saveButtonText: this.translate.instant('Save'),
-          preInit: (entityDialog: EntityDialogComponent) => {
-            _.find(entityDialog.fieldConfig, { name: 'order' })['value'] = row1.order;
-          },
-          customSubmit: (entityDialog: EntityDialogComponent) => {
-            const value = entityDialog.formValue;
-            this.loader.open();
-            this.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
-              entityDialog.dialogRef.close(true);
-              this.loader.close();
-              this.entityList.getData();
-            }, () => {
-              this.loader.close();
-            }, () => {
-              entityDialog.dialogRef.close(true);
-              this.loader.close();
-              this.entityList.getData();
-            });
-          },
-        };
-        this.dialogService.dialogForm(conf);
       },
     });
     actions.push({

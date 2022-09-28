@@ -114,12 +114,15 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     jobComponent.setDescription(this.translate.instant('Saving Permissions...'));
     jobComponent.setCall('pool.dataset.permission', payload);
     jobComponent.submit();
-    jobComponent.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-      this.router.navigate(['/datasets', this.datasetId]);
-    }, (error) => {
-      dialogRef.close();
-      this.dialog.errorReportMiddleware(error);
+    jobComponent.success.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        dialogRef.close();
+        this.router.navigate(['/datasets', this.datasetId]);
+      },
+      error: (error) => {
+        dialogRef.close();
+        this.dialog.errorReportMiddleware(error);
+      },
     });
   }
 
@@ -130,8 +133,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       this.storageService.filesystemStat(this.datasetPath),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        ([datasets, stat]) => {
+      .subscribe({
+        next: ([datasets, stat]) => {
           this.isLoading = false;
           this.aclType = datasets[0].acltype.value as AclType;
           this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
@@ -141,11 +144,11 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
             group: stat.group,
           });
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.dialog.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   private preparePayload(): DatasetPermissionsUpdate {

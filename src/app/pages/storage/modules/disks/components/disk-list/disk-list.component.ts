@@ -5,12 +5,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, lastValueFrom, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -94,7 +94,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     },
   }];
 
-  protected unused: Disk[] = [];
+  protected unusedDisks: UnusedDisk[] = [];
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
@@ -141,16 +141,22 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       }
     }
 
-    const devMatch = this.unused.filter((dev) => dev.name === parentRow.name);
+    const devMatch = this.unusedDisks.filter((dev) => dev.name === parentRow.name);
     if (devMatch.length > 0) {
       actions.push({
         id: parentRow.name,
         icon: 'delete_sweep',
         name: 'wipe',
         label: this.translate.instant('Wipe'),
-        onClick: (disk) => {
+        onClick: (disk): void => {
+          const unusedDisk: Partial<UnusedDisk> = this.unusedDisks.find(
+            (unusedDisk) => unusedDisk.devname === disk.devname,
+          );
           this.matDialog.open(DiskWipeDialogComponent, {
-            data: disk.name,
+            data: {
+              diskName: disk.name,
+              exportedPool: unusedDisk?.exported_zpool,
+            },
           });
         },
       });
@@ -170,20 +176,22 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   prerequisite(): Promise<boolean> {
-    return forkJoin([
-      this.ws.call('disk.get_unused'),
-      this.ws.call('smart.test.disk_choices'),
-    ]).pipe(
-      map(([unusedDisks, disksThatSupportSmart]) => {
-        this.unused = unusedDisks;
-        this.smartDiskChoices = disksThatSupportSmart;
-        return true;
-      }),
-      catchError((error) => {
-        this.dialogService.errorReportMiddleware(error);
-        return of(false);
-      }),
-    ).toPromise();
+    return lastValueFrom(
+      forkJoin([
+        this.ws.call('disk.get_unused'),
+        this.ws.call('smart.test.disk_choices'),
+      ]).pipe(
+        map(([unusedDisks, disksThatSupportSmart]) => {
+          this.unusedDisks = unusedDisks;
+          this.smartDiskChoices = disksThatSupportSmart;
+          return true;
+        }),
+        catchError((error) => {
+          this.dialogService.errorReportMiddleware(error);
+          return of(false);
+        }),
+      ),
+    );
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -204,8 +212,16 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
     return disks.map((disk) => ({
       ...disk,
-      pool: disk.pool || this.translate.instant('N/A'),
+      pool: this.getPoolColumn(disk),
     }));
+  }
+
+  getPoolColumn(disk: Disk): string {
+    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.devname === disk.devname);
+    if (unusedDisk?.exported_zpool) {
+      return unusedDisk.exported_zpool + ' (' + this.translate.instant('Exported') + ')';
+    }
+    return disk.pool || this.translate.instant('N/A');
   }
 
   manualTest(selected: Disk | Disk[]): void {

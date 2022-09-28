@@ -1,0 +1,49 @@
+@import '~assets/styles/mixins/cards';
+
+:host {
+  display: flex;
+}
+
+.card {
+  @include details-card();
+  flex: 1;
+
+  .content-container {
+    height: 100%;
+  }
+
+  .vdev-line {
+    margin: 8px 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.pool-icon {
+  &.icon-online {
+    color: var(--green);
+  }
+
+  &.icon-warning {
+    color: var(--orange);
+  }
+
+  &.icon-faulted {
+    color: var(--blue);
+  }
+
+  &.icon-error {
+    color: var(--red);
+  }
+}
+
+.warning {
+  display: flex;
+  padding: 0 6px;
+}
+
+.vdev-line {
+  margin: 12px 0;
+}

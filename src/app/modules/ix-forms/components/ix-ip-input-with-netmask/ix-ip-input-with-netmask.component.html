@@ -8,14 +8,14 @@
 <div class="input-container" [class.disabled]="isDisabled">
   <input
     #addressInput
+    type=""
     matInput
     [required]="required"
     [disabled]="isDisabled"
-    type=""
     [value]="address"
     (input)="onAddressInput(addressInput)"
     (blur)="onTouched()"
-  >
+  />
   <div class="slash">/</div>
   <mat-select
     class="select"

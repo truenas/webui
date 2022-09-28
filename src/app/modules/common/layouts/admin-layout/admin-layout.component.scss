@@ -74,7 +74,7 @@
   height: 100%;
 }
 
-.enterprise-logo mat-icon {
+.enterprise-logo .mat-icon {
   height: auto !important;
   margin-left: -4px !important;
   top: 14px !important;
@@ -98,13 +98,15 @@
 }
 
 .sidenav-copyright-txt {
-  bottom: 0;
   font-size: 0.6rem;
   margin: 1rem auto;
   opacity: 0.5;
-  position: absolute;
   text-align: center;
   width: 100%;
+
+  .copyright-line {
+    margin: 0 58px;
+  }
 }
 
 .sidenav-copyright-icon {
@@ -157,4 +159,9 @@ ix-jw-modal {
 
 .isdark {
   display: block;
+}
+
+ix-navigation {
+  height: 100%;
+  overflow: auto;
 }

@@ -1,11 +1,17 @@
 <div class="bulk-list-item" fxLayout="row" fxLayoutAlign="start center">
-  <div class="bulk-list-item-state" fxLayout="row" fxLayoutAlign="center center">
+  <div
+    class="bulk-list-item-state"
+    fxLayout="row"
+    fxLayoutAlign="center center"
+  >
     <ng-container [ngSwitch]="item.state">
       <mat-icon
         *ngSwitchCase="State.Initial"
         class="initial"
         [matTooltip]="item.message || 'Pending' | translate"
-      >radio_button_checked</mat-icon>
+      >
+        radio_button_checked
+      </mat-icon>
       <mat-spinner
         *ngSwitchCase="State.Running"
         class="running"
@@ -16,12 +22,16 @@
         *ngSwitchCase="State.Success"
         class="success"
         [matTooltip]="item.message || 'Success' | translate"
-      >check_circle</mat-icon>
+      >
+        check_circle
+      </mat-icon>
       <mat-icon
         *ngSwitchCase="State.Error"
         class="error"
         [matTooltip]="item.message || 'Error' | translate"
-      >error</mat-icon>
+      >
+        error
+      </mat-icon>
     </ng-container>
   </div>
   <div class="bulk-list-item-title">

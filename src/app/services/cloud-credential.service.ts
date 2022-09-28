@@ -21,8 +21,8 @@ export class CloudCredentialService {
     return this.ws.call(this.credentialProviders);
   }
 
-  getCloudsyncCredentials(): Promise<CloudsyncCredential[]> {
-    return this.ws.call('cloudsync.credentials.query').toPromise();
+  getCloudsyncCredentials(): Observable<CloudsyncCredential[]> {
+    return this.ws.call('cloudsync.credentials.query');
   }
 
   getByte(data: string): number {

@@ -79,9 +79,9 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': 'Yes',
+      'Encryption Root:': ' Yes ',
       'Current State:': 'Unlocked',
-      'Type:': 'Key',
+      'Type:': ' Key ',
       'Algorithm:': 'aes-256-cbc',
     });
 
@@ -96,9 +96,9 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': 'Yes',
+      'Encryption Root:': ' Yes ',
       'Current State:': 'Unlocked',
-      'Type:': 'Passphrase',
+      'Type:': ' Passphrase ',
       'Algorithm:': 'aes-256-cbc',
     });
 
@@ -118,9 +118,9 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': 'Yes',
+      'Encryption Root:': ' Yes ',
       'Current State:': 'Locked',
-      'Type:': 'Passphrase',
+      'Type:': ' Passphrase ',
       'Algorithm:': 'aes-256-cbc',
     });
 
@@ -142,7 +142,7 @@ describe('ZfsEncryptionCardComponent', () => {
     expect(details).toEqual({
       'Encryption Root:': '/pool',
       'Current State:': 'Locked by ancestor',
-      'Type:': 'Passphrase',
+      'Type:': ' Passphrase ',
       'Algorithm:': 'aes-256-cbc',
     });
 

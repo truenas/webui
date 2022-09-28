@@ -1,5 +1,5 @@
 <h1 matDialogTitle>{{ 'Leave Domain' | translate }}</h1>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p>
     {{ 'Leaving the domain requires sufficient privileges. Enter your credentials below.' | translate }}
   </p>
@@ -9,6 +9,7 @@
     [required]="true"
     [label]="'Username' | translate"
   ></ix-input>
+
   <ix-input
     formControlName="password"
     [required]="true"
@@ -17,16 +18,11 @@
   ></ix-input>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Cancel' | translate }}</button>
-    <button
-      mat-button
-      type="submit"
-      [disabled]="form.invalid"
-      color="primary"
-    >{{ 'Leave Domain' | translate }}</button>
+    <button mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Leave Domain' | translate }}
+    </button>
   </div>
 </form>

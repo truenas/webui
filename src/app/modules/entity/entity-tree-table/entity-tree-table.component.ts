@@ -1,5 +1,5 @@
 import {
-  Component, ViewChild, Input, OnInit, AfterViewInit,
+  Component, ViewChild, Input, OnInit, AfterViewInit, ElementRef,
 } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
@@ -148,19 +148,24 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // TODO: This block does nothing.
   getData(): void {
-    this.ws.call(this._conf.queryCall).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+    this.ws.call(this._conf.queryCall).pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
         this.treeTableService.buildTree(res);
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 
   expandNode(rootNode: TreeNode): void {
     const value = rootNode.expanded ? rootNode.expanded = false : true;
-    this.treeDataSource = this.treeTableService.editNode('expanded', value, (rootNode as any).indexPath, this.treeDataSource);
+    this.treeDataSource = this.treeTableService.editNode(
+      'expanded',
+      value,
+      (rootNode as { indexPath: number[] }).indexPath,
+      this.treeDataSource,
+    );
 
     if (this.filter.value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(
@@ -210,7 +215,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.table) {
-      const parentNode = (this.table as any)._elementRef.nativeElement.parentNode;
+      // Hack to access the private property _elementRef. Do not replace with elementRef.
+      const parentNode = (this.table as unknown as { _elementRef: ElementRef })._elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.parentNode.scrollWidth > parentNode.parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;

@@ -2,7 +2,6 @@ import {
   Injectable, EventEmitter,
 } from '@angular/core';
 import { environment } from 'environments/environment';
-import { LocalStorage } from 'ngx-webstorage';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 
 @Injectable()
@@ -10,9 +9,6 @@ export class ShellService {
   pendingMessages: string[] = [];
   socket: WebSocket;
   connected = false;
-  @LocalStorage() username: string;
-  @LocalStorage() password: string;
-  redirectUrl = '';
   token: string;
   vmId: number;
   podInfo: {
@@ -22,7 +18,6 @@ export class ShellService {
     command: string;
   };
 
-  // input and output and eventEmmitter
   private shellCmdOutput: ArrayBuffer;
   shellOutput = new EventEmitter<ArrayBuffer>();
   shellConnected = new EventEmitter<ShellConnectedEvent>();

@@ -42,33 +42,36 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.job('catalog.items', [this.catalog.label]).pipe(untilDestroyed(this)).subscribe((job: Job<CatalogItems>) => {
-      if (job.state !== JobState.Success) {
-        return;
-      }
+    this.ws.job('catalog.items', [this.catalog.label]).pipe(untilDestroyed(this)).subscribe({
+      next: (job: Job<CatalogItems>) => {
+        if (job.state !== JobState.Success) {
+          return;
+        }
 
-      this.loader.close();
-      const result = job.result;
-      this.catalogItems = [];
-      this.trainOptions = ['All'];
-      if (result) {
-        Object.keys(result).forEach((trainKey) => {
-          const train = result[trainKey];
-          this.trainOptions.push(trainKey);
-          Object.keys(train).forEach((appKey) => {
-            const app = train[appKey];
-            this.catalogItems.push({
-              train: trainKey,
-              app: appKey,
-              healthy: app.healthy,
+        this.loader.close();
+        const result = job.result;
+        this.catalogItems = [];
+        this.trainOptions = ['All'];
+        if (result) {
+          Object.keys(result).forEach((trainKey) => {
+            const train = result[trainKey];
+            this.trainOptions.push(trainKey);
+            Object.keys(train).forEach((appKey) => {
+              const app = train[appKey];
+              this.catalogItems.push({
+                train: trainKey,
+                app: appKey,
+                healthy: app.healthy,
+              });
             });
           });
-        });
-        this.filteredItems = this.catalogItems;
-      }
-    }, (err) => {
-      this.loader.close();
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.filteredItems = this.catalogItems;
+        }
+      },
+      error: (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
     });
   }
 

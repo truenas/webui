@@ -31,6 +31,18 @@ export class TruecommandButtonComponent implements OnInit {
   private isTcStatusOpened = false;
   private tcStatusDialogRef: MatDialogRef<TruecommandStatusModalComponent>;
 
+  get tcsStatusMatBadge(): string {
+    if (this.tcStatus.status === TrueCommandStatus.Connected) {
+      return 'check';
+    }
+
+    if (this.tcStatus.status === TrueCommandStatus.Failed) {
+      return 'priority_high';
+    }
+
+    return '';
+  }
+
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -88,15 +100,15 @@ export class TruecommandButtonComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.loader.open();
-        this.ws.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe(
-          () => {
+        this.ws.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
             this.loader.close();
           },
-          (err) => {
+          error: (err) => {
             this.loader.close();
             new EntityUtils().handleWsError(this, err, this.dialogService);
           },
-        );
+        });
       }
     });
   }

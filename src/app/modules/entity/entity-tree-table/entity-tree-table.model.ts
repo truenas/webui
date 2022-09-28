@@ -15,3 +15,17 @@ export interface EntityTreeTable {
   columns: EntityTreeTableColumn[];
   queryCall?: ApiMethod;
 }
+
+export interface EntityTreeTableActionGroup {
+  title: string;
+  actions: EntityTreeTableAction[];
+}
+
+export interface EntityTreeTableAction {
+  onClick: (data: unknown) => void;
+  label: string;
+
+  // TODO: Not actually supported
+  id?: string;
+  isHidden?: boolean;
+}

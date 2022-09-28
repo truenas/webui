@@ -1,20 +1,43 @@
-<div fxLayout="column" fxLayoutAlign="center center" fxFlex class="empty-page {{conf.type}}"
+<div
+  fxLayout="column"
+  fxLayoutAlign="center center"
+  fxFlex
+  class="empty-page {{ conf.type }}"
   [class.large]="conf.large"
-  [class.compact]="conf.compact">
-
-  <div *ngIf="!isLoading()" fxLayout="column" fxLayoutAlign="center center" fxFlex class="icon-div">
-    <mat-icon fontSet="mdi-set" fontIcon="mdi-{{getIcon()}}"></mat-icon>
+  [class.compact]="conf.compact"
+>
+  <div
+    *ngIf="!isLoading()"
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    fxFlex
+    class="icon-div"
+  >
+    <mat-icon fontSet="mdi-set" fontIcon="mdi-{{ getIcon() }}"></mat-icon>
   </div>
-  <div *ngIf="isLoading()" fxLayout="column" fxLayoutAlign="center center" fxFlex>
+  <div
+    *ngIf="isLoading()"
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    fxFlex
+  >
     <mat-spinner [diameter]="conf.large ? 80 : 40"></mat-spinner>
   </div>
   <div *ngIf="!isLoading()">
     <h3 class="empty-title">{{ conf.title }}</h3>
 
     <!-- Messages -->
-    <p *ngIf="conf.message && !conf.compact" class="empty-message">{{ conf.message }}</p>
+    <p *ngIf="conf.message && !conf.compact" class="empty-message">
+      {{ conf.message }}
+    </p>
 
-    <button *ngIf="conf.button && !conf.compact" class="empty-action" mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
+    <button
+      *ngIf="conf.button && !conf.compact"
+      class="empty-action"
+      mat-button
+      (click)="doAction()"
+    >
+      {{ conf.button.label | translate }}
+    </button>
   </div>
-
 </div>

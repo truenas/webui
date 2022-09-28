@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -25,7 +26,7 @@ describe('DatasetService', () => {
   it('returns a TreeNodeProvider that lists dataset nodes', async () => {
     const provider = spectator.service.getDatasetNodeProvider();
 
-    const nodes = await provider({ } as TreeNode<ExplorerNodeData>).toPromise();
+    const nodes = await lastValueFrom(provider({ } as TreeNode<ExplorerNodeData>));
     expect(nodes).toEqual([
       {
         hasChildren: true,

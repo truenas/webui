@@ -63,7 +63,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   it('shows current system timezone', () => {
     const timezoneElement = spectator.query('.timezone-message');
 
-    expect(timezoneElement).toHaveExactText('System Time Zone: America/New_York');
+    expect(timezoneElement).toHaveText('System Time Zone: America/New_York');
   });
 
   it('passes cron and time constraints to SchedulerDateExamplesComponent to show date examples', () => {

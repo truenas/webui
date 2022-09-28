@@ -510,7 +510,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-checkbox {
-    margin: 4px;
+    margin: 4px 8px;
   }
 
   .form-line .mat-checkbox {
@@ -1157,7 +1157,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding-left: 3px;
   }
 
-  tree-node-content mat-icon {
+  tree-node-content .mat-icon {
     vertical-align: top;
   }
 
@@ -1270,7 +1270,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--red) !important;
     color: white !important;
 
-    mat-icon {
+    .mat-icon {
       color: white !important;
       opacity: 0.8 !important;
     }
@@ -1315,7 +1315,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     .mat-list-item-content > a {
       background-color: var(--bg2);
 
-      mat-icon {
+      ix-icon {
         color: var(--primary);
       }
     }
@@ -1442,7 +1442,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.5;
     user-select: none;
 
-    mat-icon {
+    .mat-icon {
       font-size: 150%;
     }
 

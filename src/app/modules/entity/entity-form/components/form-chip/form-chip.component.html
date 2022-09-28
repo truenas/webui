@@ -1,26 +1,34 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{config.name}}"
   class="dynamic-field form-input form-element"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-pwtoggle]="config.togglePw"
   [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
-
   <div class="label-container">
-    <label class="label">{{config.placeholder | translate}} <span *ngIf="config.required">*</span></label>
-    <ix-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
+    <label class="label">
+      {{ config.placeholder | translate }}
+      <span *ngIf="config.required">*</span>
+    </label>
+
+    <ix-tooltip
+      *ngIf="config.tooltip"
+      [header]="config.placeholder"
+      [message]="config.tooltip"
+    ></ix-tooltip>
   </div>
 
   <mat-form-field class="full-width">
     <mat-chip-list
-      #chipList class="form-chip"
-      [required]="config.required"
-      [formControl]="group.controls[config.name] | cast"
+      #chipList
+      class="form-chip"
       ix-auto
       ix-auto-type="input"
-      ix-auto-identifier="{{config.placeholder}}"
+      ix-auto-identifier="{{ config.placeholder }}"
+      [required]="config.required"
+      [formControl]="group.controls[config.name] | cast"
     >
       <mat-chip
         *ngFor="let item of chipLists"
@@ -28,7 +36,7 @@
         [removable]="removable"
         (removed)="remove(item)"
       >
-        {{item}}
+        {{ item }}
         <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
       </mat-chip>
       <input
@@ -39,7 +47,7 @@
         [matChipInputAddOnBlur]="addOnBlur"
         (matChipInputTokenEnd)="add($event)"
         (paste)="paste($event)"
-      >
+      />
       <ng-template #autoCompleteBlock>
         <input
           [placeholder]="config.placeholder | translate"
@@ -47,14 +55,22 @@
           [formControl]="chipCtrl"
           [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matAutocomplete]="autoComplete"
           (matChipInputTokenEnd)="add($event)"
           (keyup)="updateSearchOptions(chipInput.value)"
-          [matAutocomplete]="autoComplete"
           (focus)="openPanel()"
+        />
+        <mat-autocomplete
+          #autoComplete="matAutocomplete"
+          (optionSelected)="selected($event)"
         >
-        <mat-autocomplete #autoComplete="matAutocomplete" (optionSelected)="selected($event)">
-          <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
-              ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+          <mat-option
+            *ngFor="let option of config.searchOptions"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{ option.label }}"
+            [value]="option.value"
+          >
             <span>{{ option.label | translate }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -63,10 +79,15 @@
   </mat-form-field>
 
   <div class="margin-for-error">
-    <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
+    <ix-form-errors
+      [control]="group.controls[config.name]"
+      [config]="config"
+    ></ix-form-errors>
+
     <mat-error *ngIf="config['hasErrors']">
       <div [innerHTML]="config['errors']"></div>
     </mat-error>
+
     <mat-error *ngIf="config.warnings">
       <div [innerHTML]="config.warnings | translate"></div>
     </mat-error>

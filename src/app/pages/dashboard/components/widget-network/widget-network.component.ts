@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
-import { Subject } from 'rxjs';
+import { lastValueFrom, Subject } from 'rxjs';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
@@ -329,7 +329,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   getLinkState(nic: BaseNetworkInterface): LinkState {
-    if (!nic?.state?.aliases?.length) { return null; }
     if (nic.state.name in this.nicInfoMap) {
       return this.nicInfoMap[nic.state.name].state || LinkState.Down;
     }
@@ -342,7 +341,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   async fetchReportData(): Promise<void> {
-    const endDate = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
+    const endDate = await lastValueFrom(this.reportsService.getServerTime());
     const subOptions: Duration = {};
     subOptions['hours'] = 1;
     const startDate = sub(endDate, subOptions);
@@ -361,34 +360,36 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
         map((response) => response[0]),
         untilDestroyed(this),
-      ).subscribe((response) => {
-        const labels: number[] = response.data.map((_, index) => {
-          return (response.start + index * response.step) * 1000;
-        });
+      ).subscribe({
+        next: (response) => {
+          const labels: number[] = response.data.map((_, index) => {
+            return (response.start + index * response.step) * 1000;
+          });
 
-        const chartData = {
-          datasets: [
-            {
-              label: `incoming [${networkInterfaceName}]`,
-              data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
-              borderColor: this.themeService.currentTheme().blue,
-              backgroundColor: this.themeService.currentTheme().blue,
-              pointRadius: 0.2,
-            },
-            {
-              label: `outcoming [${networkInterfaceName}]`,
-              data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
-              borderColor: this.themeService.currentTheme().orange,
-              backgroundColor: this.themeService.currentTheme().orange,
-              pointRadius: 0.1,
-            },
-          ],
-        };
+          const chartData = {
+            datasets: [
+              {
+                label: `incoming [${networkInterfaceName}]`,
+                data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
+                borderColor: this.themeService.currentTheme().blue,
+                backgroundColor: this.themeService.currentTheme().blue,
+                pointRadius: 0.2,
+              },
+              {
+                label: `outcoming [${networkInterfaceName}]`,
+                data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
+                borderColor: this.themeService.currentTheme().orange,
+                backgroundColor: this.themeService.currentTheme().orange,
+                pointRadius: 0.1,
+              },
+            ],
+          };
 
-        this.nicInfoMap[networkInterfaceName].chartData = chartData;
-      },
-      (err: WebsocketError) => {
-        this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
+          this.nicInfoMap[networkInterfaceName].chartData = chartData;
+        },
+        error: (err: WebsocketError) => {
+          this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
+        },
       });
     });
   }

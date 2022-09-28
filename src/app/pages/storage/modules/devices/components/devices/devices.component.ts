@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, pluck } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
   Disk, isTopologyDisk, isVdev, TopologyDisk,
@@ -169,7 +169,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   private listenForRouteChanges(): void {
     this.route.params.pipe(
-      pluck('guid'),
+      map((params) => params.guid),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((guid: string) => {

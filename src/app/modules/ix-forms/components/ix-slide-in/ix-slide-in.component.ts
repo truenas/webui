@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   ElementRef,
   HostListener,
   Input,
@@ -32,7 +31,6 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   private element: HTMLElement;
 
   constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
     private el: ElementRef,
     protected slideInService: IxSlideInService,
   ) {
@@ -80,11 +78,10 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   openSlideIn<T>(componentType: Type<T>, params?: { wide: boolean }): T {
     this.isSlideInOpen = true;
     this.wide = !!params?.wide;
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentType);
 
     this.slideInBody.clear();
 
-    const componentRef = this.slideInBody.createComponent<T>(componentFactory);
+    const componentRef = this.slideInBody.createComponent<T>(componentType);
     return componentRef.instance;
   }
 }

@@ -3,9 +3,8 @@
 }
 
 .time-warning {
-  color: var(--fg2);
-
-  mat-icon {
+  .mat-icon {
+    color: var(--orange);
     font-size: 16px;
     margin-right: 10px;
   }

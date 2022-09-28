@@ -1,0 +1,8 @@
+<div class="fake-icon">?</div>
+<p *ngIf="!hasFailover">
+  {{ 'Connecting to TrueNAS' | translate }}
+  {{ '... Make sure the TrueNAS system is powered on and connected to the network.' | translate }}
+</p>
+<p *ngIf="hasFailover">
+  {{ 'Waiting for Active TrueNAS controller to come up...' | translate }}
+</p>

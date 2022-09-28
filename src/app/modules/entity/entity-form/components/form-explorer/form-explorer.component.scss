@@ -38,7 +38,9 @@
   width: 87%;
 }
 
-#box2 input { padding-bottom: 4px; }
+#box2 input {
+  padding: 0 8px;
+}
 
 .tree-container {
   border-bottom: solid 1px var(--lines);
@@ -90,7 +92,7 @@
   }
 }
 
-mat-icon.explorer-folder {
+.mat-icon.explorer-folder {
   font-size: 24px;
 }
 

@@ -244,7 +244,8 @@ export class DeviceFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  onSubmit(event: SubmitEvent): void {
+    event.preventDefault();
     this.isLoading = true;
 
     const update: VmDeviceUpdate = {
@@ -260,18 +261,18 @@ export class DeviceFormComponent implements OnInit {
 
     request$
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideIn.close();
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {

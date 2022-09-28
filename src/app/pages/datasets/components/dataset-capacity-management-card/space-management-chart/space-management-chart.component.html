@@ -33,8 +33,13 @@
     <div class="legend-list-item" *ngIf="dataset.usedbysnapshots.parsed">
       <span class="legend-label">
         <span class="legend-swatch"></span>
-        <ng-container *ngIf="!isZvol">{{ 'Snapshots' | translate }}</ng-container>
-        <ng-container *ngIf="isZvol">{{ 'Used by Snapshots' | translate }}</ng-container>
+        <ng-container *ngIf="!isZvol">
+          {{ 'Snapshots' | translate }}
+        </ng-container>
+
+        <ng-container *ngIf="isZvol">
+          {{ 'Used by Snapshots' | translate }}
+        </ng-container>
       </span>
       <span class="legend-value">
         {{ dataset.usedbysnapshots.parsed | filesize: { standard: 'iec', round: 0 } }}

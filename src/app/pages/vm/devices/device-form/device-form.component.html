@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" (submit)="onSubmit($event)">
       <ix-fieldset>
         <ix-select
           *ngIf="isNew"
@@ -11,7 +12,10 @@
           [options]="deviceTypes$"
         ></ix-select>
 
-        <ng-container [ngSwitch]="typeControl.value" [formGroup]="typeSpecificForm">
+        <ng-container
+          [ngSwitch]="typeControl.value"
+          [formGroup]="typeSpecificForm"
+        >
           <ng-container *ngSwitchCase="VmDeviceType.Cdrom">
             <ix-explorer
               formControlName="path"
@@ -29,6 +33,7 @@
               [provider]="zvolProvider"
               [required]="true"
             ></ix-combobox>
+
             <ix-select
               formControlName="type"
               [label]="'Mode' | translate"
@@ -36,6 +41,7 @@
               [options]="diskModes$"
               [required]="true"
             ></ix-select>
+
             <ix-select
               formControlName="sectorsize"
               [label]="'Disk Sector Size' | translate"
@@ -52,6 +58,7 @@
               [options]="nicTypes$"
               [tooltip]="helptext.adapter_type_tooltip | translate"
             ></ix-select>
+
             <div class="mac-address">
               <ix-input
                 class="mac-input"
@@ -59,11 +66,10 @@
                 [label]="'MAC Address' | translate"
                 [tooltip]="helptext.mac_tooltip | translate"
               ></ix-input>
-              <button
-                type="button"
-                mat-button
-                (click)="generateMacAddress()"
-              >{{ 'Generate' | translate }}</button>
+
+              <button type="button" mat-button (click)="generateMacAddress()">
+                {{ 'Generate' | translate }}
+              </button>
             </div>
             <ix-select
               formControlName="nic_attach"
@@ -72,11 +78,11 @@
               [required]="true"
               [options]="nicOptions$"
             ></ix-select>
+
             <ix-checkbox
               formControlName="trust_guest_rx_filters"
               [label]="'Trust Guest Filters' | translate"
             ></ix-checkbox>
-            
           </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Raw">
             <ix-explorer
@@ -86,6 +92,7 @@
               [nodeProvider]="fileNodeProvider"
               [tooltip]="helptext.raw_file_path_tooltip | translate"
             ></ix-explorer>
+
             <ix-select
               formControlName="sectorsize"
               [label]="'Disk Sector Size' | translate"
@@ -93,6 +100,7 @@
               [tooltip]="helptext.sectorsize_tooltip | translate"
               [required]="true"
             ></ix-select>
+
             <ix-select
               formControlName="type"
               [label]="'Mode' | translate"
@@ -100,6 +108,7 @@
               [tooltip]="helptext.mode_tooltip | translate"
               [required]="true"
             ></ix-select>
+
             <ix-input
               formControlName="size"
               [label]="'Raw Filesize' | translate"
@@ -119,10 +128,11 @@
           <ng-container *ngSwitchCase="VmDeviceType.Display">
             <ix-input
               formControlName="port"
-              [label]="'Port' | translate"
               type="number"
+              [label]="'Port' | translate"
               [tooltip]="helptext.port_tooltip | translate"
             ></ix-input>
+
             <ix-select
               formControlName="resolution"
               [label]="'Resolution' | translate"
@@ -130,6 +140,7 @@
               [tooltip]="helptext.resolution_tooltip | translate"
               [required]="true"
             ></ix-select>
+
             <ix-select
               formControlName="bind"
               [label]="'Bind' | translate"
@@ -137,18 +148,21 @@
               [tooltip]="helptext.bind_tooltip | translate"
               [required]="true"
             ></ix-select>
+
             <ix-input
               formControlName="password"
+              type="password"
               [label]="'Password' | translate"
               [tooltip]="helptext.password_tooltip | translate"
-              type="password"
             ></ix-input>
+
             <ix-select
               formControlName="type"
               [label]="'Display Type' | translate"
               [options]="displayTypes$"
               [required]="true"
             ></ix-select>
+
             <ix-checkbox
               formControlName="web"
               [label]="'Web Interface' | translate"
@@ -158,9 +172,9 @@
         </ng-container>
 
         <ix-input
+          type="number"
           [formControl]="orderControl"
           [label]="'Device Order' | translate"
-          type="number"
         ></ix-input>
       </ix-fieldset>
       <div class="form-actions">
@@ -169,7 +183,9 @@
           mat-button
           color="primary"
           [disabled]="typeSpecificForm.invalid || isLoading"
-        >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

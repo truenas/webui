@@ -125,14 +125,17 @@ export class GuiFormComponent {
         return this.ws.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.handleServiceRestart(params as SystemGeneralConfigUpdate);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.handleServiceRestart(params as SystemGeneralConfigUpdate);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -195,12 +198,12 @@ export class GuiFormComponent {
         this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
         this.ws.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
-        ).subscribe(
-          () => {
+        ).subscribe({
+          next: () => {
             this.ws.reconnect(protocol, hostname + ':' + port);
             this.reconnect(href);
           },
-          (error: WebsocketError) => {
+          error: (error: WebsocketError) => {
             this.loader.close();
             this.dialog.errorReport(
               helptext.dialog_error_title,
@@ -208,7 +211,7 @@ export class GuiFormComponent {
               error.trace.formatted,
             );
           },
-        );
+        });
       });
     } else {
       this.slideInService.close(null, true);

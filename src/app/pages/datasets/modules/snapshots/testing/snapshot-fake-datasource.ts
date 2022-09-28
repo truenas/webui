@@ -17,6 +17,12 @@ export const fakeZfsSnapshot: ZfsSnapshot = {
       parsed: 1634575914000,
     },
   },
+  retention: {
+    datetime: { $date: 1663053000 },
+    source: 'periodic_snapshot_task',
+    periodic_snapshot_task_id: 1,
+
+  },
 } as unknown as ZfsSnapshot;
 
 export const fakeZfsSnapshotDataSource: ZfsSnapshot[] = [

@@ -1,5 +1,9 @@
 <mat-card class="form-card">
-  <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar
+    *ngIf="isFormLoading"
+    mode="indeterminate"
+  ></mat-progress-bar>
+
   <mat-card-content>
     <div class="status-content">
       <p class="help-text">
@@ -7,20 +11,24 @@
       </p>
       <button
         mat-button
-        [disabled]="isFormLoading"
         color="primary"
         type="button"
+        [disabled]="isFormLoading"
         (click)="toggleTwoFactor()"
-      >{{ twoFactorButtonText | translate }}</button>
+      >
+        {{ twoFactorButtonText | translate }}
+      </button>
       <button
         mat-button
-        [disabled]="isFormLoading || !secret"
         color="accent"
         type="button"
+        [disabled]="isFormLoading || !secret"
         (click)="openQrDialog()"
-      >{{ 'Show QR' | translate }}</button>
+      >
+        {{ 'Show QR' | translate }}
+      </button>
     </div>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset
           [title]="helptext.two_factor.title"
@@ -33,54 +41,64 @@
             [options]="otpDigitOptions$"
             [required]="true"
           ></ix-select>
+
           <ix-input
             formControlName="interval"
+            type="number"
             [label]="labels.interval"
             [tooltip]="tooltips.interval"
             [hint]="intervalHint"
-            type="number"
           ></ix-input>
+
           <ix-input
             formControlName="window"
+            type="number"
             [label]="labels.window"
             [tooltip]="tooltips.window"
-            type="number"
           ></ix-input>
+
           <ix-checkbox
             formControlName="ssh"
             [label]="labels.ssh"
             [tooltip]="tooltips.ssh"
           ></ix-checkbox>
+
           <button
             mat-button
             type="submit"
             color="accent"
             [disabled]="form.invalid || isFormLoading"
-          >{{ 'Save' | translate }}</button>
+          >
+            {{ 'Save' | translate }}
+          </button>
         </ix-fieldset>
 
         <ix-fieldset [title]="helptext.two_factor.sys">
           <ix-input
             formControlName="secret"
+            type="password"
             [label]="labels.secret"
             [tooltip]="tooltips.secret"
             [readonly]="true"
-            type="password"
           ></ix-input>
+
           <ix-input
             formControlName="uri"
+            type="password"
             [label]="labels.uri"
             [tooltip]="tooltips.uri"
             [readonly]="true"
-            type="password"
           ></ix-input>
+
           <button
             mat-button
             color="accent"
             type="button"
-            (click)="renewSecret()"
             [disabled]="isFormLoading || !twoFactorEnabled"
-          >{{ 'Renew Secret' | translate }}</button>
+            (click)="renewSecret()"
+          >
+            {{ 'Renew Secret' | translate }}
+          </button>
         </ix-fieldset>
       </div>
     </form>

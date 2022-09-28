@@ -34,7 +34,7 @@
     }
 
     &:first-child {
-      left: 0;
+      left: 15px;
       position: sticky;
 
       @media (max-width: $breakpoint-tablet) {

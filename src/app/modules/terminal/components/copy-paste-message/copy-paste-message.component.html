@@ -1,8 +1,12 @@
-<h1 mat-dialog-title> {{title | translate}}</h1>
+<h1 mat-dialog-title>{{ title | translate }}</h1>
 <div mat-dialog-content [innerHtml]="messageHtml"></div>
 <div mat-dialog-actions>
   <span fxFlex></span>
-  <button class="mat-button mat-primary" (click)="dialogRef.close(true)"
-          ix-auto="CLOSE"
-  >{{"Close" | translate}}</button>
+  <button
+    class="mat-button mat-primary"
+    ix-auto="CLOSE"
+    (click)="dialogRef.close(true)"
+  >
+    {{ 'Close' | translate }}
+  </button>
 </div>

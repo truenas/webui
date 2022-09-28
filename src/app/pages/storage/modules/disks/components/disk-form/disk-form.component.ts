@@ -111,18 +111,18 @@ export class DiskFormComponent implements OnInit {
     this.isLoading = true;
     this.ws.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close(null, true);
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

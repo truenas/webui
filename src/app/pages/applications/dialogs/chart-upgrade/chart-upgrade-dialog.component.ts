@@ -67,16 +67,18 @@ export class ChartUpgradeDialogComponent {
     if (!this.selectedVersion.fetched) {
       this.appLoaderService.open();
       this.appService.getUpgradeSummary(this.dialogConfig.appInfo.name, this.selectedVersionKey)
-        .pipe(untilDestroyed(this)).subscribe((summary: UpgradeSummary) => {
-          this.appLoaderService.close();
-          this.selectedVersion.changelog = summary.changelog;
-          this.selectedVersion.container_images_to_update = summary.container_images_to_update;
-          this.selectedVersion.item_update_available = summary.item_update_available;
-          this.selectedVersion.fetched = true;
-        },
-        (err) => {
-          this.appLoaderService.close();
-          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
+        .pipe(untilDestroyed(this)).subscribe({
+          next: (summary: UpgradeSummary) => {
+            this.appLoaderService.close();
+            this.selectedVersion.changelog = summary.changelog;
+            this.selectedVersion.container_images_to_update = summary.container_images_to_update;
+            this.selectedVersion.item_update_available = summary.item_update_available;
+            this.selectedVersion.fetched = true;
+          },
+          error: (err) => {
+            this.appLoaderService.close();
+            this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
+          },
         });
     }
   }

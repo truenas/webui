@@ -65,15 +65,18 @@ export class ChangePasswordDialogComponent {
       filter(Boolean),
       switchMap(() => this.ws.call('user.update', [1, { password }])),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.snackbar.success(
-        this.translate.instant(helptext.changePasswordDialog.pw_updated),
-      );
-      this.loader.close();
-      this.dialogRef.close();
-    }, (error) => {
-      this.loader.close();
-      (new EntityUtils()).errorReport(error, this.dialogService);
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(
+          this.translate.instant(helptext.changePasswordDialog.pw_updated),
+        );
+        this.loader.close();
+        this.dialogRef.close();
+      },
+      error: (error) => {
+        this.loader.close();
+        (new EntityUtils()).errorReport(error, this.dialogService);
+      },
     });
   }
 }

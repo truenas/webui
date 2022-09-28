@@ -7,8 +7,9 @@
 
 <div class="input-container" [class.disabled]="isDisabled">
   <mat-chip-list
+    #chipList
+    class="form-chip"
     [disabled]="isDisabled"
-    #chipList class="form-chip"
     [required]="required"
   >
     <mat-chip
@@ -21,6 +22,7 @@
       {{ item }}
       <mat-icon matChipRemove *ngIf="!isDisabled">cancel</mat-icon>
     </mat-chip>
+
     <input
       #chipInput
       [placeholder]="placeholder"
@@ -30,19 +32,24 @@
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       (blur)="onInputBlur($event)"
       (matChipInputTokenEnd)="onAdd($event.value)"
-    >
+    />
   </mat-chip-list>
+
   <mat-autocomplete
     #auto="matAutocomplete"
     (optionSelected)="onAdd($event.option.value)"
   >
     <ng-container *ngIf="suggestions$">
-      <mat-option *ngFor="let suggestion of suggestions$ | async" [value]="suggestion">
+      <mat-option
+        *ngFor="let suggestion of suggestions$ | async"
+        [value]="suggestion"
+      >
         {{ suggestion }}
       </mat-option>
     </ng-container>
   </mat-autocomplete>
 </div>
+
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{hint}}</mat-hint>
+<mat-hint *ngIf="hint">{{ hint }}</mat-hint>

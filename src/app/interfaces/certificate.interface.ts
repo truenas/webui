@@ -1,7 +1,14 @@
 import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
-import { CertificateAuthority, CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
+import {
+  AuthorityKeyIdentifier,
+  BasicConstraints,
+  CertificateAuthority,
+  CertificateExtensions,
+  ExtendedKeyUsage,
+  KeyUsage,
+} from 'app/interfaces/certificate-authority.interface';
 
 export interface Certificate {
   CA_type_existing: boolean;
@@ -56,14 +63,33 @@ export interface CertificateProfiles {
 }
 
 export interface CertificateProfile {
-  cert_extensions: {
-    [extension: string]: any;
-  };
+  cert_extensions: CertificateExtensions;
   digest_algorithm: CertificateDigestAlgorithm;
   key_length: number;
   key_type: CertificateKeyType;
   lifetime: number;
 }
+
+/**
+ * Temporary type for type-safety reasons.
+ * @deprecated
+ */
+export type CertificateExtension =
+  Partial<
+  & BasicConstraints
+  & AuthorityKeyIdentifier
+  & ExtendedKeyUsage
+  & KeyUsage
+  >;
+
+/**
+ * @deprecated
+ */
+export type CertificationExtensionAttribute =
+  | keyof BasicConstraints
+  | keyof AuthorityKeyIdentifier
+  | keyof ExtendedKeyUsage
+  | keyof KeyUsage;
 
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;

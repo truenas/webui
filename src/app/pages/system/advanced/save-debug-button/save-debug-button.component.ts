@@ -64,16 +64,19 @@ export class SaveDebugButtonComponent {
                   switchMap(() => this.storage.streamDownloadFile(url, fileName, mimeType)),
                   untilDestroyed(this),
                 )
-                .subscribe((blob) => {
-                  this.storage.downloadBlob(blob, fileName);
-                  dialogRef.close();
-                }, (error) => {
-                  dialogRef.close();
-                  if (error instanceof HttpErrorResponse) {
-                    this.dialogService.errorReport(error.name, error.message);
-                  } else {
-                    new EntityUtils().handleWsError(this, error, this.dialogService);
-                  }
+                .subscribe({
+                  next: (blob) => {
+                    this.storage.downloadBlob(blob, fileName);
+                    dialogRef.close();
+                  },
+                  error: (error) => {
+                    dialogRef.close();
+                    if (error instanceof HttpErrorResponse) {
+                      this.dialogService.errorReport(error.name, error.message);
+                    } else {
+                      new EntityUtils().handleWsError(this, error, this.dialogService);
+                    }
+                  },
                 });
               dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
                 this.matDialog.closeAll();

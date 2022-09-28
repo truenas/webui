@@ -159,53 +159,57 @@ export class FileTicketFormComponent implements OnInit {
       tap((job) => this.jobs$.next([this.getJobStatus(job.id)])),
       filter((job) => job.state === JobState.Success),
       untilDestroyed(this),
-    ).subscribe((job) => {
-      if (this.screenshots.length) {
-        this.fileUpload.onUploading$.pipe(
-          untilDestroyed(this),
-        ).subscribe({
-          error: () => {
-            this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
-          },
-        });
-        this.fileUpload.onUploaded$.pipe(
-          take(this.screenshots.length),
-          untilDestroyed(this),
-        ).subscribe(
-          () => {
-            /** TODO:
+    ).subscribe({
+      next: (job) => {
+        if (this.screenshots.length) {
+          this.fileUpload.onUploading$.pipe(
+            untilDestroyed(this),
+          ).subscribe({
+            error: () => {
+              this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
+            },
+          });
+          this.fileUpload.onUploaded$.pipe(
+            take(this.screenshots.length),
+            untilDestroyed(this),
+          ).subscribe({
+            next: () => {
+            /**
+             * TODO:
              * Improve UX for uploading screenshots
              * HttpResponse have `job_id`, it can be used to show progress.
              * const jobId = (res.body as { job_id: number }).job_id;
              * this.jobs$.next([this.getJobStatus(jobId), ...this.jobs$.value]);
             */
-          },
-          (error) => {
-            // TODO: Improve error handling
-            console.error(error);
-          },
-          () => {
-            this.isFormLoading$.next(false);
-            this.slideIn.close();
-            this.openSuccessDialog(job.result);
-          },
-        );
-        for (const file of this.screenshots) {
-          this.fileUpload.upload(file, 'support.attach_ticket', [{
-            ticket: job.result.ticket,
-            filename: file.name,
-            token: payload.token,
-          }]);
+            },
+            error: (error) => {
+              // TODO: Improve error handling
+              console.error(error);
+            },
+            complete: () => {
+              this.isFormLoading$.next(false);
+              this.slideIn.close();
+              this.openSuccessDialog(job.result);
+            },
+          });
+          for (const file of this.screenshots) {
+            this.fileUpload.upload(file, 'support.attach_ticket', [{
+              ticket: job.result.ticket,
+              filename: file.name,
+              token: payload.token,
+            }]);
+          }
+        } else {
+          this.isFormLoading$.next(false);
+          this.slideIn.close();
+          this.openSuccessDialog(job.result);
         }
-      } else {
+      },
+      error: (error) => {
+        console.error(error);
         this.isFormLoading$.next(false);
-        this.slideIn.close();
-        this.openSuccessDialog(job.result);
-      }
-    }, (error) => {
-      console.error(error);
-      this.isFormLoading$.next(false);
-      this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleWsFormError(error, this.form);
+      },
     });
   }
 

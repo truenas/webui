@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { SortPropDir } from '@swimlane/ngx-datatable/lib/types/sort-prop-dir.type';
 import * as filesize from 'filesize';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
@@ -25,7 +26,7 @@ export class VdevComponent implements OnInit {
   @Input() index: number;
   @Input() group: string;
   @Input() manager: ManagerComponent;
-  @Input() initialValues: any = {};
+  @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;
@@ -218,10 +219,6 @@ export class VdevComponent implements OnInit {
     this.manager.getCurrentLayout();
   }
 
-  getRawSize(): number {
-    return this.rawSize;
-  }
-
   remove(): void {
     while (this.disks.length > 0) {
       this.manager.addDisk(this.disks.pop());
@@ -229,13 +226,13 @@ export class VdevComponent implements OnInit {
     this.manager.removeVdev(this);
   }
 
-  reorderEvent(event: any): void {
+  reorderEvent(event: { sorts: SortPropDir[] }): void {
     const sort = event.sorts[0];
     const rows = this.disks;
-    this.sorter.tableSorter(rows, sort.prop, sort.dir);
+    this.sorter.tableSorter(rows, sort.prop as keyof ManagerDisk, sort.dir);
   }
 
-  toggleExpandRow(row: any): void {
+  toggleExpandRow(row: ManagerDisk): void {
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }

@@ -1,5 +1,6 @@
 /**
  * Older variant of data inside of a TreeNode
+ * @deprecated
  * @see ExplorerNodeData
  * for newer variant
  */

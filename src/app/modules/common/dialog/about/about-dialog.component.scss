@@ -5,7 +5,7 @@
 
 .header {
   background-color: black;
-  background-image: url('../../../../../assets/images/backgrounds/hard_drive_2.jpg');
+  background-image: url('~assets/images/backgrounds/hard_drive_2.jpg');
   background-position-x: 50%;
   background-position-y: 20%;
   background-size: cover;
@@ -63,6 +63,7 @@
 .copyright-txt {
   align-self: flex-end;
   font-size: 11px;
+  margin-left: 10px;
   text-align: center;
 }
 
@@ -71,7 +72,7 @@
   text-align: center;
 }
 
-#findme mat-icon {
+#findme .mat-icon {
   position: relative;
   top: 6px;
 }
@@ -81,15 +82,15 @@
   opacity: 0.6;
 }
 
-.wrapper {
-  margin-bottom: 1.5rem;
-}
-
 #actions {
-  margin-bottom: -10px;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 #button-wrapper {
+  flex-grow: 1;
   text-align: right;
 }
 

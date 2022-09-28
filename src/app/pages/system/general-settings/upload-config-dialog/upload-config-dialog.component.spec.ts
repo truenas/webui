@@ -15,7 +15,7 @@ import { UploadConfigDialogComponent } from './upload-config-dialog.component';
 
 describe('UploadConfigDialogComponent', () => {
   let spectator: Spectator<UploadConfigDialogComponent>;
-  const fileUploaded$ = new Subject();
+  const fileUploaded$ = new Subject<void>();
   const createComponent = createComponentFactory({
     component: UploadConfigDialogComponent,
     imports: [

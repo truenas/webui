@@ -1,4 +1,4 @@
-<div *ngIf="!isLoading && !areDisksLoading; else loadingSkeleton">
+<div *ngIf="!isLoading; else loadingSkeleton">
   <div class="pool-header">
     <h2 class="pool-name">{{ pool.name }}</h2>
     <div class="pool-actions">
@@ -7,17 +7,17 @@
         mat-button
         color="primary"
         (click)="onUpgrade()"
-      >{{ 'Upgrade' | translate }}</button>
+      >
+        {{ 'Upgrade' | translate }}
+      </button>
 
-      <button
-        mat-button
-        (click)="onExport()"
-      >{{ 'Export/Disconnect' | translate }}</button>
+      <button mat-button (click)="onExport()">
+        {{ 'Export/Disconnect' | translate }}
+      </button>
 
-      <button
-        mat-button
-        (click)="onExpand()"
-      >{{ 'Expand' | translate }}</button>
+      <button mat-button (click)="onExpand()">
+        {{ 'Expand' | translate }}
+      </button>
     </div>
   </div>
 
@@ -29,8 +29,7 @@
   >
     <ix-topology-card
       [poolState]="pool"
-      [loading]="areDisksLoading"
-      [diskDictionary]="diskDictionary"
+      [disks]="disks"
     ></ix-topology-card>
     <ix-pool-usage-card
       *ngIf="rootDataset"
@@ -40,8 +39,7 @@
     <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
     <ix-disk-health-card
       [poolState]="pool"
-      [loading]="areDisksLoading"
-      [diskDictionary]="diskDictionary"
+      [disks]="disks"
     ></ix-disk-health-card>
   </div>
 </div>
@@ -59,7 +57,11 @@
     >
       <mat-card class="card" *ngFor="let _ of counter(4)">
         <mat-card-content>
-          <ngx-skeleton-loader *ngFor="let _ of counter(5)" fxLayout="column" fxLayoutAlign="center"></ngx-skeleton-loader>
+          <ngx-skeleton-loader
+            *ngFor="let _ of counter(5)"
+            fxLayout="column"
+            fxLayoutAlign="center"
+          ></ngx-skeleton-loader>
         </mat-card-content>
       </mat-card>
     </div>
