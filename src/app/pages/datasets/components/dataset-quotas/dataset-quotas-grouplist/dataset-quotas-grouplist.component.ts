@@ -12,6 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
@@ -245,15 +246,10 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doDelete(row: DatasetQuota): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete Group Quota'),
-      message: this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: row.name }),
-      buttonMsg: this.translate.instant('Delete'),
-      hideCheckBox: true,
-    }).pipe(
+    this.getDeleteConfirmation(row).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([row])])),
+      switchMap(() => this.setQuota(row)),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -265,6 +261,19 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         this.dialogService.errorReportMiddleware(error);
       },
     });
+  }
+
+  getDeleteConfirmation(quota: DatasetQuota): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant('Delete Group Quota'),
+      message: this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: quota.name }),
+      buttonMsg: this.translate.instant('Delete'),
+      hideCheckBox: true,
+    });
+  }
+
+  setQuota(quota: DatasetQuota): Observable<void> {
+    return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([quota])]);
   }
 
   filter(query: string): void {
