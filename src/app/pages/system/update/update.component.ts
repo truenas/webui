@@ -115,8 +115,8 @@ export class UpdateComponent implements OnInit {
           this.fullTrainList = trains.trains;
 
           // On page load, make sure we are working with train of the current OS
-          this.train = trains.current;
-          this.selectedTrain = trains.current;
+          this.train = trains.selected;
+          this.selectedTrain = trains.selected;
 
           if (this.autoCheck) {
             this.check();
