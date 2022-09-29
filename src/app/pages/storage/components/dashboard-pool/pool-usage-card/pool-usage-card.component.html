@@ -47,8 +47,8 @@
   >
     <div class="left" fxLayout="column" fxLayoutAlign="center center">
       <ix-gauge-chart
-        [colorFill]="usedPercentage === 0 ? '#1E1E1E' : isLowCapacity ? '#CE2929' : '#0095D5'"
-        [colorBlank]="'#1E1E1E'"
+        [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
+        [colorBlank]="chartBlankColor"
         [width]="160"
         [height]="160"
         [label]="usedPercentage / 100 | percent: '1.0-1'"

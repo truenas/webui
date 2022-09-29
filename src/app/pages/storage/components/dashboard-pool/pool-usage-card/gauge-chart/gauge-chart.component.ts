@@ -10,6 +10,8 @@ import {
 import {
   Chart, ChartDataSets, ChartOptions,
 } from 'chart.js';
+import { Theme } from 'app/interfaces/theme.interface';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 interface ChartElement {
   transition: (easing: number) => {
@@ -129,14 +131,35 @@ const gapRotation = (3 / 4) * Math.PI;
   styleUrls: ['./gauge-chart.component.scss'],
 })
 export class GaugeChartComponent implements OnChanges, AfterViewInit {
-  @Input() colorFill: string;
-  @Input() colorBlank: string;
+  @Input()
+  set colorFill(color: string) {
+    this._colorFill = this.conversionColor(color);
+  }
+
+  get colorFill(): string {
+    return this._colorFill;
+  }
+  @Input()
+  set colorBlank(color: string) {
+    if (!this.themeService.isDarkTheme()) {
+      const altBg2 = this.themeService.currentTheme()['alt-bg2'];
+      this._colorBlank = this.conversionColor(altBg2);
+      return;
+    }
+    this._colorBlank = this.conversionColor(color);
+  }
+
+  get colorBlank(): string {
+    return this._colorBlank;
+  }
   @Input() label: string;
   @Input() value: number;
   @Input() @HostBinding('style.height.px') height = defaultHeight;
   @Input() @HostBinding('style.width.px') width = defaultWidth;
 
   @ViewChild('canvas') canvasRef: ElementRef;
+  private _colorFill: string;
+  private _colorBlank: string;
   chartData: ChartDataSets[] = [{ data: [] }];
   chartOptions: ChartOptions = {
     responsive: true,
@@ -150,6 +173,8 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
     },
     rotation: gapRotation,
   };
+
+  constructor(public themeService: ThemeService) {}
 
   ngAfterViewInit(): void {
     this.refresh();
@@ -167,11 +192,27 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
           100 - this.value,
           (gapPercentage / 100) * 2 * [this.value, 100 - this.value].reduce((sum, x) => sum + x, 0),
         ],
-        backgroundColor: [this.colorFill, this.colorBlank, '#0000'],
-        hoverBackgroundColor: [this.colorFill, this.colorBlank, '#0000'],
-        borderColor: '#282828',
+        backgroundColor: [this.colorFill, this.colorBlank, '#000000'],
+        hoverBackgroundColor: [this.colorFill, this.colorBlank, '#000000'],
+        borderColor: this.colorBlank,
+        hoverBorderColor: this.colorBlank,
         type: 'roundedDoughnut',
       },
     ];
+  }
+
+  private conversionColor(color: string): string {
+    const colorType = this.themeService.getUtils().getValueType(color);
+    let resultColor = color;
+    switch (colorType) {
+      case 'cssVar':
+        const cssVar = color.replace('var(--', '').replace(')', '') as keyof Theme;
+        resultColor = this.themeService.currentTheme()[cssVar] as string;
+        return this.conversionColor(resultColor);
+      case 'rgba':
+        resultColor = this.themeService.getUtils().rgbToHex(color);
+        return resultColor;
+    }
+    return resultColor;
   }
 }
