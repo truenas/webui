@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { BehaviorSubject, of } from 'rxjs';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -10,7 +11,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { BehaviorSubject, of } from 'rxjs';
 
 @UntilDestroy()
 @Injectable()
