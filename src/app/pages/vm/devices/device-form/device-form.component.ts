@@ -83,9 +83,23 @@ export class DeviceFormComponent implements OnInit {
     web: [true],
   });
 
+  usbForm = this.formBuilder.group({
+    device: ['', Validators.required],
+  });
+
   readonly helptext = helptext;
   readonly VmDeviceType = VmDeviceType;
 
+  readonly usbOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
+    map((usbDevices) => {
+      return Object.keys(usbDevices).map((id) => {
+        return {
+          label: id,
+          value: id,
+        };
+      });
+    }),
+  );
   readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
   readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
   readonly nicOptions$ = this.networkService.getVmNicChoices().pipe(choicesToOptions());
@@ -125,6 +139,9 @@ export class DeviceFormComponent implements OnInit {
       label: this.translate.instant('PCI Passthrough Device'),
       value: VmDeviceType.Pci,
     }, {
+      label: this.translate.instant('USB Passthrough Device'),
+      value: VmDeviceType.Usb,
+    }, {
       label: this.translate.instant('Display'),
       value: VmDeviceType.Display,
     },
@@ -150,6 +167,7 @@ export class DeviceFormComponent implements OnInit {
   | DeviceFormComponent['nicForm']
   | DeviceFormComponent['rawFileForm']
   | DeviceFormComponent['pciForm']
+  | DeviceFormComponent['usbForm']
   | DeviceFormComponent['displayForm'] {
     switch (this.typeControl.value) {
       case VmDeviceType.Cdrom:
@@ -162,6 +180,8 @@ export class DeviceFormComponent implements OnInit {
         return this.rawFileForm;
       case VmDeviceType.Pci:
         return this.pciForm;
+      case VmDeviceType.Usb:
+        return this.usbForm;
       case VmDeviceType.Display:
         return this.displayForm;
       default:
@@ -224,6 +244,9 @@ export class DeviceFormComponent implements OnInit {
         break;
       case VmDeviceType.Cdrom:
         this.cdromForm.patchValue(device.attributes);
+        break;
+      case VmDeviceType.Usb:
+        this.usbForm.patchValue(device.attributes);
         break;
       default:
         assertUnreachable(device);

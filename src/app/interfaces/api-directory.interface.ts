@@ -249,7 +249,7 @@ import {
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice,
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -924,6 +924,7 @@ export type ApiDirectory = {
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
+  'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };

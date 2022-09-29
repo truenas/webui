@@ -3406,6 +3406,7 @@
   "URI of the ACME Server Directory. Choose a preconfigured URI or enter a custom URI.": "",
   "URL": "",
   "URL of the HTTP host to connect to.": "",
+  "USB Passthrough Device": "",
   "UTC": "",
   "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
