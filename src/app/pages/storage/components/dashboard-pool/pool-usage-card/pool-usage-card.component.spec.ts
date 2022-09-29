@@ -1,16 +1,19 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
+import { ThemeService } from 'app/services/theme/theme.service';
+import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
-
   const createComponent = createComponentFactory({
     component: PoolUsageCardComponent,
     imports: [
@@ -19,6 +22,23 @@ describe('PoolUsageCardComponent', () => {
     ],
     declarations: [
       MockComponent(GaugeChartComponent),
+    ],
+    providers: [
+      ThemeService,
+      provideMockStore({
+        selectors: [
+          { selector: selectTheme, value: 'ix-dark' },
+        ],
+      }),
+      {
+        provide: WINDOW,
+        useValue: {
+          sessionStorage: {
+            getItem: () => 'ix-dark',
+            setItem: () => {},
+          },
+        },
+      },
     ],
   });
 
@@ -62,7 +82,7 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
     expect(spectator.query(GaugeChartComponent).label).toBe('79%');
     expect(Math.round(spectator.query(GaugeChartComponent).value)).toBe(79);
-    expect(spectator.query(GaugeChartComponent).colorFill).toBe('#0095D5');
+    expect(spectator.query(GaugeChartComponent).colorFill).toBe('var(--blue)');
   });
 
   it('renders component values when usage is above 80%', () => {
@@ -90,10 +110,10 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
 
     spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('warning');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
 
     spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('warning');
+    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
 
     spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
     expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');

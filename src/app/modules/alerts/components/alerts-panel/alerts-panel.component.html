@@ -40,7 +40,7 @@
 <ng-template #loaded>
   <!-- TODO: Consider extracting into its own component -->
   <div *ngIf="error$ | async as error" class="error">
-    <mat-icon class="icon" color="accent">warning</mat-icon>
+    <mat-icon class="icon" color="accent">cancel</mat-icon>
     <h4 class="message">
       <span class="error-word">{{ 'Error:' | translate }}</span>
       {{ error }}

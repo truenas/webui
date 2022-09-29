@@ -10801,13 +10801,6 @@ pretty-format@^28.0.0, pretty-format@^28.1.3:
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
 
-primeng@~11.4.5:
-  version "11.4.5"
-  resolved "https://registry.npmjs.org/primeng/-/primeng-11.4.5.tgz"
-  integrity sha512-7f5LDHrvFsJA4670Ftmib5ndDxTqcaQiM88XXJrjWYNGjXsXT3Yc5g9fgPvDrg2D38/jjpcSYeW9kalNcvlbrQ==
-  dependencies:
-    tslib "^2.0.0"
-
 prismjs@^1.25.0:
   version "1.25.0"
   resolved "https://registry.npmjs.org/prismjs/-/prismjs-1.25.0.tgz"

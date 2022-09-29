@@ -12,8 +12,6 @@ import { AdvancedSettingsComponent } from './advanced/advanced-settings.componen
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertConfigFormComponent } from './alert-config-form/alert-config-form.component';
-import { BootPoolAttachFormComponent } from './bootenv/boot-pool-attach/boot-pool-attach-form.component';
-import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
@@ -54,14 +52,6 @@ export const routes: Routes = [
         path: 'status',
         component: BootStatusListComponent,
         data: { title: T('Boot Pool Status'), breadcrumb: T('Status') },
-      }, {
-        path: 'attach/:pk',
-        component: BootPoolAttachFormComponent,
-        data: { title: T('Attach'), breadcrumb: ('Attach') },
-      }, {
-        path: 'replace/:pk',
-        component: BootPoolReplaceFormComponent,
-        data: { title: T('Replace'), breadcrumb: T('Replace') },
       },
       ],
     }, {

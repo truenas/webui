@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -16,11 +16,11 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './boot-pool-attach-form.component.html',
-  styleUrls: ['./boot-pool-attach-form.component.scss'],
+  templateUrl: './boot-pool-attach-dialog.component.html',
+  styleUrls: ['./boot-pool-attach-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BootPoolAttachFormComponent implements OnInit {
+export class BootPoolAttachDialogComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
@@ -45,8 +45,8 @@ export class BootPoolAttachFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    protected router: Router,
     private dialogService: DialogService,
+    private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
     private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -62,9 +62,14 @@ export class BootPoolAttachFormComponent implements OnInit {
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.unusedDisks = unusedDisks;
       const unusedDisksOptions = unusedDisks.map((disk) => {
-        const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+        const size = filesize(disk.size, { standard: 'iec' });
+        let label = `${disk.name} - ${size}`;
+        if (disk.exported_zpool) {
+          label += ` (${disk.exported_zpool})`;
+        }
+
         return {
-          label: `${disk.name} (${filesize(disk['size'], { standard: 'iec' })})${exportedPool}`,
+          label,
           value: disk.name,
         };
       });
@@ -110,7 +115,7 @@ export class BootPoolAttachFormComponent implements OnInit {
           true,
         )
           .pipe(untilDestroyed(this)).subscribe(() => {
-            this.router.navigate(['system', 'boot']);
+            this.dialogRef.close(true);
           });
       },
       error: (error) => {
@@ -119,9 +124,5 @@ export class BootPoolAttachFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  cancel(): void {
-    this.router.navigate(['system', 'boot', 'status']);
   }
 }
