@@ -78,7 +78,7 @@
               </span>
             </div>
             <!-- Legend -->
-            <div *ngIf="screenType === ScreenTypeOption.Desktop" id="memory-legend">
+            <div *ngIf="screenType === ScreenType.Desktop" id="memory-legend">
               <div *ngIf="memData; else noLegend" id="memory-legend-values">
                 <!-- Desktop -->
                 <div
@@ -109,7 +109,7 @@
 
           <!-- Mobile Legend -->
           <div
-            *ngIf="screenType === ScreenTypeOption.Mobile"
+            *ngIf="screenType === ScreenType.Mobile"
             fxFlex="100"
             id="memory-legend"
             fxLayout="row wrap"

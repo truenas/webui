@@ -1,5 +1,5 @@
 <ng-template #pageHeader>
-  <ix-page-title-header *ngIf="screenType === ScreenTypeOption.Desktop">
+  <ix-page-title-header *ngIf="screenType === ScreenType.Desktop">
     <ng-container *ngIf="isLoaded">
       <button mat-button [color]="'primary'" (click)="showConfigForm()">
         {{ 'Configure' | translate }}
@@ -29,7 +29,7 @@
 
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
   <div
-    *ngIf="screenType === ScreenTypeOption.Desktop && dashStateReady && isEmpty"
+    *ngIf="screenType === ScreenType.Desktop && dashStateReady && isEmpty"
     class="widgets-wrapper"
     fxLayout="column"
     fxLayoutAlign="center center"
@@ -47,7 +47,7 @@
     (ixDropGridModelChange)="onWidgetReorder($event)"
   >
     <!-- LOADING WIDGETS -->
-    <ng-container *ngIf="!isLoaded && screenType === ScreenTypeOption.Desktop">
+    <ng-container *ngIf="!isLoaded && screenType === ScreenType.Desktop">
       <div *ngFor="let _ of availableWidgets">
         <div class="widget placeholder">
           <div class="card-container front">
@@ -73,7 +73,7 @@
     </ng-container>
 
     <!-- SORTABLE WIDGETS -->
-    <ng-container *ngIf="isLoaded && screenType === ScreenTypeOption.Desktop">
+    <ng-container *ngIf="isLoaded && screenType === ScreenType.Desktop">
       <ng-container *ngIf="renderedWidgets">
         <div
           *ngFor="let widget of renderedWidgets; let index = index; trackBy: getWidgetId"
@@ -201,15 +201,15 @@
   </div>
 </div>
 
-<ng-container *ngIf="!isLoaded && screenType === ScreenTypeOption.Mobile">
+<ng-container *ngIf="!isLoaded && screenType === ScreenType.Mobile">
   <mat-spinner class="spinner xs" [diameter]="40"></mat-spinner>
 </ng-container>
 
 <!-- MOBILE WIDGETS -->
-<div class="mobile-viewport" [class.hidden]="screenType === ScreenTypeOption.Desktop">
+<div class="mobile-viewport" [class.hidden]="screenType === ScreenType.Desktop">
   <div class="carousel">
     <ix-widget-controller
-      *ngIf="screenType === ScreenTypeOption.Mobile && dashState && dashState.length > 0"
+      *ngIf="screenType === ScreenType.Mobile && dashState && dashState.length > 0"
       [renderedWidgets]="renderedWidgets"
       [dashState]="dashState"
       [emptyConfig]="emptyDashConf"
@@ -218,7 +218,7 @@
     ></ix-widget-controller>
 
     <div class="mobile-widget-container">
-      <ng-container *ngIf="isLoaded && screenType === ScreenTypeOption.Mobile">
+      <ng-container *ngIf="isLoaded && screenType === ScreenType.Mobile">
         <ng-container *ngFor="let widget of activeMobileWidget">
           <ng-container [ngSwitch]="widget.name | lowercase">
             <ix-widget-sysinfo

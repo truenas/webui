@@ -1,4 +1,4 @@
-export enum ScreenTypeOption {
+export enum ScreenType {
   Desktop = 'Desktop',
   Mobile = 'Mobile',
 }

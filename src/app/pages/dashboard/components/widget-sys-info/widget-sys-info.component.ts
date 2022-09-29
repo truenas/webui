@@ -12,7 +12,7 @@ import {
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ScreenTypeOption } from 'app/enums/screen-type.enum';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -63,12 +63,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   isUpdateRunning = false;
   haStatus: string;
   updateMethod = 'update.update';
-  screenType = ScreenTypeOption.Desktop;
+  screenType = ScreenType.Desktop;
   uptimeString: string;
   dateTime: string;
 
   readonly ProductType = ProductType;
-  readonly ScreenTypeOption = ScreenTypeOption;
+  readonly ScreenType = ScreenType;
 
   private _updateBtnStatus = 'default';
 
@@ -90,7 +90,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenTypeOption.Mobile : ScreenTypeOption.Desktop;
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
   }

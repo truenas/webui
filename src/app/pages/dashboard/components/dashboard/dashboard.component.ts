@@ -8,7 +8,7 @@ import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { ScreenTypeOption } from 'app/enums/screen-type.enum';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -56,7 +56,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   reorderMode = false;
-  screenType = ScreenTypeOption.Desktop;
+  screenType = ScreenType.Desktop;
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
   dashStateReady = false;
@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
 
-  readonly ScreenTypeOption = ScreenTypeOption;
+  readonly ScreenType = ScreenType;
 
   get isLoaded(): boolean {
     return this.dashStateReady
@@ -172,10 +172,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkScreenSize(): void {
-    const currentScreenType = window.innerWidth < 600 ? ScreenTypeOption.Mobile : ScreenTypeOption.Desktop;
+    const currentScreenType = window.innerWidth < 600 ? ScreenType.Mobile : ScreenType.Desktop;
 
     // If leaving .xs screen then reset mobile position
-    if (currentScreenType === ScreenTypeOption.Desktop && this.screenType === ScreenTypeOption.Mobile) {
+    if (currentScreenType === ScreenType.Desktop && this.screenType === ScreenType.Mobile) {
       this.onMobileBack();
     }
 
@@ -186,7 +186,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.screenType = currentScreenType;
 
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = this.screenType === ScreenTypeOption.Mobile ? 'hidden' : 'auto';
+    wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
   }
 
@@ -245,7 +245,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileResize(evt: Event): void {
-    if (this.screenType === ScreenTypeOption.Desktop) { return; }
+    if (this.screenType === ScreenType.Desktop) { return; }
     const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
     const viewport = styler(viewportElement);
     const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
@@ -521,11 +521,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
-    if (newScreenType === ScreenTypeOption.Desktop && oldScreenType === ScreenTypeOption.Mobile) {
+    if (newScreenType === ScreenType.Desktop && oldScreenType === ScreenType.Mobile) {
       this.enableReorderMode();
     }
 
-    if (newScreenType === ScreenTypeOption.Mobile && oldScreenType === ScreenTypeOption.Desktop) {
+    if (newScreenType === ScreenType.Mobile && oldScreenType === ScreenType.Desktop) {
       this.disableReorderMode();
     }
   }

@@ -15,7 +15,7 @@ import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ScreenTypeOption } from 'app/enums/screen-type.enum';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -43,9 +43,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
   chartId = UUID.UUID();
   colorPattern: string[];
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
-  screenType = ScreenTypeOption.Desktop;
+  screenType = ScreenType.Desktop;
 
-  readonly ScreenTypeOption = ScreenTypeOption;
+  readonly ScreenType = ScreenType;
 
   private _memData: WidgetMemoryData;
   private utils: ThemeUtils;
@@ -72,7 +72,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     this.utils = new ThemeUtils();
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenTypeOption.Mobile : ScreenTypeOption.Desktop;
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
   }

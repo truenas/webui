@@ -12,7 +12,7 @@
 
           <!-- Mobile Only: Exit widget -->
           <button
-            *ngIf="screenType === ScreenTypeOption.Mobile"
+            *ngIf="screenType === ScreenType.Mobile"
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
@@ -53,7 +53,7 @@
           </div>
         </mat-toolbar-row>
 
-        <div *ngIf="screenType === ScreenTypeOption.Desktop" class="cpu-model top">
+        <div *ngIf="screenType === ScreenType.Desktop" class="cpu-model top">
           {{ cpuModel ? cpuModel : ('Unknown CPU' | translate) }}
         </div>
 
@@ -62,7 +62,7 @@
           id="cpu-load-wrapper"
           fxLayout="row wrap"
           fxLayoutAlign="space-around center"
-          [class.mobile]="screenType === ScreenTypeOption.Mobile"
+          [class.mobile]="screenType === ScreenType.Mobile"
         >
           <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
             <ix-view-chart-gauge
@@ -76,7 +76,7 @@
           </ng-template>
 
           <div
-            *ngIf="screenType === ScreenTypeOption.Desktop"
+            *ngIf="screenType === ScreenType.Desktop"
             fxFlex="53"
             fxFlex.xs="100"
             id="cpu-load-cores"
@@ -145,7 +145,7 @@
         </div>
 
         <div
-          *ngIf="screenType === ScreenTypeOption.Mobile"
+          *ngIf="screenType === ScreenType.Mobile"
           fxLayout="column"
           class="mobile no-flicker"
         >
@@ -167,7 +167,7 @@
         </div>
 
         <div
-          *ngIf="screenType === ScreenTypeOption.Mobile"
+          *ngIf="screenType === ScreenType.Mobile"
           fxLayout="column"
           class="mobile no-flicker"
         >
@@ -234,17 +234,17 @@
             fxFlex="100"
             id="cpu-load-cores-legend"
             fxLayout="row wrap"
-            [ngClass]="{ mobile: screenType === ScreenTypeOption.Desktop }"
+            [ngClass]="{ mobile: screenType === ScreenType.Desktop }"
           >
             <div
-              *ngIf="legendData && screenType === ScreenTypeOption.Desktop; else noLegend"
+              *ngIf="legendData && screenType === ScreenType.Desktop; else noLegend"
               id="cpu-load-cores-legend-values"
               fxFlex
               fxLayout="row wrap"
               fxLayoutAlign="space-around center"
             >
               <div
-                *ngIf="screenType === ScreenTypeOption.Desktop"
+                *ngIf="screenType === ScreenType.Desktop"
                 fxFlex="23"
                 fxFlex.xs="calc(100% - 16px)"
                 class="legend-item core-number"
