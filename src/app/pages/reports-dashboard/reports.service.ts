@@ -3,7 +3,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
 import { CoreEvent } from 'app/interfaces/events';
-import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { getReportTypeLabels, ReportTab } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -32,12 +31,9 @@ export enum ReportingDatabaseError {
   providedIn: 'root',
 })
 export class ReportsService implements OnDestroy {
-  diskDevices: Option[] = [];
-  diskMetrics: Option[] = [];
   serverTime: Date;
   showTimeDiffWarning = false;
   private reportsUtils: Worker;
-  private hasUps = false;
 
   constructor(
     private ws: WebSocketService,

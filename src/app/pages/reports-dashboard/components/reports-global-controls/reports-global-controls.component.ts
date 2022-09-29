@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
-import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -37,13 +36,11 @@ export class ReportsGlobalControlsComponent implements OnChanges {
   readonly ReportType = ReportType;
 
   constructor(
-    private reportsService: ReportsService,
     private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
 
   ngOnChanges(): void {
-    this.allTabs = this.reportsService.getReportTabs();
     this.setAutoRefreshControl();
     this.setDiskControls();
   }
