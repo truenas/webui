@@ -22,39 +22,42 @@
         </mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="35%" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools" *ngIf="localControls && !report?.errorConf">
+          <div *ngIf="localControls && !report?.errorConf" class="line-chart-tools">
             <mat-button-toggle-group aria-label="Steps">
               <mat-button-toggle
-                [matTooltip]="'Step Back' | translate"
-                [matTooltipShowDelay]="1000"
-                (click)="stepBack()"
                 ix-auto
                 ix-auto-type="button"
                 ix-auto-identifier="{{ reportTitle }}_stepBack"
+                [matTooltip]="'Step Back' | translate"
+                [matTooltipShowDelay]="1000"
+                (click)="stepBack()"
               ><ix-icon name="mdi-rewind"></ix-icon></mat-button-toggle>
               <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_stepForward"
                 [disabled]="stepForwardDisabled"
                 [matTooltip]="'Step Forward' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="stepForward()"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="{{ reportTitle }}_stepForward"
               ><ix-icon name="mdi-fast-forward"></ix-icon></mat-button-toggle>
             </mat-button-toggle-group>
 
             <mat-button-toggle-group aria-label="Zoom Level">
               <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_zoomOut"
                 [disabled]="zoomLevelIndex === zoomLevelMin"
                 [matTooltip]="'Zoom Out' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="timeZoomOut()"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="{{ reportTitle }}_zoomOut"
               ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
               <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_zoomReset"
                 [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled"
                 [matTooltip]="'Reset Zoom' | translate"
                 [matTooltipShowDelay]="1000"
@@ -62,13 +65,13 @@
               >{{ currentZoomLevel | mapValue: zoomLevelLabels }}</mat-button-toggle>
 
               <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_zoomIn"
                 [disabled]="zoomLevelIndex === zoomLevelMax"
                 [matTooltip]="'Zoom In' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="timeZoomIn()"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="{{ reportTitle }}_zoomIn"
               ><ix-icon name="mdi-magnify-plus"></ix-icon></mat-button-toggle>
             </mat-button-toggle-group>
           </div>
@@ -98,12 +101,12 @@
           </div>
 
           <div class="legend-wrapper timestamps">
-            <h4 class="legend-timestamp" *ngIf="currentStartDate">
+            <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
               <span class="font-normal">{{ currentStartDate | formatDateTime:timezone }}</span>
               <small>({{ timezone }})</small>
             </h4>
-            <h4 class="legend-timestamp" *ngIf="currentEndDate">
+            <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
               <span class="font-normal">{{ currentEndDate | formatDateTime:timezone }}</span>
             </h4>
@@ -128,7 +131,7 @@
                   <strong>{{ 'Key' | translate }}</strong>
                 </th>
                 <ng-container *ngIf="data?.aggregations">
-                  <th class="legend-label" *ngFor="let item of data?.aggregations | keyvalue">
+                  <th *ngFor="let item of data?.aggregations | keyvalue" class="legend-label">
                     <strong>{{ item.key | translate }}</strong>
                   </th>
                 </ng-container>
@@ -148,7 +151,7 @@
                     <strong>{{ legendItem }}</strong>
                   </span>
 
-                  <span class="font-normal" *ngIf="legendData?.series[i]?.yHTML">:
+                  <span *ngIf="legendData?.series[i]?.yHTML" class="font-normal">:
                     {{ legendData.series[i].yHTML }}
                   </span>
                 </td>
@@ -156,9 +159,7 @@
                 <!-- Aggregations -->
                 <ng-container *ngIf="data?.aggregations">
                   <td *ngFor="let item of data?.aggregations | keyvalue" class="report-analytics">
-                    <span>
-                      {{ item.value[i] ? item.value[i] : 'null' }}
-                    </span>
+                    <span>{{ item.value[i] ? item.value[i] : 'null' }}</span>
                   </td>
                 </ng-container>
               </tr>

@@ -580,7 +580,7 @@ p.value {
   width: 100%;
 }
 
-::ng-deep .mat-button-toggle-group {
+:host ::ng-deep .mat-button-toggle-group {
   $border-color: transparent;
 
   &.mat-button-toggle-group-appearance-standard {

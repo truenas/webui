@@ -1,9 +1,9 @@
 <div class="reports-toolbar">
   <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center center">
     <mat-slide-toggle
-      (change)="toggleAutoRefresh()"
       [checked]="autoRefreshEnabled"
       [matTooltip]="'Refresh every 15 seconds.' | translate"
+      (change)="toggleAutoRefresh()"
     ><label>{{ 'Auto Refresh' | translate }}</label></mat-slide-toggle>
 
     <ng-container *ngIf="activeTab?.value === ReportType.Disk">
@@ -54,10 +54,12 @@
       ix-auto-type="button"
       class="config-form-button"
       (click)="onShowConfigForm()"
-    ><ix-icon
-      name="settings"
-      matTooltipPosition="below"
-      [matTooltip]="'Reports Configuration' | translate"></ix-icon>
+    >
+      <ix-icon
+        name="settings"
+        matTooltipPosition="below"
+        [matTooltip]="'Reports Configuration' | translate"
+      ></ix-icon>
     </button>
   </div>
 </div>
