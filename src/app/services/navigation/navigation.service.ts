@@ -168,7 +168,7 @@ export class NavigationService {
         const hasVms = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Vm));
         this.hasVms$.next(hasVms);
 
-        const hasApps = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Apps));
+        const hasApps = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Jails));
         this.hasApps$.next(hasApps);
       });
   }
