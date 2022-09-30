@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -59,6 +60,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     MatDialogModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    MatCheckboxModule,
     RouterModule,
     ReactiveFormsModule,
     routing,
