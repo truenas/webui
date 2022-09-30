@@ -2,7 +2,8 @@ import {
   Component, ElementRef, Input, OnInit, OnDestroy, HostListener,
 } from '@angular/core';
 import {
-  ModalConfiguration,
+  FormModalConfiguration,
+  ModalConfiguration, WizardModalConfiguration,
 } from 'app/modules/common/modal/modal-configuration.interface';
 import { ModalService, slideInModalId } from 'app/services/modal.service';
 
@@ -22,6 +23,7 @@ export class ModalComponent implements OnInit, OnDestroy {
   private element: HTMLElement;
   conf: ModalConfiguration;
   formOpen = false;
+  wizard = false;
   modal: HTMLElement;
   background: HTMLElement;
   slideIn: HTMLElement;
@@ -75,6 +77,9 @@ export class ModalComponent implements OnInit, OnDestroy {
     this.background = document.querySelector(`.${this.id}-background`);
     this.slideIn = document.querySelector('.slide-in-form');
 
+    if ('wizardConfig' in conf) {
+      this.wizard = true;
+    }
     this.modal.classList.add('open');
     this.background.classList.add('open');
     this.formOpen = true;
@@ -105,8 +110,18 @@ export class ModalComponent implements OnInit, OnDestroy {
       }
       this.formOpen = false;
       this.modalService.refreshForm();
+      this.wizard = false;
       this.title = '';
       resolve(true);
     });
+  }
+
+  // TODO: Pretty bad, remove at some point.
+  asFormConfig(modalConfig: ModalConfiguration): FormModalConfiguration {
+    return modalConfig as FormModalConfiguration;
+  }
+
+  asWizardConfig(modalConfig: ModalConfiguration): WizardModalConfiguration {
+    return modalConfig as WizardModalConfiguration;
   }
 }

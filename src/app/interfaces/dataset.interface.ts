@@ -208,3 +208,11 @@ export interface DatasetDetails {
   quota_warning?: ZfsProperty<number>;
   comments?: ZfsProperty<string>;
 }
+
+export enum DiskSpaceKey {
+  UsedByDataset = 'usedbydataset',
+  UsedBySnapshots = 'usedbysnapshots',
+  UsedByChildren = 'usedbychildren',
+}
+export type DiskSpace = { [key in DiskSpaceKey]?: number };
+export type SwatchColors = { [key in DiskSpaceKey]?: { backgroundColor: string } };

@@ -16,6 +16,7 @@ export const localizationFormSubmitted = createAction('[Preferences] Localizatio
   timeFormat: string;
 }>());
 
+export const autoRefreshReportsToggled = createAction('[Preferences] Auto Refresh Reports Toggled');
 export const builtinUsersToggled = createAction('[Preferences] Builtin Users Toggled');
 export const builtinGroupsToggled = createAction('[Preferences] Builtin Groups Toggled');
 export const snapshotExtraColumnsToggled = createAction('[Preferences] Snapshot Extra Columns Toggled');

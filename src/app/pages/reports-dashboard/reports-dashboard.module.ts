@@ -4,11 +4,14 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -25,6 +28,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
 @NgModule({
   imports: [
     CommonModule,
+    CoreComponents,
     ReactiveFormsModule,
     IxFormsModule,
     routing,
@@ -42,6 +46,8 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     CommonDirectivesModule,
     EntityModule,
     LayoutModule,
+    MatButtonToggleModule,
+    MatSlideToggleModule,
   ],
   declarations: [
     LineChartComponent,
@@ -50,12 +56,5 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
   ],
-  providers: [
-
-  ],
-  exports: [
-
-  ],
 })
-export class ReportsDashboardModule {
-}
+export class ReportsDashboardModule {}

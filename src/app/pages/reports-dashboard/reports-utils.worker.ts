@@ -109,7 +109,7 @@ function convertKmgt(input: number, units: string): { value: number; prefix: str
 
   if (units === 'bits') {
     shortName = shortName.replace(/i/, '').trim();
-    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
+    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`;
   }
 
   return { value: output, prefix, shortName };

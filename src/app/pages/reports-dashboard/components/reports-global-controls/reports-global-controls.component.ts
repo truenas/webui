@@ -1,12 +1,15 @@
 import {
   Component, EventEmitter, Input, OnChanges, Output,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { ReportTab } from 'app/enums/report-tab.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { Tab } from 'app/pages/reports-dashboard/reports-dashboard.component';
+import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
+import { AppState } from 'app/store';
+import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
@@ -15,42 +18,58 @@ import { Tab } from 'app/pages/reports-dashboard/reports-dashboard.component';
   styleUrls: ['./reports-global-controls.component.scss'],
 })
 export class ReportsGlobalControlsComponent implements OnChanges {
-  @Input() activeTab: Tab;
+  @Input() activeTab: ReportTab;
   @Input() diskMetrics: Option[];
   @Input() diskDevices: Option[];
   @Input() selectedDisks: string[];
-  @Input() allTabs: Tab[];
+  @Input() allTabs: ReportTab[];
   @Input() activeTabVerified: boolean;
 
   @Output() showConfigForm = new EventEmitter<void>();
-  @Output() navigateToTab = new EventEmitter<Tab>();
+  @Output() navigateToTab = new EventEmitter<ReportTab>();
   @Output() diskOptionsChanged = new EventEmitter<{ devices: Option[]; metrics: Option[] }>();
 
   devicesControl: ControlConfig;
   metricsControl: ControlConfig;
+  autoRefreshEnabled = false;
 
-  readonly ReportTab = ReportTab;
+  readonly ReportType = ReportType;
 
   constructor(
+    private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
+
+  ngOnChanges(): void {
+    this.setAutoRefreshControl();
+    this.setDiskControls();
+  }
 
   onShowConfigForm(): void {
     this.showConfigForm.emit();
   }
 
-  onNavigateToTab(tab: Tab): void {
+  onNavigateToTab(tab: ReportTab): void {
     this.navigateToTab.emit(tab);
-  }
-
-  ngOnChanges(): void {
-    this.setDiskControls();
   }
 
   onDiskOptionsChanged(): void {
     this.diskOptionsChanged.emit({
       devices: this.devicesControl.value,
       metrics: this.metricsControl.value,
+    });
+  }
+
+  toggleAutoRefresh(): void {
+    this.store$.dispatch(autoRefreshReportsToggled());
+  }
+
+  private setAutoRefreshControl(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
+      this.autoRefreshEnabled = preferences.autoRefreshReports;
     });
   }
 
