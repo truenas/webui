@@ -239,7 +239,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           tableActions: [
             {
-              label: this.translate.instant('VMware Integration'),
+              label: this.translate.instant('VMware Snapshot Integration'),
               onClick: () => {
                 this.router.navigate(['/data-protection/vmware-snapshots']);
               },
