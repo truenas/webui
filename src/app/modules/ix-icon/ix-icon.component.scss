@@ -19,3 +19,10 @@ $size: 24px;
     width: 0;
   }
 }
+
+.ix-icon,
+.mat-icon {
+  &.mdi-set {
+    font-size: $size;
+  }
+}

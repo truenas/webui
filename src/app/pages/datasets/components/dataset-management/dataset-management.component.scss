@@ -305,7 +305,7 @@ ix-dataset-details-panel {
 $level-offset: 40px;
 $padding-left: 8px;
 
-::ng-deep {
+:host ::ng-deep {
   @for $i from 1 through 10 {
     ix-tree-node[aria-level="#{$i}"],
     ix-nested-tree-node[aria-level="#{$i}"] {

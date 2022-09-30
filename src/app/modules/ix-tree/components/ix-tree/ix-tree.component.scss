@@ -1,7 +1,14 @@
 .ix-tree {
+  background: var(--bg2);
+  color: var(--fg2);
   display: flex;
   flex: 1;
   flex-direction: column;
   font-family: var(--font-family-body);
   min-width: fit-content;
+}
+
+.ix-tree-node,
+.ix-nested-tree-node {
+  color: var(--fg2);
 }

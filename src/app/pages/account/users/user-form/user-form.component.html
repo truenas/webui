@@ -115,7 +115,7 @@
       <ix-fieldset [title]="'Authentication' | translate">
         <ix-textarea
           formControlName="sshpubkey"
-          [label]="'SSH Public Key' | translate"
+          [label]="'Authorized Keys' | translate"
           [tooltip]="tooltips.sshpubkey | translate"
         ></ix-textarea>
 
@@ -162,7 +162,7 @@
       type="button"
       (click)="onDownloadSshPublicKey()"
     >
-      {{ 'Download SSH Public Key' | translate }}
+      {{ 'Download Authorized Keys' | translate }}
     </button>
   </div>
 </form>

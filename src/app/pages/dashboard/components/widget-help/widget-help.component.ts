@@ -3,6 +3,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import helptext from 'app/helptext/about';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService } from 'app/services';
@@ -19,9 +20,11 @@ import { SystemGeneralService } from 'app/services';
 export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   systemType: ProductType;
   helptext = helptext;
+  screenType = ScreenType.Desktop;
+
   readonly ProductType = ProductType;
   readonly productTypeLabels = productTypeLabels;
-  screenType = 'Desktop'; // Desktop || Mobile
+  readonly ScreenType = ScreenType;
 
   constructor(
     public mediaObserver: MediaObserver,
@@ -29,9 +32,10 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
     public translate: TranslateService,
   ) {
     super(translate);
+
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
-      this.screenType = st;
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+      this.screenType = currentScreenType;
     });
   }
 

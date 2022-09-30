@@ -13,6 +13,7 @@
   <div class="container" fxLayoutGap="16px">
     <div class="table-container">
       <ix-fake-progress-bar
+        *ngIf="!showMobileDetails"
         class="loader-bar"
         [loading]="isLoading$ | async"
       ></ix-fake-progress-bar>
@@ -122,6 +123,11 @@
       [class.details-container-mobile]="showMobileDetails"
       ixDetailsHeight="rightside-content-hold"
     >
+      <ix-fake-progress-bar
+        *ngIf="showMobileDetails"
+        class="loader-bar"
+        [loading]="isLoading$ | async"
+      ></ix-fake-progress-bar>
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"

@@ -149,5 +149,6 @@ mat-card {
   }
 }
 
-
-
+.form-control {
+  border-color: var(--primary) !important;
+}

@@ -1,6 +1,5 @@
 import {
   Component,
-  AfterViewInit,
   Input,
   ViewChild,
   OnDestroy,
@@ -8,27 +7,31 @@ import {
   SimpleChanges,
   OnInit,
 } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
-import { dygraphs } from 'dygraphs';
-import _ from 'lodash';
-import { lastValueFrom } from 'rxjs';
 import {
-  delay, filter, map, take,
+  BehaviorSubject, Subscription, timer,
+} from 'rxjs';
+import {
+  delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
-import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
-import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { ReportingData } from 'app/interfaces/reporting.interface';
+import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
+import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
+import { ReportZoomLevel, getZoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
+import {
+  DateTime, LegendDataWithStackedTotalHtml, Report, FetchReportParams, TimeAxisData, TimeData,
+} from 'app/pages/reports-dashboard/interfaces/report.interface';
+import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
 import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -38,42 +41,13 @@ import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-interface DateTime {
-  dateFormat: string;
-  timeFormat: string;
-}
-
-export interface TimeData {
-  start: number;// Seconds since epoch time
-  end?: number;// Seconds since epoch time
-  step?: string;
-  legend?: string;
-}
-
-interface TimeAxisData {
-  timespan: string;
-  timeformat: string;
-  culling: number;
-}
-
-export interface Report extends ReportingGraph {
-  isRendered?: boolean[];
-  errorConf?: EmptyConfig;
-}
-
-export type LegendDataWithStackedTotalHtml = dygraphs.LegendData & {
-  stackedTotalHTML: string;
-  stackedTotal?: number;
-};
-
 @UntilDestroy()
 @Component({
   selector: 'ix-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, OnInit, OnChanges, OnDestroy {
-  // Labels
+export class ReportComponent extends WidgetComponent implements OnInit, OnChanges, OnDestroy {
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
   @Input() report: Report;
@@ -81,110 +55,48 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
+  updateReport$ = new BehaviorSubject<SimpleChanges>(null);
+  fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
+  autoRefreshTimer: Subscription;
+  autoRefreshEnabled: boolean;
+  isReady = false;
   data: ReportingData;
-  ready = false;
-  productType = window.localStorage['product_type'] as ProductType;
-  private delay = 1000; // delayed report render time
-
-  readonly ProductType = ProductType;
+  chartId = `chart-${UUID.UUID()}`;
+  chartColors: string[];
+  legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
+  subtitle: string = this.translate.instant('% of all cores');
+  isActive = true;
+  stepForwardDisabled = true;
+  timezone: string;
+  currentStartDate: number;
+  currentEndDate: number;
+  zoomLevelMax = Object.keys(ReportZoomLevel).length - 1;
+  zoomLevelMin = 0;
+  zoomLevelIndex = this.zoomLevelMax;
+  zoomLevels: TimeAxisData[] = [
+    { timespan: ReportZoomLevel.HalfYear, timeformat: "%b '%y", culling: 6 },
+    { timespan: ReportZoomLevel.Month, timeformat: 'Week %W', culling: 4 },
+    { timespan: ReportZoomLevel.Week, timeformat: '%d %b', culling: 6 },
+    { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
+    { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
+  ];
+  readonly zoomLevelLabels = getZoomLevelLabels(this.translate);
 
   get reportTitle(): string {
     const trimmed = this.report.title.replace(/[()]/g, '');
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 
-  get aggregationKeys(): ReportingAggregationKeys[] {
-    return Object.keys(this.data.aggregations) as ReportingAggregationKeys[];
-  }
-
-  legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
-  subtitle: string = this.translate.instant('% of all cores');
-  altTitle = '';
-  isActive = true;
-
-  currentStartDate: number;// as seconds from Unix Epoch
-  currentEndDate: number;// as seconds from Unix Epoch
-  timeZoomIndex = 4;
-
-  timezone: string;
-
-  stepForwardDisabled = true;
-
   get zoomInDisabled(): boolean {
-    return this.timeZoomIndex >= (this.zoomLevels.length - 1);
+    return this.zoomLevelIndex >= this.zoomLevelMax;
   }
+
   get zoomOutDisabled(): boolean {
-    return this.timeZoomIndex <= 0;
+    return this.zoomLevelIndex <= this.zoomLevelMin;
   }
 
-  zoomLevels: TimeAxisData[] = [
-    { timespan: '5M', timeformat: "%b '%y", culling: 6 }, // 6 months
-    { timespan: '1M', timeformat: 'Week %W', culling: 4 }, // 1 month
-    { timespan: '7d', timeformat: '%d %b', culling: 6 }, // 1 week
-    { timespan: '24h', timeformat: '%a %H:%M', culling: 4 }, // 24hrs
-    { timespan: '60m', timeformat: '%H:%M', culling: 6 }, // 60 minutes
-  ];
-
-  // Loader
-  loader = false;
-
-  // Chart Options
-  showLegendValues = false;
-  chartId = 'chart-' + UUID.UUID();
-  chartColors: string[];
-
-  get startTime(): string {
-    return this.localeService.formatDateTime(new Date(this.currentStartDate), this.timezone);
-  }
-  get endTime(): string {
-    return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
-  }
-
-  formatTime(stamp: string): string {
-    const parsed = Date.parse(stamp);
-    const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
-    return result.toLowerCase() !== 'invalid date' ? result : null;
-  }
-
-  formatInterfaceUnit(value: string): string {
-    if (value && value.split(' ', 2)[0] !== '0') {
-      if (value.split(' ', 2)[1]) {
-        value += '/s';
-      } else {
-        value += 'b/s';
-      }
-    }
-    return value;
-  }
-
-  formatLegendSeries(series: dygraphs.SeriesLegendData[], data: ReportingData): dygraphs.SeriesLegendData[] {
-    switch (data.name) {
-      case 'interface':
-        series.forEach((element) => {
-          element.yHTML = this.formatInterfaceUnit(element.yHTML);
-        });
-        break;
-      default:
-        break;
-    }
-    return series;
-  }
-
-  formatData(data: ReportingData): ReportingData {
-    switch (data.name) {
-      case 'interface':
-        if (data.aggregations) {
-          for (const key in data.aggregations) {
-            _.set(data.aggregations, key, data.aggregations[key as ReportingAggregationKeys].map(
-              (value) => this.formatInterfaceUnit(value),
-            ));
-          }
-        }
-        break;
-      default:
-        break;
-    }
-    return data;
+  get currentZoomLevel(): ReportZoomLevel {
+    return this.zoomLevels[this.zoomLevelIndex].timespan;
   }
 
   constructor(
@@ -199,23 +111,24 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   ) {
     super(translate);
 
-    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(
+    this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
       untilDestroyed(this),
     ).subscribe((evt: CoreEvent) => {
-      this.data = this.formatData(evt.data);
+      this.data = formatData(evt.data);
       this.handleError(evt);
     });
 
-    this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: `LegendEvent-${this.chartId}` }).pipe(
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
-      clone.series = this.formatLegendSeries(evt.data.series, this.data);
+      clone.series = formatLegendSeries(evt.data.series, this.data);
       this.legendData = clone;
     });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
-      map(() => this.themeService.currentTheme()),
       untilDestroyed(this),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();
@@ -233,116 +146,169 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     ).subscribe(() => {
       this.lineChart.chart.resize();
     });
+
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
+      this.autoRefreshEnabled = preferences.autoRefreshReports;
+      if (this.autoRefreshEnabled && !this.autoRefreshTimer) {
+        this.initAutoRefresh();
+      }
+    });
+
+    this.fetchReport$.pipe(
+      filter((params) => !!params),
+      throttleTime(100),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((params) => {
+      this.fetchReportData(params);
+    });
+
+    this.updateReport$.pipe(
+      filter((changes) => Boolean(changes?.report)),
+      throttleTime(100),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((changes) => {
+      this.applyChanges(changes);
+    });
   }
 
-  async ngOnInit(): Promise<void> {
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = await this.convertTimespan(zoom.timespan);
-    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+  initAutoRefresh(): void {
+    this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
+      filter(() => this.autoRefreshEnabled),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
+
+      const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+      this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
+    });
+  }
+
+  ngOnInit(): void {
+    const { start, end } = this.convertTimespan(this.currentZoomLevel);
+    this.currentStartDate = start;
+    this.currentEndDate = end;
+    this.stepForwardDisabled = true;
+
+    if (!this.isReady) {
+      setTimeout(() => {
+        this.isReady = true;
+      }, 1000);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes?.report?.firstChange) {
+      this.updateReport$.next(changes);
+    } else if (changes.report.previousValue && !this.isReady) {
+      this.updateReport$.next(changes);
+    } else if (changes.report.previousValue.title !== changes.report.currentValue.title) {
+      this.updateReport$.next(changes);
+    }
   }
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    this.stepForwardDisabled = true;
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = await this.convertTimespan(zoom.timespan);
-    this.currentStartDate = rrdOptions.start;
-    this.currentEndDate = rrdOptions.end;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.report) {
-      if (changes.report.previousValue && !this.ready) {
-        this.setupData(changes);
-      } else if (!changes.report.previousValue) {
-        setTimeout(() => {
-          this.ready = true;
-          this.setupData(changes);
-        }, this.delay);
-      } else if (changes.report.previousValue.title !== changes.report.currentValue.title) {
-        this.setupData(changes);
-      }
-    }
-  }
-
-  private async setupData(changes: SimpleChanges): Promise<void> {
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = await this.convertTimespan(zoom.timespan);
-    const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
+  formatTime(stamp: string): string {
+    const parsed = Date.parse(stamp);
+    const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
+    return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
   setChartInteractive(value: boolean): void {
     this.isActive = value;
   }
 
-  async timeZoomIn(): Promise<void> {
+  timeZoomReset(): void {
+    this.zoomLevelIndex = this.zoomLevelMax;
+    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+    this.currentStartDate = rrdOptions.start;
+    this.currentEndDate = rrdOptions.end;
+
+    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
+  }
+
+  timeZoomIn(): void {
     // more detail
-    const max = 4;
-    if (this.timeZoomIndex === max) { return; }
-    this.timeZoomIndex += 1;
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = await this.convertTimespan(zoom.timespan);
+    if (this.zoomLevelIndex === this.zoomLevelMax) {
+      return;
+    }
+    this.zoomLevelIndex += 1;
+    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+    this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
-  async timeZoomOut(): Promise<void> {
+  timeZoomOut(): void {
     // less detail
-    const min = Number(0);
-    if (this.timeZoomIndex === min) { return; }
-    this.timeZoomIndex -= 1;
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = await this.convertTimespan(zoom.timespan);
+    if (this.zoomLevelIndex === this.zoomLevelMin) {
+      return;
+    }
+    this.zoomLevelIndex -= 1;
+    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+    this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
-  async stepBack(): Promise<void> {
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = await this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
+  stepBack(): void {
+    const rrdOptions = this.convertTimespan(
+      this.currentZoomLevel,
+      ReportStepDirection.Backward,
+      this.currentStartDate,
+    );
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+    this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
-  async stepForward(): Promise<void> {
-    const zoom = this.zoomLevels[this.timeZoomIndex];
-
-    const rrdOptions = await this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
+  stepForward(): void {
+    const rrdOptions = this.convertTimespan(
+      this.currentZoomLevel,
+      ReportStepDirection.Forward,
+      this.currentEndDate,
+    );
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+    this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
   // Convert timespan to start/end options for RRDTool
-  async convertTimespan(timespan: string, direction = 'backward', currentDate?: number): Promise<TimeData> {
+  convertTimespan(
+    timespan: ReportZoomLevel,
+    direction = ReportStepDirection.Backward,
+    currentDate?: number,
+  ): TimeData {
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await lastValueFrom(this.reportsService.getServerTime().pipe(untilDestroyed(this)));
+    const now = new Date();
 
     let startDate: Date;
     let endDate: Date;
-    if (direction === 'backward' && !currentDate) {
+    if (direction === ReportStepDirection.Backward && !currentDate) {
       endDate = now;
-    } else if (direction === 'backward' && currentDate) {
+    } else if (direction === ReportStepDirection.Backward && currentDate) {
       endDate = new Date(currentDate);
-    } else if (direction === 'forward' && currentDate) {
+    } else if (direction === ReportStepDirection.Forward && currentDate) {
       startDate = new Date(currentDate);
     } else {
       throw new Error(
@@ -351,44 +317,38 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
 
     switch (timespan) {
-      case '5M':
+      case ReportZoomLevel.HalfYear:
         durationUnit = 'months';
         value = 5;
         break;
-      case '1M':
+      case ReportZoomLevel.Month:
         durationUnit = 'months';
         value = 1;
         break;
-      case '7d':
+      case ReportZoomLevel.Week:
         durationUnit = 'days';
         value = 7;
         break;
-      case '24h':
+      case ReportZoomLevel.Day:
         durationUnit = 'hours';
         value = 24;
         break;
-      case '60m':
+      case ReportZoomLevel.Hour:
         durationUnit = 'minutes';
         value = 60;
         break;
     }
 
-    if (direction === 'backward') {
-      const subOptions: Duration = {};
-      subOptions[durationUnit] = value;
-      startDate = sub(endDate, subOptions);
-    } else if (direction === 'forward') {
-      const subOptions: Duration = {};
-      subOptions[durationUnit] = value;
-      endDate = add(startDate, subOptions);
+    if (direction === ReportStepDirection.Backward) {
+      startDate = sub(endDate, { [durationUnit]: value });
+    } else if (direction === ReportStepDirection.Forward) {
+      endDate = add(startDate, { [durationUnit]: value });
     }
 
     // if endDate is in the future, reset with endDate to now
     if (endDate.getTime() >= now.getTime()) {
       endDate = new Date();
-      const subOptions: Duration = {};
-      subOptions[durationUnit] = value;
-      startDate = sub(endDate, subOptions);
+      startDate = sub(endDate, { [durationUnit]: value });
       this.stepForwardDisabled = true;
     } else {
       this.stepForwardDisabled = false;
@@ -401,7 +361,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     };
   }
 
-  fetchReportData(rrdOptions: TimeData, report: Report, identifier?: string): void {
+  fetchReportData(fetchParams: FetchReportParams): void {
+    const { report, identifier, rrdOptions } = fetchParams;
     // Report options
     const params = identifier ? { name: report.name, identifier } : { name: report.name };
 
@@ -422,16 +383,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     });
   }
 
-  // Will be used for back of flip card
-  setPreferences(form: NgForm): void {
-    const filtered: string[] = [];
-    for (const i in form.value) {
-      if (form.value[i]) {
-        filtered.push(i);
-      }
-    }
-  }
-
   handleError(evt: CoreEvent): void {
     if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
       const err = evt.data.data;
@@ -450,14 +401,22 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
               title: this.translate.instant('The reporting database is broken'),
               message,
               buttonMsg: this.translate.instant('Clear'),
-            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                window.location.reload();
-              });
+            }).pipe(
+              filter(Boolean),
+              switchMap(() => this.ws.call('reporting.clear')),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              window.location.reload();
             });
           },
         },
       };
     }
+  }
+
+  private applyChanges(changes: SimpleChanges): void {
+    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+    const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
+    this.fetchReport$.next({ rrdOptions, identifier, report: changes.report.currentValue });
   }
 }
