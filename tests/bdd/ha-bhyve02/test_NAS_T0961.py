@@ -95,6 +95,9 @@ def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name, disk)
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys(pool_name)
     driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
+    if wait_on_element(driver, 3, '//mat-dialog-container[contains(.,"Warning: sd")]'):
+        assert wait_on_element(driver, 5, '//button[*/text()=" Close "]', 'clickable')
+        driver.find_element_by_xpath('//button[*/text()=" Close "]').click()
 
 
 @then('press right arrow under data vdev, click on the Force checkbox')

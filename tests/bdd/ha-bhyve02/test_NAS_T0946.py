@@ -374,6 +374,9 @@ def enter_tank_for_pool_name_click_the_checkbox_beside_the_first_disk(driver):
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
     driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
+    if wait_on_element(driver, 3, '//mat-dialog-container[contains(.,"Warning: sd")]'):
+        assert wait_on_element(driver, 5, '//button[*/text()=" Close "]', 'clickable')
+        driver.find_element_by_xpath('//button[*/text()=" Close "]').click()
 
 
 @then('click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL')
