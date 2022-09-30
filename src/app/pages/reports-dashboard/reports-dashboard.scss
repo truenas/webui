@@ -1,13 +1,35 @@
-@import 'cssvars';
+@import '~assets/styles/mixins/loader';
+@import '~assets/styles/scss-imports/cssvars';
 
 :host {
   $pagetitle: 68px;
   $outer-padding: 16px;
 
   display: block;
-  height: calc(100% - #{$pagetitle} - #{$outer-padding});
-  margin-right: -#{$outer-padding};
+  height: calc(100% - #{$pagetitle});
+  margin-top: -#{$outer-padding * 2};
   position: relative;
+
+  &.loading {
+    @include background-logo-loader(1.5);
+
+    &::before {
+      background: var(--bg2);
+      content: '';
+      display: block;
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 20;
+    }
+
+    &::after {
+      z-index: 30;
+    }
+  }
 }
 
 .time-warning {
@@ -20,7 +42,7 @@
   margin-bottom: 10px;
   max-width: 70%;
 
-  .mat-icon {
+  ix-icon {
     align-items: center;
     font-size: 16px;
     justify-content: center;
@@ -28,29 +50,8 @@
   }
 }
 
-.dashboard-wrap {
-  align-content: stretch;
-  align-items: stretch;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: stretch;
-}
-
-.dashboard-item {
-  box-flex: 1;
-  flex-basis: 33.3333%;
-  flex-grow: 1;
-}
-
 ul.ct-legend {
   top: -2em !important;
-}
-
-#reporting-spinner {
-  left: 47%;
-  position: relative;
-  top: 110px;
 }
 
 .reports-dash-global-controls {
@@ -65,16 +66,6 @@ ul.ct-legend {
   font-size: 24px;
   line-height: normal;
   margin-bottom: 4px;
-}
-
-#dashboardcontainerdiv {
-  // Adjustment should really be applied to .rightside-content-hold (margin-top 90px instead of 104px),
-  // but didn't want to risk breaking layouts of other pages so I applied this instead
-  margin-top: -14px;
-
-  .mat-ink-bar {
-    @include variable(background-color, --primary, $primary);
-  }
 }
 
 nav.reports-toolbar {
@@ -97,29 +88,6 @@ nav.reports-toolbar {
   right: 0;
   top: 0;
   width: 100%;
-}
-
-.reports-navigation-spacer {
-  width: 282px;
-}
-
-.reports-navigation {
-  width: 270px;
-}
-
-.reports-navigation {
-  background-color: var(--bg2);
-  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
-  color: var(--fg2);
-  height: 100%;
-  overflow: auto;
-  position: fixed;
-  right: 0;
-  top: 150;
-}
-
-.reports-navigation .mat-list-item.onscreen {
-  border-left: solid 3px var(--primary);
 }
 
 cdk-virtual-scroll-viewport {

@@ -1,82 +1,20 @@
 @use '@angular/material' as mat;
+@import '~assets/styles/scss-imports/cssvars';
+$standard-height: 40px;
 @import '~@angular/material/theming';
 @include mat.core();
-@import '../scss-imports/cssvars';
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
 $ix-accent: mat.define-palette($md-accent);
-
 // include the custom theme components into a theme object
 $ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
-@mixin ix-tree-theme($theme) {
-  $primary: map-get($theme, primary);
-  $background: map-get($theme, background);
-  $foreground: map-get($theme, foreground);
-
-  .ix-tree {
-    background: var(--bg2);
-    color: var(--fg2);
-  }
-
-  .ix-tree-node,
-  .ix-nested-tree-node {
-    color: var(--fg2);
-  }
-}
-
-// Bring theme colors to various ripple effects
-@mixin mat-ripple-theme($theme) {
-  .mat-checkbox .mat-ripple-element,
-  .mat-radio-button .mat-ripple-element {
-    @include variable(background, --accent, $accent, !important);
-  }
-
-  .mat-button.mat-primary .mat-ripple-element,
-  .mat-icon-button.mat-primary .mat-ripple-element,
-  .mat-tab-label .mat-ripple-element {
-    @include variable(background, --primary, $primary, !important);
-  }
-
-  .mat-button.mat-accent .mat-ripple-element,
-  .mat-icon-button.mat-accent .mat-ripple-element,
-  .mat-slide-toggle .mat-ripple-element {
-    @include variable(background, --primary, $primary, !important);
-  }
-
-  .mat-button .mat-ripple-element,
-  .mat-raised-button .mat-ripple-element {
-    background: rgba(0, 0, 0, 0.12);
-  }
-}
-
 // include the custom theme object into the angular material theme
 .ix-dark {
   @include mat.all-component-themes($ix-theme);
-  @include ix-tree-theme($ix-theme);
-
-  // UI SHELL
-  .mat-sidenav-container {
-    height: 100vh;
-  }
-
-  ix-topbar .mat-toolbar-multiple-rows {
-    min-height: unset;
-  }
-
-  .mat-sidenav {
-    min-width: 240px;
-  }
-
-  // END UI SHELL
-
-  img.fn-img {
-    margin: 10%;
-    width: 80%;
-  }
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -550,7 +488,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-dialog-title {
     .warning-icon {
-      color: #ffc107;
+      color: var(--orange);
       font-size: 35px;
       margin-right: 10px;
       position: relative;
@@ -648,11 +586,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-spinner circle {
     @include variable(stroke, --primary, $primary, !important);
-  }
-
-  // Add a visual effect when any sidenav menu item is clicked
-  .highlight {
-    opacity: 0.5;
   }
 
   // Add rule for entity wizards to make text light on dark themes

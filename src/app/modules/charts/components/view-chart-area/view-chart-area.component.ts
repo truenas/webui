@@ -50,6 +50,6 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    if (this.chart) this.chart.destroy();
+    this.chart?.destroy();
   }
 }
