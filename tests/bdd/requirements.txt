@@ -6,4 +6,4 @@ pytest-dependency
 pytest-timeout
 pytz
 requests
-selenium
+selenium==4.2.0
