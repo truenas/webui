@@ -1257,9 +1257,9 @@ export class DatasetFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['deduplication'].setValue(inherit);
 
             const checksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: 'INHERIT' }];
+            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: inherit }];
             checksum.options = checksumInherit.concat(checksum.options);
-            entityForm.formGroup.controls['checksum'].setValue('INHERIT');
+            entityForm.formGroup.controls['checksum'].setValue(inherit);
 
             const exec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
             const execInherit: Option[] = [{ label: `Inherit (${pkDataset[0].exec.rawvalue})`, value: inherit }];
@@ -1359,7 +1359,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['exec'].setValue(execValue);
 
                 const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-                const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.checksum.rawvalue})`, value: 'INHERIT' }];
+                const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.checksum.rawvalue})`, value: inherit }];
                 editChecksum.options = editChecksumCollection.concat(editChecksum.options);
                 let checksumValue = pkDataset[0].checksum.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].checksum.source)) {
@@ -1607,7 +1607,7 @@ export class DatasetFormComponent implements FormConfiguration {
     if (data.deduplication === inherit) {
       delete (data.deduplication);
     }
-    if (data.checksum === 'INHERIT') {
+    if (data.checksum === inherit) {
       delete data.checksum;
     }
     // encryption values
