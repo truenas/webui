@@ -1,18 +1,19 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -23,7 +24,6 @@ import { DialogService, WebSocketService } from 'app/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootPoolReplaceDialogComponent implements OnInit {
-  isFormLoading = false;
   unusedDisks: UnusedDisk[] = [];
 
   form = this.fb.group({
@@ -36,10 +36,18 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     options: this.ws.call('disk.get_unused').pipe(
       map((unusedDisks) => {
         this.unusedDisks = unusedDisks;
-        const options = unusedDisks.map((disk) => ({
-          label: disk.name + (disk.exported_zpool ? ' (' + disk.exported_zpool + ')' : ''),
-          value: disk.name,
-        }));
+        const options = unusedDisks.map((disk) => {
+          const size = filesize(disk.size, { standard: 'iec' });
+          let label = `${disk.name} - ${size}`;
+          if (disk.exported_zpool) {
+            label += ` (${disk.exported_zpool})`;
+          }
+
+          return {
+            label,
+            value: disk.name,
+          };
+        });
 
         return [
           ...options,
@@ -51,10 +59,10 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
-    protected router: Router,
-    protected route: ActivatedRoute,
+    private dialog: MatDialog,
+    private router: Router,
     private translate: TranslateService,
-    protected ws: WebSocketService,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
@@ -86,21 +94,20 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    const oldDisk = this.pk;
+    const { dev: newDisk } = this.form.value;
 
-    const payload = this.pk;
-    const { dev } = this.form.value;
-    this.ws.call('boot.replace', [payload, dev]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.dialogRef.close(true);
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: {
+        disableClose: true,
+        title: this.translate.instant('Replacing Boot Pool Disk'),
       },
-      error: (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
-      },
+    });
+    dialogRef.componentInstance.setCall('boot.replace', [oldDisk, newDisk]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
+      this.dialogRef.close(true);
     });
   }
 }

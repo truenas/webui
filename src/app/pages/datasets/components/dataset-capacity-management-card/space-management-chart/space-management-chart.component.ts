@@ -4,7 +4,9 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ChartColor, ChartDataSets, ChartOptions } from 'chart.js';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import {
+  DatasetDetails, DiskSpace, DiskSpaceKey, SwatchColors,
+} from 'app/interfaces/dataset.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -17,6 +19,8 @@ import { ThemeService } from 'app/services/theme/theme.service';
 export class SpaceManagementChartComponent implements OnChanges {
   @Input() dataset: DatasetDetails;
 
+  swatchColors: SwatchColors;
+  filteredData: DiskSpace[];
   chartData: ChartDataSets[] = [{ data: [] }];
   chartOptions: ChartOptions = {
     tooltips: {
@@ -53,37 +57,48 @@ export class SpaceManagementChartComponent implements OnChanges {
   }
 
   private updateChartData(): void {
-    const data: number[] = [];
+    const data: DiskSpace[] = [];
     if (this.isZvol) {
       data.push(
-        this.dataset.usedbydataset.parsed,
-        this.dataset.usedbysnapshots.parsed,
+        { usedbydataset: this.dataset.usedbydataset.parsed },
+        { usedbysnapshots: this.dataset.usedbysnapshots.parsed },
       );
     } else {
       data.push(
-        this.dataset.usedbydataset.parsed,
-        this.dataset.usedbysnapshots.parsed,
-        this.dataset.usedbychildren.parsed,
+        { usedbydataset: this.dataset.usedbydataset.parsed },
+        { usedbysnapshots: this.dataset.usedbysnapshots.parsed },
+        { usedbychildren: this.dataset.usedbychildren.parsed },
       );
     }
     this.chartData = this.makeDatasets(data);
   }
 
-  private makeDatasets(data: number[]): ChartDataSets[] {
+  private makeDatasets(data: DiskSpace[]): ChartDataSets[] {
     const datasets: ChartDataSets[] = [];
-    const filteredData = data.filter(Boolean);
+    const filteredData = data.filter((obj) => Object.values(obj)[0]);
+    const usedData = filteredData.map((obj) => Object.values(obj)[0]);
+    this.swatchColors = {};
+
     const ds: ChartDataSets = {
-      data: filteredData,
+      data: usedData,
       backgroundColor: [],
       borderColor: [],
       borderWidth: 1,
       type: 'doughnut',
     };
 
-    filteredData.forEach((_, index) => {
+    filteredData.forEach((usedDataset, index) => {
       const bgRgb = this.themeService.getRgbBackgroundColorByIndex(index);
-      (ds.backgroundColor as ChartColor[]).push(this.themeService.getUtils().rgbToString(bgRgb, 0.85));
+      const backgroundColor = this.themeService.getUtils().rgbToString(bgRgb, 0.85);
+      (ds.backgroundColor as ChartColor[]).push(backgroundColor);
       (ds.borderColor as ChartColor[]).push(this.themeService.getUtils().rgbToString(bgRgb));
+      const keyDiskSpace = Object.keys(usedDataset)[0] as keyof DiskSpace;
+
+      if (Object.values(DiskSpaceKey).includes(keyDiskSpace)) {
+        this.swatchColors[keyDiskSpace] = {
+          backgroundColor,
+        };
+      }
     });
 
     datasets.push(ds);

@@ -16,6 +16,7 @@ import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -39,14 +40,9 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
+
   chart: any;// Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
-  private _cpuData: WidgetCpuData;
-  get cpuData(): WidgetCpuData { return this._cpuData; }
-  set cpuData(value) {
-    this._cpuData = value;
-  }
-
   cpuAvg: GaugeConfig;
   title: string = this.translate.instant('CPU');
   subtitle: string = this.translate.instant('% of all cores');
@@ -56,7 +52,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   threadCount: number;
   hyperthread: boolean;
   legendData: ChartDataSets[];
-  screenType = 'Desktop'; // Desktop || Mobile
+  screenType = ScreenType.Desktop;
 
   // Mobile Stats
   tempAvailable = false;
@@ -74,9 +70,21 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   labels: string[] = [];
   isCpuAvgReady = false;
+
+  readonly ScreenType = ScreenType;
+
+  private _cpuData: WidgetCpuData;
   protected currentTheme: Theme;
   private utils: ThemeUtils;
   private dataSubscription: Subscription;
+
+  get cpuData(): WidgetCpuData {
+    return this._cpuData;
+  }
+
+  set cpuData(value) {
+    this._cpuData = value;
+  }
 
   constructor(
     public translate: TranslateService,
@@ -95,12 +103,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         height: 140,
       };
 
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
-      if (this.chart && this.screenType !== st) {
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+
+      if (this.chart && this.screenType !== currentScreenType) {
         this.chart.resize(size);
       }
 
-      this.screenType = st;
+      this.screenType = currentScreenType;
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
@@ -269,7 +278,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           intersect: true,
           callbacks: {
             label: (tt: ChartTooltipItem, data: ChartData) => {
-              if (this.screenType.toLowerCase() === 'mobile') {
+              if (this.screenType === ScreenType.Mobile) {
                 this.legendData = null;
                 this.legendIndex = null;
                 return;
