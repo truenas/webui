@@ -5,4 +5,4 @@ pytest-bdd==4.1.0
 pytest-dependency
 pytest-timeout
 pytz
-selenium
+selenium==3.141.0
