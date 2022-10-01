@@ -245,6 +245,14 @@ export class DataProtectionDashboardComponent implements OnInit {
               },
             },
           ],
+          tableFooterActions: [
+            {
+              label: this.translate.instant('Snapshots'),
+              onClick: () => {
+                this.router.navigate(['/datasets/snapshots']);
+              },
+            },
+          ],
           onButtonClick: (row) => {
             this.stateButton(row);
           },
