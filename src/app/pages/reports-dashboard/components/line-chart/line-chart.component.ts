@@ -9,7 +9,7 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/components/report/report.component';
+import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -56,19 +56,19 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   units = '';
   yLabelPrefix: string;
-  showLegendValues = false;
 
   theme: Theme;
   timeFormat = '%H:%M';
   culling = 6;
-  controlUid: string;
+  controlUid = `chart_${UUID.UUID()}`;
 
-  private utils: ThemeUtils;
+  private utils: ThemeUtils = new ThemeUtils();
   private _data: ReportingData;
 
-  constructor(private core: CoreService, public themeService: ThemeService) {
-    this.utils = new ThemeUtils();
-    this.controlUid = 'chart_' + UUID.UUID();
+  constructor(
+    private core: CoreService,
+    public themeService: ThemeService,
+  ) {
   }
 
   render(update?: boolean): void {
@@ -77,6 +77,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   // dygraph renderer
   renderGraph(update?: boolean): void {
+    if (!this.data) {
+      return;
+    }
+
     if (this.isReversed) {
       this.data.legend = this.data.legend.reverse();
       this.data.data.forEach((row, i) => this.data.data[i] = row.slice().reverse());
@@ -95,6 +99,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
     const options: dygraphs.Options = {
+      animatedZooms: true,
       drawPoints: false, // Must be disabled for smoothPlotter
       pointSize: 1,
       includeZero: true,
@@ -112,7 +117,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           axisLabelFormatter: (numero: number) => {
             const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
             const suffix = converted.suffix ? converted.suffix : '';
-            return this.limitDecimals(converted.value).toString() + suffix;
+            return `${this.limitDecimals(converted.value)} ${suffix}`;
           },
         },
       },
@@ -130,7 +135,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
           const suffix = getSuffix(converted);
-          clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
+          clone.series[index].yHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
           if (!clone.stackedTotal) {
             clone.stackedTotal = 0;
           }
@@ -139,9 +144,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         if (clone.stackedTotal >= 0) {
           const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
           const suffix = getSuffix(converted);
-          clone.stackedTotalHTML = this.limitDecimals(converted.value).toString() + suffix;
+          clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
         }
-        this.core.emit({ name: 'LegendEvent-' + this.chartId, data: clone, sender: this });
+        this.core.emit({ name: `LegendEvent-${this.chartId}`, data: clone, sender: this });
         return '';
       },
       series: () => {
@@ -209,21 +214,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       }
 
       return columns;
-    }
-  }
-
-  fetchData(rrdOptions: { start: number; end: number }, timeformat?: string, culling?: number): void {
-    if (timeformat) {
-      this.timeFormat = timeformat;
-    }
-    if (culling) {
-      this.culling = culling;
-    }
-
-    // Convert from milliseconds to seconds for epoch time
-    rrdOptions.start = Math.floor(rrdOptions.start / 1000);
-    if (rrdOptions.end) {
-      rrdOptions.end = Math.floor(rrdOptions.end / 1000);
     }
   }
 
@@ -319,7 +309,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (units === 'bits') {
       shortName = shortName.replace(/i/, '').trim();
-      shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
+      shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
     }
 
     return { value: output, prefix, shortName };
@@ -332,9 +322,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) {
       this.render();
-    }
 
-    if (changes.data) {
       if (this.chart) {
         this.render(true);
       } else {
@@ -345,7 +333,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-
-    this.chart.destroy();
+    this.chart?.destroy();
   }
 }

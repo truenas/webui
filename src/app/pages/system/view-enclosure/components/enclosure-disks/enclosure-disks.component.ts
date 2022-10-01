@@ -159,15 +159,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     originalState: string;
     styler: ValueReaction;
   };
-  protected maxCardWidth = 960;
   protected pixiWidth = 960;
   protected pixiHeight = 304;
 
   readonly EnclosureLocation = EnclosureLocation;
-
-  get cardWidth(): number {
-    return this.overview.nativeElement.offsetWidth;
-  }
 
   constructor(
     protected core: CoreService,
@@ -998,23 +993,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     this.labels.events$.next({
       name: mode === 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
-      sender: this,
-    });
-  }
-
-  showPath(devname: string): void {
-    // show the svg path
-    this.labels.events$.next({
-      name: 'ShowPath',
-      data: { devname, overlay: this.domLabels },
-      sender: this,
-    });
-  }
-
-  hidePath(devname: string): void {
-    this.labels.events$.next({
-      name: 'HidePath',
-      data: { devname, overlay: this.domLabels },
       sender: this,
     });
   }

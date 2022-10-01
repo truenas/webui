@@ -12,7 +12,7 @@
 
           <!-- Mobile Only: Exit widget -->
           <button
-            *ngIf="screenType === 'Mobile'"
+            *ngIf="screenType === ScreenType.Mobile"
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
@@ -53,22 +53,21 @@
           </div>
         </mat-toolbar-row>
 
-        <div *ngIf="screenType === 'Desktop'" class="cpu-model top">
+        <div *ngIf="screenType === ScreenType.Desktop" class="cpu-model top">
           {{ cpuModel ? cpuModel : ('Unknown CPU' | translate) }}
         </div>
 
         <!-- Chart -->
         <div
-          [class.mobile]="screenType === 'Mobile'"
           id="cpu-load-wrapper"
           fxLayout="row wrap"
           fxLayoutAlign="space-around center"
+          [class.mobile]="screenType === ScreenType.Mobile"
         >
           <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
             <ix-view-chart-gauge
-              *ngIf="cpuAvg && cpuAvg.data; else loader"
+              *ngIf="isCpuAvgReady; else loader"
               [config]="cpuAvg"
-              #load
             ></ix-view-chart-gauge>
           </div>
 
@@ -77,7 +76,7 @@
           </ng-template>
 
           <div
-            *ngIf="screenType === 'Desktop'"
+            *ngIf="screenType === ScreenType.Desktop"
             fxFlex="53"
             fxFlex.xs="100"
             id="cpu-load-cores"
@@ -89,10 +88,9 @@
                   <strong>{{ 'Cores' | translate }}:</strong>
                 </span>
 
-                &nbsp;&nbsp;{{ coreCount }} {{ 'cores' | translate }}
+                {{ coreCount }} {{ 'cores' | translate }}
 
                 <span *ngIf="hyperthread">
-                  &nbsp;&nbsp;
                   ({{ threadCount }}
                   {{ 'threads' | translate }})
                 </span>
@@ -103,12 +101,12 @@
                   class="label-icon"
                   [ngClass]="{ warn: usageMax < 90, danger: usageMax > 89 }"
                 >
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <ix-icon name="error"></ix-icon>
                 </div>
                 <span class="label">
                   <strong> {{ 'Highest Usage' | translate }}: </strong>
                 </span>
-                &nbsp;&nbsp;{{ usageMax }}% &nbsp;
+                {{ usageMax }}% &nbsp;
                 <span class="subtext">
                   ({{
                     usageMaxThreads.length < 2
@@ -128,7 +126,6 @@
                 <span class="label">
                   <strong>{{ 'Hottest' | translate }}:</strong>
                 </span>
-                &nbsp;&nbsp;
                 <ng-container *ngIf="tempAvailable; else notemps">
                   <span>{{ tempMax }}°C &nbsp;</span>
                   <span class="subtext">
@@ -148,7 +145,7 @@
         </div>
 
         <div
-          *ngIf="screenType === 'Mobile'"
+          *ngIf="screenType === ScreenType.Mobile"
           fxLayout="column"
           class="mobile no-flicker"
         >
@@ -159,12 +156,10 @@
             <mat-list>
               <mat-list-item>
                 <span class="label">{{ 'Model:' | translate }}</span>
-                &nbsp;&nbsp;
                 {{ cpuModel ? cpuModel : 'Unknown CPU' }}
               </mat-list-item>
               <mat-list-item>
                 <span class="label">{{ 'Threads:' | translate }}</span>
-                &nbsp;&nbsp;
                 {{ coreCount }}
               </mat-list-item>
             </mat-list>
@@ -172,7 +167,7 @@
         </div>
 
         <div
-          *ngIf="screenType === 'Mobile'"
+          *ngIf="screenType === ScreenType.Mobile"
           fxLayout="column"
           class="mobile no-flicker"
         >
@@ -186,7 +181,7 @@
               <ng-container *ngIf="tempAvailable">
                 <mat-list-item>
                   <span class="label">{{ 'Hottest:' | translate }}</span>
-                  &nbsp;&nbsp;{{ tempMax }}°C &nbsp;&nbsp;
+                  {{ tempMax }}°C &nbsp;&nbsp;
                   <span class="subtext">
                     ({{
                       tempMaxThreads.length < 2
@@ -197,7 +192,7 @@
                 </mat-list-item>
                 <mat-list-item>
                   <span class="label">{{ 'Coolest:' | translate }}</span>
-                  &nbsp;&nbsp;{{ tempMin }}°C &nbsp;&nbsp;
+                  {{ tempMin }}°C &nbsp;&nbsp;
                   <span class="subtext">
                     ({{
                       tempMinThreads.length < 2
@@ -209,7 +204,7 @@
               </ng-container>
               <mat-list-item>
                 <span class="label">{{ 'Highest Usage:' | translate }}</span>
-                &nbsp;&nbsp;{{ usageMax }}% &nbsp;&nbsp;
+                {{ usageMax }}% &nbsp;&nbsp;
                 <span class="subtext">
                   ({{
                     usageMaxThreads.length < 2
@@ -220,7 +215,7 @@
               </mat-list-item>
               <mat-list-item>
                 <span class="label">{{ 'Lowest Usage:' | translate }}</span>
-                &nbsp;&nbsp;{{ usageMin }}% &nbsp;&nbsp;
+                {{ usageMin }}% &nbsp;&nbsp;
                 <span class="subtext">
                   ({{
                     usageMinThreads.length < 2
@@ -239,17 +234,17 @@
             fxFlex="100"
             id="cpu-load-cores-legend"
             fxLayout="row wrap"
-            [ngClass]="{ mobile: screenType === 'Desktop' }"
+            [ngClass]="{ mobile: screenType === ScreenType.Desktop }"
           >
             <div
-              *ngIf="legendData && screenType === 'Desktop'; else noLegend"
+              *ngIf="legendData && screenType === ScreenType.Desktop; else noLegend"
               id="cpu-load-cores-legend-values"
               fxFlex
               fxLayout="row wrap"
               fxLayoutAlign="space-around center"
             >
               <div
-                *ngIf="screenType === 'Desktop'"
+                *ngIf="screenType === ScreenType.Desktop"
                 fxFlex="23"
                 fxFlex.xs="calc(100% - 16px)"
                 class="legend-item core-number"

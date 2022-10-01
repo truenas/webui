@@ -1,19 +1,18 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, delay, filter, switchMap, tap,
+  catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExportDisconnectModalComponent,
@@ -28,14 +27,11 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPoolComponent implements OnInit {
-  @Input() index: number;
+export class DashboardPoolComponent {
   @Input() pool: Pool;
   @Input() rootDataset: Dataset;
   @Input() isLoading: boolean;
-
-  diskDictionary: { [key: string]: Disk } = {};
-  areDisksLoading = false;
+  @Input() disks: StorageDashboardDisk[];
 
   constructor(
     private matDialog: MatDialog,
@@ -47,30 +43,6 @@ export class DashboardPoolComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private store: PoolsDashboardStore,
   ) {}
-
-  ngOnInit(): void {
-    this.loadDisks();
-  }
-
-  loadDisks(): void {
-    this.areDisksLoading = true;
-    this.ws.call('disk.query', [[['pool', '=', this.pool.name]], { extra: { pools: true } }])
-      .pipe(
-        // TODO: An ugly hack to make it less likely to not hit max concurrent requests error with too many pools.
-        // TODO: https://ixsystems.atlassian.net/browse/NAS-117846
-        delay(this.index * 400),
-        untilDestroyed(this),
-      ).subscribe({
-        next: (disks) => {
-          this.diskDictionary = _.keyBy(disks, (disk) => disk.devname);
-          this.areDisksLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
-        },
-      });
-  }
 
   onExport(): void {
     this.matDialog

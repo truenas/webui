@@ -1,5 +1,13 @@
 @import 'cssvars';
 
+.mat-sidenav-container {
+  height: 100vh;
+}
+
+.mat-sidenav {
+  min-width: 240px;
+}
+
 .alert-sidenav {
   max-width: 30%;
   min-width: 350px;
@@ -74,7 +82,7 @@
   height: 100%;
 }
 
-.enterprise-logo mat-icon {
+.enterprise-logo .mat-icon {
   height: auto !important;
   margin-left: -4px !important;
   top: 14px !important;
@@ -98,11 +106,9 @@
 }
 
 .sidenav-copyright-txt {
-  bottom: 0;
   font-size: 0.6rem;
   margin: 1rem auto;
   opacity: 0.5;
-  position: absolute;
   text-align: center;
   width: 100%;
 
@@ -161,4 +167,9 @@ ix-jw-modal {
 
 .isdark {
   display: block;
+}
+
+ix-navigation {
+  height: 100%;
+  overflow: auto;
 }

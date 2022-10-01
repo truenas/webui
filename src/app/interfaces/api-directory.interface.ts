@@ -445,7 +445,7 @@ export type ApiDirectory = {
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
-  'disk.temperature_alerts': { params: [disks: string[]]; response: [] };
+  'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Directory Services
@@ -987,6 +987,8 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
   'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+  'zfs.snapshot.hold': { params: [string]; response: void };
+  'zfs.snapshot.release': { params: [string]; response: void };
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };

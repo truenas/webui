@@ -1,4 +1,4 @@
-<div *ngIf="!isLoading && !areDisksLoading; else loadingSkeleton">
+<div *ngIf="!isLoading; else loadingSkeleton">
   <div class="pool-header">
     <h2 class="pool-name">{{ pool.name }}</h2>
     <div class="pool-actions">
@@ -29,8 +29,7 @@
   >
     <ix-topology-card
       [poolState]="pool"
-      [loading]="areDisksLoading"
-      [diskDictionary]="diskDictionary"
+      [disks]="disks"
     ></ix-topology-card>
     <ix-pool-usage-card
       *ngIf="rootDataset"
@@ -40,8 +39,7 @@
     <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
     <ix-disk-health-card
       [poolState]="pool"
-      [loading]="areDisksLoading"
-      [diskDictionary]="diskDictionary"
+      [disks]="disks"
     ></ix-disk-health-card>
   </div>
 </div>

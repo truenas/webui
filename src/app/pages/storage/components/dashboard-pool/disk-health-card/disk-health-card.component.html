@@ -1,0 +1,102 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Disk Health' | translate }}
+
+      <ng-container [ngSwitch]="diskState.health">
+        <mat-icon
+          *ngSwitchCase="diskHealthLevel.Safe"
+          class="pool-icon icon-online"
+          [matTooltip]="'Everything is fine' | translate"
+        >
+          check_circle
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="diskHealthLevel.Warn"
+          class="pool-icon icon-warning"
+          [matTooltip]="'Warning' | translate"
+        >
+          warning
+        </mat-icon>
+        <mat-icon
+          *ngSwitchCase="diskHealthLevel.Error"
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
+          cancel
+        </mat-icon>
+        <mat-icon
+          *ngSwitchDefault
+          class="pool-icon icon-error"
+          [matTooltip]="'Error' | translate"
+        >
+          cancel
+        </mat-icon>
+      </ng-container>
+    </h3>
+
+    <a mat-button [routerLink]="['/storage', 'disks']">
+      {{ 'Manage Disks' | translate }}
+    </a>
+  </mat-card-header>
+
+  <mat-card-content fxLayout="column" fxFlex="100">
+    <div class="details-item">
+      <div class="label">
+        {{ 'Disks temperature related alerts' | translate }}:
+      </div>
+      <div class="value">
+        {{ diskState.alerts | number }}
+      </div>
+    </div>
+
+    <div class="details-item">
+      <div class="label">{{ 'Highest Temperature' | translate }}:</div>
+      <div class="value">
+        <ng-container *ngIf="isHighestTempReady; else noData">
+          {{ diskState.highestTemperature | number }}
+          {{ diskState.symbolText }}{{ diskState.unit }}
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="details-item">
+      <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
+      <div class="value">
+        <ng-container *ngIf="isLowestTempReady; else noData">
+          {{ diskState.lowestTemperature | number }}
+          {{ diskState.symbolText }}{{ diskState.unit }}
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="details-item">
+      <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
+      <div class="value">
+        <ng-container
+          *ngIf="isAverageTempReady; else noData"
+        >
+          {{ diskState.averageTemperature | number }}
+          {{ diskState.symbolText }}{{ diskState.unit }}
+        </ng-container>
+      </div>
+      <a [routerLink]="['/reportsdashboard', 'disk']" [queryParams]="{ disks }">
+        {{ 'View Reports' | translate }}
+      </a>
+    </div>
+
+    <div class="details-item">
+      <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>
+      <div class="value">
+        {{ diskState.smartTests | number }}
+      </div>
+      <a [routerLink]="['/data-protection/smart']">
+        {{ 'View All S.M.A.R.T. Tests' | translate }}
+      </a>
+    </div>
+
+    <ng-template #noData>
+      {{ 'No Data' | translate }}
+    </ng-template>
+  </mat-card-content>
+</mat-card>

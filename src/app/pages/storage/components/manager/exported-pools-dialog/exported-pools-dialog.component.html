@@ -1,0 +1,13 @@
+<h1 matDialogTitle>{{ 'Warning' | translate }}</h1>
+<ix-warning [message]="'The following disk(s) is/are part of the currently exported pools (specified next to disk names). Reusing these disk will make the attached exported pools unable to import. You will lose any and all data in those pools. Please make sure that any sensitive data in said pools is backed up before reusing/repurposing these disks.' | translate"></ix-warning>
+<div>
+  <ul>
+    <li *ngFor="let disk of data.disks"><strong>{{ 'Disk' | translate }}:</strong> {{ disk.diskName }}, <strong>{{ 'Exported Pool' | translate }}:</strong> {{ disk.exportedPool }}</li>
+  </ul>
+</div>
+<div class="form-actions">
+  <span fxFlex></span>
+  <button mat-button type="button" matDialogClose>
+    {{ 'OK' | translate }}
+  </button>
+</div>

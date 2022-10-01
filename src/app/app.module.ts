@@ -39,7 +39,6 @@ import { CustomRouterStateSerializer } from 'app/store/router/custom-router-seri
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './modules/common/app-common.module';
-import { EntityModule } from './modules/entity/entity.module';
 import { AppLoaderModule } from './modules/loader/app-loader.module';
 import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthService } from './services/auth/auth.service';
@@ -78,7 +77,6 @@ import { WebSocketService } from './services/ws.service';
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
     CoreComponents,
-    EntityModule,
     MatSnackBarModule,
     TerminalModule,
     CommonDirectivesModule,

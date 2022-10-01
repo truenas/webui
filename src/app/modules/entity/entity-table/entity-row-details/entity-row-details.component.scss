@@ -1,11 +1,11 @@
 p,
 h4,
-mat-icon {
+.mat-icon {
   color: var(--fg2) !important;
 }
 
 .button-delete span,
-.button-delete mat-icon {
+.button-delete .mat-icon {
   color: var(--red) !important;
 }
 

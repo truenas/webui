@@ -97,20 +97,4 @@ $chart-size: 150px;
     height: 12px;
     width: 12px;
   }
-
-  &:nth-child(1) .legend-swatch {
-    background-color: var(--blue);
-  }
-
-  &:nth-child(2) .legend-swatch {
-    background-color: var(--magenta);
-  }
-
-  &:nth-child(3) .legend-swatch {
-    background-color: var(--orange);
-  }
-
-  &:nth-child(4) .legend-swatch {
-    background-color: var(--orange);
-  }
 }
