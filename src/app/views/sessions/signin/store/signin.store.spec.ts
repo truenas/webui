@@ -5,6 +5,7 @@ import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -15,6 +16,7 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
   let websocket: MockWebsocketService;
+  const testScheduler = getTestScheduler();
 
   const createService = createServiceFactory({
     service: SigninStore,
@@ -52,17 +54,18 @@ describe('SigninStore', () => {
   });
 
   describe('selectors', () => {
-    const failover = {
+    const initialFailover = {
       status: FailoverStatus.Error,
       ips: ['23.234.124.123'],
       disabledReasons: [FailoverDisabledReason.NoPong, FailoverDisabledReason.NoLicense],
     };
+    const initialState = {
+      failover: initialFailover,
+      hasRootPassword: true,
+      isLoading: false,
+    };
     beforeEach(() => {
-      spectator.service.setState({
-        failover,
-        hasRootPassword: true,
-        isLoading: false,
-      });
+      spectator.service.setState(initialState);
     });
 
     it('hasRootPassword$', async () => {
@@ -70,7 +73,7 @@ describe('SigninStore', () => {
     });
 
     it('failover$', async () => {
-      expect(await firstValueFrom(spectator.service.failover$)).toBe(failover);
+      expect(await firstValueFrom(spectator.service.failover$)).toBe(initialFailover);
     });
 
     it('isLoading$', async () => {
@@ -134,11 +137,71 @@ describe('SigninStore', () => {
     });
   });
 
-  describe('methods', () => {
+  describe('init - failover subscriptions', () => {
+    beforeEach(() => {
+      websocket.mockCall('failover.status', FailoverStatus.Master);
+    });
 
+    it('subscribes to failover updates if failover status is not Single', () => {
+      spectator.service.init();
+
+      expect(websocket.sub).toHaveBeenCalledWith('failover.status', expect.any(String));
+      expect(websocket.sub).toHaveBeenCalledWith('failover.disabled.reasons', expect.any(String));
+    });
+
+    it('changes failover status in store when websocket event is emitted', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        jest.spyOn(websocket, 'sub').mockImplementation((method) => {
+          if (method !== 'failover.status') {
+            return of();
+          }
+
+          return cold('a', { a: FailoverStatus.Importing });
+        });
+
+        spectator.service.init();
+
+        expectObservable(spectator.service.state$).toBe('a', {
+          a: {
+            hasRootPassword: true,
+            isLoading: false,
+            failover: {
+              disabledReasons: [FailoverDisabledReason.NoLicense],
+              ips: ['123.23.44.54'],
+              status: FailoverStatus.Importing,
+            },
+          },
+        });
+      });
+    });
+
+    it('changes disabled reasons in store when websocket event is emitted', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        jest.spyOn(websocket, 'sub').mockImplementation((method) => {
+          if (method !== 'failover.disabled.reasons') {
+            return of();
+          }
+
+          return cold('a', { a: [FailoverDisabledReason.DisagreeVip] });
+        });
+
+        spectator.service.init();
+
+        expectObservable(spectator.service.state$).toBe('a', {
+          a: {
+            hasRootPassword: true,
+            isLoading: false,
+            failover: {
+              disabledReasons: [FailoverDisabledReason.DisagreeVip],
+              ips: ['123.23.44.54'],
+              status: FailoverStatus.Master,
+            },
+          },
+        });
+      });
+    });
   });
 
   describe('getRedirectUrl', () => {
-
   });
 });

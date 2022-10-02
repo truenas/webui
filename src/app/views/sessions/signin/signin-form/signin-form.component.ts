@@ -8,6 +8,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { WebSocketService } from 'app/services';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
+// TODO: Check if password managers work.
 @UntilDestroy()
 @Component({
   selector: 'ix-signin-form',

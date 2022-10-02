@@ -122,7 +122,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   }
 
-  private setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
+  setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
     ...state,
     failover: {
       ...state.failover,
@@ -239,6 +239,8 @@ export class SigninStore extends ComponentStore<SigninState> {
     this.disabledReasonsSubscriptionId = UUID.UUID();
     this.ws.sub<FailoverDisabledReason[]>('failover.disabled.reasons', this.disabledReasonsSubscriptionId)
       .pipe(untilDestroyed(this))
-      .subscribe((disabledReasons) => this.setFailoverDisabledReasons(disabledReasons));
+      .subscribe((disabledReasons) => {
+        this.setFailoverDisabledReasons(disabledReasons);
+      });
   }
 }
