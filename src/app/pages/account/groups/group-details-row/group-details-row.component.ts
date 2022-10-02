@@ -4,7 +4,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Group } from 'app/interfaces/group.interface';
+import { DeleteGroupParams, Group } from 'app/interfaces/group.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -63,7 +63,7 @@ export class GroupDetailsRowComponent {
       },
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);
-        this.ws.call('group.delete', [group.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe({
+        this.ws.call('group.delete', [group.id, entityDialog.formValue] as DeleteGroupParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.update.emit();
           },

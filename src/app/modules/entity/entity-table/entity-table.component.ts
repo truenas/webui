@@ -613,7 +613,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
           if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+            (res.data as Record<string, string>[]).forEach((row) => {
+              row[prop] = new EntityUtils().parseDow(row[prop]);
+            });
           }
         }
       }
@@ -621,7 +623,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
         if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+          (res as Record<string, string>[]).forEach((row) => {
+            row[prop] = new EntityUtils().parseDow(row[prop]);
+          });
         }
       }
     }
@@ -786,7 +790,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     return [];
   }
 
-  rowValue(row: any, attr: string): any {
+  rowValue(row: any, attr: string): unknown {
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);

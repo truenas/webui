@@ -564,7 +564,7 @@ export type ApiDirectory = {
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
   'iscsi.extent.create': { params: [IscsiExtentUpdate]; response: IscsiExtent };
   'iscsi.extent.update': { params: [id: number, update: IscsiExtentUpdate]; response: IscsiExtentUpdate };
-  'iscsi.extent.delete': { params: [id: number, remove: number, force: boolean]; response: boolean };
+  'iscsi.extent.delete': { params: [id: number, remove: boolean, force: boolean]; response: boolean };
   'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: [id: number]; response: boolean };
   'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };

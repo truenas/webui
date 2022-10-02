@@ -10,7 +10,7 @@
 
           <ix-wizard-summary
             [fieldConfigs]="asFormDictConfig(fieldConfig).subFields"
-            [value]="value[fieldConfig.name]"
+            [value]="value[fieldConfig.name] | cast"
             [isRoot]="false"
           ></ix-wizard-summary>
         </ng-container>
@@ -33,7 +33,7 @@
         <ul class="wizard-ul">
           <li *ngFor="let subitem of item.value | keyvalue: originalOrder">
             <div *ngIf="subitem.value">
-              {{ subitem.key | translate }}: {{ subitem.value }}
+              {{ asString(subitem.key) | translate }}: {{ subitem.value }}
             </div>
           </li>
         </ul>

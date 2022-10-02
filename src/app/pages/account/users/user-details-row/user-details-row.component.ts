@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { User } from 'app/interfaces/user.interface';
+import { DeleteUserParams, User } from 'app/interfaces/user.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -83,7 +83,7 @@ export class UserDetailsRowComponent {
       },
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);
-        this.ws.call('user.delete', [user.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe({
+        this.ws.call('user.delete', [user.id, entityDialog.formValue] as DeleteUserParams).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.update.emit();
           },

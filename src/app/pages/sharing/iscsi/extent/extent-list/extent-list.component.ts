@@ -127,7 +127,7 @@ export class ExtentListComponent implements EntityTableConfig {
       ],
       saveButtonText: this.translate.instant('Delete'),
       customSubmit: (entityDialog: EntityDialogComponent) => {
-        const value = entityDialog.formValue;
+        const value = entityDialog.formValue as { remove: boolean; force: boolean };
         entityTable.loader.open();
         entityTable.loaderOpen = true;
         entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe({
