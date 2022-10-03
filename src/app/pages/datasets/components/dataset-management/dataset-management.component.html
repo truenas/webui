@@ -119,14 +119,13 @@
 
     <div
       class="details-container"
-      [class.details-container-mobile]="showMobileDetails"
+      [class.details-container-mobile]="showMobileDetails$ | async"
       ixDetailsHeight="rightside-content-hold"
     >
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
         [systemDataset]="systemDataset"
-        (closeMobileDetails)="closeMobileDetails()"
       ></ix-dataset-details-panel>
     </div>
   </div>

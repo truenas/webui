@@ -39,15 +39,34 @@ describe('DatasetTreeStore', () => {
         a: {
           error: null,
           isLoading: true,
+          showMobileDetails: false,
           selectedDatasetId: null,
           datasets: [],
         },
         b: {
           error: null,
           isLoading: false,
+          showMobileDetails: false,
           selectedDatasetId: null,
           datasets,
         },
+      });
+    });
+  });
+
+  describe('setShowMobileDetails', () => {
+    it('updates showMobileDetails in state', () => {
+      testScheduler.run(({ expectObservable }) => {
+        spectator.service.setShowMobileDetails(true);
+        expectObservable(spectator.service.state$).toBe('a', {
+          a: {
+            error: null,
+            isLoading: false,
+            showMobileDetails: true,
+            selectedDatasetId: null,
+            datasets: [],
+          },
+        });
       });
     });
   });
@@ -60,6 +79,7 @@ describe('DatasetTreeStore', () => {
           a: {
             error: null,
             isLoading: false,
+            showMobileDetails: false,
             selectedDatasetId: 'parent/child',
             datasets: [],
           },
