@@ -205,10 +205,11 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
     const colorType = this.themeService.getUtils().getValueType(color);
     let resultColor = color;
     switch (colorType) {
-      case 'cssVar':
+      case 'cssVar': {
         const cssVar = color.replace('var(--', '').replace(')', '') as keyof Theme;
         resultColor = this.themeService.currentTheme()[cssVar] as string;
         return this.conversionColor(resultColor);
+      }
       case 'rgba':
         resultColor = this.themeService.getUtils().rgbToHex(color);
         return resultColor;

@@ -197,7 +197,7 @@
 
         <ix-wizard-summary
           [fieldConfigs]="summaryFieldConfigs"
-          [value]="summaryValue"
+          [value]="summaryValue | cast"
           [isRoot]="true"
           [summary]="conf.summary"
         ></ix-wizard-summary>

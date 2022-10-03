@@ -93,7 +93,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
         case 'VisualizerReady':
           this.extractVisualizations();
           break;
-        case 'EnclosureCanvas':
+        case 'EnclosureCanvas': {
           if (!this.nav) {
             console.warn('No navigation UI detected');
             return;
@@ -109,6 +109,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
           break;
+        }
         case 'Error':
           this.errors.push(evt.data);
           console.warn({ ERROR_REPORT: this.errors });

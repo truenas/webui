@@ -15,7 +15,12 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { VirtualizationDetails, VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import {
+  VirtualizationDetails,
+  VirtualMachine,
+  VmCloneParams,
+  VmStopParams,
+} from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
@@ -477,9 +482,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           saveButtonText: this.translate.instant('Clone'),
           customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
-            const params = [vm.id];
-            if (entityDialog.formValue.name) {
-              params.push(entityDialog.formValue.name);
+            const params = [vm.id] as VmCloneParams;
+            const name = (entityDialog.formValue as { name: string }).name;
+            if (name) {
+              params.push(name);
             }
             this.doRowAction(vm, this.wsMethods.clone, params, true);
           },
@@ -535,7 +541,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 }],
                 saveButtonText: this.translate.instant('Open'),
                 customSubmit: (entityDialog: EntityDialogComponent) => {
-                  const displayDevice = _.find(displayDevices, { id: entityDialog.formValue.display_device });
+                  const displayDevice = _.find(displayDevices, {
+                    id: (entityDialog.formValue as { display_device: number }).display_device,
+                  });
                   if (displayDevice.attributes.password_configured) {
                     this.showPasswordDialog(vm, displayDevice);
                   } else {
@@ -627,7 +635,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
               devices_passwords: [
                 {
                   device_id: displayDevice.id,
-                  password: passDialog.formValue.password,
+                  password: (passDialog.formValue as { password: string }).password,
                 },
               ],
             },

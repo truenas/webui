@@ -31,7 +31,7 @@ export class EntityDialogComponent implements OnInit {
   saveButtonText: string;
   cancelButtonText = 'Cancel';
   error: string;
-  formValue: any;
+  formValue: Record<string, unknown>;
   showPassword = false;
   submitEnabled = true;
   instructions: string;

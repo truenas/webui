@@ -187,18 +187,23 @@ export class SupportComponent implements OnInit {
       { data: { title: helptext.is_production_job.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
 
-    self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        self.loader.close();
-        self.dialogRef.close();
-        dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
-        dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
-      },
-      error: (error: WebsocketError) => {
-        self.loader.close();
-        self.dialogRef.close();
-        new EntityUtils().handleWsError(this, error, this.dialog);
-      },
-    });
+    self.ws.call(
+      self.conf.method_ws as 'truenas.set_production',
+      [true, self.formValue.send_debug as boolean],
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          self.loader.close();
+          self.dialogRef.close();
+          dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
+          dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
+        },
+        error: (error: WebsocketError) => {
+          self.loader.close();
+          self.dialogRef.close();
+          new EntityUtils().handleWsError(this, error, this.dialog);
+        },
+      });
   }
 }
