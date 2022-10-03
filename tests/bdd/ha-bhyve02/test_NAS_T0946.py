@@ -428,8 +428,8 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
-    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 180, '//span[contains(.,"HostName:") and contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
+    assert wait_on_element(driver, 180, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
@@ -452,8 +452,8 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ix:ha_enabled"]')
-    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 15, '//span[contains(.,"HostName:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')
