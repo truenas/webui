@@ -110,10 +110,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg1);
   }
 
-  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: var(--primary);
-  }
-
   .mat-bg-accent {
     background-color: map-get($md-accent, 500);
     color: black;
