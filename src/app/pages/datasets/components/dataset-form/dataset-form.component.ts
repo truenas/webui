@@ -856,12 +856,6 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  blurSpecialSmallBlocks(): void {
-    if (this.entityForm) {
-      this.entityForm.formGroup.controls['special_small_block_size'].setValue(this.humanReadable['special_small_block_size']);
-    }
-  }
-
   isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
