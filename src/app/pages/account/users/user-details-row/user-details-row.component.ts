@@ -1,18 +1,17 @@
 import {
   Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { lastValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { DeleteUserParams, User } from 'app/interfaces/user.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { User } from 'app/interfaces/user.interface';
+import {
+  DeleteUserDialogComponent,
+} from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import {
-  WebSocketService, AppLoaderService, DialogService,
+  WebSocketService, DialogService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -31,9 +30,9 @@ export class UserDetailsRowComponent {
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
-    private loader: AppLoaderService,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,
+    private matDialog: MatDialog,
   ) {}
 
   getDetails(user: User): Option[] {
@@ -56,44 +55,18 @@ export class UserDetailsRowComponent {
     }
   }
 
-  async doDelete(user: User): Promise<void> {
-    this.loader.open();
-    const showCheckboxIfLastMember = await lastValueFrom(
-      this.ws.call('group.query', [[['id', '=', user.group.id]]]).pipe(
-        map((groups) => (groups.length ? groups[0].users.length === 1 : false)),
-      ),
-    );
+  doDelete(user: User): void {
+    this.matDialog.open(DeleteUserDialogComponent, {
+      data: user,
+    })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((wasDeleted) => {
+        if (!wasDeleted) {
+          return;
+        }
 
-    const confirmOptions: DialogFormConfiguration = {
-      title: this.translate.instant('Delete User'),
-      message: this.translate.instant('Are you sure you want to delete user <b>"{user}"</b>?', { user: user.username }),
-      saveButtonText: this.translate.instant('Confirm'),
-      fieldConfig: [{
-        type: 'checkbox',
-        name: 'delete_group',
-        placeholder: this.translate.instant('Delete user primary group "{name}"', { name: user.group.bsdgrp_group }),
-        value: false,
-        isHidden: true,
-      }],
-      preInit: () => {
-        confirmOptions.fieldConfig[0].isHidden = !showCheckboxIfLastMember;
-      },
-      afterInit: () => {
-        this.loader.close();
-      },
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close(true);
-        this.ws.call('user.delete', [user.id, entityDialog.formValue] as DeleteUserParams).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.update.emit();
-          },
-          error: (err) => {
-            new EntityUtils().handleWsError(this, err, this.dialogService);
-          },
-        });
-      },
-    };
-
-    this.dialogService.dialogForm(confirmOptions);
+        this.update.emit();
+      });
   }
 }

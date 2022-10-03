@@ -20,8 +20,8 @@ export class IxCheckboxHarness extends ComponentHarness implements IxFormControl
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorFor('label')();
-    return label.text({ exclude: '.required' });
+    const label = await (await this.getMatCheckboxHarness()).getLabelText();
+    return label.replace(/ *$/, '');
   }
 
   async getValue(): Promise<boolean> {
