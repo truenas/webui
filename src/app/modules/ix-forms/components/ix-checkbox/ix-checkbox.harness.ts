@@ -21,7 +21,7 @@ export class IxCheckboxHarness extends ComponentHarness implements IxFormControl
 
   async getLabelText(): Promise<string> {
     const label = await (await this.getMatCheckboxHarness()).getLabelText();
-    return label.replace(/ *$/, '');
+    return label.replace(/ \*$/, '');
   }
 
   async getValue(): Promise<boolean> {
