@@ -42,7 +42,6 @@
 
 <ng-container *ngIf="!isEmptyPools && !(arePoolsLoading$ | async)">
   <div fxFlex="100%" fxLayout="column">
-    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-117820 -->
     <ix-unused-resources
       *ngIf="!isEmptyPools"
       [pools]="pools$ | async"
