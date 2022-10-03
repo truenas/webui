@@ -11,7 +11,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 })
 export class WizardSummaryComponent {
   @Input() fieldConfigs: FieldConfig[];
-  @Input() value: Record<string, any>;
+  @Input() value: Record<string, unknown>;
   @Input() isRoot: boolean;
   @Input() summary: Record<string, unknown>;
 
@@ -27,12 +27,12 @@ export class WizardSummaryComponent {
     const fieldValue = this.value[fieldConfig.name];
     if (fieldValue === undefined) {
       result = false;
-    } else if (fieldConfig.type === 'list' && fieldValue.length === 0) {
+    } else if (fieldConfig.type === 'list' && (fieldValue as unknown[]).length === 0) {
       result = false;
     } else if (fieldConfig.type === 'dict') {
       result = false;
-      for (const key in fieldValue) {
-        const subValue = fieldValue[key];
+      for (const key in (fieldValue as Record<string, unknown>)) {
+        const subValue = (fieldValue as Record<string, unknown>)[key];
         if ((!Array.isArray(subValue) && subValue !== undefined) || (Array.isArray(subValue) && subValue.length > 0)) {
           result = true;
           break;
@@ -42,12 +42,12 @@ export class WizardSummaryComponent {
     return result;
   }
 
-  getValue(fieldConfig: FieldConfig): string {
+  getValue(fieldConfig: FieldConfig): unknown {
     let result;
     const fieldValue = this.value[fieldConfig.name];
     result = fieldValue;
     if (fieldConfig.type === 'list') {
-      result = fieldValue.length;
+      result = (fieldValue as unknown[]).length;
     } else if (fieldConfig.type === 'select') {
       const selectedOption = fieldConfig.options.find((option) => {
         return option.value === new EntityUtils().changeNull2String(fieldValue);
@@ -65,5 +65,9 @@ export class WizardSummaryComponent {
 
   asFormDictConfig(value: FieldConfig): FormDictConfig {
     return value as FormDictConfig;
+  }
+
+  asString(value: unknown): string {
+    return value as string;
   }
 }

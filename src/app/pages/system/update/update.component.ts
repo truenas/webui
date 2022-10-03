@@ -114,9 +114,8 @@ export class UpdateComponent implements OnInit {
           this.checkable = true;
           this.fullTrainList = trains.trains;
 
-          // On page load, make sure we are working with train of the current OS
-          this.train = trains.current;
-          this.selectedTrain = trains.current;
+          this.train = trains.selected;
+          this.selectedTrain = trains.selected;
 
           if (this.autoCheck) {
             this.check();
@@ -557,7 +556,7 @@ export class UpdateComponent implements OnInit {
   // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
     switch (this.updateType) {
-      case 'applyPending':
+      case 'applyPending': {
         const message = this.isHaLicensed
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
           : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
@@ -568,6 +567,7 @@ export class UpdateComponent implements OnInit {
           this.update();
         });
         break;
+      }
       case 'standard':
         this.confirmAndUpdate();
     }

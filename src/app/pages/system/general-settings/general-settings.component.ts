@@ -138,10 +138,11 @@ export class GeneralSettingsComponent implements OnInit, AfterViewInit {
           this.store$.dispatch(guiFormClosedWithoutSaving());
         });
         break;
-      default:
+      default: {
         const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
         localizationFormModal.setupForm(this.localizationSettings);
         break;
+      }
     }
   }
 }

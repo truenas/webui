@@ -109,7 +109,7 @@ function convertKmgt(input: number, units: string): { value: number; prefix: str
 
   if (units === 'bits') {
     shortName = shortName.replace(/i/, '').trim();
-    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
+    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`;
   }
 
   return { value: output, prefix, shortName };
@@ -338,9 +338,10 @@ function processCommands(list: Command[]): unknown {
   let output: unknown;
   list.forEach((item) => {
     const input = item.input === '--pipe' || item.input === '|' ? output : item.input;
+    const command = commands[item.command as keyof typeof commands];
     output = item.options
-      ? (commands as any)[item.command](input, item.options)
-      : (commands as any)[item.command](input);
+      ? (command as (input: unknown, options: unknown[]) => unknown)(input, item.options)
+      : (command as (input: unknown) => unknown)(input);
   });
 
   return output;
@@ -355,10 +356,11 @@ addEventListener('message', ({ data }) => { // eslint-disable-line no-restricted
   let output;
 
   switch (evt.name) {
-    case 'SayHello':
+    case 'SayHello': {
       const response = evt.data + ' World!';
       emit({ name: 'Response', data: response });
       break;
+    }
     case 'ProcessCommands':
       output = processCommands(evt.data);
       emit({ name: 'Response', data: output, sender: evt.sender });

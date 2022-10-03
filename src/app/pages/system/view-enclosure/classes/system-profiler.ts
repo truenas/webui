@@ -44,8 +44,8 @@ export class SystemProfiler {
   headIndex: number;
   rearIndex: number;
 
-  private _diskData: Disk[];
-  get diskData(): Disk[] {
+  private _diskData: (Disk & { vdev?: VDevMetadata })[];
+  get diskData(): (Disk & { vdev?: VDevMetadata })[] {
     return this._diskData;
   }
   set diskData(obj) {
@@ -318,7 +318,7 @@ export class SystemProfiler {
   rawCapacity(): number {
     if (!this.diskData || this.diskData.length === 0) { return; }
     let capacity = 0;
-    this.diskData.forEach((disk: any) => {
+    this.diskData.forEach((disk) => {
       if (disk.vdev && disk.vdev.topology === 'data') {
         capacity += disk.size;
       }

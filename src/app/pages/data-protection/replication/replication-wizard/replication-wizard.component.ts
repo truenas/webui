@@ -1491,7 +1491,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           );
         }
         if (value['setup_method'] === 'manual') {
-          await this.getRemoteHostKey(value).then(
+          await this.getRemoteHostKey(value as { host: string; port: number }).then(
             (res) => {
               value['remote_host_key'] = res;
             },
