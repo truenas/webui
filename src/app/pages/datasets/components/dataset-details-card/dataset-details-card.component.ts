@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -26,7 +26,6 @@ import { ModalService } from 'app/services/modal.service';
 export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
-  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
   OnOff = OnOff;
 
   constructor(
@@ -67,11 +66,10 @@ export class DatasetDetailsCardComponent {
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.onCloseMobileDetails();
         this.datasetStore.datasetUpdated();
         this.datasetStore.selectedParentDataset$.pipe(first(), untilDestroyed(this)).subscribe((parent) => {
           this.datasetStore.selectDatasetById(null);
-          this.router.navigate(['/datasets', parent?.id]);
+          this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
         });
       });
   }
@@ -89,9 +87,5 @@ export class DatasetDetailsCardComponent {
     addZvolComponent.isNew = false;
     // form doesnt work without cdr.markForCheck
     this.cdr.markForCheck();
-  }
-
-  onCloseMobileDetails(): void {
-    this.closeMobileDetails.emit();
   }
 }
