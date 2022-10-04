@@ -54,7 +54,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
 
   isLoading$ = this.datasetStore.isLoading$;
-  showMobileDetails$ = this.datasetStore.showMobileDetails$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>(
@@ -62,6 +61,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     { trackBy: (dataset) => dataset.id },
   );
 
+  showMobileDetails = false;
   isMobileView = false;
   systemDataset: string;
   isLoading = true;
@@ -261,11 +261,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   // Expose hidden details on mobile
   openMobileDetails(): void {
     if (this.isMobileView) {
-      this.datasetStore.setShowMobileDetails(true);
+      this.showMobileDetails = true;
     }
   }
 
   closeMobileDetails(): void {
-    this.datasetStore.setShowMobileDetails(false);
+    this.showMobileDetails = false;
   }
 }

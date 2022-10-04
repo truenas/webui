@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -26,6 +26,7 @@ import { ModalService } from 'app/services/modal.service';
 export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
+  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
   OnOff = OnOff;
 
   constructor(
@@ -88,6 +89,6 @@ export class DatasetDetailsCardComponent {
   }
 
   onCloseMobileDetails(): void {
-    this.datasetStore.setShowMobileDetails(false);
+    this.closeMobileDetails.emit();
   }
 }

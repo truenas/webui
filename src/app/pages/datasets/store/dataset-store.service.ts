@@ -11,7 +11,6 @@ import { WebSocketService } from 'app/services';
 
 export interface DatasetTreeState {
   isLoading: boolean;
-  showMobileDetails: boolean;
   error: WebsocketError | null;
   datasets: DatasetDetails[];
   selectedDatasetId: string | null;
@@ -19,7 +18,6 @@ export interface DatasetTreeState {
 
 const initialState: DatasetTreeState = {
   isLoading: false,
-  showMobileDetails: false,
   error: null,
   datasets: [],
   selectedDatasetId: null,
@@ -28,7 +26,6 @@ const initialState: DatasetTreeState = {
 @Injectable()
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly showMobileDetails$ = this.select((state) => state.showMobileDetails);
   // TODO
   readonly error$ = this.select((state) => state.error);
   readonly datasets$ = this.select((state) => state.datasets);
@@ -96,13 +93,6 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     return {
       ...state,
       selectedDatasetId,
-    };
-  });
-
-  readonly setShowMobileDetails = this.updater((state, showMobileDetails: boolean) => {
-    return {
-      ...state,
-      showMobileDetails,
     };
   });
 
