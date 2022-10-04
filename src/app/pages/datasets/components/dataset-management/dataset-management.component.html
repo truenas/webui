@@ -119,8 +119,8 @@
 
     <div
       class="details-container"
-      [class.details-container-mobile]="showMobileDetails"
       ixDetailsHeight="rightside-content-hold"
+      [class.details-container-mobile]="showMobileDetails"
     >
       <ix-dataset-details-panel
         *ngIf="selectedDataset$ | async as dataset"

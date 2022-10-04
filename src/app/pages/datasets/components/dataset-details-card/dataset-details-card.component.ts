@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, first } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -67,9 +67,12 @@ export class DatasetDetailsCardComponent {
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.router.navigate(['/datasets']);
         this.onCloseMobileDetails();
         this.datasetStore.datasetUpdated();
+        this.datasetStore.selectedParentDataset$.pipe(first(), untilDestroyed(this)).subscribe((parent) => {
+          this.datasetStore.selectDatasetById(null);
+          this.router.navigate(['/datasets', parent?.id]);
+        });
       });
   }
 
