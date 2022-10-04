@@ -28,7 +28,7 @@ describe('ReplaceDiskDialogComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('disk.get_unused', [
-          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
+          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10737418240 },
         ] as UnusedDisk[]),
       ]),
       mockProvider(MatDialogRef),
@@ -62,7 +62,7 @@ describe('ReplaceDiskDialogComponent', () => {
   it('replaces a disk when the form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Member Disk': 'sdb',
+      'Member Disk': 'sdb - 10 GiB',
       Force: true,
     });
 
