@@ -429,7 +429,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 180, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
