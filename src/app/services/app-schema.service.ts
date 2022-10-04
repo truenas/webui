@@ -283,7 +283,7 @@ export class AppSchemaService {
         altDefault = false;
       }
 
-      const value = schema.default !== undefined ? schema.default : altDefault;
+      const value = schema.default !== undefined && isNew ? schema.default : altDefault;
 
       const newFormControl = new CustomUntypedFormControl(value, [
         schema.required ? Validators.required : Validators.nullValidator,
@@ -601,6 +601,9 @@ export class AppSchemaService {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
       result[key] = this.serializeFormValue(groupValue[key]) as HierarchicalObjectMap<ChartFormValue>;
+      if (result[key] === null) {
+        delete result[key];
+      }
     });
     return result;
   }
