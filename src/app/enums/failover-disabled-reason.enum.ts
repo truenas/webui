@@ -7,7 +7,7 @@ export enum FailoverDisabledReason {
   NoLicense = 'NO_LICENSE',
   DisagreeVip = 'DISAGREE_VIP',
   MismatchDisks = 'MISMATCH_DISKS',
-  MismatchVersionss = 'MISMATCH_VERSIONS',
+  MismatchVersions = 'MISMATCH_VERSIONS',
   NoCriticalInterfaces = 'NO_CRITICAL_INTERFACES',
   NoFenced = 'NO_FENCED',
   NoJournalSync = 'NO_JOURNAL_SYNC',
