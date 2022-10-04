@@ -16,6 +16,7 @@ import { DialogService } from 'app/services';
 export class SimpleFailoverBtnComponent {
   @Input() color = 'default';
   @Input() disabled?: boolean = false;
+
   constructor(
     private dialog: DialogService,
     private router: Router,

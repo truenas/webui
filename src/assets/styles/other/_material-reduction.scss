@@ -817,49 +817,9 @@ mat-card.mat-card .mat-list-base {
   padding-left: 18px;
 }
 
-/* Entity Tree Table Styles */
-/* Pseudo Tables */
-.ix-table {
-  display: table;
-}
-
-.ix-tr {
-  display: table-row;
-}
-
-.ix-td {
-  display: table-cell;
-}
-
-.ix-th {
-  display: table-cell;
-}
-
-.ix-tree-invisible {
-  display: none;
-}
-
-.ix-tree-node .ix-td .mat-icon
-
-.ix-tree ul,
-.ix-tree li {
-  list-style-type: none;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.ix-tree-node .ix-tree-node {
-  padding-left: 40px;
-}
-
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
-}
-/* Material Design Icon Set */
-.mat-icon.mdi-set {
-  font-size: 24px; /* Default Size to match other mat icons */
-  margin-top: 2px;
 }
 
 @media only screen and (max-width: 750px) {

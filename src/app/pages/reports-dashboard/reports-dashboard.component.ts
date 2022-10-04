@@ -7,26 +7,16 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  addSeconds, differenceInDays, differenceInSeconds, format,
-} from 'date-fns';
+import { format } from 'date-fns';
 import { forkJoin } from 'rxjs';
-import { ReportTab } from 'app/enums/report-tab.enum';
 import { Option } from 'app/interfaces/option.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { Timeout } from 'app/interfaces/timeout.interface';
-import {
-  WebSocketService,
-} from 'app/services';
+import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
+import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { Report } from './components/report/report.component';
+import { WebSocketService } from 'app/services/ws.service';
 import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
-
-export interface Tab {
-  label: string;
-  value: ReportTab;
-}
+import { ReportsService } from './reports.service';
 
 @UntilDestroy()
 @Component({
@@ -40,74 +30,57 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   scrollContainer: HTMLElement;
-  scrolledIndex = 0;
-  nasDateTime: Date;
-  timeDiffInSeconds: number;
-  timeDiffInDays: number;
-  timeInterval: Timeout;
-  showTimeDiffWarning = false;
 
-  diskReports: Report[];
-  otherReports: Report[];
+  allReports: Report[] = [];
+  diskReports: Report[] = [];
+  otherReports: Report[] = [];
   activeReports: Report[] = [];
 
-  activeTab = { label: this.translate.instant('CPU'), value: ReportTab.Cpu } as Tab;
   activeTabVerified = false;
-  allTabs: Tab[] = [];
+  allTabs: ReportTab[] = this.reportsService.getReportTabs();
+  activeTab: ReportTab = this.allTabs[0];
 
   visibleReports: number[] = [];
 
   diskDevices: Option[] = [];
   diskMetrics: Option[] = [];
   selectedDisks: string[] = [];
+  hasUps = false;
 
   constructor(
+    private ws: WebSocketService,
     private router: Router,
     private route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected translate: TranslateService,
+    private translate: TranslateService,
     private slideIn: IxSlideInService,
     private layoutService: LayoutService,
+    private reportsService: ReportsService,
   ) {}
 
   get timeDiffWarning(): string {
-    if (!this.nasDateTime) {
+    if (!this.reportsService.showTimeDiffWarning) {
       return '';
     }
-    const nasTimeFormatted = format(this.nasDateTime, 'MMM dd, HH:mm:ss, OOOO');
-    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime: nasTimeFormatted });
+    const datetime = format(this.reportsService.serverTime, 'MMM dd, HH:mm:ss, OOOO');
+    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime });
   }
 
   ngOnInit(): void {
-    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
-      (sysInfo) => {
-        const now = Date.now();
-        const datetime = sysInfo.datetime.$date;
-        this.nasDateTime = new Date(datetime);
-        this.timeDiffInSeconds = differenceInSeconds(datetime, now);
-        this.timeDiffInDays = differenceInDays(datetime, now);
-        if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
-          this.showTimeDiffWarning = true;
-        }
-
-        if (this.timeInterval) {
-          clearInterval(this.timeInterval);
-        }
-
-        this.timeInterval = setInterval(() => {
-          this.nasDateTime = addSeconds(this.nasDateTime, 1);
-        }, 1000);
-      },
-    );
-    this.scrollContainer = document.querySelector('.rightside-content-hold ');
+    this.scrollContainer = document.querySelector('.rightside-content-hold');
     this.scrollContainer.style.overflow = 'hidden';
 
     forkJoin([
       this.ws.call('disk.query'),
       this.ws.call('reporting.graphs'),
     ]).pipe(untilDestroyed(this)).subscribe(([disks, reports]) => {
-      this.parseDisks(disks);
-      const allReports = reports.map((report) => {
+      this.diskDevices = disks
+        .filter((disk) => !disk.devname.includes('multipath'))
+        .map((disk) => {
+          const [value] = disk.devname.split(' ');
+          return { label: disk.devname, value };
+        });
+
+      this.allReports = reports.map((report) => {
         const list = [];
         if (report.identifiers) {
           report.identifiers.forEach(() => list.push(true));
@@ -120,10 +93,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
         };
       });
 
-      this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
-      this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
+      this.hasUps = this.allReports.some((report) => report.title.startsWith('UPS'));
+      this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
+      this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
 
-      this.allTabs = this.getAllTabs();
+      this.allTabs = this.reportsService.getReportTabs();
 
       this.activateTabFromUrl();
     });
@@ -135,29 +109,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnDestroy(): void {
     this.scrollContainer.style.overflow = 'auto';
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
-  }
-
-  nextBatch(evt: number): void {
-    this.scrolledIndex = evt;
-  }
-
-  getAllTabs(): Tab[] {
-    const hasUps = this.otherReports.find((report) => report.title.startsWith('UPS'));
-    return [
-      { label: this.translate.instant('CPU'), value: ReportTab.Cpu },
-      { label: this.translate.instant('Disk'), value: ReportTab.Disk },
-      { label: this.translate.instant('Memory'), value: ReportTab.Memory },
-      { label: this.translate.instant('Network'), value: ReportTab.Network },
-      { label: this.translate.instant('NFS'), value: ReportTab.Nfs },
-      { label: this.translate.instant('Partition'), value: ReportTab.Partition },
-      { label: this.translate.instant('System'), value: ReportTab.System },
-      ...(hasUps ? [{ label: this.translate.instant('UPS'), value: ReportTab.Ups }] : []),
-      { label: this.translate.instant('Target'), value: ReportTab.Target },
-      { label: this.translate.instant('ZFS'), value: ReportTab.Zfs },
-    ] as Tab[];
   }
 
   activateTabFromUrl(): void {
@@ -166,57 +117,60 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.updateActiveTab(tabFound || this.allTabs[0]);
   }
 
-  updateActiveTab(tab: Tab): void {
+  updateActiveTab(tab: ReportTab): void {
     // Change the URL without reloading page/component
     // the old fashioned way
-    window.history.replaceState({}, '', '/reportsdashboard/' + tab.value);
+    window.history.replaceState({}, '', `/reportsdashboard/${tab.value}`);
 
     this.activateTab(tab);
 
-    if (tab.value === ReportTab.Disk) {
-      this.selectedDisks = this.route.snapshot.queryParams.disks;
+    if (tab.value === ReportType.Disk) {
+      if (this.route.snapshot.queryParams?.disks) {
+        this.selectedDisks = this.route.snapshot.queryParams.disks;
+      } else {
+        this.selectedDisks = this.diskDevices.map((option) => option.value.toString());
+      }
       this.buildDiskMetrics();
     }
   }
 
-  navigateToTab(tab: Tab): void {
-    const link = '/reportsdashboard/' + tab.value;
-    this.router.navigate([link]);
+  navigateToTab(tab: ReportTab): void {
+    this.router.navigate(['/reportsdashboard', tab.value]);
   }
 
-  activateTab(activeTab: Tab): void {
+  activateTab(activeTab: ReportTab): void {
     this.activeTab = activeTab;
     this.activeTabVerified = true;
 
-    const reportCategories = activeTab.value === ReportTab.Disk ? this.diskReports : this.otherReports.filter(
+    const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
         let condition;
         switch (activeTab.value) {
-          case ReportTab.Cpu:
+          case ReportType.Cpu:
             condition = (report.name === 'cpu' || report.name === 'load' || report.name === 'cputemp');
             break;
-          case ReportTab.Memory:
+          case ReportType.Memory:
             condition = (report.name === 'memory' || report.name === 'swap');
             break;
-          case ReportTab.Network:
+          case ReportType.Network:
             condition = (report.name === 'interface');
             break;
-          case ReportTab.Nfs:
+          case ReportType.Nfs:
             condition = (report.name === 'nfsstat' || report.name === 'nfsstatbytes');
             break;
-          case ReportTab.Partition:
+          case ReportType.Partition:
             condition = (report.name === 'df');
             break;
-          case ReportTab.System:
+          case ReportType.System:
             condition = (report.name === 'processes' || report.name === 'uptime');
             break;
-          case ReportTab.Target:
+          case ReportType.Target:
             condition = (report.name === 'ctl');
             break;
-          case ReportTab.Ups:
+          case ReportType.Ups:
             condition = report.name.startsWith('ups');
             break;
-          case ReportTab.Zfs:
+          case ReportType.Zfs:
             condition = report.name.startsWith('arc');
             break;
           default:
@@ -229,18 +183,19 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.activeReports = this.flattenReports(reportCategories);
 
-    if (activeTab.value !== ReportTab.Disk) {
-      const keys = Object.keys(this.activeReports);
-      this.visibleReports = keys.map((reportIndex) => parseInt(reportIndex));
+    if (activeTab.value !== ReportType.Disk) {
+      this.visibleReports = Object.keys(this.activeReports).map((reportIndex) => parseInt(reportIndex));
     }
   }
 
+  /**
+   * Based on identifiers, create a single dimensional array of reports to render
+   * @param list Report[]
+   * @returns Report[]
+   */
   flattenReports(list: Report[]): Report[] {
-    // Based on identifiers, create a single dimensional array of reports to render
     const result: Report[] = [];
     list.forEach((report) => {
-      // Without identifiers
-
       // With identifiers
       if (report.identifiers) {
         report.identifiers.forEach((identifier, index) => {
@@ -254,6 +209,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
           }
         });
       } else if (!report.identifiers && report.isRendered[0]) {
+        // Without identifiers
         const flattenedReport = { ...report };
         flattenedReport.identifiers = [];
         result.push(flattenedReport);
@@ -273,7 +229,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
       formatted = formatted.replace(/requests on/, '');
       metrics.push({ label: formatted, value: item.name });
     });
-
     this.diskMetrics = metrics;
   }
 
@@ -292,17 +247,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     });
 
     this.visibleReports = visible;
-  }
-
-  parseDisks(disks: Disk[]): void {
-    const uniqueNames = disks
-      .filter((disk) => !disk.devname.includes('multipath'))
-      .map((disk) => disk.devname);
-
-    this.diskDevices = uniqueNames.map((devname) => {
-      const spl = devname.split(' ');
-      return { label: devname, value: spl[0] };
-    });
   }
 
   isReportReversed(report: Report): boolean {

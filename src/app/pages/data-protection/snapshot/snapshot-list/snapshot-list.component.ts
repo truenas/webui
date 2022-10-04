@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -63,6 +63,14 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
+  customActions = [{
+    id: 'snapshots',
+    name: this.translate.instant('Snapshots'),
+    function: () => {
+      this.router.navigate(['/datasets/snapshots']);
+    },
+  }];
+
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -70,6 +78,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
+    private router: Router,
     private store$: Store<AppState>,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';

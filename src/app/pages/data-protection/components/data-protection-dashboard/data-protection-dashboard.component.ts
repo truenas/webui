@@ -237,6 +237,22 @@ export class DataProtectionDashboardComponent implements OnInit {
             const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
             slideIn.setTaskForEdit(row);
           },
+          tableActions: [
+            {
+              label: this.translate.instant('VMware Snapshot Integration'),
+              onClick: () => {
+                this.router.navigate(['/data-protection/vmware-snapshots']);
+              },
+            },
+          ],
+          tableFooterActions: [
+            {
+              label: this.translate.instant('Snapshots'),
+              onClick: () => {
+                this.router.navigate(['/datasets/snapshots']);
+              },
+            },
+          ],
           onButtonClick: (row) => {
             this.stateButton(row);
           },
