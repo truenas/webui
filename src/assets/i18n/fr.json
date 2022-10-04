@@ -929,6 +929,7 @@
   "The <a href=\"https://www.ixsystems.com/community/\" target=\"_blank\" class=\"external-link\">TrueNAS Community Forums</a> are the best place to ask questions and interact with fellow TrueNAS users.": "",
   "The <a href=\"https://www.truenas.com/docs/\" target=\"_blank\">TrueNAS Documentation Site</a> is a collaborative website with helpful guides and information about your new storage system.": "",
   "The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.": "",
+  "The Clipboard API is not available": "",
   "The TrueNAS controllers do not have the same quantity of disks.": "",
   "The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form  and delete any unsaved changes.": "",
   "The credentials are valid.": "",

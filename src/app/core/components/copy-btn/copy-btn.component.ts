@@ -19,9 +19,7 @@ export class CopyButtonComponent {
 
   copyToClipboard(): void {
     if (!navigator.clipboard) {
-      /** @deprecated */
-      document.execCommand('copy', false, this.text);
-      this.snackbar.success(this.translate.instant('Copied to clipboard'));
+      this.snackbar.error(this.translate.instant('The Clipboard API is not available'));
     } else {
       navigator.clipboard.writeText(this.text).then(() => {
         this.snackbar.success(this.translate.instant('Copied to clipboard'));

@@ -24,4 +24,14 @@ export class SnackbarService {
       } as SnackbarConfig,
     });
   }
+
+  error(message: string): MatSnackBarRef<SnackbarComponent> {
+    return this.matSnackBar.openFromComponent(SnackbarComponent, {
+      data: {
+        message,
+        icon: 'error',
+        iconCssColor: 'var(--red)',
+      } as SnackbarConfig,
+    });
+  }
 }

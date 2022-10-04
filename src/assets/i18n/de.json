@@ -2153,6 +2153,7 @@
   "The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "The <i>Alias</i> field can either be left empty or  have an alias defined for each path in the share.": "",
   "The <i>Use Apple-style character encoding</i> value has changed.  This parameter affects how file names are read from and written to storage. Changes to  this parameter after data is written can prevent accessing or deleting files containing  mangled characters.": "",
+  "The Clipboard API is not available": "",
   "The SSL certificate to be used for TLS FTP connections. To create a certificate, use <b>System --> Certificates</b>.": "",
   "The TrueNAS controllers do not have the same quantity of disks.": "",
   "The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code.  To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually  into the app. The URI is produced by the system when Two-Factor Authentication is first activated.": "",

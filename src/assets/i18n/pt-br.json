@@ -3336,6 +3336,7 @@
   "The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "The <i>Alias</i> field can either be left empty or  have an alias defined for each path in the share.": "",
   "The <i>Use Apple-style character encoding</i> value has changed.  This parameter affects how file names are read from and written to storage. Changes to  this parameter after data is written can prevent accessing or deleting files containing  mangled characters.": "",
+  "The Clipboard API is not available": "",
   "The Group ID (GID) is a unique number used to identify a Unix group. Enter a number above 1000 for a group with user accounts. Groups used by a service must have an ID that matches the default port number used by the service.": "",
   "The Idmap cache should be cleared after finalizing idmap changes.  Click \"Continue\" to clear the cache.": "",
   "The SMB service has been restarted.": "",
