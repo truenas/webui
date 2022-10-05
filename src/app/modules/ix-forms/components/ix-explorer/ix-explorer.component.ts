@@ -153,6 +153,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.onChange(this.value);
   }
 
+  isPathSelected(path: string): boolean {
+    return typeof this.value === 'string' ? this.value === path : this.value.some((content: string) => content === path);
+  }
+
   /**
    * Provides typing in templates
    */
@@ -161,7 +165,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private updateInputValue(): void {
-    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value;
+    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
   }
 
   private selectTreeNodes(nodeIds: string[]): void {
