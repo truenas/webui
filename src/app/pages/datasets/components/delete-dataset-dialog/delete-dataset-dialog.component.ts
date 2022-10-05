@@ -59,7 +59,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   onDelete(): void {
     this.loader.open();
 
-    this.tryDeletingDataset().pipe(
+    this.deleteDataset().pipe(
       catchError((error: WebsocketError) => {
         if (error.reason.includes('Device busy')) {
           return this.askToForceDelete();
@@ -78,11 +78,11 @@ export class DeleteDatasetDialogComponent implements OnInit {
     ).subscribe();
   }
 
-  tryDeletingDataset(): Observable<boolean> {
+  private deleteDataset(): Observable<boolean> {
     return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
   }
 
-  forceDeleteDataset(): Observable<boolean> {
+  private forceDeleteDataset(): Observable<boolean> {
     return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
   }
 
@@ -90,7 +90,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     return this.getForceDeleteConfirmation();
   }
 
-  getForceDeleteConfirmation(): Observable<boolean> {
+  private getForceDeleteConfirmation(): Observable<boolean> {
     return this.dialog.confirm({
       title: this.translate.instant('Device Busy'),
       message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
@@ -98,7 +98,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     });
   }
 
-  handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
+  private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
     this.dialog.errorReport(
       this.translate.instant(
         'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
