@@ -29,7 +29,7 @@ import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tr
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
-  @Input() multiple = true;
+  @Input() multiple = false;
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() root = '/mnt';
