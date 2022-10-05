@@ -23,12 +23,12 @@ const oneGb = 1024 * 1024 * 1024;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetCapacitySettingsComponent {
-  readonly defaultReqQuotaWarning = 80;
+  readonly defaultRefQuotaWarning = 80;
   readonly defaultRefQuotaCritical = 95;
 
   form = this.formBuilder.group({
     refquota: [null as number, Validators.min(oneGb)],
-    refquota_warning: [this.defaultReqQuotaWarning, [
+    refquota_warning: [this.defaultRefQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
     ]],
@@ -40,7 +40,7 @@ export class DatasetCapacitySettingsComponent {
     refquota_critical_inherit: [false],
 
     quota: [null as number, Validators.min(oneGb)],
-    quota_warning: [this.defaultReqQuotaWarning, [
+    quota_warning: [this.defaultRefQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
     ]],
@@ -103,12 +103,12 @@ export class DatasetCapacitySettingsComponent {
     this.dataset = dataset;
     this.oldValues = {
       refquota: dataset.refquota.parsed,
-      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultReqQuotaWarning,
+      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultRefQuotaWarning,
       refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
       refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultRefQuotaCritical,
       refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
       quota: dataset.quota.parsed,
-      quota_warning: dataset.quota_warning?.parsed ?? this.defaultReqQuotaWarning,
+      quota_warning: dataset.quota_warning?.parsed ?? this.defaultRefQuotaWarning,
       quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
       quota_critical: dataset.quota_critical?.parsed ?? this.defaultRefQuotaCritical,
       quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
