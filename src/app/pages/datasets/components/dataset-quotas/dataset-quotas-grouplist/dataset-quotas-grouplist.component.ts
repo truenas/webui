@@ -197,12 +197,12 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     });
   }
 
-  confirmToggle(): Observable<boolean> {
+  private confirmToggle(): Observable<boolean> {
     const confirmOptions = this.useFullFilter ? this.getShowConfirmOptions() : this.getFilterConfirmOptions();
     return this.dialogService.confirm(confirmOptions);
   }
 
-  getShowConfirmOptions(): ConfirmOptions {
+  private getShowConfirmOptions(): ConfirmOptions {
     return {
       title: helptext.groups.filter_dialog.title_show,
       message: helptext.groups.filter_dialog.message_show,
@@ -211,7 +211,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     };
   }
 
-  getFilterConfirmOptions(): ConfirmOptions {
+  private getFilterConfirmOptions(): ConfirmOptions {
     return {
       title: helptext.groups.filter_dialog.title_filter,
       message: helptext.groups.filter_dialog.message_filter,
@@ -255,7 +255,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doDelete(row: DatasetQuota): void {
-    this.getDeleteConfirmation(row).pipe(
+    this.confirmDelete(row).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
       switchMap(() => this.setQuota(row)),
@@ -272,7 +272,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     });
   }
 
-  getDeleteConfirmation(quota: DatasetQuota): Observable<boolean> {
+  private confirmDelete(quota: DatasetQuota): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.translate.instant('Delete Group Quota'),
       message: this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: quota.name }),

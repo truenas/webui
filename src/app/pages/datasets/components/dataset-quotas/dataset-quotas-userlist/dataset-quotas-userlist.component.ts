@@ -199,12 +199,12 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     });
   }
 
-  confirmToggle(): Observable<boolean> {
+  private confirmToggle(): Observable<boolean> {
     const confirmOptions = this.useFullFilter ? this.getShowConfirmOptions() : this.getFilterConfirmOptions();
     return this.dialogService.confirm(confirmOptions);
   }
 
-  getFilterConfirmOptions(): ConfirmOptions {
+  private getFilterConfirmOptions(): ConfirmOptions {
     return {
       title: helptext.users.filter_dialog.title_filter,
       message: helptext.users.filter_dialog.message_filter,
@@ -213,7 +213,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     };
   }
 
-  getShowConfirmOptions(): ConfirmOptions {
+  private getShowConfirmOptions(): ConfirmOptions {
     return {
       title: helptext.users.filter_dialog.title_show,
       message: helptext.users.filter_dialog.message_show,
@@ -240,7 +240,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     ).subscribe();
   }
 
-  getRemovalConfirmation(): Observable<boolean> {
+  private getRemovalConfirmation(): Observable<boolean> {
     const confirmOptions: ConfirmOptions = {
       title: this.translate.instant('Remove Invalid Quotas'),
       message: this.translate.instant('This action will set all dataset quotas for the removed or invalid users to 0,\
@@ -265,7 +265,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   doDelete(row: DatasetQuota): void {
-    this.getDeleteConfirmation(row.name).pipe(
+    this.confirmDelete(row.name).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
       switchMap(() => this.setQuota(this.getRemoveQuotaPayload([row]))),
@@ -282,7 +282,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     ).subscribe();
   }
 
-  getDeleteConfirmation(name: string): Observable<boolean> {
+  private confirmDelete(name: string): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.translate.instant('Delete User Quota'),
       message: this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name }),
