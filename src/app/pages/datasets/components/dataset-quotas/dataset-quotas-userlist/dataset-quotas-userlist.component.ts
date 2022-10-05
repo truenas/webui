@@ -193,9 +193,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
+      this.useFullFilter = !this.useFullFilter;
       window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
       this.getUserQuotas();
-      this.useFullFilter = !this.useFullFilter;
     });
   }
 
