@@ -887,3 +887,7 @@ body.safari-platform {
 .mat-icon.mat-warn {
   color: var(--orange) !important;
 }
+
+.mat-tooltip {
+  word-break: break-word;
+}
