@@ -189,7 +189,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   toggleDisplay(): void {
-    this.getToggleConfirmation().pipe(
+    this.confirmToggle().pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
@@ -199,7 +199,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     });
   }
 
-  getToggleConfirmation(): Observable<boolean> {
+  confirmToggle(): Observable<boolean> {
     const confirmOptions = this.useFullFilter ? this.getShowConfirmOptions() : this.getFilterConfirmOptions();
     return this.dialogService.confirm(confirmOptions);
   }
