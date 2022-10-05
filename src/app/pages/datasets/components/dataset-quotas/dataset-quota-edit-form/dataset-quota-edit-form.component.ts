@@ -67,14 +67,14 @@ export class DatasetQuotaEditFormComponent {
 
   getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptext.users.data_quota.tooltip)
-    + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
-    + this.translate.instant(' bytes.');
+      + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+      + this.translate.instant(' bytes.');
   }
 
   getGroupDataQuotaTooltip(): string {
     return this.translate.instant(helptext.groups.data_quota.tooltip)
-    + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
-    + this.translate.instant(' bytes.');
+      + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+      + this.translate.instant(' bytes.');
   }
 
   get objectQuotaTooltip(): string {
