@@ -3,7 +3,9 @@
     <div class="icon-container">
       <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
     </div>
-    <span class="name">{{ label }}</span>
+    <span class="name" [matTooltip]="label">
+      {{ label }}
+    </span>
   </div>
   <div class="cell cell-used">
     {{
