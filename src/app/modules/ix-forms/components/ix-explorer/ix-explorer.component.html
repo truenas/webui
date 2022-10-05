@@ -28,14 +28,17 @@
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
-      <ng-container *ngIf="typeNode(node) as node">
+      <span *ngIf="typeNode(node) as node" [ngClass]="{'selected': node.data.path === value}">
         <mat-icon *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
           insert_drive_file
         </mat-icon>
-        <ng-template #folderIcon><mat-icon>folder</mat-icon></ng-template>
+
+        <ng-template #folderIcon>
+          <mat-icon>folder</mat-icon>
+        </ng-template>
 
         <span class="node-name">{{ node.data.name }}</span>
-      </ng-container>
+      </span>
     </ng-template>
   </tree-root>
 </div>
