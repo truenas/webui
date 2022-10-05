@@ -2845,7 +2845,6 @@
   "The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.": "",
   "The <i>Alias</i> field can either be left empty or  have an alias defined for each path in the share.": "",
   "The <i>Use Apple-style character encoding</i> value has changed.  This parameter affects how file names are read from and written to storage. Changes to  this parameter after data is written can prevent accessing or deleting files containing  mangled characters.": "",
-  "The Clipboard API is not available": "",
   "The Idmap cache should be cleared after finalizing idmap changes.  Click \"Continue\" to clear the cache.": "",
   "The SMB service has been restarted.": "",
   "The SSL certificate to be used for TLS FTP connections. To create a certificate, use <b>System --> Certificates</b>.": "",

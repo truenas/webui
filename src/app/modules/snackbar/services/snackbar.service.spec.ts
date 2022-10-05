@@ -27,18 +27,4 @@ describe('SnackbarService', () => {
       });
     });
   });
-
-  describe('error', () => {
-    it('opens a snackbar with Error message', () => {
-      spectator.service.error('An error occured');
-
-      expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
-        data: {
-          message: 'An error occured',
-          icon: 'error',
-          iconCssColor: 'var(--red)',
-        },
-      });
-    });
-  });
 });
