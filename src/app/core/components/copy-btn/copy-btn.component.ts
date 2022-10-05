@@ -19,27 +19,31 @@ export class CopyButtonComponent {
     this.snackbar.success(this.translate.instant('Copied to clipboard'));
   }
 
-  private handleCopyToClipboard(textToCopy: string): Promise<void> {
-    if (navigator.clipboard) {
-      return navigator.clipboard.writeText(textToCopy);
-    }
-
+  private copyViaDeprecatedExecCommand(): Promise<void> {
     const textArea = document.createElement('textarea');
-    textArea.value = textToCopy;
+    textArea.value = this.text;
     textArea.style.position = 'fixed';
     textArea.style.left = '-9999px';
     textArea.style.top = '-9999px';
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    return new Promise((resolve, reject) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      document.execCommand('copy') ? resolve() : reject();
+    return new Promise((resolve) => {
+      document.execCommand('copy');
       textArea.remove();
+      resolve();
     });
   }
 
+  private handleCopyToClipboard(): Promise<void> {
+    if (navigator.clipboard) {
+      return navigator.clipboard.writeText(this.text);
+    }
+
+    return this.copyViaDeprecatedExecCommand();
+  }
+
   copyToClipboard(): void {
-    this.handleCopyToClipboard(this.text).then(() => this.showSuccessMessage());
+    this.handleCopyToClipboard().then(() => this.showSuccessMessage());
   }
 }
