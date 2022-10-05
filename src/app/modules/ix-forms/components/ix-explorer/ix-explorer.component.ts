@@ -29,7 +29,7 @@ import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tr
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
-  @Input() multiple = false;
+  @Input() multiple = true;
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() root = '/mnt';
@@ -151,6 +151,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.value = this.multiple ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
     this.onChange(this.value);
+  }
+
+  isPathSelected(path: string): boolean {
+    return typeof this.value === 'string' ? this.value === path : this.value.some((content: string) => content === path);
   }
 
   /**
