@@ -2,6 +2,7 @@
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
     <mat-slide-toggle
+      color="primary"
       [checked]="!this.hideBuiltinUsers"
       (change)="toggleBuiltins()"
     >
@@ -84,7 +85,11 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr
           mat-row
-          *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
+          *matRowDef="
+            let user;
+            columns: displayedColumns;
+            dataSource: dataSource
+          "
           [ixDetailRow]="user"
           [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
           [ixDetailRowTemplate]="expandedRowTemplate"

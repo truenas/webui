@@ -46,6 +46,14 @@
         </ng-container>
       </dd>
     </div>
+    <mat-checkbox
+      *ngIf="!isLoading"
+      color="primary"
+      [checked]="isHold"
+      (change)="doHold()"
+    >
+      {{ 'Hold' | translate }}
+    </mat-checkbox>
   </dl>
 
   <mat-divider></mat-divider>

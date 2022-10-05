@@ -8,6 +8,7 @@ import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -53,25 +54,24 @@ export type DashboardNicState = NetworkInterfaceState & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  reorderMode = false;
 
-  screenType = 'Desktop'; // Desktop || Mobile
+  reorderMode = false;
+  screenType = ScreenType.Desktop;
   optimalDesktopWidth = '100%';
   widgetWidth = 540; // in pixels (Desktop only)
-
   dashStateReady = false;
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
   availableWidgets: DashConfigItem[] = this.generateDefaultConfig();
   renderedWidgets: DashConfigItem[];
-
   large = 'lg';
   medium = 'md';
   small = 'sm';
-
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
+
+  readonly ScreenType = ScreenType;
 
   get isLoaded(): boolean {
     return this.dashStateReady
@@ -172,21 +172,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkScreenSize(): void {
-    const st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
+    const currentScreenType = window.innerWidth < 600 ? ScreenType.Mobile : ScreenType.Desktop;
 
     // If leaving .xs screen then reset mobile position
-    if (st === 'Desktop' && this.screenType === 'Mobile') {
+    if (currentScreenType === ScreenType.Desktop && this.screenType === ScreenType.Mobile) {
       this.onMobileBack();
     }
 
-    if (this.screenType !== st) {
-      this.onScreenSizeChange(st, this.screenType);
+    if (this.screenType !== currentScreenType) {
+      this.onScreenSizeChange(currentScreenType, this.screenType);
     }
 
-    this.screenType = st;
+    this.screenType = currentScreenType;
 
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = this.screenType === 'Mobile' ? 'hidden' : 'auto';
+    wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
   }
 
@@ -245,7 +245,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileResize(evt: Event): void {
-    if (this.screenType === 'Desktop') { return; }
+    if (this.screenType === ScreenType.Desktop) { return; }
     const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
     const viewport = styler(viewportElement);
     const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
@@ -397,13 +397,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (item.name.toLowerCase()) {
       case 'storage':
         return this.volumeData;
-      default:
+      default: {
         const pool = this.pools.find((pool) => pool[key as keyof Pool] === value);
         if (!pool) {
           console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
           return;
         }
         return this.volumeData && this.volumeData[pool.name];
+      }
     }
   }
 
@@ -521,11 +522,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
-    if (newScreenType === 'Desktop' && oldScreenType === 'Mobile') {
+    if (newScreenType === ScreenType.Desktop && oldScreenType === ScreenType.Mobile) {
       this.enableReorderMode();
     }
 
-    if (newScreenType === 'Mobile' && oldScreenType === 'Desktop') {
+    if (newScreenType === ScreenType.Mobile && oldScreenType === ScreenType.Desktop) {
       this.disableReorderMode();
     }
   }

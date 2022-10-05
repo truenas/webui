@@ -2,7 +2,7 @@ import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -35,18 +35,12 @@ export class WidgetControllerComponent extends WidgetComponent {
   title: string = this.translate.instant('Dashboard');
   subtitle: string = this.translate.instant('Navigation');
   configurable = false;
-  screenType = 'Desktop'; // Desktop || Mobile
 
   constructor(
     public translate: TranslateService,
     public mediaObserver: MediaObserver,
   ) {
     super(translate);
-
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
-      this.screenType = st;
-    });
   }
 
   nameFromIdentifier(identifier: string): string {

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
+import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
@@ -103,6 +104,16 @@ export const dataProtectionRoutes: Routes = [{
         data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },
         component: ResilverConfigComponent,
       }],
+    }, {
+      path: 'vmware-snapshots',
+      data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
+      children: [
+        {
+          path: '',
+          component: VmwareSnapshotListComponent,
+          data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
+        },
+      ],
     },
   ],
 }];

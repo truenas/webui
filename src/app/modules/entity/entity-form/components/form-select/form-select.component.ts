@@ -49,8 +49,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     // Change the value of null to 'null_value' string
     this.config.options = this.config.options.map((option) => {
       if (!option.hasOwnProperty('value')) {
-        // TODO: Check if this support is actually needed.
-        option = { label: (option as any), value: option };
+        // TODO: Extra support for just having a string array
+        // TODO: Do not use.
+        option = { label: (option as unknown as string), value: option };
       }
 
       option.value = this.entityUtils.changeNull2String(option.value);

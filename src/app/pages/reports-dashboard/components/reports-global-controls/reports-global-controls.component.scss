@@ -2,14 +2,29 @@
   color: var(--fg2);
 }
 
-.config-form-button {
-  margin-left: 8px;
-}
-
-.disks-selects {
-  margin-right: 10px;
-}
-
 .toolbar-control {
-  margin-right: 10px;
+  ::ng-deep .form-element {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+    justify-content: center;
+
+    mat-label {
+      line-height: 24px;
+    }
+
+    .mat-form-field-flex {
+      align-items: center;
+    }
+
+    .mat-form-field-infix {
+      align-items: center;
+      display: flex;
+      width: 120px;
+    }
+  }
+}
+
+.reports-dash-global-controls {
+  gap: 12px;
 }

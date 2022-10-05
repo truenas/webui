@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
   filter, switchMap, tap, map,
 } from 'rxjs/operators';
@@ -27,6 +28,7 @@ export class SnapshotDetailsRowComponent implements OnInit {
   @Output() update = new EventEmitter<void>();
 
   isLoading = true;
+  isHold: boolean;
   snapshotInfo: ZfsSnapshot;
 
   constructor(
@@ -43,12 +45,13 @@ export class SnapshotDetailsRowComponent implements OnInit {
   }
 
   getSnapshotInfo(): void {
-    this.ws.call('zfs.snapshot.query', [[['id', '=', this.snapshot.name]], { extra: { retention: true } }]).pipe(
+    this.ws.call('zfs.snapshot.query', [[['id', '=', this.snapshot.name]], { extra: { retention: true, holds: true } }]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),
     ).subscribe({
       next: (snapshot) => {
         this.snapshotInfo = snapshot;
+        this.isHold = !_.isEmpty(snapshot.holds);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -58,6 +61,16 @@ export class SnapshotDetailsRowComponent implements OnInit {
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     });
+  }
+
+  doHold(): void {
+    if (!this.isHold) {
+      this.ws.call('zfs.snapshot.hold', [this.snapshotInfo.name])
+        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = true);
+    } else {
+      this.ws.call('zfs.snapshot.release', [this.snapshotInfo.name])
+        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = false);
+    }
   }
 
   doClone(snapshot: ZfsSnapshot): void {

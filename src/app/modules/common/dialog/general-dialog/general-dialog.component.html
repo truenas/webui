@@ -16,13 +16,6 @@
   </div>
 </div>
 <div mat-dialog-actions>
-  <mat-checkbox
-    color="primary"
-    *ngIf="conf.confirmCheckbox"
-    (change)="confirmed = !confirmed"
-  >
-    {{ conf.confirmCheckboxMsg || 'Confirm' | translate }}
-  </mat-checkbox>
   <span fxFlex></span>
   <button
     *ngIf="!conf.hideCancel"
@@ -35,7 +28,6 @@
   <button
     mat-button
     class="mat-button mat-primary"
-    [disabled]="isDisabled()"
     (click)="dialogRef.close(true)"
   >
     {{ conf.confirmBtnMsg || 'Close' | translate }}

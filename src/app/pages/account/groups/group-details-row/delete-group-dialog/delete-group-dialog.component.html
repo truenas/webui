@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{ 'Delete Group' | translate }}</h1>
+<div mat-dialog-content>
+  <p [innerHtml]="deleteMessage | translate: { name: group.group }" class="message"></p>
+
+  <ix-checkbox
+    *ngIf="group.users.length"
+    class="delete-checkbox"
+    [formControl]="deleteUsersCheckbox"
+    [label]="deleteUsersMessage"
+  ></ix-checkbox>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button mat-button [matDialogClose]="false">{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="primary"
+    (click)="onDelete()"
+  >
+    {{ 'Delete' | translate }}
+  </button>
+</div>

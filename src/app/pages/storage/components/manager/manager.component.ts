@@ -197,7 +197,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
       saveButtonText: helptext.manager_duplicate_button,
       customSubmit: (entityDialog: EntityDialogComponent) => {
-        const value = entityDialog.formValue;
+        const value = entityDialog.formValue as { vdevs: number };
         const origVdevs = this.vdevComponents.toArray();
         // handle case of extending with zero vdevs filled out
         if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {

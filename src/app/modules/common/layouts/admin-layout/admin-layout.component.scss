@@ -1,5 +1,13 @@
 @import 'cssvars';
 
+.mat-sidenav-container {
+  height: 100vh;
+}
+
+.mat-sidenav {
+  min-width: 240px;
+}
+
 .alert-sidenav {
   max-width: 30%;
   min-width: 350px;

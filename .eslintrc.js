@@ -140,7 +140,6 @@ module.exports = {
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
         "@typescript-eslint/no-shadow": "off",
-        "no-case-declarations": "off",
         "no-multi-str": "off",
         "no-mixed-operators": ["error", {
           groups: [
@@ -241,7 +240,7 @@ module.exports = {
         "rxjs-angular/prefer-takeuntil": ["error", {
           "alias": ["untilDestroyed"],
           "checkComplete": false,
-          "checkDecorators": ["Component"], // default
+          "checkDecorators": ["Component"],
           "checkDestroy": false
         }],
         "rxjs/finnish": ["error", {

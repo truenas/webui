@@ -2,7 +2,7 @@
   class="widget"
   [ngClass]="{
     'double-height': true,
-    xs: screenType === 'Mobile',
+    'xs': screenType === ScreenType.Mobile,
     'generic-hardware': !productImage,
     'ix-hardware': productImage
   }"
@@ -62,7 +62,7 @@
             >
               <!-- Mobile Only: Exit Widget -->
               <button
-                *ngIf="screenType === 'Mobile'"
+                *ngIf="screenType === ScreenType.Mobile"
                 class="mat-card-title-text primary-nav"
                 mat-icon-button
                 color="default"
@@ -189,7 +189,7 @@
               </div>
 
               <div *ngIf="!data && !isHa" class="loader">
-                <mat-spinner [diameter]="80" class="spinner"></mat-spinner>
+                <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
               </div>
 
               <div *ngIf="data" class="data-container" fxFlex>

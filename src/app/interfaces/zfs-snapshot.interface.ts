@@ -11,6 +11,9 @@ export interface ZfsSnapshot {
     [property: string]: ZfsProperty<string | number | boolean | ApiTimestamp>;
     creation: ZfsProperty<ApiTimestamp>;
   };
+  holds?: {
+    truenas?: number;
+  };
   retention?: {
     datetime: ApiTimestamp;
     source: ZfsSnapshotRetentionSource;
