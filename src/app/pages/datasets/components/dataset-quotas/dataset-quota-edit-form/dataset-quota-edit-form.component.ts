@@ -44,12 +44,12 @@ export class DatasetQuotaEditFormComponent {
       : this.getGroupDataQuotaLabel();
   }
 
-  getUserDataQuotaLabel(): string {
+  private getUserDataQuotaLabel(): string {
     return this.translate.instant(helptext.users.data_quota.placeholder)
     + this.translate.instant(globalHelptext.human_readable.suggestion_label);
   }
 
-  getGroupDataQuotaLabel(): string {
+  private getGroupDataQuotaLabel(): string {
     return this.translate.instant(helptext.groups.data_quota.placeholder)
     + this.translate.instant(globalHelptext.human_readable.suggestion_label);
   }
@@ -65,13 +65,13 @@ export class DatasetQuotaEditFormComponent {
       : this.getGroupDataQuotaTooltip();
   }
 
-  getUserDataQuotaTooltip(): string {
+  private getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptext.users.data_quota.tooltip)
       + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
-  getGroupDataQuotaTooltip(): string {
+  private getGroupDataQuotaTooltip(): string {
     return this.translate.instant(helptext.groups.data_quota.tooltip)
       + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
@@ -106,7 +106,7 @@ export class DatasetQuotaEditFormComponent {
     this.updateForm(id);
   }
 
-  updateForm(id: number): void {
+  private updateForm(id: number): void {
     this.isFormLoading = true;
     this.getQuota(id).pipe(
       tap((quotas) => {
@@ -153,7 +153,7 @@ export class DatasetQuotaEditFormComponent {
     this.submit(values, payload);
   }
 
-  submit(values: typeof this.form.value, payload: SetDatasetQuota[]): void {
+  private submit(values: typeof this.form.value, payload: SetDatasetQuota[]): void {
     let canSubmit$ = of(true);
     if (this.isUnsettingQuota(values)) {
       canSubmit$ = this.getConfirmation(values.name);
@@ -178,11 +178,11 @@ export class DatasetQuotaEditFormComponent {
     });
   }
 
-  isUnsettingQuota(values: typeof this.form.value): boolean {
+  private isUnsettingQuota(values: typeof this.form.value): boolean {
     return values.data_quota === 0 && values.obj_quota === 0;
   }
 
-  getConfirmation(name: string): Observable<boolean> {
+  private getConfirmation(name: string): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.quotaType === DatasetQuotaType.User
         ? this.translate.instant('Delete User Quota')
