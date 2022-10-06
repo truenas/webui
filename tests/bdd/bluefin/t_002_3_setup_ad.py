@@ -16,6 +16,7 @@ from function import (
 
 def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name):
     """test_wipe_one_disk"""
+
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
 
@@ -28,7 +29,6 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
   
 
     # on the Network Global Configuration page, change the first nameserver to "{nameserver1}"
-    time.sleep(2)
     #assert wait_on_element(driver, 7, '//h4[contains(.,"Hostname and Domain")]')
     #assert wait_on_element(driver, 5, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
     #driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
@@ -119,15 +119,22 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
 
 
     # after open the Storage page and click on the system 3 dots button, select Add Dataset.
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Storage")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
+
     # This will wait for the spinner to go away and looks like this xpath work for all spinners.
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"system")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"system")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
+    assert wait_on_element(driver, 5, '//ix-dashboard-pool//div//div//h2[contains(.,"system")]//ancestor::ix-dashboard-pool//div//div//ix-pool-usage-card//mat-card//mat-card-header//a[contains(.,"Manage Datasets")]', 'clickable')
+    driver.find_element_by_xpath('//ix-dashboard-pool//div//div//h2[contains(.,"system")]//ancestor::ix-dashboard-pool//div//div//ix-pool-usage-card//mat-card//mat-card-header//a[contains(.,"Manage Datasets")]').click()
+
+    if not is_element_present(driver, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"system")]'):
+        #assert wait_on_element(driver, 7, '//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"system")]', 'clickable')
+        driver.find_element_by_xpath('//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"system")]').click()
+    assert wait_on_element( driver, 7, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"system")]') 
+
+    assert wait_on_element(driver, 4, '//span[contains(text(),"Add Dataset")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Add Dataset")]').click()
 
 
     # on the Add Dataset page, input the dataset name "{dataset_name}"
@@ -148,15 +155,19 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
 
 
     # click on the "{dataset_name}" 3 dots button, select Edit Permissions
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
-    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
+    if not is_element_present(driver, f'//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]'):
+        assert wait_on_element(driver, 7, f'//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]', 'clickable')
+        driver.find_element_by_xpath(f'//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]').click()
+    assert wait_on_element( driver, 7, f'//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]') 
+    
+    # Scroll to permissions
+    element = driver.find_element_by_xpath('//h3[contains(text(),"Permissions")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+
+    # click on edit
+    assert wait_on_element(driver, 5, '//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]').click()
 
 
     # The Edit ACL page should open, select OPEN for Default ACL Option, select "{group_name}" for Group name, check the Apply Group
@@ -170,14 +181,22 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Dataset Permissions")]')
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]')
-    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
+    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
+
+    if not is_element_present(driver, f'//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]'):
+        assert wait_on_element(driver, 7, f'//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]', 'clickable')
+        driver.find_element_by_xpath(f'//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]').click()
+    assert wait_on_element( driver, 7, f'//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"{dataset_name}")]') 
+    
+
+    # Scroll to permissions
+    element = driver.find_element_by_xpath('//h3[contains(text(),"Permissions")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+
+    # click on edit
+    assert wait_on_element(driver, 5, '//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]').click()
 
 
 
@@ -204,9 +223,5 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+
     assert wait_on_element(driver, 7, f'//div[text()="Group - {group_name}"]')

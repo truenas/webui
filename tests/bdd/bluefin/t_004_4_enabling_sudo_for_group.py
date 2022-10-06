@@ -73,7 +73,7 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     global sudo_results
     cmd = 'ls /'
     sudo_results = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
-    assert "account validation failure" in sudo_results, str(sudo_results)
+    assert "Sorry, user qetestuser is not allowed" in sudo_results, str(sudo_results)
 
 
     # click on Credentials and Local Groups

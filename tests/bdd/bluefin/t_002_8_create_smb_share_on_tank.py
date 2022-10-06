@@ -16,7 +16,10 @@ from function import (
 
 def test_create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password):
     """test_create_smb_share_on_tank"""
-
+#    if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
+#        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
+#        driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+#    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
 
    # click on sharing and click add
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')

@@ -16,21 +16,22 @@ def test_create_pool_for_system_dataset(driver):
     """test_wipe_one_disk"""
     """click on the Storage on the side menu."""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
+
+    assert wait_on_element(driver, 10, '//span[contains(.,"Create Pool")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Create Pool")]').click()
 
 
-    # the Pool Manager appears, enter the system for pool name
+    # the Pool Manager appears, enter the tank for pool name
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
     assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('system')
 
 
-    # click sdc checkbox, press the right arrow under Data VDevs
-    assert wait_on_element(driver, 7, '//datatable-body[contains(.,"sd")]//mat-checkbox[1]', 'clickable')
+    # click sdb checkbox, press the right arrow under Data VDevs
+    assert wait_on_element(driver, 5, '//datatable-body[contains(.,"sd")]//mat-checkbox[1]', 'clickable')
     driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
@@ -44,13 +45,13 @@ def test_create_pool_for_system_dataset(driver):
     driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//button[@id="pool-manager__create-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="pool-manager__create-button"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(.,"Create")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Create")]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Warning")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@name="confirm_checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+    assert wait_on_element(driver, 7, '//span[contains(.,"Create Pool")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Create Pool")]').click()
 
 
     # Create pool should appear while pool is being created
@@ -59,9 +60,8 @@ def test_create_pool_for_system_dataset(driver):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
 
-    # the pools system should appear in the list
-    assert wait_on_element(driver, 7, '//div[contains(.,"system")]')
-
+    # you should be returned to the list of pools and tank should appear in the list
+    assert wait_on_element(driver, 7, '//h2[contains(.,"system")]')
 
     # navigate to System Setting and click Advanced to open the Advanced page should open
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')

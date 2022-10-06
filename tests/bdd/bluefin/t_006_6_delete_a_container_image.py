@@ -57,4 +57,3 @@ def test_delete_a_container_image(driver):
    
     # confirm image is deleted
     assert wait_on_element_disappear(driver, 15, '//tr[contains(.,"minio")]')
- 

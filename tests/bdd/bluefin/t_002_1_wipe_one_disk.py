@@ -16,17 +16,14 @@ def test_wipe_one_disk(driver):
     """test_wipe_one_disk"""
     """click on the Storage on the side menu."""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
 
     
     # 'the pools page appears click disk and select disks
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 10, '//button[contains(.,"Disks")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Disks")]').click()
-    assert wait_on_element(driver, 10, '//a[@ix-auto="button__STORAGE_DISKS"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button__STORAGE_DISKS"]').click()
+    assert wait_on_element(driver, 10, '//a//span[contains(.,"Disks")]', 'clickable')
+    driver.find_element_by_xpath('//a//span[contains(.,"Disks")]').click()
 
 
     # the disk manager appears, expand sdc and click wipe
@@ -36,11 +33,11 @@ def test_wipe_one_disk(driver):
     disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
     for disk_element in disk_elements:
         disk = disk_element.text
-        if is_element_present(driver, f'//tr[contains(.,"{disk}")]//div[text()="N/A"]'):
+        if is_element_present(driver, f'//tr[@id="{disk}"]//td//div[contains(text(),"N/A")]'):
             disk_list.append(disk)
     for disk in disk_list:
-        assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
-        driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
+        assert wait_on_element(driver, 7, f'//tr[@id="{disk}"]/td[2]', 'clickable')
+        driver.find_element_by_xpath(f'//tr[@id="{disk}"]/td[2]').click()
         assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
         assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')

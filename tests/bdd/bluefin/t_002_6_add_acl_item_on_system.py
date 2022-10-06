@@ -16,23 +16,25 @@ from function import (
 def test_add_acl_item_on_system(driver, input, user):
     """test_add_acl_item_on_system"""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated)")]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated)")]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
 
 
-   # click on my_acl_dataset
-    assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
+   # click Storage on the side menu and click on the "my_acl_dataset" 3 dots button, select Edit Permissions
+    assert wait_on_element(driver, 5, '//ix-dashboard-pool//div//div//h2[contains(.,"system")]//ancestor::ix-dashboard-pool//div//div//ix-pool-usage-card//mat-card//mat-card-header//a[contains(.,"Manage Datasets")]', 'clickable')
+    driver.find_element_by_xpath('//ix-dashboard-pool//div//div//h2[contains(.,"system")]//ancestor::ix-dashboard-pool//div//div//ix-pool-usage-card//mat-card//mat-card-header//a[contains(.,"Manage Datasets")]').click()
+    
+    if not is_element_present(driver, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]'):
+        assert wait_on_element(driver, 7, '//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]', 'clickable')
+        driver.find_element_by_xpath('//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]').click()
+    assert wait_on_element( driver, 7, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]') 
 
+    assert wait_on_element(driver, 5, '//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]').click()
 
     # the Edit ACL page should open
     assert wait_on_element(driver, 10, '//mat-card-title[contains(text(),"ACL Editor")]')
-
 
     # click on Add ACL Item, click on select User, User input should appear, enter "{input}" and select "{user}"
     assert wait_on_element(driver, 5, '//span[contains(text(),"Add Item")]', 'clickable')
@@ -57,17 +59,19 @@ def test_add_acl_item_on_system(driver, input, user):
     driver.find_element_by_xpath('//mat-option[4]//span[contains(text(),"Full Control")]').click()
 
 
-    # click the Save button, return to the Pools page, click on the "myk_acl_dataset" 3 dots button, select Edit Permissions
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save Access Control List")]', 'clickable')
+    # click the Save button, return to the Pools page, click on the "my_acl_dataset" 3 dots button, select Edit Permissions
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
+    assert wait_on_element_disappear(driver, 15, '//h1[contains(text(),"Updating Dataset ACL")]')
+    assert wait_on_element(driver, 10, f'//span[contains(text(),"my_acl_dataset")]')
     time.sleep(1)
-    assert wait_on_element(driver, 7, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 7, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
 
-    # the Edit ACL page should open, verify the new ACL item for user ericbsd exists
+
+    if not is_element_present(driver, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]'):
+        assert wait_on_element(driver, 7, '//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]', 'clickable')
+        driver.find_element_by_xpath('//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]').click()
+    assert wait_on_element( driver, 7, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"my_acl_dataset")]') 
+
+    #verify the new ACL item for user ericbsd exists
     assert wait_on_element(driver, 7, '//div[contains(text(),"User - ericbsd")]')
     time.sleep(1)
