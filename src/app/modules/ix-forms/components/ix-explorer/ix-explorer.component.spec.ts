@@ -5,6 +5,7 @@ import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { RootPath } from 'app/enums/root-path.enum';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
@@ -59,8 +60,8 @@ describe('IxExplorerComponent', () => {
       expect(tree.nodes).toEqual([
         {
           hasChildren: true,
-          name: '/mnt',
-          path: '/mnt',
+          name: RootPath.Mnt as string,
+          path: RootPath.Mnt as string,
           type: ExplorerNodeType.Directory,
         },
       ]);
@@ -77,9 +78,9 @@ describe('IxExplorerComponent', () => {
 
     it('calls nodeProvider when getChildren from TreeComponent options is called', () => {
       const tree = spectator.query(TreeComponent);
-      tree.options.getChildren({ path: '/mnt' });
+      tree.options.getChildren({ path: RootPath.Mnt as string });
 
-      expect(fakeNodeProvider).toHaveBeenCalledWith({ path: '/mnt' });
+      expect(fakeNodeProvider).toHaveBeenCalledWith({ path: RootPath.Mnt as string });
     });
   });
 

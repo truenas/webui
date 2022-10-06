@@ -6,6 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
+import { RootPath } from 'app/enums/root-path.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -81,7 +82,7 @@ describe('ExtentFormComponent', () => {
       'LUN RPM': 'SSD',
       'Logical Block Size': '512',
       Name: '',
-      'Path to the Extent': '/mnt',
+      'Path to the Extent': RootPath.Mnt as string,
       'Read-only': false,
       Serial: '',
       'Xen initiator compat mode': false,

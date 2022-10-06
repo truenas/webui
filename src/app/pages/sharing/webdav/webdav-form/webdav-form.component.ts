@@ -10,6 +10,7 @@ import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
+import { RootPath } from 'app/enums/root-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
@@ -39,7 +40,7 @@ export class WebdavFormComponent {
   form = this.fb.group({
     name: ['', Validators.required],
     comment: [''],
-    path: ['/mnt', Validators.required],
+    path: [RootPath.Mnt as string, Validators.required],
     ro: [false],
     perm: [true],
     enabled: [true],
