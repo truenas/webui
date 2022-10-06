@@ -120,8 +120,8 @@
 
     <div
       class="details-container"
-      [class.details-container-mobile]="showMobileDetails"
       ixDetailsHeight="rightside-content-hold"
+      [class.details-container-mobile]="showMobileDetails"
     >
       <ix-fake-progress-bar
         *ngIf="showMobileDetails"
@@ -132,7 +132,6 @@
         *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
         [systemDataset]="systemDataset"
-        (closeMobileDetails)="closeMobileDetails()"
       ></ix-dataset-details-panel>
     </div>
   </div>
