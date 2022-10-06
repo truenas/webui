@@ -434,6 +434,7 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue({ a: 1 })).toEqual({ a: 1 });
       expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
+      expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null })).toEqual({ a: { d: 'test' } });
     });
   });
 
