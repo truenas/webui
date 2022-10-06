@@ -17,6 +17,8 @@
   "Delete user primary group `{name}`": "",
   "Download Authorized Keys": "",
   "Edit VM Snapshot": "",
+  "Enter vm name to continue.": "",
+  "Enter {name} below to confirm.": "",
   "Exported": "",
   "Exported Pool": "",
   "Fetch DataStores": "",
