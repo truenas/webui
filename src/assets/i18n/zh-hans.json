@@ -379,6 +379,7 @@
   "Total Down": "",
   "Total Snapshots": "",
   "Total ZFS Errors": "",
+  "TrueNAS software versions do not match between storage controllers.": "",
   "TrueNAS {product} is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\"> Open Source</a> software, which is provided as-is with no warranty.": "",
   "Trust Guest Filters": "",
   "Unassigned Disks": "",
