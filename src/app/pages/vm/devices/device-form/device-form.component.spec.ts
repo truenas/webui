@@ -53,8 +53,12 @@ describe('DeviceFormComponent', () => {
           '1024x768': '1024x768',
         }),
         mockCall('vm.device.usb_passthrough_choices', {
-          usb_device_1: {} as VmUsbPassthroughDeviceChoice,
-          usb_device_2: {} as VmUsbPassthroughDeviceChoice,
+          usb_device_1: {
+            capability: { product: 'prod_1', vendor: 'vendor_1' },
+          } as VmUsbPassthroughDeviceChoice,
+          usb_device_2: {
+            capability: { product: 'prod_2', vendor: 'vendor_2' },
+          } as VmUsbPassthroughDeviceChoice,
         }),
         mockCall('vm.device.passthrough_device_choices', {
           pci_0000_00_1c_0: {} as VmPassthroughDeviceChoice,
@@ -564,7 +568,7 @@ describe('DeviceFormComponent', () => {
         Type: 'USB Passthrough Device',
       });
       await form.fillForm({
-        Device: 'usb_device_2',
+        Device: 'usb_device_2 prod_2 (vendor_2)',
       });
       await saveButton.click();
 
@@ -582,7 +586,7 @@ describe('DeviceFormComponent', () => {
       spectator.component.setDeviceForEdit(existingUsb);
       const values = await form.getValues();
       expect(values).toEqual({
-        Device: 'usb_device_2',
+        Device: 'usb_device_2 prod_2 (vendor_2)',
         'Device Order': '7',
       });
     });
@@ -590,7 +594,7 @@ describe('DeviceFormComponent', () => {
     it('updates an existing USB Passthrough device', async () => {
       spectator.component.setDeviceForEdit(existingUsb);
       await form.fillForm({
-        Device: 'usb_device_1',
+        Device: 'usb_device_1 prod_1 (vendor_1)',
       });
 
       await saveButton.click();
