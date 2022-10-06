@@ -82,4 +82,12 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
   }
+
+  get disabledState(): boolean {
+    return this.isDisabled || !this.options;
+  }
+
+  get loadingState(): boolean {
+    return this.isLoading || !this.options;
+  }
 }
