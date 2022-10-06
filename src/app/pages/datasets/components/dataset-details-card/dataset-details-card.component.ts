@@ -68,7 +68,6 @@ export class DatasetDetailsCardComponent {
       .subscribe(() => {
         this.datasetStore.datasetUpdated();
         this.datasetStore.selectedParentDataset$.pipe(first(), untilDestroyed(this)).subscribe((parent) => {
-          this.datasetStore.selectDatasetById(null);
           this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
         });
       });
