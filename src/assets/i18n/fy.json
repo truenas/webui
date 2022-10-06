@@ -3653,6 +3653,7 @@
   "TrueNAS Controller": "",
   "TrueNAS Help": "",
   "TrueNAS URL": "",
+  "TrueNAS software versions do not match between storage controllers.": "",
   "TrueNAS was unable to reach update servers.": "",
   "TrueNAS {product} is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\"> Open Source</a> software, which is provided as-is with no warranty.": "",
   "Trust Guest Filters": "",
