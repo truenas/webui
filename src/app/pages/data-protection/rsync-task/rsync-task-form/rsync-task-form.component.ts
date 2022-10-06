@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
-import { RootPath } from 'app/enums/root-path.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
@@ -57,7 +57,7 @@ export class RsyncTaskFormComponent implements OnInit {
       (control) => control.parent && this.isModuleMode,
       Validators.required,
     )],
-    remotepath: [RootPath.Mnt as string],
+    remotepath: [mntPath],
     validate_rpath: [true],
     schedule: ['', Validators.required],
     recursive: [true],

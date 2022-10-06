@@ -11,8 +11,8 @@ import { catchError, map } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { RootPath } from 'app/enums/root-path.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
@@ -470,7 +470,7 @@ export class VmWizardComponent implements WizardConfiguration {
           type: 'explorer',
           name: 'iso_path',
           placeholder: helptext.iso_path_placeholder,
-          initial: RootPath.Mnt as string,
+          initial: mntPath,
           tooltip: helptext.iso_path_tooltip,
         },
         {
@@ -484,7 +484,7 @@ export class VmWizardComponent implements WizardConfiguration {
           type: 'explorer',
           name: 'upload_iso_path',
           placeholder: helptext.upload_iso_path_placeholder,
-          initial: RootPath.Mnt as string,
+          initial: mntPath,
           tooltip: helptext.upload_iso_path_tooltip,
           explorerType: ExplorerType.Directory,
           isHidden: true,
@@ -754,7 +754,7 @@ export class VmWizardComponent implements WizardConfiguration {
       });
 
       this.getFormControlFromFieldName('datastore').valueChanges.pipe(untilDestroyed(this)).subscribe((datastore) => {
-        if (datastore !== undefined && datastore !== '' && datastore !== RootPath.Mnt as string) {
+        if (datastore !== undefined && datastore !== '' && datastore !== mntPath) {
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = false;
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = null;
           const volsize = this.storageService.convertHumanStringToNum(this.getFormControlFromFieldName('volsize').value as string);
@@ -777,7 +777,7 @@ export class VmWizardComponent implements WizardConfiguration {
             }
           });
         } else {
-          if (datastore === RootPath.Mnt as string) {
+          if (datastore === mntPath) {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
