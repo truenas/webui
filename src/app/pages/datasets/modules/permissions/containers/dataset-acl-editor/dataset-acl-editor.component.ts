@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
@@ -74,7 +75,7 @@ export class DatasetAclEditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.datasetPath = this.route.snapshot.params['datasetId'];
-    this.fullDatasetPath = `/mnt/${this.datasetPath}`;
+    this.fullDatasetPath = `${mntPath}/${this.datasetPath}`;
     this.store.loadAcl(this.fullDatasetPath);
 
     this.store.state$

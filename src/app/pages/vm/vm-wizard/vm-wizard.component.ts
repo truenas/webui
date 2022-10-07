@@ -757,7 +757,7 @@ export class VmWizardComponent implements WizardConfiguration {
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = false;
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = null;
           const volsize = this.storageService.convertHumanStringToNum(this.getFormControlFromFieldName('volsize').value as string);
-          this.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).pipe(untilDestroyed(this)).subscribe((stat) => {
+          this.ws.call('filesystem.statfs', [`${mntPath}/${datastore}`]).pipe(untilDestroyed(this)).subscribe((stat) => {
             this.statSize = stat;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
@@ -1009,7 +1009,7 @@ export class VmWizardComponent implements WizardConfiguration {
     const vmPayload: any = {};
 
     if (value.datastore) {
-      value.datastore = value.datastore.replace('/mnt/', '');
+      value.datastore = value.datastore.replace(`${mntPath}/`, '');
       hdd = value.datastore + '/' + value.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
     }
 

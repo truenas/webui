@@ -1,12 +1,10 @@
-import {
-  AfterViewInit, Component, ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
@@ -376,7 +374,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           isActionVisible: (actionId: string, row: SmbShare) => {
             switch (actionId) {
               case 'edit_acl': {
-                const rowName = row.path.replace('/mnt/', '');
+                const rowName = row.path.replace(`${mntPath}/`, '');
                 return rowName.includes('/');
               }
               default:
@@ -413,18 +411,13 @@ export class SharesDashboardComponent implements AfterViewInit {
                 name: 'edit_acl',
                 matTooltip: helptextSharingSmb.action_edit_acl,
                 onClick: (row: SmbShare) => {
-                  const rowName = row.path.replace('/mnt/', '');
-                  const poolName = rowName.split('/')[0];
-                  const datasetId = rowName;
-                  const productType = this.systemGeneralService.getProductType();
+                  const datasetId = row.path.replace(`${mntPath}/`, '');
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
                       if (isLocked) {
                         this.lockedPathDialog(row.path);
-                      } else if (productType.includes(ProductType.Scale)) {
-                        this.router.navigate(['/', 'storage', 'id', poolName, 'dataset', 'posix-acl', datasetId]);
                       } else {
-                        this.router.navigate(['/', 'storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]);
+                        this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
                       }
                     },
                   );

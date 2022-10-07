@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -53,7 +54,7 @@ describe('CloudsyncRestoreDialogComponent', () => {
     await form.fillForm({
       Description: 'Reverse task',
       'Transfer Mode': 'SYNC',
-      'Directory/Files': '/mnt/dir',
+      'Directory/Files': `${mntPath}/dir`,
     });
 
     const save = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
@@ -63,7 +64,7 @@ describe('CloudsyncRestoreDialogComponent', () => {
       23,
       {
         description: 'Reverse task',
-        path: '/mnt/dir',
+        path: `${mntPath}/dir`,
         transfer_mode: TransferMode.Sync,
       },
     ]);

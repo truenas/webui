@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, throwError } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -47,7 +48,7 @@ describe('DeleteDatasetDialogComponent', () => {
           {
             type: 'NFS Share',
             attachments: [
-              '/mnt/lab1/test, /mnt/lab1/t/test',
+              `${mntPath}/lab1/test, ${mntPath}/lab1/t/test`,
             ],
           },
         ] as DatasetAttachment[]),
@@ -105,8 +106,8 @@ describe('DeleteDatasetDialogComponent', () => {
     });
     const nfsAttachments = services[1].querySelectorAll('li');
     expect(nfsAttachments).toHaveLength(2);
-    expect(nfsAttachments[0]).toHaveText('/mnt/lab1/test');
-    expect(nfsAttachments[1]).toHaveText('/mnt/lab1/t/test');
+    expect(nfsAttachments[0]).toHaveText(`${mntPath}/lab1/test`);
+    expect(nfsAttachments[1]).toHaveText(`${mntPath}/lab1/t/test`);
   });
 
   it('loads and shows known processes that use dataset', () => {

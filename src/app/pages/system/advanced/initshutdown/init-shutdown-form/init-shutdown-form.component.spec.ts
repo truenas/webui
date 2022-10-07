@@ -9,6 +9,7 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -87,7 +88,7 @@ describe('InitShutdownFormComponent', () => {
         Enabled: true,
       });
       await form.fillForm({
-        Script: '/mnt/new.sh',
+        Script: `${mntPath}/new.sh`,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -96,7 +97,7 @@ describe('InitShutdownFormComponent', () => {
       expect(ws.call).toHaveBeenCalledWith('initshutdownscript.create', [{
         comment: 'New 2',
         enabled: true,
-        script: '/mnt/new.sh',
+        script: `${mntPath}/new.sh`,
         timeout: 10,
         type: InitShutdownScriptType.Script,
         when: InitShutdownScriptWhen.Shutdown,
@@ -111,7 +112,7 @@ describe('InitShutdownFormComponent', () => {
         comment: 'Existing script',
         enabled: true,
         type: InitShutdownScriptType.Script,
-        script: '/mnt/existing.sh',
+        script: `${mntPath}/existing.sh`,
         when: InitShutdownScriptWhen.PostInit,
         timeout: 45,
       } as InitShutdownScript);
@@ -125,7 +126,7 @@ describe('InitShutdownFormComponent', () => {
         Description: 'Existing script',
         Enabled: true,
         Type: 'Script',
-        Script: '/mnt/existing.sh',
+        Script: `${mntPath}/existing.sh`,
         Timeout: '45',
         When: 'Post Init',
       });

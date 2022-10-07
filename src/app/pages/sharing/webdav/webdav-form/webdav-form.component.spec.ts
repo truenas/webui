@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
@@ -29,7 +30,7 @@ describe('WebdavFormComponent', () => {
     id: 1,
     locked: false,
     name: 'test',
-    path: '/mnt/test',
+    path: `${mntPath}/test`,
     perm: false,
     ro: true,
   } as WebDavShare;
@@ -77,7 +78,7 @@ describe('WebdavFormComponent', () => {
     expect(values).toEqual({
       Name: 'test',
       Description: 'This is test',
-      Path: '/mnt/test',
+      Path: `${mntPath}/test`,
       'Read Only': true,
       'Change User & Group Ownership': false,
       Enabled: true,
@@ -106,7 +107,7 @@ describe('WebdavFormComponent', () => {
       comment: 'This is edit test',
       enabled: true,
       name: 'test',
-      path: '/mnt/test',
+      path: `${mntPath}/test`,
       perm: true,
       ro: false,
     }]);
@@ -116,7 +117,7 @@ describe('WebdavFormComponent', () => {
     await form.fillForm({
       Name: 'test01',
       Description: 'This is test01',
-      Path: '/mnt/test',
+      Path: `${mntPath}/test`,
       'Read Only': false,
       'Change User & Group Ownership': false,
       Enabled: true,
@@ -129,7 +130,7 @@ describe('WebdavFormComponent', () => {
       comment: 'This is test01',
       enabled: true,
       name: 'test01',
-      path: '/mnt/test',
+      path: `${mntPath}/test`,
       perm: false,
       ro: false,
     }]);

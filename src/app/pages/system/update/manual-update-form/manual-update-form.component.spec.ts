@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -92,7 +93,7 @@ describe('ManualUpdateFormComponent', () => {
     const optionLabels = await locationSelect.getOptionLabels();
     expect(optionLabels).toEqual([
       'Memory device',
-      '/mnt/pool2',
+      `${mntPath}/pool2`,
     ]);
   });
 

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/services/components/service-s3';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3-config.interface';
@@ -34,7 +35,7 @@ describe('ServiceS3Component', () => {
           bindport: 9000,
           access_key: 'AAAABBBB1',
           secret_key: '12345678',
-          storage_path: '/mnt/s3/',
+          storage_path: `${mntPath}/s3/`,
           browser: true,
           console_bindport: 9001,
           certificate: 2,
@@ -82,7 +83,7 @@ describe('ServiceS3Component', () => {
       'Enable Browser': true,
       'IP Address': '0.0.0.0',
       Port: '9000',
-      Disk: '/mnt/s3/',
+      Disk: `${mntPath}/s3/`,
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
       'Console Port': '9001',
@@ -95,7 +96,7 @@ describe('ServiceS3Component', () => {
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Disk: '/mnt/new',
+      Disk: `${mntPath}/new`,
     });
 
     expect(dialog.confirm).toHaveBeenCalledWith({
@@ -111,7 +112,7 @@ describe('ServiceS3Component', () => {
       Port: 8000,
       'Access Key': 'SECRETKEY',
       'Secret Key': '12345678',
-      Disk: '/mnt/new',
+      Disk: `${mntPath}/new`,
       'Enable Browser': false,
       Certificate: 'Default',
       'Console Port': 9001,
@@ -128,7 +129,7 @@ describe('ServiceS3Component', () => {
       browser: false,
       certificate: 1,
       secret_key: '12345678',
-      storage_path: '/mnt/new',
+      storage_path: `${mntPath}/new`,
       console_bindport: 9001,
       tls_server_uri: 'test',
     }]);

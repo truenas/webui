@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -93,8 +93,7 @@ export class SmbListComponent implements EntityTableConfig {
   }
 
   getActions(row: SmbShare): EntityTableAction[] {
-    const rowName = row.path.replace('/mnt/', '');
-    const poolName = rowName.split('/')[0];
+    const rowName = row.path.replace(`${mntPath}/`, '');
     const optionDisabled = !rowName.includes('/');
     return [
       {
@@ -141,14 +140,8 @@ export class SmbListComponent implements EntityTableConfig {
             next: (isLocked) => {
               if (isLocked) {
                 this.lockedPathDialog(row.path);
-              } else if (this.productType.includes(ProductType.Scale)) {
-                this.router.navigate(
-                  ['/'].concat(['storage', 'id', poolName, 'dataset', 'posix-acl', datasetId]),
-                );
               } else {
-                this.router.navigate(
-                  ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]),
-                );
+                this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
               }
             },
             error: (err) => {

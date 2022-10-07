@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -78,7 +79,7 @@ describe('SelectPresetModalComponent', () => {
           provide: MAT_DIALOG_DATA,
           useValue: {
             allowCustom: true,
-            datasetPath: '/mnt/pool/dataset',
+            datasetPath: `${mntPath}/pool/dataset`,
           } as SelectPresetModalConfig,
         },
       ],
@@ -96,7 +97,7 @@ describe('SelectPresetModalComponent', () => {
         ensure_builtins: true,
         resolve_names: true,
       },
-      path: '/mnt/pool/dataset',
+      path: `${mntPath}/pool/dataset`,
     }]);
     expect(await presetSelect.getOptionLabels()).toEqual(['POSIX_HOME', 'POSIX_OFFICE']);
   });

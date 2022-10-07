@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -17,7 +18,7 @@ describe('ServiceFtpComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const existingFtpConfig = {
-    anonpath: '/mnt/x',
+    anonpath: `${mntPath}/x`,
     anonuserbw: 3145728,
     anonuserdlbw: 4194304,
     banner: 'Welcome',
@@ -128,7 +129,7 @@ describe('ServiceFtpComponent', () => {
       'Always Chroot': true,
       'Allow Root Login': true,
       'Allow Anonymous Login': true,
-      Path: '/mnt/x',
+      Path: `${mntPath}/x`,
       'Allow Local User Login': true,
       'Require IDENT Authentication': true,
       'File Permissions': '077',

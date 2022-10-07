@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
@@ -34,7 +35,7 @@ describe('DatasetDetailsPanelComponent', () => {
     id: 'root/parent/child',
     pool: 'my-pool',
     name: 'root/parent/child',
-    mountpoint: '/mnt/root/parent/child',
+    mountpoint: `${mntPath}/root/parent/child`,
     type: DatasetType.Filesystem,
     encrypted: true,
   } as DatasetDetails;

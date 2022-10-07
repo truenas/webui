@@ -9,6 +9,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -37,7 +38,7 @@ describe('PermissionsCardComponent', () => {
   const dataset = {
     id: 'testpool/dataset',
     name: 'testpool/dataset',
-    mountpoint: '/mnt/testpool/dataset',
+    mountpoint: `${mntPath}/testpool/dataset`,
     pool: 'testpool',
   } as DatasetDetails;
 
@@ -72,8 +73,8 @@ describe('PermissionsCardComponent', () => {
   it('loads stat and acl for dataset provided in Input', () => {
     const websocket = spectator.inject(WebSocketService);
 
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', false, true]);
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [`${mntPath}/testpool/dataset`]);
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', [`${mntPath}/testpool/dataset`, false, true]);
   });
 
   it('shows dataset ownership information', () => {
@@ -99,7 +100,7 @@ describe('PermissionsCardComponent', () => {
 
     spectator.setInput('dataset', {
       ...dataset,
-      mountpoint: '/mnt/test/posix',
+      mountpoint: `${mntPath}/test/posix`,
     });
 
     const permissionsComponent = spectator.query(ViewPosixPermissionsComponent);
@@ -117,7 +118,7 @@ describe('PermissionsCardComponent', () => {
 
     spectator.setInput('dataset', {
       ...dataset,
-      mountpoint: '/mnt/test/nfs',
+      mountpoint: `${mntPath}/test/nfs`,
     });
     spectator.tick();
     spectator.detectChanges();
@@ -138,7 +139,7 @@ describe('PermissionsCardComponent', () => {
   it('does not show edit icon when dataset is root', () => {
     spectator.setInput('dataset', {
       ...dataset,
-      mountpoint: '/mnt/root',
+      mountpoint: `${mntPath}/root`,
     } as DatasetDetails);
 
     expect(spectator.query(byTitle('Edit permissions'))).not.toExist();

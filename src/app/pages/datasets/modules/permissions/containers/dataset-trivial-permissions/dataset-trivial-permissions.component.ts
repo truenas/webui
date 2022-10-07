@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -91,7 +92,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.datasetId = this.activatedRoute.snapshot.params['datasetId'];
-    this.datasetPath = '/mnt/' + this.datasetId;
+    this.datasetPath = `${mntPath}/${this.datasetId}`;
 
     this.loadPermissionsInformation();
     this.setRecursiveWarning();

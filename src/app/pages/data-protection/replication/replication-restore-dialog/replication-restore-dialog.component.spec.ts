@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -47,7 +48,7 @@ describe('ReplicationRestoreDialogComponent', () => {
 
     await form.fillForm({
       Name: 'Reverse task',
-      Destination: '/mnt/dataset',
+      Destination: `${mntPath}/dataset`,
     });
 
     const save = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
@@ -57,7 +58,7 @@ describe('ReplicationRestoreDialogComponent', () => {
       23,
       {
         name: 'Reverse task',
-        target_dataset: '/mnt/dataset',
+        target_dataset: `${mntPath}/dataset`,
       },
     ]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();

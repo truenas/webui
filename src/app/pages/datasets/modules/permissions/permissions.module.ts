@@ -81,7 +81,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     ViewNfsPermissionsComponent,
     ViewPosixPermissionsComponent,
     ViewTrivialPermissionsComponent,
-
     DatasetAclEditorComponent,
     DatasetTrivialPermissionsComponent,
     PermissionsCardComponent,

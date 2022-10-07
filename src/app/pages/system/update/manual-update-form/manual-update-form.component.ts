@@ -15,6 +15,7 @@ import {
   filter, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -97,7 +98,8 @@ export class ManualUpdateFormComponent implements OnInit {
       const options = [{ label: this.translate.instant('Memory device'), value: ':temp:' }];
       pools.forEach((pool) => {
         options.push({
-          label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
+          label: `${mntPath}/${pool.name}`,
+          value: `${mntPath}/${pool.name}`,
         });
       });
       this.fileLocationOptions$ = of(options);

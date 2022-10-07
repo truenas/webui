@@ -7,6 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -21,7 +22,7 @@ import { RsyncTaskFormComponent } from './rsync-task-form.component';
 
 describe('RsyncTaskFormComponent', () => {
   const existingTask = {
-    path: '/mnt/x/oooo',
+    path: `${mntPath}/x/oooo`,
     user: 'root',
     direction: Direction.Push,
     desc: 'My rsync task',
@@ -95,7 +96,7 @@ describe('RsyncTaskFormComponent', () => {
 
   it('adds a new rsync task when new form is saved', async () => {
     await form.fillForm({
-      Path: '/mnt/new',
+      Path: `${mntPath}/new`,
       User: 'steven',
       Direction: 'Pull',
       Description: 'My new task',
@@ -132,7 +133,7 @@ describe('RsyncTaskFormComponent', () => {
       enabled: true,
       extra: ['param=newValue'],
       mode: RsyncMode.Module,
-      path: '/mnt/new',
+      path: `${mntPath}/new`,
       preserveattr: false,
       preserveperm: true,
       quiet: true,
@@ -153,7 +154,7 @@ describe('RsyncTaskFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      Path: '/mnt/x/oooo',
+      Path: `${mntPath}/x/oooo`,
       User: 'root',
       Direction: 'Push',
       Description: 'My rsync task',
@@ -181,7 +182,7 @@ describe('RsyncTaskFormComponent', () => {
   it('saves updated rsync task when form opened for edit is saved', async () => {
     spectator.component.setTaskForEdit({ ...existingTask, id: 1 });
     await form.fillForm({
-      Path: '/mnt/new',
+      Path: `${mntPath}/new`,
       Direction: 'Push',
 
       Times: false,
@@ -196,7 +197,7 @@ describe('RsyncTaskFormComponent', () => {
       1,
       {
         ...existingTask,
-        path: '/mnt/new',
+        path: `${mntPath}/new`,
         direction: Direction.Push,
         times: false,
         compress: false,
@@ -214,7 +215,7 @@ describe('RsyncTaskFormComponent', () => {
 
     await form.fillForm({
       'Remote SSH Port': 45,
-      'Remote Path': '/mnt/path',
+      'Remote Path': `${mntPath}/path`,
       'Validate Remote Path': true,
     });
 
@@ -230,7 +231,7 @@ describe('RsyncTaskFormComponent', () => {
         ...existingTaskWithoutModule,
         mode: RsyncMode.Ssh,
         remoteport: 45,
-        remotepath: '/mnt/path',
+        remotepath: `${mntPath}/path`,
         validate_rpath: true,
         ssh_credentials: null,
       },
@@ -249,7 +250,7 @@ describe('RsyncTaskFormComponent', () => {
 
     await form.fillForm({
       'SSH Connection': 'ssh01',
-      'Remote Path': '/mnt/path',
+      'Remote Path': `${mntPath}/path`,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -266,7 +267,7 @@ describe('RsyncTaskFormComponent', () => {
         ssh_credentials: 1,
         remotehost: null,
         remoteport: null,
-        remotepath: '/mnt/path',
+        remotepath: `${mntPath}/path`,
         validate_rpath: true,
       },
     ]);

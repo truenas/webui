@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -29,7 +30,7 @@ describe('StripAclModalComponent', () => {
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
-          path: '/mnt/tank/test',
+          path: `${mntPath}/tank/test`,
         } as StripAclModalData,
       },
     ],
@@ -53,7 +54,7 @@ describe('StripAclModalComponent', () => {
           stripacl: true,
           traverse: false,
         },
-        path: '/mnt/tank/test',
+        path: `${mntPath}/tank/test`,
       }],
     );
     expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
@@ -78,7 +79,7 @@ describe('StripAclModalComponent', () => {
           stripacl: true,
           traverse: true,
         },
-        path: '/mnt/tank/test',
+        path: `${mntPath}/tank/test`,
       }],
     );
   });

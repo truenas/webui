@@ -1,12 +1,13 @@
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 
 const datasetDummy = {
-  id: '/mnt/pool/ds',
+  id: `${mntPath}/pool/ds`,
   encrypted: false,
   available: null,
   encryption_algorithm: null,

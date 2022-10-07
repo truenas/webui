@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
+  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -9,15 +9,11 @@ import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import {
-  NetworkInterface,
-  NetworkInterfaceState,
-} from 'app/interfaces/network-interface.interface';
+import { NetworkInterface, NetworkInterfaceState } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -124,7 +120,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
   ) {
     window.onresize = () => {
       this.checkScreenSize();

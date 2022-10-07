@@ -19,6 +19,7 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -412,12 +413,8 @@ export class SmbFormComponent implements OnInit {
             this.cdr.markForCheck();
             if (redirect) {
               const sharePath: string = this.form.get('path').value;
-              const homeShare = this.form.get('home').value;
-              const datasetId = sharePath.replace('/mnt/', '');
-              const poolName = datasetId.split('/')[0];
-              this.router.navigate(['/'].concat(
-                ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
-              ), { queryParams: { homeShare } });
+              const datasetId = sharePath.replace(`${mntPath}/`, '');
+              this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
             }
             this.slideInService.close();
           },
@@ -484,7 +481,7 @@ export class SmbFormComponent implements OnInit {
 
   shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.get('path').value;
-    const datasetId = sharePath.replace('/mnt/', '');
+    const datasetId = sharePath.replace(`${mntPath}/`, '');
     return this.ws.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
         return of(

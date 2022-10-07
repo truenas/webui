@@ -106,32 +106,32 @@ describe('IxExplorerComponent', () => {
 
   describe('form control - multiple=false', () => {
     it('shows value provided in form control', () => {
-      formControl.setValue('/mnt/whatever');
+      formControl.setValue(`${mntPath}/whatever`);
       spectator.detectComponentChanges();
 
-      expect(spectator.query('input')).toHaveValue('/mnt/whatever');
+      expect(spectator.query('input')).toHaveValue(`${mntPath}/whatever`);
     });
 
     it('selects a node matching form control value', () => {
-      formControl.setValue('/mnt/place');
+      formControl.setValue(`${mntPath}/place`);
       spectator.detectComponentChanges();
 
-      expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { '/mnt/place': true } });
+      expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { [`${mntPath}/place`]: true } });
     });
 
     it('updates form control when user types in new value in the input', () => {
-      spectator.typeInElement('/mnt/new', 'input');
+      spectator.typeInElement(`${mntPath}/new`, 'input');
       spectator.dispatchFakeEvent('input', 'change');
 
-      expect(formControl.value).toBe('/mnt/new');
+      expect(formControl.value).toBe(`${mntPath}/new`);
     });
 
     it('updates form control when user selects a node', () => {
       const tree = spectator.query(TreeComponent);
-      tree.select.emit({ node: { id: '/mnt/new' } });
+      tree.select.emit({ node: { id: `${mntPath}/new` } });
 
-      expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { '/mnt/new': true } });
-      expect(formControl.value).toBe('/mnt/new');
+      expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { [`${mntPath}/new`]: true } });
+      expect(formControl.value).toBe(`${mntPath}/new`);
     });
   });
 
@@ -139,46 +139,46 @@ describe('IxExplorerComponent', () => {
     beforeEach(() => spectator.setInput('multiple', true));
 
     it('shows values provided in form control', () => {
-      formControl.setValue(['/mnt/place1', '/mnt/place2']);
+      formControl.setValue([`${mntPath}/place1`, `${mntPath}/place2`]);
       spectator.detectComponentChanges();
 
-      expect(spectator.query('input')).toHaveValue('/mnt/place1,/mnt/place2');
+      expect(spectator.query('input')).toHaveValue(`${mntPath}/place1,${mntPath}/place2`);
     });
 
     it('selects nodes matching form control value', () => {
-      formControl.setValue(['/mnt/place1', '/mnt/place2']);
+      formControl.setValue([`${mntPath}/place1`, `${mntPath}/place2`]);
       spectator.detectComponentChanges();
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({
-        selectedLeafNodeIds: { '/mnt/place1': true, '/mnt/place2': true },
+        selectedLeafNodeIds: { [`${mntPath}/place1`]: true, [`${mntPath}/place2`]: true },
       });
     });
 
     it('updates form control value when user writes multiple entries in the input', () => {
-      spectator.typeInElement('/mnt/new1,/mnt/new2', 'input');
+      spectator.typeInElement(`${mntPath}/new1,${mntPath}/new2`, 'input');
       spectator.dispatchFakeEvent('input', 'change');
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({
         selectedLeafNodeIds: {
-          '/mnt/new1': true,
-          '/mnt/new2': true,
+          [`${mntPath}/new1`]: true,
+          [`${mntPath}/new2`]: true,
         },
       });
-      expect(formControl.value).toEqual(['/mnt/new1', '/mnt/new2']);
+      expect(formControl.value).toEqual([`${mntPath}/new1`, `${mntPath}/new2`]);
     });
 
     it('updates form control when user selects multiple nodes', () => {
       const tree = spectator.query(TreeComponent);
-      tree.select.emit({ node: { id: '/mnt/new1' } });
-      tree.select.emit({ node: { id: '/mnt/new2' } });
+      tree.select.emit({ node: { id: `${mntPath}/new1` } });
+      tree.select.emit({ node: { id: `${mntPath}/new2` } });
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({
         selectedLeafNodeIds: {
-          '/mnt/new1': true,
-          '/mnt/new2': true,
+          [`${mntPath}/new1`]: true,
+          [`${mntPath}/new2`]: true,
         },
       });
-      expect(formControl.value).toEqual(['/mnt/new1', '/mnt/new2']);
+      expect(formControl.value).toEqual([`${mntPath}/new1`, `${mntPath}/new2`]);
     });
   });
 

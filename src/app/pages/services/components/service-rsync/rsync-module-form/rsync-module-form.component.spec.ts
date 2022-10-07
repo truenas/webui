@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import { RsyncModule } from 'app/interfaces/rsync-module.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -27,7 +28,7 @@ describe('RsyncModuleFormComponent', () => {
     maxconn: 2,
     mode: RsyncModuleMode.ReadAndWrite,
     name: 'test',
-    path: '/mnt/x/oooo',
+    path: `${mntPath}/x/oooo`,
     user: 'daemon',
   };
 
@@ -75,7 +76,7 @@ describe('RsyncModuleFormComponent', () => {
   it('adds a new rsync module when a new form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
-      Path: '/mnt/new',
+      Path: `${mntPath}/new`,
       Comment: 'New module',
       Enabled: true,
 
@@ -94,7 +95,7 @@ describe('RsyncModuleFormComponent', () => {
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsyncmod.create', [{
       name: 'new',
-      path: '/mnt/new',
+      path: `${mntPath}/new`,
       comment: 'New module',
       enabled: true,
 
@@ -116,7 +117,7 @@ describe('RsyncModuleFormComponent', () => {
 
     expect(values).toEqual({
       Name: 'test',
-      Path: '/mnt/x/oooo',
+      Path: `${mntPath}/x/oooo`,
       Comment: 'My module',
       Enabled: true,
 
@@ -148,7 +149,7 @@ describe('RsyncModuleFormComponent', () => {
       1,
       {
         name: 'test',
-        path: '/mnt/x/oooo',
+        path: `${mntPath}/x/oooo`,
         comment: 'My module',
         enabled: false,
 

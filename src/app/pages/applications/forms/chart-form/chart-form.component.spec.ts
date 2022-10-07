@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
@@ -272,7 +273,7 @@ describe('ChartFormComponent', () => {
         volumeMounts: {
           config: {
             datasetName: 'maize-config',
-            hostPath: '/mnt/my pool',
+            hostPath: `${mntPath}/my pool`,
             hostPathEnabled: true,
             mountPath: '/root/.chia',
           },

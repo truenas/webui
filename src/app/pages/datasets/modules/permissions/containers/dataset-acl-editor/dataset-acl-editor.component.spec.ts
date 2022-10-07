@@ -13,6 +13,7 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -136,15 +137,15 @@ describe('DatasetAclEditorComponent', () => {
 
       expect(matDialog.open).toHaveBeenCalledWith(
         SelectPresetModalComponent,
-        { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset' } },
+        { data: { allowCustom: false, datasetPath: `${mntPath}/pool/dataset` } },
       );
     });
   });
 
   describe('loading and layout', () => {
     it('loads acl and stats for the dataset specified', () => {
-      expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
-      expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
+      expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', [`${mntPath}/pool/dataset`, true, true]);
+      expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [`${mntPath}/pool/dataset`]);
     });
 
     it('shows loaded acl', () => {
@@ -174,7 +175,7 @@ describe('DatasetAclEditorComponent', () => {
       await stripButton.click();
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
-        data: { path: '/mnt/pool/dataset' },
+        data: { path: `${mntPath}/pool/dataset` },
       });
     });
 

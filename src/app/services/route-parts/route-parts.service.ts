@@ -39,6 +39,15 @@ export class RoutePartsService {
       }
 
       const { title, breadcrumb, disabled } = child.snapshot.data;
+
+      if (title === 'Datasets') {
+        url = '/datasets';
+      }
+
+      if (title === 'Storage') {
+        url = '/storage';
+      }
+
       if (title) {
         routeParts.push({
           title, breadcrumb, disabled, url,

@@ -7,6 +7,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -75,7 +76,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('shows path of the dataset being edited', () => {
     const datasetPath = spectator.query('.dataset-path');
 
-    expect(datasetPath).toHaveText('Dataset:/mnt/pool/trivial');
+    expect(datasetPath).toHaveText(`Dataset:${mntPath}/pool/trivial`);
   });
 
   it('shows current setting owner and access information', async () => {

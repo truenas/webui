@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -35,7 +36,7 @@ describe('NfsFormComponent', () => {
     maproot_group: 'operator',
     maproot_user: 'news',
     networks: ['192.168.1.78/21'],
-    path: '/mnt/nfs',
+    path: `${mntPath}/nfs`,
     quiet: false,
     ro: false,
   } as NfsShare;
@@ -118,7 +119,7 @@ describe('NfsFormComponent', () => {
     await advancedButton.click();
 
     await form.fillForm({
-      Path: '/mnt/new',
+      Path: `${mntPath}/new`,
       Description: 'New share',
       Enabled: true,
       'Read Only': true,
@@ -139,7 +140,7 @@ describe('NfsFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
-      path: '/mnt/new',
+      path: `${mntPath}/new`,
       comment: 'New share',
       enabled: true,
       ro: true,
@@ -165,7 +166,7 @@ describe('NfsFormComponent', () => {
     const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
     const hosts = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Authorized Hosts and IP addresses' }));
     expect(values).toMatchObject({
-      Path: '/mnt/nfs',
+      Path: `${mntPath}/nfs`,
       Description: 'My share',
       Enabled: true,
       'Read Only': false,
@@ -209,7 +210,7 @@ describe('NfsFormComponent', () => {
         maproot_group: 'operator',
         maproot_user: 'news',
         networks: ['192.168.1.78/21', '10.56.1.1/20'],
-        path: '/mnt/nfs',
+        path: `${mntPath}/nfs`,
         ro: false,
         security: [],
       },

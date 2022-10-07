@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -18,7 +19,7 @@ describe('DataProtectionComponent', () => {
     spectator = createComponent({
       props: {
         dataset: {
-          id: '/mnt/pool/ds',
+          id: `${mntPath}/pool/ds`,
           encrypted: false,
           available: null,
           encryption_algorithm: null,

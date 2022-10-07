@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -93,7 +94,7 @@ describe('DeviceFormComponent', () => {
       id: 5,
       dtype: VmDeviceType.Cdrom,
       attributes: {
-        path: '/mnt/bassein/cdrom',
+        path: `${mntPath}/bassein/cdrom`,
       },
       order: 4,
       vm: 1,
@@ -102,7 +103,7 @@ describe('DeviceFormComponent', () => {
     it('adds a new CD-ROM device', async () => {
       await form.fillForm({
         Type: 'CD-ROM',
-        'CD-ROM Path': '/mnt/cdrom',
+        'CD-ROM Path': `${mntPath}/cdrom`,
         'Device Order': 1002,
       });
 
@@ -110,7 +111,7 @@ describe('DeviceFormComponent', () => {
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
         dtype: VmDeviceType.Cdrom,
-        attributes: { path: '/mnt/cdrom' },
+        attributes: { path: `${mntPath}/cdrom` },
         order: 1002,
         vm: 45,
       }]);
@@ -122,7 +123,7 @@ describe('DeviceFormComponent', () => {
 
       const values = await form.getValues();
       expect(values).toEqual({
-        'CD-ROM Path': '/mnt/bassein/cdrom',
+        'CD-ROM Path': `${mntPath}/bassein/cdrom`,
         'Device Order': '4',
       });
     });
@@ -130,12 +131,12 @@ describe('DeviceFormComponent', () => {
     it('updates an existing CD-ROM device', async () => {
       spectator.component.setDeviceForEdit(existingCdRom);
       await form.fillForm({
-        'CD-ROM Path': '/mnt/newcdrom',
+        'CD-ROM Path': `${mntPath}/newcdrom`,
       });
       await saveButton.click();
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [5, {
-        attributes: { path: '/mnt/newcdrom' },
+        attributes: { path: `${mntPath}/newcdrom` },
         dtype: VmDeviceType.Cdrom,
         order: 4,
         vm: 45,
@@ -329,7 +330,7 @@ describe('DeviceFormComponent', () => {
       id: 6,
       dtype: VmDeviceType.Raw,
       attributes: {
-        path: '/mnt/bassein/raw',
+        path: `${mntPath}/bassein/raw`,
         type: VmDiskMode.Ahci,
         size: 3,
         logical_sectorsize: null,
@@ -346,7 +347,7 @@ describe('DeviceFormComponent', () => {
       });
 
       await form.fillForm({
-        'Raw File': '/mnt/bassein/newraw',
+        'Raw File': `${mntPath}/bassein/newraw`,
         'Disk Sector Size': '512',
         Mode: 'AHCI',
         'Raw Filesize': 3,
@@ -358,7 +359,7 @@ describe('DeviceFormComponent', () => {
         attributes: {
           logical_sectorsize: 512,
           physical_sectorsize: 512,
-          path: '/mnt/bassein/newraw',
+          path: `${mntPath}/bassein/newraw`,
           size: 3,
           type: VmDiskMode.Ahci,
         },
@@ -373,7 +374,7 @@ describe('DeviceFormComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
-        'Raw File': '/mnt/bassein/raw',
+        'Raw File': `${mntPath}/bassein/raw`,
         'Disk Sector Size': 'Default',
         Mode: 'AHCI',
         'Raw Filesize': '3',
@@ -391,7 +392,7 @@ describe('DeviceFormComponent', () => {
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [6, {
         attributes: {
-          path: '/mnt/bassein/raw',
+          path: `${mntPath}/bassein/raw`,
           logical_sectorsize: null,
           physical_sectorsize: null,
           size: 5,

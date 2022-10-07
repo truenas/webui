@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { UserService, WebSocketService } from 'app/services';
@@ -29,7 +30,7 @@ describe('ServiceTftpComponent', () => {
         }),
         mockCall('tftp.config', {
           id: 1,
-          directory: '/mnt/x/oooo',
+          directory: `${mntPath}/x/oooo`,
           host: '0.0.0.0',
           newfiles: false,
           options: 'param=true',
@@ -63,7 +64,7 @@ describe('ServiceTftpComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      Directory: '/mnt/x/oooo',
+      Directory: `${mntPath}/x/oooo`,
       Host: '0.0.0.0',
       Port: '69',
       Username: 'nobody',
@@ -85,7 +86,7 @@ describe('ServiceTftpComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('tftp.update', [{
-      directory: '/mnt/x/oooo',
+      directory: `${mntPath}/x/oooo`,
       host: '192.168.1.50',
       newfiles: true,
       options: 'param=true',

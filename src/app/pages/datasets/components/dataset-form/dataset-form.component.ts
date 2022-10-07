@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AclMode, AclType } from 'app/enums/acl-type.enum';
+import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
@@ -19,6 +19,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
@@ -1644,7 +1645,7 @@ export class DatasetFormComponent implements FormConfiguration {
       next: (restPostResp) => {
         this.loader.close();
         this.modalService.closeSlideIn();
-        const parentPath = `/mnt/${this.parent}`;
+        const parentPath = `${mntPath}/${this.parent}`;
         this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe({
           next: (isTrivial) => {
             if (!isTrivial) {
@@ -1657,18 +1658,8 @@ export class DatasetFormComponent implements FormConfiguration {
               }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
                 if (confirmed) {
                   this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
-                    next: ({ acltype }) => {
-                      if (acltype === AclType.Posix1e) {
-                        this.router.navigate(
-                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                          { queryParams: { default: parentPath } },
-                        );
-                      } else {
-                        this.router.navigate(
-                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                          { queryParams: { default: parentPath } },
-                        );
-                      }
+                    next: () => {
+                      this.router.navigate(['/', 'datasets', restPostResp.name, 'permissions', 'acl']);
                     },
                     error: this.handleError,
                   });

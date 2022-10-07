@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -30,7 +31,7 @@ describe('SmbFormComponent', () => {
   const existingShare: SmbShare = {
     id: 1,
     purpose: SmbPresetType.MultiUserTimeMachine,
-    path: '/mnt/pool123/ds222',
+    path: `${mntPath}/pool123/ds222`,
     path_suffix: '%U',
     home: false,
     name: 'ds222',
@@ -283,7 +284,7 @@ describe('SmbFormComponent', () => {
     const nameControl = await loader.getHarness(IxInputHarness.with({ label: formLabels.name }));
     await nameControl.setValue('');
     const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-    await pathControl.setValue('/mnt/pool2/ds22');
+    await pathControl.setValue(`${mntPath}/pool2/ds22`);
 
     expect(await nameControl.getValue()).toEqual('ds22');
 
@@ -301,7 +302,7 @@ describe('SmbFormComponent', () => {
     await advancedButton.click();
 
     const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-    await pathControl.setValue('/mnt/pool2/ds22');
+    await pathControl.setValue(`${mntPath}/pool2/ds22`);
 
     const purposeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
     await purposeSelect.setValue(presets.NO_PRESET.verbose_name);
@@ -325,7 +326,7 @@ describe('SmbFormComponent', () => {
     await purposeSelect.setValue(presets.PRIVATE_DATASETS.verbose_name);
 
     const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
-    await pathControl.setValue('/mnt/pool2/ds22');
+    await pathControl.setValue(`${mntPath}/pool2/ds22`);
 
     const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: formLabels.acl }));
     await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
@@ -371,7 +372,7 @@ describe('SmbFormComponent', () => {
     await saveButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('sharing.smb.create', [{
-      path: '/mnt/pool123/ds222',
+      path: `${mntPath}/pool123/ds222`,
       name: 'ds223',
       purpose: SmbPresetType.MultiUserTimeMachine,
       comment: '',
@@ -419,13 +420,9 @@ describe('SmbFormComponent', () => {
     )).getValue();
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
-    const homeShare = await (await loader.getHarness(
-      IxCheckboxHarness.with({ label: formLabels.home }),
-    )).getValue();
-    const datasetId = sharePath.replace('/mnt/', '');
-    const poolName = datasetId.split('/')[0];
+    const datasetId = sharePath.replace(`${mntPath}/`, '');
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/'].concat(
-      ['storage', 'id', poolName, 'dataset', 'acl', datasetId],
-    ), { queryParams: { homeShare } });
+      ['datasets', datasetId, 'permissions', 'acl'],
+    ));
   });
 });

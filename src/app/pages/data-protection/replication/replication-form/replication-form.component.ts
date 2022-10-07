@@ -10,6 +10,7 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -1441,7 +1442,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
     if (data['direction'] === Direction.Push) {
       for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
-        if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
+        if (_.startsWith(data['source_datasets_PUSH'][i], `${mntPath}/`)) {
           data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
         }
       }
@@ -1464,7 +1465,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string'
         ? _.cloneDeep(data['target_dataset_PULL'])
         : _.cloneDeep(data['target_dataset_PULL']).toString();
-      if (_.startsWith(data['target_dataset'], '/mnt/')) {
+      if (_.startsWith(data['target_dataset'], `${mntPath}/`)) {
         data['target_dataset'] = data['target_dataset'].substring(5);
       }
       delete data['source_datasets_PULL'];
