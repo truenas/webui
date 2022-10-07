@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -47,7 +48,7 @@ export class DeviceFormComponent implements OnInit {
   orderControl = new FormControl(null as number);
 
   cdromForm = this.formBuilder.group({
-    path: ['/mnt', Validators.required],
+    path: [mntPath, Validators.required],
   });
 
   diskForm = this.formBuilder.group({
