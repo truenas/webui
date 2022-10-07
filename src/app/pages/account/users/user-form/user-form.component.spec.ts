@@ -122,7 +122,7 @@ describe('UserFormComponent', () => {
 
       const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
       await usernameInput.setValue('test');
-      expect(await homeInput.getValue()).toBe(`/${mntPath}/users/test`);
+      expect(await homeInput.getValue()).toBe(`${mntPath}/users/test`);
     });
 
     it('checks download ssh key button is hidden', async () => {
