@@ -87,7 +87,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     return this.isDisabled || !this.options;
   }
 
-  get loadingState(): boolean {
+  get isLoadingState(): boolean {
     return this.isLoading || !this.options;
   }
 }
