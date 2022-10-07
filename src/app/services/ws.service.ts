@@ -52,7 +52,7 @@ export class WebSocketService {
 
   constructor(
     protected router: Router,
-    @Inject(WINDOW) private window: Window,
+    @Inject(WINDOW) protected window: Window,
   ) {
     this.protocol = this.window.location.protocol;
     this.remote = environment.remote;

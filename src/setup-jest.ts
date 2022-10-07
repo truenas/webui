@@ -94,7 +94,8 @@ defineGlobalsInjections({
     },
     {
       provide: WINDOW,
-      useValue: {},
+      // eslint-disable-next-line no-restricted-globals
+      useValue: window,
     },
   ],
 });
