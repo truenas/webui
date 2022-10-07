@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -147,7 +148,7 @@ describe('CloudsyncFormComponent', () => {
       encryption: false,
       exclude: [],
       follow_symlinks: false,
-      path: '/mnt',
+      path: mntPath,
       post_script: '',
       pre_script: '',
       schedule: {
@@ -206,7 +207,7 @@ describe('CloudsyncFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
-      attributes: { folder: '/mnt' },
+      attributes: { folder: mntPath },
       bwlimit: [
         { time: '9:00' },
         { bandwidth: 2097152, time: '12:30' },
@@ -220,7 +221,7 @@ describe('CloudsyncFormComponent', () => {
       exclude: [],
       follow_symlinks: true,
       include: ['/path1/**', '/path2/**'],
-      path: '/mnt',
+      path: mntPath,
       post_script: 'test post-script',
       pre_script: 'test pre-script',
       schedule: {
