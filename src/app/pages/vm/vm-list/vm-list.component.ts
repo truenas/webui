@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, Inject, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -114,6 +115,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private translate: TranslateService,
     private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -507,8 +509,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                   'vm.get_display_web_uri',
                   [
                     vm.id,
-                    window.location.host,
-                    { protocol: window.location.protocol.replace(':', '').toUpperCase() },
+                    this.window.location.host,
+                    { protocol: this.window.location.protocol.replace(':', '').toUpperCase() },
                   ],
                 ).pipe(untilDestroyed(this)).subscribe({
                   next: (webUris) => {
@@ -516,7 +518,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     if (webUris[displayDevices[0].id].error) {
                       return this.dialogService.warn('Error', webUris[displayDevices[0].id].error);
                     }
-                    window.open(webUris[displayDevices[0].id].uri, '_blank');
+                    this.window.open(webUris[displayDevices[0].id].uri, '_blank');
                   },
                   error: (err) => {
                     this.loader.close();
@@ -552,8 +554,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                       'vm.get_display_web_uri',
                       [
                         vm.id,
-                        window.location.host,
-                        { protocol: window.location.protocol.replace(':', '').toUpperCase() },
+                        this.window.location.host,
+                        { protocol: this.window.location.protocol.replace(':', '').toUpperCase() },
                       ],
                     ).pipe(untilDestroyed(this)).subscribe({
                       next: (webUris) => {
@@ -561,7 +563,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
                         if (webUris[displayDevice.id].error) {
                           return this.dialogService.warn('Error', webUris[displayDevice.id].error);
                         }
-                        window.open(webUris[displayDevice.id].uri, '_blank');
+                        this.window.open(webUris[displayDevice.id].uri, '_blank');
                       },
                       error: (err) => {
                         this.loader.close();
@@ -629,9 +631,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
           'vm.get_display_web_uri',
           [
             vm.id,
-            window.location.host,
+            this.window.location.host,
             {
-              protocol: window.location.protocol.replace(':', '').toUpperCase(),
+              protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
               devices_passwords: [
                 {
                   device_id: displayDevice.id,
@@ -648,7 +650,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
               return passwordConfiguration.fieldConfig[0].warnings = webUris[displayDevice.id].error;
             }
             passDialog.dialogRef.close();
-            window.open(webUris[displayDevice.id].uri, '_blank');
+            this.window.open(webUris[displayDevice.id].uri, '_blank');
           },
           error: (err) => {
             passDialog.dialogRef.close();

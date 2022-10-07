@@ -9,7 +9,7 @@ import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal.component';
+import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { DialogService } from 'app/services';
 

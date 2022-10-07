@@ -40,7 +40,7 @@ export class OauthProviderComponent {
   ) { }
 
   onLoginPressed(): void {
-    this.window.open(this.oauthUrl + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
+    this.window.open(this.oauthUrl + '?origin=' + encodeURIComponent(this.window.location.toString()), '_blank', 'width=640,height=480');
 
     this.window.addEventListener('message', this.onOauthMessage, false);
   }
