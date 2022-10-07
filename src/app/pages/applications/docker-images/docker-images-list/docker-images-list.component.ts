@@ -76,6 +76,7 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.store.loadEntities();
     this.getDockerImages();
   }
 

@@ -1,5 +1,13 @@
+@import '~assets/styles/mixins/loader';
+
 :host {
   display: block;
+}
+
+.mat-card {
+  &.loading {
+    @include background-logo-loader(1);
+  }
 }
 
 .mobile-viewport {

@@ -296,7 +296,7 @@ export class FieldRelationService {
           }
         }
         break;
-      case 'object':
+      case 'object': {
         const keys1 = Object.keys(data1);
         const keys2 = Object.keys(data2);
 
@@ -312,6 +312,7 @@ export class FieldRelationService {
           }
         }
         break;
+      }
       case 'basic':
       default:
         if (data1 !== data2) {

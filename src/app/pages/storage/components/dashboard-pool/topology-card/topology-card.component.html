@@ -16,7 +16,7 @@
           class="pool-icon icon-warning"
           [matTooltip]="'Warning' | translate"
         >
-          warning
+          error
         </mat-icon>
         <mat-icon
           *ngSwitchCase="topologyHealthLevel.Error"
@@ -50,7 +50,7 @@
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span *ngIf="topologyState.data === mixedDev" class="warning">
-            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.data }}</span>
         </div>
@@ -59,7 +59,7 @@
         <b>{{ 'Metadata VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span *ngIf="topologyState.metadata === mixedDev" class="warning">
-            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.metadata }}</span>
         </div>
@@ -68,7 +68,7 @@
         <b>{{ 'Log VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span *ngIf="topologyState.log === mixedDev" class="warning">
-            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.log }}</span>
         </div>
@@ -77,7 +77,7 @@
         <b>{{ 'Cache VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span *ngIf="topologyState.cache === mixedDev" class="warning">
-            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.cache }}</span>
         </div>
@@ -86,7 +86,7 @@
         <b>{{ 'Spare VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span *ngIf="topologyState.spare === mixedDev" class="warning">
-            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.spare }}</span>
         </div>
@@ -95,7 +95,7 @@
         <b>{{ 'Dedup VDEVs' | translate }}</b>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span *ngIf="topologyState.dedup === mixedDev" class="warning">
-            <ix-icon name="warning" class="pool-icon icon-warning"></ix-icon>
+            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.dedup }}</span>
         </div>

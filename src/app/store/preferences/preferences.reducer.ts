@@ -4,6 +4,7 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 import { defaultTheme } from 'app/services/theme/theme.constants';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import {
+  autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted,
   localizationFormSubmitted, noPreferencesFound,
@@ -66,6 +67,9 @@ export const preferencesReducer = createReducer(
     (state, { rebootAfterManualUpdate }) => updatePreferences(
       state, { rebootAfterManualUpdate },
     )),
+  on(autoRefreshReportsToggled, (state) => updatePreferences(state, {
+    autoRefreshReports: !state.preferences.autoRefreshReports,
+  })),
 );
 
 export function updatePreferences(state: PreferencesState, update: Partial<Preferences>): PreferencesState {

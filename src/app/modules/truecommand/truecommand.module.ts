@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -29,6 +30,7 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
     MatTooltipModule,
     IxFormsModule,
     HttpClientModule,
+    MatDialogModule,
   ],
   declarations: [
     TruecommandButtonComponent,

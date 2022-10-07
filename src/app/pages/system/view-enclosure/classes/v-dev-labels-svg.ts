@@ -49,12 +49,13 @@ export class VDevLabelsSvg {
     this.events$ = new Subject<CoreEvent>();
     this.events$.subscribe((evt: CoreEvent): void => {
       switch (evt.name) {
-        case 'ThemeChanged':
+        case 'ThemeChanged': {
           const theme = evt.data;
           this.color = theme.blue;
           this.selectedDiskColor = theme.cyan;
           this.highlightColor = theme.yellow;
           break;
+        }
         case 'LabelDrives':
           this.createVdevLabels(evt.data);
           break;

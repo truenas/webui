@@ -375,9 +375,10 @@ export class SharesDashboardComponent implements AfterViewInit {
           limitRows: 5,
           isActionVisible: (actionId: string, row: SmbShare) => {
             switch (actionId) {
-              case 'edit_acl':
+              case 'edit_acl': {
                 const rowName = row.path.replace('/mnt/', '');
                 return rowName.includes('/');
+              }
               default:
                 return true;
             }

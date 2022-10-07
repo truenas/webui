@@ -17,4 +17,5 @@ export const defaultPreferences: Preferences = {
   showSnapshotExtraColumns: false,
 
   rebootAfterManualUpdate: false,
+  autoRefreshReports: false,
 };

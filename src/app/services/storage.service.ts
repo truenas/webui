@@ -237,7 +237,7 @@ export class StorageService {
      * Strip leading forward slash if present
      * /zpool/d0 -> zpool/d0
      */
-    path = path.indexOf('/') === 0 ? path.substr(1) : path;
+    path = path.indexOf('/') === 0 ? path.substring(1) : path;
 
     return !path.includes('/');
   }

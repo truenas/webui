@@ -249,7 +249,7 @@ import {
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice,
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -564,7 +564,7 @@ export type ApiDirectory = {
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
   'iscsi.extent.create': { params: [IscsiExtentUpdate]; response: IscsiExtent };
   'iscsi.extent.update': { params: [id: number, update: IscsiExtentUpdate]; response: IscsiExtentUpdate };
-  'iscsi.extent.delete': { params: [id: number, remove: number, force: boolean]; response: boolean };
+  'iscsi.extent.delete': { params: [id: number, remove: boolean, force: boolean]; response: boolean };
   'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: [id: number]; response: boolean };
   'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };
@@ -924,6 +924,7 @@ export type ApiDirectory = {
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
+  'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
@@ -987,6 +988,8 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
   'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+  'zfs.snapshot.hold': { params: [string]; response: void };
+  'zfs.snapshot.release': { params: [string]; response: void };
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };

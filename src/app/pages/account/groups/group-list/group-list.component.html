@@ -5,9 +5,10 @@
       (search)="onSearch($event)"
     ></ix-search-input>
     <mat-slide-toggle
-      (change)="toggleBuiltins()"
+      color="primary"
       [checked]="!hideBuiltinGroups"
       [disabled]="isLoading$ | async"
+      (change)="toggleBuiltins()"
     >
       <label>{{ 'Show Built-In Groups' | translate }}</label>
     </mat-slide-toggle>
@@ -88,7 +89,11 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr
           mat-row
-          *matRowDef="let group; columns: displayedColumns; dataSource: dataSource"
+          *matRowDef="
+            let group;
+            columns: displayedColumns;
+            dataSource: dataSource
+          "
           [ixDetailRow]="group"
           [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
           [ixDetailRowTemplate]="expandedRowTemplate"

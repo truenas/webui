@@ -24,7 +24,7 @@ export interface Preferences {
   tableDisplayedColumns: TableDisplayedColumns[];
   hideBuiltinUsers: boolean;
   hideBuiltinGroups: boolean;
-
+  autoRefreshReports: boolean;
   showSnapshotExtraColumns: boolean;
 
   rebootAfterManualUpdate: boolean;

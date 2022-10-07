@@ -61,7 +61,7 @@
           fxLayoutAlign="space-around center"
         >
           <div *ngIf="!memData" class="spinner-wrapper">
-            <mat-spinner [diameter]="120" class="spinner"></mat-spinner>
+            <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
           </div>
 
           <div class="primary-stat-wrapper" fxFlex.gt-xs="45" fxFlex.xs="100">
@@ -78,7 +78,7 @@
               </span>
             </div>
             <!-- Legend -->
-            <div *ngIf="screenType === 'Desktop'" id="memory-legend">
+            <div *ngIf="screenType === ScreenType.Desktop" id="memory-legend">
               <div *ngIf="memData; else noLegend" id="memory-legend-values">
                 <!-- Desktop -->
                 <div
@@ -109,7 +109,7 @@
 
           <!-- Mobile Legend -->
           <div
-            *ngIf="screenType === 'Mobile'"
+            *ngIf="screenType === ScreenType.Mobile"
             fxFlex="100"
             id="memory-legend"
             fxLayout="row wrap"

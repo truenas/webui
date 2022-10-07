@@ -36,6 +36,7 @@ import { userStateKey } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { UserListComponent } from 'app/pages/account/users/user-list/user-list.component';
 import { routing } from 'app/pages/account/users/users.routing';
+import { DeleteUserDialogComponent } from './user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserDetailsRowComponent } from './user-details-row/user-details-row.component';
 
 @NgModule({
@@ -79,6 +80,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     UserListComponent,
     UserFormComponent,
     UserDetailsRowComponent,
+    DeleteUserDialogComponent,
   ],
   exports: [],
 })

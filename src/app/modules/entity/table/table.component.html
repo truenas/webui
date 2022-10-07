@@ -278,4 +278,18 @@
       {{ 'Collapse' | translate }}
     </div>
   </mat-card-content>
+
+  <mat-toolbar-row *ngIf="!_tableConf.expandable && _tableConf.tableFooterActions?.length">
+    <div class="actions">
+      <button
+        *ngFor="let action of _tableConf.tableFooterActions let last=last"
+        mat-button
+        color="default"
+        [ngClass]="{ 'table-action-button': !last }"
+        (click)="$event.stopPropagation(); action.onClick()"
+      >
+        {{ action.label | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
 </mat-card>

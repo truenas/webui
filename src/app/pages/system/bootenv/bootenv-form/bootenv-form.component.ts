@@ -94,7 +94,7 @@ export class BootEnvironmentFormComponent {
   onSubmit(): void {
     this.isFormLoading = true;
     switch (this.operation) {
-      case this.Operations.Create:
+      case this.Operations.Create: {
         const createParams: CreateBootenvParams = [{
           name: this.formGroup.value.name,
         }];
@@ -112,7 +112,8 @@ export class BootEnvironmentFormComponent {
         });
 
         break;
-      case this.Operations.Rename:
+      }
+      case this.Operations.Rename: {
         const renameParams: UpdateBootenvParams = [
           this.currentName,
           {
@@ -133,7 +134,8 @@ export class BootEnvironmentFormComponent {
         });
 
         break;
-      case this.Operations.Clone:
+      }
+      case this.Operations.Clone: {
         const cloneParams: CreateBootenvParams = [{
           name: this.formGroup.value.name,
           source: this.currentName,
@@ -152,6 +154,7 @@ export class BootEnvironmentFormComponent {
         });
 
         break;
+      }
     }
   }
 }
