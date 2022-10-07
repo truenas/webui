@@ -189,37 +189,34 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   toggleDisplay(): void {
-    this.confirmToggle().pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.useFullFilter = !this.useFullFilter;
-      window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-      this.getUserQuotas();
+    this.useFullFilter = !this.useFullFilter;
+    const confirm$ = this.useFullFilter ? this.confirmFilterUsers() : this.confirmShowAllUsers();
+    confirm$.pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (confirmed) {
+        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+        this.getUserQuotas();
+      } else {
+        this.useFullFilter = !this.useFullFilter;
+      }
     });
   }
 
-  private confirmToggle(): Observable<boolean> {
-    const confirmOptions = this.useFullFilter ? this.getShowConfirmOptions() : this.getFilterConfirmOptions();
-    return this.dialogService.confirm(confirmOptions);
-  }
-
-  private getFilterConfirmOptions(): ConfirmOptions {
-    return {
-      title: helptext.users.filter_dialog.title_filter,
-      message: helptext.users.filter_dialog.message_filter,
-      hideCheckBox: true,
-      buttonMsg: helptext.users.filter_dialog.button_filter,
-    };
-  }
-
-  private getShowConfirmOptions(): ConfirmOptions {
-    return {
+  confirmShowAllUsers(): Observable<boolean> {
+    return this.dialogService.confirm({
       title: helptext.users.filter_dialog.title_show,
       message: helptext.users.filter_dialog.message_show,
       hideCheckBox: true,
       buttonMsg: helptext.users.filter_dialog.button_show,
-    };
+    });
+  }
+
+  confirmFilterUsers(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: helptext.users.filter_dialog.title_filter,
+      message: helptext.users.filter_dialog.message_filter,
+      hideCheckBox: true,
+      buttonMsg: helptext.users.filter_dialog.button_filter,
+    });
   }
 
   removeInvalidQuotas(): void {
