@@ -118,7 +118,7 @@ describe('UserFormComponent', () => {
     it('loads home share path and puts it in home field', async () => {
       const homeInput = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
       expect(ws.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
-      expect(await homeInput.getValue()).toBe(`/${mntPath}/users`);
+      expect(await homeInput.getValue()).toBe(`${mntPath}/users`);
 
       const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
       await usernameInput.setValue('test');
