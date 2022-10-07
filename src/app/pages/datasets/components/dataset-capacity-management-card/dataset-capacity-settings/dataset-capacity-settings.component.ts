@@ -23,29 +23,29 @@ const oneGb = 1024 * 1024 * 1024;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetCapacitySettingsComponent {
-  readonly defaultRefQuotaWarning = 80;
-  readonly defaultRefQuotaCritical = 95;
+  readonly defaultQuotaWarning = 80;
+  readonly defaultQuotaCritical = 95;
 
   form = this.formBuilder.group({
     refquota: [null as number, Validators.min(oneGb)],
-    refquota_warning: [this.defaultRefQuotaWarning, [
+    refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
     ]],
     refquota_warning_inherit: [false],
-    refquota_critical: [this.defaultRefQuotaCritical, [
+    refquota_critical: [this.defaultQuotaCritical, [
       Validators.min(0),
       Validators.max(100),
     ]],
     refquota_critical_inherit: [false],
 
     quota: [null as number, Validators.min(oneGb)],
-    quota_warning: [this.defaultRefQuotaWarning, [
+    quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
     ]],
     quota_warning_inherit: [false],
-    quota_critical: [this.defaultRefQuotaCritical, [
+    quota_critical: [this.defaultQuotaCritical, [
       Validators.min(0),
       Validators.max(100),
     ]],
@@ -103,14 +103,14 @@ export class DatasetCapacitySettingsComponent {
     this.dataset = dataset;
     this.oldValues = {
       refquota: dataset.refquota.parsed,
-      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultRefQuotaWarning,
+      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
       refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
-      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultRefQuotaCritical,
+      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
       refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
       quota: dataset.quota.parsed,
-      quota_warning: dataset.quota_warning?.parsed ?? this.defaultRefQuotaWarning,
+      quota_warning: dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
       quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
-      quota_critical: dataset.quota_critical?.parsed ?? this.defaultRefQuotaCritical,
+      quota_critical: dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
       quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
       refreservation: dataset.refreservation.parsed,
       reservation: dataset.reservation.parsed,

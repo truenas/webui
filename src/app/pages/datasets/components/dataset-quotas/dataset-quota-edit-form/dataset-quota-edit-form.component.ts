@@ -46,12 +46,12 @@ export class DatasetQuotaEditFormComponent {
 
   private getUserDataQuotaLabel(): string {
     return this.translate.instant(helptext.users.data_quota.placeholder)
-    + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+      + this.translate.instant(globalHelptext.human_readable.suggestion_label);
   }
 
   private getGroupDataQuotaLabel(): string {
     return this.translate.instant(helptext.groups.data_quota.placeholder)
-    + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+      + this.translate.instant(globalHelptext.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
