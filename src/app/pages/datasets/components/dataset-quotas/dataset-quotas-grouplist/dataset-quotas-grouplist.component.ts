@@ -17,7 +17,6 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -187,37 +186,36 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   toggleDisplay(): void {
-    this.confirmToggle().pipe(
-      filter(Boolean),
+    this.useFullFilter = !this.useFullFilter;
+    const confirm$ = this.useFullFilter ? this.confirmFilterUsers() : this.confirmShowAllUsers();
+    confirm$.pipe(
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.useFullFilter = !this.useFullFilter;
-      window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-      this.getGroupQuotas();
+    ).subscribe((confirmed) => {
+      if (confirmed) {
+        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+        this.getGroupQuotas();
+      } else {
+        this.useFullFilter = !this.useFullFilter;
+      }
     });
   }
 
-  private confirmToggle(): Observable<boolean> {
-    const confirmOptions = this.useFullFilter ? this.getShowConfirmOptions() : this.getFilterConfirmOptions();
-    return this.dialogService.confirm(confirmOptions);
-  }
-
-  private getShowConfirmOptions(): ConfirmOptions {
-    return {
+  private confirmShowAllUsers(): Observable<boolean> {
+    return this.dialogService.confirm({
       title: helptext.groups.filter_dialog.title_show,
       message: helptext.groups.filter_dialog.message_show,
       hideCheckBox: true,
       buttonMsg: helptext.groups.filter_dialog.button_show,
-    };
+    });
   }
 
-  private getFilterConfirmOptions(): ConfirmOptions {
-    return {
+  private confirmFilterUsers(): Observable<boolean> {
+    return this.dialogService.confirm({
       title: helptext.groups.filter_dialog.title_filter,
       message: helptext.groups.filter_dialog.message_filter,
       hideCheckBox: true,
       buttonMsg: helptext.groups.filter_dialog.button_filter,
-    };
+    });
   }
 
   removeInvalidQuotas(): void {
