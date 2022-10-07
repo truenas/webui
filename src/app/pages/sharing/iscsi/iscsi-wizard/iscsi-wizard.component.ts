@@ -10,6 +10,7 @@ import { lastValueFrom } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -129,7 +130,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
         {
           type: 'explorer',
           explorerType: ExplorerType.File,
-          initial: '/mnt',
+          initial: mntPath,
           name: 'path',
           placeholder: helptextSharingIscsi.extent_placeholder_path,
           tooltip: helptextSharingIscsi.extent_tooltip_path,

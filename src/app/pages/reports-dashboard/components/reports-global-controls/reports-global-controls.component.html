@@ -1,6 +1,7 @@
 <div class="reports-toolbar">
   <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center center">
     <mat-slide-toggle
+      color="primary"
       [checked]="autoRefreshEnabled"
       [matTooltip]="'Refresh every 15 seconds.' | translate"
       (change)="toggleAutoRefresh()"

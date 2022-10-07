@@ -481,10 +481,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-dialog-title {
     .warning-icon {
       color: var(--orange);
-      font-size: 35px;
       margin-right: 10px;
       position: relative;
-      top: 8px;
+      top: 6px;
     }
   }
 
@@ -595,6 +594,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .node-content-wrapper:hover,
   .node-content-wrapper-focused {
     background-color: var(--bg2);
+    box-shadow: none;
   }
 
   // Give vdev and dual-list arrow buttons theme colors

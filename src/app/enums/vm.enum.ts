@@ -20,6 +20,7 @@ export enum VmDeviceType {
   Pci = 'PCI',
   Display = 'DISPLAY',
   Raw = 'RAW',
+  Usb = 'USB',
 }
 
 export enum VmCpuMode {

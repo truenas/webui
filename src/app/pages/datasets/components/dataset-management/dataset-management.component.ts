@@ -14,7 +14,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
@@ -96,7 +96,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
-  ) {}
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .subscribe(() => {
+        if (this.router.getCurrentNavigation().extras.state?.hideMobileDetails) {
+          this.closeMobileDetails();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();

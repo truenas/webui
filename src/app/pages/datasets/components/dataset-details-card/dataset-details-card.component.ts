@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, first } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -33,6 +34,7 @@ export class DatasetDetailsCardComponent {
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) { }
 
   get datasetCompression(): string {
@@ -65,6 +67,9 @@ export class DatasetDetailsCardComponent {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.datasetStore.datasetUpdated();
+        this.datasetStore.selectedParentDataset$.pipe(first(), untilDestroyed(this)).subscribe((parent) => {
+          this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
+        });
       });
   }
 
