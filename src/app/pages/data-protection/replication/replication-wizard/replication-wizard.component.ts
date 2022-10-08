@@ -661,7 +661,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           label: this.translate.instant('Manual'),
           value: 'manual',
         }, {
-          label: this.translate.instant('Semi-automatic (TrueNAS CORE only)'),
+          label: this.translate.instant('Semi-automatic (TrueNAS only)'),
           value: 'semiautomatic',
         },
       ],
@@ -1213,7 +1213,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (item === 'ssh_credentials') {
       let payload: SshSemiAutomaticSetup | KeychainCredentialCreate;
-      const sshCreateItem = ('_' + data['setup_method']) as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
+      const sshCreateItem = `${item}_${data['setup_method']}` as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
       if (data['setup_method'] === 'manual') {
         payload = {
           name: data['name'],
