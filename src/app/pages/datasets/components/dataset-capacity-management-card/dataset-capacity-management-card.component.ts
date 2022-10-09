@@ -69,14 +69,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.getInheritedQuotas();
-    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
-    if (selectedDatasetHasChanged && this.checkQuotas) {
-      this.refreshQuotas$.next();
-    }
-  }
-
   initQuotas(): void {
     this.refreshQuotas$.pipe(
       tap(() => {
@@ -96,10 +88,19 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       },
       error: (error) => {
+        this.isLoadingQuotas = false;
         this.dialogService.errorReportMiddleware(error);
         this.cdr.markForCheck();
       },
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.getInheritedQuotas();
+    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
+    if (selectedDatasetHasChanged && this.checkQuotas) {
+      this.refreshQuotas$.next();
+    }
   }
 
   getInheritedQuotas(): void {
