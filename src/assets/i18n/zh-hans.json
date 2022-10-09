@@ -3189,7 +3189,6 @@
   "Self Healed": "自我修复",
   "Self-Encrypting Drive": "自加密驱动器",
   "Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this option allows the key server to manage creating or updating the global SED password, creating or updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling this option leaves SED password management with the local system.": "可以使用KMIP管理自加密驱动器（SED）密码。启用此选项后，密钥服务器可以在未锁定SED的情况下管理创建或更新全局SED密码，创建或更新单个SED密码以及检索SED密码。禁用此选项将使SED密码管理留在本地系统上。",
-  "Semi-automatic (TrueNAS CORE only)": "半自动（仅限TrueNAS CORE）",
   "Send Email Status Updates": "状态更新时发送邮件",
   "Send Mail Method": "发送邮件方法",
   "Send Test Mail": "发送测试邮件",
