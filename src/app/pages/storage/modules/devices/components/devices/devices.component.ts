@@ -197,10 +197,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      dataNodes.children = dataNodes.children.filter((child) => {
-        return child.disk !== null && child.device !== null;
-      });
-
       dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
         const nameA = a.disk?.toLowerCase();
         const nameB = b.disk?.toLowerCase();
