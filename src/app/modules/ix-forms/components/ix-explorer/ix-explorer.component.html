@@ -24,7 +24,7 @@
     [nodes]="nodes"
     [options]="treeOptions"
     (select)="onNodeSelect($event)"
-    (deselect)="onSelectionChanged()"
+    (deselect)="onNodeDeselect($event)"
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
