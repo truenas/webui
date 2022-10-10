@@ -12,6 +12,7 @@ export class AuthService implements CanActivate {
     if (this.ws.loggedIn) {
       return true;
     }
+
     this.ws.redirectUrl = state.url;
     this.router.navigate(['/sessions/signin']);
     return false;
