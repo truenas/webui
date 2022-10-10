@@ -2,4 +2,5 @@ export enum TopologyItemStatus {
   Online = 'ONLINE',
   Removed = 'REMOVED',
   Offline = 'OFFLINE',
+  Unavail = 'UNAVAIL',
 }

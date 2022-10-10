@@ -24,11 +24,19 @@
             *ngIf="serviceLoadingMap.get(service.service); else slider"
             matTooltipPosition="right"
             [diameter]="40"
-            [matTooltip]="(service.state === ServiceStatus.Running ? 'Stopping' : 'Starting') | uppercase | translate"
+            [matTooltip]="
+              (service.state === ServiceStatus.Running
+                ? 'Stopping'
+                : 'Starting'
+              )
+                | uppercase
+                | translate
+            "
           ></mat-spinner>
 
           <ng-template #slider>
             <mat-slide-toggle
+              color="primary"
               matTooltipPosition="right"
               [checked]="service.state === ServiceStatus.Running"
               [matTooltip]="service.state"
@@ -69,7 +77,11 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr
         mat-row
-        *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"
+        *matRowDef="
+          let element;
+          columns: displayedColumns;
+          dataSource: dataSource
+        "
       ></tr>
 
       <tr class="mat-row no-data-row" *matNoDataRow>

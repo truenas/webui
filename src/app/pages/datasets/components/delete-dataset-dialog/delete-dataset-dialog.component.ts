@@ -7,9 +7,11 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, Observable, of, throwError,
+  combineLatest, EMPTY, Observable, throwError,
 } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -56,53 +58,57 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.loader.open();
-    this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }])
-      .pipe(
-        catchError((error: WebsocketError) => {
-          if (error.reason.includes('Device busy')) {
-            return this.askToForceDelete();
-          }
 
-          return throwError(() => error);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: () => {
-          this.loader.close();
-          this.dialogRef.close(true);
-        },
-        error: (error) => {
-          this.dialog.errorReport(
-            this.translate.instant(
-              'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
-            ),
-            error.reason,
-            error.stack,
-          );
-          this.loader.close();
-          this.dialogRef.close(true);
-        },
-      });
+    this.deleteDataset().pipe(
+      catchError((error: WebsocketError) => {
+        if (error.reason.includes('Device busy')) {
+          return this.askToForceDelete();
+        }
+
+        return throwError(() => error);
+      }),
+      filter(Boolean),
+      switchMap(() => this.forceDeleteDataset()),
+      tap(() => {
+        this.loader.close();
+        this.dialogRef.close(true);
+      }),
+      catchError(this.handleDeleteError.bind(this)),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  private deleteDataset(): Observable<boolean> {
+    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
+  }
+
+  private forceDeleteDataset(): Observable<boolean> {
+    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
   }
 
   private askToForceDelete(): Observable<unknown> {
+    return this.getForceDeleteConfirmation();
+  }
+
+  private getForceDeleteConfirmation(): Observable<boolean> {
     return this.dialog.confirm({
       title: this.translate.instant('Device Busy'),
       message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
       buttonMsg: this.translate.instant('Force Delete'),
-    }).pipe(
-      switchMap((shouldForceDelete) => {
-        if (shouldForceDelete) {
-          this.ws.call('pool.dataset.delete', [this.dataset.id, {
-            recursive: true,
-            force: true,
-          }]);
-        } else {
-          return of();
-        }
-      }),
+    });
+  }
+
+  private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
+    this.dialog.errorReport(
+      this.translate.instant(
+        'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
+      ),
+      error.reason,
+      error.stack,
     );
+    this.loader.close();
+    this.dialogRef.close(true);
+    return EMPTY;
   }
 
   private loadDatasetRelatedEntities(): void {

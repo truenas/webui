@@ -14,6 +14,7 @@ import { filter, map } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -51,8 +52,8 @@ export class CloudsyncFormComponent {
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
     transfer_mode: [TransferMode.Copy, Validators.required],
-    path_destination: [['/mnt'], Validators.required],
-    path_source: [['/mnt'], Validators.required],
+    path_destination: [[mntPath], Validators.required],
+    path_source: [[mntPath], Validators.required],
 
     credentials: [null as number, Validators.required],
     bucket: [''],

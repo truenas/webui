@@ -5,6 +5,7 @@
       (search)="filter($event)"
     ></ix-search-input>
     <mat-slide-toggle
+      color="primary"
       [checked]="!useFullFilter"
       [disabled]="isLoading"
       (change)="toggleDisplay()"

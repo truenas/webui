@@ -48,14 +48,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg1);
   }
 
-  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: var(--primary);
-  }
-
-  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-    background-color: var(--primary);
-  }
-
   .mat-bg-accent {
     background-color: map-get($md-accent, 500);
     color: black;
@@ -489,10 +481,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-dialog-title {
     .warning-icon {
       color: var(--orange);
-      font-size: 35px;
       margin-right: 10px;
       position: relative;
-      top: 8px;
+      top: 6px;
     }
   }
 
@@ -603,6 +594,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .node-content-wrapper:hover,
   .node-content-wrapper-focused {
     background-color: var(--bg2);
+    box-shadow: none;
   }
 
   // Give vdev and dual-list arrow buttons theme colors

@@ -18,8 +18,25 @@
   <meta name="msapplication-TileColor" content="#2d89ef">
   <meta name="msapplication-config" content="assets/favicons/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
+  <style>
+    @keyframes loading {
+      50% {
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
-<body class="ix-dark">
-  <ix-root></ix-root>
+<body class="ix-dark" style="--bg1: #1e1e1e; background-color: var(--bg1)">
+  <ix-root>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+      <img
+        src="assets/customicons/truenas_scale_logo_full.svg"
+        style="animation: loading 2s linear infinite; filter: invert(1); opacity: 0.1"
+        width="300"
+        height="65"
+        alt="TrueNAS SCALE"
+      >
+    </div>
+  </ix-root>
 </body>
 </html>

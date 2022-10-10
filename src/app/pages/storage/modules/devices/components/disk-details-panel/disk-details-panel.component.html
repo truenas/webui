@@ -33,7 +33,7 @@
       [topologyCategory]="topologyCategory"
     ></ix-zfs-info-card>
 
-    <ng-container *ngIf="isTopologyDisk">
+    <ng-container *ngIf="isTopologyDisk && hasTopologyItemDisk">
       <ix-hardware-disk-encryption
         [topologyDisk]="topologyItem | cast"
       ></ix-hardware-disk-encryption>
@@ -44,7 +44,7 @@
       ></ix-smart-info-card>
     </ng-container>
 
-    <ng-container *ngIf="isTopologyDisk">
+    <ng-container *ngIf="isTopologyDisk && hasTopologyItemDisk">
       <ix-disk-info-card [disk]="disk"></ix-disk-info-card>
     </ng-container>
   </div>

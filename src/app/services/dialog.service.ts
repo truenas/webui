@@ -135,15 +135,11 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
+  /**
+   * @deprecated Build a separate dialog component instead of using this method.
+   */
   dialogForm(conf: DialogFormConfiguration, disableClose = false): Observable<boolean> {
     const dialogRef = this.dialog.open(EntityDialogComponent, { maxWidth: '420px', minWidth: '350px', disableClose });
-    dialogRef.componentInstance.conf = conf;
-
-    return dialogRef.afterClosed();
-  }
-
-  dialogFormWide(conf: DialogFormConfiguration): Observable<boolean> {
-    const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();

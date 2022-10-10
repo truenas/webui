@@ -85,6 +85,14 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     this.cdr.markForCheck();
   }
 
+  get disabledState(): boolean {
+    return this.isDisabled || !this.options;
+  }
+
+  get isLoadingState(): boolean {
+    return this.isLoading || !this.options;
+  }
+
   selectionChange(val: MatSelectChange): void {
     this.valueChanged.emit(val);
   }

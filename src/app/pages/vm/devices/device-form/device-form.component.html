@@ -125,6 +125,14 @@
               [required]="true"
             ></ix-combobox>
           </ng-container>
+          <ng-container *ngSwitchCase="VmDeviceType.Usb">
+            <ix-select
+              formControlName="device"
+              [label]="'Device' | translate"
+              [options]="usbOptions$"
+              [required]="true"
+            ></ix-select>
+          </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Display">
             <ix-input
               formControlName="port"

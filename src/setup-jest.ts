@@ -32,6 +32,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { WINDOW } from 'app/helpers/window.helper';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 
 jest.setTimeout(30 * 1000);
@@ -80,6 +81,7 @@ defineGlobalsInjections({
     }),
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
+    AppLoaderModule,
   ],
   providers: [
     {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { EMPTY } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -36,23 +36,28 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
   readonly entities$ = this.select((state) => state.entities);
   readonly entitiesTotal$ = this.select((state) => state.entities.length);
 
-  readonly loadEntities = this.effect(() => {
-    this.setState({
-      ...initialState,
-      isLoading: true,
-    });
-
-    return this.ws.call('container.image.query').pipe(
-      tap((entities) => this.patchState({ entities })),
-      catchError((error) => {
-        new EntityUtils().errorReport(error, this.dialog);
-
-        this.patchState({
-          isLoading: false,
-          error: 'Docker Images could not be loaded',
+  readonly loadEntities = this.effect((triggers$: Observable<void>) => {
+    return triggers$.pipe(
+      tap(() => {
+        this.setState({
+          ...initialState,
+          isLoading: true,
         });
+      }),
+      switchMap(() => {
+        return this.ws.call('container.image.query').pipe(
+          tap((entities) => this.patchState({ entities })),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
 
-        return EMPTY;
+            this.patchState({
+              isLoading: false,
+              error: 'Docker Images could not be loaded',
+            });
+
+            return EMPTY;
+          }),
+        );
       }),
     );
   });
