@@ -165,7 +165,6 @@ module.exports = {
           allowSamePrecedence: true
         }],
         "default-case": "off",
-        "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-explicit-any": "off",

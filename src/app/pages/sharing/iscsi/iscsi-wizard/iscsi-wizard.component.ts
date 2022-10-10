@@ -848,7 +848,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       associateTarget: null,
     };
 
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as keyof CreatedItems;
       if (!toStop) {

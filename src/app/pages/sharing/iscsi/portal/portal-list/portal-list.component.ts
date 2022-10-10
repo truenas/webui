@@ -90,16 +90,9 @@ export class PortalListComponent implements EntityTableConfig {
   }
 
   prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      await lastValueFrom(this.iscsiService.getIpChoices()).then(
-        (ips) => {
-          this.ipChoices = ips;
-          resolve(true);
-        },
-        () => {
-          resolve(true);
-        },
-      );
+    return lastValueFrom(this.iscsiService.getIpChoices()).then((ips) => {
+      this.ipChoices = ips;
+      return true;
     });
   }
 
