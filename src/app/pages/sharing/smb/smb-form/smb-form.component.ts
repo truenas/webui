@@ -412,9 +412,13 @@ export class SmbFormComponent implements OnInit {
             this.isLoading = false;
             this.cdr.markForCheck();
             if (redirect) {
-              const sharePath: string = this.form.get('path').value;
+              const sharePath = this.form.get('path').value;
+              const homeShare = this.form.get('home').value;
               const datasetId = sharePath.replace(`${mntPath}/`, '');
-              this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
+              this.router.navigate(
+                ['/', 'datasets', datasetId, 'permissions', 'acl'],
+                { queryParams: { homeShare } },
+              );
             }
             this.slideInService.close();
           },

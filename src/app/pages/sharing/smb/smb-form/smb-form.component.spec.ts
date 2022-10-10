@@ -420,9 +420,15 @@ describe('SmbFormComponent', () => {
     )).getValue();
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
+
+    const homeShare = await (await loader.getHarness(
+      IxCheckboxHarness.with({ label: formLabels.home }),
+    )).getValue();
+
     const datasetId = sharePath.replace(`${mntPath}/`, '');
+
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/'].concat(
       ['datasets', datasetId, 'permissions', 'acl'],
-    ));
+    ), { queryParams: { homeShare } });
   });
 });
