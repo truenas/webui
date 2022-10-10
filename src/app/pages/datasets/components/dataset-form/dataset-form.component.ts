@@ -815,7 +815,7 @@ export class DatasetFormComponent implements FormConfiguration {
       data.quota = null;
       data.refreservation = null;
       data.reservation = null;
-      data.special_small_block_size = null;
+      data.special_small_block_size = inherit;
       data.copies = (data.copies !== undefined && data.copies !== null && data.name !== undefined) ? '1' : undefined;
     }
     // calculate and delete _unit
