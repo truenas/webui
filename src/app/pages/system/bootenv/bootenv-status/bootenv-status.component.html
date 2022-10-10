@@ -1,18 +1,92 @@
-<div class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
-    <div fxFlex="300px" class="mat-card-title-text">
-      {{title | translate}}
+<ix-fake-progress-bar
+  class="loader-bar"
+  [loading]="isLoading$ | async"
+></ix-fake-progress-bar>
+
+<div class="tree-wrapper">
+  <div class="tree-inner">
+    <mat-accordion *ngIf="poolInstance">
+      <mat-expansion-panel class="mat-elevation-z0">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <strong>{{ poolInstance.scan.function }}</strong>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-list>
+          <mat-list-item>
+            {{ 'Status' | translate }}:
+            {{ poolInstance.scan.pause != null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
+          </mat-list-item>
+          <mat-list-item *ngIf="poolInstance.scan.errors != null">
+            {{ 'Errors' | translate }}:
+            {{ poolInstance.scan.errors }}
+          </mat-list-item>
+          <mat-list-item *ngIf="poolInstance.scan.start_time?.$date">
+            {{ 'Date' | translate }}:
+            {{ poolInstance.scan.start_time.$date | formatDateTime }}
+          </mat-list-item>
+        </mat-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <div class="tree-header">
+      <div class="name-header">
+        <span >{{ 'Name' | translate }}</span>
+      </div>
+      <div>{{ 'Status' | translate }}</div>
+      <div>{{ 'Read' | translate }}</div>
+      <div>{{ 'Write' | translate }}</div>
+      <div>{{ 'Checksum' | translate }}</div>
+      <div>{{ 'Errors' | translate }}</div>
     </div>
-  </div>
-  <div>
-    <mat-list *ngIf="poolScan">
-      <mat-list-item><b>{{poolScan.function}}</b></mat-list-item>
-      <mat-list-item>Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.errors != null">{{ 'Errors' | translate }}: {{poolScan.errors}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.start_time?.$date">{{ 'Date' | translate }}: {{poolScan.start_time.$date | formatDateTime}}</mat-list-item>
-    </mat-list>
-  </div>
-  <div class="padding-16">
-    <ix-entity-tree-table [conf]="treeTableConfig"></ix-entity-tree-table>
+
+    <ix-tree
+      class="tree"
+      [dataSource]="dataSource"
+      [treeControl]="treeControl"
+    >
+      <ix-tree-node
+        *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
+        ixTreeNodeToggle
+        [ixTreeNodeDefDataSource]="dataSource"
+      >
+        <button mat-icon-button disabled></button>
+        <ix-bootenv-node-item
+          [node]="topologyItem"
+          [poolInstance]="poolInstance"
+          [oneDisk]="oneDisk"
+          (invokeAction)="doAction($event)"
+        ></ix-bootenv-node-item>
+      </ix-tree-node>
+
+      <ix-nested-tree-node
+        *ixTreeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
+        [ixTreeNodeDefDataSource]="dataSource"
+      >
+        <div class="nested-tree-root-node">
+          <button
+            mat-icon-button
+            ixTreeNodeToggle
+            [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
+            (click)="$event.preventDefault()"
+          >
+            <mat-icon>
+              {{ treeControl.isExpanded(topologyItem) ? 'expand_more' : 'chevron_right' }}
+            </mat-icon>
+          </button>
+          <ix-bootenv-node-item
+            [node]="topologyItem"
+            [poolInstance]="poolInstance"
+            [oneDisk]="oneDisk"
+            (invokeAction)="doAction($event)"
+          ></ix-bootenv-node-item>
+        </div>
+
+        <ng-container
+          *ngIf="treeControl.isExpanded(topologyItem)"
+          ixTreeNodeOutlet
+        ></ng-container>
+      </ix-nested-tree-node>
+    </ix-tree>
   </div>
 </div>

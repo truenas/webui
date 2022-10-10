@@ -1,5 +1,8 @@
 <form [formGroup]="form">
-  <ix-fieldset [title]="'Access Control Entry' | translate" class="general-fields">
+  <ix-fieldset
+    [title]="'Access Control Entry' | translate"
+    class="general-fields"
+  >
     <ix-select
       formControlName="tag"
       [label]="'Who' | translate"
@@ -36,6 +39,7 @@
       inlineFieldFlex="25%"
     ></ix-radio-group>
   </ix-fieldset>
+
   <div class="permissions-and-flags">
     <ix-fieldset [title]="'Permissions' | translate">
       <ix-radio-group

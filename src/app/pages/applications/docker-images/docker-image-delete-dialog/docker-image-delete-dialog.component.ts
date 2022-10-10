@@ -81,7 +81,7 @@ export class DockerImageDeleteDialogComponent {
               message: null,
             });
             if (this.bulkItems.size === 1) {
-              this.dialogRef.close();
+              this.dialogRef.close(true);
             }
           }
         }

@@ -1,0 +1,33 @@
+:host {
+  .bulk-actions-toolbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--lines);
+    color: var(--fg1);
+
+    .title {
+      padding: 16px 28px 8px;
+    }
+
+    .actions {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      padding: 0 28px 16px;
+    }
+
+    .select-all {
+      border-top: 1px solid var(--lines);
+      font-size: 14px;
+      padding: 8px 28px;
+    }
+  }
+
+  .keep-td {
+    align-items: center;
+    display: flex;
+
+    ix-icon {
+      margin-right: 10px;
+    }
+  }
+}

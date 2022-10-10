@@ -1,0 +1,319 @@
+@import '~assets/styles/mixins/grid';
+@import '~assets/styles/scss-imports/splitview';
+@import 'app/modules/layout/components/breadcrumb/breadcrumb.component';
+
+$singlecolumn-max-width: ($card-width-slim + $gap * 2);
+$dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
+$scrollbar-offset: 20px;
+
+:host {
+  display: block;
+}
+
+.loader-bar {
+  height: 2px;
+  position: absolute;
+  top: 0;
+  z-index: 10;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100%;
+}
+
+.table-container {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-right: 16px;
+  max-width: $table-width;
+  min-width: $table-min-width;
+  position: relative;
+
+  // Hide Details and stop compressing table width
+  @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+    margin-right: unset;
+    min-width: $breakpoint-min-mobile;
+    width: 100%;
+  }
+
+  // Hide Details and stretch table
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
+    margin-right: unset;
+    min-width: 100%;
+  }
+
+  // One Cards Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    max-width: calc(100% - $singlecolumn-max-width - 16px);
+    min-width: calc($table-min-width + 0px);
+  }
+
+  // Two Cards Slim Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
+    min-width: calc($table-min-width + 0px);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    min-width: calc(98% - 2 * ($card-width + $gap));
+  }
+
+  // Three Cards Columns
+  @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+    min-width: calc(98% - 3 * ($card-width + $gap));
+  }
+
+  // Cards spill to the right
+  @media (min-width: $breakpoint-flex) {
+    max-width: 1200px;
+    width: 50%;
+  }
+}
+
+.close-details-container-mobile {
+  display: none;
+
+  @media (max-width: $breakpoint-hidden) {
+    display: block;
+    left: 0;
+    padding: 8px 16px 0;
+    position: absolute;
+    text-align: right;
+    top: 0;
+    z-index: 4;
+  }
+}
+
+.details-container {
+  color: var(--fg2);
+  display: flex;
+  flex: 1;
+  min-width: inherit;
+  overflow: hidden;
+  padding: 0;
+  position: sticky;
+  top: 0;
+
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    display: none;
+  }
+
+  // One Card Column
+  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+    max-width: $singlecolumn-max-width;
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
+  }
+
+  // Two Cards Columns
+  @media (min-width: $breakpoint-dualcolumn) {
+    max-width: 70%;
+  }
+}
+
+.close-details-container-mobile {
+  display: none;
+
+  @media (max-width: $breakpoint-hidden) {
+    display: block;
+    left: 0;
+    padding: 8px 16px 0;
+    position: absolute;
+    text-align: right;
+    top: 0;
+    z-index: 4;
+  }
+}
+
+.details-container.details-container-mobile {
+  // Hide Details
+  @media (max-width: $breakpoint-hidden) {
+    background: var(--bg1);
+    display: flex;
+    height: 100% !important;
+    left: 0;
+    max-width: 100%;
+    padding-top: 24px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 3;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+    overflow-y: auto;
+    padding-bottom: 96px;
+  }
+
+  ::ng-deep .header h3.title {
+    width: calc(100% - 16px);
+  }
+
+  ::ng-deep .cards .scroll-window {
+    display: block;
+    padding-bottom: 96px;
+  }
+
+  ::ng-deep .cards .scroll-window > * {
+    display: grid;
+    margin: 0 auto;
+    max-width: $card-width;
+    min-width: unset !important;
+    width: 99% !important;
+  }
+
+  ix-disk-details-panel {
+    margin-top: -12px;
+  }
+}
+
+ix-disk-details-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.disk-search {
+  background-color: var(--bg2);
+  padding: 16px;
+  position: sticky;
+  top: -15px;
+  z-index: 1;
+}
+
+.disk-tree-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  overflow: auto;
+}
+
+.disk-tree-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: fit-content;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-height: fit-content;
+    min-width: unset;
+    overflow-x: auto;
+  }
+
+}
+
+.disk-tree {
+  border-top: 2px solid var(--lines);
+}
+
+.disk-tree-header {
+  @include grid-row();
+
+  align-items: center;
+  color: var(--fg2);
+
+  // Override default fraction based values to avoid misaligned columns
+  grid-template-columns: auto 125px 125px 125px 90px;
+  min-height: 48px;
+  padding-left: 48px;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0 0;
+    width: auto;
+  }
+
+  @media (min-width: $breakpoint-singlecolumn) {
+    grid-template-columns: auto 125px 125px 125px 40px;
+    overflow-x: hidden;
+  }
+
+  > div {
+    font-weight: bold;
+    padding: 4px 0;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: block;
+      }
+    }
+  }
+
+  .disk-name-header {
+    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
+    padding-left: 8px;
+    padding-right: 15px;
+  }
+
+  .disk-status-header {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+.disk-nested-tree-root-node {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  cursor: pointer;
+  display: flex;
+  min-width: fit-content;
+  position: relative;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+    color: var(--fg2);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+}
+
+.vdev-group-toggle {
+  height: 25px;
+  line-height: 0;
+  margin-right: 10px;
+  width: 25px;
+}
+
+
+.dataset-nested-tree-root-node ix-icon.mobile-actions,
+.ix-tree-node ix-icon.mobile-actions,
+.ix-nested-tree-node ix-icon.mobile-actions {
+  display: none;
+
+  @media (max-width: $breakpoint-hidden) {
+    display: flex;
+    margin: 12px;
+    position: relative;
+    right: 8px;
+  }
+}

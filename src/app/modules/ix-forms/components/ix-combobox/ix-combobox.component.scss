@@ -12,13 +12,9 @@
   padding: 8px 0;
 }
 
-.tooltip {
-  margin: 0 0 0 8px;
-}
-
 .input-container {
   background: var(--bg1);
-  border: 1.5px solid var(--lines);
+  border: solid 1.5px var(--lines);
   border-radius: 2px;
   display: flex;
   flex-direction: row;
@@ -49,19 +45,6 @@
   margin-left: 4px;
 }
 
-.label-container {
-  align-items: center;
-  display: flex;
-  margin-bottom: 1px;
-  margin-left: 1px;
-  min-height: 24px;
-}
-
-.label {
-  display: inline-flex;
-  font-size: x-small;
-}
-
 .reset-input {
   align-items: center;
   bottom: 0;
@@ -75,7 +58,7 @@
   user-select: none;
 }
 
-.input-container mat-icon {
+.input-container .mat-icon {
   font-size: 1rem;
   height: auto;
   margin-left: 4px;

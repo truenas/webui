@@ -1,0 +1,15 @@
+.pool {
+  margin-bottom: 30px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.entity-empty-wrapper {
+  padding: 16px;
+
+  ix-entity-empty {
+    margin: 32px 0;
+  }
+}

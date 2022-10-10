@@ -3,12 +3,15 @@ $level-offset: 40px;
 :host {
   align-items: center;
   border-bottom: 1px solid var(--lines);
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   min-height: 48px;
   min-width: fit-content;
   position: relative;
+
+  &[routerlinkactive] {
+    cursor: pointer;
+  }
 
   &:hover {
     background-color: var(--hover-bg);

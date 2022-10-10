@@ -23,7 +23,6 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
-import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import {
   Bootenv,
   CreateBootenvParams,
@@ -50,7 +49,7 @@ import { ChartReleaseEvent, ChartRollbackParams, ChartScaleResult } from 'app/in
 import {
   ChartRelease,
   ChartReleaseCreate,
-  ChartReleaseQueryParams,
+  ChartReleaseQueryParams, ChartReleaseUpdate, ChartReleaseUpgrade,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
@@ -163,7 +162,11 @@ import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface'
 import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { MapOption } from 'app/interfaces/option.interface';
-import { PeriodicSnapshotTask, PeriodSnapshotTaskUpdate } from 'app/interfaces/periodic-snapshot-task.interface';
+import {
+  PeriodicSnapshotTask,
+  PeriodicSnapshotTaskCreate,
+  PeriodicSnapshotTaskUpdate,
+} from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -246,7 +249,7 @@ import {
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice,
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
@@ -323,7 +326,7 @@ export type ApiDirectory = {
   // Boot
   'boot.set_scrub_interval': { params: [number]; response: number };
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
-  'boot.get_state': { params: void; response: BootPoolState };
+  'boot.get_state': { params: void; response: PoolInstance };
   'boot.detach': { params: [disk: string]; response: void };
   'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: void };
   'boot.scrub': { params: void; response: void };
@@ -370,8 +373,8 @@ export type ApiDirectory = {
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
-  'chart.release.update': { params: any; response: ChartRelease };
-  'chart.release.upgrade': { params: any; response: ChartRelease };
+  'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
+  'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
@@ -442,7 +445,7 @@ export type ApiDirectory = {
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
-  'disk.temperature_alerts': { params: [disks: string[]]; response: [] };
+  'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Directory Services
@@ -549,6 +552,9 @@ export type ApiDirectory = {
   'interface.checkin': { params: void; response: void };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
+  'interface.default_route_will_be_removed': { params: void; response: boolean };
+  'interface.save_default_route': { params: string[]; response: void };
+  'interface.cancel_rollback': { params: void; response: void };
 
   // iSCSI
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
@@ -558,7 +564,7 @@ export type ApiDirectory = {
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
   'iscsi.extent.create': { params: [IscsiExtentUpdate]; response: IscsiExtent };
   'iscsi.extent.update': { params: [id: number, update: IscsiExtentUpdate]; response: IscsiExtentUpdate };
-  'iscsi.extent.delete': { params: [id: number, remove: number, force: boolean]; response: boolean };
+  'iscsi.extent.delete': { params: [id: number, remove: boolean, force: boolean]; response: boolean };
   'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: [id: number]; response: boolean };
   'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };
@@ -716,10 +722,10 @@ export type ApiDirectory = {
   'pool.scrub.delete': { params: [id: number]; response: boolean };
   'pool.scrub.query': { params: QueryParams<PoolScrubTask>; response: PoolScrubTask[] };
   'pool.scrub.update': { params: [id: number, params: CreatePoolScrubTask]; response: PoolScrubTask };
-  'pool.snapshottask.create': { params: [PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
+  'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
-  'pool.snapshottask.update': { params: [id: number, update: PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
+  'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
   'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
   'pool.update': { params: [id: number, update: UpdatePool]; response: Pool };
@@ -787,6 +793,7 @@ export type ApiDirectory = {
   // System
   'system.feature_enabled': { params: [feature: string]; response: boolean };
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
+  'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
   'system.reboot': { params: { delay?: number }; response: void };
   'system.shutdown': { params: { delay?: number }; response: void };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
@@ -917,6 +924,7 @@ export type ApiDirectory = {
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
+  'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
@@ -980,6 +988,8 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
   'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+  'zfs.snapshot.hold': { params: [string]; response: void };
+  'zfs.snapshot.release': { params: [string]; response: void };
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };

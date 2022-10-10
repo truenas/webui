@@ -1,12 +1,9 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   OnInit,
-  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -16,25 +13,21 @@ import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { UUID } from 'angular2-uuid';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
-import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService, SystemGeneralService, LanguageService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
-import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -43,33 +36,26 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
-export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterViewInit {
+export class AdminLayoutComponent implements OnInit, AfterViewInit {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode: MatDrawerMode = 'over';
-  isShowFooterConsole = false;
-  consoleMsg = '';
   hostname: string;
-  consoleMessages: string[] = [];
-  logoPath = 'assets/images/light-logo.svg';
-  logoTextPath = 'assets/images/light-logo-text.svg';
   currentTheme = '';
   isOpen = false;
   menuName: string;
-  readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
-  consoleMsgsSubscriptionId: string = null;
   subs: SubMenuItem[];
-  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+  copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
 
   headerPortalOutlet: TemplatePortal = null;
 
   readonly productTypeLabels = productTypeLabels;
 
   isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
+  hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
-  @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   themes: Theme[];
   productType$ = this.sysGeneralService.getProductType$;
 
@@ -82,11 +68,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     protected ws: WebSocketService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
+    private languageService: LanguageService,
   ) {
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
@@ -107,13 +93,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
-    });
-
-    this.core.register({
-      observerClass: this,
-      eventName: 'ForceSidenav',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ForceSidenavEvent) => {
-      this.updateSidenav(evt.data);
     });
 
     this.core.register({
@@ -147,7 +126,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     this.sysGeneralService.toggleSentryInit();
 
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
-      this.onShowConsoleFooterBar(config.ui_consolemsg);
+      this.languageService.setLanguage(config.language);
     });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
@@ -159,32 +138,26 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
     this.store$.dispatch(adminUiInitialized());
   }
 
-  ngAfterViewChecked(): void {
-    this.scrollToBottomOnFooterBar();
-  }
-
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$
       .pipe(untilDestroyed(this))
-      .subscribe((headerContent: TemplateRef<unknown>) => {
-        this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-        this.cdr.detectChanges();
+      .subscribe((headerContent) => {
+        try {
+          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+          this.cdr.detectChanges();
+        } catch (error: unknown) {
+          // Prevents an error on one header from breaking headers on all pages.
+          console.error('Error when rendering page header template', error);
+          this.headerPortalOutlet = null;
+        }
       });
   }
 
-  updateSidenav(force?: 'open' | 'close'): void {
-    if (force) {
-      this.isSidenavOpen = force === 'open';
-      if (force === 'close') {
-        this.layoutService.isMenuCollapsed = false;
-      }
-      return;
-    }
-
+  updateSidenav(): void {
     this.isSidenavOpen = !this.isMobile;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
     if (!this.isMobile) {
-      // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
+      // TODO: This is hack to resolve issue described here: https://ixsystems.atlassian.net/browse/NAS-110404
       setTimeout(() => {
         this.sideNav.open();
       });
@@ -211,65 +184,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, AfterView
       return '240px';
     }
     return '0px';
-  }
-
-  scrollToBottomOnFooterBar(): void {
-    try {
-      this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch (err: unknown) { }
-  }
-
-  getLogConsoleMsg(): void {
-    this.consoleMsgsSubscriptionId = UUID.UUID();
-    this.ws.sub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.data && typeof res.data === 'string') {
-        this.consoleMsg = this.accumulateConsoleMsg(res.data, 3);
-      }
-    });
-  }
-
-  accumulateConsoleMsg(msg: string, num: number): string {
-    let msgs = '';
-    const msgarr = msg.split('\n');
-
-    // consoleMSgList will store just 500 messages.
-    msgarr.forEach((message) => {
-      if ((message) !== '') {
-        this.consoleMessages.push((message));
-      }
-    });
-    while (this.consoleMessages.length > 500) {
-      this.consoleMessages.shift();
-    }
-
-    const limit = Math.min(num, 500, this.consoleMessages.length);
-    for (let i = this.consoleMessages.length - 1; i >= this.consoleMessages.length - limit; --i) {
-      msgs = this.consoleMessages[i] + '\n' + msgs;
-    }
-
-    return msgs;
-  }
-
-  onShowConsoleFooterBar(isConsoleFooterEnabled: boolean): void {
-    if (isConsoleFooterEnabled && this.consoleMsg === '') {
-      this.getLogConsoleMsg();
-    } else if (!isConsoleFooterEnabled && this.consoleMsgsSubscriptionId) {
-      this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);
-    }
-
-    this.isShowFooterConsole = isConsoleFooterEnabled;
-  }
-
-  onShowConsolePanel(): void {
-    const dialogRef = this.dialog.open(ConsolePanelDialogComponent, {});
-    const sub = dialogRef.componentInstance.onEventEmitter.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
-    });
-
-    dialogRef.beforeClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      clearInterval(dialogRef.componentInstance.intervalPing);
-      sub.unsubscribe();
-    });
   }
 
   // For the slide-in menu

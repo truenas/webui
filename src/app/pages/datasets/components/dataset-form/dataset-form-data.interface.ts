@@ -1,7 +1,7 @@
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetChecksum } from 'app/enums/dataset-checksum.enum';
 import {
-  DatasetAclType, DatasetRecordSize, DatasetSnapdir, DatasetSync,
+  DatasetAclType, DatasetRecordSize, DatasetSnapdev, DatasetSnapdir, DatasetSync,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -28,6 +28,7 @@ export interface DatasetFormData {
   exec: WithInherit<OnOff>;
   readonly: WithInherit<OnOff>;
   snapdir: DatasetSnapdir;
+  snapdev: DatasetSnapdev;
   copies: WithInherit<number>;
   recordsize: WithInherit<DatasetRecordSize>;
   casesensitivity: string;
@@ -39,6 +40,6 @@ export interface DatasetFormData {
   refquota_warning_inherit: boolean;
   refquota_critical: WithInherit<number>;
   refquota_critical_inherit: boolean;
-  special_small_block_size: number;
+  special_small_block_size: WithInherit<number>;
   checksum: DatasetChecksum;
 }

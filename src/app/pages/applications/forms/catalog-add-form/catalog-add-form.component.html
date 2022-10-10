@@ -1,7 +1,11 @@
-<ix-modal-header [title]="'Add Catalog' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Add Catalog' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-input
           formControlName="label"
@@ -9,22 +13,26 @@
           [required]="true"
           [tooltip]="tooltips.label | translate"
         ></ix-input>
+
         <ix-checkbox
           formControlName="force"
           [label]="'Force Create' | translate"
           [tooltip]="tooltips.force | translate"
         ></ix-checkbox>
+
         <ix-input
           formControlName="repository"
           [label]="'Repository' | translate"
           [tooltip]="tooltips.repository | translate"
           [required]="true"
         ></ix-input>
+
         <ix-chips
           formControlName="preferred_trains"
           [label]="'Preferred Trains' | translate"
           [tooltip]="tooltips.preferred_trains | translate"
         ></ix-chips>
+
         <ix-input
           formControlName="branch"
           [label]="'Branch' | translate"
@@ -36,9 +44,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

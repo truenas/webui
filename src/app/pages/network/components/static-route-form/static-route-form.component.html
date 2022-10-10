@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
         <ix-input
           formControlName="destination"
@@ -9,12 +10,14 @@
           [required]="true"
           [tooltip]="tooltips.destination"
         ></ix-input>
+
         <ix-input
           formControlName="gateway"
           [label]="'Gateway' | translate"
           [required]="true"
           [tooltip]="tooltips.gateway"
         ></ix-input>
+
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
@@ -26,9 +29,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

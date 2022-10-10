@@ -1,23 +1,24 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit, SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import {
-  IActionMapping,
-  ITreeOptions,
-  KEYS,
-  TREE_ACTIONS,
-  TreeComponent,
+  IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
 } from '@circlon/angular-tree-component';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { findKey } from 'lodash';
-import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { lastValueFrom, Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { TreeNode, ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { mntPath } from 'app/enums/mnt-path.enum';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-
-export type TreeNodeProvider = (parent?: TreeNode<ExplorerNodeData>) => Observable<ExplorerNodeData[]>;
+import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
 @UntilDestroy()
 @Component({
@@ -26,22 +27,24 @@ export type TreeNodeProvider = (parent?: TreeNode<ExplorerNodeData>) => Observab
   styleUrls: ['./ix-explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxExplorerComponent implements OnInit, ControlValueAccessor {
+export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
+  @Input() multiple = false;
   @Input() tooltip: string;
   @Input() required: boolean;
-  @Input() root = '/mnt';
+  @Input() root = mntPath;
   @Input() nodeProvider: TreeNodeProvider;
 
-  @ViewChild('tree') tree: TreeComponent;
+  @ViewChild('tree', { static: true }) tree: TreeComponent;
 
-  value = '';
+  inputValue = '';
+  value: string | string[];
   isDisabled = false;
   nodes: ExplorerNodeData[] = [];
   loadingError: string;
 
-  onChange: (value: string) => void = (): void => {};
+  onChange: (value: string | string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   readonly ExplorerNodeType = ExplorerNodeType;
@@ -62,19 +65,10 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
     },
   };
 
-  readonly treeOptions: ITreeOptions = {
+  treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    getChildren: (node) => this.nodeProvider(node).pipe(
-      tap(() => {
-        this.loadingError = null;
-      }),
-      catchError((error: WebsocketError | Error) => {
-        this.loadingError = 'reason' in error ? error.reason : error.message;
-        this.cdr.markForCheck();
-        return of([]);
-      }),
-    ).toPromise(),
+    getChildren: (node) => lastValueFrom(this.loadChildren(node)),
     actionMapping: this.actionMapping,
     useTriState: false,
   };
@@ -97,12 +91,20 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
     ];
   }
 
-  writeValue(value: string): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('multiple' in changes) {
+      this.treeOptions.useCheckbox = this.multiple;
+    }
+  }
+
+  writeValue(value: string | string[]): void {
     this.value = value;
+    this.updateInputValue();
+    this.selectTreeNodes(Array.isArray(value) ? value : [value]);
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: string) => void): void {
+  registerOnChange(onChange: (value: string | string[]) => void): void {
     this.onChange = onChange;
   }
 
@@ -116,34 +118,56 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
   }
 
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
-    // TODO: If you ever need to implement multiple selection adjust code here
-    // Ensure only one node is selected
-    const treeState = {
-      ...this.tree.treeModel.getState(),
-      selectedLeafNodeIds: {
-        [event.node.id]: true,
-      },
-    };
+    if (this.multiple) {
+      this.selectTreeNodes([
+        ...Object.keys(this.tree.treeModel.selectedLeafNodeIds),
+        event.node.id,
+      ]);
+    } else {
+      this.selectTreeNodes([event.node.id]);
+    }
 
-    this.tree.treeModel.setState(treeState);
+    this.onSelectionChanged();
+  }
+
+  onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
+    if (this.multiple) {
+      this.selectTreeNodes(
+        Object.keys(this.tree.treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
+      );
+    } else {
+      this.selectTreeNodes([]);
+    }
 
     this.onSelectionChanged();
   }
 
   onSelectionChanged(): void {
-    const newValue = findKey(this.tree.treeModel.selectedLeafNodeIds, (isSelected) => isSelected);
+    let newValue: string[] | string = Object.entries(this.tree.treeModel.selectedLeafNodeIds)
+      .filter(([, isSelected]) => isSelected)
+      .map(([nodeId]) => nodeId);
+
+    if (!this.multiple) {
+      newValue = newValue[0];
+    }
 
     if (newValue === this.value) {
       return;
     }
 
     this.value = newValue;
+    this.updateInputValue();
     this.onChange(newValue);
   }
 
-  valueChangedCustom(value: string): void {
-    this.value = value;
-    this.onChange(value);
+  onInputChanged(inputValue: string): void {
+    this.value = this.multiple ? inputValue.split(',') : inputValue;
+    this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
+    this.onChange(this.value);
+  }
+
+  isPathSelected(path: string): boolean {
+    return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
   }
 
   /**
@@ -151,5 +175,31 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
    */
   typeNode(node: TreeNode<ExplorerNodeData>): TreeNode<ExplorerNodeData> {
     return node;
+  }
+
+  private updateInputValue(): void {
+    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
+  }
+
+  private selectTreeNodes(nodeIds: string[]): void {
+    const treeState = {
+      ...this.tree.treeModel.getState(),
+      selectedLeafNodeIds: nodeIds.reduce((acc, nodeId) => ({ ...acc, [nodeId]: true }), {}),
+    };
+
+    this.tree.treeModel.setState(treeState);
+  }
+
+  private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {
+    this.loadingError = null;
+    this.cdr.markForCheck();
+
+    return this.nodeProvider(node).pipe(
+      catchError((error: WebsocketError | Error) => {
+        this.loadingError = 'reason' in error ? error.reason : error.message;
+        this.cdr.markForCheck();
+        return of([]);
+      }),
+    );
   }
 }

@@ -50,14 +50,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   formGroup: UntypedFormGroup;
   fieldConfig: FieldConfig[];
   resourceName: string;
-  getFunction: any;
+  getFunction: Observable<any>;
   submitFunction = this.editCall;
   isNew = false;
   hasConf = true;
   wsResponse: any;
   wsfg: AbstractControl;
-  wsResponseIdx: any;
-  queryResponse: any;
   saveSubmitText: string = this.translate.instant('Save');
   successMessage: string = this.translate.instant('Settings saved.');
 
@@ -228,7 +226,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.submitFunction = this.editCall;
             // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
-            this.resourceName = this.resourceName + this.pk + '/';
+            this.resourceName = `${this.resourceName}${this.pk}/`;
           }
         } else {
           if (this.conf.saveSubmitText === undefined) {
@@ -249,7 +247,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       if (!this.conf.queryCall) {
-        this.getFunction = this.noGetFunction();
+        this.getFunction = undefined;
       } else if (this.conf.queryCall) {
         if (this.pk) {
           let pk = this.pk;
@@ -276,7 +274,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
-        this.getFunction.pipe(untilDestroyed(this)).subscribe((res: any) => {
+        this.getFunction.pipe(untilDestroyed(this)).subscribe((res) => {
           if (res.data) {
             this.data = res.data;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
@@ -311,7 +309,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               }
             }
           } else {
-            this.queryResponse = res;
             if (res[0]) {
               this.wsResponse = res[0];
             } else {
@@ -331,7 +328,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             } else {
               for (const key in this.wsResponse) {
                 this.wsfg = this.formGroup.controls[key];
-                this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
@@ -368,10 +364,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.blurEvent) {
       this.conf.blurEvent(this);
     }
-  }
-
-  noGetFunction(): void {
-
   }
 
   ngOnChanges(): void {
@@ -450,16 +442,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
 
-    // TODO: remove
-    for (const i in value) {
-      if (value.hasOwnProperty(i)) {
-        const cleanMethod = new EntityUtils().getCleanMethod(i);
-        if ((this.conf as any)[cleanMethod]) {
-          value = (this.conf as any)[cleanMethod](value, i);
-        }
-      }
-    }
-
     if ('id' in value) {
       delete value['id'];
     }
@@ -484,8 +466,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loader.open();
       this.loaderOpen = true;
       this.submitFunction(value)
-        .pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+        .pipe(untilDestroyed(this)).subscribe({
+          next: (res) => {
             this.loader.close();
             this.loaderOpen = false;
 
@@ -522,7 +504,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               });
             }
           },
-          (res) => {
+          error: (res) => {
             this.loader.close();
             this.loaderOpen = false;
             if (this.conf.errorReport) {
@@ -533,7 +515,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               new EntityUtils().handleError(this, res);
             }
           },
-        );
+        });
     }
   }
 
@@ -583,11 +565,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  setValue(name: string, value: any): void {
+  setValue(name: string, value: unknown): void {
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 
-  setArrayValue(data: any[], formArray: UntypedFormArray, name: string): void {
+  setArrayValue(data: Record<string, unknown>[], formArray: UntypedFormArray, name: string): void {
     let arrayFieldConfigs: FieldConfig[];
     this.fieldConfig.forEach((config) => {
       if (config.name === name) {
@@ -629,7 +611,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  addExtraFieldConfigs(value: any, fieldConfig: FieldConfig): void {
+  addExtraFieldConfigs(value: Record<string, unknown>[] | Record<string, unknown[]>, fieldConfig: FieldConfig): void {
     if (value) {
       if (fieldConfig.type === 'list' && Array.isArray(value)) {
         const listConfig: FormListConfig = fieldConfig;
@@ -639,7 +621,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           templateListField.forEach((subFieldConfig) => {
             const subValue = listValue[subFieldConfig.name];
             if (subFieldConfig.type === 'list' || subFieldConfig.type === 'dict') {
-              this.addExtraFieldConfigs(subValue, subFieldConfig);
+              this.addExtraFieldConfigs(
+                subValue as Record<string, unknown>[] | Record<string, unknown[]>,
+                subFieldConfig,
+              );
             }
           });
           listConfig.listFields.push(templateListField);
@@ -648,9 +633,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         const dictConfig = fieldConfig;
         if (dictConfig.subFields) {
           dictConfig.subFields.forEach((subFieldConfig) => {
-            const subValue = value[subFieldConfig.name];
+            const subValue = (value as Record<string, unknown[]>)[subFieldConfig.name];
             if (subFieldConfig.type === 'list' || subFieldConfig.type === 'dict') {
-              this.addExtraFieldConfigs(subValue, subFieldConfig);
+              this.addExtraFieldConfigs(
+                subValue as Record<string, unknown>[] | Record<string, unknown[]>,
+                subFieldConfig,
+              );
             }
           });
         }
@@ -683,7 +671,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  setObjectListValue(values: any, formControl: AbstractControl, fieldConfig: FieldConfig): void {
+  setObjectListValue(
+    values: Record<string, unknown>[] | Record<string, unknown[]>,
+    formControl: AbstractControl,
+    fieldConfig: FieldConfig,
+  ): void {
     this.addExtraFieldConfigs(values, fieldConfig);
     this.addExtraFormControls(fieldConfig, formControl);
   }

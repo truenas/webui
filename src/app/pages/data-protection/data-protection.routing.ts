@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
-import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
+import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
@@ -30,14 +30,6 @@ export const dataProtectionRoutes: Routes = [{
         path: ':dataset',
         component: CloudsyncListComponent,
         data: { title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks' },
-      }, {
-        path: 'add',
-        component: CloudsyncFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: CloudsyncFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     }, {
       path: 'snapshot',
@@ -55,7 +47,7 @@ export const dataProtectionRoutes: Routes = [{
         component: SnapshotListComponent,
         data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
       }],
-    },{
+    }, {
       path: 'replication',
       data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks', icon: 'event_note' },
       children: [{
@@ -87,7 +79,7 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: RsyncTaskListComponent,
         data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
-      },{
+      }, {
         path: ':dataset',
         component: RsyncTaskListComponent,
         data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
@@ -112,6 +104,16 @@ export const dataProtectionRoutes: Routes = [{
         data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },
         component: ResilverConfigComponent,
       }],
+    }, {
+      path: 'vmware-snapshots',
+      data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
+      children: [
+        {
+          path: '',
+          component: VmwareSnapshotListComponent,
+          data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
+        },
+      ],
     },
   ],
 }];

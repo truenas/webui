@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -23,7 +23,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService,
   DialogService,
-  StorageService,
+  StorageService, SystemGeneralService,
   VmService,
   WebSocketService,
 } from 'app/services';
@@ -49,7 +49,7 @@ export class VmFormComponent implements FormConfiguration {
   private gpus: Device[];
   private isolatedGpuPciIds: string[];
   private maxVcpus: number;
-  private productType = window.localStorage.getItem('product_type') as ProductType;
+  private productType = this.systemGeneralService.getProductType();
   queryCallOption: [Partial<QueryFilter<VirtualMachine>>?] = [];
 
   fieldConfig: FieldConfig[] = [];
@@ -236,6 +236,8 @@ export class VmFormComponent implements FormConfiguration {
     },
   ];
   private bootloader: FormSelectConfig;
+  private gpuVmPciSlots: string[];
+  private wasFormInitialized = false;
 
   constructor(
     protected router: Router,
@@ -247,6 +249,7 @@ export class VmFormComponent implements FormConfiguration {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) { }
 
   preInit(entityForm: EntityFormComponent): void {
@@ -263,6 +266,7 @@ export class VmFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
+    this.wasFormInitialized = true;
     this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
     this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
       for (const option in options) {
@@ -323,14 +327,16 @@ export class VmFormComponent implements FormConfiguration {
         }
       }
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
-      if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
+      if (finalIsolatedPciIds.length && gpusValue.length
+        && this.gpuVmPciSlots !== gpusValue && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
           if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
             prevSelectedGpus.push(gpu);
           }
         }
-        const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+        const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
+        const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
         gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
         if (prevSelectedGpus.length) {
           gpusConf.warnings += this.translate.instant(
@@ -362,23 +368,27 @@ export class VmFormComponent implements FormConfiguration {
     }
   }
 
-  cpuValidator(name: string): any {
+  cpuValidator(name: string): ValidatorFn {
     return () => {
+      if (!this.wasFormInitialized) {
+        return;
+      }
       const cpuConfig = this.fieldConfig.find((config) => config.name === name);
-      setTimeout(() => {
-        const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
-          ? { validCPU: true }
-          : null;
+      const vcpus = this.entityForm.formGroup.controls['vcpus'].value;
+      const cores = this.entityForm.formGroup.controls['cores'].value;
+      const threads = this.entityForm.formGroup.controls['threads'].value;
+      const errors = vcpus * cores * threads > this.maxVcpus
+        ? { validCPU: true }
+        : null;
 
-        if (errors) {
-          cpuConfig.hasErrors = true;
-          cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
-        } else {
-          cpuConfig.hasErrors = false;
-          cpuConfig.warnings = '';
-        }
-        return errors;
-      }, 100);
+      if (errors) {
+        cpuConfig.hasErrors = true;
+        cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
+      } else {
+        cpuConfig.hasErrors = false;
+        cpuConfig.warnings = '';
+      }
+      return errors;
     };
   }
 
@@ -402,8 +412,8 @@ export class VmFormComponent implements FormConfiguration {
         }
         return true;
       });
-      const gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.entityForm.formGroup.controls['gpus'].setValue(gpuVmPciSlots);
+      this.gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
+      this.entityForm.formGroup.controls['gpus'].setValue(this.gpuVmPciSlots);
     });
     return vmRes;
   }
@@ -496,15 +506,15 @@ export class VmFormComponent implements FormConfiguration {
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
     // TODO: Potential error - forkJoin may be needed.
-    combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    combineLatest(observables).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
-    );
+    });
   }
 }

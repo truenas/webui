@@ -77,15 +77,18 @@ export class SedFormComponent {
     const values = this.form.value;
     delete values.sed_passwd2;
 
-    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-      this.store$.dispatch(advancedConfigUpdated());
-    }, (res) => {
-      this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, res);
-      this.cdr.markForCheck();
+    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+        this.store$.dispatch(advancedConfigUpdated());
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(this, error);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

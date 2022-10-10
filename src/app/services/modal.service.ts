@@ -1,3 +1,4 @@
+import { PlatformLocation } from '@angular/common';
 import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
@@ -11,20 +12,26 @@ export interface ModalServiceMessage {
   row: number;
 }
 
+export const slideInModalId = 'slide-in-form';
+
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private modals: ModalComponent[] = [];
 
-  refreshTable$ = new Subject();
-  onClose$ = new Subject();
-  refreshForm$ = new Subject();
+  private modalTypeOpenedInSlideIn: Type<unknown> = null;
+  readonly refreshTable$ = new Subject<void>();
+  readonly onClose$ = new Subject<{ modalType?: Type<unknown>; response: unknown }>();
+  refreshForm$ = new Subject<void>();
   getRow$ = new Subject();
   message$ = new Subject<ModalServiceMessage>();
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
-  ) {}
+    private location: PlatformLocation,
+  ) {
+    this.location.onPopState(() => this.closeSlideIn());
+  }
 
   refreshTable(): void {
     this.refreshTable$.next();
@@ -51,12 +58,13 @@ export class ModalService {
   openInSlideIn<T>(componentType: Type<T>, rowId?: string | number): T {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentType);
     const componentRef = componentFactory.create(this.injector);
-    this.open('slide-in-form', componentRef.instance, rowId);
+    this.open(slideInModalId, componentRef.instance, rowId);
+    this.modalTypeOpenedInSlideIn = componentType;
     return componentRef.instance;
   }
 
   closeSlideIn(): Promise<boolean> {
-    return this.close('slide-in-form');
+    return this.close(slideInModalId);
   }
 
   /**
@@ -75,7 +83,11 @@ export class ModalService {
   private close(id: string): Promise<boolean> {
     // close modal specified by id
     const modal = this.modals.find((modal) => modal.id === id);
-    this.onClose$.next(true);
+    if (id === slideInModalId) {
+      this.onClose$.next({ modalType: this.modalTypeOpenedInSlideIn, response: true });
+    } else {
+      this.onClose$.next({ response: true });
+    }
     return modal.close();
   }
 }

@@ -24,6 +24,7 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:rxjs/recommended"
       ],
       "plugins": [
         "rxjs",
@@ -53,6 +54,7 @@ module.exports = {
           "ignoreStrings": true, // TODO: Consider enabling later.
           "ignoreTemplateLiterals": true
         }],
+        "radix": "off",
         "no-console": ["error", { allow: ["warn", "error", "info"] }],
         "import/order": ["error", {
           "groups": ["builtin", "external", ["internal", "parent", "sibling", "index"]],
@@ -135,13 +137,10 @@ module.exports = {
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
         "@typescript-eslint/no-shadow": "off",
-        "no-case-declarations": "off",
         "no-multi-str": "off",
-        "no-useless-escape": "off",
         "no-mixed-operators": ["error", {
           groups: [
             // TODO: Some operators from default config not implemented.
@@ -153,7 +152,6 @@ module.exports = {
           allowSamePrecedence: true
         }],
         "default-case": "off",
-        "import/no-cycle": "off",
         "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
@@ -161,13 +159,14 @@ module.exports = {
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
 
         // Other temporary disables
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
+        "rxjs/no-implicit-any-catch": ["off"],
+        "rxjs/no-nested-subscribe": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
@@ -178,6 +177,7 @@ module.exports = {
             "PropertyDefinition[decorators]",
           ]
         }],
+        "@typescript-eslint/restrict-plus-operands": ["error", { allowAny: true }],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
@@ -240,7 +240,7 @@ module.exports = {
         "rxjs-angular/prefer-takeuntil": ["error", {
           "alias": ["untilDestroyed"],
           "checkComplete": false,
-          "checkDecorators": ["Component"], // default
+          "checkDecorators": ["Component"],
           "checkDestroy": false
         }],
         "rxjs/finnish": ["error", {
@@ -250,6 +250,7 @@ module.exports = {
           "functions": false,
           "methods": false,
         }],
+        "rxjs/prefer-observer": ["error"],
         "id-length": ["error", {
           exceptions: ['a', 'b', 'x', 'y', '_', 'i', 'n'],
           properties: 'never',

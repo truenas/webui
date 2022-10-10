@@ -1,33 +1,37 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, OnInit, TemplateRef, AfterViewInit,
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  OnInit,
+  TemplateRef,
+  AfterViewInit,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of, Observable } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  filter, map, switchMap,
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
+import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
-import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
-import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import {
-  DialogService, WebSocketService, AppLoaderService,
-} from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -56,6 +60,8 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     }),
   );
   showExtraColumns: boolean;
+  expandedRow: ZfsSnapshot;
+  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
@@ -80,21 +86,19 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   readonly defaultColumns: string[] = ['select', 'dataset', 'snapshot_name', 'actions'];
   readonly defaultExtraColumns: string[] = ['select', 'dataset', 'snapshot_name', 'used', 'created', 'referenced', 'actions'];
   displayedColumns: string[] = this.defaultColumns;
-  private dataset: string = '';
+  datasetFilter = '';
 
   constructor(
     private dialogService: DialogService,
-    private websocket: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private loader: AppLoaderService,
     private matDialog: MatDialog,
     private store$: Store<AppState>,
     private slideIn: IxSlideInService,
     private layoutService: LayoutService,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.datasetFilter = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   ngOnInit(): void {
@@ -124,16 +128,15 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     this.store$.pipe(
       select(selectSnapshots),
       untilDestroyed(this),
-    ).subscribe((snapshots) => {
-      const _snapshots = snapshots.filter((snapshot) =>
-        snapshot.dataset === this.dataset ||
-        snapshot.dataset.includes(`${this.dataset}/`)
-      );
-      this.createDataSource(_snapshots);
-      this.cdr.markForCheck();
-    }, () => {
-      this.createDataSource();
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (snapshots) => {
+        this.createDataSource(snapshots);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -176,51 +179,18 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
       this.cdr.markForCheck();
     }, 0);
+    this.dataSource.filter = this.datasetFilter;
   }
 
   toggleExtraColumns(event: MouseEvent): void {
     event.preventDefault();
     this.dialogService.confirm(this.getConfirmOptions())
-      .pipe(
-        filter(Boolean),
-        untilDestroyed(this),
-      )
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store$.dispatch(snapshotExtraColumnsToggled()));
   }
 
   doAdd(): void {
     this.slideIn.open(SnapshotAddFormComponent);
-  }
-
-  doClone(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotCloneDialogComponent, {
-      data: snapshot.name,
-    });
-  }
-
-  doRollback(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotRollbackDialogComponent, { data: snapshot.name });
-  }
-
-  doDelete(snapshot: ZfsSnapshot): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
-      buttonMsg: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.websocket.call('zfs.snapshot.delete', [snapshot.name])),
-      untilDestroyed(this),
-    ).subscribe(
-      () => {
-        this.loader.close();
-      },
-      (error: WebsocketError) => {
-        console.error(error);
-        this.loader.close();
-      },
-    );
   }
 
   doBatchDelete(snapshots: ZfsSnapshot[]): void {
@@ -236,7 +206,24 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onToggle(row: ZfsSnapshot): void {
+    this.expandedRow = this.expandedRow === row ? null : row;
+    this.toggleDetailRows();
+    this.cdr.markForCheck();
+  }
+
+  toggleDetailRows(): void {
+    this.detailRows.forEach((row) => {
+      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
+        row.close();
+      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
+        row.open();
+      }
+    });
+  }
+
   onSearch(query: string): void {
+    this.datasetFilter = query;
     this.dataSource.filter = query;
   }
 }

@@ -1,0 +1,111 @@
+@import '~assets/styles/mixins/grid';
+@import '~assets/styles/scss-imports/splitview';
+
+$level-offset: 25px;
+$padding-left: 8px;
+$columns: 7;
+
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-weight: 500;
+  min-height: 48px;
+  padding: 0;
+}
+
+.tree-node-grid {
+  @include grid-row($columns);
+  align-items: center;
+
+  grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0 0 0 30px;
+    width: 100%;
+  }
+
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 15px;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+
+    &:last-child {
+      justify-content: flex-end;
+      padding-right: $level-offset;
+      position: sticky;
+      right: 0;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+
+      button {
+        left: 0;
+        position: absolute;
+      }
+    }
+  }
+
+  .cell-name .name {
+    background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+    font-weight: bold;
+  }
+
+  .cell-status {
+    gap: 8px;
+
+    .ix-icon {
+      font-size: 20px;
+      height: 20px;
+      margin: 0;
+      width: 20px;
+    }
+  }
+
+  .cell-actions {
+    background: linear-gradient(270deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+  }
+}
+
+// TODO: Fragile (at least with css selectors)
+:host-context(ix-tree-node:hover),
+:host-context(ix-tree-node.selected),
+:host-context(.nested-tree-root-node:hover),
+:host-context(.nested-tree-root-node.selected) {
+  .tree-node-grid .cell-name .name {
+    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  }
+
+  .tree-node-grid .cell-actions {
+    background: linear-gradient(270deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  }
+}
+
+::ng-deep {
+  @for $i from 1 through 10 {
+    ix-tree-node[aria-level="#{$i}"],
+    ix-nested-tree-node[aria-level="#{$i}"] {
+      > .mat-icon-button:first-child {
+        left: $padding-left + $level-offset * ($i - 1);
+      }
+
+      ix-bootenv-node-item {
+        padding-left: $padding-left + $level-offset * ($i - 1);
+      }
+    }
+  }
+}

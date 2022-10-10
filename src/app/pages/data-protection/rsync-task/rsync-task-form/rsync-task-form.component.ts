@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
@@ -56,7 +57,7 @@ export class RsyncTaskFormComponent implements OnInit {
       (control) => control.parent && this.isModuleMode,
       Validators.required,
     )],
-    remotepath: ['/mnt'],
+    remotepath: [mntPath],
     validate_rpath: [true],
     schedule: ['', Validators.required],
     recursive: [true],
@@ -167,6 +168,7 @@ export class RsyncTaskFormComponent implements OnInit {
       ...task,
       schedule: scheduleToCrontab(task.schedule),
       sshconnectmode: task.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
+      ssh_credentials: task.ssh_credentials?.id || null,
     });
   }
 
@@ -184,10 +186,10 @@ export class RsyncTaskFormComponent implements OnInit {
     } else {
       delete values.remotemodule;
       if (values.sshconnectmode === RsyncSshConnectMode.PrivateKey) {
-        delete values.ssh_credentials;
+        values.ssh_credentials = null;
       } else {
-        delete values.remotehost;
-        delete values.remoteport;
+        values.remotehost = null;
+        values.remoteport = null;
       }
     }
     delete values.sshconnectmode;
@@ -203,13 +205,16 @@ export class RsyncTaskFormComponent implements OnInit {
       ]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

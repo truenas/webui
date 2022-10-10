@@ -89,14 +89,14 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   onCheckboxChange(row: NfsShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (res) => {
-          row.enabled = res.enabled;
+      .subscribe({
+        next: (share) => {
+          row.enabled = share.enabled;
         },
-        (err) => {
+        error: (err) => {
           row.enabled = !row.enabled;
           new EntityUtils().handleWsError(this, err, this.dialog);
         },
-      );
+      });
   }
 }

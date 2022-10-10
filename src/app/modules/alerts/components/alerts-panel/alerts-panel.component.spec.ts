@@ -1,4 +1,4 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
@@ -13,7 +13,7 @@ import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-pane
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const unreadAlerts = [
@@ -70,7 +70,13 @@ describe('AlertsPanelComponent', () => {
         mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
+        mockCall('failover.licensed', true),
       ]),
+      mockProvider(SystemGeneralService, {
+        get isEnterprise(): boolean {
+          return true;
+        },
+      }),
     ],
   });
 
@@ -85,6 +91,13 @@ describe('AlertsPanelComponent', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
     expect(websocket.call).toHaveBeenCalledWith('alert.list');
+  });
+
+  it('checks for HA status and passes it to the ix-alert', () => {
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.licensed');
+
+    expect(alertPanel.unreadAlertComponents[0].isHa).toEqual(true);
+    expect(alertPanel.dismissedAlertComponents[0].isHa).toEqual(true);
   });
 
   it('shows a list of unread alerts', () => {

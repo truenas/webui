@@ -1,5 +1,6 @@
 <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset [title]="'Global Configuration' | translate">
     <ix-input
       formControlName="basename"
@@ -7,16 +8,25 @@
       [required]="true"
       [tooltip]="tooltips.basename | translate"
     ></ix-input>
+
     <ix-chips
       formControlName="isns_servers"
       [label]="'ISNS Servers' | translate"
       [tooltip]="tooltips.isns_servers | translate"
     ></ix-chips>
+
     <ix-input
       formControlName="pool_avail_threshold"
+      type="number"
       [label]="'Pool Available Space Threshold (%)' | translate"
       [tooltip]="tooltips.pool_avail_threshold | translate"
+    ></ix-input>
+
+    <ix-input
       type="number"
+      formControlName="listen_port"
+      [label]="'iSCSI listen port' | translate"
+      [required]="true"
     ></ix-input>
   </ix-fieldset>
 
@@ -26,7 +36,9 @@
       type="submit"
       [disabled]="form.invalid || isFormLoading"
       color="primary"
-    >{{ 'Save' | translate }}</button>
+    >
+      {{ 'Save' | translate }}
+    </button>
   </div>
   <div *ngIf="areSettingsSaved" class="saved-message">
     {{ 'Settings saved.' | translate }}

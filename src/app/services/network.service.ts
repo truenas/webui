@@ -19,9 +19,8 @@ export class NetworkService {
   ipv4OrIpv6 = new RegExp('(' + this.ipv6Regex.source + ')|(' + this.ipv4Regex.source + ')');
   ipv4OrIpv6Cidr = new RegExp('(' + this.ipv6CidrRegex.source + ')|(' + this.ipv4CidrRegex.source + ')');
   ipv4OrIpv6CidrOptional = new RegExp('(' + this.ipv6CidrOptionalRegex.source + ')|(' + this.ipv4CidrOptionalRegex.source + ')');
-  ipv4OrIpv6CidrOrNone = new RegExp('(' + this.ipv4OrIpv6Cidr + ')?');
 
-  hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+  hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
 
   constructor(protected ws: WebSocketService) {}
 

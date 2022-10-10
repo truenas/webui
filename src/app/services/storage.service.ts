@@ -9,6 +9,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
 
+function isStringArray(items: unknown[]): items is string[] {
+  return typeof items[0] === 'string';
+}
+
 @Injectable()
 export class StorageService {
   protected diskResource = 'disk.query' as const;
@@ -85,8 +89,8 @@ export class StorageService {
 
   // Handles sorting for entity tables and some other ngx datatables
   tableSorter<T>(arr: T[], key: keyof T, asc: SortDirection): T[] {
-    const tempArr: any[] = [];
-    let sorter: any;
+    const tempArr: unknown[] = [];
+    let sorter: unknown[];
     const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
     // Breaks out the key to sort by
@@ -107,7 +111,7 @@ export class StorageService {
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T
     // also include bytes unit, which will get from convertBytesToHumanReadable function
-    if (typeof (tempArr[n]) === 'string'
+    if (isStringArray(tempArr)
       && (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].slice(-6) === ' bytes')) {
       let bytes = []; let kbytes = []; let mbytes = []; let gbytes = []; let
         tbytes = [];
@@ -143,7 +147,7 @@ export class StorageService {
       sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes);
 
       // Select disks where last two chars = a digit and the one letter space abbrev
-    } else if (typeof (tempArr[n]) === 'string'
+    } else if (isStringArray(tempArr)
       && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
       && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
       let bytes = []; let kiloBytes = []; let megaBytes = []; let gigaBytes = []; let teraBytes = [];
@@ -176,7 +180,7 @@ export class StorageService {
       sorter = bytes.concat(kiloBytes, megaBytes, gigaBytes, teraBytes);
 
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
-    } else if (typeof (tempArr[n]) === 'string'
+    } else if (isStringArray(tempArr)
       && !Number.isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
       for (const i of tempArr) {
@@ -233,7 +237,7 @@ export class StorageService {
      * Strip leading forward slash if present
      * /zpool/d0 -> zpool/d0
      */
-    path = path.indexOf('/') === 0 ? path.substr(1) : path;
+    path = path.indexOf('/') === 0 ? path.substring(1) : path;
 
     return !path.includes('/');
   }

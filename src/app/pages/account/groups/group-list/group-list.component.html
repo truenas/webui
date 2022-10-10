@@ -1,67 +1,99 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-search-input [disabled]="isLoading$ | async" (search)="onSearch($event)"></ix-search-input>
+    <ix-search-input
+      [disabled]="isLoading$ | async"
+      (search)="onSearch($event)"
+    ></ix-search-input>
     <mat-slide-toggle
-      (change)="toggleBuiltins()"
+      color="primary"
       [checked]="!hideBuiltinGroups"
       [disabled]="isLoading$ | async"
+      (change)="toggleBuiltins()"
     >
       <label>{{ 'Show Built-In Groups' | translate }}</label>
     </mat-slide-toggle>
-    <button
-      mat-button
-      color="primary"
-      (click)="doAdd()"
-    >{{ 'Add' | translate }}</button>
+    <button mat-button color="primary" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
+<ix-entity-empty
+  *ngIf="isLoading$ | async; else loaded"
+  [conf]="loadingConfig"
+></ix-entity-empty>
 
 <ng-template #loaded>
   <mat-card>
     <mat-card-content>
       <table
         ix-table
-        [dataSource]="dataSource"
         matSort
         matSortDisableClear="true"
+        [dataSource]="dataSource"
         [matSortActive]="defaultSort.active"
         [matSortDirection]="defaultSort.direction"
         [multiTemplateDataRows]="true"
         [fixedLayout]="true"
       >
         <ng-container matColumnDef="group">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Group' | translate }}</th>
-          <td mat-cell *matCellDef="let group; dataSource: dataSource">{{ group.group }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Group' | translate }}
+          </th>
+          <td mat-cell *matCellDef="let group; dataSource: dataSource">
+            {{ group.group }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="gid">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'GID' | translate }}</th>
-          <td mat-cell *matCellDef="let group; dataSource: dataSource">{{ group.gid }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'GID' | translate }}
+          </th>
+          <td mat-cell *matCellDef="let group; dataSource: dataSource">
+            {{ group.gid }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="builtin">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Builtin' | translate }}</th>
-          <td mat-cell *matCellDef="let group; dataSource: dataSource">{{ group.builtin }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Builtin' | translate }}
+          </th>
+          <td mat-cell *matCellDef="let group; dataSource: dataSource">
+            {{ group.builtin }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="sudo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Permit Sudo' | translate }}</th>
-          <td mat-cell *matCellDef="let group; dataSource: dataSource">{{ group.sudo }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Permit Sudo' | translate }}
+          </th>
+          <td mat-cell *matCellDef="let group; dataSource: dataSource">
+            {{ group.sudo }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="smb">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Samba Authentication' | translate }}</th>
-          <td mat-cell *matCellDef="let group; dataSource: dataSource">{{ group.smb }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Samba Authentication' | translate }}
+          </th>
+          <td mat-cell *matCellDef="let group; dataSource: dataSource">
+            {{ group.smb }}
+          </td>
         </ng-container>
 
-        <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="onToggle($event)"></ix-expand-toggle-column>
+        <ix-expand-toggle-column
+          [expandedRow]="expandedRow"
+          (toggle)="onToggle($event)"
+        ></ix-expand-toggle-column>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr
           mat-row
-          *matRowDef="let group; columns: displayedColumns; dataSource: dataSource"
+          *matRowDef="
+            let group;
+            columns: displayedColumns;
+            dataSource: dataSource
+          "
           [ixDetailRow]="group"
           [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
           [ixDetailRowTemplate]="expandedRowTemplate"
@@ -70,7 +102,9 @@
 
         <tr class="mat-row no-data-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
+            <ix-entity-empty
+              [conf]="emptyOrErrorConfig$ | async"
+            ></ix-entity-empty>
           </td>
         </tr>
       </table>
@@ -81,5 +115,8 @@
 </ng-template>
 
 <ng-template #expandedRowTemplate let-group let-colspan="colspan">
-  <ix-group-details-row [group]="group" [colspan]="colspan"></ix-group-details-row>
+  <ix-group-details-row
+    [group]="group"
+    [colspan]="colspan"
+  ></ix-group-details-row>
 </ng-template>

@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
+import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-roles-card',
@@ -8,8 +10,24 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 })
 export class RolesCardComponent {
   @Input() dataset: DatasetDetails;
-
+  @Input() systemDataset: string;
   @Input() hasChildrenWithShares = false;
+
+  get isApplications(): boolean {
+    return this.dataset.name && this.dataset.name.endsWith(ixApplications);
+  }
+
+  get appsNames(): string {
+    return _.uniq(this.dataset.apps.map((app) => app.name)).join(', ');
+  }
+
+  get vmsNames(): string {
+    return _.uniq(this.dataset.vms.map((app) => app.name)).join(', ');
+  }
+
+  get isSystemDataset(): boolean {
+    return this.dataset.name === this.systemDataset;
+  }
 
   get smbSharesNames(): string {
     if (!this.dataset.smb_shares?.length) {

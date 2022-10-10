@@ -1,0 +1,42 @@
+<button
+  name="Settings"
+  mat-icon-button
+  [matTooltip]="tooltips.settings | translate"
+  [matMenuTriggerFor]="userMenu"
+  class="topbar-button-right"
+  ix-auto
+  ix-auto-type="button"
+  ix-auto-identifier="settings"
+>
+  <mat-icon>account_circle</mat-icon>
+</button>
+<mat-menu #userMenu="matMenu">
+  <button
+    name="settings-change-password"
+    mat-menu-item
+    (click)="openChangePasswordDialog()"
+  >
+    <mat-icon>dialpad</mat-icon>
+    {{ 'Change Password' | translate }}
+  </button>
+
+  <a name="settings-api" mat-menu-item [routerLink]="['/apikeys']">
+    <mat-icon>laptop</mat-icon>
+    {{ 'API Keys' | translate }}
+  </a>
+
+  <a
+    name="settings-guide"
+    mat-menu-item
+    href="https://www.truenas.com/docs/"
+    target="_blank"
+  >
+    <mat-icon>library_books</mat-icon>
+    {{ 'Guide' | translate }}
+  </a>
+
+  <button name="settings-about" mat-menu-item (click)="onShowAbout()">
+    <mat-icon>info_outline</mat-icon>
+    {{ 'About' | translate }}
+  </button>
+</mat-menu>

@@ -1,0 +1,31 @@
+<h1 matDialogTitle>{{ 'Manage SED Password' | translate }}</h1>
+<form class="ix-form-container" (submit)="onSubmit($event)">
+  <ix-input
+    [formControl]="passwordControl"
+    [label]="'SED Password' | translate"
+    [tooltip]="helptext.disk_form_passwd_tooltip | translate"
+    type="password"
+  ></ix-input>
+
+  <div class="form-actions">
+    <button
+      mat-button
+      type="submit"
+      [disabled]="passwordControl.invalid"
+      color="primary"
+    >
+      {{ 'Save' | translate }}
+    </button>
+    <button
+      *ngIf="disk?.passwd"
+      mat-button
+      type="button"
+      (click)="onClearPassword()"
+    >
+      {{ 'Clear SED Password' | translate }}
+    </button>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

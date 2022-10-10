@@ -1,0 +1,16 @@
+:host {
+  align-items: center;
+  display: flex;
+  margin-bottom: 1px;
+  margin-left: 1px;
+  min-height: 24px;
+}
+
+.label {
+  display: inline-flex;
+  font-size: x-small;
+}
+
+.required {
+  margin-left: 2px;
+}

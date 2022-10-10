@@ -6,7 +6,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -15,7 +14,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IpmiFormComponent } from 'app/pages/network/components/forms/ipmi-form.component';
-import { DialogService, RedirectService, WebSocketService } from 'app/services';
+import {
+  DialogService, RedirectService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('IpmiFormComponent', () => {
@@ -31,20 +32,13 @@ describe('IpmiFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      {
-        provide: WINDOW,
-        useFactory: () => {
-          return {
-            localStorage: {
-              getItem: () => {
-                return productType === ProductType.ScaleEnterprise
-                  ? ProductType.ScaleEnterprise
-                  : ProductType.Scale;
-              },
-            },
-          };
+      mockProvider(SystemGeneralService, {
+        getProductType(): ProductType {
+          return productType === ProductType.ScaleEnterprise
+            ? ProductType.ScaleEnterprise
+            : ProductType.Scale;
         },
-      },
+      }),
       mockProvider(RedirectService),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
@@ -87,7 +81,7 @@ describe('IpmiFormComponent', () => {
       const formValue = await form.getValues();
 
       expect(formValue).toEqual({
-        'Active: TrueNAS Controller 1': 'Active: TrueNAS Controller 1',
+        'Remote Controller': 'Active: TrueNAS Controller 1',
         DHCP: false,
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
@@ -104,7 +98,7 @@ describe('IpmiFormComponent', () => {
       const formData = await form.getValues();
 
       expect(formData).toEqual({
-        'Active: TrueNAS Controller 1': 'Standby: TrueNAS Controller 2',
+        'Remote Controller': 'Standby: TrueNAS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',
@@ -129,7 +123,7 @@ describe('IpmiFormComponent', () => {
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       spectator.component.setIdIpmi(1);
       const dataForm = {
-        'Active: TrueNAS Controller 1': 'Standby: TrueNAS Controller 2',
+        'Remote Controller': 'Standby: TrueNAS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',

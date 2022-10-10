@@ -1,0 +1,119 @@
+<ix-modal-header
+  [title]="title | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <div class="two-columns">
+        <ix-fieldset [title]="helptext.fieldset_disk | translate">
+          <ix-input
+            formControlName="name"
+            [label]="'Name' | translate"
+            [tooltip]="helptext.disk_form_name_tooltip | translate"
+            [readonly]="true"
+          ></ix-input>
+
+          <ix-input
+            formControlName="serial"
+            [label]="'Serial' | translate"
+            [tooltip]="helptext.disk_form_serial_tooltip | translate"
+            [readonly]="true"
+          ></ix-input>
+
+          <ix-input
+            formControlName="description"
+            [label]="'Description' | translate"
+            [tooltip]="helptext.disk_form_description_tooltip | translate"
+          ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="helptext.fieldset_temperature | translate">
+          <ix-input
+            formControlName="critical"
+            type="number"
+            [label]="'Critical' | translate"
+            [tooltip]="helptext.disk_form_critical_tooltip | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="difference"
+            type="number"
+            [label]="'Difference' | translate"
+            [tooltip]="helptext.disk_form_difference_tooltip | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="informational"
+            type="number"
+            [label]="'Informational' | translate"
+            [tooltip]="helptext.disk_form_informational_tooltip | translate"
+          ></ix-input>
+        </ix-fieldset>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="two-columns">
+        <ix-fieldset [title]="helptext.fieldset_powermgmt | translate">
+          <ix-select
+            formControlName="hddstandby"
+            [required]="true"
+            [label]="'HDD Standby' | translate"
+            [tooltip]="helptext.disk_form_hddstandby_tooltip | translate"
+            [options]="hddstandbyOptions$"
+          ></ix-select>
+
+          <ix-select
+            formControlName="advpowermgmt"
+            [required]="true"
+            [label]="'Advanced Power Management' | translate"
+            [tooltip]="helptext.disk_form_advpowermgmt_tooltip | translate"
+            [options]="advpowermgmtOptions$"
+          ></ix-select>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="helptext.fieldset_smartsed | translate">
+          <ix-checkbox
+            formControlName="togglesmart"
+            [label]="'Enable S.M.A.R.T.' | translate"
+            [tooltip]="helptext.disk_form_togglesmart_tooltip | translate"
+          ></ix-checkbox>
+
+          <ix-input
+            formControlName="smartoptions"
+            [label]="'S.M.A.R.T. extra options' | translate"
+            [tooltip]="helptext.disk_form_smartoptions_tooltip | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="passwd"
+            [label]="'SED Password' | translate"
+            [tooltip]="helptext.disk_form_passwd_tooltip | translate"
+            type="password"
+          ></ix-input>
+
+          <ix-checkbox
+            formControlName="clear_pw"
+            [label]="'Clear SED Password' | translate"
+            [tooltip]="helptext.clear_pw.tooltip | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-actions class="buttons">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

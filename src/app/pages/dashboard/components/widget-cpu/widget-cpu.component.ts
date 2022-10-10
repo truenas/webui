@@ -16,10 +16,11 @@ import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeConfig, GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -39,14 +40,9 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
+
   chart: any;// Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
-  private _cpuData: WidgetCpuData;
-  get cpuData(): WidgetCpuData { return this._cpuData; }
-  set cpuData(value) {
-    this._cpuData = value;
-  }
-
   cpuAvg: GaugeConfig;
   title: string = this.translate.instant('CPU');
   subtitle: string = this.translate.instant('% of all cores');
@@ -56,7 +52,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   threadCount: number;
   hyperthread: boolean;
   legendData: ChartDataSets[];
-  screenType = 'Desktop'; // Desktop || Mobile
+  screenType = ScreenType.Desktop;
 
   // Mobile Stats
   tempAvailable = false;
@@ -73,9 +69,22 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   legendIndex: number;
 
   labels: string[] = [];
+  isCpuAvgReady = false;
+
+  readonly ScreenType = ScreenType;
+
+  private _cpuData: WidgetCpuData;
   protected currentTheme: Theme;
   private utils: ThemeUtils;
   private dataSubscription: Subscription;
+
+  get cpuData(): WidgetCpuData {
+    return this._cpuData;
+  }
+
+  set cpuData(value) {
+    this._cpuData = value;
+  }
 
   constructor(
     public translate: TranslateService,
@@ -94,12 +103,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         height: 140,
       };
 
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
-      if (this.chart && this.screenType !== st) {
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+
+      if (this.chart && this.screenType !== currentScreenType) {
         this.chart.resize(size);
       }
 
-      this.screenType = st;
+      this.screenType = currentScreenType;
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
@@ -140,10 +150,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {
+  parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length > 0);
-    const usageColumn: (string | number)[] = ['Usage'];
-    let temperatureColumn: (string | number)[] = ['Temperature'];
+    const usageColumn: GaugeData = ['Usage'];
+    let temperatureColumn: GaugeData = ['Temperature'];
     const temperatureValues = [];
 
     // Filter out stats per thread
@@ -214,9 +224,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.coresChartInit();
   }
 
-  setCpuLoadData(data: (string | number)[]): void {
+  setCpuLoadData(data: GaugeData): void {
+    this.onCpuAvgChanged(this.cpuAvg?.data, data);
+  }
+
+  private onCpuAvgChanged(oldData: GaugeData, newData: GaugeData): void {
     const config = {
-      data,
+      data: newData,
       units: '%',
       diameter: 136,
       fontSize: 28,
@@ -224,6 +238,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       subtitle: this.translate.instant('Avg Usage'),
     } as GaugeConfig;
     this.cpuAvg = config;
+    this.isCpuAvgReady = Boolean(oldData);
   }
 
   setPreferences(form: NgForm): void {
@@ -263,7 +278,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           intersect: true,
           callbacks: {
             label: (tt: ChartTooltipItem, data: ChartData) => {
-              if (this.screenType.toLowerCase() === 'mobile') {
+              if (this.screenType === ScreenType.Mobile) {
                 this.legendData = null;
                 this.legendIndex = null;
                 return;
@@ -324,7 +339,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.renderChart();
   }
 
-  protected makeDatasets(data: (string | number)[][]): ChartDataSets[] {
+  protected makeDatasets(data: GaugeData[]): ChartDataSets[] {
     const datasets: ChartDataSets[] = [];
     const labels: string[] = [];
     for (let i = 0; i < this.threadCount; i++) {
@@ -354,8 +369,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const bgRgb = this.utils.convertToRgb((this.currentTheme[color as keyof Theme]) as string).rgb;
 
-      ds.backgroundColor = this.utils.rgbToString(bgRgb as any, 0.85);
-      ds.borderColor = this.utils.rgbToString(bgRgb as any);
+      ds.backgroundColor = this.utils.rgbToString(bgRgb, 0.85);
+      ds.borderColor = this.utils.rgbToString(bgRgb);
       datasets.push(ds);
     });
 
@@ -376,7 +391,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const rgb = valueType === 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
-    const rgba = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')';
+    const rgba = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
 
     return rgba;
   }

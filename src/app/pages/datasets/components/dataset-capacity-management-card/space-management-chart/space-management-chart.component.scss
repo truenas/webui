@@ -1,14 +1,28 @@
-$chart-size: 180px !default;
+@import '~assets/styles/scss-imports/splitview';
+$chart-size: 150px;
 
 :host {
   display: flex;
   gap: 24px;
   min-height: $chart-size;
+
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    flex-wrap: wrap;
+  }
 }
 
 .chart-wrapper {
   height: $chart-size;
   width: $chart-size;
+
+  @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    margin: 0 auto;
+  }
+}
+
+.chart-wrapper canvas {
+  height: $chart-size !important;
+  width: $chart-size !important;
 }
 
 .chart-description {
@@ -82,21 +96,5 @@ $chart-size: 180px !default;
     display: inline-block;
     height: 12px;
     width: 12px;
-  }
-
-  &:nth-child(1) .legend-swatch {
-    background-color: var(--blue);
-  }
-
-  &:nth-child(2) .legend-swatch {
-    background-color: var(--magenta);
-  }
-
-  &:nth-child(3) .legend-swatch {
-    background-color: var(--orange);
-  }
-
-  &:nth-child(4) .legend-swatch {
-    background-color: var(--orange);
   }
 }

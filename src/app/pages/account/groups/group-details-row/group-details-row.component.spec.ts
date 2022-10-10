@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
@@ -11,9 +12,11 @@ import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import {
+  DeleteGroupDialogComponent,
+} from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -29,7 +32,6 @@ const dummyGroup = {
 describe('GroupDetailsRowComponent', () => {
   let spectator: SpectatorRouting<GroupDetailsRowComponent>;
   let loader: HarnessLoader;
-  let dialogServiceMock: DialogService;
 
   const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
@@ -47,8 +49,10 @@ describe('GroupDetailsRowComponent', () => {
         mockCall('group.delete'),
         mockCall('group.query', []),
       ]),
-      mockProvider(DialogService, {
-        dialogForm: jest.fn(() => of()),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
       }),
       provideMockStore({
         selectors: [
@@ -71,7 +75,6 @@ describe('GroupDetailsRowComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    dialogServiceMock = spectator.inject(DialogService);
   });
 
   it('checks colspan attribute', () => {
@@ -86,20 +89,18 @@ describe('GroupDetailsRowComponent', () => {
   });
 
   it('should open edit group form', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'editEdit' }));
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent);
   });
 
-  it('should make websocket call to delete group', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'deleteDelete' }));
+  it('should open DeleteUserGroup when Delete button is pressed', async () => {
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
 
-    expect(dialogServiceMock.dialogForm).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Delete Group',
-      }),
-    );
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteGroupDialogComponent, {
+      data: dummyGroup,
+    });
   });
 });

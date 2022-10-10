@@ -1,14 +1,17 @@
-<div *ngIf="label" class="label-container">
-  <label class="label">
-    <span [innerHTML]="label"></span>
-    <span *ngIf="required" class="required">*</span>
-  </label>
-  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
-</div>
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+></ix-label>
 
-<div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
+<div
+  class="input-container"
+  [class.disabled]="isDisabled"
+  [class.readonly]="readonly"
+>
   <span *ngIf="prefixIcon" class="prefix-icon">
-    <mat-icon>{{prefixIcon}}</mat-icon>
+    <mat-icon>{{ prefixIcon }}</mat-icon>
   </span>
   <input
     #ixInput
@@ -21,23 +24,32 @@
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
+    [autocomplete]="autocomplete"
+    [placeholder]="placeholder"
     (input)="input(ixInput)"
     (focus)="focus(ixInput)"
     (blur)="blurred()"
-    [autocomplete]="autocomplete"
-    [placeholder]="placeholder"
-  >
+  />
   <span *ngIf="shouldShowResetInput()" class="reset-input">
-    <mat-icon (click)="resetInput(ixInput)" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    <mat-icon
+      fontSet="mdi-set"
+      fontIcon="mdi-close-circle"
+      (click)="resetInput(ixInput)"
+    ></mat-icon>
   </span>
   <button
     *ngIf="type === 'password'"
-    mat-icon-button type="button"
+    mat-icon-button
+    type="button"
     class="toggle_pw"
     (click)="onPasswordToggled()"
   >
-    <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
-    <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
+    <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">
+      visibility
+    </i>
+    <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">
+      visibility_off
+    </i>
   </button>
 </div>
 
@@ -49,4 +61,4 @@
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{hint}}</mat-hint>
+<mat-hint *ngIf="hint">{{ hint }}</mat-hint>

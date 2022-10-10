@@ -1,0 +1,49 @@
+<div class="tree-node-grid">
+  <div class="cell cell-name">
+    <span class="name">{{ ownName }}</span>
+  </div>
+  <div class="cell cell-status" [style.background-color]="statusColor">
+    <span>{{ topologyItem.status }}</span>
+    <ix-icon
+      *ngIf="!isDisk && !isMirror && poolInstance?.status_detail"
+      name="mdi-information-outline"
+      [matTooltip]="poolInstance.status_detail"
+    ></ix-icon>
+  </div>
+  <div class="cell">
+    <span>{{ topologyItem?.stats?.read_errors || 0 }}</span>
+  </div>
+  <div class="cell">
+    <span>{{ topologyItem?.stats?.write_errors || 0 }}</span>
+  </div>
+  <div class="cell">
+    <span>{{ topologyItem?.stats?.checksum_errors || 0 }}</span>
+  </div>
+  <div class="cell">
+    <span>{{ errors }}</span>
+  </div>
+  <div class="cell cell-actions">
+    <button
+      *ngIf="isDisk || isMirror"
+      mat-icon-button
+      aria-label="Actions"
+      [matMenuTriggerFor]="menu"
+    >
+      <ix-icon name="more_vert"></ix-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="replace()">
+        <ix-icon name="mdi-file-replace"></ix-icon>
+        <span>{{ 'Replace' | translate }}</span>
+      </button>
+      <button mat-menu-item (click)="attach()" *ngIf="isDisk && oneDisk">
+        <ix-icon name="mdi-attachment-plus"></ix-icon>
+        <span>{{ 'Attach' | translate }}</span>
+      </button>
+      <button mat-menu-item (click)="detach()" *ngIf="isMirror">
+        <ix-icon name="mdi-attachment-minus"></ix-icon>
+        <span>{{ 'Detach' | translate }}</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>

@@ -17,7 +17,6 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   title = this.translate.instant('Kerberos Realms');
   queryCall = 'kerberos.realm.query' as const;
   wsDelete = 'kerberos.realm.delete' as const;
-  keyList = ['admin_server', 'kdc', 'kpasswd_server'] as const;
   protected entityList: EntityTableComponent;
 
   columns = [

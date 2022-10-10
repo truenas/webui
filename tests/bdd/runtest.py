@@ -5,10 +5,7 @@ import os
 import getopt
 import json
 from configparser import ConfigParser
-from platform import system
 from subprocess import run
-major_v = sys.version_info.major
-version = f"-{major_v}" if system() == "Linux" else ""
 cwd = str(os.getcwd())
 screenshot_path = f"{cwd}/screenshot"
 argument = sys.argv
@@ -167,8 +164,10 @@ def run_testing():
 
     convert_jira_feature_file(test_suite)
     pytest_cmd = [
-        f"pytest{version}",
-        "-v",
+        sys.executable,
+        '-m',
+        'pytest',
+        '-v',
         test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"

@@ -1,10 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
+import { getReportTypeLabels, ReportTab } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -17,8 +18,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: any;
-  options?: any[]; // Function parameters
+  input: unknown;
+  options?: unknown[]; // Function parameters
 }
 
 export enum ReportingDatabaseError {
@@ -30,64 +31,76 @@ export enum ReportingDatabaseError {
   providedIn: 'root',
 })
 export class ReportsService implements OnDestroy {
+  serverTime: Date;
+  showTimeDiffWarning = false;
   private reportsUtils: Worker;
 
   constructor(
     private ws: WebSocketService,
     private core: CoreService,
     private store$: Store<AppState>,
+    private translate: TranslateService,
   ) {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
-    this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
+    this.core.register({
+      observerClass: this,
+      eventName: 'ReportDataRequest',
+    }).subscribe((evt: CoreEvent) => {
       const chartId = (evt.sender as ReportComponent).chartId;
-      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((reportingData) => {
-        let res;
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
+        next: (reportingData) => {
+          let res;
 
-        // If requested, we truncate trailing null values
-        if (evt.data.truncate) {
-          const truncated = this.truncateData(reportingData[0].data);
-          res = Object.assign([], reportingData);
-          res[0].data = truncated;
-        } else {
-          res = reportingData;
-        }
+          // If requested, we truncate trailing null values
+          if (evt.data.truncate) {
+            const truncated = this.truncateData(reportingData[0].data);
+            res = Object.assign([], reportingData);
+            res[0].data = truncated;
+          } else {
+            res = reportingData;
+          }
 
-        const commands = [
-          {
-            command: 'optimizeLegend',
-            input: res[0],
-          },
-          {
-            command: 'convertAggregations',
-            input: '|',
-            options: [evt.data.report.vertical_label], // units
-          },
-        ];
+          const commands = [
+            {
+              command: 'optimizeLegend',
+              input: res[0],
+            },
+            {
+              command: 'convertAggregations',
+              input: '|',
+              options: [evt.data.report.vertical_label], // units
+            },
+          ];
 
-        // We average out cputemps for v11.3.
-        // Move this to backend for 12.
-        if (evt.data.report.name === 'cputemp') {
-          // Do a complete replacement instead...
-          const repl = [{
-            command: 'avgCpuTempReport',
-            input: res[0],
-          }];
-
-          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: chartId });
-        } else {
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
-        }
-      }, (err: WebsocketError) => {
-        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
+        },
+        error: (err: WebsocketError) => {
+          this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
+        },
       });
     });
 
     this.reportsUtils.onmessage = ({ data }) => {
       if (data.name === 'ReportData') {
-        this.core.emit({ name: 'ReportData-' + data.sender, data: data.data, sender: this });
+        this.core.emit({ name: `ReportData-${data.sender}`, data: data.data, sender: this });
       }
     };
+
+    this.store$.pipe(waitForSystemInfo).subscribe((systemInfo) => {
+      const now = Date.now();
+      const datetime = systemInfo.datetime.$date;
+      this.serverTime = new Date(datetime);
+      const timeDiffInSeconds = differenceInSeconds(datetime, now);
+      const timeDiffInDays = differenceInDays(datetime, now);
+      if (timeDiffInSeconds > 300 || timeDiffInDays > 0) {
+        this.showTimeDiffWarning = true;
+      }
+
+      setInterval(() => {
+        this.serverTime = addSeconds(this.serverTime, 1);
+      }, 1000);
+    });
   }
 
   ngOnDestroy(): void {
@@ -117,16 +130,9 @@ export class ReportsService implements OnDestroy {
     return data;
   }
 
-  getServerTime(): Observable<Date> {
-    return this.store$.pipe(
-      waitForSystemInfo,
-      take(1), // This observable is used as a promise and since store
-      // observable never completes, the promise will never complete unless
-      // we use the take(1) operator to complete observable after first response
-    )
-      .pipe(map((systemInfo) => {
-        const msToTrim = 60_000;
-        return new Date(systemInfo.datetime.$date - msToTrim);
-      }));
+  getReportTabs(): ReportTab[] {
+    return Array.from(getReportTypeLabels(this.translate)).map(([value, label]) => {
+      return { value, label } as ReportTab;
+    });
   }
 }

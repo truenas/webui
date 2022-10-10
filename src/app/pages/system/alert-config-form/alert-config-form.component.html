@@ -1,0 +1,54 @@
+<mat-card class="form-card">
+  <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  <div class="mat-title">
+    <div *ngIf="selectedCategory"> {{ 'Category' | translate }}: </div>
+    <div class="categories">
+      <button mat-button [matMenuTriggerFor]="categoriesMenu">
+        {{ selectedCategory.title }}
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #categoriesMenu="matMenu">
+        <button
+          *ngFor="let category of categories; let i = index"
+          mat-menu-item
+          (click)="onCategoryChanged(category)"
+        >
+          <span>
+            <mat-icon *ngIf="category === selectedCategory">check_circle</mat-icon>
+            <mat-icon *ngIf="category !== selectedCategory">remove</mat-icon>
+          </span>
+          <span>{{ category.title }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+  <form *ngIf="selectedCategory" (submit)="onSubmit()">
+    <ng-container *ngFor="let cls of selectedCategory.classes">
+      <div [formGroup]="form.controls[cls.id]" class="class-row">
+        <span class="class-label">{{ cls.title }}</span>
+        <ix-select
+          formControlName="level"
+          [label]="'Set Warning Level' | translate"
+          [required]="true"
+          [tooltip]="helptext.level_tooltip | translate"
+          [options]="levelOptions$"
+        ></ix-select>
+        <ix-select
+          formControlName="policy"
+          [label]="'Set Frequency' | translate"
+          [required]="true"
+          [tooltip]="helptext.policy_tooltip | translate"
+          [options]="policyOptions$"
+        ></ix-select>
+      </div>
+    </ng-container>
+    <div class="form-actions">
+      <button
+        mat-button
+        type="submit"
+        [disabled]="form.invalid || isFormLoading || !selectedCategory"
+        color="primary"
+      >{{ 'Save' | translate }}</button>
+    </div>
+  </form>
+</mat-card>

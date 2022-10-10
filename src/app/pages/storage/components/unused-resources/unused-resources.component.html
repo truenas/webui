@@ -1,0 +1,13 @@
+<div class="header" *ngIf="unusedDisks.length">
+  <h2 class="title">{{ 'Unused Resources' | translate }}</h2>
+</div>
+
+<div class="cards">
+  <ng-container *ngIf="unusedDisks.length">
+    <ix-unused-disk-card
+      class=".unused-resources"
+      [pools]="pools"
+      [unusedDisks]="unusedDisks"
+    ></ix-unused-disk-card>
+  </ng-container>
+</div>

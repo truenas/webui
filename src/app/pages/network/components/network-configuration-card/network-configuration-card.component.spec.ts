@@ -100,7 +100,7 @@ describe('NetworkConfigurationCardComponent', () => {
     const detailsItems = detailsList.reduce((items, element) => {
       const label = element.querySelector('.label').textContent;
       const value = element.querySelector('.value').textContent;
-      items[label] = value;
+      items[label.trim()] = value.trim();
       return items;
     }, {} as Record<string, string>);
 

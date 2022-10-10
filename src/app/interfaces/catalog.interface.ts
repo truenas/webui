@@ -1,5 +1,5 @@
 import { JobState } from 'app/enums/job-state.enum';
-import { ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartFormValue, ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
@@ -71,7 +71,7 @@ export interface CatalogApp {
   latest_version: string;
   latest_app_version: string;
   latest_human_version: string;
-  versions: { [version: string]: CatalogAppVersion };
+  versions?: { [version: string]: CatalogAppVersion };
   catalog?: {
     id?: string;
     label?: string;
@@ -112,7 +112,7 @@ export interface CatalogAppVersion {
     };
   };
   supported: boolean;
-  values: any;
+  values: { [key: string]: ChartFormValue };
   version: string;
   train?: string;
   app?: string;

@@ -77,11 +77,10 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('shows dataset ownership information', () => {
-    const [ownerItem, groupItem, pathItem] = spectator.queryAll('.details-item');
+    const [ownerItem, groupItem] = spectator.queryAll('.details-item');
 
-    expect(ownerItem).toHaveText('Owner:john');
-    expect(groupItem).toHaveText('Group:johns');
-    expect(pathItem).toHaveText('Path:/mnt/testpool/dataset');
+    expect(ownerItem.textContent.replace(/\s/g, '')).toEqual('Owner:john');
+    expect(groupItem.textContent.replace(/\s/g, '')).toEqual('Group:johns');
   });
 
   it('shows trivial permissions when acl is trivial', () => {

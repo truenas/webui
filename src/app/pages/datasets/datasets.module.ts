@@ -5,10 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { AngularResizeEventModule } from 'angular-resize-event';
 import { ChartsModule } from 'ng2-charts';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -61,6 +63,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatSortModule,
     MatSlideToggleModule,
     MatRippleModule,
+    MatProgressSpinnerModule,
     AppCommonModule,
     PermissionsModule,
     EncryptionModule,
@@ -79,6 +82,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     CoreComponents,
     AppLoaderModule,
     SnapshotsModule,
+    AngularResizeEventModule,
   ],
   declarations: [
     DatasetsManagementComponent,

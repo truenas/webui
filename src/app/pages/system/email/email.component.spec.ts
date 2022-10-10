@@ -17,7 +17,7 @@ import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailComponent } from './email.component';
 
@@ -63,14 +63,14 @@ describe('EmailComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
+      mockProvider(SystemGeneralService, {
+        getProductType: () => ProductType.Scale,
+      }),
       {
         provide: WINDOW,
         useFactory: () => {
           return {
             open: jest.fn(),
-            localStorage: {
-              getItem: () => ProductType.Scale,
-            },
             location: {
               toString: () => 'http://truenas.com/system/email',
             } as Location,

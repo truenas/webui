@@ -3,6 +3,8 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
+export const ixApplications = 'ix-applications';
+
 export function isRootDataset(dataset: Pick<Dataset, 'name'>): boolean {
   return dataset.name.split('/').length === 1;
 }

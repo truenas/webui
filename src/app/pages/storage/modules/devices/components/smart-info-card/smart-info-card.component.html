@@ -1,0 +1,91 @@
+<mat-card class="card">
+  <mat-card-header class="header">
+    <h3 mat-card-title>
+      {{ 'S.M.A.R.T. Info for {disk}' | translate: { disk: topologyDisk.disk } }}
+    </h3>
+
+    <!-- TODO: Hide for disks with no SMART support after https://ixsystems.atlassian.net/browse/NAS-116969 -->
+    <button mat-button (click)="onManualTest()">
+      {{ 'Run Manual Test' | translate }}
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="details-item">
+      <span class="label">{{ 'Completed S.M.A.R.T. Tests' | translate }}:</span>
+      <ng-container *ngIf="totalResults$ | async as totalResults">
+        <ngx-skeleton-loader
+          *ngIf="totalResults.isLoading"
+        ></ngx-skeleton-loader>
+        <span *ngIf="totalResults.value !== undefined" class="value">
+          {{ totalResults.value | number }}
+        </span>
+        <ng-container *ngIf="totalResults.error">
+          <!-- TODO: Add error handler -->
+          Error
+        </ng-container>
+        <a
+          *ngIf="totalResults.value"
+          class="action"
+          [routerLink]="[
+            '/storage',
+            'disks',
+            'smartresults',
+            topologyDisk.disk
+          ]"
+        >
+          {{ 'View All Test Results' | translate }}
+        </a>
+      </ng-container>
+    </div>
+
+    <div
+      *ngIf="lastResultsInCategory$ | async as lastResultsInCategory"
+      class="results-by-category"
+    >
+      <div
+        *ngFor="let resultInCategory of lastResultsInCategory"
+        class="details-item"
+      >
+        <span class="label">
+          {{ 'Last {result} Test' | translate: { result: resultInCategory.description } }}:
+        </span>
+        <span class="value">{{ resultInCategory.status }}</span>
+      </div>
+    </div>
+
+    <div
+      *ngIf="disk?.togglesmart; else smartDisabledForDisk"
+      class="details-item"
+    >
+      <span class="label">{{ 'S.M.A.R.T. Tasks' | translate }}:</span>
+      <ng-container *ngIf="smartTasksCount$ | async as smartTasksCount">
+        <ngx-skeleton-loader
+          *ngIf="smartTasksCount.isLoading"
+        ></ngx-skeleton-loader>
+        <span *ngIf="smartTasksCount.value !== undefined" class="value">
+          {{ tasksMessage | translate: { n: smartTasksCount.value } }}
+        </span>
+        <ng-container *ngIf="smartTasksCount.error">
+          <!-- TODO: Add error handler -->
+          Error
+        </ng-container>
+        <a class="action" [routerLink]="['/data-protection', 'smart']">
+          {{ 'Manage S.M.A.R.T. Tasks' | translate }}
+        </a>
+      </ng-container>
+    </div>
+
+    <ng-template #smartDisabledForDisk>
+      <div class="details-item">
+        <span class="label">{{ 'S.M.A.R.T. Tasks' | translate }}:</span>
+        <span class="value">{{ 'Disabled in Disk Settings' | translate }}</span>
+      </div>
+    </ng-template>
+
+    <div *ngIf="disk?.smartoptions" class="details-item">
+      <span class="label">{{ 'S.M.A.R.T. Options' | translate }}:</span>
+      <span class="value">{{ disk.smartoptions }}</span>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -61,8 +61,8 @@ export class KmipComponent implements OnInit {
 
   onSyncKeysPressed(): void {
     this.isLoading = true;
-    this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.dialogService.info(
           helptextSystemKmip.syncInfoDialog.title,
           helptextSystemKmip.syncInfoDialog.info,
@@ -70,18 +70,18 @@ export class KmipComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   onClearSyncKeysPressed(): void {
     this.isLoading = true;
-    this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.dialogService.info(
           helptextSystemKmip.clearSyncKeyInfoDialog.title,
           helptextSystemKmip.clearSyncKeyInfoDialog.info,
@@ -89,12 +89,12 @@ export class KmipComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-    );
+    });
   }
 
   onSubmit(): void {
@@ -117,19 +117,19 @@ export class KmipComponent implements OnInit {
       this.ws.call('kmip.kmip_sync_pending'),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        ([config, isSyncPending]) => {
+      .subscribe({
+        next: ([config, isSyncPending]) => {
           this.form.patchValue(config);
           this.isKmipEnabled = config.enabled;
           this.isSyncPending = isSyncPending;
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 }

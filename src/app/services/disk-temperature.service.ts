@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
 import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { BaseService } from 'app/services/base.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/index';
 
@@ -16,14 +15,17 @@ export interface Temperature {
 @Injectable({
   providedIn: 'root',
 })
-export class DiskTemperatureService extends BaseService {
+export class DiskTemperatureService {
   protected disks: Disk[] = [];
   protected broadcast: Interval;
   protected subscribers = 0;
 
-  constructor(protected core: CoreService, protected websocket: WebSocketService) {
-    super(core, websocket);
+  constructor(
+    protected core: CoreService,
+    protected websocket: WebSocketService,
+  ) { }
 
+  listenForTemperatureUpdates(): void {
     this.core.register({ observerClass: this, eventName: 'DiskTemperaturesSubscribe' }).subscribe(() => {
       this.subscribers++;
       if (!this.broadcast) {
@@ -37,14 +39,10 @@ export class DiskTemperatureService extends BaseService {
         this.stop();
       }
     });
-  }
-
-  protected onAuthenticated(): void {
-    this.authenticated = true;
 
     const queryOptions: QueryOptions<Disk> = { select: ['name', 'type'] };
-    this.websocket.call('disk.query', [[], queryOptions]).subscribe((res) => {
-      this.disks = res;
+    this.websocket.call('disk.query', [[], queryOptions]).subscribe((disks) => {
+      this.disks = disks;
       if (this.subscribers > 0) this.start();
     });
 
@@ -53,17 +51,18 @@ export class DiskTemperatureService extends BaseService {
       eventName: 'DisksChanged',
     }).subscribe(() => {
       this.stop();
-      this.websocket.call('disk.query', [[], queryOptions]).subscribe((res) => {
-        this.disks = res;
+      this.websocket.call('disk.query', [[], queryOptions]).subscribe((disks) => {
+        this.disks = disks;
         if (this.subscribers > 0) this.start();
       });
     });
   }
 
   start(): void {
+    this.fetch(this.disks.map((disk) => disk.name));
     this.broadcast = setInterval(() => {
       this.fetch(this.disks.map((disk) => disk.name));
-    }, 2000);
+    }, 10000);
   }
 
   stop(): void {
@@ -72,10 +71,10 @@ export class DiskTemperatureService extends BaseService {
   }
 
   fetch(disks: string[]): void {
-    this.websocket.call('disk.temperatures', [disks]).subscribe((res) => {
+    this.websocket.call('disk.temperatures', [disks]).subscribe((temperatures) => {
       const data: Temperature = {
-        keys: Object.keys(res),
-        values: res,
+        keys: Object.keys(temperatures),
+        values: temperatures,
         unit: 'Celsius',
         symbolText: '°',
       };

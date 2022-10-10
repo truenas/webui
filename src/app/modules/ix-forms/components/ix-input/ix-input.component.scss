@@ -8,10 +8,6 @@
   padding: 8px 0;
 }
 
-.tooltip {
-  margin: 0 0 0 8px;
-}
-
 .input-container {
   background: var(--bg1);
   border: solid 1.5px var(--lines);
@@ -28,7 +24,6 @@
 
   &:focus-within {
     border-color: var(--primary);
-    border-width: 1px;
   }
 
   &.disabled {
@@ -52,19 +47,6 @@
 .link {
   color: var(--primary);
   cursor: pointer;
-  font-size: x-small;
-}
-
-.label-container {
-  align-items: center;
-  display: flex;
-  margin-bottom: 1px;
-  margin-left: 1px;
-  min-height: 24px;
-}
-
-.label {
-  display: inline-flex;
   font-size: x-small;
 }
 
@@ -92,7 +74,7 @@
   padding-left: 16px;
 }
 
-.input-container mat-icon {
+.input-container .mat-icon {
   font-size: 1rem;
   height: auto;
   max-width: 16px;

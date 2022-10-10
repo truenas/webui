@@ -1,10 +1,9 @@
-<div *ngIf="label" class="label-container">
-  <label class="label">
-    <span [innerHTML]="label"></span>
-    <span *ngIf="required" class="required">*</span>
-  </label>
-  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
-</div>
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+></ix-label>
 
 <mat-radio-group
   color="primary"
@@ -20,9 +19,16 @@
     [fxFlex.gt-md]="fieldFlex"
   >
     <mat-radio-button [value]="option.value">
-      {{option.label}}
+      {{ option.label }}
     </mat-radio-button>
-    <ix-tooltip *ngIf="option.tooltip" [header]="option.label" class="tooltip" [message]="option.tooltip"></ix-tooltip>
+
+    <ix-tooltip
+      *ngIf="option.tooltip"
+      class="tooltip"
+      [header]="option.label"
+      [message]="option.tooltip"
+    ></ix-tooltip>
   </div>
 </mat-radio-group>
+
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

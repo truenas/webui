@@ -14,6 +14,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectComponent } from './ix-select.component';
 
 describe('IxSelectComponent', () => {
@@ -32,6 +33,7 @@ describe('IxSelectComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
+      MockComponent(IxLabelComponent),
     ],
   });
 
@@ -70,6 +72,18 @@ describe('IxSelectComponent', () => {
       expect(state).toBeTruthy();
     });
 
+    it('renders a label and passes properties to it', () => {
+      spectator.setInput('label', 'Select Group');
+      spectator.setInput('required', true);
+      spectator.setInput('tooltip', 'Select group to use.');
+
+      const label = spectator.query(IxLabelComponent);
+      expect(label).toExist();
+      expect(label.label).toBe('Select Group');
+      expect(label.required).toBe(true);
+      expect(label.tooltip).toBe('Select group to use.');
+    });
+
     it('loader will be rendered only while options are loading', async () => {
       const opt$ = options$.pipe(delay(100));
       spectator.setInput({ options: opt$ });
@@ -81,7 +95,7 @@ describe('IxSelectComponent', () => {
       expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
     });
 
-    it('shows a list of labels', async () => {
+    it('shows a list of options', async () => {
       spectator.setInput({ options: options$ });
 
       const select = await loader.getHarness(MatSelectHarness);
@@ -100,7 +114,7 @@ describe('IxSelectComponent', () => {
       expect(currentValue).toEqual('FRA');
     });
 
-    it('writes values when label is selected from the dropdown', async () => {
+    it('writes values when option is selected from the dropdown', async () => {
       spectator.setInput({ options: options$ });
 
       const select = await loader.getHarness(MatSelectHarness);
@@ -121,7 +135,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'Options cannot be loaded\' if options has some error', async () => {
-      spectator.component.options = throwError('Some Error');
+      spectator.component.options = throwError(() => new Error('Some Error'));
       spectator.component.ngOnChanges();
 
       const select = await loader.getHarness(MatSelectHarness);

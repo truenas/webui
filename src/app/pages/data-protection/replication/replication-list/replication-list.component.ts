@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -53,6 +53,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
   asyncView = true;
+  filterValue = '';
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -79,8 +80,6 @@ export class ReplicationListComponent implements EntityTableConfig {
     },
   };
 
-  private dataset: string = '';
-
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -91,7 +90,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     private matDialog: MatDialog,
     private route: ActivatedRoute,
   ) {
-    this.dataset = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -102,15 +101,10 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
-    const _tasks = tasks.filter((task) =>
-      task.target_dataset === this.dataset ||
-      task.source_datasets.includes(this.dataset) ||
-      task.name.includes(`${this.dataset}/`)
-    );
-    return _tasks.map((task) => {
+    return tasks.map((task) => {
       return {
         ...task,
-        ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
+        ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
         task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };
     });
@@ -130,8 +124,8 @@ export class ReplicationListComponent implements EntityTableConfig {
             hideCheckBox: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             row.state = { state: JobState.Running };
-            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
-              (jobId: number) => {
+            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe({
+              next: (jobId: number) => {
                 this.dialog.info(
                   this.translate.instant('Task started'),
                   this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
@@ -142,15 +136,15 @@ export class ReplicationListComponent implements EntityTableConfig {
                   row.job = job;
                 });
               },
-              (err) => {
+              error: (err) => {
                 new EntityUtils().handleWsError(this.entityList, err);
               },
-            );
+            });
           });
         },
       },
       {
-        actionName: (parentrow as any).description,
+        actionName: 'restore',
         id: 'restore',
         name: 'restore',
         label: this.translate.instant('Restore'),
@@ -244,18 +238,18 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: ReplicationTaskUi): void {
-    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
         row.enabled = res.enabled;
         if (!res) {
           row.enabled = !row.enabled;
         }
       },
-      (err) => {
+      error: (err) => {
         row.enabled = !row.enabled;
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 
   doAdd(): void {

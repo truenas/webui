@@ -11,7 +11,7 @@ import {
   TemplateRef,
   ViewChild,
   ChangeDetectorRef,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -577,11 +577,11 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   }
 
   callGetFunction(skipActions = false): void {
-    this.getFunction.pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+    this.getFunction.pipe(untilDestroyed(this)).subscribe({
+      next: (res) => {
         this.handleData(res, skipActions);
       },
-      (res: WebsocketError) => {
+      error: (res: WebsocketError) => {
         this.isTableEmpty = true;
         this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
         if (this.loaderOpen) {
@@ -594,7 +594,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
           new EntityUtils().handleError(this, res);
         }
       },
-    );
+    });
   }
 
   handleData(res: any, skipActions = false): any {
@@ -613,7 +613,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
           if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+            (res.data as Record<string, string>[]).forEach((row) => {
+              row[prop] = new EntityUtils().parseDow(row[prop]);
+            });
           }
         }
       }
@@ -621,7 +623,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
         if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+          (res as Record<string, string>[]).forEach((row) => {
+            row[prop] = new EntityUtils().parseDow(row[prop]);
+          });
         }
       }
     }
@@ -698,8 +702,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
-      // TODO: Replacing with elementRef breaks things
-      const parentNode = (this.entitytable as any)._elementRef.nativeElement.parentNode;
+      // Hack to access the private property _elementRef. Do not replace with elementRef.
+      const parentNode = (this.entitytable as unknown as { _elementRef: ElementRef })
+        ._elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
@@ -785,7 +790,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     return [];
   }
 
-  rowValue(row: any, attr: string): any {
+  rowValue(row: any, attr: string): unknown {
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
@@ -888,19 +893,19 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     this.busy = this.ws.call(
       this.conf.wsDelete,
       this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id],
-    ).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    ).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.getData();
         this.excuteDeletion = true;
         if (this.conf.afterDelete) {
           this.conf.afterDelete();
         }
       },
-      (error) => {
+      error: (error) => {
         new EntityUtils().handleWsError(this, error, this.dialogService);
         this.loader.close();
       },
-    );
+    });
   }
 
   doDeleteJob(item: Row): Observable<{ state: JobState } | boolean> {
@@ -995,8 +1000,8 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
         if (this.conf.wsMultiDeleteParams) {
           this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
             .pipe(untilDestroyed(this))
-            .subscribe(
-              (res1) => {
+            .subscribe({
+              next: (res1) => {
                 if (res1.state !== JobState.Success) {
                   return;
                 }
@@ -1004,14 +1009,13 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
                 this.loader.close();
                 this.loaderOpen = false;
                 this.getData();
-                // this.selected = [];
                 this.selection.clear();
 
-                const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                const selectedName = String(this.conf.wsMultiDeleteParams(selected)[1]);
                 let message = '';
                 for (let i = 0; i < res1.result.length; i++) {
                   if (res1.result[i].error !== null) {
-                    message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    message = `${message}<li>${selectedName[i]}: ${res1.result[i].error}</li>`;
                   }
                 }
                 if (message === '') {
@@ -1021,12 +1025,12 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
                   this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
                 }
               },
-              (res1) => {
+              error: (res1) => {
                 new EntityUtils().handleWsError(this, res1, this.dialogService);
                 this.loader.close();
                 this.loaderOpen = false;
               },
-            );
+            });
         }
       } else {
         // rest to do multi-delete
@@ -1105,7 +1109,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     }
   }
 
-  getButtonClass(row: any): string {
+  getButtonClass(row: { warnings: unknown[]; state: JobState }): string {
     // Bring warnings to user's attention even if state is finished or successful.
     if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
 

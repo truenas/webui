@@ -1,0 +1,100 @@
+@import '~assets/styles/mixins/grid';
+@import '~assets/styles/scss-imports/splitview';
+
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-weight: 500;
+  min-height: 48px;
+  padding: 0;
+}
+
+.tree-node-grid {
+  @include grid-row();
+  align-items: center;
+
+
+  // Override default fraction based values to avoid misaligned columns
+  grid-template-columns: auto 125px 125px 125px 40px;
+
+  @media (max-width: $breakpoint-tablet) {
+    // Override default fraction based values to avoid misaligned columns
+    grid-template-columns: auto 0 0 0 0;
+    width: 100%;
+  }
+
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 15px;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+  }
+
+  .cell-name {
+    align-items: stretch;
+    font-weight: bold;
+
+    .icon-container {
+      align-items: center;
+      background-color: var(--bg2);
+      display: flex;
+      padding: 5px;
+    }
+
+    .name {
+      align-items: center;
+      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
+      display: inline-flex;
+      padding-right: 15px;
+    }
+  }
+
+  .cell-status {
+    padding: 0 8px;
+  }
+}
+
+// TODO: Fragile (at least with css selectors)
+:host-context(ix-tree-node:hover),
+:host-context(ix-tree-node.selected),
+:host-context(.disk-nested-tree-root-node:hover),
+:host-context(.disk-nested-tree-root-node.selected) {
+  .tree-node-grid .cell-name .name {
+    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  }
+
+  .tree-node-grid .cell-name .icon-container {
+    background-color: var(--hover-bg);
+  }
+}
+
+$level-offset: 25px;
+$padding-left: 8px;
+
+::ng-deep {
+  @for $i from 2 through 10 {
+    ix-tree-node[aria-level="#{$i}"],
+    ix-nested-tree-node[aria-level="#{$i}"] {
+      > .mat-icon-button:first-child {
+        left: $padding-left + $level-offset * ($i - 2);
+      }
+
+      ix-topology-item-node {
+        padding-left: $padding-left + $level-offset * ($i - 2);
+      }
+    }
+  }
+}

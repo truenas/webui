@@ -42,10 +42,10 @@ export class MockWebsocketService extends WebSocketService {
       send: jest.fn(),
       close: jest.fn(),
     } as unknown as WebSocket;
-    when(this.call).mockImplementation((method: ApiMethod, args: unknown[]) => {
+    when(this.call).mockImplementation((method: ApiMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
-    when(this.job).mockImplementation((method: ApiMethod, args: unknown[]) => {
+    when(this.job).mockImplementation((method: ApiMethod, args: unknown) => {
       throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
     });
   }

@@ -1,20 +1,28 @@
 <div class="container">
   <div class="label-container">
-    <label *ngIf="label" class="label">
-      {{label}}
-      <span *ngIf="required" class="required">*</span>
-    </label>
-    <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
+    <ix-label
+      *ngIf="label || tooltip"
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="required"
+    ></ix-label>
+
     <button
       *ngIf="canAdd"
       mat-button
       type="button"
       class="add-btn"
       (click)="addItem()"
-    >{{ "Add" | translate }}</button>
+    >
+      {{ 'Add' | translate }}
+    </button>
   </div>
+
   <div class="input-container" [class.disabled]="isDisabled">
     <ng-content></ng-content>
-    <span *ngIf="empty" class="empty">{{ "No items have been added yet." | translate }}</span>
+
+    <span *ngIf="empty" class="empty">
+      {{ 'No items have been added yet.' | translate }}
+    </span>
   </div>
 </div>

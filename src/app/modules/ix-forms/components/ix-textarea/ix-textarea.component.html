@@ -1,12 +1,10 @@
 <div class="full-width container has-tooltip">
-
-  <div *ngIf="label" class="label-container">
-    <label class="label">
-      {{label}}
-      <span *ngIf="required" class="required">*</span>
-    </label>
-    <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
-  </div>
+  <ix-label
+    *ngIf="label || tooltip"
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+  ></ix-label>
 
   <div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
     <textarea
@@ -16,13 +14,12 @@
       [disabled]="isDisabled"
       [readonly]="readonly"
       [(ngModel)]="value"
+      [placeholder]="placeholder"
       (ngModelChange)="onChange($event)"
       (blur)="onTouch()"
-      [placeholder]="placeholder"
     ></textarea>
   </div>
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
-
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 </div>

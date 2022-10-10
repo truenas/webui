@@ -7,14 +7,15 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, Observable, of, throwError,
+  combineLatest, EMPTY, Observable, throwError,
 } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -57,50 +58,57 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.loader.open();
-    this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }])
-      .pipe(
-        catchError((error: WebsocketError) => {
-          if (error.reason.includes('Device busy')) {
-            return this.askToForceDelete();
-          }
 
-          return throwError(error);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
+    this.deleteDataset().pipe(
+      catchError((error: WebsocketError) => {
+        if (error.reason.includes('Device busy')) {
+          return this.askToForceDelete();
+        }
+
+        return throwError(() => error);
+      }),
+      filter(Boolean),
+      switchMap(() => this.forceDeleteDataset()),
+      tap(() => {
         this.loader.close();
         this.dialogRef.close(true);
-      }, (error) => {
-        this.dialog.errorReport(
-          this.translate.instant(
-            'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
-          ),
-          error.reason,
-          error.stack,
-        );
-        this.loader.close();
-        this.dialogRef.close(true);
-      });
+      }),
+      catchError(this.handleDeleteError.bind(this)),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  private deleteDataset(): Observable<boolean> {
+    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
+  }
+
+  private forceDeleteDataset(): Observable<boolean> {
+    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
   }
 
   private askToForceDelete(): Observable<unknown> {
+    return this.getForceDeleteConfirmation();
+  }
+
+  private getForceDeleteConfirmation(): Observable<boolean> {
     return this.dialog.confirm({
       title: this.translate.instant('Device Busy'),
       message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
       buttonMsg: this.translate.instant('Force Delete'),
-    }).pipe(
-      switchMap((shouldForceDelete) => {
-        if (shouldForceDelete) {
-          this.ws.call('pool.dataset.delete', [this.dataset.id, {
-            recursive: true,
-            force: true,
-          }]);
-        } else {
-          return of();
-        }
-      }),
+    });
+  }
+
+  private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
+    this.dialog.errorReport(
+      this.translate.instant(
+        'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
+      ),
+      error.reason,
+      error.stack,
     );
+    this.loader.close();
+    this.dialogRef.close(true);
+    return EMPTY;
   }
 
   private loadDatasetRelatedEntities(): void {
@@ -109,16 +117,19 @@ export class DeleteDatasetDialogComponent implements OnInit {
       this.ws.call('pool.dataset.attachments', [this.dataset.id]),
       this.ws.call('pool.dataset.processes', [this.dataset.id]),
     ]).pipe(untilDestroyed(this))
-      .subscribe(([attachments, processes]) => {
-        this.attachments = attachments;
-        this.setProcesses(processes);
+      .subscribe({
+        next: ([attachments, processes]) => {
+          this.attachments = attachments;
+          this.setProcesses(processes);
 
-        this.cdr.markForCheck();
-        this.loader.close();
-      }, (error) => {
-        this.loader.close();
-        this.dialogRef.close(false);
-        (new EntityUtils()).errorReport(error, this.dialog);
+          this.cdr.markForCheck();
+          this.loader.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialogRef.close(false);
+          this.dialog.errorReportMiddleware(error);
+        },
       });
   }
 

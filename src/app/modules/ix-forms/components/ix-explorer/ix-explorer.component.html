@@ -1,47 +1,52 @@
-<div *ngIf="label" class="label-container">
-  <label class="label">
-    {{label}}
-    <span *ngIf="required" class="required">*</span>
-  </label>
-  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
-</div>
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+></ix-label>
 
 <div class="input-container" [class.disabled]="isDisabled">
   <input
+    #input
     matInput
     type="text"
     autocomplete="off"
-    [(ngModel)]="value"
+    [value]="inputValue"
     [required]="required"
     [disabled]="isDisabled"
-    (ngModelChange)="valueChangedCustom($event)"
+    (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
-  >
+  />
 </div>
-<div *ngIf="!isDisabled" class="tree-container">
+<div class="tree-container" [class.disabled]="isDisabled">
   <tree-root
     #tree
     [nodes]="nodes"
     [options]="treeOptions"
     (select)="onNodeSelect($event)"
-    (deselect)="onSelectionChanged()"
+    (deselect)="onNodeDeselect($event)"
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
-      <ng-container *ngIf="typeNode(node) as node">
-        <mat-icon *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">insert_drive_file</mat-icon>
-        <ng-template #folderIcon><mat-icon>folder</mat-icon></ng-template>
+      <span *ngIf="typeNode(node) as node" [class.selected]="isPathSelected(node.data.path)">
+        <mat-icon *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
+          insert_drive_file
+        </mat-icon>
+
+        <ng-template #folderIcon>
+          <mat-icon>folder</mat-icon>
+        </ng-template>
 
         <span class="node-name">{{ node.data.name }}</span>
-      </ng-container>
+      </span>
     </ng-template>
   </tree-root>
 </div>
 
-
 <mat-error *ngIf="loadingError" class="loading-error">
-  {{loadingError}}
+  {{ loadingError }}
 </mat-error>
+
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{hint}}</mat-hint>
+<mat-hint *ngIf="hint">{{ hint }}</mat-hint>

@@ -66,7 +66,14 @@ describe('RolesCardComponent', () => {
             ],
           }],
           apps: [
-            { name: 'app', path: 'apppath' },
+            { name: 'app1', path: 'app1path' },
+            { name: 'app1', path: 'app1path' },
+            { name: 'app2', path: 'app2path' },
+          ],
+          vms: [
+            { name: 'vm1', path: 'vm1path' },
+            { name: 'vm1', path: 'vm1path' },
+            { name: 'vm2', path: 'vm2path' },
           ],
         },
       },
@@ -104,10 +111,31 @@ describe('RolesCardComponent', () => {
   });
 
   it('shows apps row', () => {
-    expect(
-      spectator.query('.apps.value'),
-    ).toHaveText(
-      'This dataset is used by one or more apps',
+    expect(spectator.query('.apps.value')).toHaveText(
+      'This dataset is used by: app1, app2',
+    );
+  });
+
+  it('shows vms row', () => {
+    expect(spectator.query('.vms.value')).toHaveText(
+      'This dataset is used by: vm1, vm2',
+    );
+  });
+
+  it('shows apps row when dataset has name `ix-applications`', () => {
+    spectator.component.dataset.name = 'root/ix-applications';
+    spectator.detectChanges();
+    expect(spectator.query('.apps.value')).toHaveText(
+      'This dataset is used to store Kubernetes config and other container related data',
+    );
+  });
+
+  it('shows system dataset row', () => {
+    spectator.component.dataset.name = 'system-dataset';
+    spectator.component.systemDataset = 'system-dataset';
+    spectator.detectChanges();
+    expect(spectator.query('.system-dataset.value')).toHaveText(
+      'This dataset is used by the system',
     );
   });
 });

@@ -1,0 +1,27 @@
+<h1 matDialogTitle>
+  {{ 'Extend Vdev' | translate }}
+</h1>
+
+<form class="ix-form-container" (submit)="onSubmit($event)">
+  <ix-select
+    [formControl]="newDiskControl"
+    [label]="'New Disk' | translate"
+    [required]="true"
+    [options]="unusedDiskOptions$"
+    [tooltip]="helptext.dialogFormFields.new_disk.tooltip | translate"
+  ></ix-select>
+
+  <div class="form-actions">
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      [disabled]="!newDiskControl.valid"
+    >
+      {{ 'Extend' | translate }}
+    </button>
+  </div>
+</form>

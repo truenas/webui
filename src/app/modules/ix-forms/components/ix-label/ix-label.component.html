@@ -1,0 +1,11 @@
+<label *ngIf="label" class="label">
+  <span [innerHTML]="label"></span>
+  <span *ngIf="required" class="required">*</span>
+</label>
+
+<ix-tooltip
+  *ngIf="tooltip"
+  class="tooltip"
+  [header]="label"
+  [message]="tooltip"
+></ix-tooltip>

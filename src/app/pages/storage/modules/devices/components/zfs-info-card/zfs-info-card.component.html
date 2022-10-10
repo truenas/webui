@@ -1,0 +1,55 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'ZFS Info' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <div class="details-item" *ngIf="topologyParentItem?.name">
+        <span class="label">{{ 'Parent' | translate }}:</span>
+        <span class="value">{{ topologyParentItem.name | uppercase }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Read Errors' | translate }}:</span>
+        <span class="value">{{ topologyItem.stats?.read_errors }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Write Errors' | translate }}:</span>
+        <span class="value">{{ topologyItem.stats?.write_errors }}</span>
+      </div>
+      <div class="details-item">
+        <span class="label">{{ 'Checksum Errors' | translate }}:</span>
+        <span class="value">{{ topologyItem.stats?.checksum_errors }}</span>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions *ngIf="isDisk">
+    <button *ngIf="canExtendDisk" mat-stroked-button (click)="onExtend()">
+      {{ 'Extend' | translate }}
+    </button>
+
+    <button *ngIf="canRemoveDisk" mat-stroked-button (click)="onRemove()">
+      {{ 'Remove' | translate }}
+    </button>
+
+    <button *ngIf="canDetachDisk" mat-stroked-button (click)="onDetach()">
+      {{ 'Detach' | translate }}
+    </button>
+
+    <button *ngIf="canOfflineDisk" mat-stroked-button (click)="onOffline()">
+      {{ 'Offline' | translate }}
+    </button>
+
+    <button *ngIf="canOnlineDisk" mat-stroked-button (click)="onOnline()">
+      {{ 'Online' | translate }}
+    </button>
+  </mat-card-actions>
+  <mat-card-actions *ngIf="isMirror">
+    <button mat-stroked-button (click)="onExtend()">
+      {{ 'Extend' | translate }}
+    </button>
+    <!-- TODO: May have conditions when removing a mirror is not allowed -->
+    <button mat-stroked-button (click)="onRemove()">
+      {{ 'Remove' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>

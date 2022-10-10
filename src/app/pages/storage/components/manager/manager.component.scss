@@ -1,0 +1,229 @@
+.custom_cell_styling {
+  height: 20px;
+  overflow: hidden;
+  padding-left: 5px;
+  width: 100%;
+}
+
+.wrapper {
+  box-direction: normal;
+  box-orient: horizontal;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.disks {
+  width: 510px;
+}
+
+.disk-details-icon {
+  float: right;
+  width: 50px;
+}
+
+.disk-icon {
+  font-size: 24px;
+}
+
+.disk-details {
+  float: left;
+}
+
+.pool {
+  box-flex: 1;
+  flex-basis: auto;
+  flex-grow: 1;
+  max-width: 580px;
+  min-width: 520px;
+  position: relative;
+  top: -10px;
+}
+
+.manager {
+  display: flex;
+  flex-direction: column;
+}
+
+.manager input[name='poolname']:focus-visible {
+  box-shadow: 0 0 0 1px var(--primary) inset;
+}
+
+.buttons {
+  display: flex;
+}
+
+button {
+  margin-right: 5px;
+}
+
+h4 {
+  text-align: center;
+}
+
+#avail-disks-title {
+  margin-bottom: 25px;
+}
+
+.volumeTooltip {
+  display: inline-flex;
+}
+
+.estimated-size,
+.size-message {
+  margin: 0.5rem 1rem;
+
+  &.red {
+    color: var(--red);
+  }
+
+  &.orange {
+    color: var(--orange);
+  }
+}
+
+.vdev-h4 {
+  margin-bottom: 0;
+}
+
+.footer-div {
+  width: 100%;
+}
+
+.footer-main {
+  align-items: baseline;
+  display: flex;
+}
+
+.data-div {
+  align-items: center;
+  display: flex;
+  margin-left: 102px;
+  padding: 0;
+  width: 477px;
+}
+
+.data-title {
+  flex: 1;
+}
+
+.duplicate-button {
+  width: 60px;
+}
+
+#pool-manager__encryption-checkbox {
+  margin-left: 10px;
+}
+
+#pool-manager__reset-layout-button:disabled,
+#pool-manager__suggest-layout-button:disabled {
+  color: var(--fg2);
+  opacity: 0.38;
+}
+
+.pool-manager-title {
+  margin: 16px !important;
+}
+
+.fields {
+  margin: 0.75rem 3rem 3rem 1rem;
+  width: 600px;
+}
+
+#filter-wrapper,
+#pool-manager__button-group {
+  margin-left: 1rem;
+}
+
+#create-pool-card {
+  min-width: 660px !important;
+}
+
+.adjust-upward {
+  bottom: 5px;
+  position: relative;
+}
+
+@media screen and (max-width: 1399px) {
+  .pool {
+    margin-bottom: 50px;
+    top: 40px;
+  }
+
+  .data-div {
+    margin-left: 118px;
+  }
+}
+
+.forceCreateCheckbox {
+  margin-bottom: 13px;
+  margin-left: 13px;
+}
+
+.tbl {display: table;}
+.tr {display: table-row;}
+.td {display: table-cell;}
+
+button.vdev-option {
+  height: auto !important;
+  padding: 12px 12px 12px 0;
+  width: 98.5% !important;
+}
+
+button.vdev-option .td.icon {
+  font-size: 200%;
+  line-height: 0.5;
+  padding: 0 16px;
+  vertical-align: middle;
+}
+
+button.vdev-option h3 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+button.vdev-option p {
+  font-size: 90%;
+  line-height: normal;
+  white-space: normal;
+}
+
+.button-bar {
+  display: flex;
+  margin-top: 12px;
+}
+
+.button-spacer {
+  width: 50px;
+}
+
+.inline {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.encryption-select.inline {
+  padding-top: 4px;
+  width: 200px;
+}
+
+.encryption-checkbox.inline {
+  padding-top: 50px;
+}
+
+.row-details {
+  padding-left: 35px;
+}
+
+.non-unique-serial-disks-checkbox {
+  padding-left: 0.6rem;
+}
+
+.non-unique-serial-disks-warning {
+  color: var(--orange);
+  margin: 0;
+  padding: 1.2rem 1.2rem 0;
+}
+
+.inline-warn {
+  display: inline-block;
+}

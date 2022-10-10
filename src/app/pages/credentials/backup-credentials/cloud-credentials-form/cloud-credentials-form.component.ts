@@ -60,6 +60,9 @@ import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
 import {
+  StorjProviderFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
+import {
   TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import {
@@ -78,7 +81,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class CloudCredentialsFormComponent implements OnInit {
   commonForm = this.formBuilder.group({
     name: ['', Validators.required],
-    provider: [null as CloudsyncProviderName],
+    provider: [CloudsyncProviderName.Storj],
   });
 
   isLoading = false;
@@ -149,8 +152,8 @@ export class CloudCredentialsFormComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.snackbarService.success(
             this.isNew
@@ -160,13 +163,13 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.slideInService.close();
           this.cdr.markForCheck();
         },
-        (error) => {
-          // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
+        error: (error) => {
+        // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
         },
-      );
+      });
 
     return false;
   }
@@ -185,8 +188,8 @@ export class CloudCredentialsFormComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(
-        (response) => {
+      .subscribe({
+        next: (response) => {
           if (response.valid) {
             this.dialogService.info(
               this.translate.instant('Valid'),
@@ -199,12 +202,12 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   private preparePayload(): CloudsyncCredentialUpdate {
@@ -220,8 +223,8 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.isLoading = true;
     this.ws.call('cloudsync.providers')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (providers) => {
+      .subscribe({
+        next: (providers) => {
           this.providers = providers;
           this.providerOptions = of(
             providers.map((provider) => ({
@@ -232,19 +235,15 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.renderProviderForm();
           if (this.existingCredential) {
             this.providerForm.setValues(this.existingCredential.attributes);
-          } else {
-            this.commonForm.patchValue({
-              provider: providers[0].name,
-            });
           }
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           new EntityUtils().handleWsError(null, error, this.dialogService);
           this.slideInService.close();
         },
-      );
+      });
   }
 
   private setFormEvents(): void {
@@ -292,6 +291,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       [CloudsyncProviderName.Pcloud, PcloudProviderFormComponent],
       [CloudsyncProviderName.AmazonS3, S3ProviderFormComponent],
       [CloudsyncProviderName.Sftp, SftpProviderFormComponent],
+      [CloudsyncProviderName.Storj, StorjProviderFormComponent],
       [CloudsyncProviderName.Webdav, WebdavProviderFormComponent],
     ]);
 

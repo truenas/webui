@@ -1,0 +1,8 @@
+<div *ngIf="connectionState?.connected" class="truecommand" (click)="goToTrueCommand()">
+  <img
+    class="truecommand-logo"
+    src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg"
+    alt="TrueCommand"
+  >
+  <span class="truecommand-text">{{ 'TrueCommand IP' | translate }}: {{ connectionState.truecommand_ip }}</span>
+</div>

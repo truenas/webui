@@ -1,7 +1,11 @@
-<ix-modal-header [title]="title | translate" [loading]="isLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="title | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Basic Info' | translate">
         <ix-input
           formControlName="comment"
@@ -9,6 +13,7 @@
           [tooltip]="tooltips.comment | translate"
         ></ix-input>
       </ix-fieldset>
+
       <ix-fieldset [title]="'Authentication Method and Group' | translate">
         <ix-select
           formControlName="discovery_authmethod"
@@ -16,6 +21,7 @@
           [tooltip]="tooltips.discovery_authmethod | translate"
           [options]="authmethodOptions$"
         ></ix-select>
+
         <ix-select
           formControlName="discovery_authgroup"
           [label]="labels.discovery_authgroup | translate"
@@ -23,6 +29,7 @@
           [options]="authgroupOptions$"
         ></ix-select>
       </ix-fieldset>
+
       <ix-fieldset [title]="'IP Address' | translate">
         <ix-list
           [empty]="listen.length === 0"
@@ -31,23 +38,13 @@
         >
           <ng-container *ngFor="let item of listen; let i = index">
             <ix-list-item (delete)="onDelete(i)">
-              <div class="two-columns">
-                <ix-select
-                  [formControlName]="'ip' + listPrefix + i"
-                  [label]="labels.ip | translate"
-                  [tooltip]="tooltips.ip | translate"
-                  [options]="listenOptions$"
-                  [multiple]="true"
-                  [required]="true"
-                ></ix-select>
-                <ix-input
-                  [formControlName]="'port' + listPrefix + i"
-                  [label]="labels.port | translate"
-                  [tooltip]="tooltips.port | translate"
-                  type="number"
-                  [required]="true"
-                ></ix-input>
-              </div>
+              <ix-select
+                [formControlName]="'ip' + listPrefix + i"
+                [label]="labels.ip | translate"
+                [tooltip]="tooltips.ip | translate"
+                [options]="listenOptions$"
+                [required]="true"
+              ></ix-select>
             </ix-list-item>
           </ng-container>
         </ix-list>
@@ -57,9 +54,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

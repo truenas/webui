@@ -21,6 +21,7 @@ import {
 import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
+import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
@@ -110,6 +111,30 @@ export class CertificatesDashComponent implements OnInit {
           edit: (certificate: Certificate) => {
             const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
             slideIn.setCertificate(certificate);
+          },
+          delete: (item: Certificate, table: TableComponent) => {
+            const dialogRef = this.dialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: item } });
+            dialogRef.afterClosed()
+              .pipe(untilDestroyed(this))
+              .subscribe((result: unknown) => {
+                if (!result) {
+                  return;
+                }
+                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') } });
+                this.dialogRef.componentInstance.setCall(
+                  table.tableConf.deleteCall,
+                  [item.id, (result as { force: boolean }).force],
+                );
+                this.dialogRef.componentInstance.submit();
+                this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                  this.dialogRef.close(true);
+                  this.tableService.getData(table);
+                });
+                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+                  table.loaderOpen = false;
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
+                });
+              });
           },
         },
       },
@@ -219,26 +244,26 @@ export class CertificatesDashComponent implements OnInit {
     ];
   }
 
-  certificatesDataSourceHelper(res: Certificate[]): Certificate[] {
-    res.forEach((certificate) => {
+  certificatesDataSourceHelper(certificates: Certificate[]): Certificate[] {
+    certificates.forEach((certificate) => {
       if (_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
       }
     });
-    return res.filter((item) => item.certificate !== null);
+    return certificates.filter((item) => item.certificate !== null);
   }
 
-  csrDataSourceHelper(res: Certificate[]): Certificate[] {
-    return res.filter((item) => item.CSR !== null);
+  csrDataSourceHelper(certificates: Certificate[]): Certificate[] {
+    return certificates.filter((item) => item.CSR !== null);
   }
 
-  caDataSourceHelper(res: CertificateAuthority[]): CertificateAuthority[] {
-    res.forEach((row) => {
+  caDataSourceHelper(authorities: CertificateAuthority[]): CertificateAuthority[] {
+    authorities.forEach((row) => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;
       }
     });
-    return res;
+    return authorities;
   }
 
   certificateActions(): AppTableAction[] {
@@ -251,41 +276,45 @@ export class CertificatesDashComponent implements OnInit {
           const isCsr = rowinner.cert_type_CSR;
           const path = isCsr ? rowinner.csr_path : rowinner.certificate_path;
           const fileName = `${rowinner.name}.${isCsr ? 'csr' : 'crt'}`;
-          this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              const url = res[1];
+          this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
               const mimetype = 'application/x-x509-user-cert';
               this.storage.streamDownloadFile(url, fileName, mimetype)
                 .pipe(untilDestroyed(this))
-                .subscribe((file) => {
-                  this.storage.downloadBlob(file, fileName);
-                }, (err) => {
-                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
-                    helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                .subscribe({
+                  next: (file) => {
+                    this.storage.downloadBlob(file, fileName);
+                  },
+                  error: (err) => {
+                    this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                      helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  },
                 });
             },
-            (err) => {
+            error: (err) => {
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
           const keyName = rowinner.name + '.key';
-          this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              const url = res[1];
+          this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
               const mimetype = 'text/plain';
               this.storage.streamDownloadFile(url, keyName, mimetype)
                 .pipe(untilDestroyed(this))
-                .subscribe((file) => {
-                  this.storage.downloadBlob(file, keyName);
-                }, (err) => {
-                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
-                    helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                .subscribe({
+                  next: (file) => {
+                    this.storage.downloadBlob(file, keyName);
+                  },
+                  error: (err) => {
+                    this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                      helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  },
                 });
             },
-            (err) => {
+            error: (err) => {
               new EntityUtils().handleWsError(this, err, this.dialogService);
             },
-          );
+          });
         },
       },
     ];
@@ -309,9 +338,9 @@ export class CertificatesDashComponent implements OnInit {
             this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               this.dialog.closeAll();
             });
-            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(this, res, this.dialogService);
+              new EntityUtils().handleWsError(this, failedJob, this.dialogService);
             });
           });
       },
@@ -371,9 +400,9 @@ export class CertificatesDashComponent implements OnInit {
             this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               this.dialog.closeAll();
             });
-            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWsError(this, res, this.dialogService);
+              new EntityUtils().handleWsError(this, failedJob, this.dialogService);
             });
           });
       },

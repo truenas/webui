@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
@@ -11,6 +12,8 @@ import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/sma
 import { TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { AppState } from 'app/store';
+import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -62,6 +65,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
     protected taskService: TaskService,
     protected entityFormService: EntityFormService,
     protected translate: TranslateService,
+    protected store$: Store<AppState>,
   ) {
     this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
       this.listDisks = listDisks;
@@ -78,8 +82,11 @@ export class SmartTaskListComponent implements EntityTableConfig {
   resourceTransformIncomingRestData(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
+
+      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, timezone);
+      });
 
       if (test.all_disks) {
         test.disksLabel = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];

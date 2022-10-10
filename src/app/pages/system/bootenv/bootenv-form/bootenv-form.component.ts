@@ -92,23 +92,28 @@ export class BootEnvironmentFormComponent {
   }
 
   onSubmit(): void {
+    this.isFormLoading = true;
     switch (this.operation) {
-      case this.Operations.Create:
+      case this.Operations.Create: {
         const createParams: CreateBootenvParams = [{
           name: this.formGroup.value.name,
         }];
 
-        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
-          this.isFormLoading = false;
-          this.slideInService.close();
-        }, (error) => {
-          this.isFormLoading = false;
-          this.slideInService.close();
-          this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.isFormLoading = false;
+            this.slideInService.close(null, true);
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.slideInService.close(error, false);
+            this.errorHandler.handleWsFormError(error, this.formGroup);
+          },
         });
 
         break;
-      case this.Operations.Rename:
+      }
+      case this.Operations.Rename: {
         const renameParams: UpdateBootenvParams = [
           this.currentName,
           {
@@ -116,32 +121,40 @@ export class BootEnvironmentFormComponent {
           },
         ];
 
-        this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe(() => {
-          this.isFormLoading = false;
-          this.slideInService.close();
-        }, (error) => {
-          this.isFormLoading = false;
-          this.slideInService.close();
-          this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.isFormLoading = false;
+            this.slideInService.close(null, true);
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.slideInService.close(error, false);
+            this.errorHandler.handleWsFormError(error, this.formGroup);
+          },
         });
 
         break;
-      case this.Operations.Clone:
+      }
+      case this.Operations.Clone: {
         const cloneParams: CreateBootenvParams = [{
           name: this.formGroup.value.name,
           source: this.currentName,
         }];
 
-        this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe(() => {
-          this.isFormLoading = false;
-          this.slideInService.close();
-        }, (error) => {
-          this.isFormLoading = false;
-          this.slideInService.close();
-          this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.isFormLoading = false;
+            this.slideInService.close(null, true);
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.slideInService.close(error, false);
+            this.errorHandler.handleWsFormError(error, this.formGroup);
+          },
         });
 
         break;
+      }
     }
   }
 }

@@ -81,13 +81,8 @@ export class PortalFormComponent {
   private ipAddressFromControls = [
     {
       name: 'ip',
-      default: [] as string[],
+      default: '' as string,
       validator: [Validators.required, ipValidator('all')],
-    },
-    {
-      name: 'port',
-      default: 3260,
-      validator: [Validators.required],
     },
   ];
 
@@ -104,16 +99,14 @@ export class PortalFormComponent {
   setupForm(iscsiPortal: IscsiPortal): void {
     this.editingIscsiPortal = iscsiPortal;
 
-    Object.entries(_.groupBy(iscsiPortal.listen, 'port')).forEach(([port, listen], index) => {
-      const newListItem: any = {};
+    iscsiPortal.listen.forEach((listen, index) => {
+      const newListItem = {} as IscsiInterface;
       this.ipAddressFromControls.forEach((fc) => {
-        let defaultValue = Number(port) as number | string[];
         if (fc.name === 'ip') {
-          defaultValue = listen.map((item) => item.ip);
+          const defaultValue = listen.ip;
+          newListItem[fc.name] = defaultValue;
+          this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(defaultValue, fc.validator));
         }
-
-        newListItem[fc.name] = defaultValue;
-        this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(defaultValue, fc.validator));
       });
       this.listen.push(newListItem);
     });
@@ -126,9 +119,9 @@ export class PortalFormComponent {
 
   onAdd(): void {
     const newIndex = this.listen.length;
-    const newListItem: any = {};
+    const newListItem = {} as IscsiInterface;
     this.ipAddressFromControls.forEach((fc) => {
-      newListItem[fc.name] = fc.default;
+      newListItem[fc.name as keyof IscsiInterface] = fc.default;
       this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
     });
 
@@ -155,15 +148,9 @@ export class PortalFormComponent {
     });
 
     Object.values(_.groupBy(tempListen, 'index')).forEach((item) => {
-      const ip = item.find((ele) => ele.name === 'ip')?.value as string[];
-      const port = item.find((ele) => ele.name === 'port')?.value;
-      if (ip && port) {
-        ip.forEach((sip) => {
-          listen.push({
-            ip: sip,
-            port: Number(port),
-          });
-        });
+      const ip = item.find((ele) => ele.name === 'ip')?.value as string;
+      if (ip) {
+        listen.push({ ip });
       }
     });
 
@@ -187,14 +174,17 @@ export class PortalFormComponent {
       request$ = this.ws.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

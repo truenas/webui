@@ -1,18 +1,31 @@
 <div mat-dialog-content>
   <div class="logo-container" fxLayout="row" fxLayoutAlign="start center">
     <div class="logo">
-      <img [src]="dialogConfig.appInfo.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
+      <img
+        [src]="dialogConfig.appInfo.chart_metadata.icon"
+        [src-fallback]="imagePlaceholder"
+      />
     </div>
     <div fxLayout="row" fxLayoutAlign="start center">
       <strong class="chart-name">{{ dialogConfig.appInfo.name }}</strong>
       <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
     </div>
   </div>
-  <div class="resource" fxLayout="row" fxLayoutAlign="start center" *ngIf="selectedVersion.item_update_available; else noItemUpdate">
+  <div
+    class="resource"
+    fxLayout="row"
+    fxLayoutAlign="start center"
+    *ngIf="selectedVersion.item_update_available; else noItemUpdate"
+  >
     <span>{{ 'Version to be upgraded to' | translate }}:</span>
-    <mat-form-field class="form-element ">
-      <mat-select [(ngModel)]="selectedVersionKey"  (ngModelChange)="onVersionOptionChanged()"
-          ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
+    <mat-form-field class="form-element">
+      <mat-select
+        ix-auto
+        ix-auto-type="select"
+        ix-auto-identifier="status-select"
+        [(ngModel)]="selectedVersionKey"
+        (ngModelChange)="onVersionOptionChanged()"
+      >
         <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
           {{ option.value.latest_human_version }}
         </mat-option>
@@ -32,8 +45,12 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="expansion-content">
-        <div *ngIf="hasUpdateImages();else no_image">
-          <div *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: originalOrder; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+        <div *ngIf="hasUpdateImages(); else no_image">
+          <div
+            *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: originalOrder; let i = index"
+            class="detail-row"
+            [ngClass]="{ 'row-dark': i % 2 == 0 }"
+          >
             <div fxLayout="row" fxLayoutAlign="start center">
               <span fxFlex="10" class="text-center">{{ i + 1 }}</span>
               <span>{{ containerImage.key }}</span>
@@ -41,7 +58,11 @@
           </div>
         </div>
         <ng-template #no_image>
-          <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
+          <div
+            fxLayout="row"
+            fxLayoutAlign="start start"
+            class="detail-row row-dark"
+          >
             {{ 'There are no images requiring upgrade' | translate }}
           </div>
         </ng-template>
@@ -55,9 +76,14 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="expansion-content">
-        <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
-          <div [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)">
-          </div>
+        <div
+          fxLayout="row"
+          fxLayoutAlign="start start"
+          class="detail-row row-dark"
+        >
+          <div
+            [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
+          ></div>
         </div>
       </div>
     </mat-expansion-panel>
@@ -65,10 +91,24 @@
 </div>
 
 <div class="button-bar" mat-dialog-actions align="end">
-  <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(false)" ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">
+  <button
+    mat-button
+    class="mat-button mat-secondary"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="CLOSE"
+    (click)="dialogRef.close(false)"
+  >
     {{ 'Close' | translate }}
   </button>
-  <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(selectedVersionKey)" ix-auto ix-auto-type="button" ix-auto-identifier="UPGRADE">
+  <button
+    mat-button
+    class="mat-button mat-secondary"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="UPGRADE"
+    (click)="dialogRef.close(selectedVersionKey)"
+  >
     {{ 'Upgrade' | translate }}
   </button>
 </div>

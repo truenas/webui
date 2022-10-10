@@ -20,9 +20,10 @@ import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 import { WebSocketService } from 'app/services';
 
 interface Slide {
@@ -54,7 +55,6 @@ enum PoolHealthLevel {
   ],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnChanges {
-  readonly TopologyItemStatus = TopologyItemStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
 
@@ -65,13 +65,24 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
   @ViewChild('diskDetails', { static: false }) diskDetails: TemplateRef<void>;
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
+
   templates: { [template: string]: TemplateRef<void> };
   tpl: TemplateRef<void>;
+  path: Slide[] = [];
+  title: string;
+  displayValue: string;
+  diskSize: string;
+  diskSizeLabel: string;
+  poolHealth: PoolDiagnosis = {
+    isHealthy: true,
+    level: PoolHealthLevel.Safe,
+  };
+  currentDiskDetails: Disk;
 
+  readonly TopologyItemStatus = TopologyItemStatus;
   readonly PoolStatus = PoolStatus;
   readonly PoolTopologyCategory = PoolTopologyCategory;
 
-  // NAVIGATION
   currentSlide = '0';
 
   get currentSlideTopology(): PoolTopologyCategory {
@@ -89,8 +100,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   get previousSlide(): number {
     return this.currentSlide === '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
-
-  path: Slide[] = [];
 
   get totalDisks(): string {
     if (this.poolState && this.poolState.topology) {
@@ -132,48 +141,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return { totalErrors: 'Unknown', disks: [] };
   }
 
-  get allDiskNames(): string[] {
-    if (!this.poolState || !this.poolState.topology) {
-      return [];
-    }
-
-    const allDiskNames: string[] = [];
-    (['cache', 'data', 'dedup', 'log', 'spare', 'special'] as PoolTopologyCategory[]).forEach((categoryName) => {
-      const category = this.poolState.topology[categoryName];
-
-      if (!category || !category.length) {
-        return;
-      }
-
-      category.forEach((item) => {
-        if (isTopologyDisk(item) && item.disk) {
-          allDiskNames.push(item.disk);
-        } else {
-          item.children.forEach((device) => {
-            if (!device.disk) {
-              return;
-            }
-
-            allDiskNames.push(device.disk);
-          });
-        }
-      });
-    });
-
-    return allDiskNames;
+  get poolDisks(): string[] {
+    return getPoolDisks(this.poolState);
   }
 
-  title: string;
-  voldataavail = false;
-  displayValue: string;
-  diskSize: string;
-  diskSizeLabel: string;
-  poolHealth: PoolDiagnosis = {
-    isHealthy: true,
-    level: PoolHealthLevel.Safe,
-  };
-
-  currentDiskDetails: Disk;
   get currentDiskDetailsKeys(): (keyof Disk)[] {
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
@@ -242,10 +213,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
-    }
-
-    if (!Number.isNaN(this.volumeData.avail)) {
-      this.voldataavail = true;
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
@@ -391,7 +358,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
   }
 
-  percentAsNumber(value: string): number {
+  convertPercentToNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
   }

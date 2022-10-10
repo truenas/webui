@@ -12,6 +12,7 @@ import {
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -39,12 +40,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
   @Input() systemInfo: SystemInfo;
+
   showTimeDiffWarning = false;
   timeInterval: Timeout;
   timeDiffInSeconds: number;
   timeDiffInDays: number;
   nasDateTime: Date;
-
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
@@ -55,8 +56,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   productEnclosure = ''; // rackmount || tower
   certified = false;
   updateAvailable = false;
-  private _updateBtnStatus = 'default';
-  private _themeAccentColors: string[];
   manufacturer = '';
   buildDate: string;
   loader = false;
@@ -64,11 +63,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   isUpdateRunning = false;
   haStatus: string;
   updateMethod = 'update.update';
-  screenType = 'Desktop';
+  screenType = ScreenType.Desktop;
   uptimeString: string;
   dateTime: string;
 
   readonly ProductType = ProductType;
+  readonly ScreenType = ScreenType;
+
+  private _updateBtnStatus = 'default';
 
   constructor(
     public router: Router,
@@ -88,8 +90,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
-      this.screenType = st;
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+      this.screenType = currentScreenType;
     });
   }
 
@@ -107,17 +109,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         this.haStatus = haStatus.status;
       });
     } else {
-      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe(
-        (systemInfo) => {
+      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
+        next: (systemInfo) => {
           this.processSysInfo(systemInfo);
-        }, (error) => {
+        },
+        error: (error) => {
           console.error('System Info not available', error);
-        }, () => {
+        },
+        complete: () => {
           this.checkForUpdate();
         },
-      );
+      });
     }
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
         if (hasFailover) {
           this.updateMethod = 'failover.upgrade';
@@ -128,28 +132,22 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (jobs) => {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (jobs) => {
         if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
         }
       },
-      (err) => {
+      error: (err) => {
         console.error(err);
       },
-    );
+    });
   }
 
   ngOnDestroy(): void {
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
     }
-  }
-
-  get themeAccentColors(): string[] {
-    const theme = this.themeService.currentTheme();
-    this._themeAccentColors = theme.accentColors.map((color) => theme[color]);
-    return this._themeAccentColors;
   }
 
   get updateBtnStatus(): string {
@@ -211,7 +209,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     const day = build.getUTCDate();
     const hours = build.getUTCHours();
     const minutes = build.getUTCMinutes();
-    this.buildDate = month + ' ' + day + ', ' + year + ' ' + hours + ':' + minutes;
+    this.buildDate = `${month} ${day}, ${year} ${hours}:${minutes}`;
 
     this.memory = this.formatMemory(this.data.physmem, 'GiB');
 

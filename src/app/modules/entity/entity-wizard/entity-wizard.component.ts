@@ -33,7 +33,7 @@ export class EntityWizardComponent implements OnInit {
   formGroup: UntypedFormGroup;
   showSpinner = false;
 
-  summaryValue: any;
+  summaryValue: unknown;
   summaryFieldConfigs: FieldConfig[] = [];
 
   saveSubmitText: string = this.translate.instant('Save');
@@ -180,8 +180,8 @@ export class EntityWizardComponent implements OnInit {
     } else {
       this.loader.open();
 
-      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
+      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe({
+        next: (res) => {
           this.loader.close();
           if (res.error) {
             this.dialog.errorReport(res.error, (res as any).reason, res.exception);
@@ -191,11 +191,11 @@ export class EntityWizardComponent implements OnInit {
             this.dialog.info(this.translate.instant('Settings saved'), '');
           }
         },
-        (res) => {
+        error: (res) => {
           this.loader.close();
           new EntityUtils().handleError(this, res);
         },
-      );
+      });
     }
   }
 

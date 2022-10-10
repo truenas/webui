@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -47,7 +48,7 @@ export class ExtentFormComponent implements OnInit {
     enabled: [true],
     type: [IscsiExtentType.Disk],
     disk: [''],
-    path: ['/mnt'],
+    path: [mntPath],
     filesize: [null as number],
     serial: [''],
     blocksize: [512],
@@ -143,13 +144,16 @@ export class ExtentFormComponent implements OnInit {
       ]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

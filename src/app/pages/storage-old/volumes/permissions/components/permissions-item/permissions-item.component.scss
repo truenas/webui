@@ -1,0 +1,25 @@
+:host {
+  align-items: baseline;
+  display: flex;
+  padding: 11px 15px 7px 10px;
+}
+
+.icon {
+  align-self: normal;
+  margin-right: 6px;
+
+  .mat-icon {
+    font-size: 21px;
+  }
+}
+
+.name {
+  flex-grow: 1;
+}
+
+.permissions {
+  font-size: 0.8rem;
+  margin-left: 20px;
+  opacity: 0.75;
+  text-align: right;
+}

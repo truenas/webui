@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { FileSizePipe } from 'ngx-filesize';
-import { ActivatedRoute } from '@angular/router';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -90,8 +90,8 @@ describe('SnapshotListComponent', () => {
               },
             },
           },
-        }
-      ]
+        },
+      ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store$ = spectator.inject(MockStore);
@@ -135,8 +135,8 @@ describe('SnapshotListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const expectedRows = [
       ['', 'Dataset', 'Snapshot', ''],
-      ['', 'test-dataset', 'second-snapshot', 'more_vert'],
-      ['', 'test-dataset', 'first-snapshot', 'more_vert'],
+      ['', 'test-dataset', 'second-snapshot', 'expand_more'],
+      ['', 'test-dataset', 'first-snapshot', 'expand_more'],
     ];
     const tableData = await table.getCells(true);
     expect(tableData).toEqual(expectedRows);
@@ -155,8 +155,8 @@ describe('SnapshotListComponent', () => {
     const tableData = await table.getCells(true);
     const expectedRows = [
       ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced', ''],
-      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'more_vert'],
-      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'more_vert'],
+      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'expand_more'],
+      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-11-05 10:52:06', '1.49 TiB', 'expand_more'],
     ];
     expect(tableData).toEqual(expectedRows);
   });

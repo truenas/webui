@@ -1,22 +1,21 @@
-<div *ngIf="label" class="label-container">
-  <label class="label">
-    <span [innerHTML]="label"></span>
-    <span *ngIf="required" class="required">*</span>
-  </label>
-  <ix-tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></ix-tooltip>
-</div>
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+></ix-label>
 
 <div class="input-container" [class.disabled]="isDisabled">
   <input
     #addressInput
+    type=""
     matInput
     [required]="required"
     [disabled]="isDisabled"
-    type=""
     [value]="address"
     (input)="onAddressInput(addressInput)"
     (blur)="onTouched()"
-  >
+  />
   <div class="slash">/</div>
   <mat-select
     class="select"

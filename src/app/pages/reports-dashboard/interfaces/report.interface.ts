@@ -1,0 +1,44 @@
+import { dygraphs } from 'dygraphs';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
+import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { ReportZoomLevel } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
+
+export interface DateTime {
+  dateFormat: string;
+  timeFormat: string;
+}
+
+export interface TimeData {
+  /**
+   * Seconds since epoch time
+   */
+  start: number;
+  /**
+   * Seconds since epoch time
+   */
+  end?: number;
+  step?: string;
+  legend?: string;
+}
+
+export interface TimeAxisData {
+  timespan: ReportZoomLevel;
+  timeformat: string;
+  culling: number;
+}
+
+export interface Report extends ReportingGraph {
+  isRendered?: boolean[];
+  errorConf?: EmptyConfig;
+}
+
+export type LegendDataWithStackedTotalHtml = dygraphs.LegendData & {
+  stackedTotalHTML: string;
+  stackedTotal?: number;
+};
+
+export interface FetchReportParams {
+  rrdOptions: TimeData;
+  report: Report;
+  identifier?: string;
+}

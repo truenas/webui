@@ -12,7 +12,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -28,7 +28,7 @@ export class SmbListComponent implements EntityTableConfig {
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
-  productType = window.localStorage.getItem('product_type') as ProductType;
+  productType = this.systemGeneralService.getProductType();
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No SMB Shares have been configured yet'),
@@ -70,6 +70,7 @@ export class SmbListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
     private dialog: DialogService,
     private translate: TranslateService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -110,16 +111,16 @@ export class SmbListComponent implements EntityTableConfig {
         label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              if (res) {
+            (isLocked) => {
+              if (isLocked) {
                 this.lockedPathDialog(row.path);
               } else {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                  (res) => {
+                  (shareSecs) => {
                     const form = this.slideInService.open(SmbAclComponent);
-                    form.setSmbShareName(res[0].share_name);
+                    form.setSmbShareName(shareSecs[0].share_name);
                   },
                 );
               }
@@ -136,9 +137,9 @@ export class SmbListComponent implements EntityTableConfig {
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
           const datasetId = rowName;
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-            (res) => {
-              if (res) {
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({
+            next: (isLocked) => {
+              if (isLocked) {
                 this.lockedPathDialog(row.path);
               } else if (this.productType.includes(ProductType.Scale)) {
                 this.router.navigate(
@@ -149,11 +150,12 @@ export class SmbListComponent implements EntityTableConfig {
                   ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]),
                 );
               }
-            }, (err) => {
+            },
+            error: (err) => {
               this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
-          );
+          });
         },
       },
       {
@@ -174,14 +176,14 @@ export class SmbListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: SmbShare): void {
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        row.enabled = res.enabled;
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+      next: (share) => {
+        row.enabled = share.enabled;
       },
-      (err) => {
+      error: (err) => {
         row.enabled = !row.enabled;
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 }

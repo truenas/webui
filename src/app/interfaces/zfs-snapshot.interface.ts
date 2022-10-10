@@ -1,3 +1,4 @@
+import { ZfsSnapshotRetentionSource } from 'app/enums/zfs-snapshot-retention-source.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
@@ -10,7 +11,14 @@ export interface ZfsSnapshot {
     [property: string]: ZfsProperty<string | number | boolean | ApiTimestamp>;
     creation: ZfsProperty<ApiTimestamp>;
   };
-  retention: unknown;
+  holds?: {
+    truenas?: number;
+  };
+  retention?: {
+    datetime: ApiTimestamp;
+    source: ZfsSnapshotRetentionSource;
+    periodic_snapshot_task_id?: number;
+  };
   snapshot_name: string;
   type: string; // "SNAPSHOT"
 }

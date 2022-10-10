@@ -1,4 +1,4 @@
-import { UntypedFormGroup } from '@angular/forms';
+import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
@@ -158,10 +158,10 @@ const afterEnum = [[{
     required: true,
     title: 'Label Select Int',
     tooltip: undefined,
-    options: {
-      _isScalar: false,
+    // TODO: Rework not to rely on rxjs internals
+    options: expect.objectContaining({
       _subscribe: expect.any(Function),
-    },
+    }),
     type: 'select',
   }, {
     controlName: 'variable_select_string',
@@ -170,10 +170,9 @@ const afterEnum = [[{
     required: false,
     title: 'Label Select String',
     tooltip: undefined,
-    options: {
-      _isScalar: false,
+    options: expect.objectContaining({
       _subscribe: expect.any(Function),
-    },
+    }),
     type: 'select',
   }] as DynamicFormSchemaSelect[],
   controlName: 'variable_dict',
@@ -328,50 +327,50 @@ describe('AppSchemaService', () => {
   describe('transformNode()', () => {
     beforeIntString.forEach((item, idx) => {
       it('converts schema with "int" and "string" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterIntString[idx]);
       });
     });
     beforeEnum.forEach((item, idx) => {
       it('converts schema with "emum" parameter', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterEnum[idx]);
       });
     });
     beforeBoolean.forEach((item, idx) => {
       it('converts schema with "boolean" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterBoolean[idx]);
       });
     });
     beforePath.forEach((item, idx) => {
       it('converts schema with "path" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterPath[idx]);
       });
     });
     beforeList.forEach((item, idx) => {
       it('converts schema with "list" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterList[idx]);
       });
     });
     beforeIpaddr.forEach((item, idx) => {
       it('converts schema with "ipaddr" type', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterIpaddr[idx]);
       });
     });
     beforeHidden.forEach((item, idx) => {
       it('converts schema for hidden field', () => {
-        const transformed = service.transformNode(item);
+        const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterHidden[idx]);
       });
     });
   });
   describe('addFormControls()', () => {
     beforeIntString.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for "int" with default value', () => {
@@ -394,7 +393,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeBoolean.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for "boolean"', () => {
@@ -403,7 +402,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeList.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for "list"', () => {
@@ -411,7 +410,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeHidden.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null);
+      service.addFormControls(item, dynamicForm, null, true, false);
     });
 
     it('creates form for hidden field', () => {
@@ -435,6 +434,44 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue({ a: 1 })).toEqual({ a: 1 });
       expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
+      expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null })).toEqual({ a: { d: 'test' } });
+    });
+  });
+
+  describe('restoreKeysFromFormGroup()', () => {
+    it('restores keys from form group', () => {
+      const config = {
+        noObjectList: ['test1', 'test2', 'test3'],
+        objectList: [{ nestedList: ['test4', 'test5'] }],
+        object: { nestedList: ['test6', 'test7'] },
+      };
+      const form = new FormGroup({
+        noObjectList: new FormArray([
+          new FormControl({ key1: '' }),
+          new FormControl({ key1: '' }),
+          new FormControl({ key1: '' }),
+        ]),
+        objectList: new FormArray([
+          new FormGroup({
+            nestedList: new FormArray([
+              new FormControl({ key2: '' }),
+              new FormControl({ key2: '' }),
+            ]),
+          }),
+        ]),
+        object: new FormGroup({
+          nestedList: new FormArray([
+            new FormControl({ key3: '' }),
+            new FormControl({ key3: '' }),
+          ]),
+        }),
+      });
+      const result = service.restoreKeysFromFormGroup(config, form);
+      expect(result).toEqual({
+        noObjectList: [{ key1: 'test1' }, { key1: 'test2' }, { key1: 'test3' }],
+        objectList: [{ nestedList: [{ key2: 'test4' }, { key2: 'test5' }] }],
+        object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },
+      });
     });
   });
 });

@@ -50,10 +50,8 @@ export class TargetFormComponent {
     map((initiators) => {
       const opts: Option[] = [];
       initiators.forEach((initiator) => {
-        const optionLabel = initiator.id
-          + ' ('
-          + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
-          + ')';
+        const initiatorsAllowed = initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString();
+        const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
         opts.push({ label: optionLabel, value: initiator.id });
       });
       return opts;
@@ -78,6 +76,7 @@ export class TargetFormComponent {
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],
     groups: this.formBuilder.array<IscsiTargetGroup>([]),
+    auth_networks: this.formBuilder.array<string>([]),
   });
 
   private editingTarget: IscsiTarget;
@@ -96,6 +95,7 @@ export class TargetFormComponent {
     this.editingTarget = target;
 
     Object.values(target.groups).forEach(() => this.addGroup());
+    Object.values(target.auth_networks).forEach(() => this.addNetwork());
 
     this.form.patchValue({
       ...target,
@@ -114,13 +114,16 @@ export class TargetFormComponent {
       request$ = this.ws.call('iscsi.target.update', [this.editingTarget.id, values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -137,5 +140,15 @@ export class TargetFormComponent {
 
   deleteGroup(index: number): void {
     this.form.controls.groups.removeAt(index);
+  }
+
+  addNetwork(): void {
+    this.form.controls.auth_networks.push(
+      this.formBuilder.control(''),
+    );
+  }
+
+  deleteNetwork(index: number): void {
+    this.form.controls.auth_networks.removeAt(index);
   }
 }

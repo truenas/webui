@@ -97,6 +97,10 @@ export default {
       formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
       modalWarning: T('You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.'),
     },
+    validateHostPathWarning: {
+      title: T('Warning'),
+      modalWarning: T('Disabling validation of host path can result in a data loss.'),
+    },
     cluster_cidr: {
       placeholder: T('Cluster CIDR'),
       tooltip: T(''),
@@ -150,22 +154,10 @@ export default {
     },
 
     rollback_dialog: {
-      title: T('Roll Back'),
       version: {
-        placeholder: T('Version'),
         tooltip: T('Enter the version to roll back to.'),
       },
-      snapshot: {
-        placeholder: T('Roll back snapshots'),
-        tooltip: T('Roll back snapshots of ix_volumes'),
-      },
-      force: {
-        placeholder: T('Force'),
-        tooltip: T('Used for rollback of a chart release and snapshots of ix_volumes'),
-      },
-      action: T('Roll back'),
 
-      msg: T('Roll back '),
       job: T('Rolling back...'),
     },
   },

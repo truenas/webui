@@ -1,14 +1,12 @@
 <h1 matDialogTitle>{{ 'Stats/Settings' | translate }}</h1>
 <form
   *ngIf="state"
-  [formGroup]="form"
   class="ix-form-container"
+  [formGroup]="form"
   (submit)="onSubmit()"
 >
   <div class="status-item">
-    <span class="status-name">
-      {{ 'Boot Pool Condition:' }}
-    </span>
+    <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
     <span class="status-value">
       {{ condition | mapValue: poolStatusLabels }}
       <ng-container *ngIf="condition === PoolStatus.Degraded">
@@ -17,25 +15,19 @@
     </span>
   </div>
   <div class="status-item">
-    <span class="status-name">
-      {{ 'Size:' | translate }}
-    </span>
+    <span class="status-name"> {{ 'Size' | translate }}: </span>
     <span class="status-value">
-      {{ state?.properties?.size?.parsed | filesize: { standard: 'iec' } }}
+      {{ state?.size | filesize: { standard: 'iec' } }}
     </span>
   </div>
   <div class="status-item">
-    <span class="status-name">
-      {{ 'Used:' | translate }}
-    </span>
+    <span class="status-name"> {{ 'Used' | translate }}: </span>
     <span class="status-value">
-      {{ state?.properties?.allocated?.parsed | filesize: { standard: 'iec' } }}
+      {{ state?.allocated | filesize: { standard: 'iec' } }}
     </span>
   </div>
   <div class="status-item">
-    <span class="status-name">
-      {{ 'Last Scrub Run:' | translate }}
-    </span>
+    <span class="status-name"> {{ 'Last Scrub Run' | translate }}: </span>
     <span class="status-value">
       <ng-container *ngIf="state.scan?.end_time; else noScanTime">
         {{ state.scan.end_time.$date | formatDateTime }}
@@ -48,22 +40,18 @@
 
   <ix-input
     formControlName="interval"
-    [label]="'Scrub interval (in days)' | translate"
     type="number"
+    [label]="'Scrub interval (in days)' | translate"
     [required]="true"
   ></ix-input>
 
   <div class="form-actions">
-    <button
-      mat-button
-      type="submit"
-      [disabled]="form.invalid"
-      color="primary"
-    >{{ 'Update Interval' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      matDialogClose
-    >{{ 'Close' | translate }}</button>
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Update Interval' | translate }}
+    </button>
+
+    <button mat-button type="button" matDialogClose>
+      {{ 'Close' | translate }}
+    </button>
   </div>
 </form>

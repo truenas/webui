@@ -2,7 +2,8 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe, ngMocks } from 'ng-mocks';
-import { first, map } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -21,6 +22,7 @@ const dummyAlert = {
   datetime: {
     $date: 1641811015,
   },
+  node: 'Active Controller (A)',
   level: AlertLevel.Critical,
   formatted: 'CPU is on fire',
   dismissed: false,
@@ -78,13 +80,18 @@ describe('AlertComponent', () => {
     expect(alert.messageElement).toHaveExactText('CPU is on fire');
   });
 
+  it('shows an alert node on an HA system', () => {
+    spectator.setInput('isHa', true);
+    expect(alert.nodeElement).toHaveExactText('Active Controller (A)');
+  });
+
   it('shows an alert icon', async () => {
     const icon = await alert.getIconHarness();
-    expect(await icon.getName()).toEqual('error');
+    expect(await icon.getName()).toEqual('cancel');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    expect(alert.dateTimeElement).toHaveText('Jan 10 2022 10:36 (America/Alaska)');
+    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toEqual('Jan 10 2022 10:36 (America/Alaska)');
 
     const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);
@@ -95,7 +102,7 @@ describe('AlertComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['79']);
 
-    const state = await spectator.inject(Store).pipe(map(selectAlerts), first()).toPromise();
+    const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
     expect(state).toEqual([
       {
         ...dummyAlert,
@@ -114,7 +121,7 @@ describe('AlertComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['79']);
 
-    const state = await spectator.inject(Store).pipe(map(selectAlerts), first()).toPromise();
+    const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
     expect(state).toEqual([dummyAlert]);
   });
 });

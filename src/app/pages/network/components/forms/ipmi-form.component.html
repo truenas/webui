@@ -1,13 +1,15 @@
-<ix-modal-header [title]="title | translate" [loading]="isLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="title | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ng-container *ngIf="remoteControllerOptions">
-        <ix-fieldset
-          [title]="helptext.ipmi_remote_controller | translate"
-        >
+        <ix-fieldset [title]="helptext.ipmi_remote_controller | translate">
           <ix-radio-group
+            [label]="helptext.ipmi_remote_controller | translate"
             [formControlName]="'remoteController'"
             [options]="remoteControllerOptions"
           >
@@ -16,72 +18,74 @@
         <mat-divider></mat-divider>
       </ng-container>
 
-      <ix-fieldset
-        [title]="helptext.ipmi_configuration | translate"
-      >
+      <ix-fieldset [title]="helptext.ipmi_configuration | translate">
         <ix-checkbox
           formControlName="dhcp"
           [label]="'DHCP' | translate"
           [tooltip]="helptext.dhcp_tooltip | translate"
-        >
-        </ix-checkbox>
+        ></ix-checkbox>
+
         <ix-input
           formControlName="ipaddress"
           [label]="'IPv4 Address' | translate"
           [tooltip]="helptext.ipaddress_tooltip | translate"
         ></ix-input>
+
         <ix-input
           formControlName="netmask"
           [label]="'IPv4 Netmask' | translate"
           [tooltip]="helptext.netmask_tooltip | translate"
         ></ix-input>
+
         <ix-input
           formControlName="gateway"
           [label]="'IPv4 Default Gateway' | translate"
           [tooltip]="helptext.gateway_tooltip | translate"
         ></ix-input>
+
         <ix-input
           formControlName="vlan"
+          type="number"
           [label]="'VLAN ID' | translate"
           [tooltip]="helptext.vlan_tooltip | translate"
-          type="number"
         ></ix-input>
       </ix-fieldset>
       <mat-divider></mat-divider>
 
-      <ix-fieldset
-        [title]="helptext.ipmi_password_reset | translate"
-      >
+      <ix-fieldset [title]="helptext.ipmi_password_reset | translate">
         <ix-input
           formControlName="password"
+          type="password"
           [label]="'Password' | translate"
           [tooltip]="helptext.password_tooltip | translate"
-          type="password"
         ></ix-input>
       </ix-fieldset>
+
       <mat-divider></mat-divider>
 
       <mat-card-actions class="buttons">
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="setFlashTime()">
+          {{ 'Identify Light' | translate }}
+        </button>
+
         <button
           mat-button
-          type='button'
-          (click)="setFlashTime()"
-        >{{ 'Identify Light' | translate }}</button>
-        <button
-          mat-button
-          type='button'
-          (click)="openManageWindow()"
+          type="button"
           [disabled]="isDisabledManageBtn || isLoading"
-        >{{ 'Manage' | translate }}</button>
+          (click)="openManageWindow()"
+        >
+          {{ 'Manage' | translate }}
+        </button>
       </mat-card-actions>
     </form>
-
   </mat-card-content>
 </mat-card>
-

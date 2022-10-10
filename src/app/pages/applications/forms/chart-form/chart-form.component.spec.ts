@@ -436,6 +436,15 @@ describe('ChartFormComponent', () => {
     });
   });
 
+  it('disables immutable fields when form is opened for edit', () => {
+    const existingChartEditWithImmutable = { ...existingChartEdit };
+    existingChartEditWithImmutable.chart_schema.schema.questions[0].schema.immutable = true;
+    spectator.component.setChartEdit(existingChartEditWithImmutable);
+    spectator.detectComponentChanges();
+
+    expect(spectator.component.form.get('timezone').disabled).toBeTruthy();
+  });
+
   it('editing when form is submitted', () => {
     spectator.component.setChartEdit(existingChartEdit);
 

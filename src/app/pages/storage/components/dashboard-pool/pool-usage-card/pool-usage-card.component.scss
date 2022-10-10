@@ -1,0 +1,57 @@
+@import '~assets/styles/mixins/cards';
+@import '~assets/styles/mixins/animations';
+
+:host {
+  display: flex;
+}
+
+.card {
+  @include details-card();
+  flex: 1;
+
+  .content-container {
+    height: 100%;
+  }
+}
+
+.pool-icon {
+  &.icon-online {
+    color: var(--green);
+  }
+
+  &.icon-warning {
+    color: var(--orange);
+  }
+
+  &.icon-faulted {
+    color: var(--blue);
+  }
+
+  &.icon-error {
+    color: var(--red);
+  }
+}
+
+.capacity-caption {
+  border-bottom: 2px solid var(--contrast-lighter);
+  font-size: 130%;
+}
+
+.list-caption {
+  margin: 0;
+}
+
+.item-caption {
+  margin: 10px -10px;
+}
+
+.value-caption {
+  margin-left: 5px;
+}
+
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  margin-top: 25px;
+  text-decoration: underline;
+}

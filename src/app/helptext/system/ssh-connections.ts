@@ -6,7 +6,7 @@ export default {
  must be unique.'),
 
   setup_method_placeholder: T('Setup Method'),
-  setup_method_tooltip: T('How to configure the connection\:<br><br> \
+  setup_method_tooltip: T('How to configure the connection:<br><br> \
  <i>Manual</i> requires configuring authentication on the remote system. \
  This can include copying SSH keys and modifying the <i>root</i> user \
  account on that system.<br><br> \
@@ -43,7 +43,7 @@ export default {
  connection speed. Disabling the security should only be used within a \
  secure, trusted network.</li></ul>'),
 
-  connect_timeout_tooltip: T('Time \(in seconds\) before the system \
+  connect_timeout_tooltip: T('Time (in seconds) before the system \
  stops attempting to establish a connection with the remote system.'),
 
   url_placeholder: T('TrueNAS URL'),
@@ -54,4 +54,6 @@ export default {
   password_placeholder: T('Password'),
   password_tooltip: T('User account password for logging into the \
  remote system.'),
+  otp_placeholder: T('One-Time Password (if necessary)'),
+  otp_tooltip: T('One-Time Password if two factor authentication is enabled.'),
 };

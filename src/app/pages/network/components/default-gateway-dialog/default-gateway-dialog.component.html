@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>{{ 'Register Default Gateway' | translate }}</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div mat-dialog-content>
+    <ix-fieldset>
+      <ix-input
+        formControlName="defaultGateway"
+        [label]="'IPv4 Default Gateway' | translate"
+        [required]="true"
+        [tooltip]="helptext.ipv4gateway_tooltip"
+      ></ix-input>
+    </ix-fieldset>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Register' | translate }}
+    </button>
+  </div>
+</form>

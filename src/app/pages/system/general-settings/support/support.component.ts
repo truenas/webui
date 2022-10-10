@@ -78,8 +78,8 @@ export class SupportComponent implements OnInit {
     this.ws.call('truenas.is_production').pipe(
       delay(500),
       untilDestroyed(this),
-    ).subscribe((res) => {
-      this.isProduction = res;
+    ).subscribe((isProduction) => {
+      this.isProduction = isProduction;
     });
   }
 
@@ -144,17 +144,20 @@ export class SupportComponent implements OnInit {
     if (event.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
-      this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.snackbar.success(
-          this.translate.instant(helptext.is_production_dialog.message),
-        );
-      }, (err) => {
-        this.loader.close();
-        this.dialog.errorReport(
-          helptext.is_production_error_dialog.title,
-          err.error.message,
-          err.error.traceback,
-        );
+      this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.snackbar.success(
+            this.translate.instant(helptext.is_production_dialog.message),
+          );
+        },
+        error: (err) => {
+          this.loader.close();
+          this.dialog.errorReport(
+            helptext.is_production_error_dialog.title,
+            err.error.message,
+            err.error.traceback,
+          );
+        },
       });
     }
   }
@@ -184,16 +187,23 @@ export class SupportComponent implements OnInit {
       { data: { title: helptext.is_production_job.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
 
-    self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).pipe(untilDestroyed(this)).subscribe(() => {
-      self.loader.close();
-      self.dialogRef.close();
-      dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
-      dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
-    },
-    (error: WebsocketError) => {
-      self.loader.close();
-      self.dialogRef.close();
-      new EntityUtils().handleWsError(this, error, this.dialog);
-    });
+    self.ws.call(
+      self.conf.method_ws as 'truenas.set_production',
+      [true, self.formValue.send_debug as boolean],
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          self.loader.close();
+          self.dialogRef.close();
+          dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
+          dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
+        },
+        error: (error: WebsocketError) => {
+          self.loader.close();
+          self.dialogRef.close();
+          new EntityUtils().handleWsError(this, error, this.dialog);
+        },
+      });
   }
 }

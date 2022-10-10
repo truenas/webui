@@ -10,6 +10,7 @@ import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
+  autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
@@ -64,11 +65,12 @@ export class PreferencesEffects {
       localizationFormSubmitted,
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
+      autoRefreshReportsToggled,
     ),
     withLatestFrom(this.store$.select(selectPreferencesState)),
     switchMap(([, state]) => {
       if (!state.areLoaded) {
-        return throwError('Attempting to save user preferences before they were loaded.');
+        return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
       return this.ws.call('user.set_attribute', [rootUserId, 'preferences', state.preferences]);

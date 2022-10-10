@@ -1,3 +1,4 @@
-<!-- TODO: https://jira.ixsystems.com/browse/NAS-116793 -->
+<!-- TODO: https://ixsystems.atlassian.net/browse/NAS-116793 -->
 <!-- TODO: Remove me -->
-<ix-icon [name]="name"></ix-icon>
+<ix-icon *ngIf="isRoot" name="ix:dataset"></ix-icon>
+<ix-icon *ngIf="!isRoot" [name]="name"></ix-icon>

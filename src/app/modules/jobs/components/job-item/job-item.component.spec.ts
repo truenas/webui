@@ -45,8 +45,8 @@ describe('JobItemComponent', () => {
       },
     });
 
-    expect(spectator.query('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(spectator.query('.job-progress-description')).toHaveExactText('progress description');
+    expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
+    expect(spectator.query('.job-progress-description')).toHaveText('progress description');
     expect(spectator.query('.job-icon-abort')).toBeTruthy();
     expect(spectator.query('.job-icon-failed')).toBeFalsy();
   });
@@ -69,8 +69,8 @@ describe('JobItemComponent', () => {
       },
     });
 
-    expect(spectator.query('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(spectator.query('.job-time')).toHaveText('Stopped: Jan 10 2022 10:36');
+    expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
+    expect(spectator.query('.job-time')).toHaveText('Stopped:  Jan 10 2022 10:36');
     expect(spectator.query('.job-icon-failed')).toBeTruthy();
   });
 

@@ -200,17 +200,17 @@ export class IdmapFormComponent implements OnInit {
         switchMap(() => this.askAndClearCache()),
         untilDestroyed(this),
       )
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   certificatesLinkClicked(): void {
@@ -223,8 +223,8 @@ export class IdmapFormComponent implements OnInit {
 
     this.idmapService.getBackendChoices()
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (backendChoices) => {
+      .subscribe({
+        next: (backendChoices) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.backendChoices = backendChoices;
@@ -237,12 +237,12 @@ export class IdmapFormComponent implements OnInit {
             this.setDefaultsForBackendOptions();
           }
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error);
         },
-      );
+      });
   }
 
   private setFormDependencies(): void {

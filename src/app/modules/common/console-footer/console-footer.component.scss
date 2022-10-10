@@ -1,0 +1,23 @@
+.footer-console-bar {
+  background-color: #000;
+  bottom: 0;
+  cursor: pointer;
+  height: 45px;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+
+  .messages {
+    background-color: #000;
+    color: #0f0;
+    font-family: monospace, Courier New, Courier;
+    font-size: 9pt;
+    height: 39px;
+    line-height: 1;
+    margin: 0;
+    max-height: 42px;
+    overflow: hidden;
+    padding: 3px 20px 0;
+    white-space: pre-wrap;
+  }
+}

@@ -1,6 +1,6 @@
 import {
   Attribute, ChangeDetectionStrategy, Component, ElementRef,
-  ErrorHandler, Inject, Input, OnInit, Optional, ViewEncapsulation,
+  ErrorHandler, Inject, Input, OnChanges, OnInit, Optional, ViewEncapsulation,
 } from '@angular/core';
 import {
   MatIcon, MatIconDefaultOptions, MatIconLocation, MatIconRegistry, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
@@ -20,6 +20,8 @@ import {
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'ix-icon',
+    '[attr.data-mat-icon-name]': '(_svgIcon && _svgName) || fontIcon',
+    '[attr.data-mat-icon-namespace]': '(_svgIcon && _svgNamespace) || fontSet',
   },
   styleUrls: ['./ix-icon.component.scss'],
   templateUrl: 'ix-icon.component.html',
@@ -27,7 +29,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxIconComponent extends MatIcon implements OnInit {
+export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
   @Input() name: string;
 
   private get iconName(): string {
@@ -70,15 +72,38 @@ export class IxIconComponent extends MatIcon implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.iconName.startsWith('ix:')) {
-      this.svgIcon = this.iconName;
-    } else if (this.iconName.startsWith('mdi')) {
-      this.fontSet = 'mdi-set';
-      this.fontIcon = this.iconName;
-    } else {
-      this.fontIcon = this.iconName;
-      this.iconLigature = null;
-    }
+    this.updateIcon(this.iconName);
     super.ngOnInit();
+  }
+
+  ngOnChanges(): void {
+    this.updateIcon(this.name);
+  }
+
+  private updateIcon(iconName: string): void {
+    switch (true) {
+      case ((!iconName)):
+        this.svgIcon = '';
+        this.fontSet = '';
+        this.fontIcon = '';
+        this.iconLigature = '';
+        break;
+      case (iconName.startsWith('ix:')):
+        this.fontIcon = '';
+        this.fontSet = '';
+        this.svgIcon = iconName;
+        break;
+      case (iconName.startsWith('mdi')):
+        this.svgIcon = '';
+        this.iconLigature = '';
+        this.fontSet = 'mdi-set';
+        this.fontIcon = iconName;
+        break;
+      default:
+        this.fontSet = '';
+        this.svgIcon = '';
+        this.fontIcon = iconName;
+        this.iconLigature = iconName;
+    }
   }
 }

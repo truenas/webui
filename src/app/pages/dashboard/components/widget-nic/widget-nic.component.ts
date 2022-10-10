@@ -87,7 +87,6 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   get linkState(): LinkState {
-    if (!this.nicState?.aliases?.length) { return null; }
     if (this.traffic?.linkState) {
       return this.traffic.linkState;
     }

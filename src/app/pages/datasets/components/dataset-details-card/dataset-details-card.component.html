@@ -1,9 +1,17 @@
 <div>
   <mat-card class="card">
     <mat-card-header>
-      <h3 mat-card-title *ngIf="isFilesystem">{{ 'Dataset Details' | translate }}</h3>
+      <h3 mat-card-title *ngIf="isFilesystem">
+        {{ 'Dataset Details' | translate }}
+      </h3>
+      <button *ngIf="isFilesystem" mat-button (click)="editDataset()">
+        {{ 'Edit' | translate }}
+      </button>
+
       <h3 mat-card-title *ngIf="isZvol">{{ 'Zvol Details' | translate }}</h3>
-      <button mat-button (click)="editDataset()">{{ 'Edit' | translate }}</button>
+      <button *ngIf="isZvol" mat-button (click)="editZvol()">
+        {{ 'Edit' | translate }}
+      </button>
     </mat-card-header>
     <mat-card-content>
       <div class="details-item">
@@ -50,12 +58,27 @@
           {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
         </span>
       </div>
+      <div class="details-item">
+        <span class="label">{{ 'Path' | translate }}:</span>
+        <span
+          *ngIf="!isLoading"
+          matTooltipPosition="above"
+          class="value dataset-path"
+          [matTooltip]="dataset.name"
+        >
+          {{ dataset.name }}
+        </span>
+        <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
+      </div>
+      <div class="details-item" *ngIf="!isLoading && hasComments">
+        <span class="label">{{ 'Comments' | translate }}:</span>
+        <span class="value dataset-comments">{{ dataset.comments.value }}</span>
+      </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
-      <button
-        mat-stroked-button
-        (click)="deleteDataset()"
-      >{{ 'Delete' | translate }}</button>
+      <button mat-stroked-button (click)="deleteDataset()">
+        {{ 'Delete' | translate }}
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>

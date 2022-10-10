@@ -1,0 +1,196 @@
+<div class="vdev-wrapper">
+  <div class="vdev-actions" id="vdev__action-buttons">
+    <button
+      id="vdev__add-button"
+      mat-flat-button
+      name="vdev_add-button"
+      class="vdev-action-btn"
+      (click)="addSelectedDisks()"
+      [disabled]="!manager.selected.length"
+    >
+      <mat-icon class="arrow">arrow_forward</mat-icon>
+    </button>
+    <button
+      id="vdev__remove-button"
+      mat-flat-button
+      name="vdev_remove-button"
+      class="vdev-action-btn"
+      (click)="removeSelectedDisks()"
+      [disabled]="!selected.length"
+    >
+      <mat-icon class="arrow">arrow_back</mat-icon>
+    </button>
+  </div>
+  <div class="vdev-table">
+    <ngx-datatable
+      id="vdev__disk-table"
+      #table
+      class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
+      [rows]="getDisks()"
+      [headerHeight]="50"
+      [rowHeight]="50"
+      [footerHeight]="$any('auto')"
+      [externalSorting]="true"
+      [limit]="10"
+      [selected]="selected"
+      [selectionType]="'checkbox' | cast"
+      (sort)="reorderEvent($event)"
+      (select)="onSelect($event)"
+    >
+      <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
+        <ng-template
+          let-row="row"
+          let-expanded="expanded"
+          ngx-datatable-row-detail-template
+        >
+          <div *ngFor="let detail of row.details" class="row-details">
+            <strong>{{ detail.label | translate }}:</strong> {{ detail.value }}
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
+      <ngx-datatable-column
+        [width]="82"
+        [sortable]="false"
+        [canAutoResize]="false"
+        [draggable]="false"
+        [resizeable]="false"
+      >
+        <ng-template
+          ngx-datatable-header-template
+          let-value="value"
+          let-allRowsSelected="allRowsSelected"
+          let-selectFn="selectFn"
+        >
+          <div class="headerCheckBox">
+            <mat-checkbox
+              color="primary"
+              id="vdev__disk-table-checkall-{{ group }}-{{ index }}"
+              [checked]="allRowsSelected"
+              (change)="selectFn(!allRowsSelected)"
+            ></mat-checkbox>
+          </div>
+        </ng-template>
+
+        <ng-template
+          ngx-datatable-cell-template
+          let-value="value"
+          let-isSelected="isSelected"
+          let-rowIndex="rowIndex"
+          let-onCheckboxChangeFn="onCheckboxChangeFn"
+        >
+          <div>
+            <mat-checkbox
+              color="primary"
+              id="vdev__disks-{{
+                disks[rowIndex] ? disks[rowIndex].devname : rowIndex
+              }}"
+              [checked]="isSelected"
+              (change)="onCheckboxChangeFn($event)"
+              >&nbsp;</mat-checkbox
+            >
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        [width]="165"
+        name="{{'Disk' | translate}}"
+      >
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+          {{ row.devname }}
+          <ix-warning class="inline-warn" *ngIf="row.exported_zpool" [message]="'('+row.exported_zpool+')'"></ix-warning>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        [width]="100"
+        name="{{ 'Type' | translate }}"
+        prop="type"
+      ></ngx-datatable-column>
+      <ngx-datatable-column
+        [width]="120"
+        name="{{ 'Capacity' | translate }}"
+        prop="capacity"
+      ></ngx-datatable-column>
+      <ngx-datatable-column
+        [width]="50"
+        [resizeable]="false"
+        [sortable]="false"
+        [draggable]="false"
+        [canAutoResize]="false"
+      >
+        <ng-template
+          let-row="row"
+          let-expanded="expanded"
+          ngx-datatable-cell-template
+        >
+          <a
+            href="javascript:void(0)"
+            title="Expand/Collapse Row"
+            [class.datatable-icon-right]="!expanded"
+            [class.datatable-icon-down]="expanded"
+            (click)="toggleExpandRow(row)"
+          >
+          </a>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+    <div class="vdev-wrapper">
+      <div class="vdev-type">
+        <div
+          *ngIf="group === 'data' || group === 'log' || group === 'special' || group === 'dedup'"
+          class="datainfo form-element"
+        >
+          <mat-form-field *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdevTypeDisabled">
+            <mat-select
+              matSelect
+              id="vdev__option-menu"
+              [formControl]="typeControl"
+              class="form-control"
+            >
+              <mat-option value="stripe">{{ 'Stripe' | translate }}</mat-option>
+              <mat-option
+                *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special' ||group === 'dedup')"
+                value="mirror"
+              >
+                {{ 'Mirror' | translate }}
+              </mat-option>
+              <mat-option *ngIf="getDisks().length >= 3 && group === 'data'" value="raidz">
+                {{ 'Raid-z' | translate }}
+              </mat-option>
+              <mat-option *ngIf="getDisks().length >= 4 && group === 'data'" value="raidz2">
+                {{ 'Raid-z2' | translate }}
+              </mat-option>
+              <mat-option *ngIf="getDisks().length >= 5 && group === 'data'" value="raidz3">
+                {{ 'Raid-z3' | translate }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="vdev-estimated">
+            <p *ngIf="group === 'data' && vdevTypeDisabled">
+              {{ getType() | translate }}
+            </p>
+            <span>{{ 'Estimated raw capacity:' | translate }} {{ size }}</span>
+            <ix-tooltip [message]="vdevTypeTooltip"></ix-tooltip>
+          </div>
+        </div>
+      </div>
+      <div class="vdev-close">
+        <button
+          *ngIf="removable"
+          id="vdev__close-button"
+          mat-flat-button
+          class="vdev-action-btn close"
+          [disabled]="group === 'data' && manager.vdevs['data'].length < 2"
+          (click)="remove()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="error" [innerHTML]="error" class="size-message red"></div>
+
+    <div *ngIf="showDiskSizeError" class="size-message orange">
+      {{ diskSizeErrorMsg }}
+    </div>
+  </div>
+</div>

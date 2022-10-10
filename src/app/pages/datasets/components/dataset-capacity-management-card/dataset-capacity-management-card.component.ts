@@ -3,15 +3,15 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { maxBy } from 'lodash';
-import { forkJoin, Subject, EMPTY } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import {
-  map, take, switchMap, tap, catchError,
+  map, take, switchMap, tap,
 } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -59,19 +59,12 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
     if (this.checkQuotas) {
       this.initQuotas();
-      this.refreshQuotas$.next();
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.getInheritedQuotas();
-    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
-    if (selectedDatasetHasChanged && this.checkQuotas) {
       this.refreshQuotas$.next();
     }
   }
@@ -86,15 +79,28 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
         this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
       ])),
-      catchError(() => EMPTY),
       untilDestroyed(this),
-    ).subscribe(([userQuotas, groupQuotas]) => {
-      this.userQuotas = userQuotas.length;
-      this.groupQuotas = groupQuotas.length;
-      this.isLoadingQuotas = false;
-      this.cdr.markForCheck();
-      // TODO: Handle error.
+    ).subscribe({
+      next: ([userQuotas, groupQuotas]) => {
+        this.userQuotas = userQuotas.length;
+        this.groupQuotas = groupQuotas.length;
+        this.isLoadingQuotas = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isLoadingQuotas = false;
+        this.dialogService.errorReportMiddleware(error);
+        this.cdr.markForCheck();
+      },
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.getInheritedQuotas();
+    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
+    if (selectedDatasetHasChanged && this.checkQuotas) {
+      this.refreshQuotas$.next();
+    }
   }
 
   getInheritedQuotas(): void {
@@ -105,9 +111,15 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       }),
       take(1),
       untilDestroyed(this),
-    ).subscribe((dataset) => {
-      this.inheritedQuotasDataset = dataset;
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (dataset) => {
+        this.inheritedQuotasDataset = dataset;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+        this.cdr.markForCheck();
+      },
     });
   }
 

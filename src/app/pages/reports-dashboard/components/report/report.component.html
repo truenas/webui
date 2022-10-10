@@ -1,73 +1,93 @@
 <div class="report" ngClass.xs="double-height xs">
-  <div class="card-container front" (mouseenter)="setChartInteractive(true)" (mouseleave)="setChartInteractive(false)">
-    <mat-card *ngIf="ready" class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
+  <div
+    class="card-container"
+    (mouseenter)="setChartInteractive(true)"
+    (mouseleave)="setChartInteractive(false)"
+  >
+    <mat-card
+      fxLayout="row wrap"
+      fxLayoutGap="16px"
+      fxLayoutAlign="space-between stretch"
+      [class.loading]="!isReady"
+    >
       <mat-toolbar-row
-        fxLayout="row"
-        fxLayoutWrap
-        fxLayoutAlign="space-between start"
-        fxFlex="100"
+        *ngIf="isReady"
+        fxLayout="row wrap"
+        fxLayoutAlign="space-between center"
+        fxFlex="100%"
         class="mat-card-toolbar"
       >
-        <mat-card-title fxFlex="65%">
-          <h3 class="mat-card-title-text">
-            {{ reportTitle }}
-          </h3>
+        <mat-card-title fxFlex="65%" fxLayoutAlign="start center">
+          <h3 class="mat-card-title-text">{{ reportTitle }}</h3>
         </mat-card-title>
         <!-- Controls/Tools -->
-        <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools" *ngIf="localControls && !report?.errorConf">
-            <button
-              mat-icon-button
-              [disabled]="timeZoomIndex >= zoomLevels.length - 1"
-              (click)="timeZoomIn()"
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="{{ reportTitle }}_zoomIn"
-            >
-              <mat-icon fontSet="mdi-set" fontIcon="mdi-magnify-plus"></mat-icon>
-            </button>
+        <div fxFlex="35%" class="line-chart-tools-wrapper">
+          <div *ngIf="localControls && !report?.errorConf" class="line-chart-tools">
+            <mat-button-toggle-group aria-label="Steps">
+              <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_stepBack"
+                [matTooltip]="'Step Back' | translate"
+                [matTooltipShowDelay]="1000"
+                (click)="stepBack()"
+              ><ix-icon name="mdi-rewind"></ix-icon></mat-button-toggle>
+              <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_stepForward"
+                [disabled]="stepForwardDisabled"
+                [matTooltip]="'Step Forward' | translate"
+                [matTooltipShowDelay]="1000"
+                (click)="stepForward()"
+              ><ix-icon name="mdi-fast-forward"></ix-icon></mat-button-toggle>
+            </mat-button-toggle-group>
 
-            <button
-              mat-icon-button
-              [disabled]="timeZoomIndex <= 0"
-              (click)="timeZoomOut()"
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="{{ reportTitle }}_zoomOut"
-            >
-              <mat-icon fontSet="mdi-set" fontIcon="mdi-magnify-minus"></mat-icon>
-            </button>
+            <mat-button-toggle-group aria-label="Zoom Level">
+              <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_zoomOut"
+                [disabled]="zoomLevelIndex === zoomLevelMin"
+                [matTooltip]="'Zoom Out' | translate"
+                [matTooltipShowDelay]="1000"
+                (click)="timeZoomOut()"
+              ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
-            <button
-              mat-icon-button
-              (click)="stepBack()"
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="{{ reportTitle }}_stepBack"
-            >
-              <mat-icon fontSet="mdi-set" fontIcon="mdi-rewind"></mat-icon>
-            </button>
+              <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_zoomReset"
+                [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled"
+                [matTooltip]="'Reset Zoom' | translate"
+                [matTooltipShowDelay]="1000"
+                (click)="timeZoomReset()"
+              >{{ currentZoomLevel | mapValue: zoomLevelLabels }}</mat-button-toggle>
 
-            <button
-              mat-icon-button
-              (click)="stepForward()"
-              [disabled]="stepForwardDisabled"
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="{{ reportTitle }}_stepForward"
-            >
-              <mat-icon fontSet="mdi-set" fontIcon="mdi-fast-forward"></mat-icon>
-            </button>
+              <mat-button-toggle
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="{{ reportTitle }}_zoomIn"
+                [disabled]="zoomLevelIndex === zoomLevelMax"
+                [matTooltip]="'Zoom In' | translate"
+                [matTooltipShowDelay]="1000"
+                (click)="timeZoomIn()"
+              ><ix-icon name="mdi-magnify-plus"></ix-icon></mat-button-toggle>
+            </mat-button-toggle-group>
           </div>
         </div>
       </mat-toolbar-row>
 
-      <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100" *ngIf="!report?.errorConf">
-        <!-- Chart -->
+      <mat-card-content
+        *ngIf="isReady && !report?.errorConf"
+        fxLayout="row wrap"
+        fxLayout.gt-xs="row wrap"
+        fxLayoutAlign="space-between start"
+        fxFlex="100"
+      >
         <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
           <div class="chart-wrapper">
             <ix-linechart
-              *ngIf="report && data && chartColors"
               [chartId]="chartId"
               [chartColors]="chartColors"
               [data]="data"
@@ -75,96 +95,87 @@
               [title]="report.title"
               [timezone]="timezone"
               [labelY]="report.vertical_label"
-              type="line"
               [interactive]="false"
               [isReversed]="isReversed"
             ></ix-linechart>
           </div>
 
-          <!-- Legend Section - Timestamps -->
-          <div class="legend-wrapper timestamps" *ngIf="data && legendData">
-            <h4 class="legend-timestamp">
+          <div class="legend-wrapper timestamps">
+            <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
-              <span class="font-normal">{{ startTime }}</span>
+              <span class="font-normal">{{ currentStartDate | formatDateTime:timezone }}</span>
               <small>({{ timezone }})</small>
             </h4>
-            <h4 class="legend-timestamp">
+            <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
-              <span class="font-normal">{{ endTime }}</span>
+              <span class="font-normal">{{ currentEndDate | formatDateTime:timezone }}</span>
             </h4>
           </div>
         </div>
 
         <section class="legend" #legendElement fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
-          <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px">
-            <div>
-              <span *ngIf="data && legendData && legendData.xHTML">
-                <h4>
-                  <strong>{{ 'Time' | translate }}:</strong>
-                  <span *ngIf="legendData && legendData.xHTML" class="font-normal">
-                    &nbsp;&nbsp;
-                    {{ legendData.xHTML }}
-                  </span>
-                </h4>
+          <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px" fxLayoutAlign="start center">
+            <h4 *ngIf="data && legendData?.xHTML" fxLayoutGap="8px" fxLayoutAlign="start center">
+              <strong>{{ 'Time' | translate }}:</strong>
+              <span *ngIf="legendData && legendData.xHTML" class="font-normal">
+                {{ legendData.xHTML }}
               </span>
-            </div>
+            </h4>
           </div>
 
-          <div *ngIf="report && data && data.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)">
+          <div *ngIf="report && data?.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)">
             <table class="legend-table">
               <!-- Table Header-->
               <tr class="legend-group header">
                 <th class="legend-label">
                   <strong>{{ 'Key' | translate }}</strong>
                 </th>
-                <ng-container *ngIf="data && data.aggregations">
-                  <th class="legend-label" *ngFor="let key of aggregationKeys">
-                    <strong>{{ key }}</strong>
+                <ng-container *ngIf="data?.aggregations">
+                  <th *ngFor="let item of data?.aggregations | keyvalue" class="legend-label">
+                    <strong>{{ item.key | translate }}</strong>
                   </th>
                 </ng-container>
               </tr>
 
               <!-- Table Rows -->
-              <tr class="legend-group" *ngFor="let legendItem of data.legend; let i = index">
+              <tr *ngFor="let legendItem of data.legend; let i = index" class="legend-group">
                 <td class="legend-label">
                   <!--Legend Label-->
-                  <div *ngIf="chartColors && legendItem" class="swatch" [style.background-color]="chartColors[i]"></div>
+                  <div
+                    *ngIf="chartColors && legendItem"
+                    class="swatch"
+                    [style.background-color]="chartColors[i]"
+                  ></div>
 
                   <span class="legend-item">
                     <strong>{{ legendItem }}</strong>
                   </span>
 
-                  <span *ngIf="legendData && legendData.series">
-                    <span class="tooltip-value">
-                      <span class="font-normal">: {{ legendData.series[i].yHTML }}</span>
-                    </span>
+                  <span *ngIf="legendData?.series[i]?.yHTML" class="font-normal">:
+                    {{ legendData.series[i].yHTML }}
                   </span>
                 </td>
 
                 <!-- Aggregations -->
-                <ng-container *ngIf="data && data.aggregations">
-                  <td *ngFor="let key of aggregationKeys" class="report-analytics">
-                    <span>
-                      {{ data.aggregations[key][i] ? data.aggregations[key][i] : 'null' }}
-                    </span>
+                <ng-container *ngIf="data?.aggregations">
+                  <td *ngFor="let item of data?.aggregations | keyvalue" class="report-analytics">
+                    <span>{{ item.value[i] ? item.value[i] : 'null' }}</span>
                   </td>
                 </ng-container>
               </tr>
             </table>
           </div>
           <ng-container *ngIf="report?.stacked_show_total && legendData?.stackedTotalHTML">
-            <div class="legend-timestamp" fxFlex="32px">
-              <h4>
-                <strong>{{ 'Total' | translate }}:</strong>
-                <span>&nbsp;&nbsp;{{ legendData.stackedTotalHTML }}</span>
-              </h4>
-            </div>
+            <h4 class="legend-timestamp" fxFlex="32px" fxLayoutGap="8px">
+              <strong>{{ 'Total' | translate }}:</strong>
+              <span>{{ legendData.stackedTotalHTML }}</span>
+            </h4>
           </ng-container>
         </section>
       </mat-card-content>
 
       <mat-card-content
-        *ngIf="report?.errorConf"
+        *ngIf="isReady && report?.errorConf"
         fxLayout="row wrap"
         fxLayout.gt-xs="row wrap"
         fxLayoutAlign="space-between start"
@@ -173,30 +184,5 @@
         <ix-entity-empty [conf]="report.errorConf"></ix-entity-empty>
       </mat-card-content>
     </mat-card>
-
-    <mat-card
-      *ngIf="!ready"
-      class="front zero-state"
-      fxLayout="row wrap"
-      fxlayoutGap="16px"
-      fxLayoutAlign="center center"
-    >
-      <mat-icon
-        class="generic"
-        svgIcon="ix:truenas_scale_logo_full"
-      ></mat-icon>
-    </mat-card>
-
-    <ng-template *ngIf="configurable">
-      <mat-card class="back">
-        <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100"> </mat-card-content>
-        <div class="widget-footer">
-          <button mat-button color="accent" (click)="toggleConfig()">{{ 'Cancel' | translate }}</button>
-          <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">
-            {{ 'Save' | translate }}
-          </button>
-        </div>
-      </mat-card>
-    </ng-template>
   </div>
 </div>

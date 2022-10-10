@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
@@ -23,7 +24,7 @@ export class CloudsyncRestoreDialogComponent {
   readonly form = this.formBuilder.group({
     description: ['', Validators.required],
     transfer_mode: [TransferMode.Copy],
-    path: ['/mnt', Validators.required],
+    path: [mntPath, Validators.required],
   });
 
   readonly treeNodeProvider = this.filesystem.getFilesystemNodeProvider({ directoriesOnly: true });
@@ -55,15 +56,15 @@ export class CloudsyncRestoreDialogComponent {
 
     this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.loader.close();
           this.dialogRef.close();
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 }

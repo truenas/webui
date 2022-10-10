@@ -1,0 +1,184 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onSearch($event)"></ix-search-input>
+
+    <button mat-button (click)="openBootenvStats()">
+      {{ 'Stats/Settings' | translate }}
+    </button>
+
+    <button mat-button [routerLink]="['/', 'system', 'boot', 'status']">
+      {{ 'Boot Pool Status' | translate }}
+    </button>
+
+    <button mat-button (click)="doScrub()">
+      {{ 'Scrub Boot Pool' | translate }}
+    </button>
+
+    <button mat-button (click)="doAdd()" color="primary">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<ix-fake-progress-bar
+  class="loader-bar"
+  [loading]="isLoading$ | async"
+></ix-fake-progress-bar>
+
+<div
+  *ngIf="checkboxColumn?.selection.selected.length"
+  class="bulk-actions-toolbar"
+>
+  <div class="title">
+    <strong>{{ 'Bulk Operations' | translate }}</strong>
+  </div>
+
+  <div class="actions">
+    <button
+      mat-button
+      [disabled]="!selectionHasItems"
+      (click)="doDelete(checkboxColumn?.selection.selected)"
+    >
+      <ix-icon name="delete"></ix-icon>
+      {{ 'Delete' | translate }}
+    </button>
+  </div>
+</div>
+
+<table
+  ix-table
+  matSort
+  matSortDisableClear="true"
+  [dataSource]="dataSource"
+  [matSortActive]="defaultSort.active"
+  [matSortDirection]="defaultSort.direction"
+  [fixedLayout]="true"
+>
+  <ix-checkbox-column></ix-checkbox-column>
+
+  <ng-container matColumnDef="name">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Name' | translate }}
+    </th>
+    <td
+      mat-cell
+      *matCellDef="let bootenv; dataSource: dataSource"
+      [title]="bootenv.name"
+    >
+      {{ bootenv.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="active">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Active' | translate }}
+    </th>
+    <td
+      mat-cell
+      *matCellDef="let bootenv; dataSource: dataSource"
+      [title]="bootenv.id"
+    >
+      <ng-container [ngSwitch]="bootenv.active">
+        <ng-container *ngSwitchCase="'N'">{{ 'Now' | translate }}</ng-container>
+        <ng-container *ngSwitchCase="'R'">
+          {{ 'Reboot' | translate }}
+        </ng-container>
+        <ng-container *ngSwitchCase="'NR'">
+          {{ 'Now/Reboot' | translate }}
+        </ng-container>
+      </ng-container>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="created">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Date Created' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
+      {{ bootenv.created.$date | formatDateTime }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="rawspace">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Space' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
+      {{ bootenv.rawspace | filesize: { standard: 'iec', round: 0 } }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="keep">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Keep' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource" class="keep-td">
+      <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
+      {{ (bootenv.keep ? 'Yes' : 'No') | translate }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th *matHeaderCellDef mat-header-cell></th>
+    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
+      <button
+        [title]="'Settings' | translate"
+        mat-icon-button
+        [matMenuTriggerFor]="actionsMenu"
+      >
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu">
+        <a
+          mat-menu-item
+          *ngIf="!bootenv.active.includes('R')"
+          (click)="doActivate(bootenv)"
+          ><ix-icon name="mdi-check-decagram"></ix-icon>
+          {{ 'Activate' | translate }}
+        </a>
+        <a mat-menu-item (click)="doClone(bootenv)">
+          <ix-icon name="mdi-content-copy"></ix-icon>
+          {{ 'Clone' | translate }}
+        </a>
+        <a mat-menu-item (click)="doRename(bootenv)">
+          <ix-icon name="mdi-rename-box"></ix-icon>
+          {{ 'Rename' | translate }}
+        </a>
+        <a
+          mat-menu-item
+          *ngIf="bootenv.active === '-' || bootenv.active === ''"
+          (click)="doDelete([bootenv])"
+          ><ix-icon name="mdi-delete"></ix-icon>
+          {{ 'Delete' | translate }}
+        </a>
+        <a mat-menu-item (click)="toggleKeep(bootenv)">
+          <ix-icon
+            [name]="bootenv.keep ? 'bookmark_border' : 'bookmark'"
+          ></ix-icon>
+          {{ (bootenv.keep ? 'Unkeep' : 'Keep') | translate }}
+        </a>
+      </mat-menu>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr
+    mat-row
+    *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"
+  ></tr>
+
+  <tr class="mat-row no-data-row" *matNoDataRow>
+    <td
+      class="mat-cell"
+      [attr.colspan]="displayedColumns.length"
+      *ngIf="!(isLoading$ | async)"
+    >
+      <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
+    </td>
+  </tr>
+</table>
+
+<ix-table-paginator
+  [dataSource]="dataSource"
+  [pageSize]="10"
+></ix-table-paginator>

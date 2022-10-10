@@ -1,12 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -16,7 +18,6 @@ import {
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
@@ -28,6 +29,9 @@ import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
+  DefaultGatewayDialogComponent,
+} from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
+import {
   InterfaceNameValidatorService,
 } from 'app/pages/network/components/interface-form/interface-name-validator.service';
 import {
@@ -35,7 +39,7 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
-import { NetworkService, WebSocketService } from 'app/services';
+import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -131,7 +135,8 @@ export class InterfaceFormComponent implements OnInit {
     private core: CoreService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
-    @Inject(WINDOW) private window: Window,
+    private matDialog: MatDialog,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   get isNew(): boolean {
@@ -160,6 +165,10 @@ export class InterfaceFormComponent implements OnInit {
 
   get isLoadBalanceLag(): boolean {
     return this.form.get('lag_protocol').value === LinkAggregationProtocol.LoadBalance;
+  }
+
+  get canHaveAliases(): boolean {
+    return !this.form.value.ipv4_dhcp && !this.form.value.ipv6_auto;
   }
 
   ngOnInit(): void {
@@ -212,19 +221,29 @@ export class InterfaceFormComponent implements OnInit {
       ? this.ws.call('interface.create', [params])
       : this.ws.call('interface.update', [this.existingInterface.id, params]);
 
-    request$.pipe(untilDestroyed(this)).subscribe(
-      () => {
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.isLoading = false;
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
         this.slideInService.close();
+
+        this.ws.call('interface.default_route_will_be_removed').pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.matDialog.open(DefaultGatewayDialogComponent, {
+            width: '600px',
+          });
+        });
+
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);
       },
-    );
+    });
   }
 
   private validateNameOnTypeChange(): void {
@@ -248,7 +267,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private loadFailoverStatus(): void {
-    if (this.window.localStorage.getItem('product_type') !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
       return;
     }
 

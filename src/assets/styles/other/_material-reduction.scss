@@ -156,9 +156,15 @@ ix-entity-table .mat-toolbar.mat-card-toolbar {
 }
 
 .form-element .label-container {
+  align-items: center;
+  display: flex;
   height: 24px;
   margin-bottom: 4px;
   padding: 4px 0;
+
+  label {
+    margin-right: 8px;
+  }
 }
 
 /* Bring back the native placeholder */
@@ -361,6 +367,8 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 
 .login-form .form-element.username .mat-form-field-flex {
   align-items: flex-start;
+  position: relative;
+  top: -2px;
 }
 
 .login-form .form-element.password .mat-form-field-prefix {
@@ -369,8 +377,8 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 
 .login-form .form-element input[type = 'password'],
 .login-form .form-element .has_toggle_pw input {
-  padding: 0;
-  top: -8px;
+  padding: 2px 0 0;
+  top: -10px;
 }
 
 .login-form .form-element button.toggle_pw {
@@ -440,7 +448,7 @@ ix-tooltip button i {
 }
 
 .label-container ix-tooltip {
-  margin: 0 0 4px 4px;
+  margin: 0;
 }
 
 .tooltip .material-icons {
@@ -456,7 +464,7 @@ ix-tooltip button i {
 
 .mat-form-field-appearance-legacy .mat-form-field-infix {
   border: 0;
-  height: 20px;
+  height: fit-content;
   overflow: hidden;
   padding: 0;
 }
@@ -740,7 +748,7 @@ thead.ui-treetable-thead tr {
 
 .label,
 .mat-list-item .label {
-  margin-right: 16px;
+  margin-right: 8px;
 }
 
 .standard-list .label {
@@ -809,49 +817,9 @@ mat-card.mat-card .mat-list-base {
   padding-left: 18px;
 }
 
-/* Entity Tree Table Styles */
-/* Pseudo Tables */
-.ix-table {
-  display: table;
-}
-
-.ix-tr {
-  display: table-row;
-}
-
-.ix-td {
-  display: table-cell;
-}
-
-.ix-th {
-  display: table-cell;
-}
-
-.ix-tree-invisible {
-  display: none;
-}
-
-.ix-tree-node .ix-td .mat-icon
-
-.ix-tree ul,
-.ix-tree li {
-  list-style-type: none;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.ix-tree-node .ix-tree-node {
-  padding-left: 40px;
-}
-
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
-}
-/* Material Design Icon Set */
-.mat-icon.mdi-set {
-  font-size: 24px; /* Default Size to match other mat icons */
-  margin-top: 2px;
 }
 
 @media only screen and (max-width: 750px) {
@@ -944,4 +912,18 @@ ul.nested-list li {
 
 .form-list-item .form-element {
   margin: 8px 0;
+}
+
+.mat-tab-header-pagination-chevron {
+  border-color: unset !important;
+  color: var(--fg2);
+}
+
+.mat-tab-header-pagination {
+  background-color: var(--lines);
+  opacity: 0.6;
+}
+
+.mat-tab-header-pagination-disabled {
+  opacity: 0.2;
 }

@@ -82,6 +82,7 @@ export interface AppTableConfig<P = unknown> {
    */
   parent: P;
   tableActions?: AppTableHeaderAction[];
+  tableFooterActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];
   confirmDeleteDialog?: AppTableConfirmDeleteDialog;
 
@@ -108,7 +109,7 @@ export interface AppTableConfig<P = unknown> {
   styleUrls: ['./table.component.scss'],
   providers: [TableService],
 })
-export class TableComponent<Row = any> implements OnInit, AfterViewInit, AfterViewChecked {
+export class TableComponent<Row = Record<string, any>> implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('table') table: ElementRef<HTMLElement>;
   LinkState = LinkState;
 
@@ -127,7 +128,7 @@ export class TableComponent<Row = any> implements OnInit, AfterViewInit, AfterVi
   entityEmptyLarge = false;
   enableViewMore = false;
   loaderOpen = false;
-  afterGetDataHook$ = new Subject();
+  afterGetDataHook$ = new Subject<void>();
 
   idProp = 'id';
 
@@ -300,7 +301,7 @@ export class TableComponent<Row = any> implements OnInit, AfterViewInit, AfterVi
     this.showCollapse = false;
   }
 
-  getButtonClass(row: any): string {
+  getButtonClass(row: { warnings: unknown[]; state: JobState }): string {
     // Bring warnings to user's attention even if state is finished or successful.
     if (row.warnings && row.warnings.length > 0) {
       return 'fn-theme-orange';

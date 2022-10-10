@@ -16,15 +16,6 @@
   margin-left: 1px;
 }
 
-.label {
-  font-size: x-small;
-}
-
-.tooltip {
-  margin: 0;
-  margin-left: 8px;
-}
-
 .add-btn {
   margin-left: auto;
 }
@@ -46,6 +37,7 @@
   .empty {
     background: rgba(0, 0, 0, 0.1);
     font-size: 13px;
-    padding: 15px;
+    margin-top: 10px;
+    padding: 10px;
   }
 }

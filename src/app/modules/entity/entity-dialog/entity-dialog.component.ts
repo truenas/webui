@@ -31,7 +31,7 @@ export class EntityDialogComponent implements OnInit {
   saveButtonText: string;
   cancelButtonText = 'Cancel';
   error: string;
-  formValue: any;
+  formValue: Record<string, unknown>;
   showPassword = false;
   submitEnabled = true;
   instructions: string;
@@ -88,18 +88,17 @@ export class EntityDialogComponent implements OnInit {
       this.conf.customSubmit(this);
     } else {
       this.loader.open();
-      this.ws.call(this.conf.method_ws, [this.formValue]).pipe(untilDestroyed(this)).subscribe(
-        () => {},
-        (error) => {
+      this.ws.call(this.conf.method_ws, [this.formValue]).pipe(untilDestroyed(this)).subscribe({
+        error: (error) => {
           this.loader.close();
           this.dialogRef.close(false);
           new EntityUtils().handleWsError(this, error);
         },
-        () => {
+        complete: () => {
           this.loader.close();
           this.dialogRef.close(true);
         },
-      );
+      });
     }
   }
 

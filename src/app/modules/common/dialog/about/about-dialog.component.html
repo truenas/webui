@@ -2,7 +2,11 @@
   <div class="header">
     <div class="header-overlay">
       <div class="logo-wrapper">
-        <mat-icon svgIcon="ix:truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
+        <mat-icon
+          svgIcon="ix:truenas_scale_logo_full"
+          class="logo"
+          alt="TrueNAS SCALE logo"
+        ></mat-icon>
       </div>
     </div>
   </div>
@@ -10,33 +14,45 @@
   <div class="content-wrapper">
     <div class="help">{{ helptext.help | translate }}</div>
     <div class="line-item">
-      <div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
-      <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.docs | translate"></div>
+      <div fxFlex="10%">
+        <mat-icon class="bullet-icon">assignment</mat-icon>
+      </div>
+      <div
+        fxFlex="90%"
+        class="medium-font"
+        [innerHtml]="helptext.docs | translate"
+      ></div>
     </div>
 
     <div class="line-item">
       <div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
-      <div fxFlex="90%" class="medium-font" [innerHtml]="helptext.forums | translate"></div>
+      <div
+        fxFlex="90%"
+        class="medium-font"
+        [innerHtml]="helptext.forums | translate"
+      ></div>
     </div>
 
-    <div id="open-source" *appLet="systemType | mapValue: productTypeLabels as product" [innerHtml]="helptext.opensource | translate: { product } "></div>
+    <div
+      id="open-source"
+      *appLet="systemType | mapValue: productTypeLabels as product"
+      [innerHtml]="helptext.opensource | translate: { product }"
+    ></div>
   </div>
-
 </div>
 
 <div mat-dialog-actions id="actions">
-  <div fxFlex="50%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{ systemType | mapValue: productTypeLabels }}® © {{copyrightYear}} -
-    <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc.">
-      iXsystems, Inc</a>.
-  </div>
-  <div id="button-wrapper" fxFlex="50%" fxFlex.xs="100">
+  <ix-copyright-line class="copyright-txt"></ix-copyright-line>
+  <div id="button-wrapper">
     <button
-      mat-button class="mat-button mat-primary"
+      mat-button
+      class="mat-button mat-primary"
+      ix-auto
+      ix-auto-type="button"
+      ix-auto-identifier="CLOSE"
       (click)="dialogRef.close(false)"
-      ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE"
     >
       {{ helptext.actionBtnText.about | translate | uppercase }}
     </button>
-
   </div>
 </div>

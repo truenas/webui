@@ -15,6 +15,7 @@ import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ScreenType } from 'app/enums/screen-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -33,26 +34,30 @@ import { ThemeService } from 'app/services/theme/theme.service';
 export class WidgetMemoryComponent extends WidgetComponent implements OnChanges {
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
-  chart: Chart;// chart instance
-  private _memData: WidgetMemoryData;
-  get memData(): WidgetMemoryData { return this._memData; }
-  set memData(value) {
-    this._memData = value;
-  }
 
+  chart: Chart;// chart instance
   isReady = false;
   title: string = this.translate.instant('Memory');
   subtitle: string = this.translate.instant('% of all cores');
   configurable = false;
   chartId = UUID.UUID();
   colorPattern: string[];
-
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
+  screenType = ScreenType.Desktop;
 
-  screenType = 'Desktop';
+  readonly ScreenType = ScreenType;
 
+  private _memData: WidgetMemoryData;
   private utils: ThemeUtils;
   private dataSubscription: Subscription;
+
+  get memData(): WidgetMemoryData {
+    return this._memData;
+  }
+
+  set memData(value) {
+    this._memData = value;
+  }
 
   constructor(
     public router: Router,
@@ -67,8 +72,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
     this.utils = new ThemeUtils();
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const st = evt.mqAlias === 'xs' ? 'Mobile' : 'Desktop';
-      this.screenType = st;
+      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+      this.screenType = currentScreenType;
     });
   }
 
@@ -207,7 +212,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
 
     const ds: ChartDataSets = {
       label: this.labels as any,
-      data: data.map((x) => x[1] as any),
+      data: data.map((x) => Number(x[1])),
       backgroundColor: [],
       borderColor: [],
       borderWidth: 1,

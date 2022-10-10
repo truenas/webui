@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-input
           formControlName="var"
@@ -9,17 +10,20 @@
           [required]="true"
           [tooltip]="tooltips.var"
         ></ix-input>
+
         <ix-textarea
           formControlName="value"
           [label]="'Value' | translate"
           [required]="true"
           [tooltip]="tooltips.value"
         ></ix-textarea>
+
         <ix-input
           formControlName="comment"
           [label]="'Description' | translate"
           [tooltip]="tooltips.comment"
         ></ix-input>
+
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
@@ -31,9 +35,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

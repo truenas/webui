@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <div class="column">
           <ix-fieldset [title]="helptext.fieldset_target_basic | translate">
@@ -12,12 +13,14 @@
               [placeholder]="helptext.target_form_placeholder_name | translate"
               [required]="true"
             ></ix-input>
+
             <ix-input
               [formControlName]="'alias'"
               [label]="helptext.target_form_placeholder_alias | translate"
               [tooltip]="helptext.target_form_tooltip_alias | translate"
               [placeholder]="helptext.target_form_placeholder_alias | translate"
             ></ix-input>
+
             <ix-select
               [formControlName]="'mode'"
               [label]="helptext.target_form_placeholder_mode | translate"
@@ -25,14 +28,33 @@
               [tooltip]="helptext.target_form_tooltip_mode | translate"
               [fxHide]="true"
             ></ix-select>
+
+            <ix-list
+              formArrayName="auth_networks"
+              [empty]="form.controls.auth_networks.length === 0"
+              [label]="helptext.auth_network.placeholder | translate"
+              (add)="addNetwork()"
+            >
+              <ix-list-item
+                *ngFor="let entry of form.controls.auth_networks.controls; let i = index"
+                (delete)="deleteNetwork(i)"
+              >
+                <ix-ip-input-with-netmask
+                  [formControlName]="i"
+                  [label]="'Network' | translate"
+                  [required]="true"
+                ></ix-ip-input-with-netmask>
+              </ix-list-item>
+            </ix-list>
           </ix-fieldset>
         </div>
+
         <div class="column">
           <ix-fieldset [title]="helptext.fieldset_target_group | translate">
             <ix-list
+              formArrayName="groups"
               [empty]="form.controls.groups.length === 0"
               [label]="'Add groups' | translate"
-              formArrayName="groups"
               (add)="addGroup()"
             >
               <ix-list-item
@@ -47,12 +69,14 @@
                   [tooltip]="helptext.target_form_tooltip_portal | translate"
                   [required]="true"
                 ></ix-select>
+
                 <ix-select
                   formControlName="initiator"
                   [label]="helptext.target_form_placeholder_initiator | translate"
                   [options]="initiators$"
                   [tooltip]="helptext.target_form_tooltip_initiator | translate"
                 ></ix-select>
+
                 <ix-select
                   formControlName="authmethod"
                   [label]="helptext.target_form_placeholder_authmethod | translate"
@@ -60,6 +84,7 @@
                   [tooltip]="helptext.target_form_tooltip_authmethod | translate"
                   [required]="true"
                 ></ix-select>
+
                 <ix-select
                   formControlName="auth"
                   [label]="helptext.target_form_placeholder_auth | translate"
@@ -76,9 +101,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

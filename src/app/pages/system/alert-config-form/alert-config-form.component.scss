@@ -1,0 +1,24 @@
+.class-row {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 30px;
+
+  .class-label {
+    align-items: center;
+    display: flex;
+    margin-top: 25px;
+  }
+}
+
+.mat-title {
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+  gap: 18px;
+  padding: 18px 30px;
+}
+
+.form-actions {
+  border-top: 1px solid var(--lines);
+  padding: 18px 30px;
+}

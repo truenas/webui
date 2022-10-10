@@ -1,7 +1,10 @@
-<ix-modal-header [title]="'Kubernetes Settings' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Kubernetes Settings' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
           formControlName="node_ip"
@@ -32,10 +35,16 @@
           formControlName="configure_gpus"
           [label]="'Enable GPU support' | translate"
         ></ix-checkbox>
-		
+
         <ix-checkbox
           formControlName="servicelb"
           [label]="'Enable Integrated Loadbalancer' | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="validate_host_path"
+          [label]="'Validate host path' | translate"
+          [warning]="validateHostPathWarning"
         ></ix-checkbox>
       </ix-fieldset>
       <ix-fieldset [title]="'Settings Requiring Re-Initialization' | translate">
@@ -63,16 +72,17 @@
           [tooltip]="tooltips.cluster_dns_ip"
           [required]="true"
         ></ix-input>
-
       </ix-fieldset>
 
       <div class="form-actions">
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

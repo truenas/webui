@@ -24,7 +24,7 @@ export class ServiceSnmpComponent implements OnInit {
   form = this.fb.group({
     location: [''],
     contact: ['', Validators.email],
-    community: ['', Validators.pattern(/^[\w\_\-\.\s]*$/)],
+    community: ['', Validators.pattern(/^[\w_\-.\s]*$/)],
 
     v3: [false],
     v3_username: [''],
@@ -92,27 +92,33 @@ export class ServiceSnmpComponent implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.ws.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.router.navigate(['/services']);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    this.ws.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/services']);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 
   private loadCurrentSettings(): void {
     this.isFormLoading = true;
-    this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      this.isFormLoading = false;
-      this.form.patchValue(config);
-      this.cdr.markForCheck();
-    }, (error) => {
-      new EntityUtils().handleWsError(this, error, this.dialogService);
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
+    this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
+      next: (config) => {
+        this.isFormLoading = false;
+        this.form.patchValue(config);
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 }

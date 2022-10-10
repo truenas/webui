@@ -52,7 +52,7 @@ import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.conf
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
-import { Temperature } from 'app/services/disk-temperature.service';
+import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -100,7 +100,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private resources = PIXI.loader.resources;
   container: Container;
   failedDisks: DiskFailure[] = [];
-  subenclosure: any; // Declare rear and internal enclosure visualizations here
+  subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
   view: string = EnclosureLocation.Front;
@@ -159,15 +159,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     originalState: string;
     styler: ValueReaction;
   };
-  protected maxCardWidth = 960;
   protected pixiWidth = 960;
   protected pixiHeight = 304;
 
   readonly EnclosureLocation = EnclosureLocation;
-
-  get cardWidth(): number {
-    return this.overview.nativeElement.offsetWidth;
-  }
 
   constructor(
     protected core: CoreService,
@@ -177,8 +172,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     protected ws: WebSocketService,
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
+    protected diskTemperatureService: DiskTemperatureService,
   ) {
     this.themeUtils = new ThemeUtils();
+    this.diskTemperatureService.listenForTemperatureUpdates();
 
     core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const chassisView = this.view === 'rear' ? this.chassis.rear : this.chassis.front;
@@ -248,7 +245,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const callback = (mutationList: MutationRecord[]): void => {
       mutationList.forEach((mutation) => {
         switch (mutation.type) {
-          case 'childList':
+          case 'childList': {
             /* One or more children have been added to and/or removed
                from the tree; see mutation.addedNodes and
                mutation.removedNodes */
@@ -272,7 +269,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
               this.enter('full-stage'); // View has changed so we launch transition animations
             }
             break;
-          case 'attributes':
+          }
+          case 'attributes': {
             /* An attribute value changed on the element in
                mutation.target; the attribute name is in
                mutation.attributeName and its previous value is in
@@ -283,9 +281,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             if (diskName && this.currentView === 'details' && this.exitingView === 'details') {
               this.update('stage-right'); // View has changed so we launch transition animations
               this.update('stage-left'); // View has changed so we launch transition animations
-              this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
+              this.labels.events$.next({
+                name: 'OverlayReady',
+                data: { vdev: this.selectedVdev, overlay: this.domLabels },
+                sender: this,
+              });
             }
             break;
+          }
         }
       });
     };
@@ -424,10 +427,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R50B(true);
         this.showCaption = false;
         break;
-      case 'M Series':
+      case 'M Series': {
         const rearChassis = !!this.system.rearIndex;
         this.chassis = new M50(rearChassis);
         break;
+      }
       case 'X Series':
       case 'ES12':
         this.chassis = new Es12();
@@ -491,7 +495,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           this.optimizeChassisOpacity();
 
           break;
-        case 'DriveSelected':
+        case 'DriveSelected': {
           if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
             this.radiate(true);
@@ -505,6 +509,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.setCurrentView('details');
           }
           break;
+        }
       }
     });
 
@@ -628,7 +633,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   destroyEnclosure(): void {
     if (!this.enclosure) { return; }
-    this.enclosure.events.unsubscribe();
     this.container.removeChild(this.enclosure.container);
     this.enclosure.destroy();
   }
@@ -687,7 +691,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'expanders':
         this.container.alpha = 0;
         break;
-      case 'details':
+      case 'details': {
         this.container.alpha = 1;
         this.setDisksDisabled();
 
@@ -700,6 +704,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this } as LabelDrivesEvent);
 
         break;
+      }
     }
 
     this.currentView = opt;
@@ -1001,23 +1006,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
   }
 
-  showPath(devname: string): void {
-    // show the svg path
-    this.labels.events$.next({
-      name: 'ShowPath',
-      data: { devname, overlay: this.domLabels },
-      sender: this,
-    });
-  }
-
-  hidePath(devname: string): void {
-    this.labels.events$.next({
-      name: 'HidePath',
-      data: { devname, overlay: this.domLabels },
-      sender: this,
-    });
-  }
-
   highlightPath(devname: string): void {
     // show the svg path
     this.labels.events$.next({
@@ -1071,8 +1059,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       const cc = this.hexToRgb(this.theme.cyan);
       const animation = keyframes({
         values: [
-          { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ')' },
-          { borderWidth: 30, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ', 0)' },
+          { borderWidth: 0, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]})` },
+          { borderWidth: 30, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]}, 0)` },
         ],
         duration: 1000,
         loop: Infinity,
@@ -1175,7 +1163,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.pendingDialog = entityDialog;
         entityDialog.loader.open();
-        this.setEnclosureLabel(entityDialog.formValue.label);
+        this.setEnclosureLabel(entityDialog.formValue.label as string);
       },
     };
 

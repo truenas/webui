@@ -97,10 +97,10 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
       onClick: (rowinner: IscsiTarget) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (sessions) => {
             const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
-            for (const session of res) {
+            for (const session of sessions) {
               if (session.target.split(':')[1] === rowinner.name) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
                 payload.push(true); // enable force delele
@@ -116,13 +116,13 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.entityList.loader.open();
               this.entityList.loaderOpen = true;
-              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
-                () => { this.entityList.getData(); },
-                (error: WebsocketError) => {
+              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
+                next: () => this.entityList.getData(),
+                error: (error: WebsocketError) => {
                   new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
                   this.entityList.loader.close();
                 },
-              );
+              });
             });
           },
         );

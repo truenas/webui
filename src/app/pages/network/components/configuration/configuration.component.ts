@@ -14,7 +14,7 @@ import {
 import { ipv4Validator, ipv6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -139,7 +139,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
-    label: '',
+    label: helptext.outbound_activity,
     tooltip: '',
     options: of([
       // Mismatch between enum and label is expected.
@@ -165,7 +165,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   outboundNetworkValue = {
     fcName: 'outbound_network_value',
-    label: '',
+    label: helptext.outbound_network_value.placeholder,
     tooltip: helptext.outbound_network_value.tooltip,
     options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
@@ -203,6 +203,7 @@ export class NetworkConfigurationComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
@@ -234,7 +235,7 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    if (window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.hostnameB.hidden = !isHa;
         this.hostnameVirtual.hidden = !isHa;
@@ -245,8 +246,8 @@ export class NetworkConfigurationComponent implements OnInit {
   private loadConfig(): void {
     this.ws.call('network.configuration.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config: NetworkConfiguration) => {
+      .subscribe({
+        next: (config: NetworkConfiguration) => {
           const transformed: NetworkConfigurationConfig = {
             hostname: config.hostname,
             hostname_b: config.hostname_b,
@@ -287,12 +288,12 @@ export class NetworkConfigurationComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onSubmit(): void {
@@ -332,17 +333,17 @@ export class NetworkConfigurationComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.slideInService.close();
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 }

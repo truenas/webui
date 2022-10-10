@@ -9,7 +9,6 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services';
@@ -24,29 +23,29 @@ const oneGb = 1024 * 1024 * 1024;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetCapacitySettingsComponent {
-  readonly defaultWarning = 80;
-  readonly defaultCritical = 95;
+  readonly defaultQuotaWarning = 80;
+  readonly defaultQuotaCritical = 95;
 
   form = this.formBuilder.group({
     refquota: [null as number, Validators.min(oneGb)],
-    refquota_warning: [this.defaultWarning, [
+    refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
     ]],
     refquota_warning_inherit: [false],
-    refquota_critical: [this.defaultCritical, [
+    refquota_critical: [this.defaultQuotaCritical, [
       Validators.min(0),
       Validators.max(100),
     ]],
     refquota_critical_inherit: [false],
 
     quota: [null as number, Validators.min(oneGb)],
-    quota_warning: [this.defaultWarning, [
+    quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
     ]],
     quota_warning_inherit: [false],
-    quota_critical: [this.defaultCritical, [
+    quota_critical: [this.defaultQuotaCritical, [
       Validators.min(0),
       Validators.max(100),
     ]],
@@ -72,7 +71,6 @@ export class DatasetCapacitySettingsComponent {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private validationService: IxValidatorsService,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -83,6 +81,20 @@ export class DatasetCapacitySettingsComponent {
     this.setFormRelations();
   }
 
+  private setFormRelations(): void {
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
+      Object.entries(this.inheritRelations).forEach(([inheritField, valueField]) => {
+        if (values[inheritField as keyof DatasetCapacitySettingsComponent['inheritRelations']]) {
+          this.form.controls[valueField].disable({ emitEvent: false });
+          this.form.controls[valueField].removeValidators(Validators.required);
+        } else {
+          this.form.controls[valueField].enable({ emitEvent: false });
+          this.form.controls[valueField].addValidators(Validators.required);
+        }
+      });
+    });
+  }
+
   get isRoot(): boolean {
     return isRootDataset(this.dataset);
   }
@@ -91,14 +103,14 @@ export class DatasetCapacitySettingsComponent {
     this.dataset = dataset;
     this.oldValues = {
       refquota: dataset.refquota.parsed,
-      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultWarning,
+      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
       refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
-      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultCritical,
+      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
       refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
       quota: dataset.quota.parsed,
-      quota_warning: dataset.quota_warning?.parsed ?? this.defaultWarning,
+      quota_warning: dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
       quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
-      quota_critical: dataset.quota_critical?.parsed ?? this.defaultCritical,
+      quota_critical: dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
       quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
       refreservation: dataset.refreservation.parsed,
       reservation: dataset.reservation.parsed,
@@ -114,8 +126,8 @@ export class DatasetCapacitySettingsComponent {
 
     this.ws.call('pool.dataset.update', [this.dataset.id, payload])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
@@ -123,26 +135,12 @@ export class DatasetCapacitySettingsComponent {
           this.slideIn.close();
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-      );
-  }
-
-  private setFormRelations(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
-      Object.entries(this.inheritRelations).forEach(([inheritField, valueField]) => {
-        if (values[inheritField as keyof DatasetCapacitySettingsComponent['inheritRelations']]) {
-          this.form.controls[valueField].disable({ emitEvent: false });
-          this.form.controls[valueField].removeValidators(Validators.required);
-        } else {
-          this.form.controls[valueField].enable({ emitEvent: false });
-          this.form.controls[valueField].addValidators(Validators.required);
-        }
       });
-    });
   }
 
   private getChangedFormValues(): DatasetUpdate {

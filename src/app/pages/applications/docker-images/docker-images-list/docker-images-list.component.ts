@@ -76,6 +76,7 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.store.loadEntities();
     this.getDockerImages();
   }
 
@@ -144,12 +145,13 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
     this.store.patchState({ isLoading: true });
     this.store.entities$.pipe(
       untilDestroyed(this),
-    ).subscribe(
-      (images) => {
+    ).subscribe({
+      next: (images) => {
         this.createDataSource(images);
-      }, () => {
+      },
+      error: () => {
         this.createDataSource();
       },
-    );
+    });
   }
 }

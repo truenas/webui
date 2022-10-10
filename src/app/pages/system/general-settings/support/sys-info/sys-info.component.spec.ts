@@ -59,7 +59,7 @@ describe('SysInfoComponent', () => {
     const sysLicenseValues = spectator.queryAll('.sys-license-wrapper .value');
     const sysLicenseLabels = spectator.queryAll('.sys-license-wrapper .label');
     const infoRows = sysLicenseValues.reduce((acc, item, i) => {
-      return { ...acc, ...{ [sysLicenseLabels[i].textContent]: item.textContent } };
+      return { ...acc, ...{ [sysLicenseLabels[i].textContent]: item.textContent.replace(/\s{2,}/g, ' ').trim() } };
     }, {} as { [key: string]: string });
     const sysInfoBlock = spectator.query('.sys-info-wrapper');
 
@@ -70,7 +70,7 @@ describe('SysInfoComponent', () => {
       'System Serial:': systemInfo.serial,
       'Features:': licenseInfo.features.join(', '),
       'Contract Type:': licenseInfo.contract_type,
-      'Expiration Date:': licenseInfo.expiration_date + ' ( EXPIRED ) ',
+      'Expiration Date:': `${licenseInfo.expiration_date} ( EXPIRED )`,
       'Additional Hardware:': licenseInfo.add_hardware,
     });
   });

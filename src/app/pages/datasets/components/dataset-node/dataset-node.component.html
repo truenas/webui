@@ -3,17 +3,32 @@
     <div class="icon-container">
       <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
     </div>
-    <span class="name">{{ label }}</span>
+    <span class="name" [matTooltip]="label">
+      {{ label }}
+    </span>
   </div>
-  <div class="cell">
-    {{ '{value} Used' | translate: { value: dataset.used.parsed | filesize: { standard: 'iec', round: 0 } } }}
+  <div class="cell cell-used">
+    {{
+      '{value}' | translate : {
+        value: dataset.used.parsed | filesize: { standard: 'iec', round: 0 }
+      }
+    }}
     /
-    {{ '{value} Left' | translate: { value: dataset.available.parsed | filesize: { standard: 'iec', round: 0 } } }}
+    {{
+      '{value}' | translate : {
+        value: dataset.available.parsed | filesize: { standard: 'iec', round: 0 }
+      }
+    }}
   </div>
   <div class="cell cell-encryption">
-    <ix-dataset-encryption-cell [dataset]="dataset"></ix-dataset-encryption-cell>
+    <ix-dataset-encryption-cell
+      [dataset]="dataset"
+    ></ix-dataset-encryption-cell>
   </div>
   <div class="cell cell-roles">
-    <ix-dataset-roles-cell [dataset]="dataset" [isSystemDataset]="isSystemDataset"></ix-dataset-roles-cell>
+    <ix-dataset-roles-cell
+      [dataset]="dataset"
+      [isSystemDataset]="isSystemDataset"
+    ></ix-dataset-roles-cell>
   </div>
 </div>
