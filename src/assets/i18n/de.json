@@ -824,6 +824,7 @@
   "Enter the hostname to connect to.": "",
   "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
   "Enter the version to roll back to.": "",
+  "Enter vm name to continue.": "",
   "Enter {value} below to confirm.": "",
   "Entering <i>0</i> uses the actual file size and requires that the file already exists. Otherwise, specify the file size for the new file.": "",
   "Error Extending Vdev": "",

@@ -134,6 +134,7 @@
   "Endpoint": "",
   "Enter <strong>{pool}</strong> below to confirm": "",
   "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
+  "Enter vm name to continue.": "",
   "Everything is fine": "",
   "Example: blob.core.usgovcloudapi.net": "",
   "Existing Pool": "",

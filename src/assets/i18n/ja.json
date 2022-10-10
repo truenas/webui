@@ -1051,6 +1051,7 @@
   "Enter the relative distinguished name of the site object in the Active Directory.": "",
   "Enter the subject for status emails.": "",
   "Enter the version to roll back to.": "",
+  "Enter vm name to continue.": "",
   "Enter {value} below to confirm.": "",
   "Entering <i>0</i> uses the actual file size and requires that the file already exists. Otherwise, specify the file size for the new file.": "",
   "Environment": "",
