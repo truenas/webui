@@ -164,9 +164,9 @@ export class EntityWizardComponent implements OnInit {
 
   onSubmit(): void {
     let value = {};
-    for (const i in this.formGroup.value.formArray) {
-      value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
-    }
+    Object.values(this.formGroup.value.formArray).forEach((controlValue) => {
+      value = _.merge(value, _.cloneDeep(controlValue));
+    });
 
     value = new EntityUtils().changeNullString2Null(value);
 
@@ -221,9 +221,9 @@ export class EntityWizardComponent implements OnInit {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex === this.conf.wizardConfig.length) {
         let value = {};
-        for (const i in this.formGroup.value.formArray) {
-          value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
-        }
+        Object.values(this.formGroup.value.formArray).forEach((controlValue) => {
+          value = _.merge(value, _.cloneDeep(controlValue));
+        });
         this.summaryValue = value;
       }
     }

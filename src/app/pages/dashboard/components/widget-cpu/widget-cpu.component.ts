@@ -243,11 +243,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   setPreferences(form: NgForm): void {
     const filtered: string[] = [];
-    for (const i in form.value) {
+    Object.keys(form.value).forEach((i) => {
       if (form.value[i]) {
         filtered.push(i);
       }
-    }
+    });
   }
 
   // chart.js renderer

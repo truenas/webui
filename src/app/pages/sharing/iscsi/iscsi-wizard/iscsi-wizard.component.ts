@@ -11,6 +11,7 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSharingIscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -569,12 +570,10 @@ export class IscsiWizardComponent implements WizardConfiguration {
     const diskField = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormComboboxConfig;
     // get device options
     this.loader.open(this.translate.instant('Loading devices. Please wait.'));
-    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
+    this.iscsiService.getExtentDevices().pipe(choicesToOptions(), untilDestroyed(this)).subscribe({
+      next: (options) => {
         this.loader.close();
-        for (const i in res) {
-          diskField.options.push({ label: res[i], value: i });
-        }
+        diskField.options = options;
       },
       error: (res) => {
         this.loader.close();
@@ -582,10 +581,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       },
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
-    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      for (const item of targets) {
-        targetField.options.push({ label: item.name, value: item.id });
-      }
+    this.iscsiService.getTargets().pipe(idNameArrayToOptions(), untilDestroyed(this)).subscribe((targets) => {
+      targetField.options = targets;
     });
 
     this.entityWizard.formArray.get([0]).get('type').valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
@@ -632,10 +629,13 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
-      for (const portal of portals) {
+      field.options = portals.map((portal) => {
         const ips = portal.listen.map((ip) => ip.ip).join(', ');
-        field.options.push({ label: `${portal.tag} (${ips})`, value: portal.id });
-      }
+        return {
+          label: `${portal.tag} (${ips})`,
+          value: portal.id,
+        };
+      });
     });
 
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
@@ -646,10 +646,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       });
     });
 
-    this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((ips) => {
-      for (const ip in ips) {
-        listenIpField.options.push({ label: ips[ip], value: ip });
-      }
+    this.iscsiService.getIpChoices().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
+      listenIpField.options = options;
 
       const listenListFields = listenIpFieldConfig.listFields;
       for (const listenField of listenListFields) {
@@ -802,10 +800,10 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   formUseforValueUpdate(selected: string): void {
     const settings = _.find(this.defaultUseforSettings, { key: selected });
-    for (const i in settings.values) {
+    Object.keys(settings).forEach((i) => {
       const controller = this.entityWizard.formArray.get([0]).get(i);
       controller.setValue(settings.values[i as keyof UseforDefaults['values']]);
-    }
+    });
   }
 
   getDatasetValue(dataset: string): void {
@@ -850,6 +848,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       associateTarget: null,
     };
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const createdItem in createdItems) {
       const item = createdItem as keyof CreatedItems;
       if (!toStop) {

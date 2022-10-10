@@ -149,8 +149,7 @@ export class WebSocketService {
 
     const collectionName = data.collection?.replace('.', '_');
     if (collectionName && this.pendingSubs[collectionName]?.observers) {
-      for (const uuid in this.pendingSubs[collectionName].observers) {
-        const subObserver = this.pendingSubs[collectionName].observers[uuid];
+      Object.values(this.pendingSubs[collectionName].observers).forEach((subObserver) => {
         if (data.error) {
           console.error('Error: ', data.error);
           subObserver.error(data.error);
@@ -160,7 +159,7 @@ export class WebSocketService {
         } else if (subObserver && !data.fields) {
           subObserver.next(data);
         }
-      }
+      });
     }
   }
 

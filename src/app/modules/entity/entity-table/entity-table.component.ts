@@ -251,13 +251,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     this.selection.toggle(element);
 
     const allShown = this.currentRowsThatAreOnScreenToo;
-    for (const row of allShown) {
-      if (!this.selection.isSelected(row)) {
-        this.isAllSelected = false;
-        return;
-      }
-    }
-    this.isAllSelected = true;
+    this.isAllSelected = allShown.every((row) => this.selection.isSelected(row));
   }
 
   ngOnInit(): void {
@@ -728,11 +722,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     }
 
     rows.forEach((row) => {
-      for (const attr in row) {
-        if (row.hasOwnProperty(attr)) {
-          row[attr] = this.rowValue(row, attr);
-        }
-      }
+      Object.keys(row).forEach((attr) => {
+        row[attr] = this.rowValue(row, attr);
+      });
     });
 
     if (this.rows.length === 0) {
@@ -743,9 +735,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       this.currentRows.forEach((row) => {
         const index = _.findIndex(rows, { id: row.id });
         if (index > -1) {
-          for (const prop in rows[index]) {
+          Object.keys(rows[index]).forEach((prop) => {
             row[prop as keyof Row] = rows[index][prop];
-          }
+          });
         }
       });
 

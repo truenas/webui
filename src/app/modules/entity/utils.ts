@@ -47,34 +47,32 @@ export class EntityUtils {
   handleObjError(entity: EntityErrorHandler, error: any): void {
     let scroll = false;
     entity.error = '';
-    for (const i in error.error) {
-      if (error.error.hasOwnProperty(i)) {
-        const field = error.error[i];
-        const fc = _.find(entity.fieldConfig, { name: i });
-        if (fc) {
-          const element = document.getElementById(i);
-          if (element) {
-            if (entity.conf && entity.conf.advancedFields
-              && _.indexOf(entity.conf.advancedFields, i) > -1
-              && entity.conf.isBasicMode) {
-              entity.conf.isBasicMode = false;
-            }
-            if (!scroll) {
-              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
-              scroll = true;
-            }
+    Object.keys(error.error).forEach((i) => {
+      const field = error.error[i];
+      const fc = _.find(entity.fieldConfig, { name: i });
+      if (fc) {
+        const element = document.getElementById(i);
+        if (element) {
+          if (entity.conf && entity.conf.advancedFields
+            && _.indexOf(entity.conf.advancedFields, i) > -1
+            && entity.conf.isBasicMode) {
+            entity.conf.isBasicMode = false;
           }
-          let errors = '';
-          field.forEach((item: string) => { errors += item + ' '; });
-          fc['hasErrors'] = true;
-          fc['errors'] = errors;
-        } else if (typeof field === 'string') {
-          entity.error = field;
-        } else {
-          field.forEach((item: string) => { entity.error += item + '<br />'; });
+          if (!scroll) {
+            element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
+            scroll = true;
+          }
         }
+        let errors = '';
+        field.forEach((item: string) => { errors += item + ' '; });
+        fc['hasErrors'] = true;
+        fc['errors'] = errors;
+      } else if (typeof field === 'string') {
+        entity.error = field;
+      } else {
+        field.forEach((item: string) => { entity.error += item + '<br />'; });
       }
-    }
+    });
   }
 
   handleWsError(

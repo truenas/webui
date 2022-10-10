@@ -179,12 +179,12 @@ export class BackupCredentialsComponent implements OnInit {
       name: 'download',
       onClick: (rowinner: KeychainCredential) => {
         const name = rowinner.name;
-        for (const keyType in rowinner.attributes) {
+        Object.keys(rowinner.attributes).forEach((keyType) => {
           const key = rowinner.attributes[keyType as keyof KeychainCredential['attributes']];
           const filename = name + '_' + keyType + '_rsa';
           const blob = new Blob([key as BlobPart], { type: 'text/plain' });
           this.storage.downloadBlob(blob, filename);
-        }
+        });
       },
     }];
   }

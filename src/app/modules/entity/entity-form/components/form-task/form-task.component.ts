@@ -41,11 +41,11 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
     this.control = this.group.controls[this.config.name];
-    for (const item in this.tabFormGroup.controls) {
-      this.tabFormGroup.controls[item].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    Object.values(this.tabFormGroup.controls).forEach((control) => {
+      control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setControlValue();
       });
-    }
+    });
 
     this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.init && res) {

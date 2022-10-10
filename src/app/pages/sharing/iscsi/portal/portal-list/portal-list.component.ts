@@ -105,10 +105,10 @@ export class PortalListComponent implements EntityTableConfig {
 
   dataHandler(entityTable: EntityTableComponent): void {
     entityTable.rows.forEach((row) => {
-      for (const ip in row.listen) {
+      Object.keys(row.listen).forEach((ip) => {
         const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
         row.listen[ip] = listenIp + ':' + row.listen[ip].port;
-      }
+      });
     });
   }
 }
