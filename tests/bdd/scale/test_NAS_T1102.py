@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -13,16 +14,19 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='system_pool')
 @scenario('features/NAS-T1102.feature', 'Creating new pool and set it as a system dataset')
 def test_creating_new_pool_and_set_it_as_a_system_dataset():
     """Creating new pool and set it as a system dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -119,8 +123,6 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     """click on System Dataset Configure button and close the popup."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
     assert wait_on_element(driver, 7, '//h3[contains(text(),"System Dataset Pool")]')
-    element = driver.find_element_by_xpath('//h3[contains(text(),"System Dataset Pool")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]').click()
     assert wait_on_element(driver, 5, '//h1[contains(.,"Warning")]')

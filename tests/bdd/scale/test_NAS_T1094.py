@@ -14,6 +14,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1094.feature', 'Enable password for a user')
@@ -22,8 +23,9 @@ def test_enable_password_for_a_user():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['First_User', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

@@ -6,7 +6,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
-import { UserService, TaskService } from 'app/services';
+import { UserService, TaskService, SystemGeneralService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -55,6 +55,7 @@ export class ScrubListComponent implements EntityTableConfig {
     protected taskService: TaskService,
     protected modalService: ModalService,
     protected translate: TranslateService,
+    protected systemGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -68,7 +69,9 @@ export class ScrubListComponent implements EntityTableConfig {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      });
 
       return task;
     });

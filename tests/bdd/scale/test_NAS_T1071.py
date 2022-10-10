@@ -16,13 +16,14 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='tank_pool')
 @scenario('features/NAS-T1071.feature', 'Create pool with 1 disk')
 def test_create_pool_with_1_disk():
     """Create pool with 2 disks."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")

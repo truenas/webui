@@ -12,6 +12,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1262.feature', 'Verify an internal certificate can be deleted')
@@ -20,8 +21,9 @@ def test_verify_an_internal_certificate_can_be_deleted():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['Internal_Certificate'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -54,7 +56,7 @@ def click_on_the_trash_icon_for_cert1(driver):
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificates")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"cert1")]//mat-icon[contains(text(),"delete")]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"cert1")]//mat-icon[contains(text(),"delete")]').click()
-    
+
 
 @then('click the confirm checkbox and click delete')
 def click_the_confirm_checkbox_and_click_delete(driver):

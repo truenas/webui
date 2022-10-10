@@ -14,17 +14,20 @@ from pytest_bdd import (
     when
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='App_Collabora')
 @scenario('features/NAS-T1287.feature', 'Apps Page - Validate Collabora')
 def test_apps_page__validate_collabora():
     """Apps Page - Validate Collabora."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -135,7 +138,7 @@ def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
     if is_element_present(driver, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]') is False:
         assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
@@ -161,6 +164,7 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+            assert wait_on_element_disappear(driver, 30, '//mat-spinner')
             assert wait_on_element(driver, 500, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
     else:
         assert wait_on_element(driver, 500, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')

@@ -1,13 +1,10 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -15,6 +12,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1249.feature', 'Verify a dataset can be deleted')
@@ -23,8 +21,9 @@ def test_verify_a_dataset_can_be_deleted():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -69,13 +68,13 @@ def in_the_dropdown_click_export_disconnect(driver):
 def click_the_checkboxes_enter_name_and_click_export(driver):
     """click the checkboxes, enter name, and click export."""
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Destroy data on this pool?"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Destroy data on this pool?"]').click()   
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Destroy data on this pool?"]').click()
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__"]').click()
-    #driver.find_element_by_xpath('//input[@ix-auto="input__"]').clear()
+    # driver.find_element_by_xpath('//input[@ix-auto="input__"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__"]').send_keys("encrypted_tank")
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Confirm Export/Disconnect"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm Export/Disconnect"]').click()   
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm Export/Disconnect"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EXPORT/DISCONNECT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EXPORT/DISCONNECT"]').click()
 

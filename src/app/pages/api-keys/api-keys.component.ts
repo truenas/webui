@@ -128,7 +128,11 @@ export class ApiKeysComponent implements EntityTableConfig {
         },
       );
     } else {
-      this.ws.call(this.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+      const payload = {
+        name: entityDialogForm.formValue.name,
+        allowlist: [{ method: '*', resource: '*' }],
+      };
+      this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           entityDialogForm.dialogRef.close(true);
           this.displayKey(res.key);

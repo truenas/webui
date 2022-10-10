@@ -37,6 +37,7 @@ import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapsh
 import {
   DialogService, ModalServiceMessage,
   StorageService,
+  SystemGeneralService,
   TaskService,
   WebSocketService,
 } from 'app/services';
@@ -91,6 +92,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     private storage: StorageService,
     private translate: TranslateService,
     private job: JobService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.storage
       .listDisks()
@@ -404,7 +406,10 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      });
 
       return task;
     });
@@ -416,8 +421,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.credential = task.credentials.name;
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, config.timezone) : this.translate.instant('Disabled');
+      });
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
@@ -466,7 +474,10 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, config.timezone);
+      });
 
       if (test.all_disks) {
         test.disks = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
@@ -492,7 +503,10 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      });
 
       return task;
     });
@@ -502,7 +516,10 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+
+      this.systemGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
+        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, config.timezone);
+      });
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };

@@ -1,12 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -15,6 +12,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1252.feature', 'Verify that you can change a group name')
@@ -23,8 +21,9 @@ def test_verify_that_you_can_change_a_group_name():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['Set_Group'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')

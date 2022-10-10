@@ -1,9 +1,11 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
-    is_element_present
+    is_element_present,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -11,16 +13,19 @@ from pytest_bdd import (
     then,
     when
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='App_Catalog')
 @scenario('features/NAS-T1353.feature', 'Apps Page - Validate adding a Catalog')
 def test_apps_page__validate__adding_truecharts():
     """Apps Page - Validate  adding TrueCharts."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -43,6 +48,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('when the Apps page loads, open manage catalogs')

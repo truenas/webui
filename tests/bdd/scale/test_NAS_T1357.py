@@ -14,6 +14,7 @@ from pytest_bdd import (
     when
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -23,8 +24,9 @@ def test_apps_page__validate_deleting_a_container_image():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_Container'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -47,6 +49,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('Stop nextcloud from running')
@@ -65,6 +68,8 @@ def verify_the_application_has_stopped(driver):
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
     assert wait_on_element_disappear(driver, 180, '//h1[contains(.,"Stopping")]')
     assert wait_on_element(driver, 15, '//mat-card[contains(.,"nextcloud-test")]//span[contains(.,"STOPPED ")]')
+    # Give a break to the system
+    time.sleep(5)
 
 
 @then('open available applications')
@@ -72,13 +77,12 @@ def open_available_applications(driver):
     """open available applications."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element_disappear(driver, 60, '//mat-spinner[@role="progressbar"]')
-    time.sleep(1)
 
 
 @then('when the Apps page loads, open Manager Docker Images')
 def when_the_apps_page_loads_open_manager_docker_images(driver):
     """when the Apps page loads, open Manager Docker Images."""
+    assert wait_on_element_disappear(driver, 60, '//mat-spinner')
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
     time.sleep(1)
@@ -89,9 +93,15 @@ def click_the_three_dots_icon_for_nextcloud(driver):
     """click the three dots icon for nextcloud."""
     assert wait_on_element(driver, 10, '//th[text()="Tags"]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"Items per page:")]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"nextcloud")]')
-    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+    if wait_on_element(driver, 3, '//div[contains(text(),"nextcloud")]'):
+        assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+        driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+    else:
+        assert wait_on_element(driver, 20, '//button[@aria-label="Next page"]', 'clickable')
+        driver.find_element_by_xpath('//button[@aria-label="Next page"]').click()
+        assert wait_on_element(driver, 5, '//div[contains(text(),"nextcloud")]')
+        assert wait_on_element(driver, 5, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+        driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
 
 
 @then('click delete')

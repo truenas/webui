@@ -567,7 +567,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'content_paste',
       label: this.translate.instant('Download Logs'),
       onClick: (vm: VirtualMachineRow) => {
-        const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
+        const path = `/var/log/libvirt/qemu/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
         this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
           ([_, url]) => {
