@@ -225,7 +225,6 @@
   "Enter the device name of the interface. This cannot be changed after the interface is created.": "",
   "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
   "Enter vm name to continue.": "",
-  "Enter {name} below to confirm.": "",
   "Enter {value} below to confirm.": "",
   "Error deleting dataset {datasetName}.": "",
   "Error importing pool": "",

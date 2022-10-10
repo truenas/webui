@@ -1137,7 +1137,6 @@
   "Enter the username if the SMTP server requires authentication.": "",
   "Enter the version to roll back to.": "",
   "Enter vm name to continue.": "",
-  "Enter {name} below to confirm.": "",
   "Enter {value} below to confirm.": "",
   "Entering <i>0</i> uses the actual file size and requires that the file already exists. Otherwise, specify the file size for the new file.": "",
   "Environment": "",
