@@ -3,12 +3,14 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { UUID } from 'angular2-uuid';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
@@ -46,7 +48,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   suggestableDisks: ManagerDisk[] = [];
   selected: ManagerDisk[] = [];
   vdevs: any = {
-    data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
+    data: [{ disks: [], type: 'data', uuid: UUID.UUID() }], cache: [], spares: [], log: [], special: [], dedup: [],
   };
   originalDisks: ManagerDisk[] = [];
   originalSuggestableDisks: ManagerDisk[] = [];
@@ -78,6 +80,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   loaderOpen = false;
   help = helptext;
   exportedPoolsWarnings: string[] = [];
+
+  shownDataVdevs: { disks: ManagerDisk[]; type: string; uuid: string } [] = [...this.vdevs.data];
+  lastPageChangedEvent: PageEvent;
 
   submitTitle: string = this.translate.instant('Create');
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
@@ -220,6 +225,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.addVdev('data', vdevValues);
         }
         entityDialog.dialogRef.close(true);
+        let pageIndex = 0;
+        let pageSize = 10;
+        if (this.lastPageChangedEvent) {
+          pageIndex = this.lastPageChangedEvent.pageIndex;
+          pageSize = this.lastPageChangedEvent.pageSize;
+        }
+        const offset = pageIndex * pageSize;
+        const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length - offset);
+        this.shownDataVdevs = [...this.vdevs.data.slice(offset, endIndex)];
         setTimeout(() => {
           this.getCurrentLayout();
         }, 500);
@@ -260,6 +274,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.vdevtypeError = `${this.translate.instant(this.vdevtypeErrorMessage)} ${this.translate.instant('First vdev is a {vdevType}, new vdev is {newVdevType}', { vdevType: this.firstDataVdevType, newVdevType: type })}`;
   }
 
+  dataVdevsPageChange(pageEvent: PageEvent): void {
+    this.lastPageChangedEvent = pageEvent;
+    const offset = pageEvent.pageIndex * pageEvent.pageSize;
+    const endIndex = Math.min(offset + pageEvent.pageSize, pageEvent.length - offset);
+    this.shownDataVdevs = [...this.vdevs.data.slice(offset, offset + endIndex)];
+  }
+
   getStripeVdevTypeErrorMsg(group: string): void {
     const vdevType = group === 'special' ? 'metadata' : group;
     this.stripeVdevTypeError = this.translate.instant('A stripe {vdevType} vdev is highly discouraged and will result in data loss if it fails', { vdevType });
@@ -267,6 +288,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   getLogVdevTypeWarningMsg(): void {
     this.logVdevTypeWarning = this.translate.instant('A stripe log vdev may result in data loss if it fails combined with a power outage.');
+  }
+
+  onVdevChanged(changedVdev: { disks: ManagerDisk[]; type: string; uuid: string; group: string }): void {
+    const index = this.vdevs[changedVdev.group].findIndex((vdev: { uuid: string }) => vdev.uuid === changedVdev.uuid);
+    if (index < 0) {
+      return;
+    }
+    this.vdevs.data[index].disks = [...changedVdev.disks];
+    this.vdevs.data[index].type = changedVdev.type;
   }
 
   getPoolData(): void {
@@ -365,6 +395,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       next: (unusedDisks) => {
         this.loader.close();
         this.loaderOpen = false;
+        for (let i = 0; i < 1000; i++) {
+          const disk = { ...unusedDisks[0] };
+          disk.name += i;
+          disk.devname += i;
+          disk.identifier += i;
+          delete disk.exported_zpool;
+          unusedDisks.push(disk);
+        }
         this.disks = unusedDisks.map((disk) => {
           const details: Option[] = [];
           if (disk.rotationrate) {
@@ -412,28 +450,43 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addVdev(group: string, initialValues = {}): void {
+  addVdev(group: string, initialValues: any = {}): void {
     this.dirty = true;
+    initialValues.uuid = UUID.UUID();
     this.vdevs[group].push(initialValues);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
   }
 
-  removeVdev(vdev: VdevComponent): void {
-    let index = null;
-    this.vdevComponents.forEach((item, i) => {
-      if (item === vdev) {
-        index = i;
-      }
-    });
-    if (index !== null) {
-      if (vdev.group === 'data') {
-        this.vdevs[vdev.group].splice(index, 1);
-      } else {
-        this.vdevs[vdev.group] = []; // should only be one cache/spare/log
-      }
+  removeVdev(vdevChanged: VdevComponent): void {
+    const indexRemove = this.vdevs[vdevChanged.group].findIndex(
+      (vdev: { uuid: string }) => vdev.uuid === vdevChanged.uuid,
+    );
+
+    if (indexRemove < 0) {
+      return;
     }
+
+    if (vdevChanged.group === 'data') {
+      this.vdevs[vdevChanged.group].splice(indexRemove, 1);
+    } else {
+      this.vdevs[vdevChanged.group] = []; // should only be one vdev of other groups at one time
+    }
+
+    // let index = null;
+    // this.vdevComponents.forEach((item, i) => {
+    //   if (item === vdevChanged) {
+    //     index = i;
+    //   }
+    // });
+    // if (index !== null) {
+    //   if (vdevChanged.group === 'data') {
+    //     this.vdevs[vdevChanged.group].splice(index, 1);
+    //   } else {
+    //     this.vdevs[vdevChanged.group] = []; // should only be one cache/spare/log
+    //   }
+    // }
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);

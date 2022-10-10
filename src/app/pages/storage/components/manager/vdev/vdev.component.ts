@@ -1,8 +1,10 @@
 import {
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -23,10 +25,16 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['vdev.component.scss'],
 })
 export class VdevComponent implements OnInit {
-  @Input() index: number;
+  @Input() uuid: string;
   @Input() group: string;
   @Input() manager: ManagerComponent;
   @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
+  @Output() vdevChanged: EventEmitter<{
+    disks: ManagerDisk[];
+    type: string;
+    uuid: string;
+    group: string;
+  }> = new EventEmitter();
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;
@@ -77,7 +85,10 @@ export class VdevComponent implements OnInit {
     }
     this.estimateSize();
 
-    this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.vdevChanged.emit({
+        disks: [...this.disks], type: value, uuid: this.uuid, group: this.group,
+      });
       this.onTypeChange();
     });
   }
@@ -99,6 +110,9 @@ export class VdevComponent implements OnInit {
     this.guessVdevType();
     this.estimateSize();
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
+    this.vdevChanged.emit({
+      disks: [...this.disks], type: this.typeControl.value, uuid: this.uuid, group: this.group,
+    });
   }
 
   removeDisk(disk: ManagerDisk): void {
@@ -107,6 +121,9 @@ export class VdevComponent implements OnInit {
     this.guessVdevType();
     this.estimateSize();
     this.manager.getCurrentLayout();
+    this.vdevChanged.emit({
+      disks: [...this.disks], type: this.typeControl.value, uuid: this.uuid, group: this.group,
+    });
   }
 
   guessVdevType(): void {
