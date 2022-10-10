@@ -2,7 +2,6 @@ import {
   Component, AfterViewInit, Input, ElementRef, OnChanges,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -239,15 +238,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     } as GaugeConfig;
     this.cpuAvg = config;
     this.isCpuAvgReady = Boolean(oldData);
-  }
-
-  setPreferences(form: NgForm): void {
-    const filtered: string[] = [];
-    Object.keys(form.value).forEach((i) => {
-      if (form.value[i]) {
-        filtered.push(i);
-      }
-    });
   }
 
   // chart.js renderer
