@@ -1,4 +1,3 @@
-import { parallel } from '@angular/cdk/testing';
 import { IxCheckboxListHarness } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
@@ -57,12 +56,13 @@ export async function getControlValues(
   controlsDict: { [label: string]: SupportedFormControlHarness },
 ): Promise<{ [label: string]: IxFormBasicValueType }> {
   const result: { [label: string]: IxFormBasicValueType } = {};
-  await parallel(() => {
-    return Object.keys(controlsDict).map(async (label) => {
-      const control = controlsDict[label] as IxFormControlHarness;
-      result[label] = await control.getValue() as IxFormBasicValueType;
-    });
-  });
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const label in controlsDict) {
+    const control = controlsDict[label] as IxFormControlHarness;
+
+    result[label] = await control.getValue() as IxFormBasicValueType;
+  }
 
   return result;
 }
@@ -71,15 +71,14 @@ export async function fillControlValues(
   controlsDict: { [label: string]: SupportedFormControlHarness },
   values: { [label: string]: unknown },
 ): Promise<void> {
-  await parallel(() => {
-    return Object.keys(values).map(async (label) => {
-      const control = controlsDict[label] as IxFormControlHarness;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const label in values) {
+    const control = controlsDict[label] as IxFormControlHarness;
 
-      if (!control) {
-        throw new Error(`Could not find control with label ${label}.`);
-      }
+    if (!control) {
+      throw new Error(`Could not find control with label ${label}.`);
+    }
 
-      await control.setValue(values[label]);
-    });
-  });
+    await control.setValue(values[label]);
+  }
 }
