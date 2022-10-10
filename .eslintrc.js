@@ -149,7 +149,6 @@ module.exports = {
             "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
           }
         ],
-        "guard-for-in": "off",
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
