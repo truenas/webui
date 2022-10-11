@@ -42,7 +42,8 @@ export class ZfsInfoCardComponent {
   get canExtendDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
       && this.topologyItem.type === TopologyItemType.Disk
-      && this.topologyCategory === PoolTopologyCategory.Data;
+      && this.topologyCategory === PoolTopologyCategory.Data
+      && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canRemoveDisk(): boolean {
@@ -60,12 +61,14 @@ export class ZfsInfoCardComponent {
 
   get canOfflineDisk(): boolean {
     return this.topologyItem.status !== TopologyItemStatus.Offline
-      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory);
+      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory)
+      && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   get canOnlineDisk(): boolean {
     return this.topologyItem.status !== TopologyItemStatus.Online
-      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory);
+      && ![PoolTopologyCategory.Spare, PoolTopologyCategory.Cache].includes(this.topologyCategory)
+      && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
   constructor(
@@ -105,7 +108,7 @@ export class ZfsInfoCardComponent {
   onOnline(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Online Disk'),
-      message: this.translate.instant('Online disk {name}?', { name: this.disk.devname }),
+      message: this.translate.instant('Online disk {name}?', { name: this.disk?.devname }),
       buttonMsg: this.translate.instant('Online'),
     }).pipe(
       filter(Boolean),
@@ -130,7 +133,7 @@ export class ZfsInfoCardComponent {
   onDetach(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Detach Disk'),
-      message: this.translate.instant('Detach disk {name}?', { name: this.disk.devname }),
+      message: this.translate.instant('Detach disk {name}?', { name: this.disk?.devname }),
       buttonMsg: this.translate.instant('Detach'),
     }).pipe(
       filter(Boolean),

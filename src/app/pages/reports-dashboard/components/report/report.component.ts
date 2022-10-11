@@ -386,12 +386,17 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   handleError(evt: CoreEvent): void {
-    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
-      const err = evt.data.data;
+    const err = evt.data.data;
+    if (evt.data?.data?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
-        large: false,
-        compact: false,
+        title: this.translate.instant('Error getting chart data'),
+        message: err.reason,
+      };
+    }
+    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
+      this.report.errorConf = {
+        type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
         button: {
           label: this.translate.instant('Fix database'),

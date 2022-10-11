@@ -150,7 +150,7 @@ export class EntityUtils {
   }
 
   errorReport(res: WebsocketError | Job, dialog: DialogService): void {
-    if ('trace' in res && res.trace.formatted && dialog) {
+    if ('trace' in res && res.trace?.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
     } else if ('state' in res && res.error && res.exception && dialog) {
       dialog.errorReport(res.state, res.error, res.exception);

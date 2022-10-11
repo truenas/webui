@@ -196,11 +196,18 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
-        const nameA = a.disk.toLowerCase();
-        const nameB = b.disk.toLowerCase();
+      dataNodes.children = dataNodes.children.filter((child) => {
+        return child.disk !== null && child.device !== null;
+      });
 
-        return nameA.localeCompare(nameB);
+      dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
+        if (a.disk && b.disk) {
+          const nameA = a.disk.toLowerCase();
+          const nameB = b.disk.toLowerCase();
+
+          return nameA.localeCompare(nameB);
+        }
+        return undefined;
       });
       this.sortDataNodesByDiskName(dataNodes.children);
     });
