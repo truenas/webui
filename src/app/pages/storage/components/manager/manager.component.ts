@@ -274,7 +274,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.vdevtypeError = `${this.translate.instant(this.vdevtypeErrorMessage)} ${this.translate.instant('First vdev is a {vdevType}, new vdev is {newVdevType}', { vdevType: this.firstDataVdevType, newVdevType: type })}`;
   }
 
-  dataVdevsPageChange(pageEvent: PageEvent): void {
+  onPageChange(pageEvent: PageEvent): void {
     this.lastPageChangedEvent = pageEvent;
     const offset = pageEvent.pageIndex * pageEvent.pageSize;
     const endIndex = Math.min(offset + pageEvent.pageSize, pageEvent.length);
