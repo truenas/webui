@@ -57,6 +57,7 @@ export class DiskTemperatureService extends BaseService {
   }
 
   start() {
+    this.fetch(this.disks.map((v) => v.name));
     let tally = 0;
     this.broadcast = setInterval(() => {
       this.fetch(this.disks.map((v) => v.name));
