@@ -11,10 +11,10 @@ export class DocsService {
       // For some reason # markers are getting a "\" appended to them by the translate service now
       message = message.replace(/\\#/g, '#');
 
-      for (const url in urls) {
+      Object.keys(urls).forEach((url) => {
         const replace = new RegExp('--' + url + '--', 'g');
         message = message.replace(replace, urls[url as keyof typeof urls]);
-      }
+      });
       const runningVersion = window.localStorage.getItem('running_version');
       if (runningVersion) {
         const webVersion = '?runningversion=' + runningVersion;

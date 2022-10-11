@@ -169,9 +169,9 @@ describe('SmbFormComponent', () => {
     await advancedButton.click();
 
     const fields = Object.keys(await form.getControlHarnessesDict());
-    for (const param in formLabels) {
-      expect(fields).toContain(formLabels[param]);
-    }
+    Object.values(formLabels).forEach((label) => {
+      expect(fields).toContain(label);
+    });
   });
 
   it('sets the correct options array for purpose field', async () => {
@@ -203,6 +203,7 @@ describe('SmbFormComponent', () => {
 
     for (let i = 0; i < labels.length; i++) {
       await purposeSelect.setValue(labels[i]);
+      // eslint-disable-next-line no-restricted-syntax
       for (const param in presets[presetKeys[i]].params) {
         if (param === 'auxsmbconf') {
           continue;
@@ -239,12 +240,12 @@ describe('SmbFormComponent', () => {
     const values = await form.getValues();
 
     const existingShareWithLabels: { [key: string]: unknown } = {};
-    for (const key in existingShare) {
+    Object.keys(existingShare).forEach((key) => {
       if (!formLabels[key]) {
-        continue;
+        return;
       }
       existingShareWithLabels[formLabels[key]] = existingShare[key as keyof SmbShare];
-    }
+    });
 
     existingShareWithLabels[formLabels.purpose] = (
       presets[existingShareWithLabels[formLabels.purpose] as string].verbose_name
@@ -344,11 +345,11 @@ describe('SmbFormComponent', () => {
     await advancedButton.click();
 
     const attrs: { [key: string]: unknown } = {};
-    for (const key in existingShare) {
+    Object.keys(existingShare).forEach((key) => {
       if (formLabels[key]) {
         attrs[formLabels[key]] = existingShare[key as keyof SmbShare];
       }
-    }
+    });
 
     attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
     attrs[formLabels.name] = 'ds223';
