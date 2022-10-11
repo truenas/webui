@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
-  Router, NavigationEnd, NavigationCancel,
-} from '@angular/router';
+import { Router, NavigationCancel } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
-import { WebSocketService } from 'app/services';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';
 
@@ -18,7 +15,6 @@ export class AppComponent {
   constructor(
     public title: Title,
     private router: Router,
-    private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
   ) {
     const product = productText.product.trim();
@@ -50,14 +46,6 @@ export class AppComponent {
     }
 
     this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
-      // save currenturl
-      if (event instanceof NavigationEnd) {
-        const navigation = this.router.getCurrentNavigation();
-        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
-          sessionStorage.currentUrl = event.url;
-        }
-      }
-
       if (event instanceof NavigationCancel) {
         const params = new URLSearchParams(event.url.split('#')[1]);
         const isEmbedded = params.get('embedded');
