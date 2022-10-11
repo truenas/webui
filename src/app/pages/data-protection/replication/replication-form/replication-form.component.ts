@@ -21,6 +21,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -1336,10 +1337,7 @@ export class ReplicationFormComponent implements FormConfiguration {
 
     wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
     wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
-    const snapshotTasks = [];
-    for (const item of wsResponse['periodic_snapshot_tasks']) {
-      snapshotTasks.push(item.id);
-    }
+    const snapshotTasks = wsResponse['periodic_snapshot_tasks'].map((item: PeriodicSnapshotTask) => item.id);
     wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
 
     if (wsResponse.schedule) {
@@ -1520,7 +1518,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         data['ssh_credentials'] = null;
       }
 
-      for (const prop in this.queryRes) {
+      Object.keys(this.queryRes).forEach((prop) => {
         if (
           prop !== 'id'
           && prop !== 'state'
@@ -1539,7 +1537,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         if (prop === 'schedule' && data[prop] === false) {
           data[prop] = null;
         }
-      }
+      });
     }
   }
 

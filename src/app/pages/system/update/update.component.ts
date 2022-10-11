@@ -123,10 +123,10 @@ export class UpdateComponent implements OnInit {
             this.check();
           }
 
-          this.trains = [];
-          for (const i in trains.trains) {
-            this.trains.push({ name: i, description: trains.trains[i].description });
-          }
+          this.trains = Object.entries(trains.trains).map(([name, train]) => ({
+            name,
+            description: train.description,
+          }));
           if (this.trains.length > 0) {
             this.singleDescription = this.trains[0].description;
           }

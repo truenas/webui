@@ -193,13 +193,13 @@ export class FileTicketFormComponent implements OnInit {
               this.openSuccessDialog(job.result);
             },
           });
-          for (const file of this.screenshots) {
+          this.screenshots.forEach((file) => {
             this.fileUpload.upload(file, 'support.attach_ticket', [{
               ticket: job.result.ticket,
               filename: file.name,
               token: payload.token,
             }]);
-          }
+          });
         } else {
           this.isFormLoading$.next(false);
           this.slideIn.close();

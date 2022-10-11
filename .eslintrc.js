@@ -135,8 +135,21 @@ module.exports = {
         "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
-        "no-restricted-syntax": "off",
-        "guard-for-in": "off",
+        "no-restricted-syntax": ["error",
+          // TODO: Partially implemented. ForOfStatement is allowed for now.
+          {
+            "selector": "ForInStatement",
+            "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+          },
+          {
+            "selector": "LabeledStatement",
+            "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+          },
+          {
+            "selector": "WithStatement",
+            "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+          }
+        ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
@@ -153,7 +166,6 @@ module.exports = {
           allowSamePrecedence: true
         }],
         "default-case": "off",
-        "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-explicit-any": "off",

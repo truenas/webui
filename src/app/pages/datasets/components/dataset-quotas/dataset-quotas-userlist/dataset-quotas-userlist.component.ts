@@ -129,7 +129,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
 
   private getRemoveQuotaPayload(quotas: DatasetQuota[]): SetDatasetQuota[] {
     const payload: SetDatasetQuota[] = [];
-    for (const quota of quotas) {
+    quotas.forEach((quota) => {
       payload.push({
         id: quota.id.toString(),
         quota_type: DatasetQuotaType.User,
@@ -140,7 +140,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         quota_type: DatasetQuotaType.UserObj,
         quota_value: 0,
       });
-    }
+    });
     return payload;
   }
 
