@@ -1,34 +1,23 @@
-.menu-toggle {
+:host {
   color: var(--fg2);
-}
 
-.toolbar-control {
-  ::ng-deep .form-element {
-    align-items: center;
-    display: inline-flex;
-    gap: 8px;
-    justify-content: center;
-
-    mat-label {
-      line-height: 24px;
-    }
-
-    .mat-form-field-flex {
-      align-items: center;
-    }
-
-    .mat-form-field-infix {
-      align-items: center;
-      display: flex;
-      width: 120px;
-    }
+  .menu-toggle {
+    color: var(--fg2);
   }
 }
 
-::ng-deep .reports-dash-global-controls {
+.reports-toolbar ::ng-deep {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: row;
   gap: 12px;
 
   ix-slide-toggle {
+    align-items: center;
+    display: flex;
+    margin: 0;
+    min-height: 36px;
+
     .mat-slide-toggle-content {
       font-family: var(--font-family-body);
     }
@@ -39,24 +28,16 @@
     margin: 0;
     padding: 0;
 
-    .full-width {
-      align-items: center;
-      display: flex;
-    }
-
     .input-container {
-      min-width: 150px;
-    }
-
-    ix-label .label {
-      font-size: 12px;
-      line-height: 2;
+      width: 180px;
     }
   }
 }
 
-::ng-deep .reports-menu .mat-menu-item {
-  &.selected {
-    background-color: var(--primary);
+.reports-menu ::ng-deep {
+  .mat-menu-item {
+    &.selected {
+      background-color: var(--primary);
+    }
   }
 }

@@ -28,7 +28,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     devices: [[] as string[]],
     metrics: [[] as string[]],
   });
-
   activeTab: ReportTab;
   selectedDisks: string[];
   allTabs: ReportTab[] = this.reportsService.getReportTabs();
@@ -69,26 +68,24 @@ export class ReportsGlobalControlsComponent implements OnInit {
     if (this.activeTab.value !== ReportType.Disk) {
       return;
     }
-    if (this.route.snapshot.queryParams?.disks) {
-      this.selectedDisks = this.route.snapshot.queryParams.disks;
-    } else {
-      this.selectedDisks = this.form.value.devices;
-    }
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
       this.diskOptionsChanged.emit({
         devices: values.devices,
         metrics: values.metrics,
       });
     });
-    this.setupDisksToolbar();
-  }
-
-  private setupDisksToolbar(): void {
-    this.diskDevices$.pipe(untilDestroyed(this)).subscribe((diskDevices) => {
-      this.form.patchValue({ devices: diskDevices.map((device) => `${device.value}`) });
+    this.diskDevices$.pipe(untilDestroyed(this)).subscribe((disks) => {
+      const disksNames = this.route.snapshot.queryParams.disks;
+      let devices: string[];
+      if (disksNames) {
+        devices = Array.isArray(disksNames) ? disksNames : [disksNames];
+      } else {
+        devices = disks.map((device) => String(device.value));
+      }
+      this.form.patchValue({ devices });
     });
-    this.diskMetrics$.pipe(untilDestroyed(this)).subscribe((diskMetrics) => {
-      this.form.patchValue({ metrics: diskMetrics.map((device) => `${device.value}`) });
+    this.diskMetrics$.pipe(untilDestroyed(this)).subscribe((metrics) => {
+      this.form.patchValue({ metrics: metrics.map((device) => String(device.value)) });
     });
   }
 

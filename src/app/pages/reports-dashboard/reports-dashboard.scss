@@ -54,10 +54,6 @@ ul.ct-legend {
   top: -2em !important;
 }
 
-.reports-dash-global-controls {
-  color: var(--fg2);
-}
-
 .mat-card.ghost-card {
   min-height: 430px;
 }
@@ -66,17 +62,6 @@ ul.ct-legend {
   font-size: 24px;
   line-height: normal;
   margin-bottom: 4px;
-}
-
-nav.reports-toolbar {
-  background-color: var(--alt-bg1);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
-  left: 0;
-  padding: 4px 32px;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 2;
 }
 
 .master-container {

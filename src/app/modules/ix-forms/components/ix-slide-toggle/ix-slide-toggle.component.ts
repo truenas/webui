@@ -16,7 +16,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 })
 export class IxSlideToggleComponent implements ControlValueAccessor {
   @Input() label: string;
-  @Input() labelPosition: 'before' | 'after' = 'after';
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;

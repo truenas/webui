@@ -31,12 +31,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   diskReports: Report[] = [];
   otherReports: Report[] = [];
   activeReports: Report[] = [];
-
-  allTabs: ReportTab[] = this.reportsService.getReportTabs();
-  activeTab: ReportTab = this.allTabs[0];
-
   visibleReports: number[] = [];
-
+  allTabs: ReportTab[] = this.reportsService.getReportTabs();
   diskDevices: Option[] = [];
   diskMetrics: Option[] = [];
   hasUps = false;
@@ -114,8 +110,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   activateTab(activeTab: ReportTab): void {
-    this.activeTab = activeTab;
-
     const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
         let condition;
