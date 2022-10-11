@@ -77,7 +77,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   // dygraph renderer
   renderGraph(update?: boolean): void {
-    if (!this.data) {
+    if (!this.data?.legend) {
       return;
     }
 
