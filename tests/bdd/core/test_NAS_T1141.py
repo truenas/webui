@@ -18,8 +18,8 @@ from pytest_bdd import (
     parsers
 )
 
-# import pytest
-# pytestmark = [pytest.mark.debug_test]
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1141.feature', 'Verify Google Drive Cloud Sync task works')
@@ -280,15 +280,15 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
 @then(parsers.parse('click on {folder1} then click on the test folder'))
 def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     """click on {folder1} then click on the test folder."""
-    assert wait_on_element(driver, 5, f'//div[text()="{folder1}"]', 'clickable')
+    assert wait_on_element(driver, 5, f'//div[@data-tooltip="Google Drive Folder: {folder1}"]', 'clickable')
     action = ActionChains(driver)
-    action.double_click(driver.find_element_by_xpath(f'//div[text()="{folder1}"]')).perform()
-    assert wait_on_element(driver, 7, f'//div[@aria-label="{folder1}"]')
+    action.double_click(driver.find_element_by_xpath(f'//div[@data-tooltip="Google Drive Folder: {folder1}"]')).perform()
+    assert wait_on_element(driver, 7, f'//div[@data-tooltip="{folder1}" and @role="button"]')
     time.sleep(1)
-    assert wait_on_element(driver, 7, '//div[text()="initial"]', 'clickable')
-    assert wait_on_element(driver, 5, '//div[text()="test"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[@data-tooltip="Google Drive Folder: initial"]', 'clickable')
+    assert wait_on_element(driver, 5, '//div[@data-tooltip="Google Drive Folder: test"]', 'clickable')
     action = ActionChains(driver)
-    action.double_click(driver.find_element_by_xpath('//div[text()="test"]')).perform()
+    action.double_click(driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: test"]')).perform()
     time.sleep(1)
 
 
