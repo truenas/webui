@@ -215,7 +215,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           }
         }
         for (let i = 0; i < value.vdevs; i++) {
-          const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType };
+          const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType, uuid: UUID.UUID };
           for (let n = 0; n < this.firstDataVdevDisknum; n++) {
             const duplicateDisk = duplicableDisks.shift();
             vdevValues.disks.push(duplicateDisk);
@@ -232,8 +232,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           pageSize = this.lastPageChangedEvent.pageSize;
         }
         const offset = pageIndex * pageSize;
-        const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length - offset);
-        this.shownDataVdevs = [...this.vdevs.data.slice(offset, endIndex)];
+        const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length);
+        this.shownDataVdevs = _.cloneDeep(this.vdevs.data.slice(offset, endIndex));
         setTimeout(() => {
           this.getCurrentLayout();
         }, 500);
@@ -277,8 +277,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   dataVdevsPageChange(pageEvent: PageEvent): void {
     this.lastPageChangedEvent = pageEvent;
     const offset = pageEvent.pageIndex * pageEvent.pageSize;
-    const endIndex = Math.min(offset + pageEvent.pageSize, pageEvent.length - offset);
-    this.shownDataVdevs = [...this.vdevs.data.slice(offset, offset + endIndex)];
+    const endIndex = Math.min(offset + pageEvent.pageSize, pageEvent.length);
+    this.shownDataVdevs = _.cloneDeep(this.vdevs.data.slice(offset, endIndex));
   }
 
   getStripeVdevTypeErrorMsg(group: string): void {
