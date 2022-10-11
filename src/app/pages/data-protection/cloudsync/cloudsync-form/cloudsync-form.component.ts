@@ -249,8 +249,8 @@ export class CloudsyncFormComponent {
                 }
 
                 this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
-                  next: (subitems) => {
-                    this.bucketOptions$ = of(subitems.map((subitem) => ({ label: subitem.Name, value: subitem.Path })));
+                  next: (buckets) => {
+                    this.bucketOptions$ = of(buckets.map((bucket) => ({ label: bucket.Name, value: bucket.Path })));
                     this.isLoading = false;
                     this.form.controls.bucket.enable();
                     this.form.controls.bucket_input.disable();
