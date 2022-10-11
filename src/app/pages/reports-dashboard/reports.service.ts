@@ -2,7 +2,12 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
+import {
+  map, Observable, shareReplay, BehaviorSubject,
+} from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { Option } from 'app/interfaces/option.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { getReportTypeLabels, ReportTab } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -33,6 +38,8 @@ export enum ReportingDatabaseError {
 export class ReportsService implements OnDestroy {
   serverTime: Date;
   showTimeDiffWarning = false;
+  private reportingGraphs$ = new BehaviorSubject([]);
+  private diskMetrics$ = new BehaviorSubject([]);
   private reportsUtils: Worker;
 
   constructor(
@@ -87,6 +94,10 @@ export class ReportsService implements OnDestroy {
       }
     };
 
+    this.ws.call('reporting.graphs').subscribe((reportingGraphs) => {
+      this.reportingGraphs$.next(reportingGraphs);
+    });
+
     this.store$.pipe(waitForSystemInfo).subscribe((systemInfo) => {
       const now = Date.now();
       const datetime = systemInfo.datetime.$date;
@@ -134,5 +145,31 @@ export class ReportsService implements OnDestroy {
     return Array.from(getReportTypeLabels(this.translate)).map(([value, label]) => {
       return { value, label } as ReportTab;
     });
+  }
+
+  getDiskDevices(): Observable<Option[]> {
+    return this.ws.call('disk.query').pipe(
+      map((disks) => {
+        return disks
+          .filter((disk) => !disk.devname.includes('multipath'))
+          .map((disk) => {
+            const [value] = disk.devname.split(' ');
+            return { label: disk.devname, value };
+          });
+      }),
+      shareReplay({ refCount: true, bufferSize: 1 }),
+    );
+  }
+
+  getReportGraphs(): Observable<ReportingGraph[]> {
+    return this.reportingGraphs$.asObservable();
+  }
+
+  setDiskMetrics(options: Option[]): void {
+    this.diskMetrics$.next(options);
+  }
+
+  getDiskMetrics(): Observable<Option[]> {
+    return this.diskMetrics$.asObservable();
   }
 }

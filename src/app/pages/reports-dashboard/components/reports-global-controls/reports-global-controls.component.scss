@@ -25,6 +25,38 @@
   }
 }
 
-.reports-dash-global-controls {
+::ng-deep .reports-dash-global-controls {
   gap: 12px;
+
+  ix-slide-toggle {
+    .mat-slide-toggle-content {
+      font-family: var(--font-family-body);
+    }
+  }
+
+  ix-select {
+    display: flex;
+    margin: 0;
+    padding: 0;
+
+    .full-width {
+      align-items: center;
+      display: flex;
+    }
+
+    .input-container {
+      min-width: 150px;
+    }
+
+    ix-label .label {
+      font-size: 12px;
+      line-height: 2;
+    }
+  }
+}
+
+::ng-deep .reports-menu .mat-menu-item {
+  &.selected {
+    background-color: var(--primary);
+  }
 }

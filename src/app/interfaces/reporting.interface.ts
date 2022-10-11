@@ -105,11 +105,16 @@ export interface ReportingConfig {
   id: number;
 }
 
+export interface ReportingTimeFrame {
+  start: number;
+  end: number;
+}
+
 export type ReportingConfigUpdate = Omit<ReportingConfig, 'id'>;
 
 export type ReportingQueryParams = [
   [ReportingParams],
-  { start: number; end: number },
+  ReportingTimeFrame,
 ];
 
 export interface ReportingParams {
