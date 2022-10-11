@@ -57,14 +57,14 @@ export class IxFormHarness extends ComponentHarness {
 
   async getDisabledState(): Promise<{ [label: string]: boolean }> {
     const controlsDict = await this.getControlHarnessesDict();
-    const result: { [label: string]: boolean } = {};
 
-    await parallel(() => {
-      return Object.keys(controlsDict).map(async (label) => {
-        const control = controlsDict[label] as IxFormControlHarness;
-        result[label] = await control.isDisabled();
-      });
-    });
+    const result: { [label: string]: boolean } = {};
+    // eslint-disable-next-line guard-for-in,no-restricted-syntax
+    for (const label in controlsDict) {
+      const control = controlsDict[label] as IxFormControlHarness;
+
+      result[label] = await control.isDisabled();
+    }
 
     return result;
   }
