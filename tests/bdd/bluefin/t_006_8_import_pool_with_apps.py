@@ -78,5 +78,5 @@ def test_import_pool_with_apps(driver):
 
     # Verify the application has stopped
     assert wait_on_element(driver, 5, '//h1[contains(.,"Starting")]')
-    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Starting")]')
+    assert wait_on_element_disappear(driver, 90, '//h1[contains(.,"Starting")]')
     assert wait_on_element(driver, 15, '//mat-card[contains(.,"minio-test")]//span[contains(.,"ACTIVE")]')
