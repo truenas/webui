@@ -54,7 +54,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   originalSuggestableDisks: ManagerDisk[] = [];
   error: string;
 
-  @ViewChild('paginator', { static: true }) paginator: MatPaginator;
+  @ViewChild('paginator') paginator: MatPaginator;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   // TODO: Rename to something more readable
@@ -350,7 +350,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.addVdev('data', { disks: [], type: this.firstDataVdevType || 'data', uuid: UUID.UUID() });
     this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
       next: (algorithms) => {
         for (const algorithm in algorithms) {
@@ -393,6 +392,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.addVdev('data', { disks: [], type: this.firstDataVdevType || 'data', uuid: UUID.UUID() });
+
     this.loader.open();
     this.loaderOpen = true;
     this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe({
