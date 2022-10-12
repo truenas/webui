@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AclMode, AclType } from 'app/enums/acl-type.enum';
+import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
@@ -1653,18 +1653,8 @@ export class DatasetFormComponent implements FormConfiguration {
               }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
                 if (confirmed) {
                   this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
-                    next: ({ acltype }) => {
-                      if (acltype === AclType.Posix1e) {
-                        this.router.navigate(
-                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                          { queryParams: { default: parentPath } },
-                        );
-                      } else {
-                        this.router.navigate(
-                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                          { queryParams: { default: parentPath } },
-                        );
-                      }
+                    next: () => {
+                      this.router.navigate(['/', 'datasets', restPostResp.name, 'permissions', 'acl']);
                     },
                     error: this.handleError,
                   });
