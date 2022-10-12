@@ -273,14 +273,14 @@ export class SmbFormComponent implements OnInit {
     if (!this.presets[preset]) {
       return;
     }
-    for (const param in this.presets[preset].params) {
+    Object.keys(this.presets[preset].params).forEach((param) => {
       this.presetFields.push(param as keyof SmbShare);
       const ctrl = this.form.get(param);
       if (ctrl && param !== 'auxsmbconf') {
         ctrl.setValue(this.presets[preset].params[param as keyof SmbShare]);
         ctrl.disable();
       }
-    }
+    });
   }
 
   /**
@@ -291,13 +291,10 @@ export class SmbFormComponent implements OnInit {
     return this.ws.call('sharing.smb.presets').pipe(
       switchMap((presets) => {
         this.presets = presets;
-        const options: Option[] = [];
-        for (const presetName in presets) {
-          options.push({
-            label: presets[presetName].verbose_name,
-            value: presetName,
-          });
-        }
+        const options = Object.entries(presets).map(([presetName, preset]) => ({
+          label: preset.verbose_name,
+          value: presetName,
+        }));
         this.purposeOptions$ = of(options);
         this.form
           .get('purpose')

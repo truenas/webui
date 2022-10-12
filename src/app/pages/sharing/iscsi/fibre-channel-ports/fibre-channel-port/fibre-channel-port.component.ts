@@ -124,11 +124,11 @@ export class FibreChannelPortComponent implements OnInit {
         this.formGroup.controls['target'].updateValueAndValidity();
       }
     });
-    for (const i in this.config) {
+    Object.keys(this.config).forEach((i) => {
       if (this.formGroup.controls[i]) {
         this.formGroup.controls[i].setValue(this.config[i as keyof FibreChannelPortUpdate]);
       }
-    }
+    });
   }
 
   isShow(field: string): boolean {

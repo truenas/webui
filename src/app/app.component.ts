@@ -21,10 +21,10 @@ export class AppComponent {
     @Inject(WINDOW) private window: Window,
   ) {
     const product = productText.product.trim();
-    this.title.setTitle(product + ' - ' + window.location.hostname);
-    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    this.title.setTitle(product + ' - ' + this.window.location.hostname);
+    const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
-    const savedProductType = window.localStorage.product_type;
+    const savedProductType = this.window.localStorage.product_type;
     if (savedProductType) {
       const cachedType = savedProductType.toLowerCase();
       path = `assets/images/truenas_${cachedType}_favicon.png`;
@@ -71,7 +71,7 @@ export class AppComponent {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {
-        window.location.reload();
+        this.window.location.reload();
       }
       console.error(err);
     };

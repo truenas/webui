@@ -90,25 +90,18 @@ export class PortalListComponent implements EntityTableConfig {
   }
 
   prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      await lastValueFrom(this.iscsiService.getIpChoices()).then(
-        (ips) => {
-          this.ipChoices = ips;
-          resolve(true);
-        },
-        () => {
-          resolve(true);
-        },
-      );
+    return lastValueFrom(this.iscsiService.getIpChoices()).then((ips) => {
+      this.ipChoices = ips;
+      return true;
     });
   }
 
   dataHandler(entityTable: EntityTableComponent): void {
     entityTable.rows.forEach((row) => {
-      for (const ip in row.listen) {
+      Object.keys(row.listen).forEach((ip) => {
         const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
         row.listen[ip] = listenIp + ':' + row.listen[ip].port;
-      }
+      });
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,7 @@ import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -91,6 +92,7 @@ export class UpdateComponent implements OnInit {
     public translate: TranslateService,
     protected storage: StorageService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
@@ -121,10 +123,10 @@ export class UpdateComponent implements OnInit {
             this.check();
           }
 
-          this.trains = [];
-          for (const i in trains.trains) {
-            this.trains.push({ name: i, description: trains.trains[i].description });
-          }
+          this.trains = Object.entries(trains.trains).map(([name, train]) => ({
+            name,
+            description: train.description,
+          }));
           if (this.trains.length > 0) {
             this.singleDescription = this.trains[0].description;
           }
@@ -517,8 +519,8 @@ export class UpdateComponent implements OnInit {
   }
 
   update(): void {
-    window.sessionStorage.removeItem('updateLastChecked');
-    window.sessionStorage.removeItem('updateAvailable');
+    this.window.sessionStorage.removeItem('updateLastChecked');
+    this.window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.isHa) {

@@ -98,7 +98,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
-import { AppLoaderService, DocsService, JobService } from 'app/services';
+import { AppLoaderService, JobService } from 'app/services';
 
 @NgModule({
   imports: [
@@ -225,7 +225,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
   providers: [
     EntityFormService,
     AppLoaderService,
-    DocsService,
     JobService,
     TableService,
   ],

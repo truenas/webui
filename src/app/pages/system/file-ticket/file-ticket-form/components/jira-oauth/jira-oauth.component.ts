@@ -1,8 +1,9 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, Inject,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { WINDOW } from 'app/helpers/window.helper';
 import { OauthJiraMessage } from 'app/interfaces/support.interface';
 
 @Component({
@@ -32,6 +33,7 @@ export class JiraOauthComponent implements ControlValueAccessor {
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -47,9 +49,9 @@ export class JiraOauthComponent implements ControlValueAccessor {
   initSession(): void {
     const authFn = (message: OauthJiraMessage): void => this.doAuth(message);
 
-    window.removeEventListener('message', authFn, false);
-    window.open('https://support-proxy.ixsystems.com/oauth/initiate?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
-    window.addEventListener('message', authFn, false);
+    this.window.removeEventListener('message', authFn, false);
+    this.window.open('https://support-proxy.ixsystems.com/oauth/initiate?origin=' + encodeURIComponent(this.window.location.toString()), '_blank', 'width=640,height=480');
+    this.window.addEventListener('message', authFn, false);
   }
 
   doAuth(message: OauthJiraMessage): void {

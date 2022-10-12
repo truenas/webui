@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  Inject,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -15,6 +16,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { filter, take } from 'rxjs/operators';
 import { productTypeLabels } from 'app/enums/product-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -73,6 +75,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     private viewContainerRef: ViewContainerRef,
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
+    @Inject(WINDOW) private window: Window,
   ) {
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
@@ -111,11 +114,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     const navigationHold = document.getElementById('scroll-area');
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
-    if (window.navigator.platform.toLowerCase() === 'win32') {
+    if (this.window.navigator.platform.toLowerCase() === 'win32') {
       navigationHold.addEventListener('wheel', (event) => {
         // deltaY is 1 for page scrolling and 33.3 per line for regular scrolling; default is 100, or 3 lines at a time
         if (event.deltaY === 1 || event.deltaY === -1) {
-          navigationHold.scrollBy(0, event.deltaY * window.innerHeight);
+          navigationHold.scrollBy(0, event.deltaY * this.window.innerHeight);
         }
       });
     }

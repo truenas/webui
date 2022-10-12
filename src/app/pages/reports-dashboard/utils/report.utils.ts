@@ -33,11 +33,11 @@ export function formatData(data: ReportingData): ReportingData {
   switch (data.name) {
     case 'interface':
       if (data.aggregations) {
-        for (const key in data.aggregations) {
+        Object.keys(data.aggregations).forEach((key) => {
           _.set(data.aggregations, key, data.aggregations[key as ReportingAggregationKeys].map(
             (value) => formatInterfaceUnit(value),
           ));
-        }
+        });
       }
       break;
     default:

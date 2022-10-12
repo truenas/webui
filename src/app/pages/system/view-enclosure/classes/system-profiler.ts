@@ -218,9 +218,9 @@ export class SystemProfiler {
   }
 
   storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: TopologyItemStats }): void {
-    for (const diskName in vdev.disks) {
+    Object.keys(vdev.disks).forEach((diskName) => {
       this.addVdevToDiskInfo(diskName, vdev, stats[diskName]);
-    }
+    });
   }
 
   addVdevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: TopologyItemStats): void {

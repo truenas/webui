@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import {
@@ -593,21 +594,17 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       });
     });
 
-    this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+    this.ws.call('certificate.ec_curve_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
       const ecCurvesConfig = this.getTarget('ec_curve') as FormSelectConfig;
-      for (const key in choices) {
-        ecCurvesConfig.options.push({ label: choices[key], value: key });
-      }
+      ecCurvesConfig.options = options;
     });
 
-    this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.country = this.getTarget('country') as FormSelectConfig;
-      for (const item in choices) {
-        this.country.options.push(
-          { label: choices[item], value: item },
-        );
-      }
-    });
+    this.systemGeneralService.getCertificateCountryChoices()
+      .pipe(choicesToOptions(), untilDestroyed(this))
+      .subscribe((options) => {
+        this.country = this.getTarget('country') as FormSelectConfig;
+        this.country.options = options;
+      });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages') as FormSelectConfig;
     this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {

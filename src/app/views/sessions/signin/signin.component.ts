@@ -109,7 +109,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (this.canLogin()) {
         this.loginToken();
       }
-      window.localStorage.setItem('product_type', this.productType);
+      this.window.localStorage.setItem('product_type', this.productType);
     });
   }
 
