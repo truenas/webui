@@ -53,7 +53,7 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
         if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
-          this.window.localStorage.setItem('redirectUrl', event.url);
+          this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }
 

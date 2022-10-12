@@ -72,7 +72,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   reasonText = helptext.ha_disabled_reasons;
   haStatusText = this.translate.instant('Checking HA status');
   haStatus = false;
-  redirectUrl = this.window.localStorage.getItem('redirectUrl');
+  redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
 
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;

@@ -18,7 +18,7 @@ export class AuthService implements CanActivate {
       return true;
     }
 
-    this.window.localStorage.setItem('redirectUrl', state.url);
+    this.window.sessionStorage.setItem('redirectUrl', state.url);
     this.router.navigate(['/sessions/signin']);
 
     return false;
