@@ -18,7 +18,6 @@
             [tooltip]="helptext.direction_tooltip | translate"
             [required]="true"
             [options]="directionOptions$"
-            (valueChanged)="onSelect()"
           ></ix-select>
           <ix-select
             *ngIf="form.controls.transfer_mode.enabled"

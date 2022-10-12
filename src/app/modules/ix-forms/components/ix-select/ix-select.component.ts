@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, EventEmitter, Input, OnChanges, Output,
+  Component, Input, OnChanges,
 } from '@angular/core';
 import {
   ControlValueAccessor, UntypedFormControl, NgControl,
 } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -30,7 +29,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
-  @Output() valueChanged = new EventEmitter<MatSelectChange>();
 
   formControl = new UntypedFormControl(this).value as UntypedFormControl;
   isDisabled = false;
@@ -91,9 +89,5 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
 
   get isLoadingState(): boolean {
     return this.isLoading || !this.options;
-  }
-
-  selectionChange(val: MatSelectChange): void {
-    this.valueChanged.emit(val);
   }
 }
