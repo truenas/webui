@@ -228,12 +228,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.addVdev('data', vdevValues);
         }
         entityDialog.dialogRef.close(true);
-        let pageIndex = 0;
-        let pageSize = 10;
-        if (this.lastPageChangedEvent) {
-          pageIndex = this.lastPageChangedEvent.pageIndex;
-          pageSize = this.lastPageChangedEvent.pageSize;
-        }
+        const pageIndex = this.lastPageChangedEvent.pageIndex;
+        const pageSize = this.lastPageChangedEvent.pageSize;
         const offset = pageIndex * pageSize;
         const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length);
         this.shownDataVdevs = _.cloneDeep(this.vdevs.data.slice(offset, endIndex));
@@ -852,7 +848,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
-  removeCounter = 0;
   removeDisk(diskToRemove: ManagerDisk): void {
     const index = this.disks.findIndex((disk) => disk.devname === diskToRemove.devname);
     if (index >= 0) {
