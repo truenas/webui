@@ -178,7 +178,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private updateInputValue(): void {
-    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
+    this.inputValue = Array.isArray(this.value) ? this.value?.join(',') : this.value || '';
   }
 
   private selectTreeNodes(nodeIds: string[]): void {
