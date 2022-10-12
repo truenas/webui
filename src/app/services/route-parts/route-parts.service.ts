@@ -8,6 +8,7 @@ export interface RoutePart {
   title: string;
   breadcrumb: string;
   url: string;
+  ngUrl?: string[];
   disabled?: boolean;
 }
 
@@ -27,6 +28,7 @@ export class RoutePartsService {
 
   private generateRouteParts(route: ActivatedRoute, url = '', routeParts: RoutePart[] = []): RoutePart[] {
     const children: ActivatedRoute[] = route.children;
+    const ngUrl: string[] = [url];
 
     if (children.length === 0) {
       return routeParts;
@@ -36,12 +38,17 @@ export class RoutePartsService {
       const routeUrl: string = child.snapshot.url.map((segment) => segment.path).join('/');
       if (routeUrl) {
         url += `/${routeUrl}`;
+        ngUrl.push(routeUrl);
       }
 
       const { title, breadcrumb, disabled } = child.snapshot.data;
       if (title) {
         routeParts.push({
-          title, breadcrumb, disabled, url,
+          title,
+          breadcrumb,
+          disabled,
+          url,
+          ngUrl,
         });
       }
 
