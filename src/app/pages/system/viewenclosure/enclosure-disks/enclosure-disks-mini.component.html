@@ -1,12 +1,13 @@
 <mat-card
-  class="view-card {{chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
-  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
-  id="{{currentTab.alias}}"
-  (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
-  ngClass.xs="xs">
+  ngClass.xs="xs"
+  class="view-card {{chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
+  id="{{currentTab.alias}}"
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  (window:resize)="onResize($event)"
+>
 
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
@@ -28,7 +29,7 @@
       <div class="header-container" id="legend">
         <h3 class="header">Pools</h3>
         <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-          <div class="legend-item" *ngFor="let pool of enclosurePools; let i=index">
+          <div *ngFor="let pool of enclosurePools; let i=index" class="legend-item">
             <div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
             </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
         </div>
