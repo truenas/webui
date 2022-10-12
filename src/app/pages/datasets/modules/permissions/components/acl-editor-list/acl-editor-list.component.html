@@ -2,7 +2,7 @@
   {{ 'Access Control List' | translate }}
 </div>
 <div class="acl-list">
-  <div *ngIf="!acl.acl.length; else aclList" class="empty-message">
+  <div *ngIf="!acl?.acl?.length; else aclList" class="empty-message">
     {{ 'The list is empty.' | translate }}
   </div>
   <ng-template #aclList>

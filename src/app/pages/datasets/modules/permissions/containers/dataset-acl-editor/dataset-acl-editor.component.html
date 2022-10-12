@@ -81,7 +81,7 @@
                 </button>
 
                 <a
-                  *ngIf="acl.trivial; else stripButton"
+                  *ngIf="acl?.trivial; else stripButton"
                   mat-button
                   class="action"
                   [routerLink]="['/datasets/permissions/edit', datasetPath]"
@@ -115,7 +115,7 @@
                   mat-button
                   color="primary"
                   class="action"
-                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
+                  [disabled]="acesWithError.length > 0 || !acl?.acl?.length || ownerFormGroup.invalid"
                   (click)="onSavePressed()"
                 >
                   {{ 'Save Access Control List' | translate }}
@@ -125,7 +125,7 @@
           </div>
         </div>
         <div class="column-right">
-          <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
+          <ng-container *ngIf="acl?.acl?.[selectedAceIndex] as selectedAce">
             <ix-edit-nfs-ace
               *ngIf="isNfsAcl; else posixAcl"
               [ace]="selectedAce | cast"
