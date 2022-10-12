@@ -54,7 +54,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     return mountpoints$.pipe(
       tap((mountpoint) => {
         this.patchState({
-          ...initialState,
           mountpoint,
           isLoading: true,
         });

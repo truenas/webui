@@ -82,12 +82,9 @@ export class DatasetAclEditorComponent implements OnInit {
       .subscribe((state) => {
         const isFirstLoad = !this.acl && state.acl;
         this.isLoading = state.isLoading;
+        this.acl = state.acl;
         this.selectedAceIndex = state.selectedAceIndex;
         this.acesWithError = state.acesWithError;
-
-        if (state.acl) {
-          this.acl = state.acl;
-        }
 
         if (isFirstLoad) {
           this.onFirstLoad();
