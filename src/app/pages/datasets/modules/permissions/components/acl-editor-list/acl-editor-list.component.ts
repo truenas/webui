@@ -36,9 +36,9 @@ export class AclEditorListComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.aces = this.acl?.acl;
-    if (this.acl?.acltype === AclType.Nfs4) {
-      this.permissionItems = this.acl?.acl?.map((ace) => {
+    this.aces = this.acl.acl;
+    if (this.acl.acltype === AclType.Nfs4) {
+      this.permissionItems = this.acl.acl.map((ace) => {
         if (ace.tag === NfsAclTag.Owner) {
           return nfsAceToPermissionItem(this.translate, { ...ace, who: this.owner });
         }
@@ -49,7 +49,7 @@ export class AclEditorListComponent implements OnChanges {
         return nfsAceToPermissionItem(this.translate, ace);
       });
     } else {
-      this.permissionItems = this.acl?.acl?.map((ace) => {
+      this.permissionItems = this.acl.acl.map((ace) => {
         if (ace.tag === PosixAclTag.UserObject) {
           return posixAceToPermissionItem(this.translate, { ...ace, who: this.owner });
         }
@@ -66,14 +66,14 @@ export class AclEditorListComponent implements OnChanges {
    * POSIX acl must have at least one of each: USER_OBJ, GROUP_OBJ and OTHER.
    */
   canBeRemoved(aceToRemove: NfsAclItem | PosixAclItem): boolean {
-    if (this.acl?.acltype === AclType.Nfs4) {
+    if (this.acl.acltype === AclType.Nfs4) {
       return true;
     }
 
     let hasAnotherUserObj = false;
     let hasAnotherGroupObj = false;
     let hasAnotherOtherAce = false;
-    this.acl?.acl?.forEach((ace) => {
+    this.acl.acl.forEach((ace) => {
       if (ace === aceToRemove) {
         return;
       }

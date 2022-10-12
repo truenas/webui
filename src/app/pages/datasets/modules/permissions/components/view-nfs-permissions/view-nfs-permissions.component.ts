@@ -46,7 +46,7 @@ export class ViewNfsPermissionsComponent implements OnChanges {
     this.permissionItems = [];
     this.permissionDetails = [];
 
-    this.acl?.acl?.forEach((ace) => {
+    this.acl.acl.forEach((ace) => {
       this.permissionItems.push(nfsAceToPermissionItem(this.translate, ace));
       this.permissionDetails.push(this.aceToPermissionDetails(ace));
     });

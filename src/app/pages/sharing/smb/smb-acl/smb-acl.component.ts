@@ -140,7 +140,7 @@ export class SmbAclComponent {
       .subscribe({
         next: (shareAcls) => {
           this.shareAclId = shareAcls[0]?.id;
-          shareAcls[0]?.share_acl?.forEach((ace, i) => {
+          shareAcls[0]?.share_acl.forEach((ace, i) => {
             this.addAce();
             this.form.controls.entries.at(i).patchValue({
               ae_who_sid: ace.ae_who_sid,

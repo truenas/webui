@@ -50,7 +50,7 @@ export class DatasetAclEditorComponent implements OnInit {
   });
 
   get isNfsAcl(): boolean {
-    return this.acl?.acltype === AclType.Nfs4;
+    return this.acl.acltype === AclType.Nfs4;
   }
 
   get isHomeShare(): boolean {
@@ -171,7 +171,7 @@ export class DatasetAclEditorComponent implements OnInit {
    * Prompt for empty acl, user navigating from trivial form
    */
   private showPresetModalIfNeeded(): void {
-    const needModal = !this.acl?.acl?.length || this.acl?.trivial;
+    const needModal = !this.acl.acl.length || this.acl.trivial;
 
     if (!needModal) {
       return;
