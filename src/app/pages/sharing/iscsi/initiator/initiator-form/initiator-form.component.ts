@@ -119,18 +119,18 @@ export class InitiatorFormComponent implements OnInit {
       this.ws.call(this.queryCall, this.customFilter as [[QueryFilter<IscsiInitiatorGroup>]])
         .pipe(untilDestroyed(this))
         .subscribe({
-          next: (res) => {
-            for (const i in res[0]) {
+          next: (groups) => {
+            Object.keys(groups[0]).forEach((i) => {
               const ctrl = this.formGroup.controls[i];
               if (ctrl) {
                 if (i === 'initiators') {
-                  ctrl.setValue(new Set(res[0][i]));
+                  ctrl.setValue(new Set(groups[0][i]));
                 } else {
-                  ctrl.setValue(res[0][i as keyof IscsiInitiatorGroup]);
+                  ctrl.setValue(groups[0][i as keyof IscsiInitiatorGroup]);
                 }
               }
-            }
-            if (res[0]['initiators'].length === 0) {
+            });
+            if (groups[0]['initiators'].length === 0) {
               this.formGroup.controls['all'].setValue(true);
             }
           },

@@ -598,13 +598,7 @@ export class VmWizardComponent implements WizardConfiguration {
       cpuModel.isHidden = false;
 
       this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
-        for (const model in models) {
-          cpuModel.options.push(
-            {
-              label: model, value: model,
-            },
-          );
-        }
+        cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
       });
     }
 
@@ -868,10 +862,8 @@ export class VmWizardComponent implements WizardConfiguration {
 
     this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
 
-    this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
-      for (const option in options) {
-        this.bootloader.options.push({ label: options[option], value: option });
-      }
+    this.vmService.getBootloaderOptions().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
+      this.bootloader.options = options;
       this.getFormControlFromFieldName('bootloader').setValue(
         this.bootloader.options[0].label,
       );

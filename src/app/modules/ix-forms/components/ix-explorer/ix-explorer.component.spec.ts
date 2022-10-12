@@ -134,6 +134,15 @@ describe('IxExplorerComponent', () => {
       expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { [`${mntPath}/new`]: true } });
       expect(formControl.value).toBe(`${mntPath}/new`);
     });
+
+    it('updates form control when user deselects a node', () => {
+      const tree = spectator.query(TreeComponent);
+      tree.select.emit({ node: { id: '/mnt/new' } });
+      tree.deselect.emit({ node: { id: '/mnt/new' } });
+
+      expect(mockTreeMock.setState).toHaveBeenLastCalledWith({ selectedLeafNodeIds: {} });
+      expect(formControl.value).toBe(undefined);
+    });
   });
 
   describe('form control - multiple=true', () => {
@@ -180,6 +189,18 @@ describe('IxExplorerComponent', () => {
         },
       });
       expect(formControl.value).toEqual([`${mntPath}/new1`, `${mntPath}/new2`]);
+    });
+
+    it('updates form control when user deselects multiple nodes', () => {
+      const tree = spectator.query(TreeComponent);
+      tree.select.emit({ node: { id: '/mnt/new1' } });
+      tree.select.emit({ node: { id: '/mnt/new2' } });
+      tree.deselect.emit({ node: { id: '/mnt/new1' } });
+
+      expect(mockTreeMock.setState).toHaveBeenLastCalledWith({
+        selectedLeafNodeIds: { '/mnt/new2': true },
+      });
+      expect(formControl.value).toEqual(['/mnt/new2']);
     });
   });
 

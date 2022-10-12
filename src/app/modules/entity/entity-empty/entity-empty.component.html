@@ -3,8 +3,8 @@
   fxLayoutAlign="center center"
   fxFlex
   class="empty-page {{ conf.type }}"
-  [class.large]="conf.large"
-  [class.compact]="conf.compact"
+  [class.large]="conf?.large"
+  [class.compact]="conf?.compact"
 >
   <div
     *ngIf="!isLoading()"

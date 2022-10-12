@@ -1,6 +1,6 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef,
+  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef, Inject,
 } from '@angular/core';
 import {
   Router, ActivatedRoute,
@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { forkJoin } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
@@ -55,6 +56,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     private slideIn: IxSlideInService,
     private layoutService: LayoutService,
     private reportsService: ReportsService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   get timeDiffWarning(): string {
@@ -120,7 +122,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   updateActiveTab(tab: ReportTab): void {
     // Change the URL without reloading page/component
     // the old fashioned way
-    window.history.replaceState({}, '', `/reportsdashboard/${tab.value}`);
+    this.window.history.replaceState({}, '', `/reportsdashboard/${tab.value}`);
 
     this.activateTab(tab);
 

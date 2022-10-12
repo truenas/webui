@@ -130,6 +130,18 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.onSelectionChanged();
   }
 
+  onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
+    if (this.multiple) {
+      this.selectTreeNodes(
+        Object.keys(this.tree.treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
+      );
+    } else {
+      this.selectTreeNodes([]);
+    }
+
+    this.onSelectionChanged();
+  }
+
   onSelectionChanged(): void {
     let newValue: string[] | string = Object.entries(this.tree.treeModel.selectedLeafNodeIds)
       .filter(([, isSelected]) => isSelected)

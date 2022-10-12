@@ -49,9 +49,11 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   };
 
   ngOnInit(): void {
-    this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
-    this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
-    this.loadTemperatures();
+    if (this.disks) {
+      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
+      this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
+      this.loadTemperatures();
+    }
 
     this.checkVolumeHealth(this.poolState);
   }
@@ -105,9 +107,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   private loadTemperatures(): void {
     let avgSum = 0;
     let avgCounter = 0;
-    for (const disk of this.disks) {
+    this.disks.forEach((disk) => {
       if (!disk.tempAggregates) {
-        continue;
+        return;
       }
 
       if (this.diskState.highestTemperature === null) {
@@ -124,7 +126,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
       avgSum += disk.tempAggregates.avg;
       avgCounter++;
-    }
+    });
 
     this.diskState.averageTemperature = avgSum / avgCounter;
     this.diskState.unit = TemperatureUnit.Celsius;

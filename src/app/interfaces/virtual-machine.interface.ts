@@ -46,16 +46,18 @@ export type VmStopParams = [
 export type VmDisplayWebUriParams = [
   id: number,
   domain: string,
-  options?: {
-    protocol?: string;
-    devices_passwords?: [
-      {
-        device_id: number;
-        password: string;
-      },
-    ];
-  },
+  options?: VmDisplayWebUriParamsOptions,
 ];
+
+export interface VmDisplayWebUriParamsOptions {
+  protocol?: string;
+  devices_passwords?: [
+    {
+      device_id: number;
+      password: string;
+    },
+  ];
+}
 
 export interface VmPortWizardResult {
   port: number;

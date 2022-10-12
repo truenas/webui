@@ -5,15 +5,17 @@ import {
   ViewChild, ChangeDetectionStrategy,
   AfterViewInit,
   TemplateRef,
-  OnDestroy,
+  OnDestroy, Inject,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -77,12 +79,13 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
     const paramMap = this.aroute.snapshot.params;
     this.datasetId = paramMap.datasetId;
-    this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
+    this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getGroupQuotas();
 
     this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -95,7 +98,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   ngOnDestroy(): void {
-    window.localStorage.setItem('useFullFilter', 'true');
+    this.window.localStorage.setItem('useFullFilter', 'true');
   }
 
   handleError = (error: WebsocketError | Job): void => {
@@ -185,28 +188,35 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   toggleDisplay(): void {
-    let title: string = helptext.groups.filter_dialog.title_filter;
-    let message: string = helptext.groups.filter_dialog.message_filter;
-    let button: string = helptext.groups.filter_dialog.button_filter;
-    if (this.useFullFilter) {
-      title = helptext.groups.filter_dialog.title_show;
-      message = helptext.groups.filter_dialog.message_show;
-      button = helptext.groups.filter_dialog.button_show;
-    }
-
     this.useFullFilter = !this.useFullFilter;
-    this.dialogService.confirm({
-      title,
-      message,
-      hideCheckBox: true,
-      buttonMsg: button,
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+    const confirm$ = this.useFullFilter ? this.confirmFilterUsers() : this.confirmShowAllUsers();
+    confirm$.pipe(
+      untilDestroyed(this),
+    ).subscribe((confirmed) => {
       if (confirmed) {
-        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+        this.window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
         this.getGroupQuotas();
       } else {
         this.useFullFilter = !this.useFullFilter;
       }
+    });
+  }
+
+  private confirmShowAllUsers(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: helptext.groups.filter_dialog.title_show,
+      message: helptext.groups.filter_dialog.message_show,
+      hideCheckBox: true,
+      buttonMsg: helptext.groups.filter_dialog.button_show,
+    });
+  }
+
+  private confirmFilterUsers(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: helptext.groups.filter_dialog.title_filter,
+      message: helptext.groups.filter_dialog.message_filter,
+      hideCheckBox: true,
+      buttonMsg: helptext.groups.filter_dialog.button_filter,
     });
   }
 
@@ -245,15 +255,10 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   doDelete(row: DatasetQuota): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete Group Quota'),
-      message: this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: row.name }),
-      buttonMsg: this.translate.instant('Delete'),
-      hideCheckBox: true,
-    }).pipe(
+    this.confirmDelete(row).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([row])])),
+      switchMap(() => this.setQuota(row)),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -265,6 +270,19 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         this.dialogService.errorReportMiddleware(error);
       },
     });
+  }
+
+  private confirmDelete(quota: DatasetQuota): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant('Delete Group Quota'),
+      message: this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name: quota.name }),
+      buttonMsg: this.translate.instant('Delete'),
+      hideCheckBox: true,
+    });
+  }
+
+  setQuota(quota: DatasetQuota): Observable<void> {
+    return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload([quota])]);
   }
 
   filter(query: string): void {

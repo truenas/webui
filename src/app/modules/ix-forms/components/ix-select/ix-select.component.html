@@ -6,11 +6,11 @@
     [required]="required"
   ></ix-label>
 
-  <div class="input-container" [class.disabled]="isDisabled">
+  <div class="input-container" [class.disabled]="disabledState">
     <mat-select
       [(ngModel)]="value"
       [required]="required"
-      [disabled]="isDisabled"
+      [disabled]="disabledState"
       [multiple]="multiple"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
@@ -38,7 +38,7 @@
       </ng-template>
     </mat-select>
     <mat-progress-spinner
-      *ngIf="isLoading"
+      *ngIf="isLoadingState"
       class="loader"
       mode="indeterminate"
       [diameter]="15"

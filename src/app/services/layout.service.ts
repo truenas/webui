@@ -1,6 +1,7 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { Inject, Injectable, TemplateRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as domHelper from 'app/helpers/dom.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +11,12 @@ export class LayoutService {
 
   readonly pageHeaderUpdater$ = new BehaviorSubject<TemplateRef<unknown>>(null);
 
+  constructor(
+    @Inject(WINDOW) private window: Window,
+  ) {}
+
   get isMobile(): boolean {
-    return window.innerWidth < 960;
+    return this.window.innerWidth < 960;
   }
 
   get isMenuCollapsed(): boolean {

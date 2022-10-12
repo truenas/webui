@@ -9,7 +9,7 @@ export enum EmptyType {
 }
 export interface EmptyConfig {
   type?: EmptyType;
-  large: boolean;
+  large?: boolean;
   compact?: boolean;
   title: string;
   message?: string;
