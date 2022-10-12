@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
-import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { omit } from 'lodash';
 import {
@@ -44,7 +43,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     private ws: WebSocketService,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private translate: TranslateService,
     private router: Router,
     private storageService: StorageService,
     private userService: UserService,
@@ -107,14 +105,14 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
+        acl: (state.acl?.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
       },
       acesWithError: newAcesWithError,
     } as DatasetAclEditorState;
   });
 
   readonly addAce = this.updater((state) => {
-    const newAce = state.acl.acltype === AclType.Nfs4
+    const newAce = state.acl?.acltype === AclType.Nfs4
       ? { ...newNfsAce } as NfsAclItem
       : { ...newPosixAce } as PosixAclItem;
 
@@ -122,9 +120,9 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       ...state,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
+        acl: (state.acl?.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
       },
-      selectedAceIndex: state.acl.acl.length,
+      selectedAceIndex: state.acl?.acl?.length,
     } as DatasetAclEditorState;
   });
 
@@ -138,7 +136,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly updateSelectedAce = this.updater((
     state: DatasetAclEditorState, updatedAce: NfsAclItem | PosixAclItem,
   ) => {
-    const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
+    const updatedAces = (state.acl?.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
       if (index !== state.selectedAceIndex) {
         return ace;
       }
@@ -171,7 +169,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     return saveParams$.pipe(
       // Warn user about risks when changing top level dataset
       switchMap(() => {
-        if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
+        if (this.storageService.isDatasetTopLevel(this.get()?.mountpoint?.replace('mnt/', ''))) {
           return this.dialog.confirm({
             title: helptext.dataset_acl_dialog_warning,
             message: helptext.dataset_acl_toplevel_dialog_message,
@@ -240,7 +238,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       }),
       switchMap(() => {
         return this.ws.call('filesystem.acltemplate.by_path', [{
-          path: this.get().mountpoint,
+          path: this.get()?.mountpoint,
           'format-options': {
             ensure_builtins: true,
             resolve_names: true,
@@ -250,7 +248,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             this.patchState({
               isLoading: false,
             });
-            const homePresetName = this.get().acl.acltype === AclType.Nfs4
+            const homePresetName = this.get()?.acl?.acltype === AclType.Nfs4
               ? DefaultAclType.Nfs4Home
               : DefaultAclType.PosixHome;
 
@@ -286,7 +284,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     const groupWhoToIds = new Map<string, number>();
     const requests: Observable<unknown>[] = [];
 
-    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).forEach((ace, index) => {
+    (editorState.acl?.acl as (NfsAclItem | PosixAclItem)[]).forEach((ace, index) => {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
         requests.push(
           this.userService.getUserByName(ace.who).pipe(
@@ -340,7 +338,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       withLatestFrom(this.state$),
       filter(([, currentState]) => currentState.acesWithError.length === 0),
       map(([, currentState]) => {
-        const convertedAces = (currentState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
+        const convertedAces = (currentState.acl?.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
           const aceAttributes = omit(ace, ['who']);
           if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
             const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;
@@ -366,7 +364,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           gid: groupWhoToIds.has(options.ownerGroup) && options.applyGroup
             ? groupWhoToIds.get(options.ownerGroup)
             : null,
-          acltype: editorState.acl.acltype,
+          acltype: editorState.acl?.acltype,
           path: editorState.mountpoint,
           dacl: convertedAces as NfsAclItem[] | PosixAclItem[],
         } as SetAcl;
