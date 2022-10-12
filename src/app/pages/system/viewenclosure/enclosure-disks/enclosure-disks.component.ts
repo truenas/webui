@@ -213,6 +213,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       if (!this.chassis || !this.chassis[this.view] || !this.chassis[this.view].driveTrayObjects) { return; }
 
       const clone: Temperature = { ...evt.data };
+      const cloneValues = { ...evt.data.values };
+      const cloneKeys = [...evt.data.keys];
       clone.values = {};
       clone.keys = [];
 
@@ -223,7 +225,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           clone.values[disk.name] = evt.data.values[disk.name];
         }
       });
-
+      if (Object.keys(clone.values).length === 0) {
+        clone.values = cloneValues;
+      }
+      if (clone.keys.length === 0) {
+        clone.keys = cloneKeys;
+      }
       this.temperatures = clone;
     });
     this.core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
@@ -309,6 +316,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngOnDestroy() {
+    this.core.emit({ name: 'DiskTemperaturesUnsubscribe', sender: this });
     this.core.unregister({ observerClass: this });
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
