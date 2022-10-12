@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -47,12 +47,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   disks: ManagerDisk[] = [];
   suggestableDisks: ManagerDisk[] = [];
   selected: ManagerDisk[] = [];
-  vdevs: any = {
-    data: [{ disks: [], type: 'data', uuid: UUID.UUID() }], cache: [], spares: [], log: [], special: [], dedup: [],
+  vdevs: { [group: string]: { disks: ManagerDisk[]; type: string; uuid: string }[] } = {
+    data: [], cache: [], spares: [], log: [], special: [], dedup: [],
   };
   originalDisks: ManagerDisk[] = [];
   originalSuggestableDisks: ManagerDisk[] = [];
   error: string;
+
+  @ViewChild('paginator', { static: true }) paginator: MatPaginator;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   // TODO: Rename to something more readable
@@ -81,8 +83,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   help = helptext;
   exportedPoolsWarnings: string[] = [];
 
-  shownDataVdevs: { disks: ManagerDisk[]; type: string; uuid: string } [] = [...this.vdevs.data];
-  lastPageChangedEvent: PageEvent;
+  shownDataVdevs: { disks: ManagerDisk[]; type: string; uuid: string } [] = [];
+  lastPageChangedEvent: PageEvent = { pageIndex: 0, length: 1, pageSize: 10 };
 
   submitTitle: string = this.translate.instant('Create');
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
@@ -215,10 +217,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           }
         }
         for (let i = 0; i < value.vdevs; i++) {
-          const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType, uuid: UUID.UUID };
+          const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType, uuid: UUID.UUID() };
           for (let n = 0; n < this.firstDataVdevDisknum; n++) {
             const duplicateDisk = duplicableDisks.shift();
             vdevValues.disks.push(duplicateDisk);
+            this.disks.splice(this.disks.findIndex((disk) => disk.devname === duplicateDisk.devname), 1);
             // remove disk from selected
             this.selected = _.remove(this.selected, (disk) => disk.devname !== duplicateDisk.devname);
           }
@@ -347,6 +350,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.addVdev('data', { disks: [], type: this.firstDataVdevType || 'data', uuid: UUID.UUID() });
     this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
       next: (algorithms) => {
         for (const algorithm in algorithms) {
@@ -450,10 +454,33 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addVdev(group: string, initialValues: any = {}): void {
+  addVdev(
+    group: string,
+    initialValues: {
+      disks: ManagerDisk[];
+      type: string;
+      uuid: string;
+    } = { disks: [], type: this.firstDataVdevType || 'data', uuid: UUID.UUID() },
+  ): void {
     this.dirty = true;
-    initialValues.uuid = UUID.UUID();
     this.vdevs[group].push(initialValues);
+
+    let pageIndex = this.lastPageChangedEvent.pageIndex;
+    const pageSize = this.lastPageChangedEvent.pageSize;
+    const vdevsLength = this.vdevs[group].length;
+
+    this.paginator.length = this.vdevs[group].length;
+
+    const lastIndexOnCurrentPage = (pageIndex + 1) * pageSize;
+    if (lastIndexOnCurrentPage < vdevsLength) {
+      pageIndex++;
+      this.paginator.pageIndex = pageIndex;
+    }
+    this.onPageChange({
+      ...this.lastPageChangedEvent,
+      length: this.vdevs[group].length,
+      pageIndex,
+    });
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -474,19 +501,22 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.vdevs[vdevChanged.group] = []; // should only be one vdev of other groups at one time
     }
 
-    // let index = null;
-    // this.vdevComponents.forEach((item, i) => {
-    //   if (item === vdevChanged) {
-    //     index = i;
-    //   }
-    // });
-    // if (index !== null) {
-    //   if (vdevChanged.group === 'data') {
-    //     this.vdevs[vdevChanged.group].splice(index, 1);
-    //   } else {
-    //     this.vdevs[vdevChanged.group] = []; // should only be one cache/spare/log
-    //   }
-    // }
+    let pageIndex = this.lastPageChangedEvent.pageIndex;
+    const pageSize = this.lastPageChangedEvent.pageSize;
+    const vdevsLength = this.vdevs[vdevChanged.group].length;
+
+    this.paginator.length = this.vdevs[vdevChanged.group].length;
+    const lastIndexOnPrevPage = ((pageIndex + 1) * pageSize) - pageSize;
+    if (lastIndexOnPrevPage >= vdevsLength) {
+      pageIndex--;
+      this.paginator.pageIndex = pageIndex;
+    }
+    this.onPageChange({
+      ...this.lastPageChangedEvent,
+      length: this.vdevs[vdevChanged.group].length,
+      pageIndex,
+    });
+
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -821,11 +851,21 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
-  removeDisk(disk: ManagerDisk): void {
-    this.disks.splice(this.disks.indexOf(disk), 1);
+  removeCounter = 0;
+  removeDisk(diskToRemove: ManagerDisk): void {
+    const index = this.disks.findIndex((disk) => disk.devname === diskToRemove.devname);
+    if (index >= 0) {
+      this.disks.splice(index, 1);
+      this.dirty = true;
+    }
+
     this.disks = [...this.disks];
-    this.temp.splice(this.temp.indexOf(disk), 1);
-    this.dirty = true;
+    const tempIndex = this.temp.findIndex((disk) => disk.devname === diskToRemove.devname);
+    if (tempIndex >= 0) {
+      this.temp.splice(tempIndex, 1);
+      this.dirty = true;
+    }
+    this.temp = [...this.temp];
     this.getCurrentLayout();
   }
 
@@ -910,7 +950,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.vdevs['data'].push({});
+    this.addVdev('data', { disks: [], type: this.firstDataVdevType || 'data', uuid: UUID.UUID() });
     this.vdevComponents.first.estimateSize();
     this.disks = Array.from(this.originalDisks);
     this.suggestableDisks = Array.from(this.originalSuggestableDisks);

@@ -672,6 +672,7 @@
               (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
             <mat-paginator
+              #paginator
               [length]="vdevs.data.length"
               [pageSize]="10"
               showFirstLastButtons
