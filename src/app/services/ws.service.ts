@@ -27,7 +27,6 @@ export class WebSocketService {
   connected = false;
   loggedIn = false;
   @LocalStorage() token: string;
-  redirectUrl = '';
   shuttingdown = false;
 
   private authStatus$ = new Subject<boolean>();

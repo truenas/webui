@@ -24,7 +24,6 @@ import helptext from 'app/helptext/topbar';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -73,6 +72,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   reasonText = helptext.ha_disabled_reasons;
   haStatusText = this.translate.instant('Checking HA status');
   haStatus = false;
+  redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
 
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
@@ -83,7 +83,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private snackBar: MatSnackBar,
     public translate: TranslateService,
-    private dialogService: DialogService,
     private fb: UntypedFormBuilder,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
@@ -178,16 +177,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginCallback(result);
         });
     }
-    if (this.ws.token && this.ws.redirectUrl !== undefined) {
+    if (this.ws.token && !!this.redirectUrl) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
       if (this.progressBar) {
         this.progressBar.mode = 'indeterminate';
-      }
-
-      if (sessionStorage.currentUrl !== undefined) {
-        this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
       this.ws.loginToken(this.ws.token)
@@ -328,8 +323,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.haInterval) {
         clearInterval(this.haInterval);
       }
-      if (this.ws.redirectUrl) {
-        this.router.navigateByUrl(this.ws.redirectUrl);
+
+      if (this.redirectUrl) {
+        this.router.navigateByUrl(this.redirectUrl);
       } else {
         this.router.navigate(['/dashboard']);
       }

@@ -1,14 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
-  Router, NavigationEnd, NavigationCancel,
-} from '@angular/router';
+import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService } from 'app/services';
 import productText from './helptext/product';
-import { SystemGeneralService } from './services';
+import { SystemGeneralService, WebSocketService } from './services';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +53,7 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
         if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
-          sessionStorage.currentUrl = event.url;
+          this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }
 
