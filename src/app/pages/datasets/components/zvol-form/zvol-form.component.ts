@@ -458,11 +458,9 @@ export class ZvolFormComponent implements FormConfiguration {
           }
           this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
             next: (algorithms) => {
-              for (const algorithm in algorithms) {
-                if (algorithms.hasOwnProperty(algorithm)) {
-                  encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
-                }
-              }
+              Object.keys(algorithms).forEach((algorithm) => {
+                encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
+              });
             },
             error: this.handleError,
           });

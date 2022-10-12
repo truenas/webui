@@ -5,7 +5,7 @@ import {
   ViewChild, ChangeDetectionStrategy,
   AfterViewInit,
   TemplateRef,
-  OnDestroy,
+  OnDestroy, Inject,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,6 +17,7 @@ import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
@@ -81,12 +82,13 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
     const paramMap = this.aroute.snapshot.params;
     this.datasetId = paramMap.datasetId;
-    this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
+    this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getUserQuotas();
 
     this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -99,7 +101,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   ngOnDestroy(): void {
-    window.localStorage.setItem('useFullFilter', 'true');
+    this.window.localStorage.setItem('useFullFilter', 'true');
   }
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
@@ -127,7 +129,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
 
   private getRemoveQuotaPayload(quotas: DatasetQuota[]): SetDatasetQuota[] {
     const payload: SetDatasetQuota[] = [];
-    for (const quota of quotas) {
+    quotas.forEach((quota) => {
       payload.push({
         id: quota.id.toString(),
         quota_type: DatasetQuotaType.User,
@@ -138,7 +140,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         quota_type: DatasetQuotaType.UserObj,
         quota_value: 0,
       });
-    }
+    });
     return payload;
   }
 
@@ -193,7 +195,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     const confirm$ = this.useFullFilter ? this.confirmFilterUsers() : this.confirmShowAllUsers();
     confirm$.pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (confirmed) {
-        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+        this.window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
         this.getUserQuotas();
       } else {
         this.useFullFilter = !this.useFullFilter;

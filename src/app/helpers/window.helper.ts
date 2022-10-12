@@ -15,5 +15,6 @@ import { InjectionToken } from '@angular/core';
 export const WINDOW = new InjectionToken<string>('Window');
 
 export function getWindow(): Window {
+  // eslint-disable-next-line no-restricted-globals
   return window;
 }

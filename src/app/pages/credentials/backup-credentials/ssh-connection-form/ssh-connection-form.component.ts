@@ -189,6 +189,7 @@ export class SshConnectionFormComponent {
     ).subscribe({
       next: () => {
         this.isLoading = false;
+        // TODO: Ideally this form shouldn't care about how it was called
         if (this.data?.dialog) {
           if (this.dialogRef) {
             this.dialogRef.close();
