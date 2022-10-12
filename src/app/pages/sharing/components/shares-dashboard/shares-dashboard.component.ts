@@ -399,7 +399,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                         this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                           (sharesecs) => {
                             const form = this.slideInService.open(SmbAclComponent);
-                            form.setSmbShareName(sharesecs[0]?.share_name);
+                            form.setSmbShareName(sharesecs[0].share_name);
                           },
                         );
                       }

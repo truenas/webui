@@ -247,7 +247,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             this.patchState({
               isLoading: false,
             });
-            const homePresetName = this.get()?.acl.acltype === AclType.Nfs4
+            const homePresetName = this.get().acl.acltype === AclType.Nfs4
               ? DefaultAclType.Nfs4Home
               : DefaultAclType.PosixHome;
 
