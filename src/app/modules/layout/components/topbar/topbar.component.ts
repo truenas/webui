@@ -232,7 +232,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   checkEula(): void {
     this.ws.call('truenas.is_eula_accepted').pipe(untilDestroyed(this)).subscribe((isEulaAccepted) => {
-      if (!isEulaAccepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
+      if (!isEulaAccepted || this.window.localStorage.getItem('upgrading_status') === 'upgrading') {
         this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
           this.dialogService.confirm({
             title: this.translate.instant('End User License Agreement - TrueNAS'),
@@ -241,7 +241,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
             buttonMsg: this.translate.instant('I Agree'),
             hideCancel: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-            window.localStorage.removeItem('upgrading_status');
+            this.window.localStorage.removeItem('upgrading_status');
             this.ws.call('truenas.accept_eula').pipe(untilDestroyed(this)).subscribe();
           });
         });
@@ -267,7 +267,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
             } else {
               this.checkinRemaining = null;
               clearInterval(this.checkinInterval);
-              window.location.reload(); // should just refresh after the timer goes off
+              this.window.location.reload(); // should just refresh after the timer goes off
             }
           }, 1000);
         }
@@ -435,6 +435,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   openIx(): void {
-    window.open('https://www.ixsystems.com/', '_blank');
+    this.window.open('https://www.ixsystems.com/', '_blank');
   }
 }

@@ -1,6 +1,6 @@
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import {
-  Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit,
+  Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit, Inject,
 } from '@angular/core';
 import {
   UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl, AbstractControl,
@@ -17,6 +17,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -86,8 +87,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: UntypedFormBuilder,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
+    @Inject(WINDOW) private window: Window,
   ) {
-    const haStatus = window.sessionStorage.getItem('ha_status');
+    const haStatus = this.window.sessionStorage.getItem('ha_status');
     if (haStatus && haStatus === 'true') {
       this.haStatus = true;
     }
@@ -108,7 +110,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (this.canLogin()) {
         this.loginToken();
       }
-      window.localStorage.setItem('product_type', this.productType);
+      this.window.localStorage.setItem('product_type', this.productType);
     });
   }
 
@@ -165,9 +167,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loginToken(): void {
     let middlewareToken;
-    if (window.localStorage.getItem('middleware_token')) {
-      middlewareToken = window.localStorage.getItem('middleware_token');
-      window.localStorage.removeItem('middleware_token');
+    if (this.window.localStorage.getItem('middleware_token')) {
+      middlewareToken = this.window.localStorage.getItem('middleware_token');
+      this.window.localStorage.removeItem('middleware_token');
     }
 
     if (middlewareToken) {
@@ -250,7 +252,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
                   this.showReasons = true;
                   this.haStatus = false;
                 }
-                window.sessionStorage.setItem('ha_status', this.haStatus.toString());
+                this.window.sessionStorage.setItem('ha_status', this.haStatus.toString());
                 if (this.canLogin()) {
                   this.loginToken();
                 }

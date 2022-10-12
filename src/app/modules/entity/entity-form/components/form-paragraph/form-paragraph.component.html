@@ -20,7 +20,7 @@
     <p
       class="full-width"
       [class.large]="config.isLargeText"
-      [innerHTML]="config.paraText | translate | docreplace"
+      [innerHTML]="config.paraText | translate"
     ></p>
     <ix-tooltip
       *ngIf="config.tooltip"
