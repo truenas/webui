@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, NavigationCancel } from '@angular/router';
+import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import productText from './helptext/product';
-import { SystemGeneralService } from './services';
+import { SystemGeneralService, WebSocketService } from './services';
 
 @UntilDestroy()
 @Component({
@@ -15,7 +16,9 @@ export class AppComponent {
   constructor(
     public title: Title,
     private router: Router,
+    private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
+    @Inject(WINDOW) private window: Window,
   ) {
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
@@ -46,6 +49,14 @@ export class AppComponent {
     }
 
     this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
+      // save currenturl
+      if (event instanceof NavigationEnd) {
+        const navigation = this.router.getCurrentNavigation();
+        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
+          this.window.localStorage.setItem('redirectUrl', event.url);
+        }
+      }
+
       if (event instanceof NavigationCancel) {
         const params = new URLSearchParams(event.url.split('#')[1]);
         const isEmbedded = params.get('embedded');
