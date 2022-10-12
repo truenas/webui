@@ -147,7 +147,7 @@ export interface DatasetUpdate {
   refquota_critical?: WithInherit<number>;
   reservation?: number;
   refreservation?: number;
-  special_small_block_size?: WithInherit<number>;
+  special_small_block_size?: number;
   copies?: WithInherit<number>;
   snapdir?: DatasetSnapdir;
   snapdev?: DatasetSnapdev;
