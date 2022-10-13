@@ -7,11 +7,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, EMPTY, Observable, throwError,
+  combineLatest, EMPTY, Observable, of, throwError,
 } from 'rxjs';
-import {
-  catchError, filter, switchMap, tap,
-} from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -67,8 +65,6 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
         return throwError(() => error);
       }),
-      filter(Boolean),
-      switchMap(() => this.forceDeleteDataset()),
       tap(() => {
         this.loader.close();
         this.dialogRef.close(true);
@@ -87,7 +83,12 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private askToForceDelete(): Observable<unknown> {
-    return this.getForceDeleteConfirmation();
+    return this.getForceDeleteConfirmation()
+      .pipe(
+        switchMap((shouldForceDelete: boolean) => {
+          return shouldForceDelete ? this.forceDeleteDataset() : of();
+        }),
+      );
   }
 
   private getForceDeleteConfirmation(): Observable<boolean> {
