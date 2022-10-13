@@ -62,11 +62,20 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
 
-
+    #verify in UI
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
 
+    assert wait_on_element(driver, 10, '//tr[contains(.,"qetestuser")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]//mat-icon').click()
+
+    assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]')
+
+    assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
+    element_text = driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
+    assert element_text == 'false'
 
     # verify user can ssh in and cannot sudo
     time.sleep(2) #race condition if we dont give the OS enough time to preform the function first. 
@@ -109,7 +118,7 @@ def test_enabling_sudo_for_group(driver, nas_ip):
 
     # check the enable sudo box and click save
     assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
-    assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 5, '//mat-icon[@id="ix-close-icon"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
 
