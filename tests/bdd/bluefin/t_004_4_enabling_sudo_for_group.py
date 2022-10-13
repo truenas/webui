@@ -79,10 +79,10 @@ def test_enabling_sudo_for_group(driver, nas_ip):
 
     # verify user can ssh in and cannot sudo
     time.sleep(2) #race condition if we dont give the OS enough time to preform the function first. 
-    global sudo_results
+    global sudo_group_results
     cmd = 'ls /'
-    sudo_results = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
-    assert "Sorry, user qetestuser is not allowed" in sudo_results, str(sudo_results)
+    sudo_group_results = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
+    assert "Sorry, user qetestuser is not allowed" in sudo_group_results, str(sudo_group_results)
 
 
     # click on Credentials and Local Groups
@@ -124,7 +124,7 @@ def test_enabling_sudo_for_group(driver, nas_ip):
 
 
     # ssh in with qetest user and try to sudo
-    global sudo_results2
+    global sudo_group_results2
     cmd = 'ls /'
-    sudo_results2 = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
-    assert "vmlinuz" in sudo_results2, str(sudo_results2)
+    sudo_group_results2 = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
+    assert "vmlinuz" in sudo_group_results2, str(sudo_group_results2)
