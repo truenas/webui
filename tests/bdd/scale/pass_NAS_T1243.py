@@ -17,7 +17,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1243.feature', 'Verify that changing an encryption key format to PASSPHRASE functions')
+@scenario('features/NAS-T1243.feature', 'Hi mom')
 def test_verify_that_changing_an_encryption_key_format_to_passphrase_functions():
     """SCALE UI: Verify that changing an encryption key format to PASSPHRASE functions."""
 
@@ -61,7 +61,7 @@ def the_pools_page_appears_click_the_three_dots_for_the_encrypted_pool(driver):
 def click_encryption_options(driver):
     """click encryption Options."""
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Encryption Options"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Encryption Options"]').click()  
+    driver.find_element_by_xpath('//button[normalize-space(text())="Encryption Options"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Edit Encryption Options")]')
 
 
@@ -72,7 +72,7 @@ def set_key_type_to_passphrase(driver):
     driver.find_element_by_xpath('//mat-select').click()
     assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"Passphrase")]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"Passphrase")]').click()
-    
+
 
 @then('enter acbd1234 and 1234abcd and verify that an error shows')
 def enter_acbd1234_and_1234abcd_and_verify_that_an_error_shows(driver):
@@ -93,11 +93,11 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input').clear()
     driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//input').send_keys("abcd1234")
     assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
-    
+
     #element = driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]')
     #driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox').click()   
+    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox').click()
     assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
@@ -113,13 +113,13 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Lock"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Lock Dataset encrypted_tank")]')
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()       
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()   
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__LOCK"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__LOCK"]').click()
 
@@ -132,9 +132,9 @@ def unlock_the_pool(driver):
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Unlock"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click() 
+    driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
-    
+
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")
