@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -30,7 +31,7 @@ export class SystemInfoEffects {
   loadSystemFeatures = createEffect(() => this.actions$.pipe(
     ofType(systemInfoLoaded),
     switchMap(({ systemInfo }) => {
-      window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
+      this.window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
       const features: SystemFeatures = {
         HA: false,
         enclosure: false,
@@ -67,7 +68,7 @@ export class SystemInfoEffects {
 
           const enabledText = failoverDisabledReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
 
-          window.sessionStorage.setItem('ha_status', haEnabled.toString());
+          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
           return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });
         }),
       );
@@ -77,5 +78,6 @@ export class SystemInfoEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 }

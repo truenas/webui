@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
-  OnInit,
+  OnInit, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -19,6 +19,7 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { WINDOW } from 'app/helpers/window.helper';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -108,6 +109,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private core: CoreService,
     private store$: Store<AppState>,
     private themeService: ThemeService,
+    @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
 
@@ -384,12 +386,17 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   handleError(evt: CoreEvent): void {
-    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
-      const err = evt.data.data;
+    const err = evt.data.data;
+    if (evt.data?.data?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
-        large: false,
-        compact: false,
+        title: this.translate.instant('Error getting chart data'),
+        message: err.reason,
+      };
+    }
+    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
+      this.report.errorConf = {
+        type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
         button: {
           label: this.translate.instant('Fix database'),
@@ -406,7 +413,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
               switchMap(() => this.ws.call('reporting.clear')),
               untilDestroyed(this),
             ).subscribe(() => {
-              window.location.reload();
+              this.window.location.reload();
             });
           },
         },

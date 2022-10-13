@@ -59,14 +59,13 @@ export class IxErrorsComponent implements OnChanges {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
       this.statusChangeSubscription = this.control.statusChanges.pipe(untilDestroyed(this)).subscribe(() => {
-        const newErrors: string[] = [];
-        for (const error in this.control.errors) {
+        const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
           if (this.control.errors[error].message) {
-            newErrors.push(this.control.errors[error].message);
-          } else {
-            newErrors.push(this.getDefaultError(error as DefaultValidationError));
+            return this.control.errors[error].message;
           }
-        }
+
+          return this.getDefaultError(error as DefaultValidationError);
+        });
         this.messages = newErrors;
 
         this.cdr.markForCheck();

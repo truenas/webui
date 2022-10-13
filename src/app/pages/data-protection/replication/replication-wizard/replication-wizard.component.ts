@@ -1179,12 +1179,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   clearReplicationTask(): void {
     this.entityWizard.formArray.reset();
     for (let i = 0; i < (this.entityWizard.formArray as UntypedFormArray).length; i++) {
-      for (const item in (this.entityWizard.formArray.get([i]) as UntypedFormGroup).controls) {
+      Object.keys((this.entityWizard.formArray.get([i]) as UntypedFormGroup).controls).forEach((item) => {
         const itemConf = _.find(this.wizardConfig[i].fieldConfig, { name: item });
         if (itemConf.value !== undefined && item !== 'exist_replication') {
           this.entityWizard.formArray.get([i]).get(item).setValue(itemConf.value);
         }
-      }
+      });
     }
   }
 
@@ -1349,13 +1349,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         payload['ssh_credentials'],
       ]).toPromise().then(
         (res) => {
-          let hasBadSnapshots = false;
-          for (const ds in res) {
-            if (res[ds].length > 0) {
-              hasBadSnapshots = true;
-              break;
-            }
-          }
+          const hasBadSnapshots = Object.values(res).some((snapshots) => snapshots.length > 0);
           if (hasBadSnapshots) {
             return this.dialogService.confirm({
               title: helptext.clearSnapshotDialog_title,
@@ -1390,6 +1384,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       replication: null,
     };
 
+    // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
       if (!toStop) {
@@ -1511,7 +1506,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           ssh_credentials: null,
         };
         let hasError = false;
+        // eslint-disable-next-line no-restricted-syntax,guard-for-in
         for (const createdItem in createdItems) {
+          if (!createdItems.hasOwnProperty(createdItem)) {
+            return;
+          }
           const item = createdItem as 'private_key' | 'ssh_credentials';
           if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
             await this.doCreate(value, item).then(

@@ -1,17 +1,18 @@
 import {
-  Component, OnInit,
+  Component, Inject, OnInit,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal.component';
-import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal.component';
+import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
+import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -48,6 +49,7 @@ export class TruecommandButtonComponent implements OnInit {
     private dialogService: DialogService,
     private dialog: MatDialog,
     private loader: AppLoaderService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -124,7 +126,7 @@ export class TruecommandButtonComponent implements OnInit {
           id: 'signup',
           name: helptext.signupDialog.singup_btn,
           function: () => {
-            window.open('https://portal.ixsystems.com');
+            this.window.open('https://portal.ixsystems.com');
             this.dialogService.closeAllDialogs();
           },
         },

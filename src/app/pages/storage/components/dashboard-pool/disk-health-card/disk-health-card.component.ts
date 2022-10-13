@@ -112,9 +112,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   private loadTemperatures(): void {
     let avgSum = 0;
     let avgCounter = 0;
-    for (const disk of this.disks) {
+    this.disks.forEach((disk) => {
       if (!disk.tempAggregates) {
-        continue;
+        return;
       }
 
       if (this.diskState.highestTemperature === null) {
@@ -131,7 +131,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
       avgSum += disk.tempAggregates.avg;
       avgCounter++;
-    }
+    });
 
     this.diskState.averageTemperature = avgSum / avgCounter;
     this.diskState.unit = TemperatureUnit.Celsius;
