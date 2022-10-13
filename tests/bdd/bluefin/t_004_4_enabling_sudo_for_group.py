@@ -98,7 +98,20 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     # give middleware time to actually do its work
-    time.sleep(4)
+    time.sleep(1)
+
+    #verify in ui
+    assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
+    assert wait_on_element(driver, 10, '//td[contains(text(),"qetest")]', 'clickable')
+    driver.find_element_by_xpath('//td[contains(text(),"qetest")]').click()
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Edit")]').click()
+
+    # check the enable sudo box and click save
+    assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
+    assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 5, '//mat-icon[@id="ix-close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
 
 
     # ssh in with qetest user and try to sudo

@@ -16,8 +16,8 @@ def test_enable_pass(driver, nas_ip):
 
     # the Users page should open, click the down carat sign right of the users
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    #assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    #driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '//mat-card//mat-card-content//table//tbody//ix-user-details-row//td//ix-table-expandable-row//div//button//span//span[contains(text(),"Edit")]', 'clickable')
     driver.find_element_by_xpath('//mat-card//mat-card-content//table//tbody//ix-user-details-row//td//ix-table-expandable-row//div//button//span//span[contains(text(),"Edit")]').click()
 
