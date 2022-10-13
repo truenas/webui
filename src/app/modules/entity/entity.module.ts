@@ -86,7 +86,6 @@ import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
-import { ToolbarMultiSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { WizardSummaryComponent } from 'app/modules/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
@@ -194,7 +193,6 @@ import { AppLoaderService, JobService } from 'app/services';
     FormParagraphComponent,
     EntityDialogComponent,
     ToolbarMultimenuComponent,
-    ToolbarMultiSelectComponent,
     ToolbarSliderComponent,
     FormStatusComponent,
     TableComponent,
@@ -215,7 +213,6 @@ import { AppLoaderService, JobService } from 'app/services';
     EntityDialogComponent,
     ToolbarSliderComponent,
     ToolbarMultimenuComponent,
-    ToolbarMultiSelectComponent,
     TableComponent,
     ExpandableTableComponent,
     CdkTreeModule,

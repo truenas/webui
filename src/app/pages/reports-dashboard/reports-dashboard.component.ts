@@ -8,15 +8,11 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
-import { forkJoin } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
 import { ReportsService } from './reports.service';
 
 @UntilDestroy()
@@ -36,24 +32,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   diskReports: Report[] = [];
   otherReports: Report[] = [];
   activeReports: Report[] = [];
-
-  activeTabVerified = false;
-  allTabs: ReportTab[] = this.reportsService.getReportTabs();
-  activeTab: ReportTab = this.allTabs[0];
-
   visibleReports: number[] = [];
-
-  diskDevices: Option[] = [];
-  diskMetrics: Option[] = [];
-  selectedDisks: string[] = [];
+  allTabs: ReportTab[] = this.reportsService.getReportTabs();
   hasUps = false;
 
   constructor(
-    private ws: WebSocketService,
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
     private layoutService: LayoutService,
     private reportsService: ReportsService,
     @Inject(WINDOW) private window: Window,
@@ -71,17 +57,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.scrollContainer = document.querySelector('.rightside-content-hold');
     this.scrollContainer.style.overflow = 'hidden';
 
-    forkJoin([
-      this.ws.call('disk.query'),
-      this.ws.call('reporting.graphs'),
-    ]).pipe(untilDestroyed(this)).subscribe(([disks, reports]) => {
-      this.diskDevices = disks
-        .filter((disk) => !disk.devname.includes('multipath'))
-        .map((disk) => {
-          const [value] = disk.devname.split(' ');
-          return { label: disk.devname, value };
-        });
-
+    this.reportsService.getReportGraphs().pipe(untilDestroyed(this)).subscribe((reports) => {
       this.allReports = reports.map((report) => {
         const list = [];
         if (report.identifiers) {
@@ -98,8 +74,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
       this.hasUps = this.allReports.some((report) => report.title.startsWith('UPS'));
       this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
       this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
-
-      this.allTabs = this.reportsService.getReportTabs();
 
       this.activateTabFromUrl();
     });
@@ -127,11 +101,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.activateTab(tab);
 
     if (tab.value === ReportType.Disk) {
-      if (this.route.snapshot.queryParams?.disks) {
-        this.selectedDisks = this.route.snapshot.queryParams.disks;
-      } else {
-        this.selectedDisks = this.diskDevices.map((option) => option.value.toString());
-      }
       this.buildDiskMetrics();
     }
   }
@@ -141,9 +110,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   activateTab(activeTab: ReportTab): void {
-    this.activeTab = activeTab;
-    this.activeTabVerified = true;
-
     const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
         let condition;
@@ -231,12 +197,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
       formatted = formatted.replace(/requests on/, '');
       metrics.push({ label: formatted, value: item.name });
     });
-    this.diskMetrics = metrics;
+    this.reportsService.setDiskMetrics(metrics);
   }
 
-  buildDiskReport(event: { devices: Option[]; metrics: Option[] }): void {
-    const metrics = event.metrics.map((metric) => metric.value);
-    const devices = event.devices.map((device) => device.value);
+  buildDiskReport(event: { devices: string[]; metrics: string[] }): void {
+    const { devices, metrics } = event;
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
@@ -253,9 +218,5 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   isReportReversed(report: Report): boolean {
     return report.name === 'cpu';
-  }
-
-  showConfigForm(): void {
-    this.slideIn.open(ReportsConfigFormComponent);
   }
 }
