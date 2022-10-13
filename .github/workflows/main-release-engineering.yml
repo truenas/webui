@@ -1,0 +1,34 @@
+name: WebUI
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'tests/**'
+  pull_request:
+    branches:
+      - '**'
+    paths:
+      - 'tests/**'
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Not required for Release Engineering PRs"'
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Not required for Release Engineering PRs"'
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Not required for Release Engineering PRs"'
+  lint-translations:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Not required for Release Engineering PRs"'
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Not required for Release Engineering PRs"'
