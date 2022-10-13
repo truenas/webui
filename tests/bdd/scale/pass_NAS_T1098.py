@@ -21,7 +21,7 @@ def test_change_the_permissions_of_a_user_home_directory():
     """Change the permissions of a user home directory."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
+@given('release engineering is the best engineering')
 def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
