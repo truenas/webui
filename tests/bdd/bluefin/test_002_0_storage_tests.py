@@ -48,43 +48,43 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 @then('wipe one disk')
 def wipe_one_disk(driver):
     """wipe one disk"""
-#    import t_002_1_wipe_one_disk
-#    t_002_1_wipe_one_disk.test_wipe_one_disk(driver)
+    import t_002_1_wipe_one_disk
+    t_002_1_wipe_one_disk.test_wipe_one_disk(driver)
 
 
 @then('create pool for system dataset')
 def create_pool_for_system_dataset(driver):
     """create pool for system dataset"""
-#    import t_002_2_create_pool_for_system_dataset
-#    t_002_2_create_pool_for_system_dataset.test_create_pool_for_system_dataset(driver)
+    import t_002_2_create_pool_for_system_dataset
+    t_002_2_create_pool_for_system_dataset.test_create_pool_for_system_dataset(driver)
 
 
 @then(parsers.parse('setup ad with "{ad_ns}" "{ad_domain}" "{ad_user}" "{ad_password}" "{ca_ou}" "{cmd1}" "{ad_object1}" "{cmd2}" "{dataset_name}" "{group_name}"'))
 def setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name):
     """setup ad"""
-#    import t_002_3_setup_ad
-#    t_002_3_setup_ad.test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
+    import t_002_3_setup_ad
+    t_002_3_setup_ad.test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
 
 
 @then(parsers.parse('create ad dataset with "{dataset_name}" "{group_name}"'))
 def create_ad_dataset(driver, dataset_name, group_name):
     """create ad dataset"""
-#    import t_002_4_create_ad_dataset
-#    t_002_4_create_ad_dataset.test_create_ad_dataset(driver, dataset_name, group_name)
+    import t_002_4_create_ad_dataset
+    t_002_4_create_ad_dataset.test_create_ad_dataset(driver, dataset_name, group_name)
 
 
 @then(parsers.parse('add acl item on tank with "{input}" "{user}"'))
 def add_acl_item_on_tank(driver, input, user):
     """add acl item on tank"""
-#    import t_002_5_add_acl_item_on_tank
-#    t_002_5_add_acl_item_on_tank.test_add_acl_item_on_tank(driver, input, user)
+    import t_002_5_add_acl_item_on_tank
+    t_002_5_add_acl_item_on_tank.test_add_acl_item_on_tank(driver, input, user)
 
 
 @then(parsers.parse('add acl item on system with "{input}" "{user}"'))
 def add_acl_item_on_system(driver, input, user):
     """add acl item on tank"""
-#    import t_002_6_add_acl_item_on_system
-#    t_002_6_add_acl_item_on_system.test_add_acl_item_on_system(driver, input, user)
+    import t_002_6_add_acl_item_on_system
+    t_002_6_add_acl_item_on_system.test_add_acl_item_on_system(driver, input, user)
 
 
 @then(parsers.parse('create smb share on system with "{systemsmbpath}" "{systemsmbname}" "{systemsmbdescription}" "{mysmbshare}" "{user}" "{password}"'))
