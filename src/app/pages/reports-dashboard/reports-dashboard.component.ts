@@ -34,8 +34,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   activeReports: Report[] = [];
   visibleReports: number[] = [];
   allTabs: ReportTab[] = this.reportsService.getReportTabs();
-  diskDevices: Option[] = [];
-  diskMetrics: Option[] = [];
   hasUps = false;
 
   constructor(
@@ -199,7 +197,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
       formatted = formatted.replace(/requests on/, '');
       metrics.push({ label: formatted, value: item.name });
     });
-    this.diskMetrics = metrics;
     this.reportsService.setDiskMetrics(metrics);
   }
 
