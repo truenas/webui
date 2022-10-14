@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
-import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { omit } from 'lodash';
 import {
@@ -12,6 +11,7 @@ import {
   catchError, filter, map, switchMap, takeUntil, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -44,7 +44,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     private ws: WebSocketService,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private translate: TranslateService,
     private router: Router,
     private storageService: StorageService,
     private userService: UserService,
@@ -55,8 +54,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
     return mountpoints$.pipe(
       tap((mountpoint) => {
-        this.setState({
-          ...initialState,
+        this.patchState({
           mountpoint,
           isLoading: true,
         });
@@ -194,8 +192,9 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
           next: () => {
+            const ngUrl = ['datasets', this.get()?.mountpoint.replace(`${mntPath}/`, '')];
             dialogRef.close();
-            this.router.navigate(['/datasets']);
+            this.router.navigate(ngUrl);
           },
           error: (error) => {
             dialogRef.close();
@@ -233,8 +232,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadHomeSharePreset = this.effect((trigger$: Observable<void>) => {
     return trigger$.pipe(
       tap(() => {
-        this.setState({
-          ...initialState,
+        this.patchState({
           isLoading: true,
         });
       }),

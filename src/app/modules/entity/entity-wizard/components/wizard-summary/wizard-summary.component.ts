@@ -30,14 +30,9 @@ export class WizardSummaryComponent {
     } else if (fieldConfig.type === 'list' && (fieldValue as unknown[]).length === 0) {
       result = false;
     } else if (fieldConfig.type === 'dict') {
-      result = false;
-      for (const key in (fieldValue as Record<string, unknown>)) {
-        const subValue = (fieldValue as Record<string, unknown>)[key];
-        if ((!Array.isArray(subValue) && subValue !== undefined) || (Array.isArray(subValue) && subValue.length > 0)) {
-          result = true;
-          break;
-        }
-      }
+      result = Object.values(fieldValue).some((subValue) => {
+        return (!Array.isArray(subValue) && subValue !== undefined) || (Array.isArray(subValue) && subValue.length > 0);
+      });
     }
     return result;
   }

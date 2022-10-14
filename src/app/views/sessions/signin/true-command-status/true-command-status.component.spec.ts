@@ -1,6 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TrueCommandConnectionState } from 'app/interfaces/true-command-config.interface';
 import { DialogService, WebSocketService } from 'app/services';
@@ -23,12 +24,9 @@ describe('TrueCommandStatusComponent', () => {
       mockProvider(DialogService, {
         generalDialog: jest.fn(() => of(true)),
       }),
-      {
-        provide: WINDOW,
-        useValue: {
-          open: jest.fn(),
-        },
-      },
+      mockWindow({
+        open: jest.fn(),
+      }),
     ],
   });
 

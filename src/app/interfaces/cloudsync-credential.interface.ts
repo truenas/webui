@@ -22,6 +22,7 @@ export interface CloudsyncCredentialVerifyResult {
 export interface CloudsyncBucket {
   Name: string;
   Path: string;
+  Enabled: boolean;
 }
 
 export interface CloudsyncOneDriveDrive {

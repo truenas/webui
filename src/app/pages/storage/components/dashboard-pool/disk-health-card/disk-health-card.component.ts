@@ -6,6 +6,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
+import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 interface DiskState {
   health: DiskHealthLevel;
@@ -35,6 +36,10 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[] = [];
 
+  get disksNames(): string[] {
+    return getPoolDisks(this.poolState);
+  }
+
   readonly diskHealthLevel = DiskHealthLevel;
 
   diskState: DiskState = {
@@ -49,9 +54,11 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   };
 
   ngOnInit(): void {
-    this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
-    this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
-    this.loadTemperatures();
+    if (this.disks) {
+      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
+      this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
+      this.loadTemperatures();
+    }
 
     this.checkVolumeHealth(this.poolState);
   }
@@ -105,9 +112,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   private loadTemperatures(): void {
     let avgSum = 0;
     let avgCounter = 0;
-    for (const disk of this.disks) {
+    this.disks.forEach((disk) => {
       if (!disk.tempAggregates) {
-        continue;
+        return;
       }
 
       if (this.diskState.highestTemperature === null) {
@@ -124,7 +131,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
       avgSum += disk.tempAggregates.avg;
       avgCounter++;
-    }
+    });
 
     this.diskState.averageTemperature = avgSum / avgCounter;
     this.diskState.unit = TemperatureUnit.Celsius;

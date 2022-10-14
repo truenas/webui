@@ -59,7 +59,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   manufacturer = '';
   buildDate: string;
   loader = false;
-  productType = window.localStorage['product_type'] as ProductType;
+  productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   haStatus: string;
   updateMethod = 'update.update';

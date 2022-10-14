@@ -12,7 +12,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal.component';
+import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {

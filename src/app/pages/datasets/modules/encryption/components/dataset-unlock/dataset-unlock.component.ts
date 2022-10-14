@@ -444,23 +444,18 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: (job: Job<DatasetUnlockResult>) => {
         dialogRef.close();
-        const errors = [];
-        const skipped: { name: string }[] = [];
+        const errors: { name: string; unlock_error: string }[] = [];
+        let skipped: { name: string }[] = [];
         const unlock: { name: string }[] = [];
         if (job && job.result) {
           if (job.result.failed) {
             const failed = job.result.failed;
-            for (const errorDataset in failed) {
-              if (failed.hasOwnProperty(errorDataset)) {
-                const fail = failed[errorDataset];
-                const error = fail.error;
-                const skip = fail.skipped;
-                errors.push({ name: errorDataset, unlock_error: error });
-                for (const name of skip) {
-                  skipped.push({ name });
-                }
-              }
-            }
+            Object.entries(failed).forEach(([errorDataset, fail]) => {
+              const error = fail.error;
+              const skip = fail.skipped;
+              errors.push({ name: errorDataset, unlock_error: error });
+              skipped = skip.map((dataset) => ({ name: dataset }));
+            });
           }
           job.result.unlocked.forEach((name) => {
             unlock.push({ name });

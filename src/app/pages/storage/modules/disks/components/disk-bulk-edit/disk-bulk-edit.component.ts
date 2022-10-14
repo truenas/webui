@@ -58,7 +58,7 @@ export class DiskBulkEditComponent {
     const advPowerMgt: DiskPowerLevel[] = [];
     const smartOptions: string[] = [];
 
-    for (const disk of selectedDisks) {
+    selectedDisks.forEach((disk) => {
       this.diskIds.push(disk.identifier);
       setForm.disknames.push(disk.name);
       hddStandby.push(disk.hddstandby);
@@ -67,7 +67,7 @@ export class DiskBulkEditComponent {
         setForm.togglesmart = true;
         smartOptions.push(disk.smartoptions);
       }
-    }
+    });
 
     // If all items match in an array, this fills in the value in the form; otherwise, blank
     if (hddStandby.every((val, i, arr) => val === arr[0])) {
@@ -93,24 +93,19 @@ export class DiskBulkEditComponent {
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {
-    const req: [id: string, update: DiskUpdate][] = [];
     const data = { ...this.form.value };
 
     if (!data.togglesmart) {
       data.smartoptions = '';
     }
 
-    for (const key in data) {
+    Object.keys(data).forEach((key) => {
       if (data[key as keyof typeof data] === null) {
         delete data[key as keyof typeof data];
       }
-    }
+    });
 
-    for (const i of this.diskIds) {
-      req.push([i, data]);
-    }
-
-    return req;
+    return this.diskIds.map((id) => [id, data]);
   }
 
   onSubmit(): void {
@@ -126,15 +121,16 @@ export class DiskBulkEditComponent {
           }
 
           this.isLoading = false;
-          let isSuccessful = true;
-          for (const result of job.result) {
+          const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
               this.slideInService.close();
               this.dialogService.errorReport(helptext.dialog_error, result.error);
-              isSuccessful = false;
-              break;
+              return false;
             }
-          }
+
+            return true;
+          });
+
           if (isSuccessful) {
             this.slideInService.close();
             this.snackbarService.success(successText);
