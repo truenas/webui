@@ -638,7 +638,11 @@ export class CloudsyncFormComponent {
                   this.bucket_field.options = [{ label: '----------', value: '' }];
                   if (res) {
                     res.forEach((subitem) => {
-                      this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
+                      this.bucket_field.options.push({
+                        label: subitem.Name,
+                        value: subitem.Path,
+                        disable: !subitem.Enabled,
+                      });
                     });
                   }
                   this.setDisabled('bucket', false, false);
