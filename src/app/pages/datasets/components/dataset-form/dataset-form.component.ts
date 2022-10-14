@@ -139,7 +139,7 @@ export class DatasetFormComponent implements FormConfiguration {
           disabled: true,
         },
         {
-          type: 'input',
+          type: 'textarea',
           name: 'name',
           placeholder: helptext.dataset_form_name_placeholder,
           tooltip: helptext.dataset_form_name_tooltip,
