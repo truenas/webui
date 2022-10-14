@@ -24,7 +24,11 @@
           --
         </mat-option>
 
-        <mat-option *ngFor="let option of opts" [value]="option.value">
+        <mat-option
+          *ngFor="let option of opts"
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
           {{ option.label }}
         </mat-option>
       </ng-container>

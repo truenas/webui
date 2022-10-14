@@ -19,6 +19,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket } from 'app/interfaces/cloudsync-credential.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -131,7 +132,7 @@ export class CloudsyncFormComponent {
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 
-  bucketOptions$ = of([]);
+  bucketOptions$: Observable<SelectOption[]> = of([]);
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
@@ -251,7 +252,11 @@ export class CloudsyncFormComponent {
 
                 this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
                   next: (buckets) => {
-                    this.bucketOptions$ = of(buckets.map((bucket) => ({ label: bucket.Name, value: bucket.Path })));
+                    this.bucketOptions$ = of(buckets.map((bucket) => ({
+                      label: bucket.Name,
+                      value: bucket.Path,
+                      disabled: !bucket.Enabled,
+                    })));
                     this.isLoading = false;
                     this.form.controls.bucket.enable();
                     this.form.controls.bucket_input.disable();
