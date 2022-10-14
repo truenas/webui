@@ -2,11 +2,16 @@
 """High Availability (tn-bhyve03) feature tests."""
 
 import time
+import random
+import string
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
+    wait_on_element_disappear,
+    attribute_value_exist,
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -16,27 +21,35 @@ from pytest_bdd import (
     parsers
 )
 
+MOUNT_POINT = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=3))}'
 
-@scenario('features/NAS-T977.feature', 'Setting up an ISCSI share')
+
+def click_summit(driver):
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+
+
+@scenario('features/NAS-T977.feature', 'Verify that iSCSI connection on HA works')
 def test_setting_up_an_iscsi_share(driver):
     """Setting up an ISCSI share."""
 
 
-@given(parsers.parse('the browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
-    """The browser is open navigate to "{nas_user}"."""
-    if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/dashboard/")
+@given(parsers.parse('the browser is open navigate to "{nas_hostname}"'))
+def the_browser_is_open_navigate_to_nas_hostname(driver, nas_hostname):
+    """The browser is open navigate to "{nas_hostname}"."""
+    if nas_hostname not in driver.current_url:
+        driver.get(f"http://{nas_hostname}/ui/dashboard/")
         time.sleep(1)
 
 
-@when(parsers.parse('if login page appear enter "{user}" and "{password}"'))
-def if_login_page_appear_enter_root_and_password(driver, user, password):
-    """If login page appear enter "{user}" and "{password}"."""
+@when(parsers.parse('if login page appear enter "{nas_user}" and "{password}"'))
+def if_login_page_appear_enter_root_and_password(driver, nas_user, password):
+    """If login page appear enter "{nas_user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(nas_user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 7, '//button[@name="signin_button"]')
@@ -52,9 +65,9 @@ def you_should_see_the_dashboard(driver):
     assert wait_on_element(driver, 20, '//span[contains(.,"System Information")]')
 
 
-@then('go to sharing click iscsi')
-def go_to_sharing_click_iscsi(driver):
-    """go to sharing click iscsi."""
+@then('go to sharing then click iscsi the iscsi page should open')
+def go_to_sharing_then_click_iscsi_the_iscsi_page_should_open(driver):
+    """go to sharing then click iscsi the iscsi page should open."""
     assert wait_on_element(driver, 7, '//span[contains(.,"root")]')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -62,17 +75,12 @@ def go_to_sharing_click_iscsi(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]').click()
-
-
-@then('the iscsi page should open')
-def the_iscsi_page_should_open(driver):
-    """the iscsi page should open."""
     assert wait_on_element(driver, 7, '//a[contains(.,"iSCSI")]')
 
 
-@then('click Authorized Access tab, then click Add')
-def click_authorized_access_tab_then_click_add(driver):
-    """click Authorized Access tab, then click Add."""
+@then('click Authorized Access tab, then click Add and Authorized AccessAdd Add page should open')
+def click_authorized_access_tab_then_click_add_and_authorized_accessadd_add_page_should_open(driver):
+    """click Authorized Access tab, then click Add and Authorized AccessAdd Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
@@ -108,22 +116,17 @@ def input_peer_secret_password_peer_secret_confirm_passwordc(driver, password, p
     driver.find_element_by_xpath('//input[@ix-auto="input__Peer Secret (Confirm)"]').send_keys(passwordc)
 
 
-@then('click Summit')
-def click_summit(driver):
-    """click Summit."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-
-
-@then('you should be retune to the Authorized Access tab')
-def then_you_should_be_retune_to_the_authorized_access_tab(driver):
-    """you should be retune to the Authorized Access tab."""
+@then('click Summit and the new authorized access should be in Authorized Access list')
+def click_summit_and_the_new_authorized_access_should_be_in_authorized_access_list(driver):
+    """click Summit and the new authorized access should be in Authorized Access list."""
+    click_summit(driver)
     assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"usertest")]')
 
 
-@then('click Portals tab, then click Add')
-def click_portals_tab_then_click_add(driver):
-    """click Portals tab, then click Add."""
+@then('click Portals tab, then click Add and the Portal Add page should open')
+def click_portals_tab_then_click_add_and_the_portal_add_page_should_open(driver):
+    """click Portals tab, then click Add and the Portal Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Portals"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Portals")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
@@ -156,25 +159,26 @@ def select_discovery_auth_group_1_ip_address_0000_port_3260(driver, gid, ip, por
     driver.find_element_by_xpath('//input[@ix-auto="input__Port"]').send_keys(ports)
 
 
-@then('you should be retune to the Portals tab')
-def then_you_should_be_retune_to_the_portals_tab(driver):
-    """you should be retune to the Portals tab."""
+@then('click Summit and the new portal should be on the Portals list')
+def click_summit_and_the_new_portal_should_be_on_the_portals_list(driver):
+    """click Summit and the new portal should be on the Portals list."""
+    click_summit(driver)
     assert wait_on_element(driver, 7, '//div[contains(.,"Portals")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"my iscsi")]')
 
 
-@then('click Initiators Group tab, then click Add')
-def click_initiators_group_tab_then_click_add(driver):
-    """click Initiators Group tab, then click Add."""
+@then('click Initiators Group tab, then click Add and the Initiators Add page should open')
+def click_initiators_group_tab_then_click_add_and_the_initiators_add_page_should_open(driver):
+    """click Initiators Group tab, then click Add and the Initiators Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Initiators Groups"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Initiators Groups")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
     assert wait_on_element(driver, 7, '//span[contains(.,"Allow All Initiators")]')
 
 
-@then(parsers.parse('input "{description}" in Description input "{initiator}" in Allowed Initiators then click +'))
-def input_Group_ID_1_in_description_input_initiator_in_allowed_initiators_then_click_plus(driver, description, initiator):
-    """input "description" in Description input "initiator" in Allowed Initiators then click +."""
+@then(parsers.parse('input "{description}" in Description, input "{initiator}" in Allowed Initiators then click +'))
+def input_group_id_1_in_description_input_iqn199801comvmwareiscsids1_in_allowed_initiators_then_click_plus(driver, description, initiator):
+    """input "Group ID 1" in Description, input "iqn.1998-01.com.vmware.iscsi:ds1" in Allowed Initiators then click +."""
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
     driver.find_element_by_xpath('//input[@ix-auto="input__Allowed Initiators (IQN)"]').clear()
@@ -190,22 +194,17 @@ def input_ip_in_authorized_networks_then_click_plus(driver, ip):
     driver.find_element_by_xpath('(//button[contains(.,"add")])[2]').click()
 
 
-@then('click Save')
-def click_save(driver):
-    """click Save."""
+@then('click Save and the new initiator should be on the Initiators Group list')
+def click_save_and_the_new_initiator_should_be_on_the_initiators_group_list(driver):
+    """click Save and the new initiator should be on the Initiators Group list."""
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-
-
-@then('you should be retune to the Initiators Group tab')
-def then_you_should_be_retune_to_the_initiators_group_tab(driver):
-    """you should be retune to the Initiators Group tab."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Initiators Groups")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"Group ID 1")]')
 
 
-@then('click Targets tab, then click Add')
-def click_targets_tab_then_click_add(driver):
-    """click Targets tab, then click Add."""
+@then('click Targets tab, then click Add and the Target Add page should open')
+def click_targets_tab_then_click_add_and_the_target_add_page_should_open(driver):
+    """click Targets tab, then click Add and the Target Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Targets"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
@@ -239,16 +238,17 @@ def initiator_group_id_select_1_auth_method_select_mutual_chap_authentication_gr
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Group Number_{gid}"]').click()
 
 
-@then('you should be retune to the Targets tab')
-def then_you_should_be_retune_to_the_targets_tab(driver):
-    """you should be retune to the Targets tab."""
+@then('click Summit and the new target should be on the Targets list')
+def click_summit_and_the_new_target_should_be_on_the_targets_list(driver):
+    """click Summit and the new target should be on the Targets list."""
+    click_summit(driver)
     assert wait_on_element(driver, 7, '//div[contains(.,"Targets")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"ds1")]')
 
 
-@then('click Extents tab, then click Add')
-def click_extents_tab_then_click_add(driver):
-    """click Extents tab, then click Add."""
+@then('click Extents tab, then click Add and Extents Add page should open')
+def click_extents_tab_then_click_add_and_extents_add_page_should_open(driver):
+    """click Extents tab, then click Add and Extents Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Extents"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Extents")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
@@ -268,16 +268,17 @@ def input_extent_name_ds1__extent_type_device_device__tankds1(driver, name, exte
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Device_{device}"]').click()
 
 
-@then('you should be retune to the Extents tab')
-def then_you_should_be_retune_to_the_extents_tab(driver):
-    """you should be retune to the Extents tab."""
+@then('click Summit and the new extent should be on the Extents list')
+def click_summit_and_the_new_extent_should_be_on_the_extents_list(driver):
+    """click Summit and the new extent should be on the Extents list."""
+    click_summit(driver)
     assert wait_on_element(driver, 7, '//div[contains(.,"Extents")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"ds1")]')
 
 
-@then('click Associated Targets tab, then click Add')
-def click_associated_targets_tab_then_click_add(driver):
-    """click Associated Targets tab, then click Add."""
+@then('click Associated Targets tab, then click Add and Associated Targets Add page should open')
+def click_associated_targets_tab_then_click_add_and_associated_targets_add_page_should_open(driver):
+    """click Associated Targets tab, then click Add and Associated Targets Add page should open."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Associated Targets"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Associated Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
@@ -297,8 +298,109 @@ def select_ds1_Target_input_1_for_lun_id_select_ds1_extent(driver, target, lun_i
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Extent_{extent}"]').click()
 
 
-@then('you should be retune to the Associated Targets tab')
-def then_you_should_be_retune_to_the_associated_targets_tab(driver):
-    """you should be retune to the Associated Targets tab."""
+@then('click Summit and the new associated target should be on the Associated Targets list')
+def click_summit_and_the_new_associated_target_should_be_on_the_associated_targets_list(driver):
+    """click Summit and the new associated target should be on the Associated Targets list."""
+    click_summit(driver)
     assert wait_on_element(driver, 7, '//div[contains(.,"Associated Targets")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"ds1")]')
+
+
+@then('click on Services on the side menu and the Services page should open')
+def click_on_services_on_the_side_menu_and_the_services_page_should_open(driver):
+    """click on Services on the side menu and the Services page should open."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Services"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 7, '//services')
+
+
+@then('if the SCSI service is not started, start the service')
+def if_the_scsi_service_is_not_started_start_the_service(driver):
+    """if the SCSI service is not started, start the service."""
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__iSCSI"]')
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__iSCSI_Running"]', 'class', 'mat-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__iSCSI_Running"]').click()
+    time.sleep(2)
+
+
+@then(parsers.parse('SSH to <host> with <host_password> and connect with iscsictl, "{target}",  "{user}" and "{secret}"'))
+def ssh_to_host_with_password_connect_with_iscsictl_ds1__usertest_and_testing123abc(nas_hostname, host_password, host, target, user, secret):
+    """SSH to <host> with <password> connect with iscsictl, "ds1",  "usertest" and "testing123abc"."""
+    cmd = f'iscsictl -A -p {nas_hostname}:3260 -t iqn.2005-10.org.freenas.ctl:{target} -u {user} -s {secret}'
+    login_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert login_results['result'], str(login_results)
+
+
+@then('find the iscsi device with iscsictl -L and format the device newfs')
+def find_the_iscsi_device_with_iscsictl_L_and_format_the_device_newfs(nas_hostname, host_password, host):
+    """find the iscsi device with iscsictl -L and format the device newfs."""
+    global device
+    cmd = f'iscsictl -L | grep {nas_hostname}:3260'
+    for num in list(range(15)):
+        iscsictl_results = ssh_cmd(cmd, 'root', host_password, host)
+        assert iscsictl_results['result'], str(iscsictl_results)
+        iscsictl_list = iscsictl_results['output'].strip().split()
+        if iscsictl_list[2] == "Connected:":
+            device = f"/dev/{iscsictl_list[3]}"
+            assert True
+            break
+        time.sleep(1)
+    else:
+        assert False
+    time.sleep(1)
+    cmd = f'newfs {device}'
+    format_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert format_results['result'], str(format_results)
+
+
+@then('create a mount point, then mount the iscsi device to it')
+def create_a_mount_point_then_mount_the_device_to_it(host_password, host):
+    """create a mount point, then mount the device to it."""
+    cmd = f"mkdir -p {MOUNT_POINT}"
+    mkdir_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert mkdir_results['result'], str(mkdir_results)
+    cmd = f"mount {device} {MOUNT_POINT}"
+    mount_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert mount_results['result'], str(mount_results)
+
+
+@then('create a file in the mount point unmount it and verify the file is missing in the mount point')
+def create_a_file_in_the_mount_point_unmount_it_and_verify_the_file_is_missing_in_the_mount_point(host_password, host):
+    """create a file in the mount point unmount it and verify the file is missing in the mount point."""
+    cmd = f"touch {MOUNT_POINT}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert touch_results['result'], str(touch_results)
+    cmd = f"test -f {MOUNT_POINT}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert touch_results['result'], str(touch_results)
+    cmd = f"umount {MOUNT_POINT}"
+    unmount_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert unmount_results['result'], str(unmount_results)
+    cmd = f"test -f {MOUNT_POINT}/test.text"
+    test_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert not test_results['result'], str(test_results)
+
+
+@then('then remount the iscsi device, the file should be in the mount point')
+def then_remount_the_iscsi_device_the_file_should_be_in_the_mount_point(host_password, host):
+    """then remount the iscsi device, the file should be in the mount point."""
+    cmd = f"mount {device} {MOUNT_POINT}"
+    mount_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert mount_results['result'], str(mount_results)
+    cmd = f"test -f {MOUNT_POINT}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert touch_results['result'], str(touch_results)
+
+
+@then(parsers.parse('unmount and remove the mount point, disconnect with "{iscsictl_command}"'))
+def unmount_and_remove_the_mount_point_disconnect_with_iscsictl_r_t_iqn200510orgfreenasctlds1(iscsictl_command, host, host_password):
+    """unmount and remove the mount point, disconnect with "iscsictl -R -t iqn.2005-10.org.freenas.ctl:ds1"."""
+    cmd = f"umount {MOUNT_POINT}"
+    umount_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert umount_results['result'], str(umount_results)
+    cmd = f"rm -rf {MOUNT_POINT}"
+    mount_results = ssh_cmd(cmd, 'root', host_password, host)
+    assert mount_results['result'], str(mount_results)
+    remove_results = ssh_cmd(iscsictl_command, 'root', host_password, host)
+    assert remove_results['result'], str(remove_results)

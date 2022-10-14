@@ -12,7 +12,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from subprocess import run, PIPE
+from subprocess import run, PIPE, TimeoutExpired
 
 header = {'Content-Type': 'application/json', 'Vary': 'accept'}
 
@@ -97,17 +97,21 @@ def ssh_cmd(command, username, password, host):
         f"{username}@{host}",
         command
     ]
-    process = run(cmd, stdout=PIPE, universal_newlines=True)
-    output = process.stdout
-    if process.returncode != 0:
-        return {'result': False, 'output': output}
-    else:
-        return {'result': True, 'output': output}
+    try:
+        process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=10)
+        output = process.stdout
+        stderr = process.stderr
+        if process.returncode != 0:
+            return {'result': False, 'output': output, 'stderr': stderr}
+        else:
+            return {'result': True, 'output': output, 'stderr': stderr}
+    except TimeoutExpired:
+        return {'result': False, 'output': 'Timeout'}
 
 
 def start_ssh_agent():
     process = run(['ssh-agent', '-s'], stdout=PIPE, universal_newlines=True)
-    torecompil = 'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)'
+    torecompil = r'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)'
     OUTPUT_PATTERN = re.compile(torecompil, re.MULTILINE | re.DOTALL)
     match = OUTPUT_PATTERN.search(process.stdout)
     if match is None:
