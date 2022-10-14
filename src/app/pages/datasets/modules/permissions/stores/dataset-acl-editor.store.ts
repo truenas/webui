@@ -11,6 +11,7 @@ import {
   catchError, filter, map, switchMap, takeUntil, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -191,8 +192,9 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
           next: () => {
+            const ngUrl = ['datasets', this.get()?.mountpoint.replace(`${mntPath}/`, '')];
             dialogRef.close();
-            this.router.navigate(['/datasets']);
+            this.router.navigate(ngUrl);
           },
           error: (error) => {
             dialogRef.close();
