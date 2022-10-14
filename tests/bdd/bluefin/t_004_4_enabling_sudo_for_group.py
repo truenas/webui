@@ -77,14 +77,6 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     element_text = driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
     assert element_text == 'false'
 
-    # verify user can ssh in and cannot sudo
-    time.sleep(2) #race condition if we dont give the OS enough time to preform the function first. 
-    global sudo_group_results
-    cmd = 'ls /'
-    sudo_group_results = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
-    assert "Sorry, user qetestuser is not allowed" in sudo_group_results, str(sudo_group_results)
-
-
     # click on Credentials and Local Groups
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
