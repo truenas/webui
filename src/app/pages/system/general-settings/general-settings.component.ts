@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -318,6 +318,9 @@ export class GeneralSettingsComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
+    });
+    dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((error: HttpErrorResponse) => {
+      dialogRef.componentInstance.setDescription(error.error);
     });
   }
 
