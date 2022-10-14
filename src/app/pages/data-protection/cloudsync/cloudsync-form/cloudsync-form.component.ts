@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -169,7 +169,6 @@ export class CloudsyncFormComponent {
     this.form.controls.filename_encryption.disable();
     this.form.controls.encryption_password.disable();
     this.form.controls.encryption_salt.disable();
-    this.resetTransferMode();
 
     this.form.controls.direction.valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
       if (direction === Direction.Pull || this.form.controls.transfer_mode.value === TransferMode.Move) {
@@ -616,19 +615,6 @@ export class CloudsyncFormComponent {
       value.snapshot = false;
     }
     return value;
-  }
-
-  // We make a default copy for push and pull to avoid default destruction
-  resetTransferMode(): void {
-    this.form.controls.direction.valueChanges.pipe(
-      distinctUntilChanged(),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      if (this.form.controls.transfer_mode.value !== TransferMode.Copy && this.form.controls.direction.touched) {
-        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, true);
-        this.form.controls.transfer_mode.setValue(TransferMode.Copy);
-      }
-    });
   }
 
   onDryRun(): void {
