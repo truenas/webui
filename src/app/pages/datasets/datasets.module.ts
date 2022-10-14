@@ -41,7 +41,6 @@ import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
 import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.module';
-import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from './components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
@@ -105,8 +104,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     SpaceManagementChartComponent,
     DatasetCapacitySettingsComponent,
   ],
-  providers: [
-    DatasetTreeStore,
-  ],
+  providers: [],
 })
 export class DatasetsModule { }

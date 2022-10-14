@@ -13,6 +13,7 @@ import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -76,6 +77,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private matDialog: MatDialog,
     private loader: AppLoaderService,
     private ws: WebSocketService,
+    private datasetStore: DatasetTreeStore,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,
   ) {}
 
@@ -100,12 +102,15 @@ export class ExportDisconnectModalComponent implements OnInit {
       disableClose: true,
     });
     entityJobRef.componentInstance.setDescription(helptext.exporting);
+
     entityJobRef.componentInstance.setCall('pool.export', [this.pool.id, {
       destroy: value.destroy,
       cascade: value.cascade,
       restart_services: this.restartServices,
     }]);
+
     entityJobRef.componentInstance.submit();
+
     entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
@@ -124,6 +129,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.dialogService.errorReportMiddleware(error);
       },
     });
+
     entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failureData) => {
         let conditionalErrMessage = '';
@@ -188,6 +194,8 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.dialogService.errorReportMiddleware(error);
       },
     });
+
+    this.datasetStore.resetDatasets();
   }
 
   private loadRelatedEntities(): void {
