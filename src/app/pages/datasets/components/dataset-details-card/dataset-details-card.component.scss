@@ -35,6 +35,6 @@
   width: 35%;
 }
 
-::ng-deep .custom-tooltip {
+::ng-deep :host .tooltip-name {
   word-break: break-all;
 }

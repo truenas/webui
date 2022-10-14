@@ -542,10 +542,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   canSave(): boolean {
-    if (this.isNew && !this.nameControl.value) {
-      return false;
-    }
-    if (this.nameControl.value.length > 50) {
+    if (this.isNew && (!this.nameControl.value || this.nameControl.value.length > 50)) {
       return false;
     }
     if (this.vdevtypeError) {
