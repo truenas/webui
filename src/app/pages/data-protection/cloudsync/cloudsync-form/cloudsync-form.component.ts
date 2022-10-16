@@ -193,10 +193,6 @@ export class CloudsyncFormComponent {
         this.form.controls.path_destination.disable();
         this.form.controls.path_source.enable();
       }
-      if (this.form.controls.transfer_mode.value !== TransferMode.Copy) {
-        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, true);
-        this.form.controls.transfer_mode.setValue(TransferMode.Copy);
-      }
     });
 
     this.form.controls.transfer_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((transferMode) => {
