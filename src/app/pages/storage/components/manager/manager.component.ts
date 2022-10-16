@@ -206,6 +206,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue as { vdevs: number };
         const origVdevs = this.vdevComponents.toArray();
+        const pageNoBefore = this.lastPageChangedEvent.pageIndex;
         // handle case of extending with zero vdevs filled out
         if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
           const vdev = origVdevs[0];
@@ -228,9 +229,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.addVdev('data', vdevValues);
         }
         entityDialog.dialogRef.close(true);
-        const pageIndex = this.lastPageChangedEvent.pageIndex;
+        this.paginator.pageIndex = pageNoBefore;
         const pageSize = this.lastPageChangedEvent.pageSize;
-        const offset = pageIndex * pageSize;
+        const offset = pageNoBefore * pageSize;
         const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length);
         this.shownDataVdevs = _.cloneDeep(this.vdevs.data.slice(offset, endIndex));
         setTimeout(() => {
