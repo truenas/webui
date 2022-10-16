@@ -6,6 +6,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
+import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 interface DiskState {
   health: DiskHealthLevel;
@@ -34,6 +35,10 @@ export enum DiskHealthLevel {
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[] = [];
+
+  get disksNames(): string[] {
+    return getPoolDisks(this.poolState);
+  }
 
   readonly diskHealthLevel = DiskHealthLevel;
 

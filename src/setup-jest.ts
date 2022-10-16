@@ -94,11 +94,13 @@ defineGlobalsInjections({
     },
     {
       provide: WINDOW,
-      useValue: {},
+      // eslint-disable-next-line no-restricted-globals
+      useValue: window,
     },
   ],
 });
 
+// eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({

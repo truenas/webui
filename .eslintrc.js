@@ -1,4 +1,5 @@
-const { rules: airbnbRules } = require('eslint-config-airbnb-typescript/lib/shared');
+const { rules: airbnbSharedRules } = require('eslint-config-airbnb-typescript/lib/shared');
+const { rules: airbnbVariableRules } = require('eslint-config-airbnb-base/rules/variables');
 
 module.exports = {
   "root": true,
@@ -183,13 +184,21 @@ module.exports = {
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
-          ...airbnbRules['@typescript-eslint/indent'][2],
+          ...airbnbSharedRules['@typescript-eslint/indent'][2],
           ignoredNodes: [
-            ...airbnbRules['@typescript-eslint/indent'][2]['ignoredNodes'],
+            ...airbnbSharedRules['@typescript-eslint/indent'][2]['ignoredNodes'],
             "PropertyDefinition[decorators]",
           ]
         }],
         "@typescript-eslint/restrict-plus-operands": ["error", { allowAny: true }],
+        "no-restricted-globals": [
+          "error",
+          ...airbnbVariableRules['no-restricted-globals'].slice(1),
+          {
+            "name": "window",
+            "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
+          }
+        ],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],

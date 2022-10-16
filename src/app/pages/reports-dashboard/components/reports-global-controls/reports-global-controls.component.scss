@@ -1,30 +1,43 @@
-.menu-toggle {
+:host {
   color: var(--fg2);
+
+  .menu-toggle {
+    color: var(--fg2);
+  }
 }
 
-.toolbar-control {
-  ::ng-deep .form-element {
+.reports-toolbar ::ng-deep {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  ix-slide-toggle {
     align-items: center;
-    display: inline-flex;
-    gap: 8px;
-    justify-content: center;
+    display: flex;
+    margin: 0;
+    min-height: 36px;
 
-    mat-label {
-      line-height: 24px;
+    .mat-slide-toggle-content {
+      font-family: var(--font-family-body);
     }
+  }
 
-    .mat-form-field-flex {
-      align-items: center;
-    }
+  ix-select {
+    display: flex;
+    margin: 0;
+    padding: 0;
 
-    .mat-form-field-infix {
-      align-items: center;
-      display: flex;
-      width: 120px;
+    .input-container {
+      width: 180px;
     }
   }
 }
 
-.reports-dash-global-controls {
-  gap: 12px;
+.reports-menu ::ng-deep {
+  .mat-menu-item {
+    &.selected {
+      background-color: var(--primary);
+    }
+  }
 }

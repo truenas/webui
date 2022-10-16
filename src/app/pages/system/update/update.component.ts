@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { filter, pairwise, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -98,6 +99,7 @@ export class UpdateComponent implements OnInit {
     protected storage: StorageService,
     private store$: Store<AppState>,
     private fb: FormBuilder,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
@@ -552,8 +554,8 @@ export class UpdateComponent implements OnInit {
   }
 
   update(): void {
-    window.sessionStorage.removeItem('updateLastChecked');
-    window.sessionStorage.removeItem('updateAvailable');
+    this.window.sessionStorage.removeItem('updateLastChecked');
+    this.window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.isHa) {

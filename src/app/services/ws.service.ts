@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
@@ -10,6 +10,7 @@ import {
 import { filter, share, switchMap } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-event.interface';
@@ -26,7 +27,6 @@ export class WebSocketService {
   connected = false;
   loggedIn = false;
   @LocalStorage() token: string;
-  redirectUrl = '';
   shuttingdown = false;
 
   private authStatus$ = new Subject<boolean>();
@@ -51,8 +51,9 @@ export class WebSocketService {
 
   constructor(
     protected router: Router,
+    @Inject(WINDOW) protected window: Window,
   ) {
-    this.protocol = window.location.protocol;
+    this.protocol = this.window.location.protocol;
     this.remote = environment.remote;
     this.connect();
   }
@@ -61,7 +62,7 @@ export class WebSocketService {
     return this.authStatus$.asObservable();
   }
 
-  reconnect(protocol = window.location.protocol, remote = environment.remote): void {
+  reconnect(protocol = this.window.location.protocol, remote = environment.remote): void {
     this.protocol = protocol;
     this.remote = remote;
     this.socket.close();
@@ -331,7 +332,7 @@ export class WebSocketService {
       this.clearCredentials();
       this.socket.close();
       this.router.navigate(['/sessions/signin']);
-      window.location.reload();
+      this.window.location.reload();
     });
   }
 }

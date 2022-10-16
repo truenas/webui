@@ -32,19 +32,14 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   private getBreadcrumbs(): RoutePart[] {
-    let breadcrumbs = this.routePartsService.routeParts;
-    // uniq by url
-    breadcrumbs = _.uniqBy(breadcrumbs, 'url');
-    // uniq by title
-    breadcrumbs = _.uniqBy(breadcrumbs, 'title');
-
-    breadcrumbs = breadcrumbs.filter((routePart) => {
-      // filters routers has empty breadcrumb
-      if (!routePart.breadcrumb) {
-        return false;
-      }
-      return true;
+    let breadcrumbs = this.routePartsService.routeParts.sort((a, b) => {
+      return a.ngUrl.length - b.ngUrl.length;
     });
+
+    breadcrumbs = _.uniqBy(breadcrumbs, 'title');
+    breadcrumbs = _.uniqBy(breadcrumbs, 'url');
+
+    breadcrumbs = breadcrumbs.filter((routePart) => routePart.breadcrumb);
 
     return breadcrumbs;
   }

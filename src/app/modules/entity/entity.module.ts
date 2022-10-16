@@ -86,7 +86,6 @@ import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
-import { ToolbarMultiSelectComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { WizardSummaryComponent } from 'app/modules/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
@@ -98,7 +97,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
-import { AppLoaderService, DocsService, JobService } from 'app/services';
+import { AppLoaderService, JobService } from 'app/services';
 
 @NgModule({
   imports: [
@@ -194,7 +193,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     FormParagraphComponent,
     EntityDialogComponent,
     ToolbarMultimenuComponent,
-    ToolbarMultiSelectComponent,
     ToolbarSliderComponent,
     FormStatusComponent,
     TableComponent,
@@ -215,7 +213,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
     EntityDialogComponent,
     ToolbarSliderComponent,
     ToolbarMultimenuComponent,
-    ToolbarMultiSelectComponent,
     TableComponent,
     ExpandableTableComponent,
     CdkTreeModule,
@@ -225,7 +222,6 @@ import { AppLoaderService, DocsService, JobService } from 'app/services';
   providers: [
     EntityFormService,
     AppLoaderService,
-    DocsService,
     JobService,
     TableService,
   ],

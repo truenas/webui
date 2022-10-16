@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { WINDOW } from 'app/helpers/window.helper';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -27,10 +26,6 @@ describe('TokenProviderFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      {
-        provide: WINDOW,
-        useValue: {} as Window,
-      },
     ],
   });
 
