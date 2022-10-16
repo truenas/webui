@@ -463,22 +463,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.dirty = true;
     this.vdevs[group].push(initialValues);
 
-    let pageIndex = this.lastPageChangedEvent.pageIndex;
-    const pageSize = this.lastPageChangedEvent.pageSize;
-    const vdevsLength = this.vdevs[group].length;
-
-    this.paginator.length = this.vdevs[group].length;
-
-    const lastIndexOnCurrentPage = (pageIndex + 1) * pageSize;
-    if (lastIndexOnCurrentPage < vdevsLength) {
-      pageIndex++;
-      this.paginator.pageIndex = pageIndex;
+    if (group === 'data') {
+      this.reaffirmDataVdevsLastPage();
     }
-    this.onPageChange({
-      ...this.lastPageChangedEvent,
-      length: this.vdevs[group].length,
-      pageIndex,
-    });
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -495,29 +482,36 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
     if (vdevChanged.group === 'data') {
       this.vdevs[vdevChanged.group].splice(indexRemove, 1);
+      this.reaffirmDataVdevsLastPage();
     } else {
       this.vdevs[vdevChanged.group] = []; // should only be one vdev of other groups at one time
     }
 
+    setTimeout(() => { // there appears to be a slight race condition with adding/removing
+      this.getCurrentLayout();
+    }, 100);
+  }
+
+  private reaffirmDataVdevsLastPage(): void {
     let pageIndex = this.lastPageChangedEvent.pageIndex;
     const pageSize = this.lastPageChangedEvent.pageSize;
-    const vdevsLength = this.vdevs[vdevChanged.group].length;
+    const vdevsLength = this.vdevs.data.length;
 
-    this.paginator.length = this.vdevs[vdevChanged.group].length;
+    this.paginator.length = vdevsLength;
+    const lastIndexOnCurrentPage = (pageIndex + 1) * pageSize;
     const lastIndexOnPrevPage = ((pageIndex + 1) * pageSize) - pageSize;
-    if (lastIndexOnPrevPage >= vdevsLength) {
+    if (lastIndexOnCurrentPage < vdevsLength) {
+      pageIndex++;
+      this.paginator.pageIndex = pageIndex;
+    } else if (lastIndexOnPrevPage >= vdevsLength) {
       pageIndex--;
       this.paginator.pageIndex = pageIndex;
     }
     this.onPageChange({
       ...this.lastPageChangedEvent,
-      length: this.vdevs[vdevChanged.group].length,
+      length: vdevsLength,
       pageIndex,
     });
-
-    setTimeout(() => { // there appears to be a slight race condition with adding/removing
-      this.getCurrentLayout();
-    }, 100);
   }
 
   getCurrentLayout(): void {
