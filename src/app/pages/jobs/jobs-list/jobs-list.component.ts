@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +46,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
   dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
-  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments_logs'];
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs', 'actions'];
   expandedRow: Job;
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
@@ -63,6 +62,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   selector$ = new BehaviorSubject(selectJobs);
 
   readonly JobState = JobState;
+  readonly JobTab = JobTab;
   readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
 
   constructor(
@@ -123,8 +123,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onTabChange(tab: MatTabChangeEvent): void {
-    this.selectedIndex = tab.index;
+  onTabChange(tab: JobTab): void {
+    this.selectedIndex = tab;
     switch (this.selectedIndex) {
       case JobTab.Failed:
         this.selector$.next(selectFailedJobs);
