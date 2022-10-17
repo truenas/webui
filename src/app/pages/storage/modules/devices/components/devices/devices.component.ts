@@ -16,9 +16,10 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs/operators';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
-  Disk, isTopologyDisk, isVdev, TopologyDisk,
+  Disk, isTopologyDisk, isVdev, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
@@ -179,8 +180,8 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   // Expose hidden details on mobile
-  openMobileDetails(): void {
-    if (this.isMobileView) {
+  openMobileDetails(selectedNode: DeviceNestedDataNode): void {
+    if (this.isMobileView && this.isHealthyNode(selectedNode)) {
       this.showMobileDetails = true;
     }
   }
@@ -197,12 +198,16 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       }
 
       dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
-        const nameA = a.disk.toLowerCase();
-        const nameB = b.disk.toLowerCase();
+        const nameA = a.disk?.toLowerCase();
+        const nameB = b.disk?.toLowerCase();
 
         return nameA.localeCompare(nameB);
       });
       this.sortDataNodesByDiskName(dataNodes.children);
     });
+  }
+
+  isHealthyNode(selectedNode: DeviceNestedDataNode): boolean {
+    return (selectedNode as TopologyItem).type !== TopologyItemType.Disk || !!this.getDisk(selectedNode);
   }
 }
