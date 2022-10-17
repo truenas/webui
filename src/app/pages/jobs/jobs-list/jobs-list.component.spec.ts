@@ -107,9 +107,9 @@ describe('JobsListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedRows = [
-      ['Name', 'State', 'ID', 'Started', 'Finished', 'Arguments/Logs'],
-      ['highlight_off  cloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View  Download Logs'],
-      ['check_circle_outline  cloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View'],
+      ['Name', 'State', 'ID', 'Started', 'Finished', 'Logs', ''],
+      ['cloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'Download Logs', 'expand_more'],
+      ['cloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', '', 'expand_more'],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -129,7 +129,7 @@ describe('JobsListComponent', () => {
     store$.overrideSelector(selectJobs, fakeJobDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'View' }));
+    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'expand_more' }));
     await firstExpandButton.click();
     await secondExpandButton.click();
 
