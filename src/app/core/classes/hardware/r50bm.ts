@@ -90,14 +90,14 @@ export class R50BM extends Chassis {
       this.rear = new ChassisView();
       const rscale = 0.95;
       this.rear.driveTrays.scale = { x: rscale, y: rscale };
-      this.rear.driveTraysOffsetX = -26;
+      this.rear.driveTraysOffsetX = 230;
       this.rear.driveTraysOffsetY = -60;
       this.rear.container = new PIXI.Container();
       this.rear.chassisPath = 'assets/images/hardware/r50/r50bm_rear.png';
       this.rear.driveTrayBackgroundPath = 'assets/images/hardware/r50/r50_rear_960w_drivetray_bg.png';
       this.rear.driveTrayHandlePath = 'assets/images/hardware/r50/r50_rear_960w_drivetray_handle.png';
-      this.rear.columns = 1;
-      this.rear.rows = 3;
+      this.rear.columns = 2;
+      this.rear.rows = 2;
       this.rear.slotRange = { start: 49, end: 52 };
 
       this.rear.totalDriveTrays = 4;
