@@ -70,11 +70,7 @@ export class FailoverSettingsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.cdr.markForCheck();
-
-          if (values.disabled && !values.master) {
-            this.ws.logout();
-          }
+          this.ws.logout();
         },
         error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
