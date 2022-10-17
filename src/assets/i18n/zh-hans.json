@@ -68,6 +68,7 @@
   "Completed S.M.A.R.T. Tests": "",
   "Configure Dashboard": "",
   "Configure {name}": "",
+  "Confirm New Password": "",
   "Connect using:": "",
   "Connecting to TrueNAS": "",
   "Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.": "",

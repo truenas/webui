@@ -3,6 +3,7 @@
   [label]="label"
   [tooltip]="tooltip"
   [required]="required"
+  [class.disabled]="isDisabled"
 ></ix-label>
 
 <div
@@ -30,7 +31,7 @@
     (focus)="focus(ixInput)"
     (blur)="blurred()"
   />
-  <span *ngIf="shouldShowResetInput()" class="reset-input">
+  <span *ngIf="shouldShowResetInput() && !isDisabled" class="reset-input">
     <mat-icon
       fontSet="mdi-set"
       fontIcon="mdi-close-circle"
@@ -38,7 +39,7 @@
     ></mat-icon>
   </span>
   <button
-    *ngIf="type === 'password'"
+    *ngIf="type === 'password' && !isDisabled"
     mat-icon-button
     type="button"
     class="toggle_pw"

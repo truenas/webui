@@ -36,17 +36,17 @@
         <ix-input
           formControlName="password"
           type="password"
-          [label]="'Password' | translate"
-          [tooltip]="(isNew ? tooltips.password : tooltips.password_edit) | translate"
-          [required]="isNew"
+          [label]="((isNewUser ? 'Password' : 'New Password') | translate)"
+          [tooltip]="(isNewUser ? tooltips.password : tooltips.password_edit) | translate"
+          [required]="isNewUser"
         ></ix-input>
 
         <ix-input
           formControlName="password_conf"
           type="password"
-          [label]="'Confirm Password' | translate"
-          [tooltip]="!isNew ? (tooltips.password_conf_edit | translate) : null"
-          [required]="isNew"
+          [label]="((isNewUser ? 'Confirm Password' : 'Confirm New Password') | translate)"
+          [tooltip]="!isNewUser ? (tooltips.password_conf_edit | translate) : null"
+          [required]="isNewUser"
         ></ix-input>
       </div>
     </div>
@@ -157,7 +157,7 @@
       {{ 'Save' | translate }}
     </button>
     <button
-      *ngIf="!isNew"
+      *ngIf="!isNewUser"
       mat-button
       type="button"
       (click)="onDownloadSshPublicKey()"
