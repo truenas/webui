@@ -646,7 +646,7 @@
           </div>
         </div>
         <div class="pool">
-          <div>
+          <div class="data-vdev">
             <div class="data-div">
               <div class="data-title">
                 <h4 class="vdev-h4">{{ 'Data VDevs' | translate }}</h4>
@@ -664,12 +664,14 @@
               </div>
             </div>
             <ix-vdev
+              class="vdev"
               *ngFor="let vdev of shownDataVdevs; let i = index"
               [group]="'data'"
               [manager]="this"
               [uuid]="vdev.uuid"
               [initialValues]="vdev"
               (vdevChanged)="onVdevChanged($event)"
+              [title]="getDataVdevTitle(i)"
             ></ix-vdev>
             <mat-paginator
               #paginator
@@ -681,11 +683,13 @@
               (page)="onPageChange($event)"
             >
             </mat-paginator>
+            <mat-divider></mat-divider>
 
           </div>
           <div *ngIf="vdevs.cache.length > 0">
             <h4 class="vdev-h4">{{ 'Cache VDev' | translate }}</h4>
             <ix-vdev
+              class="vdev"
               *ngFor="let vdev of vdevs.cache; let i = index"
               [group]="'cache'"
               [manager]="this"
@@ -695,6 +699,7 @@
           <div *ngIf="vdevs.log.length > 0">
             <h4 class="vdev-h4">{{ 'Log VDev' | translate }}</h4>
             <ix-vdev
+              class="vdev"
               *ngFor="let vdev of vdevs.log; let i = index"
               [group]="'log'"
               [manager]="this"
@@ -704,6 +709,7 @@
           <div *ngIf="vdevs.spares.length > 0">
             <h4 class="vdev-h4">{{ 'Spare VDev' | translate }}</h4>
             <ix-vdev
+              class="vdev"
               *ngFor="let vdev of vdevs.spares; let i = index"
               [group]="'spares'"
               [manager]="this"
@@ -713,6 +719,7 @@
           <div *ngIf="vdevs.special.length > 0">
             <h4 class="vdev-h4">{{ 'Metadata VDev' | translate }}</h4>
             <ix-vdev
+              class="vdev"
               *ngFor="let vdev of vdevs.special; let i = index"
               [group]="'special'"
               [manager]="this"
@@ -722,6 +729,7 @@
           <div *ngIf="vdevs.dedup.length > 0">
             <h4 class="vdev-h4">{{ 'Dedup VDev' | translate }}</h4>
             <ix-vdev
+              class="vdev"
               *ngFor="let vdev of vdevs.dedup; let i = index"
               [group]="'dedup'"
               [manager]="this"

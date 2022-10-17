@@ -1007,4 +1007,12 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.disks = this.disks.filter((disk) => !this.nonUniqueSerialDisks.includes(disk));
     }
   }
+
+  getDataVdevTitle(index: number): string {
+    let title = `${this.translate.instant('Vdev')} (`;
+    const offset = this.paginator.pageSize * this.paginator.pageIndex;
+    const vdevNo = offset + index + 1;
+    title += `${vdevNo}/${this.paginator.length})`;
+    return title;
+  }
 }

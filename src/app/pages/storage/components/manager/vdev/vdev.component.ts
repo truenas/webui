@@ -25,6 +25,7 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['vdev.component.scss'],
 })
 export class VdevComponent implements OnInit {
+  @Input() title: string;
   @Input() uuid: string;
   @Input() group: string;
   @Input() manager: ManagerComponent;
