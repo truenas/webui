@@ -14,10 +14,12 @@ import { filter, map } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket } from 'app/interfaces/cloudsync-credential.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -51,8 +53,8 @@ export class CloudsyncFormComponent {
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
     transfer_mode: [TransferMode.Copy, Validators.required],
-    path_destination: [['/mnt'], Validators.required],
-    path_source: [['/mnt'], Validators.required],
+    path_destination: [[mntPath], Validators.required],
+    path_source: [[mntPath], Validators.required],
 
     credentials: [null as number, Validators.required],
     bucket: [''],
@@ -116,13 +118,6 @@ export class CloudsyncFormComponent {
     untilDestroyed(this),
   );
 
-  readonly bucketOptions$ = this.form.controls.credentials.value
-    ? this.getBuckets(this.form.controls.credentials.value).pipe(
-      map((options) => {
-        return options.map((subitem) => ({ label: subitem.Name, value: subitem.Path }));
-      }),
-    ) : of([]);
-
   readonly encryptionOptions$ = of([
     { label: 'AES-256', value: 'AES256' },
   ]);
@@ -136,6 +131,8 @@ export class CloudsyncFormComponent {
     { label: 'Glacier', value: 'GLACIER' },
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
+
+  bucketOptions$: Observable<SelectOption[]> = of([]);
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
@@ -196,10 +193,6 @@ export class CloudsyncFormComponent {
         this.form.controls.path_destination.disable();
         this.form.controls.path_source.enable();
       }
-      if (this.form.controls.transfer_mode.value !== TransferMode.Copy) {
-        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, true);
-        this.form.controls.transfer_mode.setValue(TransferMode.Copy);
-      }
     });
 
     this.form.controls.transfer_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((transferMode) => {
@@ -254,10 +247,16 @@ export class CloudsyncFormComponent {
                 }
 
                 this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
-                  next: () => {
+                  next: (buckets) => {
+                    this.bucketOptions$ = of(buckets.map((bucket) => ({
+                      label: bucket.Name,
+                      value: bucket.Path,
+                      disabled: !bucket.Enabled,
+                    })));
                     this.isLoading = false;
                     this.form.controls.bucket.enable();
                     this.form.controls.bucket_input.disable();
+                    this.cdr.markForCheck();
                   },
                   error: (err) => {
                     this.isLoading = false;
@@ -273,8 +272,10 @@ export class CloudsyncFormComponent {
                       const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
                       this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
                     });
+                    this.cdr.markForCheck();
                   },
                 });
+                this.cdr.markForCheck();
               } else {
                 this.form.controls.bucket.disable();
                 this.form.controls.bucket_input.disable();

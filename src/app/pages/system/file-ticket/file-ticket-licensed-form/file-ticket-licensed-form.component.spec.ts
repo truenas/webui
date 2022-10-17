@@ -5,10 +5,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TicketCategory, TicketCriticality, TicketEnvironment } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -39,7 +42,9 @@ describe('FileTicketLicensedFormComponent', () => {
       MockComponent(JobItemComponent),
     ],
     providers: [
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        generalDialog: jest.fn(() => of()),
+      }),
       mockWebsocket([
         mockCall('core.get_jobs', [{
           id: 1,
@@ -59,6 +64,9 @@ describe('FileTicketLicensedFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
+      mockWindow({
+        open: jest.fn(),
+      }),
     ],
   });
 
@@ -103,11 +111,10 @@ describe('FileTicketLicensedFormComponent', () => {
   });
 
   it('opens window when User Guide is pressed', async () => {
-    jest.spyOn(window, 'open').mockImplementation();
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'User Guide' }));
     await button.click();
 
-    expect(window.open).toHaveBeenCalledWith('https://www.truenas.com/docs/hub/');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('https://www.truenas.com/docs/hub/');
   });
 
   it('redirects to eula page when EULA is pressed', async () => {

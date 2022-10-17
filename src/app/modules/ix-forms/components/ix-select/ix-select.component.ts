@@ -8,7 +8,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Option } from 'app/interfaces/option.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 
 type IxSelectValue = string | number | string[] | number[];
 
@@ -23,7 +23,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() label: string;
   @Input() value: IxSelectValue;
   @Input() hint: string;
-  @Input() options: Observable<Option[]>;
+  @Input() options: Observable<SelectOption[]>;
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() multiple: boolean;
@@ -33,7 +33,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   formControl = new UntypedFormControl(this).value as UntypedFormControl;
   isDisabled = false;
   hasErrorInOptions = false;
-  opts$: Observable<Option[]>;
+  opts$: Observable<SelectOption[]>;
   isLoading = false;
 
   constructor(
@@ -81,5 +81,13 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
+  }
+
+  get disabledState(): boolean {
+    return this.isDisabled || !this.options;
+  }
+
+  get isLoadingState(): boolean {
+    return this.isLoading || !this.options;
   }
 }

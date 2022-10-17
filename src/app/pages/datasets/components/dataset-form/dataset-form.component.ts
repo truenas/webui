@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AclMode, AclType } from 'app/enums/acl-type.enum';
+import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
   DatasetCaseSensitivity,
@@ -23,7 +23,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -815,7 +815,7 @@ export class DatasetFormComponent implements FormConfiguration {
       data.quota = null;
       data.refreservation = null;
       data.reservation = null;
-      data.special_small_block_size = null;
+      data.special_small_block_size = inherit;
       data.copies = (data.copies !== undefined && data.copies !== null && data.name !== undefined) ? '1' : undefined;
     }
     // calculate and delete _unit
@@ -1067,22 +1067,18 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
-    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe({
-      next: (choices) => {
+    this.ws.call('pool.dataset.compression_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe({
+      next: (options) => {
         const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
-        for (const key in choices) {
-          compression.options.push({ label: key, value: choices[key] });
-        }
+        compression.options = options;
       },
       error: this.handleError,
     });
 
-    this.ws.call('pool.dataset.checksum_choices').pipe(untilDestroyed(this)).subscribe({
-      next: (checksumChoices) => {
+    this.ws.call('pool.dataset.checksum_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe({
+      next: (options) => {
         const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-        for (const key in checksumChoices) {
-          checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
-        }
+        checksumFieldConfig.options = options;
       },
       error: this.handleError,
     });
@@ -1136,12 +1132,12 @@ export class DatasetFormComponent implements FormConfiguration {
             }
             this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
               next: (algorithms) => {
-                encryptionAlgorithmConfig.options = [];
-                for (const algorithm in algorithms) {
-                  if (algorithms.hasOwnProperty(algorithm)) {
-                    encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
-                  }
-                }
+                encryptionAlgorithmConfig.options = Object.keys(algorithms).map((algorithm) => {
+                  return {
+                    label: algorithm,
+                    value: algorithm,
+                  };
+                });
               },
               error: this.handleError,
             });
@@ -1657,18 +1653,8 @@ export class DatasetFormComponent implements FormConfiguration {
               }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
                 if (confirmed) {
                   this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
-                    next: ({ acltype }) => {
-                      if (acltype === AclType.Posix1e) {
-                        this.router.navigate(
-                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                          { queryParams: { default: parentPath } },
-                        );
-                      } else {
-                        this.router.navigate(
-                          ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                          { queryParams: { default: parentPath } },
-                        );
-                      }
+                    next: () => {
+                      this.router.navigate(['/', 'datasets', restPostResp.name, 'permissions', 'acl']);
                     },
                     error: this.handleError,
                   });

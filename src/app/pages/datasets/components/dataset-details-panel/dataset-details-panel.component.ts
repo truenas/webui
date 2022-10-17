@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit, EventEmitter, Output,
+  ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -25,12 +26,11 @@ export class DatasetDetailsPanelComponent implements OnInit {
   @Input() systemDataset: string;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
-  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
-
   constructor(
     private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -96,6 +96,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
   }
 
   onCloseMobileDetails(): void {
-    this.closeMobileDetails.emit();
+    this.router.navigate(['/datasets'], { state: { hideMobileDetails: true } });
   }
 }

@@ -1,4 +1,5 @@
-const { rules: airbnbRules } = require('eslint-config-airbnb-typescript/lib/shared');
+const { rules: airbnbSharedRules } = require('eslint-config-airbnb-typescript/lib/shared');
+const { rules: airbnbVariableRules } = require('eslint-config-airbnb-base/rules/variables');
 
 module.exports = {
   "root": true,
@@ -134,8 +135,21 @@ module.exports = {
         "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
-        "no-restricted-syntax": "off",
-        "guard-for-in": "off",
+        "no-restricted-syntax": ["error",
+          // TODO: Partially implemented. ForOfStatement is allowed for now.
+          {
+            "selector": "ForInStatement",
+            "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+          },
+          {
+            "selector": "LabeledStatement",
+            "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+          },
+          {
+            "selector": "WithStatement",
+            "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+          }
+        ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
@@ -152,7 +166,6 @@ module.exports = {
           allowSamePrecedence: true
         }],
         "default-case": "off",
-        "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-explicit-any": "off",
@@ -171,13 +184,21 @@ module.exports = {
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
-          ...airbnbRules['@typescript-eslint/indent'][2],
+          ...airbnbSharedRules['@typescript-eslint/indent'][2],
           ignoredNodes: [
-            ...airbnbRules['@typescript-eslint/indent'][2]['ignoredNodes'],
+            ...airbnbSharedRules['@typescript-eslint/indent'][2]['ignoredNodes'],
             "PropertyDefinition[decorators]",
           ]
         }],
         "@typescript-eslint/restrict-plus-operands": ["error", { allowAny: true }],
+        "no-restricted-globals": [
+          "error",
+          ...airbnbVariableRules['no-restricted-globals'].slice(1),
+          {
+            "name": "window",
+            "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
+          }
+        ],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],

@@ -14,7 +14,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
@@ -96,7 +96,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
-  ) {}
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .subscribe(() => {
+        if (this.router.getCurrentNavigation().extras.state?.hideMobileDetails) {
+          this.closeMobileDetails();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
@@ -105,82 +113,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.loadSystemDatasetConfig();
     this.listenForLoading();
     this.listenForDatasetScrolling();
-  }
-
-  ngAfterViewInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
-      .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView = true;
-        } else {
-          this.closeMobileDetails();
-          this.isMobileView = false;
-        }
-        this.cdr.detectChanges();
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  loadSystemDatasetConfig(): void {
-    this.ws
-      .call('systemdataset.config')
-      .pipe(
-        map((config) => config.pool),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (systemDataset) => {
-          this.systemDataset = systemDataset;
-        },
-        error: this.handleError,
-      });
-  }
-
-  listenForLoading(): void {
-    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
-      this.isLoading = isLoading;
-      this.cdr.markForCheck();
-    });
-  }
-
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
-    this.dialogService.errorReportMiddleware(error);
-  };
-
-  isSystemDataset(dataset: DatasetDetails): boolean {
-    return isRootDataset(dataset) && this.systemDataset === dataset.name;
-  }
-
-  updateScroll(type: ScrollType): void {
-    this.scrollSubject.next(
-      type === ScrollType.IxTree ? this.ixTree.nativeElement.scrollLeft : this.ixTreeHeader.nativeElement.scrollLeft,
-    );
-  }
-
-  onIxTreeWidthChange(event: ResizedEvent): void {
-    this.ixTreeHeaderWidth = Math.round(event.newRect.width);
-  }
-
-  private listenForDatasetScrolling(): void {
-    this.subscription.add(
-      this.scrollSubject
-        .pipe(debounceTime(0), distinctUntilChanged(), untilDestroyed(this))
-        .subscribe({
-          next: (scrollLeft: number) => {
-            this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
-            this.ixTree.nativeElement.scrollLeft = scrollLeft;
-          },
-        }),
-    );
-  }
-
-  onSearch(query: string): void {
-    this.dataSource.filter(query);
   }
 
   private setupTree(): void {
@@ -216,27 +148,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        map((params) => params.datasetId),
-        filter(Boolean),
-        untilDestroyed(this),
-      )
-      .subscribe((datasetId: string) => {
-        this.datasetStore.selectDatasetById(datasetId);
-      });
-  }
-
-  private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
-    this.dataSource.filterPredicate = (datasets, query = '') => {
-      return flattenTreeWithFilter(datasets, (dataset: DatasetDetails) => {
-        return dataset.name.toLowerCase().includes(query.toLowerCase());
-      });
-    };
-  }
-
   private sortDatasetsByName(datasets: DatasetDetails[]): void {
     datasets.forEach((dataset) => {
       if (dataset.children.length > 0) {
@@ -254,6 +165,107 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
+  private createDataSource(datasets: DatasetDetails[]): void {
+    this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
+    this.dataSource.filterPredicate = (datasets, query = '') => {
+      return flattenTreeWithFilter(datasets, (dataset: DatasetDetails) => {
+        return dataset.name.toLowerCase().includes(query.toLowerCase());
+      });
+    };
+  }
+
+  private listenForRouteChanges(): void {
+    this.activatedRoute.params
+      .pipe(
+        map((params) => params.datasetId),
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe((datasetId: string) => {
+        this.datasetStore.selectDatasetById(datasetId);
+      });
+  }
+
+  loadSystemDatasetConfig(): void {
+    this.ws
+      .call('systemdataset.config')
+      .pipe(
+        map((config) => config.pool),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (systemDataset) => {
+          this.systemDataset = systemDataset;
+        },
+        error: this.handleError,
+      });
+  }
+
+  listenForLoading(): void {
+    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+      this.isLoading = isLoading;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private listenForDatasetScrolling(): void {
+    this.subscription.add(
+      this.scrollSubject
+        .pipe(debounceTime(0), distinctUntilChanged(), untilDestroyed(this))
+        .subscribe({
+          next: (scrollLeft: number) => {
+            this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
+            this.ixTree.nativeElement.scrollLeft = scrollLeft;
+          },
+        }),
+    );
+  }
+
+  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+    this.dialogService.errorReportMiddleware(error);
+  };
+
+  isSystemDataset(dataset: DatasetDetails): boolean {
+    return isRootDataset(dataset) && this.systemDataset === dataset.name;
+  }
+
+  updateScroll(type: ScrollType): void {
+    this.scrollSubject.next(
+      type === ScrollType.IxTree ? this.ixTree.nativeElement.scrollLeft : this.ixTreeHeader.nativeElement.scrollLeft,
+    );
+  }
+
+  onIxTreeWidthChange(event: ResizedEvent): void {
+    this.ixTreeHeaderWidth = Math.round(event.newRect.width);
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.filter(query);
+  }
+
+  ngAfterViewInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+        } else {
+          this.closeMobileDetails();
+          this.isMobileView = false;
+        }
+        this.cdr.detectChanges();
+      });
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   createPool(): void {
     this.router.navigate(['/storage', 'create']);
   }
@@ -263,9 +275,5 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     if (this.isMobileView) {
       this.showMobileDetails = true;
     }
-  }
-
-  closeMobileDetails(): void {
-    this.showMobileDetails = false;
   }
 }
