@@ -30,7 +30,7 @@
     (focus)="focus(ixInput)"
     (blur)="blurred()"
   />
-  <span *ngIf="shouldShowResetInput() && !isDisabled" class="reset-input">
+  <span *ngIf="shouldShowResetInput()" class="reset-input">
     <mat-icon
       fontSet="mdi-set"
       fontIcon="mdi-close-circle"
