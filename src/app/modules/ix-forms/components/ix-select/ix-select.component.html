@@ -34,9 +34,10 @@
           [value]="option.value"
           [disabled]="option.disabled"
         >
-          <mat-icon *ngIf="multiple">
-            {{ ixOption.selected ? 'check_circle' : 'remove' }}
-          </mat-icon>
+          <ix-icon
+            *ngIf="multiple"
+            [name]="ixOption.selected ? 'check_circle' : 'remove'"
+          ></ix-icon>
 
           {{ option.label }}
         </mat-option>
