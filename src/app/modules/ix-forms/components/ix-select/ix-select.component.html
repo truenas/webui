@@ -15,7 +15,7 @@
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >
-      <mat-select-trigger>
+      <mat-select-trigger *ngIf="multiple">
         {{ value }}
       </mat-select-trigger>
 
