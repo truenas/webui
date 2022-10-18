@@ -859,8 +859,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .mat-pseudo-checkbox.mat-pseudo-checkbox-checked {
-    background-color: var(--primary);
+  // for multi-selection only
+  .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
+    display: none;
   }
 
   // Bring tooltips to the front in dialogs

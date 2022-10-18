@@ -15,6 +15,10 @@
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >
+      <mat-select-trigger>
+        {{ value }}
+      </mat-select-trigger>
+
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
         <mat-option *ngIf="opts.length === 0" [value]="null" [disabled]="true">
           {{ 'No options' | translate }}
@@ -26,10 +30,19 @@
 
         <mat-option
           *ngFor="let option of opts"
-          color="primary"
+          #ixOption
           [value]="option.value"
           [disabled]="option.disabled"
         >
+          <span *ngIf="multiple">
+            <mat-icon *ngIf="ixOption.selected" class="fn-checked">
+              check_circle
+            </mat-icon>
+            <mat-icon *ngIf="!ixOption.selected" class="fn-unchecked">
+              remove
+            </mat-icon>
+          </span>
+
           {{ option.label }}
         </mat-option>
       </ng-container>
