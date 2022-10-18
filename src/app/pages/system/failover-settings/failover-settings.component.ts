@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -11,6 +12,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
@@ -47,6 +50,7 @@ export class FailoverSettingsComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -69,8 +73,12 @@ export class FailoverSettingsComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          if (values.disabled && !values.master) {
+            this.ws.logout();
+          }
+          this.store$.dispatch(adminUiInitialized());
           this.isLoading = false;
-          this.ws.logout();
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);
