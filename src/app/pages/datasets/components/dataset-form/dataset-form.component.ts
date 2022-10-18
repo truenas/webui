@@ -135,6 +135,7 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'parent',
           placeholder: helptext.dataset_parent_name_placeholder,
           tooltip: helptext.dataset_parent_name_tooltip,
+          textAreaRows: 3,
           readonly: true,
           disabled: true,
         },
@@ -142,6 +143,7 @@ export class DatasetFormComponent implements FormConfiguration {
           type: 'textarea',
           name: 'name',
           placeholder: helptext.dataset_form_name_placeholder,
+          textAreaRows: 3,
           tooltip: helptext.dataset_form_name_tooltip,
           readonly: true,
           required: true,
@@ -1068,6 +1070,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.isNew = true;
       entityForm.formGroup.controls['parent'].setValue(this.parent);
       entityForm.formGroup.controls['name'].setValidators(datasetNameTooLong(this.parent));
+
       if (this.parent.length >= 200) {
         this.dialogService.warn(
           this.translate.instant('Action Not Possible'),
