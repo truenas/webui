@@ -494,12 +494,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   private reaffirmDataVdevsLastPage(): void {
     let pageIndex = this.lastPageChangedEvent.pageIndex;
+    pageIndex = pageIndex < 0 ? 0 : pageIndex;
     const pageSize = this.lastPageChangedEvent.pageSize;
     const vdevsLength = this.vdevs.data.length;
 
     this.paginator.length = vdevsLength;
-    const lastIndexOnCurrentPage = (pageIndex + 1) * pageSize;
-    const lastIndexOnPrevPage = ((pageIndex + 1) * pageSize) - pageSize;
+    const lastIndexOnCurrentPage = ((pageIndex + 1) * pageSize) - 1;
+    const lastIndexOnPrevPage = (((pageIndex + 1) * pageSize) - pageSize) - 1;
     const lastPage = Math.floor((vdevsLength / pageSize));
     if (lastPage === pageIndex && lastIndexOnCurrentPage < vdevsLength) {
       pageIndex++;
