@@ -1,12 +1,18 @@
 import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
+import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
+import { ReplaceDiskDialogComponent, ReplaceDiskDialogData } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -23,12 +29,21 @@ export class TopologyItemNodeComponent {
 
   constructor(
     protected translate: TranslateService,
+    private matDialog: MatDialog,
+    private route: ActivatedRoute,
+    private devicesStore: DevicesStore,
   ) {
     this.utils = new WidgetUtils();
   }
 
   get name(): string {
-    return (this.topologyItem as TopologyDisk).disk || this.topologyItem.type;
+    if ((this.topologyItem as TopologyDisk).disk) {
+      return (this.topologyItem as TopologyDisk).disk;
+    }
+    if (this.isDisk) {
+      return this.topologyItem.path;
+    }
+    return this.topologyItem.type;
   }
 
   get status(): string {
@@ -58,5 +73,29 @@ export class TopologyItemNodeComponent {
       default:
         return '';
     }
+  }
+
+  get isDisk(): boolean {
+    return Boolean(this.topologyItem.type === TopologyItemType.Disk && this.topologyItem.path);
+  }
+
+  onReplace(): void {
+    const poolId = this.route.snapshot.params.poolId;
+    this.matDialog
+      .open(ReplaceDiskDialogComponent, {
+        data: {
+          poolId: Number(poolId),
+          guid: this.topologyItem.guid,
+          diskName: this.disk?.name || this.topologyItem.path,
+        } as ReplaceDiskDialogData,
+      })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.devicesStore.reloadList();
+      });
   }
 }

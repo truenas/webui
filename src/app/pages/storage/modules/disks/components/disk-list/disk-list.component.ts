@@ -117,28 +117,26 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       },
     }];
 
-    for (const key in this.smartDiskChoices) {
-      if (key === parentRow.identifier) {
-        actions.push({
-          id: parentRow.name,
-          icon: 'format_list_bulleted',
-          name: 'manual_test',
-          label: this.translate.instant('Manual Test'),
-          onClick: (row: Disk) => {
-            this.manualTest(row);
-          },
-        });
-        actions.push({
-          id: parentRow.name,
-          icon: 'format_list_bulleted',
-          name: 'smartresults',
-          label: this.translate.instant('S.M.A.R.T Test Results'),
-          onClick: (row) => {
-            this.router.navigate(['/storage', 'disks', 'smartresults', row.name]);
-          },
-        });
-        break;
-      }
+    const isSmartSupported = Object.keys(this.smartDiskChoices).includes(parentRow.identifier);
+    if (isSmartSupported) {
+      actions.push({
+        id: parentRow.name,
+        icon: 'format_list_bulleted',
+        name: 'manual_test',
+        label: this.translate.instant('Manual Test'),
+        onClick: (row: Disk) => {
+          this.manualTest(row);
+        },
+      });
+      actions.push({
+        id: parentRow.name,
+        icon: 'format_list_bulleted',
+        name: 'smartresults',
+        label: this.translate.instant('S.M.A.R.T Test Results'),
+        onClick: (row) => {
+          this.router.navigate(['/storage', 'disks', 'smartresults', row.name]);
+        },
+      });
     }
 
     const devMatch = this.unusedDisks.filter((dev) => dev.name === parentRow.name);
@@ -170,9 +168,9 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   diskUpdate(entityList: EntityTableComponent): void {
-    for (const disk of entityList.rows) {
+    entityList.rows.forEach((disk) => {
       disk.readable_size = filesize(disk.size, { standard: 'iec' });
-    }
+    });
   }
 
   prerequisite(): Promise<boolean> {

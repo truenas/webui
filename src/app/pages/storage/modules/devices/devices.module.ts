@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -50,6 +51,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
+    MatMenuModule,
     IxIconModule,
     NgxFilesizeModule,
     NgxSkeletonLoaderModule.forRoot({

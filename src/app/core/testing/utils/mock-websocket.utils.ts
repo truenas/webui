@@ -5,6 +5,7 @@ import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
@@ -40,8 +41,8 @@ export function mockWebsocket(
   return [
     {
       provide: WebSocketService,
-      useFactory: (router: Router) => {
-        const mockWebsocketService = new MockWebsocketService(router);
+      useFactory: (router: Router, window: Window) => {
+        const mockWebsocketService = new MockWebsocketService(router, window);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -52,7 +53,7 @@ export function mockWebsocket(
 
         return mockWebsocketService;
       },
-      deps: [Router],
+      deps: [Router, WINDOW],
     },
     {
       provide: MockWebsocketService,

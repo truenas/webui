@@ -1,14 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
     <ix-reports-global-controls
-      [diskMetrics]="diskMetrics"
-      [diskDevices]="diskDevices"
-      [selectedDisks]="selectedDisks"
-      [activeTab]="activeTab"
-      [activeTabVerified]="activeTabVerified"
-      [allTabs]="allTabs"
-      (showConfigForm)="showConfigForm()"
-      (navigateToTab)="navigateToTab($event)"
       (diskOptionsChanged)="buildDiskReport($event)"
     ></ix-reports-global-controls>
   </ix-page-title-header>
@@ -32,7 +24,7 @@
     </div>
   </div>
 
-  <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="350">
+  <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
     <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">
       <ix-report
         *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0"

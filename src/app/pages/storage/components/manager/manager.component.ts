@@ -349,11 +349,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
       next: (algorithms) => {
-        for (const algorithm in algorithms) {
-          if (algorithms.hasOwnProperty(algorithm)) {
-            this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
-          }
-        }
+        Object.keys(algorithms).forEach((algorithm) => {
+          this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
+        });
       },
       error: this.handleError,
     });
@@ -934,13 +932,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.vdevComponents.forEach((vdev) => {
       vdev.remove();
     });
-    for (const group in this.vdevs) {
-      if (this.vdevs.hasOwnProperty(group)) {
-        while (this.vdevs[group].length > 0) {
-          this.vdevs[group].pop();
-        }
+    Object.keys(this.vdevs).forEach((group) => {
+      while (this.vdevs[group].length > 0) {
+        this.vdevs[group].pop();
       }
-    }
+    });
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
     this.addVdev('data', { disks: [], type: this.firstDataVdevType || 'data', uuid: UUID.UUID() });

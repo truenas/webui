@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
+  ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -15,6 +15,7 @@ import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -80,6 +81,7 @@ export class GuiFormComponent {
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.loadCurrentValues();
     this.setupThemePreview();
@@ -89,7 +91,7 @@ export class GuiFormComponent {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
-      window.location.replace(href);
+      this.window.location.replace(href);
     } else {
       setTimeout(() => {
         this.reconnect(href);
@@ -181,10 +183,10 @@ export class GuiFormComponent {
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
-        const hostname = window.location.hostname;
-        const protocol = window.location.protocol;
-        let port = window.location.port;
-        let href = window.location.href;
+        const hostname = this.window.location.hostname;
+        const protocol = this.window.location.protocol;
+        let port = this.window.location.port;
+        let href = this.window.location.href;
 
         if (httpPortChanged && protocol === 'http:') {
           port = changed.ui_port.toString();
@@ -192,7 +194,7 @@ export class GuiFormComponent {
           port = changed.ui_httpsport.toString();
         }
 
-        href = protocol + '//' + hostname + ':' + port + window.location.pathname;
+        href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;
 
         this.loader.open();
         this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily

@@ -8,6 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -66,30 +67,25 @@ describe('EmailComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Scale,
       }),
-      {
-        provide: WINDOW,
-        useFactory: () => {
-          return {
-            open: jest.fn(),
-            location: {
-              toString: () => 'http://truenas.com/system/email',
-            } as Location,
-            addEventListener: jest.fn((_, listener) => {
-              listener({
-                data: {
-                  oauth_portal: true,
-                  result: {
-                    refresh_token: 'new_token',
-                    client_secret: 'new_secret',
-                    client_id: 'new_client_id',
-                  },
-                },
-              } as OauthMessage<GmailOauthConfig>);
-            }),
-            removeEventListener: jest.fn(),
-          } as unknown as Window;
-        },
-      },
+      mockWindow({
+        open: jest.fn(),
+        location: {
+          toString: () => 'http://truenas.com/system/email',
+        } as Location,
+        addEventListener: jest.fn((_, listener: EventListener) => {
+          listener({
+            data: {
+              oauth_portal: true,
+              result: {
+                refresh_token: 'new_token',
+                client_secret: 'new_secret',
+                client_id: 'new_client_id',
+              },
+            },
+          } as OauthMessage<GmailOauthConfig>);
+        }),
+        removeEventListener: jest.fn(),
+      }),
     ],
   });
 

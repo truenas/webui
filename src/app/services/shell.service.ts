@@ -1,7 +1,8 @@
 import {
-  Injectable, EventEmitter,
+  Injectable, EventEmitter, Inject,
 } from '@angular/core';
 import { environment } from 'environments/environment';
+import { WINDOW } from 'app/helpers/window.helper';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 
 @Injectable()
@@ -22,10 +23,14 @@ export class ShellService {
   shellOutput = new EventEmitter<ArrayBuffer>();
   shellConnected = new EventEmitter<ShellConnectedEvent>();
 
+  constructor(
+    @Inject(WINDOW) private window: Window,
+  ) {}
+
   connect(): void {
     this.socket = new WebSocket(
-      (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
-      + environment.remote + '/websocket/shell/',
+      (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+        + environment.remote + '/websocket/shell/',
     );
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);

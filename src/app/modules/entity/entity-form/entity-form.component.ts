@@ -285,7 +285,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 delete this.data['extra_fieldsets'];
               }
             }
-            for (const key in this.data) {
+            Object.keys(this.data).forEach((key) => {
               const fg = this.formGroup.controls[key];
               if (fg) {
                 const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
@@ -307,7 +307,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   }
                 }
               }
-            }
+            });
           } else {
             if (res[0]) {
               this.wsResponse = res[0];
@@ -326,7 +326,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if (this.conf.dataHandler) {
               this.conf.dataHandler(this);
             } else {
-              for (const key in this.wsResponse) {
+              Object.keys(this.wsResponse).forEach((key) => {
                 this.wsfg = this.formGroup.controls[key];
                 if (this.wsfg) {
                   const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
@@ -342,7 +342,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 } else if (this.conf.dataAttributeHandler) {
                   this.conf.dataAttributeHandler(this);
                 }
-              }
+              });
 
               this.formGroup.patchValue(this.wsResponse);
             }
@@ -578,15 +578,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
     });
 
-    data.forEach((value, index) => {
+    data.forEach((arrayValue, index) => {
       this.conf.initialCount += 1;
       this.conf.initialCount_default += 1;
 
       const formGroup = this.entityFormService.createFormGroup(arrayFieldConfigs);
-      for (const i in value) {
+      Object.entries(arrayValue).forEach(([i, value]) => {
         const formControl = formGroup.controls[i];
-        formControl.setValue(value[i]);
-      }
+        formControl.setValue(value);
+      });
       formArray.insert(index, formGroup);
     });
   }

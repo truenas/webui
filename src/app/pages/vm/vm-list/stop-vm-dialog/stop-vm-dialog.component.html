@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>{{ 'Stop {vmName}?' | translate: { vmName: vm.name } }}</h1>
+<div mat-dialog-content>
+  <ix-checkbox
+    [formControl]="forceAfterTimeoutCheckbox"
+    [label]="'Force Stop After Timeout' | translate"
+    [tooltip]="helptext.stop_dialog.forceTooltip | translate"
+  ></ix-checkbox>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button
+    mat-button
+    [matDialogClose]="false"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    (click)="onStop()"
+  >
+    {{ 'Stop' | translate }}
+  </button>
+</div>

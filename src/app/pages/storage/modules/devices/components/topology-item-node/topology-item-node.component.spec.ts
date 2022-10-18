@@ -1,4 +1,4 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -6,6 +6,7 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/components/topology-item-icon/topology-item-icon.component';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
+import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 
 describe('TopologyItemNodeComponent', () => {
   let spectator: Spectator<TopologyItemNodeComponent>;
@@ -30,6 +31,9 @@ describe('TopologyItemNodeComponent', () => {
     component: TopologyItemNodeComponent,
     declarations: [
       MockComponent(TopologyItemIconComponent),
+    ],
+    providers: [
+      mockProvider(DevicesStore),
     ],
   });
 

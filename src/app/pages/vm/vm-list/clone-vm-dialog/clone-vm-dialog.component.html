@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>{{ 'Clone' | translate }}</h1>
+<div mat-dialog-content>
+  <ix-input
+    [label]="'Enter a Name (optional)' | translate"
+    [formControl]="nameControl"
+  ></ix-input>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button
+    mat-button
+    [matDialogClose]="false"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    (click)="onClone()"
+  >
+    {{ 'Clone' | translate }}
+  </button>
+</div>

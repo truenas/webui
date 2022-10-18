@@ -39,13 +39,12 @@ export class ProductImageService {
   private serverSeries = ['M30', 'M40', 'M50', 'M60', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50', 'R10', 'R20', 'R40', 'R50'];
 
   getMiniImagePath(sysProd: string): string {
-    for (const series in this.miniSeries) {
-      const product = this.miniSeries[series].images.find((image) => image === sysProd);
-      if (product) {
-        return this.miniSeries[series].pathImg;
-      }
+    const product = Object.values(this.miniSeries).find((mini) => mini.images.includes(sysProd));
+    if (!product) {
+      return null;
     }
-    return null;
+
+    return product.pathImg;
   }
 
   getServerProduct(sysProd: string): string {

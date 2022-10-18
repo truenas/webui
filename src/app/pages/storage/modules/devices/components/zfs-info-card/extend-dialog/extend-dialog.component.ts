@@ -6,10 +6,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { Observable, of } from 'rxjs';
+import { map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
-import { Option } from 'app/interfaces/option.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -28,8 +27,19 @@ export interface ExtendDialogParams {
 })
 export class ExtendDialogComponent implements OnInit {
   newDiskControl = new FormControl(null as string, Validators.required);
-  unusedDiskOptions$: Observable<Option[]>;
   unusedDisks: UnusedDisk[] = [];
+
+  readonly unusedDiskOptions$ = this.ws.call('disk.get_unused').pipe(
+    map((disks) => {
+      return disks.map((disk) => {
+        const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+        return {
+          label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
+          value: disk.name,
+        };
+      });
+    }),
+  );
 
   readonly helptext = helptext;
 
@@ -106,16 +116,6 @@ export class ExtendDialogComponent implements OnInit {
       .subscribe({
         next: (disks) => {
           this.unusedDisks = disks;
-          this.unusedDiskOptions$ = of(
-            disks.map((disk) => {
-              const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
-              return {
-                label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
-                value: disk.name,
-              };
-            }),
-          );
-
           this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
         },
         error: (error) => {

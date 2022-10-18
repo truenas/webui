@@ -23,7 +23,9 @@ const initialState: DatasetTreeState = {
   selectedDatasetId: null,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   // TODO
@@ -79,6 +81,18 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
               return EMPTY;
             }),
           );
+      }),
+    );
+  });
+
+  readonly resetDatasets = this.effect((triggers$: Observable<void>) => {
+    return triggers$.pipe(
+      tap(() => {
+        this.patchState({
+          isLoading: false,
+          selectedDatasetId: null,
+          datasets: [],
+        });
       }),
     );
   });

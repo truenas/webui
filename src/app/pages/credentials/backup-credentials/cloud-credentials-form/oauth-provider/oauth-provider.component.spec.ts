@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -22,28 +23,25 @@ describe('OauthProviderComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      {
-        provide: WINDOW,
-        useValue: {
-          location: {
-            toString: () => 'http://localhost',
-          },
-          open: jest.fn() as Window['open'],
-          addEventListener: jest.fn((_, oAuthCallback: (message: OauthMessage<OauthProviderData>) => void) => {
-            oAuthCallback({
-              data: {
-                oauth_portal: true,
-                result: {
-                  client_id: 'id1234',
-                  client_secret: 'secret1234',
-                  token: 'token1234',
-                },
+      mockWindow({
+        location: {
+          toString: () => 'http://localhost',
+        },
+        open: jest.fn() as Window['open'],
+        addEventListener: jest.fn((_, oAuthCallback: (message: OauthMessage<OauthProviderData>) => void) => {
+          oAuthCallback({
+            data: {
+              oauth_portal: true,
+              result: {
+                client_id: 'id1234',
+                client_secret: 'secret1234',
+                token: 'token1234',
               },
-            } as OauthMessage<OauthProviderData>);
-          }) as Window['addEventListener'],
-          removeEventListener: jest.fn() as Window['removeEventListener'],
-        } as Window,
-      },
+            },
+          } as OauthMessage<OauthProviderData>);
+        }) as Window['addEventListener'],
+        removeEventListener: jest.fn() as Window['removeEventListener'],
+      }),
       mockProvider(DialogService),
     ],
   });
@@ -63,7 +61,7 @@ describe('OauthProviderComponent', () => {
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith(
-      'https://oauth.example.com?origin=http%3A%2F%2Flocalhost%2F',
+      'https://oauth.example.com?origin=http%3A%2F%2Flocalhost',
       '_blank',
       'width=640,height=480',
     );

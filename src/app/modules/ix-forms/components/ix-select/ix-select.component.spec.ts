@@ -144,6 +144,21 @@ describe('IxSelectComponent', () => {
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
       expect(optionLabels).toEqual(['Options cannot be loaded']);
     });
+
+    it('allows some options to be disabled', async () => {
+      spectator.component.options = of([
+        { label: 'GBR', value: 'Great Britain' },
+        { label: 'GRL', value: 'Greenland', disabled: true },
+      ]);
+      spectator.component.ngOnChanges();
+
+      const select = await loader.getHarness(MatSelectHarness);
+      await select.open();
+      const options = await select.getOptions();
+      expect(await options[1].isDisabled()).toBe(false);
+      expect(await options[2].getText()).toBe('GRL');
+      expect(await options[2].isDisabled()).toBe(true);
+    });
   });
 
   describe('select multiple', () => {
