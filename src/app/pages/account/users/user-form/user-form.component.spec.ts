@@ -163,8 +163,8 @@ describe('UserFormComponent', () => {
     it('check change password', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Password: 'changepwd',
-        'Confirm Password': 'changepwd',
+        'New Password': 'changepwd',
+        'Confirm New Password': 'changepwd',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -194,7 +194,7 @@ describe('UserFormComponent', () => {
 
       expect(values).toEqual({
         'Auxiliary Groups': ['test-group'],
-        'Confirm Password': '',
+        'Confirm New Password': '',
         'Create New Primary Group': false,
         'Disable Password': false,
         'Full Name': 'test',
@@ -207,7 +207,7 @@ describe('UserFormComponent', () => {
         'Authorized Keys': '',
         UID: '1004',
         Email: '',
-        Password: '',
+        'New Password': '',
         Shell: 'bash',
         Username: 'test',
       });
