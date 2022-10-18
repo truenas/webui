@@ -1,20 +1,3 @@
-<div class="container">
-  <div class="header-wrapper">
-    <h3 *ngIf="title" class="title-wrapper"> {{ title | translate }}</h3>
-    <div class="vdev-close" [class.full-width]="!title">
-      <button
-        *ngIf="removable"
-        id="vdev__close-button"
-        mat-flat-button
-        class="vdev-action-btn close"
-        [disabled]="group === 'data' && manager.vdevs['data'].length < 2"
-        (click)="remove()"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-  </div>
-  <div class="vdev-wrapper">
     <div class="vdev-actions" id="vdev__action-buttons">
       <button
         id="vdev__add-button"
@@ -37,6 +20,23 @@
         <mat-icon class="arrow">arrow_back</mat-icon>
       </button>
     </div>
+<div class="container">
+  <div class="header-wrapper">
+    <h4 *ngIf="title" class="title-wrapper"> {{ title | translate }}</h4>
+    <div class="vdev-close" [class.full-width]="!title">
+      <button
+        *ngIf="removable"
+        id="vdev__close-button"
+        mat-flat-button
+        class="vdev-action-btn close"
+        [disabled]="group === 'data' && manager.vdevs['data'].length < 2"
+        (click)="remove()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="vdev-wrapper">
     <div class="vdev-table">
       <div class="vdev-wrapper type-wrapper">
         <div class="vdev-type">

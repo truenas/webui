@@ -1,5 +1,15 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .container {
   background: var(--bg1);
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0 8px 28px;
 }
 
 .vdev-wrapper {
@@ -14,7 +24,8 @@
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  padding: 50px 0;
+  margin: 0 12px;
+  width: 48px;
 }
 
 .vdev-action-btn {
@@ -32,6 +43,10 @@
 
 .vdev-close {
   flex: 0 0 auto;
+
+  button {
+    margin-top: 0;
+  }
 }
 
 .vdevTooltip {
@@ -46,7 +61,7 @@
 }
 
 .datainfo {
-  margin-left: 16px;
+  margin: 4px 16px;
 }
 
 @media screen and (max-width: 1399px) {
@@ -62,6 +77,12 @@
 .vdev-estimated {
   display: inline-block;
   margin-left: 16px;
+
+  ix-tooltip {
+    left: 4px;
+    position: relative;
+    top: 3px;
+  }
 }
 
 .size-message {
@@ -91,12 +112,13 @@
 .title-wrapper {
   display: inline-block;
   padding-left: 24px;
-  padding-top: 16px;
 }
 
 .header-wrapper {
+  align-items: center;
   display: flex;
   flex-direction: row;
+  height: 48px;
   justify-content: space-between;
 }
 
