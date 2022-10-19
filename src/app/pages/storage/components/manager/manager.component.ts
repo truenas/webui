@@ -56,7 +56,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
 
-  nameControl = new FormControl('', Validators.required);
+  nameControl = new FormControl('', [Validators.required, Validators.maxLength(50)]);
   addCall = 'pool.create' as const;
   editCall = 'pool.update' as const;
   queryCall = 'pool.query' as const;
@@ -540,7 +540,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   canSave(): boolean {
-    if (this.isNew && !this.nameControl.value) {
+    if (this.isNew && (!this.nameControl.value || this.nameControl.value.length > 50)) {
       return false;
     }
     if (this.vdevtypeError) {
