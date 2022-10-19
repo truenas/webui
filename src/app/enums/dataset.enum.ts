@@ -70,7 +70,6 @@ export enum DatasetCaseSensitivity {
   Inherit = 'INHERIT',
   Sensitive = 'SENSITIVE',
   Insensitive = 'INSENSITIVE',
-  Mixed = 'MIXED',
 }
 
 export enum DatasetShareType {

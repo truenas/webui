@@ -668,7 +668,6 @@ export class DatasetFormComponent implements FormConfiguration {
           options: [
             { label: 'Sensitive', value: DatasetCaseSensitivity.Sensitive },
             { label: 'Insensitive', value: DatasetCaseSensitivity.Insensitive },
-            { label: 'Mixed', value: DatasetCaseSensitivity.Mixed },
           ],
           value: DatasetCaseSensitivity.Sensitive,
         },
