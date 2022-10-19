@@ -87,7 +87,7 @@
           <h3 class="header">Drive Details {{selectedDisk.name}}</h3>
           <div>
             <ul>
-              <li><strong>Pool:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</li>
+              <li><strong>Pool:</strong>  &nbsp;&nbsp;&nbsp;{{ selectedDisk.vdev?.pool ? selectedDisk.vdev.pool : (selectedDisk?.pool ? selectedDisk.pool : 'Disk not attached to any pools.')}}</li>
 
               <li><strong>Vdev:</strong>  &nbsp;&nbsp;&nbsp;
                 <span *ngIf="selectedVdev.type == 'DISK'">DISK</span>
