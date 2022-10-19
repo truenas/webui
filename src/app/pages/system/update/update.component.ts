@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { filter, pairwise, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -13,6 +14,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -41,10 +43,8 @@ export class UpdateComponent implements OnInit {
   updated = false;
   progress: Record<string, unknown> = {};
   error: string;
-  autoCheck = false;
   checkable = false;
-  train: string;
-  trains: { name: string; description: string }[] = [];
+  trains: Option[] = [];
   selectedTrain: string;
   generalUpdateError: string;
   updateDownloaded = false;
@@ -75,6 +75,12 @@ export class UpdateComponent implements OnInit {
                                   the downloaded update.');
   trainVersion: string = null;
   updateTitle = this.translate.instant('Update');
+
+  form = this.fb.group({
+    auto_check: [false],
+    train: ['', Validators.required],
+  });
+
   private wasConfigurationSaved = false;
 
   readonly clickForInformationLink = helptext.clickForInformationLink;
@@ -92,11 +98,32 @@ export class UpdateComponent implements OnInit {
     public translate: TranslateService,
     protected storage: StorageService,
     private store$: Store<AppState>,
+    private fb: FormBuilder,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
     });
+  }
+
+  get trains$(): Observable<Option[]> {
+    return of(this.trains);
+  }
+
+  get trainValue(): string {
+    return this.form.controls.train.value;
+  }
+
+  set trainValue(value) {
+    this.form.controls.train.patchValue(value);
+  }
+
+  get autoCheckValue(): boolean {
+    return this.form.controls.auto_check.value;
+  }
+
+  set autoCheckValue(value) {
+    this.form.controls.auto_check.patchValue(value);
   }
 
   ngOnInit(): void {
@@ -109,26 +136,26 @@ export class UpdateComponent implements OnInit {
       });
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
-      this.autoCheck = isAutoDownloadOn;
+      this.autoCheckValue = isAutoDownloadOn;
 
       this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe({
         next: (trains) => {
           this.checkable = true;
           this.fullTrainList = trains.trains;
 
-          this.train = trains.selected;
+          this.trainValue = trains.selected || '';
           this.selectedTrain = trains.selected;
 
-          if (this.autoCheck) {
+          if (this.autoCheckValue) {
             this.check();
           }
 
           this.trains = Object.entries(trains.trains).map(([name, train]) => ({
-            name,
-            description: train.description,
+            label: `${name} - ${train.description}`,
+            value: name,
           }));
           if (this.trains.length > 0) {
-            this.singleDescription = this.trains[0].description;
+            this.singleDescription = Object.values(trains.trains)[0]?.description;
           }
 
           if (this.fullTrainList[trains.current]) {
@@ -169,6 +196,14 @@ export class UpdateComponent implements OnInit {
     } else {
       this.checkForUpdateRunning();
     }
+
+    this.form.controls.train.valueChanges.pipe(pairwise(), untilDestroyed(this)).subscribe(([prevTrain, newTrain]) => {
+      this.onTrainChanged(newTrain, prevTrain);
+    });
+
+    this.form.controls.auto_check.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.toggleAutoCheck();
+    });
   }
 
   checkForUpdateRunning(): void {
@@ -212,16 +247,16 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  onTrainChanged(event: string): void {
+  onTrainChanged(newTrain: string, prevTrain: string): void {
     // For the case when the user switches away, then BACK to the train of the current OS
-    if (event === this.selectedTrain) {
+    if (newTrain === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
-      this.setTrainAndCheck();
+      this.setTrainAndCheck(newTrain, prevTrain);
       return;
     }
 
     let warning = '';
-    if (this.fullTrainList[event].description.includes('[nightly]')) {
+    if (this.fullTrainList[newTrain] && this.fullTrainList[newTrain].description.includes('[nightly]')) {
       warning = this.translate.instant('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
@@ -230,27 +265,26 @@ export class UpdateComponent implements OnInit {
       message: warning + this.translate.instant('Switch update trains?'),
     }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
       if (confirmSwitch) {
-        this.train = event;
         this.setTrainDescription();
-        this.setTrainAndCheck();
+        this.setTrainAndCheck(newTrain, prevTrain);
       } else {
-        this.train = this.selectedTrain;
+        this.trainValue = prevTrain;
         this.setTrainDescription();
       }
     });
   }
 
   setTrainDescription(): void {
-    if (this.fullTrainList[this.train]) {
-      this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+    if (this.fullTrainList[this.trainValue]) {
+      this.currentTrainDescription = this.fullTrainList[this.trainValue].description.toLowerCase();
     } else {
       this.currentTrainDescription = '';
     }
   }
 
   toggleAutoCheck(): void {
-    this.ws.call('update.set_auto_download', [this.autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.autoCheck) {
+    this.ws.call('update.set_auto_download', [this.autoCheckValue]).pipe(untilDestroyed(this)).subscribe(() => {
+      if (this.autoCheckValue) {
         this.check();
       }
     });
@@ -264,14 +298,15 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  setTrainAndCheck(): void {
+  setTrainAndCheck(newTrain: string, prevTrain: string): void {
     this.showSpinner = true;
-    this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.check();
       },
       error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.trainValue = prevTrain;
         this.showSpinner = false;
       },
       complete: () => {
@@ -531,7 +566,7 @@ export class UpdateComponent implements OnInit {
         this.dialogService.errorReport(failedJob.error, failedJob.reason, failedJob.trace.formatted);
       });
     } else {
-      this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.ws.call('update.set_train', [this.trainValue]).pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.componentInstance.setCall('failover.upgrade');
         dialogRef.componentInstance.disableProgressValue(true);
         dialogRef.componentInstance.submit();
