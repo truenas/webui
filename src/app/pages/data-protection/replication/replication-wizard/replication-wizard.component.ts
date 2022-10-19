@@ -82,7 +82,20 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   pk: number;
   saveSubmitText = this.translate.instant('START REPLICATION');
   hideCancel = true;
-
+  protected retentionPolicyChoice = [
+    {
+      label: this.translate.instant('Same as Source'),
+      value: RetentionPolicy.Source,
+    },
+    {
+      label: this.translate.instant('Never Delete'),
+      value: RetentionPolicy.None,
+    },
+    {
+      label: this.translate.instant('Custom'),
+      value: RetentionPolicy.Custom,
+    },
+  ];
   protected entityWizard: EntityWizardComponent;
   customActions = [{
     id: 'advanced_add',
@@ -571,16 +584,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           name: 'retention_policy',
           placeholder: helptext.retention_policy_placeholder,
           tooltip: helptext.retention_policy_tooltip,
-          options: [{
-            label: this.translate.instant('Same as Source'),
-            value: RetentionPolicy.Source,
-          }, {
-            label: this.translate.instant('Never Delete'),
-            value: RetentionPolicy.None,
-          }, {
-            label: this.translate.instant('Custom'),
-            value: RetentionPolicy.Custom,
-          }],
+          options: this.retentionPolicyChoice,
           value: RetentionPolicy.Source,
           class: 'inline',
           width: '50%',
@@ -1643,7 +1647,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   toggleNamingSchemaOrRegex(): void {
     const customSnapshotsValue = this.entityWizard.formArray.get([0]).get('custom_snapshots').value;
     const sourceDatasetsFromValue = this.entityWizard.formArray.get([0]).get('source_datasets_from').value;
+
     const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
+    const retentionPolicyFormControl = this.entityWizard.formArray.get([1]).get('retention_policy');
+
+    const retentionPolicyField = _.find(
+      _.find(this.wizardConfig[1].fieldSets).config, { name: 'retention_policy' },
+    ) as FormSelectConfig;
 
     if (customSnapshotsValue || sourceDatasetsFromValue === DatasetSource.Remote) {
       if (schemaOrRegexFormControl.disabled) {
@@ -1652,9 +1662,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
         this.setDisable('naming_schema', false, false, 0);
         this.setDisable('name_regex', true, true, 0);
+
+        retentionPolicyField.options = this.retentionPolicyChoice;
       } else {
         this.setDisable('naming_schema', true, true, 0);
         this.setDisable('name_regex', false, false, 0);
+
+        if (retentionPolicyFormControl.value === RetentionPolicy.Custom) {
+          retentionPolicyFormControl.setValue(RetentionPolicy.None);
+        }
+
+        retentionPolicyField.options = this.retentionPolicyChoice
+          .filter((option) => option.value !== RetentionPolicy.Custom);
       }
     } else {
       this.setDisable('naming_schema', true, true, 0);
