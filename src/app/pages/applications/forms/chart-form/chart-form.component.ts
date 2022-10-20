@@ -16,6 +16,7 @@ import {
   ChartRelease, ChartReleaseCreate, ChartSchema, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -33,7 +34,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class ChartFormComponent implements OnDestroy {
   title: string;
-  config: { [key: string]: ChartFormValue };
+  config: HierarchicalObjectMap<ChartFormValue>;
   catalogApp: CatalogApp;
   selectedVersionKey: string;
 
@@ -228,24 +229,12 @@ export class ChartFormComponent implements OnDestroy {
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
-    let value: any = data;
-    for (let i = 0; i < keys.length - 1; i++) {
-      value = value[keys[i]];
-      if (value === undefined || value === null) {
-        break;
-      }
-    }
+    const value = _.get(data, fieldTobeDeleted) as HierarchicalObjectMap<ChartFormValue>;
     if (value !== undefined && value !== null) {
       if (this.isNew) {
         delete value[keys[keys.length - 1]];
       } else {
-        let configValue: any = this.config;
-        for (let i = 0; i < keys.length - 1; i++) {
-          configValue = configValue[keys[i]];
-          if (configValue === undefined || configValue === null) {
-            break;
-          }
-        }
+        const configValue = _.get(this.config, fieldTobeDeleted) as HierarchicalObjectMap<ChartFormValue>;
         if (!configValue || !configValue[keys[keys.length - 1]]) {
           delete value[keys[keys.length - 1]];
         }
@@ -297,7 +286,7 @@ export class ChartFormComponent implements OnDestroy {
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
   }
 
-  onFailure(failedJob: Job<null, unknown[]>): void {
+  onFailure(failedJob: Job): void {
     if (failedJob.exc_info && failedJob.exc_info.extra) {
       new EntityUtils().handleWsError(this, failedJob);
     } else {

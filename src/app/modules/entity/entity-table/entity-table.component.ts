@@ -30,6 +30,8 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -104,7 +106,10 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   isTableEmpty = true;
   selection = new SelectionModel<Row>(true, []);
   busy: Subscription;
-  columns: any[] = [];
+  columns: {
+    name: string;
+    sort?: 'asc' | 'desc';
+  }[] = [];
 
   /**
    * Need this for the checkbox headings
@@ -591,7 +596,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     });
   }
 
-  handleData(res: any, skipActions = false): any {
+  handleData(res: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
     this.expandedElement = this.expandedRows > 0 ? cache : null;
@@ -993,7 +998,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
           this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
             .pipe(untilDestroyed(this))
             .subscribe({
-              next: (res1) => {
+              next: (res1: Job<CoreBulkResponse[]>) => {
                 if (res1.state !== JobState.Success) {
                   return;
                 }

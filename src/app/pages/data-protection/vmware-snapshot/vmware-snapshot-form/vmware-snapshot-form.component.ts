@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
+import helptext from 'app/helptext/storage/vmware-snapshot/vm-ware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';

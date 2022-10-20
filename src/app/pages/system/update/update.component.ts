@@ -561,10 +561,6 @@ export class UpdateComponent implements OnInit {
     if (!this.isHa) {
       dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       dialogRef.componentInstance.submit();
-
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob: any) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.reason, failedJob.trace.formatted);
-      });
     } else {
       this.ws.call('update.set_train', [this.trainValue]).pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.componentInstance.setCall('failover.upgrade');

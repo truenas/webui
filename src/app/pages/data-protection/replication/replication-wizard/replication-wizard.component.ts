@@ -996,7 +996,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     schemaOrRegex: SnapshotNamingOption,
     schema: string = null,
     regex: string = null,
-  ): any {
+  ): ReplicationCreate {
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
       data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
       delete data.name_regex;

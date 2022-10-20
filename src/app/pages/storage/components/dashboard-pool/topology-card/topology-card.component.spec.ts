@@ -1,5 +1,6 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -27,17 +28,17 @@ describe('TopologyCardComponent', () => {
           topology: {
             data: [
               {
-                type: 'RAIDZ1',
+                type: CreateVdevLayout.Raidz1,
                 children: [{ type: 'DISK', disk: 'sda' }, { type: 'DISK', disk: 'sdb' }, { type: 'DISK', disk: 'sdc' }],
               },
               {
-                type: 'RAIDZ1',
+                type: CreateVdevLayout.Raidz1,
                 children: [{ type: 'DISK', disk: 'sdd' }, { type: 'DISK', disk: 'sde' }],
               },
             ],
             log: [
               {
-                type: 'MIRROR',
+                type: CreateVdevLayout.Mirror,
                 children: [{ type: 'DISK', disk: 'sdf' }, { type: 'DISK', disk: 'sdg' }],
               },
             ],
@@ -51,7 +52,7 @@ describe('TopologyCardComponent', () => {
             ],
             special: [
               {
-                type: 'MIRROR',
+                type: CreateVdevLayout.Mirror,
                 children: [{ type: 'DISK', disk: 'sdl' }, { type: 'DISK', disk: 'sdm' }],
               },
             ],

@@ -157,7 +157,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
         return series;
       },
-      drawCallback: (dygraph: any) => {
+      drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
         if (dygraph.axes_) {
           const numero = dygraph.axes_[0].maxyval;
           const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
@@ -180,7 +180,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  protected makeTimeAxis(rd: ReportingData): any[] {
+  protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const structure = this.library === 'chart.js' ? 'columns' : 'rows';
     if (structure === 'rows') {
       // Push dates to row based data...
@@ -213,7 +213,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         columns.push(date);
       }
 
-      return columns;
+      return columns as unknown as dygraphs.DataArray;
     }
   }
 

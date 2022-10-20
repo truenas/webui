@@ -49,7 +49,7 @@ export interface BaseFieldConfig<P> {
   tooltipPosition?: string;
   type: FieldType;
   validation?: ValidatorFn | ValidatorFn[];
-  value?: any;
+  value?: unknown;
   warnings?: string;
   width?: string;
 }
@@ -184,6 +184,7 @@ export interface FormPermissionsConfig<P = unknown> extends BaseFieldConfig<P> {
   inputType?: string;
   options?: Option[];
   type: 'permissions';
+  value: string;
 }
 
 export interface FormRadioConfig<P = unknown> extends BaseFieldConfig<P>{
@@ -279,7 +280,7 @@ export interface FormToggleButtonConfig<P = unknown> extends BaseFieldConfig<P> 
 
 export interface FormToggleButtonOption {
   label: string;
-  value: any;
+  value: unknown;
   checked?: boolean;
 }
 

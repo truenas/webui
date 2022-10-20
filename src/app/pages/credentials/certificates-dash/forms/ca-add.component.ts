@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
-import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
+import { CertificateAuthorityUpdate, CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import {
   CertificateExtension,
   CertificateProfile,
@@ -847,7 +847,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     }
   }
 
-  beforeSubmit(data: any): any {
+  beforeSubmit(data: any): CertificateAuthorityUpdate {
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase === '') {
       data.passphrase = undefined;
@@ -893,7 +893,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return data;
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: CertificateAuthorityUpdate): void {
     this.loader.open();
     this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe({
       next: () => {

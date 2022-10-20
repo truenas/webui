@@ -1,6 +1,8 @@
+import { Option } from 'app/interfaces/option.interface';
+
 export interface ControlConfig {
   label?: string;
-  value?: any;
+  value?: Option[];
   options?: ToolbarOption[];
   placeholder?: string;
   customTriggerValue?: string;
