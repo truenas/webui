@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import xpaths
 import time
 from function import (
     wait_on_element,
@@ -34,13 +35,13 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 4, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -53,7 +54,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
 
 
 @then('Go to Storage click Pools')
@@ -97,7 +98,7 @@ def input_dataset_name_my_ldap_dataset_and_click_save(driver, dataset_name):
 @then(parsers.parse('"{dataset_name}" should be created'))
 def my_ldap_dataset_should_be_created(driver, dataset_name):
     """"my_ldap_dataset" should be created."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 10, f'//span[contains(.,"{dataset_name}")]')
 
 
@@ -136,7 +137,7 @@ def click_the_save_button_should_be_return_to_pool_page(driver):
     """Click the Save button, should be return to pool page."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"dozer")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__dozer_name"]')
 

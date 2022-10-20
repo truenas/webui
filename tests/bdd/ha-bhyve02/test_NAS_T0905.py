@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import xpaths
 import time
 from function import wait_on_element, wait_on_element_disappear, is_element_present
 from pytest_bdd import (
@@ -29,13 +30,13 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def login_appear_enter_root_and_password(driver, password):
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         """login appear enter "root" and "password"."""
-        assert wait_on_element(driver, 7, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 7, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 7, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 7, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -95,7 +96,7 @@ def click_save_license(driver):
 @then('the following should appear "Reload the page for the license to take effect"')
 def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
     """the following should appear "Reload the page for the license to take effect"."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Reload the page")]')
 
 
@@ -117,7 +118,7 @@ def click_agree(driver):
     """click Agree."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+    if wait_on_element(driver, 2, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
@@ -181,7 +182,7 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_the_same_global_configuration_screen_and_settings_saved_should_appear_below_the_save_button_at_the_bottom(driver):
     """"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
@@ -270,7 +271,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
@@ -287,7 +288,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//button[contains(.,"SAVE CHANGES")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]')
@@ -429,11 +430,11 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     time.sleep(0.5)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
     assert wait_on_element(driver, 600, '//div[contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
     time.sleep(5)
 
 
@@ -460,7 +461,7 @@ def enter_hostname_and_hostname_truenas_controller_2(driver, host1, host2):
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_and_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     time.sleep(2)
 
@@ -474,8 +475,8 @@ def navigate_to_dashboard_verify_both_controller_hostname(driver):
     time.sleep(0.5)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
-    assert wait_on_element(driver, 20, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
+    assert wait_on_element(driver, 20, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 20, '//div[contains(.,"tn-bhyve03-nodea")]')
     assert wait_on_element(driver, 20, '//div[contains(.,"tn-bhyve03-nodeb")]')
 

@@ -1,6 +1,7 @@
 # coding=utf-8
 """Enterprise HA UI feature tests."""
 
+import xpaths
 import time
 from function import (
     wait_on_element,
@@ -40,13 +41,13 @@ def if_the_login_page_appears_enter_user_and_password(driver, user, password):
     global passwd
     passwd = password
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 5, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
@@ -85,14 +86,14 @@ def click_on_enable_twofactor_authentication_button_then_confirm(driver):
 @then('when Two-factor Authentication is enabled, logout')
 def when_twofactor_authentication_is_enabled_logout(driver):
     """when Two-factor Authentication is enabled, logout."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 5, '//p[contains(.,"Two-factor authentication IS currently enabled")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="option__Log Out"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="option__Log Out"]').click()
-    assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
-    assert wait_on_element(driver, 60, '//p[contains(.,"HA is enabled")]')
+    assert wait_on_element(driver, 5, xpaths.login.user_input)
+    assert wait_on_element(driver, 60, xpaths.login.ha_status('HA is enabled'))
 
 
 @then('verify the Two-Factor Authentication code entry is visible')
@@ -106,13 +107,13 @@ def disable_twofactor_authentication_with_api_and_login(driver):
     """disable Two-Factor Authentication with API and login."""
     results = put(hostname, 'auth/twofactor/', ('root', passwd), {"enabled": False})
     assert results.status_code == 200, results.text
-    assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(passwd)
-    assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    assert wait_on_element(driver, 5, xpaths.login.user_input)
+    driver.find_element_by_xpath(xpaths.login.user_input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+    driver.find_element_by_xpath(xpaths.login.password_input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(passwd)
+    assert wait_on_element(driver, 5, xpaths.login.signin_button)
+    driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
 
 @then('enable Two-Factor Authentication with API')
@@ -130,18 +131,18 @@ def on_the_dashboard_click_on_failover_initiate_failover(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(.,"Initiate Failover")]')
-    driver.find_element_by_xpath('//mat-checkbox').click()
-    assert wait_on_element(driver, 5, '//div[2]/button[2]/span')
-    driver.find_element_by_xpath('//div[2]/button[2]/span').click()
+    assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
+    assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 5, xpaths.button.failover)
+    driver.find_element_by_xpath(xpaths.button.failover).click()
 
 
 @then('wait on the login to appear')
 def wait_on_the_login_to_appear(driver):
     """wait on the login to appear."""
-    assert wait_on_element(driver, 60, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 60, xpaths.login.user_input)
     # wait for HA is enabled to avoid UI refreshing
     driver.refresh()
-    assert wait_on_element(driver, 60, '//p[contains(.,"HA is enabled")]')
+    assert wait_on_element(driver, 60, xpaths.login.ha_status('HA is enabled'))

@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import xpaths
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -38,13 +39,13 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 4, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -57,7 +58,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
 
 
 @then('Go on Sharing click Windows Shares(SMB)')
@@ -193,9 +194,9 @@ def go_to_directory_services_and_select_ldap(driver):
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__LDAP"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services_ldap)
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services_ldap).click()
 
 
 @then('Click the Enable checkbox and click SAVE')
@@ -205,5 +206,5 @@ def click_the_enable_checkbox_and_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 5, '//div[contains(.,"Settings saved.")]')

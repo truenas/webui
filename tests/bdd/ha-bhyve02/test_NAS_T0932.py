@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (bhyve02) feature tests."""
 
+import xpaths
 import time
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 from pytest_bdd import (
@@ -29,13 +30,13 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 4, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -48,7 +49,7 @@ def if_login_page_appear_enter_user_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 5, xpaths.dashboard.system_information)
 
 
 @then('Navigate to Storage click Pools')
@@ -171,7 +172,7 @@ def click_save(driver):
 @then('Please wait should appear while settings are being applied')
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
 
 
 @then('Navigate to dashboard')
@@ -181,19 +182,19 @@ def navigate_to_dashboard(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
 
 
 @then(parsers.parse('Second node should be rebootting'))
 def second_node_should_be_rebooting(driver):
     """Second node should be rebootting."""
-    assert is_element_present(driver, '//mat-icon[@svgicon="ha_disabled"]')
+    assert is_element_present(driver, xpaths.topToolbar.ha_disabled)
 
 
 @then('Wait for second node to be up')
 def wait_for_second_node_to_be_up(driver):
     """Wait for second node to be up"""
     assert wait_on_element(driver, 420, '//mat-list-item[contains(.,"nodeb")]')
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
     # This 5 seconds of sleep is to let the system ketchup.
     time.sleep(5)
