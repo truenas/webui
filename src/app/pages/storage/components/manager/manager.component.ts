@@ -716,18 +716,18 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.error = null;
 
         const layout: any = {};
-        this.vdevComponents.forEach((vdev) => {
+        this.vdevComponents.forEach((vdevComponent) => {
           const disks: string[] = [];
-          vdev.getDisks().forEach((disk) => {
+          vdevComponent.getDisks().forEach((disk) => {
             if (disk.duplicate_serial?.length) {
               allowDuplicateSerials = true;
             }
             disks.push(disk.devname);
           });
           if (disks.length > 0) {
-            let type = vdev.typeControl.value.toUpperCase();
+            let type = vdevComponent.typeControl.value.toUpperCase();
             type = type === 'RAIDZ' ? 'RAIDZ1' : type;
-            const group = vdev.group;
+            const group = vdevComponent.group;
             if (!layout[group]) {
               layout[group] = [];
             }
@@ -926,8 +926,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   resetLayout(): void {
-    this.vdevComponents.forEach((vdev) => {
-      vdev.remove();
+    this.vdevComponents.forEach((vdevComponent) => {
+      vdevComponent.remove();
     });
     Object.keys(this.vdevs).forEach((group) => {
       while (this.vdevs[group].length > 0) {
