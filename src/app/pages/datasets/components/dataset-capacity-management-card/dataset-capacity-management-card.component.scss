@@ -37,6 +37,8 @@
 }
 
 ix-space-management-chart {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   padding: 0 0 0 8px;
 
   @media (max-width: $breakpoint-dualcolumn) {
