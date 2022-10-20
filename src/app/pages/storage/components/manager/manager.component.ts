@@ -495,15 +495,16 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     pageIndex = pageIndex < 0 ? 0 : pageIndex;
     const pageSize = this.lastPageChangedEvent.pageSize;
     const vdevsLength = this.vdevs.data.length;
+    const indexOfLastVdev = vdevsLength - 1;
 
     this.paginator.length = vdevsLength;
     const lastIndexOnCurrentPage = ((pageIndex + 1) * pageSize) - 1;
     const lastIndexOnPrevPage = (((pageIndex + 1) * pageSize) - pageSize) - 1;
     const lastPage = Math.floor((vdevsLength / pageSize));
-    if (lastPage === pageIndex && lastIndexOnCurrentPage < vdevsLength) {
+    if (lastPage === pageIndex + 1 && lastIndexOnCurrentPage < indexOfLastVdev) {
       pageIndex++;
       this.paginator.pageIndex = pageIndex;
-    } else if (lastIndexOnPrevPage >= vdevsLength) {
+    } else if (lastIndexOnPrevPage >= indexOfLastVdev) {
       pageIndex--;
       this.paginator.pageIndex = pageIndex;
     }
