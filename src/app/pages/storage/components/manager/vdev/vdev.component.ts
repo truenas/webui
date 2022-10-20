@@ -14,6 +14,7 @@ import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { SortPropDir } from '@swimlane/ngx-datatable/lib/types/sort-prop-dir.type';
 import * as filesize from 'filesize';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
+import { VdevInfo } from 'app/interfaces/vdev-info.interface';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
 import { StorageService } from 'app/services/storage.service';
@@ -30,12 +31,7 @@ export class VdevComponent implements OnInit {
   @Input() group: string;
   @Input() manager: ManagerComponent;
   @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
-  @Output() vdevChanged: EventEmitter<{
-    disks: ManagerDisk[];
-    type: string;
-    uuid: string;
-    group: string;
-  }> = new EventEmitter();
+  @Output() vdevChanged: EventEmitter<VdevInfo> = new EventEmitter();
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;
@@ -86,10 +82,8 @@ export class VdevComponent implements OnInit {
     }
     this.estimateSize();
 
-    this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      this.vdevChanged.emit({
-        disks: [...this.disks], type: value, uuid: this.uuid, group: this.group,
-      });
+    this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.emitChangedVdev();
       this.onTypeChange();
     });
   }
@@ -111,9 +105,7 @@ export class VdevComponent implements OnInit {
     this.guessVdevType();
     this.estimateSize();
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
-    this.vdevChanged.emit({
-      disks: [...this.disks], type: this.typeControl.value, uuid: this.uuid, group: this.group,
-    });
+    this.emitChangedVdev();
   }
 
   removeDisk(disk: ManagerDisk): void {
@@ -122,8 +114,17 @@ export class VdevComponent implements OnInit {
     this.guessVdevType();
     this.estimateSize();
     this.manager.getCurrentLayout();
+  }
+
+  emitChangedVdev(): void {
     this.vdevChanged.emit({
-      disks: [...this.disks], type: this.typeControl.value, uuid: this.uuid, group: this.group,
+      disks: [...this.disks],
+      type: this.typeControl.value,
+      uuid: this.uuid,
+      group: this.group,
+      rawSize: this.rawSize,
+      vdevDisksError: this.vdevDisksError,
+      showDiskSizeError: this.showDiskSizeError,
     });
   }
 
@@ -205,6 +206,7 @@ export class VdevComponent implements OnInit {
 
     this.rawSize = estimate;
     this.size = filesize(estimate, { standard: 'iec' });
+    this.emitChangedVdev();
   }
 
   onSelect({ selected }: { selected: ManagerDisk[] }): void {
