@@ -930,3 +930,12 @@ ul.nested-list li {
 .mat-tab-header-pagination-disabled {
   opacity: 0.2;
 }
+
+ix-root {
+  .cdk-focused,
+  .cdk-keyboard-focused {
+    background-color: var(--focus-bg) !important;
+    box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+    outline-width: 0;
+  }
+}
