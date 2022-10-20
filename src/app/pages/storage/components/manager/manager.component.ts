@@ -205,18 +205,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       saveButtonText: helptext.manager_duplicate_button,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue as { vdevs: number };
-        const origVdevs = this.vdevComponents.toArray();
         const pageNoBefore = this.lastPageChangedEvent.pageIndex;
-        // handle case of extending with zero vdevs filled out
-        if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
-          const vdev = origVdevs[0];
-          value.vdevs = value.vdevs - 1;
-          for (let i = 0; i < this.firstDataVdevDisknum; i++) {
-            const disk = duplicableDisks.shift();
-            vdev.addDisk(disk);
-            this.removeDisk(disk);
-          }
-        }
+
         for (let i = 0; i < value.vdevs; i++) {
           const vdevValues: VdevInfo = new VdevInfo(this.firstDataVdevType, 'data');
           for (let n = 0; n < this.firstDataVdevDisknum; n++) {
