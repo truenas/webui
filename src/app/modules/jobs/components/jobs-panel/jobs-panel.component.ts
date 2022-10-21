@@ -68,7 +68,6 @@ export class JobsPanelComponent {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title },
       hasBackdrop: true,
-      width: '400px',
     });
 
     dialogRef.componentInstance.jobId = job.id;

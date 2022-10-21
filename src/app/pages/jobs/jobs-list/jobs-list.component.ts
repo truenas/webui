@@ -14,8 +14,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, EMPTY } from 'rxjs';
 import {
+  catchError,
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
@@ -146,25 +147,14 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   downloadLogs(job: Job): void {
-    const filename = `${job.id}.log`;
-    this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe({
-      next: ([_, url]) => {
-        const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(url, filename, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (file) => {
-              this.storage.downloadBlob(file, filename);
-            },
-            error: (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
-            },
-          });
-      },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
-    });
+    this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
+      switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
+      catchError((error) => {
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   onSearch(query: string): void {
