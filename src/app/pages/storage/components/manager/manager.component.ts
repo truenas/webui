@@ -28,7 +28,7 @@ import {
   UpdatePoolTopologyGroup,
 } from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { VdevInfo } from 'app/interfaces/vdev-info.interface';
+import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
@@ -44,7 +44,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 import { ManagerDisk } from './manager-disk.interface';
 import { VdevComponent } from './vdev/vdev.component';
 
-export type ManagerVdevs = { [group in UpdatePoolTopologyGroup]: VdevInfo[] };
+export type ManagerVdevs = { [group in UpdatePoolTopologyGroup]: ManagerVdev[] };
 
 @UntilDestroy()
 @Component({
@@ -91,7 +91,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   help = helptext;
   exportedPoolsWarnings: string[] = [];
 
-  shownDataVdevs: VdevInfo[] = [];
+  shownDataVdevs: ManagerVdev[] = [];
   lastPageChangedEvent: PageEvent = { pageIndex: 0, length: 1, pageSize: 10 };
 
   submitTitle: string = this.translate.instant('Create');
@@ -216,7 +216,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         const pageIndexBefore = this.lastPageChangedEvent.pageIndex;
 
         for (let i = 0; i < value.vdevs; i++) {
-          const vdevValues: VdevInfo = new VdevInfo(this.firstDataVdevType, 'data');
+          const vdevValues: ManagerVdev = new ManagerVdev(this.firstDataVdevType, 'data');
           for (let n = 0; n < this.firstDataVdevDisknum; n++) {
             const duplicateDisk = duplicableDisks.shift();
             vdevValues.disks.push(duplicateDisk);
@@ -287,7 +287,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.logVdevTypeWarning = this.translate.instant('A stripe log vdev may result in data loss if it fails combined with a power outage.');
   }
 
-  onVdevChanged(changedVdev: VdevInfo): void {
+  onVdevChanged(changedVdev: ManagerVdev): void {
     const index = this.vdevs[changedVdev.group].findIndex((vdev: { uuid: string }) => vdev.uuid === changedVdev.uuid);
     if (index < 0) {
       return;
@@ -384,7 +384,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.addVdev('data', new VdevInfo(this.firstDataVdevDisktype, 'data'));
+    this.addVdev('data', new ManagerVdev(this.firstDataVdevDisktype, 'data'));
 
     this.loader.open();
     this.loaderOpen = true;
@@ -449,7 +449,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   addVdev(
     group: keyof ManagerVdevs,
-    initialValues: VdevInfo = new VdevInfo(this.firstDataVdevType, 'data'),
+    initialValues: ManagerVdev = new ManagerVdev(this.firstDataVdevType, 'data'),
   ): void {
     this.dirty = true;
     this.vdevs[group].push(initialValues);
@@ -593,8 +593,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.updateExportedPoolWarningFlags(this.selected);
   }
 
-  mapAllVdevsToVdevInfo(): VdevInfo[] {
-    const allVdevs: VdevInfo[] = [];
+  mapAllVdevsToVdevInfo(): ManagerVdev[] {
+    const allVdevs: ManagerVdev[] = [];
     for (const group of Object.keys(this.vdevs) as (keyof ManagerVdevs)[]) {
       for (const vdev of this.vdevs[group]) {
         allVdevs.push({ ...vdev, group });
@@ -941,7 +941,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.addVdev('data', new VdevInfo('stripe', 'data'));
+    this.addVdev('data', new ManagerVdev('stripe', 'data'));
     this.disks = Array.from(this.originalDisks);
     this.suggestableDisks = Array.from(this.originalSuggestableDisks);
     this.temp = [...this.disks];
@@ -1020,7 +1020,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     return title;
   }
 
-  estimateSize(vdev: VdevInfo): void {
+  estimateSize(vdev: ManagerVdev): void {
     let totalsize = 0;
     let stripeSize = 0;
     let smallestdisk = 0;
@@ -1058,7 +1058,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     vdev.rawSize = estimate;
   }
 
-  vdevsTracker(index: number, vdev: VdevInfo): string {
+  vdevsTracker(index: number, vdev: ManagerVdev): string {
     return vdev.uuid;
   }
 }

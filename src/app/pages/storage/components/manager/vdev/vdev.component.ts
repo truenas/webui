@@ -15,7 +15,7 @@ import { SortPropDir } from '@swimlane/ngx-datatable/lib/types/sort-prop-dir.typ
 import * as filesize from 'filesize';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
 import { UpdatePoolTopologyGroup } from 'app/interfaces/pool.interface';
-import { VdevInfo } from 'app/interfaces/vdev-info.interface';
+import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
 import { StorageService } from 'app/services/storage.service';
@@ -32,7 +32,7 @@ export class VdevComponent implements OnInit {
   @Input() group: UpdatePoolTopologyGroup;
   @Input() manager: ManagerComponent;
   @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
-  @Output() vdevChanged: EventEmitter<VdevInfo> = new EventEmitter();
+  @Output() vdevChanged: EventEmitter<ManagerVdev> = new EventEmitter();
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;
