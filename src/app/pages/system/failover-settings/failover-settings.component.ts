@@ -1,16 +1,22 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import {
+  filter, switchMap, take,
+} from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
+import { haStatusLoaded } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
@@ -47,6 +53,8 @@ export class FailoverSettingsComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -60,15 +68,21 @@ export class FailoverSettingsComponent implements OnInit {
     this.ws.call('failover.update', [values])
       .pipe(
         switchMap(() => {
-          return this.dialogService.info(
+          this.dialogService.info(
             this.translate.instant('Failover'),
             this.translate.instant('Settings saved.'),
           );
+          return this.ws.call('failover.disabled.reasons');
         }),
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => {
+        next: (failoverDisReasons) => {
+          const haEnabled = failoverDisReasons.length === 0;
+          const enabledText = failoverDisReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
+
+          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
+          this.store$.dispatch(haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisReasons } }));
           this.isLoading = false;
           this.cdr.markForCheck();
 

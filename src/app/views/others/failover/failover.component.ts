@@ -1,12 +1,17 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { haStatusLoaded } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +26,8 @@ export class FailoverComponent implements OnInit {
     protected dialogService: DialogService,
     protected dialog: MatDialog,
     private location: Location,
+    @Inject(WINDOW) private window: Window,
+    private store$: Store<AlertSlice>,
   ) {}
 
   isWsConnected(): void {
@@ -51,9 +58,22 @@ export class FailoverComponent implements OnInit {
       complete: () => { // show reboot screen
         this.ws.prepareShutdown();
         this.loader.open();
-        setTimeout(() => {
-          this.isWsConnected();
-        }, 1000);
+
+        this.ws.call('failover.disabled.reasons')
+          .pipe(
+            map((failoverDisReasons) => {
+              const haEnabled = failoverDisReasons.length === 0;
+              const enabledText = failoverDisReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
+
+              this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
+              this.store$.dispatch(haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisReasons } }));
+            }),
+            untilDestroyed(this),
+          ).subscribe(() => {
+            setTimeout(() => {
+              this.isWsConnected();
+            }, 1000);
+          });
       },
     });
   }
