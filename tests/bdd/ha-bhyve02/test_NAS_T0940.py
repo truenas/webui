@@ -127,7 +127,8 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
     assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
-    assert wait_on_element(driver, 7, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 10, xpaths.topToolbar.ha_enable)
+    time.sleep(30)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
     assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
@@ -160,7 +161,7 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
 
-    assert wait_on_element(driver, 7, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 30, xpaths.topToolbar.ha_enable)
 
 
 @then('ssh to the virtual node again to verify the pdbedit command still works')
