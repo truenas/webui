@@ -6,7 +6,6 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
@@ -33,8 +32,7 @@ export class DiskDetailsPanelComponent {
   }
 
   get isTopologyDisk(): boolean {
-    return isTopologyDisk(this.topologyItem)
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
+    return isTopologyDisk(this.topologyItem);
   }
 
   onCloseMobileDetails(): void {

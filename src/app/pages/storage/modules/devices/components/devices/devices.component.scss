@@ -224,7 +224,7 @@ ix-disk-details-panel {
   color: var(--fg2);
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 125px 125px 125px 90px;
+  grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
   padding-left: 48px;
 
@@ -234,7 +234,7 @@ ix-disk-details-panel {
   }
 
   @media (min-width: $breakpoint-singlecolumn) {
-    grid-template-columns: auto 125px 125px 125px 40px;
+    grid-template-columns: auto 125px 125px 125px;
     overflow-x: hidden;
   }
 

@@ -40,7 +40,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
 
-  chart: any;// Chart.js instance with per core data
+  chart: Chart; // Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
   cpuAvg: GaugeConfig;
   title: string = this.translate.instant('CPU');
@@ -105,7 +105,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
 
       if (this.chart && this.screenType !== currentScreenType) {
-        this.chart.resize(size);
+        (this.chart.resize as (size: { width: number; height: number }) => void)(size);
       }
 
       this.screenType = currentScreenType;
@@ -300,7 +300,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           xAxes: [{
             type: 'category',
             labels: this.labels,
-          } as any],
+          }],
           yAxes: [{
             ticks: {
               max: 100,

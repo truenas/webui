@@ -53,8 +53,8 @@
             [ixTreeNodeDefDataSource]="dataSource"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId, 'devices', topologyItem.guid]"
-            (click)="openMobileDetails(topologyItem)"
-            (keydown.enter)="openMobileDetails(topologyItem, ['/storage', poolId, 'devices', topologyItem.guid])"
+            (click)="openMobileDetails()"
+            (keydown.enter)="openMobileDetails(['/storage', poolId, 'devices', topologyItem.guid])"
           >
             <button mat-icon-button disabled></button>
             <ix-topology-item-node
@@ -62,7 +62,7 @@
               [disk]="getDisk(topologyItem)"
             ></ix-topology-item-node>
             <ix-icon
-              [name]="isHealthyNode(topologyItem) ? 'mdi-chevron-right' : ''"
+              name="mdi-chevron-right"
               class="mobile-actions"
             ></ix-icon>
           </ix-tree-node>
@@ -105,8 +105,8 @@
               routerLinkActive="selected"
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
-              (click)="openMobileDetails(vdev)"
-              (keydown.enter)="openMobileDetails(vdev, ['/storage', poolId, 'devices', vdev.guid])"
+              (click)="openMobileDetails()"
+              (keydown.enter)="openMobileDetails(['/storage', poolId, 'devices', vdev.guid])"
             >
               <button
                 mat-icon-button
@@ -125,7 +125,7 @@
               ></ix-topology-item-node>
 
               <ix-icon
-                [name]="isHealthyNode(vdev) ? 'mdi-chevron-right' : ''"
+                name="mdi-chevron-right"
                 class="mobile-actions"
               ></ix-icon>
             </div>
@@ -145,7 +145,7 @@
     ixDetailsHeight="rightside-content-hold"
   >
     <ix-disk-details-panel
-      *ngIf="selectedNode && isHealthyNode(selectedNode)"
+      *ngIf="selectedNode"
       [topologyItem]="selectedNode | cast"
       [topologyParentItem]="selectedParentNode$ | async | cast"
       [disk]="getDisk(selectedNode)"

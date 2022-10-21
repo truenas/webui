@@ -185,11 +185,11 @@ export class EntityFormService {
     });
   }
 
-  phraseInputData(value: any, config: InputUnitConfig): string | number {
+  phraseInputData(value: string, config: InputUnitConfig): string | number {
     if (!value) {
       return value;
     }
-    let num = 0;
+    let num: number | string = 0;
     let unit = '';
 
     value = value.replace(/\s+/g, '');
@@ -225,14 +225,14 @@ export class EntityFormService {
     const matchUnits = unit.match(config.type === UnitType.Size ? this.sizeRegex : this.durationRegex);
 
     if (matchUnits && matchUnits[0] === unit) {
-      const humanReableUnit = this.getHumanReadableUnit(num, unit, config.type);
+      const humanReadableUnit = this.getHumanReadableUnit(num as unknown as number, unit, config.type);
       if (config.allowUnits) {
-        const singleUnit = _.endsWith(humanReableUnit, 'S') ? humanReableUnit.substring(0, humanReableUnit.length - 1) : humanReableUnit;
+        const singleUnit = _.endsWith(humanReadableUnit, 'S') ? humanReadableUnit.substring(0, humanReadableUnit.length - 1) : humanReadableUnit;
         if (_.indexOf(config.allowUnits, singleUnit) < 0) {
           return NaN;
         }
       }
-      return `${num} ${humanReableUnit}`;
+      return `${num} ${humanReadableUnit}`;
     }
     return NaN;
   }

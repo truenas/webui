@@ -15,7 +15,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
-  NetworkInterface,
+  NetworkInterface, NetworkInterfaceAlias,
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -39,10 +39,15 @@ type DashboardNetworkInterface = NetworkInterface & {
   state: DashboardNicState;
 };
 
-export type DashboardNicState = NetworkInterfaceState & {
+export interface DashboardNicState extends NetworkInterfaceState {
   vlans: (NetworkInterfaceState & { interface?: string })[];
   lagg_ports: string[];
-};
+  aliases: DashboardNetworkInterfaceAlias[];
+}
+
+export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
+  interface?: string;
+}
 
 @UntilDestroy()
 @Component({
@@ -637,7 +642,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone[index].state.lagg_ports = item.lag_ports;
           item.lag_ports.forEach((nic) => {
             // Consolidate addresses
-            clone[index].state.aliases.forEach((item: any) => { item.interface = nic; });
+            clone[index].state.aliases.forEach((item) => {
+              (item as DashboardNetworkInterfaceAlias).interface = nic;
+            });
             clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic] as number].state.aliases);
 
             // Consolidate vlans

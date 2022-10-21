@@ -253,7 +253,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  handleUpdateFailure = (failure: Job<null, unknown[]>): void => {
+  handleUpdateFailure = (failure: Job): void => {
     this.isFormLoading$.next(false);
     this.dialogService.errorReport(failure.error, failure.state, failure.exception);
     this.cdr.markForCheck();

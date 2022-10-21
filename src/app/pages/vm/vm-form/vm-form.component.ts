@@ -385,7 +385,7 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
+  resourceTransformIncomingRestData(vmRes: VirtualMachine): VirtualMachine {
     this.rawVmData = vmRes;
     (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
@@ -411,9 +411,9 @@ export class VmFormComponent implements FormConfiguration {
     return vmRes;
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: Record<string, unknown>): Record<string, unknown> {
     if (data['memory'] !== undefined && data['memory'] !== null) {
-      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory']) / 1048576);
+      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'] as string) / 1048576);
     }
     return data;
   }

@@ -808,11 +808,11 @@ export class DatasetFormComponent implements FormConfiguration {
     return Number(num) * this.storageService.convertUnitToNum(unit);
   }
 
-  sendAsBasicOrAdvanced(data: any): DatasetFormData {
+  sendAsBasicOrAdvanced(data: Record<string, unknown>): DatasetFormData {
     if (!this.isNew) {
       delete data.name;
     } else {
-      data.name = this.parent + '/' + data.name;
+      data.name = `${this.parent}/${data.name as string}`;
     }
 
     if (this.isNew && this.isBasicMode) {
@@ -826,7 +826,7 @@ export class DatasetFormComponent implements FormConfiguration {
     // calculate and delete _unit
     this.sizeFields.forEach((field) => {
       if (this.originalHumanSize[field] !== data[field]) {
-        data[field] = Math.round(this.convertHumanStringToNum(data[field], field));
+        data[field] = Math.round(this.convertHumanStringToNum(data[field] as string | number, field));
       } else if (data[field] === null) {
         delete data[field];
       } else {
@@ -834,7 +834,7 @@ export class DatasetFormComponent implements FormConfiguration {
       }
     });
 
-    return data;
+    return data as unknown as DatasetFormData;
   }
 
   blurEventQuota(): void {
@@ -1562,7 +1562,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   // TODO: Similar to addSubmit.
-  editSubmit(body: any): Observable<Dataset> {
+  editSubmit(body: Record<string, unknown>): Observable<Dataset> {
     const data = this.sendAsBasicOrAdvanced(body);
 
     delete (data.quota_warning_inherit);
@@ -1578,7 +1578,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
-  addSubmit(body: any): Observable<Dataset> {
+  addSubmit(body: Record<string, unknown>): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.quota_warning_inherit) {
@@ -1654,7 +1654,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: Record<string, unknown>): Subscription {
     this.loader.open();
 
     const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);

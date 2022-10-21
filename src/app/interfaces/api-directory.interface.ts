@@ -748,7 +748,7 @@ export type ApiDirectory = {
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Rsync
-  'rsynctask.run': { params: [id: number]; response: any };
+  'rsynctask.run': { params: [id: number]; response: null };
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
   'rsynctask.update': { params: [id: number, params: RsyncTaskUpdate]; response: RsyncTask };
@@ -940,7 +940,7 @@ export type ApiDirectory = {
   'vm.poweroff': { params: [id: number]; response: void };
   'vm.restart': { params: [id: number]; response: void };
   'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
-  'vm.start': { params: [id: number]; response: void };
+  'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
   'vm.virtualization_details': { params: void; response: VirtualizationDetails };
 
   // Vmware
@@ -1021,3 +1021,5 @@ export type ApiDirectory = {
  * instead of using ApiMethod.
  */
 export type ApiMethod = keyof ApiDirectory;
+
+export type ApiParams<T extends ApiMethod> = ApiDirectory[T]['params'];
