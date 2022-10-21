@@ -271,9 +271,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   // Expose hidden details on mobile
-  openMobileDetails(redirect?: unknown[]): void {
-    if (redirect) {
-      this.router.navigate(redirect);
+  openMobileDetails(ngRedirect?: unknown[]): void {
+    if (ngRedirect) {
+      this.router.navigate(ngRedirect);
     }
 
     if (this.isMobileView) {

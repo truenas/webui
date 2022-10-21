@@ -177,9 +177,9 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   // Expose hidden details on mobile
-  openMobileDetails(redirect?: unknown[]): void {
-    if (redirect) {
-      this.router.navigate(redirect);
+  openMobileDetails(ngRedirect?: unknown[]): void {
+    if (ngRedirect) {
+      this.router.navigate(ngRedirect);
     }
 
     if (this.isMobileView) {
