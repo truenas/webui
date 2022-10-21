@@ -185,16 +185,10 @@ def navigate_to_dashboard(driver):
     assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
 
 
-@then(parsers.parse('Second node should be rebootting'))
-def second_node_should_be_rebooting(driver):
-    """Second node should be rebootting."""
+@then('HA should be disable wait for it to be enable')
+def ha_should_be_disable_wait_for_it_to_be_enable(driver):
+    """HA should be disable wait for it to be enable."""
     assert is_element_present(driver, xpaths.topToolbar.ha_disabled)
-
-
-@then('Wait for second node to be up')
-def wait_for_second_node_to_be_up(driver):
-    """Wait for second node to be up"""
-    assert wait_on_element(driver, 420, '//mat-list-item[contains(.,"nodeb")]')
-    assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 420, xpaths.topToolbar.ha_enable)
     # This 5 seconds of sleep is to let the system ketchup.
     time.sleep(5)
