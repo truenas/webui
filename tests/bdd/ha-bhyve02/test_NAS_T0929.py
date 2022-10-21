@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import xpaths
 import time
 from function import wait_on_element, is_element_present, attribute_value_exist
 from pytest_bdd import (

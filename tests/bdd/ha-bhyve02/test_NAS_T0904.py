@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn09) feature tests."""
 
+import xpaths
 import time
 from function import (
     is_element_present,

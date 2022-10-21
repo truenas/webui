@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import xpaths
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
