@@ -179,13 +179,9 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   getRedirectUrl(): string {
-    if (this.ws.redirectUrl) {
-      return this.ws.redirectUrl;
-    }
-
-    const currentUrl = this.window.sessionStorage.getItem('currentUrl');
-    if (currentUrl) {
-      return currentUrl;
+    const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
+    if (redirectUrl) {
+      return redirectUrl;
     }
 
     return '/dashboard';
