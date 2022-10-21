@@ -1,0 +1,17 @@
+button.action-btn {
+  margin-right: 5px;
+}
+
+div.truecommand-connect-modal-form-message {
+  margin: 0 0 13px;
+}
+
+.truecommand-connect-modal-form-title,
+.truecommand-connect-modal-form-message {
+  overflow-wrap: break-word;
+}
+
+.mat-dialog-content.truecommand-connect-modal-form-content {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}

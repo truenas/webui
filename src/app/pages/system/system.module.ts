@@ -100,6 +100,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
 import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
+import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { routing } from './system.routing';
 
 @NgModule({
@@ -212,6 +213,7 @@ import { routing } from './system.routing';
     VictorOpsServiceComponent,
     BootenvNodeItemComponent,
     BootPoolDeleteDialogComponent,
+    SetProductionStatusDialogComponent,
   ],
   providers: [
     TranslateService,
