@@ -98,7 +98,7 @@ describe('VmwareSnapshotFormComponent', () => {
       Datastore: 'ds01',
     });
     const values = await form.getValues();
-    expect(values['ZFS Filesystem']).toEqual('fs01');
+    expect(values['ZFS Filesystem']).toBe('fs01');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

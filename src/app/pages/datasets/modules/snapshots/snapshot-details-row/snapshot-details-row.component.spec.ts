@@ -61,7 +61,7 @@ describe('SnapshotDetailsRowComponent', () => {
 
   it('renders details rows', () => {
     const rows = spectator.queryAll('.details-row');
-    expect(rows.length).toEqual(4);
+    expect(rows).toHaveLength(4);
 
     expect(rows[0]).toHaveText('Used: 1.49 TiB');
     expect(rows[1]).toHaveText('Date created: 2021-11-05 10:52:06');

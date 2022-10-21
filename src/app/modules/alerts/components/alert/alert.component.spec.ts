@@ -87,11 +87,11 @@ describe('AlertComponent', () => {
 
   it('shows an alert icon', async () => {
     const icon = await alert.getIconHarness();
-    expect(await icon.getName()).toEqual('cancel');
+    expect(await icon.getName()).toBe('cancel');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toEqual('Jan 10 2022 10:36 (America/Alaska)');
+    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toBe('Jan 10 2022 10:36 (America/Alaska)');
 
     const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);
