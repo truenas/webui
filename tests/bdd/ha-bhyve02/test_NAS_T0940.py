@@ -29,7 +29,7 @@ def the_browser_is_open_on_virtal_hostname_and_logged_in(driver, virtal_hostname
     if virtal_hostname not in driver.current_url:
         driver.get(f"http://{virtal_hostname}/ui/dashboard/")
         time.sleep(1)
-    if not is_element_present(driver, xpaths.sideMenu.Dashboard):
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
@@ -41,8 +41,8 @@ def the_browser_is_open_on_virtal_hostname_and_logged_in(driver, virtal_hostname
         assert wait_on_element(driver, 10, xpaths.sideMenu.root)
         element = driver.find_element_by_xpath(xpaths.sideMenu.root)
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        assert wait_on_element(driver, 5, xpaths.sideMenu.Dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.Dashboard).click()
+        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you see the Dashboard go to Directory Services and select LDAP')
@@ -124,8 +124,8 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
     assert wait_on_element(driver, 10, xpaths.sideMenu.root)
     element = driver.find_element_by_xpath(xpaths.sideMenu.root)
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 5, xpaths.sideMenu.Dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.Dashboard).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
     assert wait_on_element(driver, 7, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
