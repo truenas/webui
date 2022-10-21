@@ -65,6 +65,7 @@
               [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="openMobileDetails()"
+              (keydown.enter)="openMobileDetails(['/datasets', dataset.id])"
             >
               <button mat-icon-button disabled></button>
               <ix-dataset-node
@@ -86,6 +87,7 @@
                 routerLinkActive="selected"
                 [routerLink]="['/datasets', dataset.id]"
                 (click)="openMobileDetails()"
+                (keydown.enter)="openMobileDetails(['/datasets', dataset.id])"
               >
                 <button
                   mat-icon-button

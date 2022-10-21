@@ -13,7 +13,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs/operators';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -24,7 +24,6 @@ import {
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService, DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -54,12 +53,11 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   isMobileView = false;
 
   constructor(
+    public router: Router,
     private layoutService: LayoutService,
-    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
-    private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
   ) { }
 
@@ -180,9 +178,15 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   // Expose hidden details on mobile
-  openMobileDetails(selectedNode: DeviceNestedDataNode): void {
-    if (this.isMobileView && this.isHealthyNode(selectedNode)) {
-      this.showMobileDetails = true;
+  openMobileDetails(selectedNode: DeviceNestedDataNode, redirect?: unknown[]): void {
+    if (this.isHealthyNode(selectedNode)) {
+      if (redirect) {
+        this.router.navigate(redirect);
+      }
+
+      if (this.isMobileView) {
+        this.showMobileDetails = true;
+      }
     }
   }
 

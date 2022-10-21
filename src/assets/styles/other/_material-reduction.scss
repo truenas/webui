@@ -932,10 +932,26 @@ ul.nested-list li {
 }
 
 ix-root {
-  .cdk-focused,
-  .cdk-keyboard-focused {
-    background-color: var(--focus-bg) !important;
+  %focused-shared {
     box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
     outline-width: 0;
   }
+
+  .cdk-focused,
+  .cdk-keyboard-focused {
+
+    @extend %focused-shared;
+    background-color: var(--focus-bg) !important;
+  }
+
+  .ix-tree-node:focus-visible,
+  .ix-nested-tree-node > div:focus-visible {
+    @extend %focused-shared;
+  }
+}
+
+// needed to correctly put box shadow on :focus-visible
+ix-tree-node,
+ix-nested-tree-node > div {
+  padding: 1px;
 }

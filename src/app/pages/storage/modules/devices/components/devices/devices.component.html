@@ -54,6 +54,7 @@
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId, 'devices', topologyItem.guid]"
             (click)="openMobileDetails(topologyItem)"
+            (keydown.enter)="openMobileDetails(topologyItem, ['/storage', poolId, 'devices', topologyItem.guid])"
           >
             <button mat-icon-button disabled></button>
             <ix-topology-item-node
@@ -105,6 +106,7 @@
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
               (click)="openMobileDetails(vdev)"
+              (keydown.enter)="openMobileDetails(vdev, ['/storage', poolId, 'devices', vdev.guid])"
             >
               <button
                 mat-icon-button
