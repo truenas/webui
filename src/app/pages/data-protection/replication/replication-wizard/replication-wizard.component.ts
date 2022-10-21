@@ -82,7 +82,20 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   pk: number;
   saveSubmitText = this.translate.instant('START REPLICATION');
   hideCancel = true;
-
+  protected retentionPolicyChoice = [
+    {
+      label: this.translate.instant('Same as Source'),
+      value: RetentionPolicy.Source,
+    },
+    {
+      label: this.translate.instant('Never Delete'),
+      value: RetentionPolicy.None,
+    },
+    {
+      label: this.translate.instant('Custom'),
+      value: RetentionPolicy.Custom,
+    },
+  ];
   protected entityWizard: EntityWizardComponent;
   customActions = [{
     id: 'advanced_add',
@@ -571,16 +584,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           name: 'retention_policy',
           placeholder: helptext.retention_policy_placeholder,
           tooltip: helptext.retention_policy_tooltip,
-          options: [{
-            label: this.translate.instant('Same as Source'),
-            value: RetentionPolicy.Source,
-          }, {
-            label: this.translate.instant('Never Delete'),
-            value: RetentionPolicy.None,
-          }, {
-            label: this.translate.instant('Custom'),
-            value: RetentionPolicy.Custom,
-          }],
+          options: this.retentionPolicyChoice,
           value: RetentionPolicy.Source,
           class: 'inline',
           width: '50%',
@@ -661,7 +665,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           label: this.translate.instant('Manual'),
           value: 'manual',
         }, {
-          label: this.translate.instant('Semi-automatic (TrueNAS CORE only)'),
+          label: this.translate.instant('Semi-automatic (TrueNAS only)'),
           value: 'semiautomatic',
         },
       ],
@@ -992,7 +996,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     schemaOrRegex: SnapshotNamingOption,
     schema: string = null,
     regex: string = null,
-  ): any {
+  ): ReplicationCreate {
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
       data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
       delete data.name_regex;
@@ -1179,12 +1183,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   clearReplicationTask(): void {
     this.entityWizard.formArray.reset();
     for (let i = 0; i < (this.entityWizard.formArray as UntypedFormArray).length; i++) {
-      for (const item in (this.entityWizard.formArray.get([i]) as UntypedFormGroup).controls) {
+      Object.keys((this.entityWizard.formArray.get([i]) as UntypedFormGroup).controls).forEach((item) => {
         const itemConf = _.find(this.wizardConfig[i].fieldConfig, { name: item });
         if (itemConf.value !== undefined && item !== 'exist_replication') {
           this.entityWizard.formArray.get([i]).get(item).setValue(itemConf.value);
         }
-      }
+      });
     }
   }
 
@@ -1213,7 +1217,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (item === 'ssh_credentials') {
       let payload: SshSemiAutomaticSetup | KeychainCredentialCreate;
-      const sshCreateItem = ('_' + data['setup_method']) as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
+      const sshCreateItem = `${item}_${data['setup_method']}` as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
       if (data['setup_method'] === 'manual') {
         payload = {
           name: data['name'],
@@ -1349,13 +1353,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         payload['ssh_credentials'],
       ]).toPromise().then(
         (res) => {
-          let hasBadSnapshots = false;
-          for (const ds in res) {
-            if (res[ds].length > 0) {
-              hasBadSnapshots = true;
-              break;
-            }
-          }
+          const hasBadSnapshots = Object.values(res).some((snapshots) => snapshots.length > 0);
           if (hasBadSnapshots) {
             return this.dialogService.confirm({
               title: helptext.clearSnapshotDialog_title,
@@ -1390,6 +1388,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       replication: null,
     };
 
+    // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
       if (!toStop) {
@@ -1491,7 +1490,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           );
         }
         if (value['setup_method'] === 'manual') {
-          await this.getRemoteHostKey(value).then(
+          await this.getRemoteHostKey(value as { host: string; port: number }).then(
             (res) => {
               value['remote_host_key'] = res;
             },
@@ -1511,7 +1510,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           ssh_credentials: null,
         };
         let hasError = false;
+        // eslint-disable-next-line no-restricted-syntax,guard-for-in
         for (const createdItem in createdItems) {
+          if (!createdItems.hasOwnProperty(createdItem)) {
+            return;
+          }
           const item = createdItem as 'private_key' | 'ssh_credentials';
           if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
             await this.doCreate(value, item).then(
@@ -1644,7 +1647,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   toggleNamingSchemaOrRegex(): void {
     const customSnapshotsValue = this.entityWizard.formArray.get([0]).get('custom_snapshots').value;
     const sourceDatasetsFromValue = this.entityWizard.formArray.get([0]).get('source_datasets_from').value;
+
     const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
+    const retentionPolicyFormControl = this.entityWizard.formArray.get([1]).get('retention_policy');
+
+    const retentionPolicyField = _.find(
+      _.find(this.wizardConfig[1].fieldSets).config, { name: 'retention_policy' },
+    ) as FormSelectConfig;
 
     if (customSnapshotsValue || sourceDatasetsFromValue === DatasetSource.Remote) {
       if (schemaOrRegexFormControl.disabled) {
@@ -1653,9 +1662,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
         this.setDisable('naming_schema', false, false, 0);
         this.setDisable('name_regex', true, true, 0);
+
+        retentionPolicyField.options = this.retentionPolicyChoice;
       } else {
         this.setDisable('naming_schema', true, true, 0);
         this.setDisable('name_regex', false, false, 0);
+
+        if (retentionPolicyFormControl.value === RetentionPolicy.Custom) {
+          retentionPolicyFormControl.setValue(RetentionPolicy.None);
+        }
+
+        retentionPolicyField.options = this.retentionPolicyChoice
+          .filter((option) => option.value !== RetentionPolicy.Custom);
       }
     } else {
       this.setDisable('naming_schema', true, true, 0);

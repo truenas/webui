@@ -15,6 +15,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { lastValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -32,7 +33,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   @Input() multiple = false;
   @Input() tooltip: string;
   @Input() required: boolean;
-  @Input() root = '/mnt';
+  @Input() root = mntPath;
   @Input() nodeProvider: TreeNodeProvider;
 
   @ViewChild('tree', { static: true }) tree: TreeComponent;
@@ -129,6 +130,18 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.onSelectionChanged();
   }
 
+  onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
+    if (this.multiple) {
+      this.selectTreeNodes(
+        Object.keys(this.tree.treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
+      );
+    } else {
+      this.selectTreeNodes([]);
+    }
+
+    this.onSelectionChanged();
+  }
+
   onSelectionChanged(): void {
     let newValue: string[] | string = Object.entries(this.tree.treeModel.selectedLeafNodeIds)
       .filter(([, isSelected]) => isSelected)
@@ -153,6 +166,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.onChange(this.value);
   }
 
+  isPathSelected(path: string): boolean {
+    return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
+  }
+
   /**
    * Provides typing in templates
    */
@@ -161,7 +178,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private updateInputValue(): void {
-    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value;
+    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
   }
 
   private selectTreeNodes(nodeIds: string[]): void {

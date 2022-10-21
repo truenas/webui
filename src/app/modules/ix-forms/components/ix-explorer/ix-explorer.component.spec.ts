@@ -5,6 +5,7 @@ import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
@@ -59,8 +60,8 @@ describe('IxExplorerComponent', () => {
       expect(tree.nodes).toEqual([
         {
           hasChildren: true,
-          name: '/mnt',
-          path: '/mnt',
+          name: mntPath,
+          path: mntPath,
           type: ExplorerNodeType.Directory,
         },
       ]);
@@ -77,9 +78,9 @@ describe('IxExplorerComponent', () => {
 
     it('calls nodeProvider when getChildren from TreeComponent options is called', () => {
       const tree = spectator.query(TreeComponent);
-      tree.options.getChildren({ path: '/mnt' });
+      tree.options.getChildren({ path: mntPath });
 
-      expect(fakeNodeProvider).toHaveBeenCalledWith({ path: '/mnt' });
+      expect(fakeNodeProvider).toHaveBeenCalledWith({ path: mntPath });
     });
   });
 
@@ -133,6 +134,15 @@ describe('IxExplorerComponent', () => {
       expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { '/mnt/new': true } });
       expect(formControl.value).toBe('/mnt/new');
     });
+
+    it('updates form control when user deselects a node', () => {
+      const tree = spectator.query(TreeComponent);
+      tree.select.emit({ node: { id: '/mnt/new' } });
+      tree.deselect.emit({ node: { id: '/mnt/new' } });
+
+      expect(mockTreeMock.setState).toHaveBeenLastCalledWith({ selectedLeafNodeIds: {} });
+      expect(formControl.value).toBe(undefined);
+    });
   });
 
   describe('form control - multiple=true', () => {
@@ -179,6 +189,18 @@ describe('IxExplorerComponent', () => {
         },
       });
       expect(formControl.value).toEqual(['/mnt/new1', '/mnt/new2']);
+    });
+
+    it('updates form control when user deselects multiple nodes', () => {
+      const tree = spectator.query(TreeComponent);
+      tree.select.emit({ node: { id: '/mnt/new1' } });
+      tree.select.emit({ node: { id: '/mnt/new2' } });
+      tree.deselect.emit({ node: { id: '/mnt/new1' } });
+
+      expect(mockTreeMock.setState).toHaveBeenLastCalledWith({
+        selectedLeafNodeIds: { '/mnt/new2': true },
+      });
+      expect(formControl.value).toEqual(['/mnt/new2']);
     });
   });
 

@@ -30,6 +30,8 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -104,7 +106,10 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   isTableEmpty = true;
   selection = new SelectionModel<Row>(true, []);
   busy: Subscription;
-  columns: any[] = [];
+  columns: {
+    name: string;
+    sort?: 'asc' | 'desc';
+  }[] = [];
 
   /**
    * Need this for the checkbox headings
@@ -251,13 +256,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     this.selection.toggle(element);
 
     const allShown = this.currentRowsThatAreOnScreenToo;
-    for (const row of allShown) {
-      if (!this.selection.isSelected(row)) {
-        this.isAllSelected = false;
-        return;
-      }
-    }
-    this.isAllSelected = true;
+    this.isAllSelected = allShown.every((row) => this.selection.isSelected(row));
   }
 
   ngOnInit(): void {
@@ -597,7 +596,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     });
   }
 
-  handleData(res: any, skipActions = false): any {
+  handleData(res: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
     this.expandedElement = this.expandedRows > 0 ? cache : null;
@@ -613,7 +612,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
           if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+            (res.data as Record<string, string>[]).forEach((row) => {
+              row[prop] = new EntityUtils().parseDow(row[prop]);
+            });
           }
         }
       }
@@ -621,7 +622,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
         if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
+          (res as Record<string, string>[]).forEach((row) => {
+            row[prop] = new EntityUtils().parseDow(row[prop]);
+          });
         }
       }
     }
@@ -724,11 +727,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     }
 
     rows.forEach((row) => {
-      for (const attr in row) {
-        if (row.hasOwnProperty(attr)) {
-          row[attr] = this.rowValue(row, attr);
-        }
-      }
+      Object.keys(row).forEach((attr) => {
+        row[attr] = this.rowValue(row, attr);
+      });
     });
 
     if (this.rows.length === 0) {
@@ -739,9 +740,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       this.currentRows.forEach((row) => {
         const index = _.findIndex(rows, { id: row.id });
         if (index > -1) {
-          for (const prop in rows[index]) {
+          Object.keys(rows[index]).forEach((prop) => {
             row[prop as keyof Row] = rows[index][prop];
-          }
+          });
         }
       });
 
@@ -786,7 +787,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     return [];
   }
 
-  rowValue(row: any, attr: string): any {
+  rowValue(row: any, attr: string): unknown {
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
@@ -997,7 +998,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
           this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
             .pipe(untilDestroyed(this))
             .subscribe({
-              next: (res1) => {
+              next: (res1: Job<CoreBulkResponse[]>) => {
                 if (res1.state !== JobState.Success) {
                   return;
                 }

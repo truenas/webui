@@ -137,9 +137,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
           this.noAvailableCatalog = false;
           catalogNames.add(catalog.label);
           catalog.preferred_trains.forEach((train) => {
-            for (const i in catalog.trains[train]) {
-              const item = catalog.trains[train][i];
-
+            Object.values(catalog.trains[train]).forEach((item) => {
               const catalogItem = { ...item } as CatalogApp;
               catalogItem.catalog = {
                 id: catalog.id,
@@ -147,7 +145,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
                 train,
               };
               this.catalogApps.push(catalogItem);
-            }
+            });
           });
         }
       });

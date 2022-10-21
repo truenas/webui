@@ -7,11 +7,12 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import {
-  Certificate, CertificateProfile, CertificateExtension, CertificationExtensionAttribute,
+  Certificate, CertificateProfile, CertificateExtension, CertificationExtensionAttribute, CertificateCreate,
 } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -662,21 +663,17 @@ export class CertificateAddComponent implements WizardConfiguration {
       });
     });
 
-    this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+    this.ws.call('certificate.ec_curve_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
       const ecCurvesConfig = this.getTarget('ec_curve') as FormSelectConfig;
-      for (const key in choices) {
-        ecCurvesConfig.options.push({ label: choices[key], value: key });
-      }
+      ecCurvesConfig.options = options;
     });
 
-    this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.country = this.getTarget('country') as FormSelectConfig;
-      for (const item in choices) {
-        this.country.options.push(
-          { label: choices[item], value: item },
-        );
-      }
-    });
+    this.systemGeneralService.getCertificateCountryChoices()
+      .pipe(choicesToOptions(), untilDestroyed(this))
+      .subscribe((options) => {
+        this.country = this.getTarget('country') as FormSelectConfig;
+        this.country.options = options;
+      });
 
     this.ws.call('certificate.query').pipe(untilDestroyed(this)).subscribe((certificates) => {
       this.csrlist = this.getTarget('csrlist') as FormSelectConfig;
@@ -954,13 +951,13 @@ export class CertificateAddComponent implements WizardConfiguration {
     }
   }
 
-  beforeSubmit(data: any): any {
+  beforeSubmit(data: any): CertificateCreate {
     if (data.san) {
       for (let i = 0; i < data.san.length; i++) {
         let sanValue = '';
-        for (const key in data.san[i]) {
+        Object.keys(data.san[i]).forEach((key) => {
           sanValue += data.san[i][key];
-        }
+        });
         data.san[i] = sanValue;
       }
     }
@@ -1022,7 +1019,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     return data;
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: CertificateCreate): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Creating Certificate') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.addWsCall, [data]);
     dialogRef.componentInstance.submit();

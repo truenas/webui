@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { uniqBy } from 'lodash';
 import { lastValueFrom } from 'rxjs';
 import {
   filter, switchMap, tap,
@@ -366,7 +367,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
         (sedPassword) => {
           this.sedPassword = sedPassword;
-          this.dataCards.push({
+
+          const sedCard = {
             title: helptextSystemAdvanced.fieldset_sed,
             id: AdvancedCardId.Sed,
             items: [
@@ -379,14 +381,18 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                 value: sedPassword ? '*'.repeat(sedPassword.length) : '–',
               },
             ],
-          });
+          };
+
+          this.addDataCard(sedCard);
         },
       );
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
-        const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
-          (pciId: string) => pciId === gpu.addr.pci_slot,
-        ) > -1).map((gpu: Device) => gpu.description).join(', ');
+        const isolatedGpus = gpus.filter((gpu: Device) => {
+          const index = advancedConfig.isolated_gpu_pci_ids.findIndex((pciId: string) => pciId === gpu.addr.pci_slot);
+          return index > -1;
+        }).map((gpu: Device) => gpu.description).join(', ');
+
         const gpuCard = {
           title: this.translate.instant('Isolated GPU Device(s)'),
           id: AdvancedCardId.Gpus,
@@ -401,7 +407,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
             message: this.translate.instant('To configure Isolated GPU Device(s), click the "Configure" button.'),
           };
         }
-        this.dataCards.push(gpuCard);
+
+        this.addDataCard(gpuCard);
       });
     });
   }
@@ -459,5 +466,9 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         ),
       };
     });
+  }
+
+  private addDataCard(card: DataCard<AdvancedCardId>): void {
+    this.dataCards = uniqBy([...this.dataCards, card], (cardElement) => cardElement.id);
   }
 }

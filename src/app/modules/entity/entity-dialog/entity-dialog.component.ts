@@ -31,7 +31,7 @@ export class EntityDialogComponent implements OnInit {
   saveButtonText: string;
   cancelButtonText = 'Cancel';
   error: string;
-  formValue: any;
+  formValue: Record<string, unknown>;
   showPassword = false;
   submitEnabled = true;
   instructions: string;
@@ -117,12 +117,10 @@ export class EntityDialogComponent implements OnInit {
 
   togglePassword(): void {
     const inputs = document.getElementsByTagName('input');
-    for (const input of inputs) {
-      if (!input.placeholder.toLowerCase().includes('current')
-          && !input.placeholder.toLowerCase().includes('root')) {
-        if (input.placeholder.toLowerCase().includes('password')
-        || input.placeholder.toLowerCase().includes('passphrase')
-        || input.placeholder.toLowerCase().includes('secret')) {
+    Array.from(inputs).forEach((input) => {
+      const placeholder = input.placeholder.toLowerCase();
+      if (!placeholder.includes('current') && !placeholder.includes('root')) {
+        if (placeholder.includes('password') || placeholder.includes('passphrase') || placeholder.includes('secret')) {
           if (input.type === 'password') {
             input.type = 'text';
           } else {
@@ -130,7 +128,7 @@ export class EntityDialogComponent implements OnInit {
           }
         }
       }
-    }
+    });
     this.showPassword = !this.showPassword;
   }
 

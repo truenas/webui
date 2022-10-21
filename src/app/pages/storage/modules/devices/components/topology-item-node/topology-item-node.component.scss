@@ -16,11 +16,11 @@
 
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 125px 125px 125px 40px;
+  grid-template-columns: auto 125px 125px 125px;
 
   @media (max-width: $breakpoint-tablet) {
     // Override default fraction based values to avoid misaligned columns
-    grid-template-columns: auto 0 0 0 0;
+    grid-template-columns: auto 0 0 0;
     width: 100%;
   }
 

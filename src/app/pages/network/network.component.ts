@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component, Inject, OnDestroy, OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +11,7 @@ import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
@@ -203,6 +206,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private core: CoreService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
@@ -313,7 +317,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             this.checkinRemaining = null;
             this.checkinWaiting = false;
             clearInterval(this.checkinInterval);
-            window.location.reload(); // should just refresh after the timer goes off
+            this.window.location.reload(); // should just refresh after the timer goes off
           }
         }, 1000);
       }
@@ -335,8 +339,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (services.length > 0) {
           const ips: string[] = [];
           services.forEach((item) => {
-            if ((item as any)['system-service']) {
-              this.affectedServices.push((item as any)['system-service']);
+            // TODO: Check if `system-service` can actually be returned.
+            const systemService = (item as unknown as { 'system-service': string })['system-service'];
+            if (systemService) {
+              this.affectedServices.push(systemService);
             }
             if (item['service']) {
               this.affectedServices.push(item['service']);
@@ -578,7 +584,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: 'manage',
       matTooltip: this.translate.instant('Manage'),
       onClick: (row: IpmiRow) => {
-        window.open(`http://${row.ipaddress}`);
+        this.window.open(`http://${row.ipaddress}`);
       },
     }];
   }

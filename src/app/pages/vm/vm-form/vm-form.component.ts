@@ -9,6 +9,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Device } from 'app/interfaces/device.interface';
@@ -268,10 +269,8 @@ export class VmFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.wasFormInitialized = true;
     this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
-    this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
-      for (const option in options) {
-        this.bootloader.options.push({ label: options[option], value: option });
-      }
+    this.vmService.getBootloaderOptions().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
+      this.bootloader.options = options;
     });
 
     entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
@@ -304,13 +303,7 @@ export class VmFormComponent implements FormConfiguration {
       cpuModel.isHidden = false;
 
       this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
-        for (const model in models) {
-          cpuModel.options.push(
-            {
-              label: model, value: models[model],
-            },
-          );
-        }
+        cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
       });
     }
 
@@ -392,7 +385,7 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
+  resourceTransformIncomingRestData(vmRes: VirtualMachine): VirtualMachine {
     this.rawVmData = vmRes;
     (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
@@ -418,9 +411,9 @@ export class VmFormComponent implements FormConfiguration {
     return vmRes;
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: Record<string, unknown>): Record<string, unknown> {
     if (data['memory'] !== undefined && data['memory'] !== null) {
-      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory']) / 1048576);
+      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'] as string) / 1048576);
     }
     return data;
   }

@@ -171,11 +171,6 @@ export default {
   action_button_dry_run: T('Dry Run'),
   job_dialog_title_dry_run: T('Dry Run Cloud Sync Task'),
 
-  resetTransferModeDialog: {
-    title: T('Transfer Mode Reset'),
-    content: T('Transfer Mode has been reset to <i>COPY</i>.'),
-  },
-
   cloudsync_task_add: T('Add Cloud Sync Task'),
   cloudsync_task_edit: T('Edit Cloud Sync Task'),
 

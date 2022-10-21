@@ -1,9 +1,8 @@
-import {
-  ChangeDetectionStrategy, Component, Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
@@ -28,7 +27,13 @@ export class TopologyItemNodeComponent {
   }
 
   get name(): string {
-    return (this.topologyItem as TopologyDisk).disk || this.topologyItem.type;
+    if ((this.topologyItem as TopologyDisk).disk) {
+      return (this.topologyItem as TopologyDisk).disk;
+    }
+    if (this.isDisk) {
+      return this.topologyItem.guid;
+    }
+    return this.topologyItem.type;
   }
 
   get status(): string {
@@ -58,5 +63,9 @@ export class TopologyItemNodeComponent {
       default:
         return '';
     }
+  }
+
+  get isDisk(): boolean {
+    return Boolean(this.topologyItem.type === TopologyItemType.Disk && this.topologyItem.path);
   }
 }

@@ -29,7 +29,7 @@ export class TableService {
   getData(table: TableComponent): void {
     this.ws.call(table.tableConf.queryCall, table.tableConf.queryCallOption)
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
+      .subscribe((res: unknown[]) => {
         if (table.tableConf.dataSourceHelper) {
           res = table.tableConf.dataSourceHelper(res);
         }
@@ -39,7 +39,7 @@ export class TableService {
         if (table.tableConf.getInOutInfo) {
           table.tableConf.getInOutInfo(res);
         }
-        table.dataSource = res;
+        table.dataSource = res as Record<string, unknown>[];
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
             type: EmptyType.NoPageData,

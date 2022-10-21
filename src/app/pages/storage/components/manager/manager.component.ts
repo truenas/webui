@@ -15,10 +15,17 @@ import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
+import {
+  CreatePool,
+  Pool,
+  UpdatePool,
+  UpdatePoolTopology,
+  UpdatePoolTopologyGroup,
+} from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
@@ -35,6 +42,13 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 import { ManagerDisk } from './manager-disk.interface';
 import { VdevComponent } from './vdev/vdev.component';
 
+export interface ManagerVdev {
+  disks: ManagerDisk[];
+  type: string;
+}
+
+export type ManagerVdevs = { [group in UpdatePoolTopologyGroup]: ManagerVdev[] };
+
 @UntilDestroy()
 @Component({
   templateUrl: 'manager.component.html',
@@ -45,8 +59,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   disks: ManagerDisk[] = [];
   suggestableDisks: ManagerDisk[] = [];
   selected: ManagerDisk[] = [];
-  vdevs: any = {
-    data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
+  vdevs: ManagerVdevs = {
+    data: [{} as ManagerVdev], cache: [], spares: [], log: [], special: [], dedup: [],
   };
   originalDisks: ManagerDisk[] = [];
   originalSuggestableDisks: ManagerDisk[] = [];
@@ -56,7 +70,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
 
-  nameControl = new FormControl('', Validators.required);
+  nameControl = new FormControl('', [Validators.required, Validators.maxLength(50)]);
   addCall = 'pool.create' as const;
   editCall = 'pool.update' as const;
   queryCall = 'pool.query' as const;
@@ -197,7 +211,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
       saveButtonText: helptext.manager_duplicate_button,
       customSubmit: (entityDialog: EntityDialogComponent) => {
-        const value = entityDialog.formValue;
+        const value = entityDialog.formValue as { vdevs: number };
         const origVdevs = this.vdevComponents.toArray();
         // handle case of extending with zero vdevs filled out
         if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
@@ -248,7 +262,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+  handleError = (error: WebsocketError | Job): void => {
     this.dialog.errorReportMiddleware(error);
   };
 
@@ -319,11 +333,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
       next: (algorithms) => {
-        for (const algorithm in algorithms) {
-          if (algorithms.hasOwnProperty(algorithm)) {
-            this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
-          }
-        }
+        Object.keys(algorithms).forEach((algorithm) => {
+          this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
+        });
       },
       error: this.handleError,
     });
@@ -412,9 +424,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addVdev(group: string, initialValues = {}): void {
+  addVdev(group: keyof ManagerVdevs, initialValues = {}): void {
     this.dirty = true;
-    this.vdevs[group].push(initialValues);
+    this.vdevs[group].push(initialValues as ManagerVdev);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -542,7 +554,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   canSave(): boolean {
-    if (this.isNew && !this.nameControl.value) {
+    if (this.isNew && (!this.nameControl.value || this.nameControl.value.length > 50)) {
       return false;
     }
     if (this.vdevtypeError) {
@@ -643,7 +655,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       .subscribe(() => {
         this.error = null;
 
-        const layout: any = {};
+        const layout: UpdatePoolTopology = {};
         this.vdevComponents.forEach((vdev) => {
           const disks: string[] = [];
           vdev.getDisks().forEach((disk) => {
@@ -654,7 +666,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           });
           if (disks.length > 0) {
             let type = vdev.typeControl.value.toUpperCase();
-            type = type === 'RAIDZ' ? 'RAIDZ1' : type;
+            type = type === 'RAIDZ' ? CreateVdevLayout.Raidz1 : type;
             const group = vdev.group;
             if (!layout[group]) {
               layout[group] = [];
@@ -662,7 +674,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             if (group === 'spares') {
               layout[group] = disks;
             } else {
-              layout[group].push({ type, disks });
+              (layout[group] as { type: CreateVdevLayout; disks: string[] }[]).push({
+                disks,
+                type: type as CreateVdevLayout,
+              });
             }
           }
         });
@@ -848,16 +863,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.vdevComponents.forEach((vdev) => {
       vdev.remove();
     });
-    for (const group in this.vdevs) {
-      if (this.vdevs.hasOwnProperty(group)) {
-        while (this.vdevs[group].length > 0) {
-          this.vdevs[group].pop();
-        }
+    Object.keys(this.vdevs).forEach((group: keyof ManagerVdevs) => {
+      while (this.vdevs[group].length > 0) {
+        this.vdevs[group].pop();
       }
-    }
+    });
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.vdevs['data'].push({});
+    this.vdevs['data'].push({} as ManagerVdev);
     this.vdevComponents.first.estimateSize();
     this.disks = Array.from(this.originalDisks);
     this.suggestableDisks = Array.from(this.originalSuggestableDisks);
@@ -902,7 +915,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 
-  toggleExpandRow(row: any): void {
+  toggleExpandRow(row: unknown): void {
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }

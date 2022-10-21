@@ -1,7 +1,6 @@
 import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -37,10 +36,6 @@ export class WidgetComponent {
     }
 
     this.isFlipped = !this.isFlipped;
-  }
-
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  setPreferences(form: NgForm): void {
   }
 
   goBack(): void {

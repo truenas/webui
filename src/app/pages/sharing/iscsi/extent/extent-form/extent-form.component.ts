@@ -9,6 +9,8 @@ import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -47,7 +49,7 @@ export class ExtentFormComponent implements OnInit {
     enabled: [true],
     type: [IscsiExtentType.Disk],
     disk: [''],
-    path: ['/mnt'],
+    path: [mntPath],
     filesize: [null as number],
     serial: [''],
     blocksize: [512],
@@ -67,12 +69,9 @@ export class ExtentFormComponent implements OnInit {
   readonly types$ = of(this.helptext.extent_form_enum_type);
   readonly blocksizes$ = of(this.helptext.extent_form_enum_blocksize);
   readonly disks$ = this.iscsiService.getExtentDevices().pipe(
-    map((devices) => {
-      const opts = [];
-      for (const i in devices) {
-        opts.push({ label: devices[i], value: i });
-      }
-      return _.sortBy(opts, ['label']);
+    choicesToOptions(),
+    map((options) => {
+      return _.sortBy(options, ['label']);
     }),
   );
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();

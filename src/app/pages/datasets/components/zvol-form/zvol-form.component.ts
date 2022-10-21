@@ -377,7 +377,7 @@ export class ZvolFormComponent implements FormConfiguration {
   }
 
   sendAsBasicOrAdvanced(data: ZvolFormData): ZvolFormData {
-    data.type = 'VOLUME';
+    data.type = DatasetType.Volume;
 
     if (!this.isNew) {
       delete data.name;
@@ -389,7 +389,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
 
     if (this.origHuman !== data.volsize) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as any, true);
+      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as unknown as string, true);
     } else {
       delete data.volsize;
     }
@@ -458,11 +458,9 @@ export class ZvolFormComponent implements FormConfiguration {
           }
           this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
             next: (algorithms) => {
-              for (const algorithm in algorithms) {
-                if (algorithms.hasOwnProperty(algorithm)) {
-                  encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
-                }
-              }
+              Object.keys(algorithms).forEach((algorithm) => {
+                encryptionAlgorithmConfig.options.push({ label: algorithm, value: algorithm });
+              });
             },
             error: this.handleError,
           });
@@ -735,7 +733,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
   }
 
-  addSubmit(body: any): Observable<Dataset> {
+  addSubmit(body: ZvolFormData): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.sync === inherit) {
@@ -792,7 +790,7 @@ export class ZvolFormComponent implements FormConfiguration {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  editSubmit(body: any): void {
+  editSubmit(body: ZvolFormData): void {
     this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
         this.editData = this.sendAsBasicOrAdvanced(body);
@@ -862,7 +860,7 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: any): void {
+  customSubmit(body: ZvolFormData): void {
     this.loader.open();
 
     if (this.isNew) {

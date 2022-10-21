@@ -2,8 +2,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -30,15 +30,12 @@ describe('PoolUsageCardComponent', () => {
           { selector: selectTheme, value: 'ix-dark' },
         ],
       }),
-      {
-        provide: WINDOW,
-        useValue: {
-          sessionStorage: {
-            getItem: () => 'ix-dark',
-            setItem: () => {},
-          },
+      mockWindow({
+        sessionStorage: {
+          getItem: () => 'ix-dark',
+          setItem: () => {},
         },
-      },
+      }),
     ],
   });
 

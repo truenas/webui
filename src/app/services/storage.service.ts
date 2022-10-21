@@ -57,11 +57,11 @@ export class StorageService {
     const dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
-    dlink.href = window.URL.createObjectURL(blob);
+    dlink.href = URL.createObjectURL(blob);
     dlink.onclick = () => {
       // revokeObjectURL needs a delay to work properly
       setTimeout(() => {
-        window.URL.revokeObjectURL(dlink.href);
+        URL.revokeObjectURL(dlink.href);
       }, 1500);
     };
 
@@ -362,7 +362,7 @@ export class StorageService {
     return Number(num) * this.convertUnitToNum(unit);
   }
 
-  // Converts a number from bytes to the most natural human readable format
+  // Converts a number from bytes to the most natural human-readable format
   convertBytesToHumanReadable(
     rawBytes: number | string,
     decimalPlaces?: number,

@@ -52,7 +52,7 @@
         ix-auto-identifier="{{ action?.name | uppercase }}_{{ action.id }}"
         id="action_button_{{ action?.name }}__{{ action.id }}"
         [disabled]="action.disabled"
-        [ix-auto]="config.name"
+        [ix-auto]="config.name | cast"
         (click)="action.onClick(this.config)"
       >
         <div fxLayoutAlign="center center" fxLayoutGap="8px">

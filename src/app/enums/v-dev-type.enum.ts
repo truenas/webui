@@ -1,3 +1,4 @@
+// TODO: This may actually be several enums. Consider splitting.
 export enum TopologyItemType {
   Disk = 'DISK',
   Mirror = 'MIRROR',
@@ -9,4 +10,12 @@ export enum TopologyItemType {
   Raidz = 'RAIDZ',
   L2Cache = 'L2CACHE',
   Replacing = 'REPLACING',
+}
+
+export enum CreateVdevLayout {
+  Stripe = 'STRIPE',
+  Mirror = 'MIRROR',
+  Raidz1 = 'RAIDZ1',
+  Raidz2 = 'RAIDZ2',
+  Raidz3 = 'RAIDZ3',
 }

@@ -11,6 +11,7 @@ import { catchError, map } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
@@ -469,7 +470,7 @@ export class VmWizardComponent implements WizardConfiguration {
           type: 'explorer',
           name: 'iso_path',
           placeholder: helptext.iso_path_placeholder,
-          initial: '/mnt',
+          initial: mntPath,
           tooltip: helptext.iso_path_tooltip,
         },
         {
@@ -483,7 +484,7 @@ export class VmWizardComponent implements WizardConfiguration {
           type: 'explorer',
           name: 'upload_iso_path',
           placeholder: helptext.upload_iso_path_placeholder,
-          initial: '/mnt',
+          initial: mntPath,
           tooltip: helptext.upload_iso_path_tooltip,
           explorerType: ExplorerType.Directory,
           isHidden: true,
@@ -597,13 +598,7 @@ export class VmWizardComponent implements WizardConfiguration {
       cpuModel.isHidden = false;
 
       this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
-        for (const model in models) {
-          cpuModel.options.push(
-            {
-              label: model, value: model,
-            },
-          );
-        }
+        cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
       });
     }
 
@@ -753,7 +748,7 @@ export class VmWizardComponent implements WizardConfiguration {
       });
 
       this.getFormControlFromFieldName('datastore').valueChanges.pipe(untilDestroyed(this)).subscribe((datastore) => {
-        if (datastore !== undefined && datastore !== '' && datastore !== '/mnt') {
+        if (datastore !== undefined && datastore !== '' && datastore !== mntPath) {
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = false;
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = null;
           const volsize = this.storageService.convertHumanStringToNum(this.getFormControlFromFieldName('volsize').value as string);
@@ -776,7 +771,7 @@ export class VmWizardComponent implements WizardConfiguration {
             }
           });
         } else {
-          if (datastore === '/mnt') {
+          if (datastore === mntPath) {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
@@ -867,10 +862,8 @@ export class VmWizardComponent implements WizardConfiguration {
 
     this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
 
-    this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
-      for (const option in options) {
-        this.bootloader.options.push({ label: options[option], value: option });
-      }
+    this.vmService.getBootloaderOptions().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
+      this.bootloader.options = options;
       this.getFormControlFromFieldName('bootloader').setValue(
         this.bootloader.options[0].label,
       );

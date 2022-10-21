@@ -37,6 +37,7 @@ import { routing } from 'app/pages/account/groups/groups.routing';
 import { GroupEffects } from 'app/pages/account/groups/store/group.effects';
 import { groupReducer } from 'app/pages/account/groups/store/group.reducer';
 import { groupStateKey } from 'app/pages/account/groups/store/group.selectors';
+import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dialog/delete-group-dialog.component';
 
 @NgModule({
   providers: [],
@@ -79,6 +80,7 @@ import { groupStateKey } from 'app/pages/account/groups/store/group.selectors';
     GroupFormComponent,
     GroupDetailsRowComponent,
     GroupMembersComponent,
+    DeleteGroupDialogComponent,
   ],
   exports: [],
 })

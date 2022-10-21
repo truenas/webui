@@ -3,8 +3,8 @@
   fxLayoutAlign="center center"
   fxFlex
   class="empty-page {{ conf.type }}"
-  [class.large]="conf.large"
-  [class.compact]="conf.compact"
+  [class.large]="conf?.large"
+  [class.compact]="conf?.compact"
 >
   <div
     *ngIf="!isLoading()"
@@ -21,7 +21,7 @@
     fxLayoutAlign="center center"
     fxFlex
   >
-    <mat-spinner [diameter]="conf.large ? 80 : 40"></mat-spinner>
+    <mat-spinner [diameter]="40"></mat-spinner>
   </div>
   <div *ngIf="!isLoading()">
     <h3 class="empty-title">{{ conf.title }}</h3>

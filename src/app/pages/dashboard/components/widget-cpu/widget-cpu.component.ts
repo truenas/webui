@@ -2,7 +2,6 @@ import {
   Component, AfterViewInit, Input, ElementRef, OnChanges,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { NgForm } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,7 +40,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
 
-  chart: any;// Chart.js instance with per core data
+  chart: Chart; // Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
   cpuAvg: GaugeConfig;
   title: string = this.translate.instant('CPU');
@@ -106,7 +105,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
 
       if (this.chart && this.screenType !== currentScreenType) {
-        this.chart.resize(size);
+        (this.chart.resize as (size: { width: number; height: number }) => void)(size);
       }
 
       this.screenType = currentScreenType;
@@ -241,15 +240,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.isCpuAvgReady = Boolean(oldData);
   }
 
-  setPreferences(form: NgForm): void {
-    const filtered: string[] = [];
-    for (const i in form.value) {
-      if (form.value[i]) {
-        filtered.push(i);
-      }
-    }
-  }
-
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
@@ -310,7 +300,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           xAxes: [{
             type: 'category',
             labels: this.labels,
-          } as any],
+          }],
           yAxes: [{
             ticks: {
               max: 100,

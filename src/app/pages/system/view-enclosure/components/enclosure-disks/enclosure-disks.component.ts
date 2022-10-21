@@ -245,7 +245,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const callback = (mutationList: MutationRecord[]): void => {
       mutationList.forEach((mutation) => {
         switch (mutation.type) {
-          case 'childList':
+          case 'childList': {
             /* One or more children have been added to and/or removed
                from the tree; see mutation.addedNodes and
                mutation.removedNodes */
@@ -269,7 +269,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
               this.enter('full-stage'); // View has changed so we launch transition animations
             }
             break;
-          case 'attributes':
+          }
+          case 'attributes': {
             /* An attribute value changed on the element in
                mutation.target; the attribute name is in
                mutation.attributeName and its previous value is in
@@ -280,9 +281,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             if (diskName && this.currentView === 'details' && this.exitingView === 'details') {
               this.update('stage-right'); // View has changed so we launch transition animations
               this.update('stage-left'); // View has changed so we launch transition animations
-              this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
+              this.labels.events$.next({
+                name: 'OverlayReady',
+                data: { vdev: this.selectedVdev, overlay: this.domLabels },
+                sender: this,
+              });
             }
             break;
+          }
         }
       });
     };
@@ -421,10 +427,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R50B(true);
         this.showCaption = false;
         break;
-      case 'M Series':
+      case 'M Series': {
         const rearChassis = !!this.system.rearIndex;
         this.chassis = new M50(rearChassis);
         break;
+      }
       case 'X Series':
       case 'ES12':
         this.chassis = new Es12();
@@ -488,7 +495,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           this.optimizeChassisOpacity();
 
           break;
-        case 'DriveSelected':
+        case 'DriveSelected': {
           if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
             this.radiate(true);
@@ -502,6 +509,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.setCurrentView('details');
           }
           break;
+        }
       }
     });
 
@@ -683,7 +691,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'expanders':
         this.container.alpha = 0;
         break;
-      case 'details':
+      case 'details': {
         this.container.alpha = 1;
         this.setDisksDisabled();
 
@@ -696,6 +704,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this } as LabelDrivesEvent);
 
         break;
+      }
     }
 
     this.currentView = opt;
@@ -862,8 +871,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     // Also check slot status
     const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
-      ? this.system.enclosures[disk.enclosure.number].elements as any[]
-      : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+      ? this.system.enclosures[disk.enclosure.number].elements as EnclosureElement[]
+      : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
     const slot = elements.find((element) => element.slot === disk.enclosure.slot);
 
     if (!failed && slot.fault) {
@@ -903,8 +912,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       // Also check slot status
       const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
-        ? this.system.enclosures[disk.enclosure.number].elements as any[]
-        : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+        ? this.system.enclosures[disk.enclosure.number].elements as EnclosureElement[]
+        : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
       const slot = elements.find((element) => element.slot === disk.enclosure.slot);
 
       if (!failed && slot.fault) {
@@ -1033,7 +1042,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if (this.identifyBtnRef) {
       // kill the animation
       this.identifyBtnRef.animation.seek(0);
-      (this.identifyBtnRef.animation.stop as any)(this.identifyBtnRef.styler);
+      (this.identifyBtnRef.animation.stop as (styler: ValueReaction) => void)(this.identifyBtnRef.styler);
       this.identifyBtnRef = null;
     } else if (!this.identifyBtnRef && !kill) {
       const btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});
@@ -1154,7 +1163,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.pendingDialog = entityDialog;
         entityDialog.loader.open();
-        this.setEnclosureLabel(entityDialog.formValue.label);
+        this.setEnclosureLabel(entityDialog.formValue.label as string);
       },
     };
 

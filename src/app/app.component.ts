@@ -1,12 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
-  Router, NavigationEnd, NavigationCancel,
-} from '@angular/router';
+import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
-import { WebSocketService } from 'app/services';
-import { SystemGeneralService } from './services';
+import { WINDOW } from 'app/helpers/window.helper';
+import { SystemGeneralService, WebSocketService } from './services';
 
 @UntilDestroy()
 @Component({
@@ -19,11 +17,12 @@ export class AppComponent {
     private router: Router,
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
+    @Inject(WINDOW) private window: Window,
   ) {
-    this.title.setTitle('TrueNAS - ' + window.location.hostname);
-    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
+    const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
-    const savedProductType = window.localStorage.product_type;
+    const savedProductType = this.window.localStorage.product_type;
     if (savedProductType) {
       const cachedType = savedProductType.toLowerCase();
       path = `assets/images/truenas_${cachedType}_favicon.png`;
@@ -52,7 +51,7 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
         if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
-          sessionStorage.currentUrl = event.url;
+          this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }
 
@@ -70,7 +69,7 @@ export class AppComponent {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {
-        window.location.reload();
+        this.window.location.reload();
       }
       console.error(err);
     };

@@ -27,4 +27,5 @@ import 'core-js/es/reflect';
 import 'zone.js'; // Included with Angular CLI.
 
 // Used by chartist.js
+// eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window, 'global', { value: window });

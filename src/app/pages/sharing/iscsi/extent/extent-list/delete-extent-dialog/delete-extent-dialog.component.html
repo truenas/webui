@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>{{ 'Delete iSCSI extent {name}?' | translate: { name: extent.name } }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <ix-checkbox
+      *ngIf="isFile"
+      formControlName="remove"
+      [label]="'Remove file?' | translate"
+    ></ix-checkbox>
+    <ix-checkbox
+      formControlName="force"
+      [label]="'Force' | translate"
+    ></ix-checkbox>
+  </form>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button
+    mat-button
+    [matDialogClose]="false"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    (click)="onDelete()"
+  >
+    {{ 'Delete' | translate }}
+  </button>
+</div>

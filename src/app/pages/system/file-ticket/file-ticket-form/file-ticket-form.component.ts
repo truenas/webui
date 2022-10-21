@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -15,6 +15,7 @@ import {
 import { ticketAcceptedFiles, TicketType, ticketTypeLabels } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -22,8 +23,7 @@ import {
   CreateNewTicket, NewTicketResponse,
 } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
@@ -78,6 +78,7 @@ export class FileTicketFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.form.get('category').setDisable(true);
     this.restoreToken();
@@ -192,13 +193,13 @@ export class FileTicketFormComponent implements OnInit {
               this.openSuccessDialog(job.result);
             },
           });
-          for (const file of this.screenshots) {
+          this.screenshots.forEach((file) => {
             this.fileUpload.upload(file, 'support.attach_ticket', [{
               ticket: job.result.ticket,
               filename: file.name,
               token: payload.token,
             }]);
-          }
+          });
         } else {
           this.isFormLoading$.next(false);
           this.slideIn.close();
@@ -214,19 +215,21 @@ export class FileTicketFormComponent implements OnInit {
   }
 
   openSuccessDialog(params: NewTicketResponse): void {
-    const conf: DialogFormConfiguration = {
+    const dialogConfig: GeneralDialogConfig = {
       title: this.translate.instant('Ticket'),
       message: this.translate.instant('Congratulations! Your ticket has been submitted successfully. It may take some time before images appear.'),
-      fieldConfig: [],
-      cancelButtonText: this.translate.instant('Close'),
-      saveButtonText: this.translate.instant('Open Ticket'),
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close();
-        window.open(params.url, '_blank');
-        this.dialog.closeAllDialogs();
-      },
+      confirmBtnMsg: this.translate.instant('Open Ticket'),
+      cancelBtnMsg: this.translate.instant('Close'),
     };
-    this.dialog.dialogForm(conf);
+    this.dialog.generalDialog(dialogConfig)
+      .pipe(untilDestroyed(this))
+      .subscribe((shouldOpen) => {
+        if (!shouldOpen) {
+          return;
+        }
+
+        this.window.open(params.url, '_blank');
+      });
   }
 
   getJobStatus(id: number): Observable<Job> {

@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./entity-job.component.scss'],
 })
 export class EntityJobComponent implements OnInit, AfterViewChecked {
-  job: Job = {} as Job;
+  job: Job<unknown> = {} as Job<unknown>;
   progressTotalPercent = 0;
   description: string;
   method: ApiMethod;
@@ -181,7 +181,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     this.http.post(path, options, { reportProgress: true, observe: 'events' })
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (event: HttpEvent<Job>) => {
+        next: (event: HttpEvent<Job | { job_id: number }>) => {
           if (event.type === HttpEventType.UploadProgress) {
             const eventTotal = event.total ? event.total : 0;
             let progress = 0;
@@ -191,9 +191,10 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.uploadPercentage = progress;
           } else if (event.type === HttpEventType.Response) {
             this.showHttpProgress = false;
-            this.job = event.body;
-            if (this.job && (this.job as any).job_id) {
-              this.jobId = (this.job as any).job_id;
+            const body = event.body;
+            this.job = body as Job; // Type is actually not a Job, but a { job_id: number }
+            if (body && 'job_id' in body) {
+              this.jobId = body.job_id;
             }
             this.wsshow();
           }
@@ -207,10 +208,10 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
 
   wspost(path: string, options: unknown): void {
     this.http.post(path, options).pipe(untilDestroyed(this)).subscribe({
-      next: (res: Job) => {
-        this.job = res;
-        if (this.job && (this.job as any).job_id) {
-          this.jobId = (this.job as any).job_id;
+      next: (res: Job | { job_id: number }) => {
+        this.job = res as Job; // Type is actually not a Job, but a { job_id: number }
+        if (res && 'job_id' in res) {
+          this.jobId = res.job_id;
         }
         this.wsshow();
       },
