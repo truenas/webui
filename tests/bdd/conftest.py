@@ -75,10 +75,10 @@ def browser():
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.download.alwaysOpenPanel", False)
-    profile.set_preference("browser.cache.disk.enable", False)
-    profile.set_preference("browser.cache.memory.enable", False)
-    profile.set_preference("browser.cache.offline.enable", False)
-    profile.set_preference("network.http.use-cache", False)
+    # profile.set_preference("browser.cache.disk.enable", False)
+    # profile.set_preference("browser.cache.memory.enable", False)
+    # profile.set_preference("browser.cache.offline.enable", False)
+    # profile.set_preference("network.http.use-cache", False)
     # browser.link.open_newwindow is frozen 2 the only way to change it is like bellow
     profile.DEFAULT_PREFERENCES["frozen"]["browser.link.open_newwindow"] = 3
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
