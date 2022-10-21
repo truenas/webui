@@ -155,7 +155,7 @@ def on_the_login_wait_to_see_ha_is_enabled_before_login(driver):
 def on_the_dashboard_make_sure_ha_is_enabled(driver):
     """on the Dashboard, make sure HA is enabled."""
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
-    assert wait_on_element(driver, 60, xpaths.dashboard.system_information
+    assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
     if wait_on_element(driver, 5, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
