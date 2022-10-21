@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren,
+  AfterViewInit, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -55,7 +55,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   error: string;
 
   @ViewChild('paginator') paginator: MatPaginator;
-  @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
@@ -519,15 +518,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.hasSavableErrors = false;
     this.emptyDataVdev = false;
 
-    (this.vdevComponents || []).forEach((vdevComponent, i) => {
-      if (vdevComponent.group === 'data') {
+    this.mapAllVdevsToVdevInfo().forEach((vdev, i) => {
+      if (vdev.group === 'data') {
         if (i === 0 && this.isNew) {
-          this.firstDataVdevType = vdevComponent.typeControl.value;
-          dataVdevType = vdevComponent.typeControl.value;
-          if (vdevComponent.disks.length > 0) {
-            this.firstDataVdevDisknum = vdevComponent.disks.length;
-            this.firstDataVdevDisksize = vdevComponent.disks[0].size;
-            this.firstDataVdevDisktype = vdevComponent.disks[0].type;
+          this.firstDataVdevType = vdev.type;
+          dataVdevType = vdev.type;
+          if (vdev.disks.length > 0) {
+            this.firstDataVdevDisknum = vdev.disks.length;
+            this.firstDataVdevDisksize = vdev.disks[0].size;
+            this.firstDataVdevDisktype = vdev.disks[0].type;
             this.canDuplicate = true;
           } else {
             this.firstDataVdevDisknum = 0;
@@ -536,15 +535,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.canDuplicate = false;
           }
         }
-        if (vdevComponent.disks.length > 0) {
+        if (vdev.disks.length > 0) {
           wasDataDiskFound = true;
-          dataVdevDisknum = vdevComponent.disks.length;
-          dataVdevType = vdevComponent.typeControl.value;
+          dataVdevDisknum = vdev.disks.length;
+          dataVdevType = vdev.type;
         } else {
           this.emptyDataVdev = true;
           dataVdevDisknum = 0;
         }
-        sizeEstimate += vdevComponent.rawSize;
+        sizeEstimate += vdev.rawSize;
         if (dataVdevDisknum > 0) {
           if (dataVdevDisknum !== this.firstDataVdevDisknum && this.firstDataVdevType !== 'stripe') {
             this.getDiskNumErrorMsg(dataVdevDisknum);
@@ -553,22 +552,22 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.getVdevTypeErrorMsg(dataVdevType);
           }
         }
-      } else if (vdevComponent.disks.length > 0) {
+      } else if (vdev.disks.length > 0) {
         wereAnyDisksFound = true;
       }
-      if (vdevComponent.vdevDisksError) {
+      if (vdev.vdevDisksError) {
         this.vdevdisksError = true;
       }
-      if (vdevComponent.showDiskSizeError) {
+      if (vdev.showDiskSizeError) {
         this.hasVdevDiskSizeError = true;
         this.hasSavableErrors = true;
       }
-      if (['dedup', 'log', 'special', 'data'].includes(vdevComponent.group)) {
-        if (vdevComponent.disks.length >= 1 && vdevComponent.typeControl.value.toLowerCase() === 'stripe') {
-          if (vdevComponent.group === 'log') {
+      if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
+        if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
+          if (vdev.group === 'log') {
             this.getLogVdevTypeWarningMsg();
           } else {
-            this.getStripeVdevTypeErrorMsg(vdevComponent.group);
+            this.getStripeVdevTypeErrorMsg(vdev.group);
           }
 
           this.hasSavableErrors = true;
@@ -587,6 +586,16 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.getDuplicableDisks();
 
     this.updateExportedPoolWarningFlags(this.selected);
+  }
+
+  mapAllVdevsToVdevInfo(): VdevInfo[] {
+    const allVdevs: VdevInfo[] = [];
+    for (const group of Object.keys(this.vdevs)) {
+      for (const vdev of this.vdevs[group]) {
+        allVdevs.push({ ...vdev, group });
+      }
+    }
+    return allVdevs;
   }
 
   getDuplicableDisks(): void {
@@ -706,16 +715,16 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.error = null;
 
         const layout: any = {};
-        this.vdevComponents.forEach((vdevComponent) => {
+        this.mapAllVdevsToVdevInfo().forEach((vdevComponent) => {
           const disks: string[] = [];
-          vdevComponent.getDisks().forEach((disk) => {
+          vdevComponent.disks.forEach((disk) => {
             if (disk.duplicate_serial?.length) {
               allowDuplicateSerials = true;
             }
             disks.push(disk.devname);
           });
           if (disks.length > 0) {
-            let type = vdevComponent.typeControl.value.toUpperCase();
+            let type = vdevComponent.type.toUpperCase();
             type = type === 'RAIDZ' ? 'RAIDZ1' : type;
             const group = vdevComponent.group;
             if (!layout[group]) {
@@ -916,9 +925,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   resetLayout(): void {
-    this.vdevComponents.forEach((vdevComponent) => {
-      vdevComponent.remove();
-    });
     Object.keys(this.vdevs).forEach((group) => {
       while (this.vdevs[group].length > 0) {
         this.vdevs[group].pop();
@@ -927,7 +933,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
     this.addVdev('data', new VdevInfo(this.firstDataVdevType, 'data'));
-    this.vdevComponents.first.estimateSize();
     this.disks = Array.from(this.originalDisks);
     this.suggestableDisks = Array.from(this.originalSuggestableDisks);
     this.temp = [...this.disks];
@@ -943,7 +948,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       if (disk.exported_zpool) {
         exportedPoolsDisks.push(disk);
       }
-      this.vdevComponents.first.addDisk(disk);
+      this.vdevs['data'][0].disks.push(disk);
     });
     while (this.suggestableDisks.length > 0) {
       this.removeDisk(this.suggestableDisks[0]);
@@ -955,6 +960,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       );
       this.mdDialog.open(ExportedPoolsDialogComponent, { data: { disks: formattedDisks } });
     }
+    this.onPageChange(this.lastPageChangedEvent);
   }
 
   checkPoolName(): void {
