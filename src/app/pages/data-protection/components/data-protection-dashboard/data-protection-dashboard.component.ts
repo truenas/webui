@@ -223,7 +223,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             {
               name: this.translate.instant('State'),
               prop: 'state',
-              state: 'state',
               button: true,
             },
           ],
@@ -286,7 +285,6 @@ export class DataProtectionDashboardComponent implements OnInit {
               name: this.translate.instant('State'),
               prop: 'state',
               button: true,
-              state: 'state',
             },
           ],
           parent: this,
@@ -333,7 +331,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             {
               name: this.translate.instant('State'),
               prop: 'state',
-              state: 'state',
               button: true,
             },
           ],
@@ -376,7 +373,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             {
               name: this.translate.instant('State'),
               prop: 'state',
-              state: 'state',
               button: true,
             },
           ],

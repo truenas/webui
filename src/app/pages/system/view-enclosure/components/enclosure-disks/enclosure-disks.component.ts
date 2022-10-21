@@ -871,8 +871,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     // Also check slot status
     const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
-      ? this.system.enclosures[disk.enclosure.number].elements as any[]
-      : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+      ? this.system.enclosures[disk.enclosure.number].elements as EnclosureElement[]
+      : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
     const slot = elements.find((element) => element.slot === disk.enclosure.slot);
 
     if (!failed && slot.fault) {
@@ -912,8 +912,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       // Also check slot status
       const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number === this.system.rearIndex
-        ? this.system.enclosures[disk.enclosure.number].elements as any[]
-        : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+        ? this.system.enclosures[disk.enclosure.number].elements as EnclosureElement[]
+        : (this.system.enclosures[disk.enclosure.number].elements[0] as EnclosureElementsGroup).elements;
       const slot = elements.find((element) => element.slot === disk.enclosure.slot);
 
       if (!failed && slot.fault) {
@@ -1042,7 +1042,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if (this.identifyBtnRef) {
       // kill the animation
       this.identifyBtnRef.animation.seek(0);
-      (this.identifyBtnRef.animation.stop as any)(this.identifyBtnRef.styler);
+      (this.identifyBtnRef.animation.stop as (styler: ValueReaction) => void)(this.identifyBtnRef.styler);
       this.identifyBtnRef = null;
     } else if (!this.identifyBtnRef && !kill) {
       const btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});

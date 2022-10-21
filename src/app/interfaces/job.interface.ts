@@ -3,7 +3,7 @@ import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
-export interface Job<R = null, A = unknown[]> {
+export interface Job<R = unknown, A = unknown[]> {
   abortable: boolean;
   arguments: A;
   description: string;
