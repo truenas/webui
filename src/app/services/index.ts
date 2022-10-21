@@ -12,7 +12,6 @@ export * from './task.service';
 export * from './language.service';
 export * from 'app/modules/loader/app-loader.service';
 export * from 'app/services/cloud-credential.service';
-export * from './job.service';
 export * from 'app/services/boot-env.service';
 export * from 'app/services/keychain-credential.service';
 export * from './replication.service';
