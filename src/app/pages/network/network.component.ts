@@ -339,8 +339,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
         if (services.length > 0) {
           const ips: string[] = [];
           services.forEach((item) => {
-            if ((item as any)['system-service']) {
-              this.affectedServices.push((item as any)['system-service']);
+            // TODO: Check if `system-service` can actually be returned.
+            const systemService = (item as unknown as { 'system-service': string })['system-service'];
+            if (systemService) {
+              this.affectedServices.push(systemService);
             }
             if (item['service']) {
               this.affectedServices.push(item['service']);

@@ -29,6 +29,7 @@
                   [formControl]="nameControl"
                   (input)="checkPoolName()"
                 />
+                <p class="error" *ngIf="nameControl.errors?.maxlength">{{ 'Max length allowed for pool name is 50' | translate }}</p>
               </div>
             </div>
 

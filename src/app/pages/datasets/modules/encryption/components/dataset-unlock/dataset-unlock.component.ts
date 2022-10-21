@@ -201,7 +201,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
   }
 
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+  handleError = (error: WebsocketError | Job): void => {
     new EntityUtils().handleWsError(this.entityForm, error, this.dialogService);
   };
 

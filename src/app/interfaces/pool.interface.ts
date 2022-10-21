@@ -4,6 +4,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -73,21 +74,28 @@ export interface CreatePool {
     key?: string;
   };
   name: string;
-  topology: {
-    [key in PoolTopologyCategory]: { type: string; disks: string[] }[];
-  };
+  topology: UpdatePoolTopology;
   checksum?: string;
   deduplication?: DeduplicationSetting;
   allow_duplicate_serials?: boolean;
 }
 
 export interface UpdatePool {
-  topology?: {
-    [key in PoolTopologyCategory]: { type: string; disks?: string[] }[];
-  };
+  topology?: UpdatePoolTopology;
   autotrim?: OnOff;
   allow_duplicate_serials?: boolean;
 }
+
+export interface UpdatePoolTopology {
+  data?: { type: CreateVdevLayout; disks: string[] }[];
+  special?: { type: CreateVdevLayout.Stripe | CreateVdevLayout.Mirror; disks: string[] }[];
+  dedup?: { type: CreateVdevLayout.Stripe | CreateVdevLayout.Mirror; disks: string[] }[];
+  cache?: { type: CreateVdevLayout.Stripe; disks: string[] }[];
+  log?: { type: CreateVdevLayout.Stripe | CreateVdevLayout.Mirror; disks: string[] }[];
+  spares?: string[];
+}
+
+export type UpdatePoolTopologyGroup = keyof UpdatePoolTopology;
 
 export interface PoolAttachParams {
   target_vdev?: string;

@@ -34,7 +34,10 @@ export interface AppTableColumn {
   slideToggle?: boolean;
   onChange?(data: unknown): void;
   width?: string;
-  state?: any;
+  state?: {
+    prop: string;
+    icon?: string;
+  };
   button?: boolean;
   showLockedStatus?: boolean;
   tooltip?: string;
@@ -102,6 +105,18 @@ export interface AppTableConfig<P = unknown> {
   afterGetDataExpandable?<T>(data: T[]): T[]; // field introduced by ExpandableTable, "fake" field
 }
 
+/**
+ * @deprecated
+ */
+interface InOutInfo extends Record<string, unknown> {
+  oldSent?: number;
+  sent_bytes?: number;
+  oldReceived?: number;
+  received_bytes?: number;
+  sent?: number;
+  received?: number;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'ix-conf-table',
@@ -109,7 +124,8 @@ export interface AppTableConfig<P = unknown> {
   styleUrls: ['./table.component.scss'],
   providers: [TableService],
 })
-export class TableComponent<Row = Record<string, any>> implements OnInit, AfterViewInit, AfterViewChecked {
+export class TableComponent<Row extends Record<string, unknown> = Record<string, unknown>>
+implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('table') table: ElementRef<HTMLElement>;
   LinkState = LinkState;
 
@@ -234,7 +250,7 @@ export class TableComponent<Row = Record<string, any>> implements OnInit, AfterV
     this.displayedColumns = this._tableConf.columns
       .map((column) => {
         if (this.dataSource && column?.hiddenIfEmpty && !column?.hidden) {
-          const hasSomeData = this.dataSource.some((row) => (row as any)[column.prop]?.toString().trim());
+          const hasSomeData = this.dataSource.some((row) => row[column.prop]?.toString().trim());
           column.hidden = !hasSomeData;
         }
         return column;
@@ -268,7 +284,7 @@ export class TableComponent<Row = Record<string, any>> implements OnInit, AfterV
     }
   }
 
-  showInOutInfo(element: any): string {
+  showInOutInfo(element: InOutInfo): string {
     if (element.oldSent === undefined) {
       element.oldSent = element.sent_bytes;
     }
@@ -277,11 +293,11 @@ export class TableComponent<Row = Record<string, any>> implements OnInit, AfterV
     }
     if (element.sent_bytes - element.oldSent > 1024) {
       element.oldSent = element.sent_bytes;
-      this.tableService.updateStateInfoIcon(element[this.idProp], 'sent');
+      this.tableService.updateStateInfoIcon(element[this.idProp] as string, 'sent');
     }
     if (element.received_bytes - element.oldReceived > 1024) {
       element.oldReceived = element.received_bytes;
-      this.tableService.updateStateInfoIcon(element[this.idProp], 'received');
+      this.tableService.updateStateInfoIcon(element[this.idProp] as string, 'received');
     }
 
     return `${this.translate.instant('Sent')}: ${element.sent} ${this.translate.instant('Received')}: ${element.received}`;

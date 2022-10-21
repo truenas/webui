@@ -16,10 +16,17 @@ import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
+import {
+  CreatePool,
+  Pool,
+  UpdatePool,
+  UpdatePoolTopology,
+  UpdatePoolTopologyGroup,
+} from 'app/interfaces/pool.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { VdevInfo } from 'app/interfaces/vdev-info.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -37,6 +44,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 import { ManagerDisk } from './manager-disk.interface';
 import { VdevComponent } from './vdev/vdev.component';
 
+export type ManagerVdevs = { [group in UpdatePoolTopologyGroup]: VdevInfo[] };
+
 @UntilDestroy()
 @Component({
   templateUrl: 'manager.component.html',
@@ -47,7 +56,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   disks: ManagerDisk[] = [];
   suggestableDisks: ManagerDisk[] = [];
   selected: ManagerDisk[] = [];
-  vdevs: { [group: string]: VdevInfo[] } = {
+  vdevs: ManagerVdevs = {
     data: [], cache: [], spares: [], log: [], special: [], dedup: [],
   };
   originalDisks: ManagerDisk[] = [];
@@ -59,7 +68,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
 
-  nameControl = new FormControl('', Validators.required);
+  nameControl = new FormControl('', [Validators.required, Validators.maxLength(50)]);
   addCall = 'pool.create' as const;
   editCall = 'pool.update' as const;
   queryCall = 'pool.query' as const;
@@ -250,7 +259,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+  handleError = (error: WebsocketError | Job): void => {
     this.dialog.errorReportMiddleware(error);
   };
 
@@ -439,7 +448,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   addVdev(
-    group: string,
+    group: keyof ManagerVdevs,
     initialValues: VdevInfo = new VdevInfo(this.firstDataVdevType, 'data'),
   ): void {
     this.dirty = true;
@@ -586,7 +595,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   mapAllVdevsToVdevInfo(): VdevInfo[] {
     const allVdevs: VdevInfo[] = [];
-    for (const group of Object.keys(this.vdevs)) {
+    for (const group of Object.keys(this.vdevs) as (keyof ManagerVdevs)[]) {
       for (const vdev of this.vdevs[group]) {
         allVdevs.push({ ...vdev, group });
       }
@@ -609,7 +618,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   canSave(): boolean {
-    if (this.isNew && !this.nameControl.value) {
+    if (this.isNew && (!this.nameControl.value || this.nameControl.value.length > 50)) {
       return false;
     }
     if (this.vdevtypeError) {
@@ -710,7 +719,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       .subscribe(() => {
         this.error = null;
 
-        const layout: any = {};
+        const layout: UpdatePoolTopology = {};
         const allVdevs = this.mapAllVdevsToVdevInfo();
         allVdevs.forEach((vdevComponent) => {
           const disks: string[] = [];
@@ -722,7 +731,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           });
           if (disks.length > 0) {
             let type = vdevComponent.type.toUpperCase();
-            type = type === 'RAIDZ' ? 'RAIDZ1' : type;
+            type = type === 'RAIDZ' ? CreateVdevLayout.Raidz1 : type;
             const group = vdevComponent.group;
             if (!layout[group]) {
               layout[group] = [];
@@ -730,7 +739,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             if (group === 'spares') {
               layout[group] = disks;
             } else {
-              layout[group].push({ type, disks });
+              (layout[group] as { type: CreateVdevLayout; disks: string[] }[]).push({
+                disks,
+                type: type as CreateVdevLayout,
+              });
             }
           }
         });
@@ -922,7 +934,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   resetLayout(): void {
-    Object.keys(this.vdevs).forEach((group) => {
+    Object.keys(this.vdevs).forEach((group: UpdatePoolTopologyGroup) => {
       while (this.vdevs[group].length > 0) {
         this.vdevs[group].pop();
       }
@@ -978,7 +990,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 
-  toggleExpandRow(row: any): void {
+  toggleExpandRow(row: unknown): void {
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }

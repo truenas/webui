@@ -20,7 +20,7 @@ import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
@@ -233,7 +233,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   getDiskDetails(key: string, value: string): void {
     this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
       const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath?.dataSource?.disk || 'unknown';
+      const currentName = (currentPath?.dataSource as TopologyDisk)?.disk || 'unknown';
 
       if ((!currentName || currentName === 'unknown') && disks.length === 0) {
         this.currentDiskDetails = null;

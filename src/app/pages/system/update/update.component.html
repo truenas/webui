@@ -6,51 +6,24 @@
     #updatespinner
   >
   </mat-spinner>
-  <div>
+  <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
-      <mat-checkbox
-        id="autocheck"
-        [(ngModel)]="autoCheck"
-        color="primary"
-        ix-auto
-        ix-auto-type="checkbox"
-        ix-auto-identifier="daily-updates"
-        [ngModelOptions]="{ standalone: true }"
-        (change)="toggleAutoCheck()"
-      >
-        {{ 'Check for Updates Daily and Download if Available' | translate }}
-      </mat-checkbox>
-      <ix-tooltip
-        [message]="updatecheckTooltip"
-        ix-auto
-        ix-auto-type="tooltip-icon"
-        ix-auto-identifier="update-check"
-      ></ix-tooltip>
+      <ix-checkbox
+        formControlName="auto_check"
+        [label]="'Check for Updates Daily and Download if Available' | translate"
+        [tooltip]="updatecheckTooltip | translate"
+      ></ix-checkbox>
     </div>
     <div
       class="train-card-row train-select-row"
       *ngIf="trains.length > 1; else trainName"
     >
-      <mat-label id="train-label">{{ 'Train' | translate }}</mat-label>
-      <mat-select
-        class="form-control full-width"
-        id="train-selector"
-        ix-auto
-        ix-auto-type="select"
-        ix-auto-identifier="train-select"
-        [(ngModel)]="train"
-        (ngModelChange)="onTrainChanged($event)"
-      >
-        <mat-option
-          *ngFor="let train of trains"
-          ix-auto
-          ix-auto-type="option"
-          ix-auto-identifier="{{ train.name }}"
-          [value]="train.name"
-        >
-          {{ train.name }} - {{ train.description }}
-        </mat-option>
-      </mat-select>
+      <ix-select
+        formControlName="train"
+        [label]="'Train' | translate"
+        [options]="trains$"
+        [required]="true"
+      ></ix-select>
       <button
         mat-mini-fab
         color="primary"
@@ -67,7 +40,7 @@
     <ng-template #trainName>
       <div class="train-card-row train-select-row">
         <div id="single-train-name">
-          {{ 'Current Train:' | translate }} {{ train }}
+          {{ 'Current Train:' | translate }} {{ trainValue }}
           <span *ngIf="singleDescription">- {{ singleDescription }}</span>
         </div>
         <button
@@ -90,7 +63,7 @@
       class="click-for-information"
       [innerHtml]="clickForInformationLink | translate"
     ></p>
-  </div>
+  </form>
   <div class="train-card-row">
     <div class="col-md-12">
       <div *ngIf="status == SystemUpdateStatus.RebootRequired">

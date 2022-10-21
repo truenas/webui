@@ -197,7 +197,7 @@ export class EntityUtils {
       cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
         .split(',')
         // TODO: Probably a bug
-        .map((element) => (dowOptions as any)[element] || element)
+        .map((element) => dowOptions[Number(element)] || element)
         .join(',');
     }
     return cronArray.join(' ');

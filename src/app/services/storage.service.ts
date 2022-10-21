@@ -362,7 +362,7 @@ export class StorageService {
     return Number(num) * this.convertUnitToNum(unit);
   }
 
-  // Converts a number from bytes to the most natural human readable format
+  // Converts a number from bytes to the most natural human-readable format
   convertBytesToHumanReadable(
     rawBytes: number | string,
     decimalPlaces?: number,
