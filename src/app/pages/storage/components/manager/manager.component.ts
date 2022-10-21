@@ -1016,7 +1016,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       stripeSize += size;
       if (i === 0) {
         smallestdisk = size;
-        firstdisksize = size;
       }
       const tenMib = 10 * 1024 * 1024;
       if (size > smallestdisk + tenMib || size < smallestdisk - tenMib) {
