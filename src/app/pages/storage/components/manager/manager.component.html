@@ -665,7 +665,7 @@
             </div>
             <ix-vdev
               class="vdev"
-              *ngFor="let vdev of shownDataVdevs; let i = index"
+              *ngFor="let vdev of shownDataVdevs; let i = index; trackBy: vdevsTracker"
               [group]="'data'"
               [manager]="this"
               [uuid]="vdev.uuid"

@@ -935,6 +935,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.temp = [...this.disks];
     this.dirty = false;
     this.table.offset = 0;
+    this.paginator.pageIndex = 0;
+    this.paginator.length = 1;
+    this.paginator.pageSize = 10;
     this.onPageChange({ pageIndex: 0, pageSize: 10, length: 1 });
     setTimeout(() => this.getCurrentLayout(), 100);
   }
@@ -1041,5 +1044,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
 
     vdev.rawSize = estimate;
+  }
+
+  vdevsTracker(index: number, vdev: VdevInfo): string {
+    return vdev.uuid;
   }
 }
