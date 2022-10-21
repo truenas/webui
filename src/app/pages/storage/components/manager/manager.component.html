@@ -693,6 +693,7 @@
               *ngFor="let vdev of vdevs.cache; let i = index"
               [group]="'cache'"
               [manager]="this"
+              (vdevChanged)="onVdevChanged($event)"
               [uuid]="vdev.uuid"
             ></ix-vdev>
           </div>
@@ -703,6 +704,7 @@
               *ngFor="let vdev of vdevs.log; let i = index"
               [group]="'log'"
               [manager]="this"
+              (vdevChanged)="onVdevChanged($event)"
               [uuid]="vdev.uuid"
             ></ix-vdev>
           </div>
@@ -713,6 +715,7 @@
               *ngFor="let vdev of vdevs.spares; let i = index"
               [group]="'spares'"
               [manager]="this"
+              (vdevChanged)="onVdevChanged($event)"
               [uuid]="vdev.uuid"
             ></ix-vdev>
           </div>
@@ -723,6 +726,7 @@
               *ngFor="let vdev of vdevs.special; let i = index"
               [group]="'special'"
               [manager]="this"
+              (vdevChanged)="onVdevChanged($event)"
               [uuid]="vdev.uuid"
             ></ix-vdev>
           </div>
@@ -733,6 +737,7 @@
               *ngFor="let vdev of vdevs.dedup; let i = index"
               [group]="'dedup'"
               [manager]="this"
+              (vdevChanged)="onVdevChanged($event)"
               [uuid]="vdev.uuid"
             ></ix-vdev>
           </div>

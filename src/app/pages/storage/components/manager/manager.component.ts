@@ -204,7 +204,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       saveButtonText: helptext.manager_duplicate_button,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue as { vdevs: number };
-        const pageNoBefore = this.lastPageChangedEvent.pageIndex;
+        const pageIndexBefore = this.lastPageChangedEvent.pageIndex;
 
         for (let i = 0; i < value.vdevs; i++) {
           const vdevValues: VdevInfo = new VdevInfo(this.firstDataVdevType, 'data');
@@ -218,11 +218,12 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.addVdev('data', vdevValues);
         }
         entityDialog.dialogRef.close(true);
-        this.paginator.pageIndex = pageNoBefore;
-        const pageSize = this.lastPageChangedEvent.pageSize;
-        const offset = pageNoBefore * pageSize;
-        const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length);
-        this.shownDataVdevs = _.cloneDeep(this.vdevs.data.slice(offset, endIndex));
+        this.paginator.pageIndex = pageIndexBefore;
+        this.onPageChange({
+          ...this.lastPageChangedEvent,
+          length: this.vdevs.data.length,
+          pageIndex: pageIndexBefore,
+        });
         setTimeout(() => this.getCurrentLayout(), 100);
       },
       afterInit: (entityDialog: EntityDialogComponent) => {
@@ -282,8 +283,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (index < 0) {
       return;
     }
-    this.vdevs.data[index].disks = [...changedVdev.disks];
-    this.vdevs.data[index].type = changedVdev.type;
+    this.vdevs[changedVdev.group][index].disks = [...changedVdev.disks];
+    this.vdevs[changedVdev.group][index].type = changedVdev.type;
   }
 
   getPoolData(): void {
@@ -443,7 +444,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ): void {
     this.dirty = true;
     this.vdevs[group].push(initialValues);
-
     if (group === 'data') {
       this.reaffirmDataVdevsLastPage();
     }
@@ -711,7 +711,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.error = null;
 
         const layout: any = {};
-        this.mapAllVdevsToVdevInfo().forEach((vdevComponent) => {
+        const allVdevs = this.mapAllVdevsToVdevInfo();
+        allVdevs.forEach((vdevComponent) => {
           const disks: string[] = [];
           vdevComponent.disks.forEach((disk) => {
             if (disk.duplicate_serial?.length) {
