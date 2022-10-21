@@ -167,13 +167,13 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
 def ssh_to_the_virtual_node_again_to_verify_the_pdbedit_command_still_works(pdbedit_cmd, ldap_user, virtal_hostname):
     """ssh to the virtual node again to verify the pdbedit command still works."""
     ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtal_hostname)
-    assert ssh_result['result'] is True, str(ssh_result['output'])
-    assert ldap_user in ssh_result['output'], str(ssh_result['output'])
+    assert ssh_result['result'] is True, str(ssh_result)
+    assert ldap_user in ssh_result['output'], str(ssh_result)
 
 
 @then('rerun the getent command to verify it return LDAP user info')
 def rerun_the_getent_command_to_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtal_hostname):
     """rerun the getent command to verify it return LDAP user info."""
     ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtal_hostname)
-    assert ssh_result['result'], ssh_result['output']
-    assert ldap_user in ssh_result['output'], ssh_result['output']
+    assert ssh_result['result'], str(ssh_result)
+    assert ldap_user in ssh_result['output'], str(ssh_result)
