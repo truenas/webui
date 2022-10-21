@@ -1,9 +1,9 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
-    <button mat-button (click)="onEdit()">{{ 'Edit' | translate }}</button>
+    <button *ngIf="isAvailable" mat-button (click)="onEdit()">{{ 'Edit' | translate }}</button>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content *ngIf="isAvailable">
     <div class="details-item">
       <span class="label">{{ 'Disk Size' | translate }}:</span>
       <span *ngIf="disk?.size; else notAvailable" class="value">
@@ -53,6 +53,9 @@
         {{ disk.description }}
       </span>
     </div>
+  </mat-card-content>
+  <mat-card-content *ngIf="!isAvailable">
+    <span>{{ 'Disk is unavailable' | translate }}</span>
   </mat-card-content>
   <mat-card-actions>
     <button mat-stroked-button (click)="onReplace()">

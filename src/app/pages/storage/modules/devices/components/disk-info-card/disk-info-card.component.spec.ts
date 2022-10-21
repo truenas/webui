@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
@@ -55,6 +55,9 @@ describe('DiskInfoCardComponent', () => {
           type: DiskType.Hdd,
           zfs_guid: '11254578662959974657',
         } as Disk,
+        topologyDisk: {
+          guid: '11254578662959974657',
+        } as TopologyDisk,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import {
@@ -23,6 +23,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskInfoCardComponent implements OnInit {
+  @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
 
   constructor(
@@ -35,6 +36,10 @@ export class DiskInfoCardComponent implements OnInit {
 
   get isHdd(): boolean {
     return this.disk?.type === DiskType.Hdd;
+  }
+
+  get isAvailable(): boolean {
+    return !!this.disk;
   }
 
   ngOnInit(): void {
@@ -57,8 +62,8 @@ export class DiskInfoCardComponent implements OnInit {
       .open(ReplaceDiskDialogComponent, {
         data: {
           poolId: Number(poolId),
-          guid: this.disk.zfs_guid,
-          diskName: this.disk.name,
+          guid: this.topologyDisk.guid,
+          diskName: this.disk?.name || this.topologyDisk.guid,
         } as ReplaceDiskDialogData,
       })
       .afterClosed()
