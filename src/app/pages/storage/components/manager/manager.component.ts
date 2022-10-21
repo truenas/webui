@@ -223,9 +223,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         const offset = pageNoBefore * pageSize;
         const endIndex = Math.min(offset + pageSize, this.vdevs['data'].length);
         this.shownDataVdevs = _.cloneDeep(this.vdevs.data.slice(offset, endIndex));
-        setTimeout(() => {
-          this.getCurrentLayout();
-        }, 500);
+        setTimeout(() => this.getCurrentLayout(), 100);
       },
       afterInit: (entityDialog: EntityDialogComponent) => {
         const copyDesc = _.find(entityDialog.fieldConfig, { name: 'copy_desc' }) as FormParagraphConfig;
@@ -449,9 +447,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (group === 'data') {
       this.reaffirmDataVdevsLastPage();
     }
-    setTimeout(() => { // there appears to be a slight race condition with adding/removing
-      this.getCurrentLayout();
-    }, 100);
+    setTimeout(() => this.getCurrentLayout(), 100);
   }
 
   removeVdev(changedVdev: VdevComponent): void {
@@ -470,9 +466,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.vdevs[changedVdev.group] = []; // should only be one vdev of other groups at one time
     }
 
-    setTimeout(() => { // there appears to be a slight race condition with adding/removing
-      this.getCurrentLayout();
-    }, 100);
+    setTimeout(() => this.getCurrentLayout(), 100);
   }
 
   private reaffirmDataVdevsLastPage(): void {
@@ -518,7 +512,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.hasSavableErrors = false;
     this.emptyDataVdev = false;
 
-    this.mapAllVdevsToVdevInfo().forEach((vdev, i) => {
+    const allVdevs = this.mapAllVdevsToVdevInfo();
+    allVdevs.forEach((vdev, i) => {
+      this.estimateSize(vdev);
       if (vdev.group === 'data') {
         if (i === 0 && this.isNew) {
           this.firstDataVdevType = vdev.type;
@@ -853,7 +849,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.dirty = true;
     }
     this.temp = [...this.temp];
-    this.getCurrentLayout();
+    setTimeout(() => this.getCurrentLayout(), 100);
   }
 
   onSelect({ selected }: { selected: ManagerDisk[] }): void {
@@ -932,13 +928,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.addVdev('data', new VdevInfo(this.firstDataVdevType, 'data'));
+    this.addVdev('data', new VdevInfo('stripe', 'data'));
     this.disks = Array.from(this.originalDisks);
     this.suggestableDisks = Array.from(this.originalSuggestableDisks);
     this.temp = [...this.disks];
     this.dirty = false;
     this.table.offset = 0;
-    this.getCurrentLayout();
+    this.onPageChange({ pageIndex: 0, pageSize: 10, length: 1 });
+    setTimeout(() => this.getCurrentLayout(), 100);
   }
 
   suggestRedundancyLayout(): void {
@@ -1005,5 +1002,44 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     const vdevNo = offset + index + 1;
     title += `${vdevNo}/${this.paginator.length})`;
     return title;
+  }
+
+  estimateSize(vdev: VdevInfo): void {
+    let totalsize = 0;
+    let stripeSize = 0;
+    let smallestdisk = 0;
+    let estimate = 0;
+    const swapsize = this.swapondrive * 1024 * 1024 * 1024;
+    vdev.showDiskSizeError = false;
+    for (let i = 0; i < vdev.disks.length; i++) {
+      const size = vdev.disks[i].real_capacity - swapsize;
+      stripeSize += size;
+      if (i === 0) {
+        smallestdisk = size;
+        firstdisksize = size;
+      }
+      const tenMib = 10 * 1024 * 1024;
+      if (size > smallestdisk + tenMib || size < smallestdisk - tenMib) {
+        vdev.showDiskSizeError = true;
+      }
+      if (vdev.disks[i].real_capacity < smallestdisk) {
+        smallestdisk = size;
+      }
+    }
+    totalsize = smallestdisk * vdev.disks.length;
+
+    if (vdev.type === 'mirror') {
+      estimate = smallestdisk;
+    } else if (vdev.type === 'raidz') {
+      estimate = totalsize - smallestdisk;
+    } else if (vdev.type === 'raidz2') {
+      estimate = totalsize - 2 * smallestdisk;
+    } else if (vdev.type === 'raidz3') {
+      estimate = totalsize - 3 * smallestdisk;
+    } else {
+      estimate = stripeSize; // stripe
+    }
+
+    vdev.rawSize = estimate;
   }
 }
