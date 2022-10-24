@@ -205,7 +205,7 @@ def go_to_directory_services_and_select_ldap(driver):
 def click_the_enable_checkbox_and_click_save(driver):
     """Click the Enable checkbox and click SAVE."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Server Credentials")]')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
+    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
