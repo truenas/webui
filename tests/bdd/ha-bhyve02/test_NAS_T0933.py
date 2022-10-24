@@ -10,7 +10,8 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     attribute_value_exist,
-    ssh_cmd
+    ssh_cmd,
+    refresh_if_element_missing
 )
 from pytest_bdd import (
     given,
@@ -249,6 +250,8 @@ def navigate_to_dashboard(driver):
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
     assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
@@ -279,6 +282,8 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     if wait_on_element(driver, 5, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))

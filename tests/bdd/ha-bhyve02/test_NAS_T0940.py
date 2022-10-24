@@ -7,7 +7,8 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_cmd,
+    refresh_if_element_missing
 )
 from pytest_bdd import (
     given,
@@ -127,7 +128,8 @@ def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
     assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
-    assert wait_on_element(driver, 10, xpaths.topToolbar.ha_enable)
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
     time.sleep(30)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
@@ -160,8 +162,8 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
     if wait_on_element(driver, 5, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
-
-    assert wait_on_element(driver, 30, xpaths.topToolbar.ha_enable)
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 30, xpaths.topToolbar.ha_enable)
 
 
 @then('ssh to the virtual node again to verify the pdbedit command still works')

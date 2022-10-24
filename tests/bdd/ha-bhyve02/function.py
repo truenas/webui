@@ -64,6 +64,17 @@ def wait_on_element_disappear(driver, wait, xpath):
         return False
 
 
+def refresh_if_element_missing(driver, wait, xpath):
+    timeout = time.time() + wait
+    while time.time() <= timeout:
+        time.sleep(2)
+        if not (driver, xpath):
+            return True
+        driver.refresh()
+    else:
+        return False
+
+
 def attribute_value_exist(driver, xpath, attribute, value):
     element = driver.find_element_by_xpath(xpath)
     class_attribute = element.get_attribute(attribute)
