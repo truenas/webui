@@ -99,14 +99,6 @@
   @media (max-width: $breakpoint-tablet) {
     overflow: hidden;
   }
-
-  .scroll-window {
-    min-height: 400px;
-
-    @media (max-height: 800px) {
-      min-height: 600px;
-    }
-  }
 }
 
 .title-icon {
@@ -124,17 +116,15 @@
   display: flex;
   margin-bottom: 16px;
   padding: 12px 12px 12px 0;
-  place-content: space-between;
+  place-content: flex-start;
 
 
   @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
     border-bottom: solid 1px var(--lines);
-    place-content: start;
   }
 
   @media (max-width: $breakpoint-tablet) {
     flex-direction: column;
-    place-content: start;
   }
 
   @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
@@ -143,9 +133,6 @@
     padding-bottom: 0;
   }
 
-  @media (min-width: $breakpoint-singlecolumn) {
-    align-items: center;
-  }
 
   a.mobile-back-button:hover {
     cursor: pointer;

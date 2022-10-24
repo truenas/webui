@@ -161,15 +161,6 @@ $scrollbar-offset: 20px;
 
   ::ng-deep .cards .scroll-window {
     display: block;
-    padding-bottom: 96px;
-  }
-
-  ::ng-deep .cards .scroll-window > * {
-    display: grid;
-    margin: 0 auto;
-    max-width: $card-width;
-    min-width: unset !important;
-    width: 99% !important;
   }
 
   ix-disk-details-panel {

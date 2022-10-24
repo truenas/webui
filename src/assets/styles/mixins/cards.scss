@@ -9,97 +9,27 @@
   width: 100%;
 
   .scroll-window {
+    column-gap: 8px;
+    columns: 2;
+    columns: calc(50vw / 2.6);
+    min-height: 100vh;
 
-    // GRID
-    display: grid;
-    grid-template-columns: auto;
-
-    // Hide Details
-    @media (max-width: $breakpoint-hidden) {
-      display: none;
+    @media (max-width: $breakpoint-tablet) {
+      columns: 1;
+      padding: 0 16px;
     }
 
-    // One Column
-    @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      gap: $gap;
-      height: unset;
-      min-height: unset;
-      width: inherit;
-    }
-
-    // Two Slim Columns
-    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      gap: $gap;
-      height: 100%;
-
-      min-height: 1240px;
-      place-content: flex-start;
-      width: inherit;
-    }
-
-    // Two Columns
-    @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      gap: $gap;
-      height: 100%;
-
-      min-height: 1240px;
-      place-content: flex-start;
-      width: inherit;
-    }
-
-    // Three Columns
-    @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      gap: $gap;
-      height: 830px;
-
-      min-height: unset;
-      place-content: flex-start;
-      width: calc(3 * ($card-width + $gap));
-    }
-
-    // Switch to Flexbox wrapping columns
-    @media  (min-width: $breakpoint-flex) {
-      align-items: flex-start;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      gap: 12px;
-      place-content: flex-start;
-    }
-
-    @media  (min-width: $breakpoint-flex) and (min-height: 1160px) {
-      height: 960px;
-      min-height: unset;
-    }
-
-    @media  (min-width: $breakpoint-flex) and (max-height: 1159px) {
-      height: 830px;
+    @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-md) {
+      columns: calc(50vw / 1.5);
+      padding: 0 16px;
     }
 
     > * {
-      min-width: $card-width;
-      width: $card-width;
-
-      @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
-        min-width: $card-width-slim;
-        width: $card-width-slim;
-      }
+      display: inline-block;
+      margin-bottom: 8px;
+      width: 100%;
     }
-
   }
-
 }
 
 @mixin details-card {
