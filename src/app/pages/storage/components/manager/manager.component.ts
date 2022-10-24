@@ -392,14 +392,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       next: (unusedDisks) => {
         this.loader.close();
         this.loaderOpen = false;
-        for (let i = 0; i < 1000; i++) {
-          const disk = { ...unusedDisks[0] };
-          disk.name += i;
-          disk.devname += i;
-          disk.identifier += i;
-          delete disk.exported_zpool;
-          unusedDisks.push(disk);
-        }
         this.disks = unusedDisks.map((disk) => {
           const details: Option[] = [];
           if (disk.rotationrate) {
