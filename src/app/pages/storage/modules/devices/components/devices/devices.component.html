@@ -53,8 +53,8 @@
             [ixTreeNodeDefDataSource]="dataSource"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId, 'devices', topologyItem.guid]"
-            (click)="openMobileDetails()"
-            (keydown.enter)="openMobileDetails(['/storage', poolId, 'devices', topologyItem.guid])"
+            (click)="viewDetails(poolId, topologyItem.guid)"
+            (keydown.enter)="viewDetails(poolId, topologyItem.guid)"
           >
             <button mat-icon-button disabled></button>
             <ix-topology-item-node
@@ -105,8 +105,8 @@
               routerLinkActive="selected"
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
-              (click)="openMobileDetails()"
-              (keydown.enter)="openMobileDetails(['/storage', poolId, 'devices', vdev.guid])"
+              (click)="viewDetails(poolId, vdev.guid)"
+              (keydown.enter)="viewDetails(poolId, vdev.guid)"
             >
               <button
                 mat-icon-button

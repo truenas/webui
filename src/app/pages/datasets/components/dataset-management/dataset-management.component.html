@@ -64,8 +64,8 @@
               [ixTreeNodeToggleRecursive]="false"
               [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
-              (click)="openMobileDetails()"
-              (keydown.enter)="openMobileDetails(['/datasets', dataset.id])"
+              (click)="viewDetails(dataset)"
+              (keydown.enter)="viewDetails(dataset)"
             >
               <button mat-icon-button disabled></button>
               <ix-dataset-node
@@ -86,8 +86,8 @@
                 class="dataset-nested-tree-root-node"
                 routerLinkActive="selected"
                 [routerLink]="['/datasets', dataset.id]"
-                (click)="openMobileDetails()"
-                (keydown.enter)="openMobileDetails(['/datasets', dataset.id])"
+                (click)="viewDetails(dataset)"
+                (keydown.enter)="viewDetails(dataset)"
               >
                 <button
                   mat-icon-button
@@ -121,6 +121,7 @@
     </div>
 
     <div
+      *ngIf="selectedDataset$ | async as dataset"
       class="details-container"
       ixDetailsHeight="rightside-content-hold"
       [class.details-container-mobile]="showMobileDetails"
@@ -131,7 +132,6 @@
         [loading]="isLoading$ | async"
       ></ix-fake-progress-bar>
       <ix-dataset-details-panel
-        *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
         [systemDataset]="systemDataset"
       ></ix-dataset-details-panel>
