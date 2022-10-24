@@ -22,6 +22,7 @@ import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-co
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import {
@@ -136,6 +137,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     protected ws: WebSocketService,
     private redirect: RedirectService,
     private layoutService: LayoutService,
+    private snackbar: SnackbarService,
   ) { }
 
   get isSomethingSelected(): boolean {
@@ -178,13 +180,13 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   onBulkStart(): void {
     const checkedItems = this.getSelectedItems();
     checkedItems.forEach((name) => this.start(name));
-    this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
   onBulkStop(): void {
     const checkedItems = this.getSelectedItems();
     checkedItems.forEach((name) => this.stop(name));
-    this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
   viewCatalog(): void {
