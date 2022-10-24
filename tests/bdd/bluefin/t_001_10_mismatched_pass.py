@@ -38,6 +38,6 @@ def test_mismatched_pass(driver):
     assert class_attribute == 'true'
     driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element(driver, 3, '//ix-fieldset[contains(.,"Identification")]')
-    assert wait_on_element(driver, 3, '//mat-error[contains(.,"Password and confirmation should match.")]')
+    assert wait_on_element(driver, 3, '//mat-error[contains(.,"New password and confirmation should match.")]')
     assert wait_on_element(driver, 10, '//*[@id="ix-close-icon"]', 'clickable')
     driver.find_element_by_xpath('//*[@id="ix-close-icon"]').click()
