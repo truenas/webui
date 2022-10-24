@@ -5,6 +5,7 @@ import os
 import re
 import requests
 import time
+import xpaths
 from selenium.common.exceptions import (
     NoSuchElementException,
     TimeoutException
@@ -67,8 +68,15 @@ def wait_on_element_disappear(driver, wait, xpath):
 def refresh_if_element_missing(driver, wait, xpath):
     timeout = time.time() + wait
     while time.time() <= timeout:
-        time.sleep(2)
-        if not (driver, xpath):
+        time.sleep(5)
+        if wait_on_element(driver, 3, xpaths.login.user_input):
+            driver.find_element_by_xpath(xpaths.login.user_input).clear()
+            driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+            driver.find_element_by_xpath(xpaths.login.password_input).clear()
+            driver.find_element_by_xpath(xpaths.login.password_input).send_keys('testing')
+            assert wait_on_element(driver, 7, xpaths.login.signin_button)
+            driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        if not wait_on_element(driver, 3, xpath):
             return True
         driver.refresh()
     else:
