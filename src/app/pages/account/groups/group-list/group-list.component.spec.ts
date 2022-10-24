@@ -16,7 +16,7 @@ import { usersInitialState } from 'app/pages/account/users/store/user.reducer';
 import { DialogService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
-export const fakeGroupDataSource: Group[] = [{
+const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,

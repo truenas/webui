@@ -115,7 +115,8 @@ describe('TruecommandSignupModalComponent', () => {
       });
 
       it(`submit button has text ${expectedSubmitButtonText}`, async () => {
-        await loader.getHarness(MatButtonHarness.with({ text: expectedSubmitButtonText }));
+        const button = await loader.getHarness(MatButtonHarness.with({ text: expectedSubmitButtonText }));
+        expect(button).toBeTruthy();
       });
     });
   });

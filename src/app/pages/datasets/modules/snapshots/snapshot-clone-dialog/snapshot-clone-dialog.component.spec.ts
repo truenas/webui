@@ -41,7 +41,7 @@ describe('SnapshotCloneDialogComponent', () => {
 
   it('sets default value in dataset name input', async () => {
     const input = await loader.getHarness(IxInputHarness);
-    expect(await input.getValue()).toEqual('my-snapshot-clone');
+    expect(await input.getValue()).toBe('my-snapshot-clone');
   });
 
   it('clones snapshot to a dataset when form is submitted and shows a success message', async () => {

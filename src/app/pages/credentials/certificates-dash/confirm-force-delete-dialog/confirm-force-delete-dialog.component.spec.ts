@@ -39,21 +39,21 @@ describe('ConfirmForceDeleteCertificateComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('returns with force attribute set to false', async () => {
+  it('closes dialog with false when user presses Cancel', async () => {
     const cancelBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
     await cancelBtn.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
   });
 
-  it('returns with force attribute set', async () => {
+  it('closes dialog with { force: false } when user presses Delete', async () => {
     const deleteBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteBtn.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ force: false });
   });
 
-  it('returns with force attribute set', async () => {
+  it('closes dialog with { force: true } when user presses Delete with Force ticked', async () => {
     const forceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force' }));
     await forceCheckbox.setValue(true);
 
