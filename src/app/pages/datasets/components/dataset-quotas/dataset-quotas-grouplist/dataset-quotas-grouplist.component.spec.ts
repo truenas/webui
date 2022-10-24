@@ -22,7 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { DatasetQuotasGrouplistComponent } from './dataset-quotas-grouplist.component';
 
-export const fakeGroupQuotas: DatasetQuota[] = [{
+const fakeGroupQuotas: DatasetQuota[] = [{
   id: 1,
   name: 'daemon',
   obj_quota: 0,

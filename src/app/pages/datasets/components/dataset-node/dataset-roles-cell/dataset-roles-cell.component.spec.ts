@@ -110,13 +110,4 @@ describe('DatasetRolesCellComponent', () => {
     expect(await ixIcon.getNamespace()).toBe('ix');
     expect(await ixIcon.getName()).toBe('iscsi_share');
   });
-
-  it('shows "SMB/NFS/iSCSI" icons when dataset all shares', async () => {
-    await setupTest({
-      name: 'root/shares',
-      smb_shares: [{}],
-      nfs_shares: [{}],
-      iscsi_shares: [{}],
-    } as DatasetDetails, false);
-  });
 });

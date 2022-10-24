@@ -81,9 +81,9 @@ describe('TopologyCardComponent', () => {
   it('rendering VDEVs rows', () => {
     const captions = spectator.queryAll('.vdev-line b');
     const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon').length).toEqual(2);
-    expect(captions.length).toEqual(6);
-    expect(values.length).toEqual(6);
+    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(2);
+    expect(captions).toHaveLength(6);
+    expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
     expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2.00GiB');

@@ -55,6 +55,6 @@ describe('TelegramServiceComponent', () => {
     await chatIdsInput.setValue(['borked']);
 
     const error = await chatIdsInput.getErrorText();
-    expect(error).toEqual('Only numeric ids are allowed.');
+    expect(error).toBe('Only numeric ids are allowed.');
   });
 });

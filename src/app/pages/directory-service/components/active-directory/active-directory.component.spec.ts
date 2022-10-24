@@ -230,7 +230,7 @@ describe('ActiveDirectoryComponent', () => {
       },
       disableClose: true,
     });
-    expect(entityJobComponent.jobId).toEqual(12345);
+    expect(entityJobComponent.jobId).toBe(12345);
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
     expect(spectator.inject(ModalService).refreshTable).toHaveBeenCalled();
   });

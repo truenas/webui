@@ -96,14 +96,14 @@ describe('AlertsPanelComponent', () => {
   it('checks for HA status and passes it to the ix-alert', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.licensed');
 
-    expect(alertPanel.unreadAlertComponents[0].isHa).toEqual(true);
-    expect(alertPanel.dismissedAlertComponents[0].isHa).toEqual(true);
+    expect(alertPanel.unreadAlertComponents[0].isHa).toBe(true);
+    expect(alertPanel.dismissedAlertComponents[0].isHa).toBe(true);
   });
 
   it('shows a list of unread alerts', () => {
     const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
-    expect(unreadAlertComponents.length).toEqual(2);
+    expect(unreadAlertComponents).toHaveLength(2);
     expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[1]);
     expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[0]);
   });
@@ -111,7 +111,7 @@ describe('AlertsPanelComponent', () => {
   it('shows a list of dismissed alerts', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
-    expect(dismissedAlertComponents.length).toEqual(2);
+    expect(dismissedAlertComponents).toHaveLength(2);
     expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[1]);
     expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[0]);
   });
