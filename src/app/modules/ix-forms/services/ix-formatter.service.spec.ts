@@ -32,7 +32,7 @@ describe('IxFormatterService', () => {
   describe('memorySizeParsing', () => {
     it('should return null when invalid size string is passed', () => {
       const parsed = spectator.service.memorySizeParsing('2u');
-      expect(parsed).toBe(null);
+      expect(parsed).toBeNull();
     });
 
     it('should return value converted in bytes when valid size string is passed', () => {

@@ -87,7 +87,7 @@ describe('ThemeUtils', () => {
       const sourceColor = '#AAAAAA';
       const resultingColor = utils.darken(sourceColor, 5);
 
-      expect(resultingColor).toEqual('hsl(0, 0%, 61.7%)');
+      expect(resultingColor).toBe('hsl(0, 0%, 61.7%)');
     });
   });
 
@@ -96,7 +96,7 @@ describe('ThemeUtils', () => {
       const sourceColor = '#AAAAAA';
       const resultingColor = utils.lighten(sourceColor, 5);
 
-      expect(resultingColor).toEqual('hsl(0, 0%, 71.7%)');
+      expect(resultingColor).toBe('hsl(0, 0%, 71.7%)');
     });
   });
 

@@ -72,7 +72,7 @@ describe('CertificateEditComponent', () => {
     const certificateDetails = spectator.query(CertificateDetailsComponent);
     expect(certificateDetails).toBeTruthy();
     expect(certificateDetails.certificate).toEqual(certificate);
-    expect(certificateDetails.showSignedBy).toEqual(true);
+    expect(certificateDetails.showSignedBy).toBe(true);
   });
 
   it('saves certificate name when it is changed and Save is pressed', async () => {

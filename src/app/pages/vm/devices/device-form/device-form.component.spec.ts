@@ -73,6 +73,10 @@ describe('DeviceFormComponent', () => {
           '/dev/zvol/bassein/zvol1': 'bassein/zvol1',
           '/dev/zvol/bassein/zvol+with+spaces': 'bassein/zvol with spaces',
         }),
+        mockCall('vm.device.usb_controller_choices', {
+          'piix3-uhci': 'piix3-uhci',
+          'pci-ohci': 'pci-ohci',
+        }),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
@@ -557,6 +561,7 @@ describe('DeviceFormComponent', () => {
       id: 1,
       dtype: VmDeviceType.Usb,
       attributes: {
+        controller_type: 'pci-ohci',
         device: 'usb_device_2',
       },
       order: 7,
@@ -568,12 +573,14 @@ describe('DeviceFormComponent', () => {
         Type: 'USB Passthrough Device',
       });
       await form.fillForm({
+        'Controller Type': 'pci-ohci',
         Device: 'usb_device_2 prod_2 (vendor_2)',
       });
       await saveButton.click();
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
         attributes: {
+          controller_type: 'pci-ohci',
           device: 'usb_device_2',
         },
         dtype: VmDeviceType.Usb,
@@ -586,21 +593,54 @@ describe('DeviceFormComponent', () => {
       spectator.component.setDeviceForEdit(existingUsb);
       const values = await form.getValues();
       expect(values).toEqual({
+        'Controller Type': 'pci-ohci',
         Device: 'usb_device_2 prod_2 (vendor_2)',
         'Device Order': '7',
       });
     });
 
-    it('updates an existing USB Passthrough device', async () => {
+    it('updates an existing USB Passthrough when device is selected', async () => {
       spectator.component.setDeviceForEdit(existingUsb);
       await form.fillForm({
+        'Controller Type': 'piix3-uhci',
         Device: 'usb_device_1 prod_1 (vendor_1)',
       });
 
       await saveButton.click();
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [1, {
         attributes: {
+          controller_type: 'piix3-uhci',
           device: 'usb_device_1',
+        },
+        dtype: VmDeviceType.Usb,
+        order: 7,
+        vm: 45,
+      }]);
+    });
+
+    it('updates an existing USB Passthrough when custom is selected', async () => {
+      spectator.component.setDeviceForEdit(existingUsb);
+      await form.fillForm({
+        'Controller Type': 'piix3-uhci',
+        Device: 'Specify custom',
+      });
+
+      await form.fillForm({
+        'Vendor ID': 'vendor_1',
+        'Product ID': 'product_1',
+      });
+
+      spectator.detectChanges();
+
+      await saveButton.click();
+      expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [1, {
+        attributes: {
+          controller_type: 'piix3-uhci',
+          device: null,
+          usb: {
+            vendor_id: 'vendor_1',
+            product_id: 'product_1',
+          },
         },
         dtype: VmDeviceType.Usb,
         order: 7,

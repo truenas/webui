@@ -47,7 +47,7 @@ describe('TopologyItemNodeComponent', () => {
 
   it('shows "Status"', () => {
     expect(spectator.query('.cell-status span')).toHaveText(topologyDisk.status);
-    expect(spectator.component.statusColor).toEqual('var(--alt-bg2)');
+    expect(spectator.component.statusColor).toBe('var(--alt-bg2)');
   });
 
   it('shows "Capacity"', () => {

@@ -39,13 +39,13 @@ describe('ConsoleMessagesStore', () => {
   it('lines$ - returns lines joined with new line from state', async () => {
     spectator.service.subscribeToMessageUpdates();
     const lines = await firstValueFrom(spectator.service.lines$);
-    expect(lines).toEqual('[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
+    expect(lines).toBe('[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
   });
 
   it('lastThreeLogLines$ - returns last three lines joined with new line from state', async () => {
     spectator.service.subscribeToMessageUpdates();
     const lines = await firstValueFrom(spectator.service.lastThreeLogLines$);
-    expect(lines).toEqual('[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
+    expect(lines).toBe('[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
   });
 
   it('unsubscribes from updates when component is destroyed', () => {

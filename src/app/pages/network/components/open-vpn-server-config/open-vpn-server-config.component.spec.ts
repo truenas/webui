@@ -160,7 +160,7 @@ describe('OpenVpnServerConfigComponent', () => {
     await deviceTypeSelect.setValue('TAP');
 
     const topologySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Topology' }));
-    expect(await topologySelect.isDisabled()).toEqual(true);
+    expect(await topologySelect.isDisabled()).toBe(true);
   });
 
   it('renews static key, downloads it and updates TLS Crypt Auth field when Renew Static Key is pressed', async () => {
@@ -176,7 +176,7 @@ tls_crypt_auth: New Key`,
     );
 
     const tlsCryptAuth = await loader.getHarness(IxTextareaHarness.with({ label: 'TLS Crypt Auth' }));
-    expect(await tlsCryptAuth.getValue()).toEqual('New Key');
+    expect(await tlsCryptAuth.getValue()).toBe('New Key');
   });
 
   it('opens Download Client Config modal when button with the same name is pressed', async () => {

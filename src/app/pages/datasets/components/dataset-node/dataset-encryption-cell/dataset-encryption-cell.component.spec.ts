@@ -35,7 +35,7 @@ describe('DatasetEncryptionCellComponent', () => {
       },
     });
 
-    expect(spectator.component.isEncryptionRoot).toEqual(true);
+    expect(spectator.component.isEncryptionRoot).toBe(true);
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
     expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-open-variant');
   });
@@ -53,7 +53,7 @@ describe('DatasetEncryptionCellComponent', () => {
       },
     });
 
-    expect(spectator.component.isEncryptionRoot).toEqual(false);
+    expect(spectator.component.isEncryptionRoot).toBe(false);
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
     expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
     expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-open-variant-outline');
@@ -72,7 +72,7 @@ describe('DatasetEncryptionCellComponent', () => {
       },
     });
 
-    expect(spectator.component.isEncryptionRoot).toEqual(true);
+    expect(spectator.component.isEncryptionRoot).toBe(true);
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
     expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock');
   });
@@ -90,7 +90,7 @@ describe('DatasetEncryptionCellComponent', () => {
       },
     });
 
-    expect(spectator.component.isEncryptionRoot).toEqual(false);
+    expect(spectator.component.isEncryptionRoot).toBe(false);
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
     expect(spectator.query('.encryption-description')).toHaveText('by ancestor');
     expect(spectator.query('mat-icon')).toHaveAttribute('data-mat-icon-name', 'mdi-lock-outline');

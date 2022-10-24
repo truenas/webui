@@ -71,7 +71,7 @@ describe('DiskBulkEditComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  it('it sets disks settings when form is opened', async () => {
+  it('sets disks settings when form is opened', async () => {
     spectator.component.setFormDiskBulk([dataDisk1, dataDisk2]);
     const formValue = await form.getValues();
     const diskIds = spectator.component.diskIds;
@@ -85,7 +85,7 @@ describe('DiskBulkEditComponent', () => {
     expect(diskIds).toEqual(['{serial}VB76b9dd9d-4e5d8cf2', '{serial}VB5a315293-ea077d3d']);
   });
 
-  it('it update selected disks when form is submitted', async () => {
+  it('updates selected disks when form is submitted', async () => {
     spectator.component.diskIds = [
       '{serial}VB76b9dd9d-4e5d8cf2',
       '{serial}VBd494d425-607efd80',
