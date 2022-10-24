@@ -180,17 +180,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Expose hidden details on mobile
-  openMobileDetails(ngRedirect?: unknown[]): void {
-    if (ngRedirect) {
-      this.router.navigate(ngRedirect);
-    }
-
-    if (this.isMobileView) {
-      this.showMobileDetails = true;
-    }
-  }
-
   viewDetails(poolId: number, guid: string): void {
     this.router.navigate(['/storage', poolId, 'devices', guid]);
 
