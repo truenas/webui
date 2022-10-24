@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
@@ -23,8 +24,8 @@ export class ShowLogsDialogComponent {
   downloadLogs(): void {
     this.ws.call('core.download', ['filesystem.get', [this.job.logs_path], `${this.job.id}.log`]).pipe(
       switchMap(([_, url]) => this.storage.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
-      catchError((error) => {
-        this.dialogService.errorReportMiddleware(error);
+      catchError((error: HttpErrorResponse) => {
+        this.dialogService.errorReport(error.name, error.message);
         return EMPTY;
       }),
       untilDestroyed(this),

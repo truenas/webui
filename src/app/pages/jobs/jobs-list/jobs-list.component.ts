@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -22,7 +23,6 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
@@ -149,8 +149,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   downloadLogs(job: Job): void {
     this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
       switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
-      catchError((error) => {
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+      catchError((error: HttpErrorResponse) => {
+        this.dialogService.errorReport(error.name, error.message);
         return EMPTY;
       }),
       untilDestroyed(this),
