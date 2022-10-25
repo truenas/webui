@@ -107,7 +107,7 @@
                   [class.ix-logo]="productImage == 'ix-original.svg'"
                 >
                   <img
-                    *ngIf="productImage && haStatus !== 'HA Disabled'; else generic"
+                    *ngIf="productImage; else generic"
                     id="{{ productModel }}"
                     matTooltip="View Enclosure"
                     matTooltipPosition="above"

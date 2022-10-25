@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
-import { haStatusLoaded } from 'app/store/system-info/system-info.actions';
+import { loadHaStatus } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
@@ -68,21 +68,16 @@ export class FailoverSettingsComponent implements OnInit {
     this.ws.call('failover.update', [values])
       .pipe(
         switchMap(() => {
-          this.dialogService.info(
+          this.store$.dispatch(loadHaStatus());
+          return this.dialogService.info(
             this.translate.instant('Failover'),
             this.translate.instant('Settings saved.'),
           );
-          return this.ws.call('failover.disabled.reasons');
         }),
         untilDestroyed(this),
       )
       .subscribe({
-        next: (failoverDisReasons) => {
-          const haEnabled = failoverDisReasons.length === 0;
-          const enabledText = failoverDisReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
-
-          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
-          this.store$.dispatch(haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisReasons } }));
+        next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
 

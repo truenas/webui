@@ -107,6 +107,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
           });
         }
         this.haStatus = haStatus.status;
+        if (haStatus.status === 'HA Disabled') {
+          this.productImage = '';
+        }
       });
     } else {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
