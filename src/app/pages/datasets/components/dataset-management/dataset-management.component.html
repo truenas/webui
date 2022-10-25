@@ -87,7 +87,7 @@
                 routerLinkActive="selected"
                 [routerLink]="['/datasets', dataset.id]"
                 (click)="viewDetails(dataset)"
-                (keydown.enter)="viewDetails(dataset)"
+                (keydown.enter)="isTreeNodePressed($event) ? viewDetails(dataset) : null"
               >
                 <button
                   mat-icon-button

@@ -80,8 +80,8 @@
                   mat-icon-button
                   ixTreeNodeToggle
                   class="vdev-group-toggle"
-                  (click)="$event.preventDefault()"
                   [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
+                  (click)="$event.preventDefault()"
                 >
                   <mat-icon>
                     {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
@@ -106,7 +106,7 @@
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
               (click)="viewDetails(poolId, vdev.guid)"
-              (keydown.enter)="viewDetails(poolId, vdev.guid)"
+              (keydown.enter)="isTreeNodePressed($event) ? viewDetails(poolId, vdev.guid) : null"
             >
               <button
                 mat-icon-button
