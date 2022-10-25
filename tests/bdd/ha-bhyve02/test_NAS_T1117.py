@@ -22,6 +22,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1117.feature', 'Setting up NIS and verify that NIS still work after failover')
 def test_setting_up_nis_and_verify_that_nis_still_work_after_failover():
     """Setting up NIS and verify that NIS still work after failover."""
+    pass
 
 
 @given(parsers.parse('the browser is open on "{virtal_hostname}" and logged in'))
@@ -145,3 +146,22 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
     assert refresh_if_element_missing(driver, 30, xpaths.topToolbar.ha_enable)
     # allow time for the NAS to settle down
     time.sleep(5)
+
+
+@then('click on Directory Services and select NIS, then disable NIS')
+def click_on_Directory_Services_and_select_NIS_then_disable_NIS(driver):
+    """click on Directory Services and select NIS, then disable NIS."""
+    assert wait_on_element(driver, 5, xpaths.sideMenu.directory_services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services_nis)
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services_nis).click()
+    assert wait_on_element(driver, 5, '//li[span/a/text()="NIS"]')
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Network Information Service (NIS)")]')
+    assert wait_on_element(driver, 5, '//mat-chip[contains(.,"nistestbsd.tn.ixsystems.net")]//mat-icon' 'clickable')
+    driver.find_element_by_xpath('//mat-chip[contains(.,"nistestbsd.tn.ixsystems.net")]//mat-icon').click()
+    assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
