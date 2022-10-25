@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
-import { loadHaStatus } from 'app/store/system-info/system-info.actions';
+import { haSettingsUpdated } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
@@ -68,7 +68,7 @@ export class FailoverSettingsComponent implements OnInit {
     this.ws.call('failover.update', [values])
       .pipe(
         switchMap(() => {
-          this.store$.dispatch(loadHaStatus());
+          this.store$.dispatch(haSettingsUpdated());
           return this.dialogService.info(
             this.translate.instant('Failover'),
             this.translate.instant('Settings saved.'),

@@ -10,7 +10,7 @@ import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { haStatusLoaded } from 'app/store/system-info/system-info.actions';
+import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -54,8 +54,7 @@ export class FailoverComponent implements OnInit {
           });
       },
       complete: () => { // show reboot screen
-        this.window.sessionStorage.setItem('ha_status', 'false');
-        this.store$.dispatch(haStatusLoaded({ haStatus: null }));
+        this.store$.dispatch(passiveNodeReplaced());
 
         this.ws.prepareShutdown();
         this.loader.open();
