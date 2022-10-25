@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import pytest
 import time
 import xpaths
 from function import (
@@ -19,6 +20,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='NAS-T940')
 @scenario('features/NAS-T940.feature', 'Setting up LDAP and verify that LDAP still work after failover')
 def test_setting_up_ldap_and_verify_that_ldap_still_work_after_failover():
     """Setting up LDAP and verify that LDAP still work after failover."""

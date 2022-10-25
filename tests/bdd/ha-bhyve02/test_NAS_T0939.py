@@ -11,6 +11,8 @@ from function import (
     run_cmd,
     post
 )
+from pytest_dependency import depends
+
 from pytest_bdd import (
     given,
     scenario,
@@ -26,8 +28,9 @@ def test_create_a_smb_share_the_acl_dataset(driver):
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_url}"."""
+    depends(request, ['NAS-T933'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)

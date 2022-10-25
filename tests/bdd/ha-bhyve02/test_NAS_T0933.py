@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import pytest
 import xpaths
 import time
 from selenium.webdriver.common.action_chains import ActionChains
@@ -22,6 +23,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name="NAS-T933")
 @scenario('features/NAS-T933.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_setting_up_active_directory_with_the_new_system_dataset(driver):
     """Verify Active Directory works after failover with new system dataset."""

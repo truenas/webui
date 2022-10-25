@@ -8,6 +8,7 @@ from function import (
     is_element_present,
     attribute_value_exist
 )
+from pytest_dependency import depends
 from pytest_bdd import (
     given,
     scenario,
@@ -23,8 +24,9 @@ def test_add_an_acl_item_and_verify_is_preserve():
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_url}"."""
+    depends(request, ['NAS-T933'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
