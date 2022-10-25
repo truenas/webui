@@ -99,9 +99,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           arePoolsLoading: false,
         });
-        if (this.showError(error)) {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
-        }
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
   }
@@ -133,9 +131,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           areDisksLoading: false,
         });
-        if (this.showError(error)) {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
-        }
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
   }
@@ -205,12 +201,5 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       }
     }
     return of(disks);
-  }
-
-  showError(error: WebsocketError): boolean {
-    if (error.trace.class === 'CalledProcessError') {
-      return false;
-    }
-    return true;
   }
 }
