@@ -27,6 +27,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CloudCredentialService, DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -171,6 +172,25 @@ export class CloudsyncFormComponent {
     this.form.controls.encryption_password.disable();
     this.form.controls.encryption_salt.disable();
 
+    this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
+      if (selectedOption === 'new_storj_bucket') {
+        const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+          width: '500px',
+          data: {
+            credentialsId: this.form.controls.credentials.value,
+          },
+        });
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+          if (bucket !== false) {
+            this.isLoading = true;
+            this.setBucketOptions(this.form.controls.credentials.value, 'STORJ_IX');
+            this.form.controls.bucket.setValue(bucket);
+          } else {
+            this.form.controls.bucket.setValue('');
+          }
+        });
+      }
+    });
     this.form.controls.direction.valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
       if (direction === Direction.Pull || this.form.controls.transfer_mode.value === TransferMode.Move) {
         this.form.controls.snapshot.disable();
@@ -246,35 +266,8 @@ export class CloudsyncFormComponent {
                   this.bucketInputTooltip = helptext.bucket_input_tooltip;
                 }
 
-                this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
-                  next: (buckets) => {
-                    this.bucketOptions$ = of(buckets.map((bucket) => ({
-                      label: bucket.Name,
-                      value: bucket.Path,
-                      disabled: !bucket.Enabled,
-                    })));
-                    this.isLoading = false;
-                    this.form.controls.bucket.enable();
-                    this.form.controls.bucket_input.disable();
-                    this.cdr.markForCheck();
-                  },
-                  error: (err) => {
-                    this.isLoading = false;
-                    this.form.controls.bucket.disable();
-                    this.form.controls.bucket_input.enable();
-                    this.dialog.closeAllDialogs();
-                    this.dialog.confirm({
-                      title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-                      message: err.reason,
-                      hideCheckBox: true,
-                      buttonMsg: this.translate.instant('Fix Credential'),
-                    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                      const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
-                      this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
-                    });
-                    this.cdr.markForCheck();
-                  },
-                });
+                this.setBucketOptions(targetCredentials.id, targetCredentials.provider);
+
                 this.cdr.markForCheck();
               } else {
                 this.form.controls.bucket.disable();
@@ -396,6 +389,46 @@ export class CloudsyncFormComponent {
           folderSourceControl.setErrors(null);
         }
       }
+    });
+  }
+
+  setBucketOptions(id: number, provider: string): void {
+    this.getBuckets(id).pipe(untilDestroyed(this)).subscribe({
+      next: (buckets) => {
+        const bucketOptions = buckets.map((bucket) => ({
+          label: bucket.Name,
+          value: bucket.Path,
+          disabled: !bucket.Enabled,
+        }));
+        if (provider === 'STORJ_IX') {
+          bucketOptions.unshift({
+            label: this.translate.instant('Add new'),
+            value: 'new_storj_bucket',
+            disabled: false,
+          });
+        }
+        this.bucketOptions$ = of(bucketOptions);
+        this.isLoading = false;
+        this.form.controls.bucket.enable();
+        this.form.controls.bucket_input.disable();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.form.controls.bucket.disable();
+        this.form.controls.bucket_input.enable();
+        this.dialog.closeAllDialogs();
+        this.dialog.confirm({
+          title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
+          message: err.reason,
+          hideCheckBox: true,
+          buttonMsg: this.translate.instant('Fix Credential'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id } };
+          this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+        });
+        this.cdr.markForCheck();
+      },
     });
   }
 

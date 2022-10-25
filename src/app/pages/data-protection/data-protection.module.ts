@@ -15,6 +15,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -71,6 +72,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     ReplicationFormComponent,
     ReplicationWizardComponent,
     ScrubListComponent,
+    CreateStorjBucketDialogComponent,
     ScrubTaskFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
