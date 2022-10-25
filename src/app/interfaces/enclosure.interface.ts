@@ -1,6 +1,6 @@
 export interface Enclosure {
   controller: boolean;
-  elements: EnclosureElementsGroup[];
+  elements: EnclosureElementsGroup[] | EnclosureElement[];
   id: string;
   label: string;
   model: string;

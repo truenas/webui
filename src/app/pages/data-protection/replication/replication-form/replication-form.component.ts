@@ -1200,6 +1200,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
       this.storageService.humanReadable = presetSpeed;
     }
+
     this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       if (
         entityForm.formGroup.controls['direction'].value === Direction.Push
@@ -1211,9 +1212,11 @@ export class ReplicationFormComponent implements FormConfiguration {
         this.formMessage.content = '';
       }
     });
+
     this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.toggleNamingSchemaOrRegex();
     });
+
     entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res === Direction.Push
@@ -1228,7 +1231,6 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.toggleNamingSchemaOrRegex();
     });
 
-    const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
     entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res !== TransportMode.Local
@@ -1238,10 +1240,6 @@ export class ReplicationFormComponent implements FormConfiguration {
         this.countEligibleManualSnapshots();
       } else {
         this.formMessage.content = '';
-      }
-
-      if (retentionPolicyField.options !== this.retentionPolicyChoice) {
-        retentionPolicyField.options = this.retentionPolicyChoice;
       }
 
       if (res === TransportMode.Local) {
@@ -1320,6 +1318,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
       entityForm.formGroup.controls['properties_override'].setErrors(null);
     });
+
     entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
     this.toggleNamingSchemaOrRegex();
   }
@@ -1589,6 +1588,10 @@ export class ReplicationFormComponent implements FormConfiguration {
   toggleNamingSchemaOrRegex(): void {
     const directionValue = this.entityForm.formGroup.controls['direction'].value;
     const schemaOrRegexValue = this.entityForm.formGroup.controls['schema_or_regex'].value;
+    const retentionPolicyValue = this.entityForm.formGroup.controls['retention_policy'].value;
+
+    const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
+
     if (schemaOrRegexValue === SnapshotNamingOption.NamingSchema) {
       this.entityForm.setDisabled('name_regex', true, true);
       if (directionValue === Direction.Push) {
@@ -1601,10 +1604,19 @@ export class ReplicationFormComponent implements FormConfiguration {
       } else {
         this.entityForm.setDisabled('also_include_naming_schema', false, false);
       }
+
+      retentionPolicyField.options = this.retentionPolicyChoice;
     } else {
       this.entityForm.setDisabled('name_regex', false, false);
       this.entityForm.setDisabled('naming_schema', true, true);
       this.entityForm.setDisabled('also_include_naming_schema', true, true);
+
+      if (retentionPolicyValue === RetentionPolicy.Custom) {
+        this.entityForm.setValue('retention_policy', RetentionPolicy.None);
+      }
+
+      retentionPolicyField.options = this.retentionPolicyChoice
+        .filter((option) => option.value !== RetentionPolicy.Custom);
     }
   }
 }

@@ -31,7 +31,7 @@ export interface FormConfiguration {
   routeDelete?: string[];
   customActions?: FormCustomAction[];
   compactCustomActions?: FormCompactCustomAction[];
-  customFilter?: any[];
+  customFilter?: unknown[];
   confirmSubmit?: boolean;
   confirmSubmitDialog?: {
     title: string;

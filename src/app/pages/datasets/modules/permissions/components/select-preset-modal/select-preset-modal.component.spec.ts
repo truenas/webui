@@ -87,7 +87,7 @@ describe('SelectPresetModalComponent', () => {
   });
 
   // TODO: Enable when [required] is added to the select
-  xit('loads acl presets for given path and shows them in the select', async () => {
+  it.skip('loads acl presets for given path and shows them in the select', async () => {
     const ws = spectator.inject(WebSocketService);
     const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
 

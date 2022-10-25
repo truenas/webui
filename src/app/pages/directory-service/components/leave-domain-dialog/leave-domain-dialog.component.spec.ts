@@ -38,7 +38,7 @@ describe('LeaveDomainDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('it leaves Active Directory domain when form is filled in and submitted', async () => {
+  it('leaves Active Directory domain when form is filled in and submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Username: 'Administrator',

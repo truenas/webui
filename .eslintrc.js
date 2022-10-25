@@ -288,6 +288,16 @@ module.exports = {
       }
     },
     {
+      "files": ["**/*.spec.ts"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "rules": {
+        "jest/no-large-snapshots": ["error"],
+        "jest/prefer-equality-matcher": ["error"],
+        "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }]
+      }
+    },
+    {
       "files": ["*.html"],
       "parser": "@angular-eslint/template-parser",
       "plugins": [

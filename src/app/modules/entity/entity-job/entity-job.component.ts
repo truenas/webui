@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./entity-job.component.scss'],
 })
 export class EntityJobComponent implements OnInit, AfterViewChecked {
-  job: Job = {} as Job;
+  job: Job<unknown> = {} as Job<unknown>;
   progressTotalPercent = 0;
   description: string;
   method: ApiMethod;

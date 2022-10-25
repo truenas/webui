@@ -393,8 +393,11 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 
 .form-element textarea {
   max-width: 100%;
-  min-height: 96px;
   min-width: 100%;
+
+  .no-rows {
+    min-height: 96px;
+  }
 }
 
 .form-element input[type = 'password'],

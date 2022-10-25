@@ -1,21 +1,25 @@
+import {
+  VmBootloader, VmCpuMode, VmDiskMode, VmDisplayType, VmNicType, VmTime,
+} from 'app/enums/vm.enum';
+
 export interface VmFormValues {
   NIC_mac: string;
-  NIC_type: string;
+  NIC_type: VmNicType;
   autostart: boolean;
   bind: string;
-  bootloader: string;
+  bootloader: VmBootloader;
   cores: number;
-  cpu_mode: string;
+  cpu_mode: VmCpuMode;
   cpu_model: string;
   datastore: string;
   description: string;
   disk_radio: boolean;
-  display_type: string;
+  display_type: VmDisplayType;
   enable_display: boolean;
   ensure_display_device: boolean;
   gpus: string[];
   hdd_path: string;
-  hdd_type: string;
+  hdd_type: VmDiskMode;
   hide_from_msr: boolean;
   iso_path: string;
   memory: string;
@@ -25,7 +29,7 @@ export interface VmFormValues {
   os: string;
   shutdown_timeout: number;
   threads: number;
-  time: string;
+  time: VmTime;
   upload_iso: string;
   upload_iso_checkbox: boolean;
   upload_iso_path: string;

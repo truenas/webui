@@ -16,11 +16,11 @@
 
 
   // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 120px 120px 120px 40px;
+  grid-template-columns: auto 125px 125px 125px;
 
   @media (max-width: $breakpoint-tablet) {
     // Override default fraction based values to avoid misaligned columns
-    grid-template-columns: auto 0 0 0 20px;
+    grid-template-columns: auto 0 0 0;
     width: 100%;
   }
 
@@ -41,16 +41,6 @@
         display: inline-flex;
       }
     }
-
-    &:last-child {
-      display: inline-flex;
-
-      button {
-        @media (min-width: $breakpoint-hidden) {
-          right: 20px;
-        }
-      }
-    }
   }
 
   .cell-name {
@@ -69,13 +59,6 @@
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
       padding-right: 15px;
-
-      span {
-        max-width: 105px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
     }
   }
 
@@ -114,8 +97,4 @@ $padding-left: 8px;
       }
     }
   }
-}
-
-::ng-deep .menu {
-  min-height: 0;
 }

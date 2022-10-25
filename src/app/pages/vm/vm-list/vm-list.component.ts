@@ -15,10 +15,10 @@ import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiParams } from 'app/interfaces/api-directory.interface';
 import {
   VirtualizationDetails,
-  VirtualMachine, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
+  VirtualMachine, VirtualMachineUpdate, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
@@ -274,9 +274,14 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     });
   }
 
-  doRowAction(row: VirtualMachineRow, method: ApiMethod, params: unknown[] = [row.id], updateTable = false): void {
+  doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.restart' | 'vm.poweroff'>(
+    row: VirtualMachineRow,
+    method: T,
+    params: ApiParams<T> = [row.id],
+    updateTable = false,
+  ): void {
     this.loader.open();
-    this.ws.call(method, params as any).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call(method, params).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         if (updateTable) {
           this.entityList.getData();
@@ -317,7 +322,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onCheckboxChange(row: VirtualMachineRow): void {
-    this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
+    this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart } as VirtualMachineUpdate]);
   }
 
   getActions(row: VirtualMachineRow): EntityTableAction[] {

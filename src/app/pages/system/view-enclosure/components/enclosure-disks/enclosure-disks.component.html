@@ -38,7 +38,7 @@
   <ix-tab-content
     class="other-tab"
     *ngIf="currentTab.alias !== 'Disks'"
-    [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]"
+    [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex] | cast"
   ></ix-tab-content>
 
   <mat-card-content id="Disks-content" [class]="currentTab.alias">

@@ -72,7 +72,7 @@ describe('BootEnvironmentFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should add source field to DOM ', () => {
+    it('should add source field to DOM', () => {
       const sourceFieldElement = IxInputHarness.with({ label: 'Source' });
       expect(sourceFieldElement).toBeTruthy();
     });

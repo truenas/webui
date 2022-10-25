@@ -1,5 +1,6 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -27,17 +28,17 @@ describe('TopologyCardComponent', () => {
           topology: {
             data: [
               {
-                type: 'RAIDZ1',
+                type: CreateVdevLayout.Raidz1,
                 children: [{ type: 'DISK', disk: 'sda' }, { type: 'DISK', disk: 'sdb' }, { type: 'DISK', disk: 'sdc' }],
               },
               {
-                type: 'RAIDZ1',
+                type: CreateVdevLayout.Raidz1,
                 children: [{ type: 'DISK', disk: 'sdd' }, { type: 'DISK', disk: 'sde' }],
               },
             ],
             log: [
               {
-                type: 'MIRROR',
+                type: CreateVdevLayout.Mirror,
                 children: [{ type: 'DISK', disk: 'sdf' }, { type: 'DISK', disk: 'sdg' }],
               },
             ],
@@ -51,7 +52,7 @@ describe('TopologyCardComponent', () => {
             ],
             special: [
               {
-                type: 'MIRROR',
+                type: CreateVdevLayout.Mirror,
                 children: [{ type: 'DISK', disk: 'sdl' }, { type: 'DISK', disk: 'sdm' }],
               },
             ],
@@ -80,9 +81,9 @@ describe('TopologyCardComponent', () => {
   it('rendering VDEVs rows', () => {
     const captions = spectator.queryAll('.vdev-line b');
     const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon').length).toEqual(2);
-    expect(captions.length).toEqual(6);
-    expect(values.length).toEqual(6);
+    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(2);
+    expect(captions).toHaveLength(6);
+    expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
     expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2.00GiB');

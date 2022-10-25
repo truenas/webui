@@ -8,7 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -33,6 +34,7 @@ export class FormUploadComponent {
     private loader: AppLoaderService,
     public dialog: DialogService,
     public translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   fileBtnClick(): void {
@@ -71,7 +73,7 @@ export class FormUploadComponent {
             if (event.statusText === 'OK') {
               this.newMessage(location + '/' + fileBrowser.files[0].name);
               this.loader.close();
-              this.dialog.info(this.translate.instant('File upload complete'), '');
+              this.snackbar.success(this.translate.instant('File upload complete'));
             }
           }
         },

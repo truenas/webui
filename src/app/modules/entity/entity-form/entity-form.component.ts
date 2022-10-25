@@ -20,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { ApiDirectory, ApiParams } from 'app/interfaces/api-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import {
@@ -50,11 +51,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   formGroup: UntypedFormGroup;
   fieldConfig: FieldConfig[];
   resourceName: string;
-  getFunction: Observable<any>;
+  getFunction: Observable<Record<string, unknown>>;
   submitFunction = this.editCall;
   isNew = false;
   hasConf = true;
-  wsResponse: any;
+  wsResponse: Record<string, unknown>;
   wsfg: AbstractControl;
   saveSubmitText: string = this.translate.instant('Save');
   successMessage: string = this.translate.instant('Settings saved.');
@@ -82,7 +83,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   sub: Subscription;
   error: string;
   success = false;
-  data: any = {};
+  data: Record<string, unknown> = {};
   showSpinner = false;
   isFromPending = false;
 
@@ -265,9 +266,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.queryKey) {
             filter = [[[this.conf.queryKey, '=', parseInt(pk as string, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
           }
-          this.getFunction = this.ws.call(this.conf.queryCall, filter);
+          this.getFunction = this.ws.call(
+            this.conf.queryCall,
+            filter as ApiParams<keyof ApiDirectory>,
+          ) as Observable<Record<string, unknown>>;
         } else {
-          this.getFunction = this.ws.call(this.conf.queryCall, []);
+          this.getFunction = this.ws.call(this.conf.queryCall, []) as Observable<Record<string, unknown>>;
         }
       }
 
@@ -276,10 +280,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.loaderOpen = true;
         this.getFunction.pipe(untilDestroyed(this)).subscribe((res) => {
           if (res.data) {
-            this.data = res.data;
+            this.data = res.data as Record<string, unknown>;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-              this.data = this.conf.resourceTransformIncomingRestData(this.data);
-              const extraFieldSets = this.data['extra_fieldsets'];
+              this.data = this.conf.resourceTransformIncomingRestData(this.data) as Record<string, unknown>;
+              const extraFieldSets = this.data['extra_fieldsets'] as FieldSet[];
               if (extraFieldSets) {
                 this.addFormControls(extraFieldSets);
                 delete this.data['extra_fieldsets'];
@@ -290,16 +294,16 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               if (fg) {
                 const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
                 if (currentField.type === 'array') {
-                  this.setArrayValue(this.data[key], fg as UntypedFormArray, key);
+                  this.setArrayValue(this.data[key] as Record<string, unknown>[], fg as UntypedFormArray, key);
                 } else if (currentField.type === 'list') {
-                  this.setListValue(this.data[key], fg as UntypedFormArray, key);
+                  this.setListValue(this.data[key] as string[], fg as UntypedFormArray, key);
                 } else if (currentField.type === 'dict') {
                   fg.patchValue(this.data[key]);
                 } else {
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
                   if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple) {
                     if (this.data[key]) {
-                      this.data[key] = _.split(this.data[key], ',');
+                      this.data[key] = _.split(this.data[key] as string, ',');
                     }
                   }
                   if (!(selectField.type === 'select' && selectField.options.length === 0)) {
@@ -310,14 +314,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             });
           } else {
             if (res[0]) {
-              this.wsResponse = res[0];
+              this.wsResponse = res[0] as Record<string, unknown>;
             } else {
               this.wsResponse = res;
             }
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-              this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
-              const extraFieldSets = this.wsResponse['extra_fieldsets'];
+              this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse) as Record<string, unknown>;
+              const extraFieldSets = this.wsResponse['extra_fieldsets'] as FieldSet[];
               if (extraFieldSets) {
                 this.addFormControls(extraFieldSets);
                 delete this.wsResponse['extra_fieldsets'];
@@ -333,9 +337,17 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
 
                   if (currentField.type === 'array') {
-                    this.setArrayValue(this.wsResponse[key], this.wsfg as UntypedFormArray, key);
+                    this.setArrayValue(
+                      this.wsResponse[key] as Record<string, unknown>[],
+                      this.wsfg as UntypedFormArray,
+                      key,
+                    );
                   } else if (currentField.type === 'list' || currentField.type === 'dict') {
-                    this.setObjectListValue(this.wsResponse[key], this.wsfg, currentField);
+                    this.setObjectListValue(
+                      this.wsResponse[key] as Record<string, unknown>[] | Record<string, unknown[]>,
+                      this.wsfg,
+                      currentField,
+                    );
                   } else if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }

@@ -19,7 +19,7 @@ import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.co
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { JobsListComponent } from './jobs-list.component';
 
-export const fakeJobDataSource: Job[] = [{
+const fakeJobDataSource: Job[] = [{
   abortable: true,
   arguments: [1],
   description: null,
@@ -133,7 +133,7 @@ describe('JobsListComponent', () => {
     await firstExpandButton.click();
     await secondExpandButton.click();
 
-    expect(spectator.queryAll('.expanded').length).toEqual(1);
+    expect(spectator.queryAll('.expanded')).toHaveLength(1);
   });
 
   it('should download logs text file when click Download Logs button', async () => {

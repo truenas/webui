@@ -228,28 +228,10 @@ export class ChartFormComponent implements OnDestroy {
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
-    let value: any = data;
-    for (let i = 0; i < keys.length - 1; i++) {
-      value = value[keys[i]];
-      if (value === undefined || value === null) {
-        break;
-      }
-    }
-    if (value !== undefined && value !== null) {
-      if (this.isNew) {
-        delete value[keys[keys.length - 1]];
-      } else {
-        let configValue: any = this.config;
-        for (let i = 0; i < keys.length - 1; i++) {
-          configValue = configValue[keys[i]];
-          if (configValue === undefined || configValue === null) {
-            break;
-          }
-        }
-        if (!configValue || !configValue[keys[keys.length - 1]]) {
-          delete value[keys[keys.length - 1]];
-        }
-      }
+    if (this.isNew) {
+      _.unset(data, keys);
+    } else if (!_.get(this.config, keys)) {
+      _.unset(data, keys);
     }
   }
 
@@ -297,7 +279,7 @@ export class ChartFormComponent implements OnDestroy {
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
   }
 
-  onFailure(failedJob: Job<null, unknown[]>): void {
+  onFailure(failedJob: Job): void {
     if (failedJob.exc_info && failedJob.exc_info.extra) {
       new EntityUtils().handleWsError(this, failedJob);
     } else {

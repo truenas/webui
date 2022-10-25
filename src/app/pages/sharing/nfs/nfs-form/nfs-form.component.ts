@@ -15,6 +15,7 @@ import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, UserService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -89,6 +90,7 @@ export class NfsFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
   ) {}
 
   setNfsShareForEdit(nfsShare: NfsShare): void {
@@ -188,8 +190,7 @@ export class NfsFormComponent implements OnInit {
         return this.ws.call('service.update', [ServiceName.Nfs, { enable: true }]).pipe(
           switchMap(() => this.ws.call('service.start', [ServiceName.Nfs, { silent: false }])),
           map(() => {
-            this.dialogService.info(
-              this.translate.instant('{service} Service', { service: 'NFS' }),
+            this.snackbar.success(
               this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
             );
 

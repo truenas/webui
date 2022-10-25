@@ -32,9 +32,6 @@
 .pool {
   box-flex: 1;
   flex-basis: auto;
-  flex-grow: 1;
-  max-width: 580px;
-  min-width: 520px;
   position: relative;
   top: -10px;
 }
@@ -97,17 +94,13 @@ h4 {
 .data-div {
   align-items: center;
   display: flex;
-  margin-left: 102px;
-  padding: 0;
-  width: 477px;
+  margin-bottom: 4px;
+  margin-left: 118px;
+  padding: 0 12px 0 0;
 }
 
 .data-title {
   flex: 1;
-}
-
-.duplicate-button {
-  width: 60px;
 }
 
 #pool-manager__encryption-checkbox {
@@ -226,4 +219,16 @@ button.vdev-option p {
 
 .inline-warn {
   display: inline-block;
+}
+
+.vdev {
+  margin: 0 16px;
+}
+
+.data-vdev {
+  margin-bottom: 24px;
+}
+
+.error {
+  color: red;
 }

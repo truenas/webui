@@ -15,7 +15,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DockerImageDeleteDialogComponent } from 'app/pages/applications/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { fakeDockerImagesDataSource } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component.spec';
+import { fakeDockerImagesDataSource } from 'app/pages/applications/docker-images/test/fake-docker-images';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 const mockSuccessBulkResponse = [{

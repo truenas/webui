@@ -28,7 +28,7 @@ describe('ViewTrivialPermissionsComponent', () => {
     });
   });
 
-  it('it converts FileSystemStat to permission items and shows them as the list', () => {
+  it('converts FileSystemStat to permission items and shows them as the list', () => {
     const items = spectator.queryAll('ix-permissions-item');
 
     expect(items[0]).toHaveText('john');

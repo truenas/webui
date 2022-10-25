@@ -53,7 +53,7 @@ describe('ManageDiskSedDialogComponent', () => {
     expect(spectator.inject(WebSocketService).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
-    expect(await passwordInput.getValue()).toEqual('123456');
+    expect(await passwordInput.getValue()).toBe('123456');
   });
 
   it('allows password to be cleared if it is set', async () => {

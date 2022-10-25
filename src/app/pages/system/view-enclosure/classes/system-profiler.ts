@@ -165,7 +165,7 @@ export class SystemProfiler {
         };
       }) as EnclosureElement[];
       const powerSupply = { name: 'Power Supply', elements, header: ['Descriptor', 'Status', 'Value'] } as EnclosureElementsGroup;
-      this.enclosures[this.headIndex].elements.push(powerSupply);
+      (this.enclosures[this.headIndex].elements as EnclosureElementsGroup[]).push(powerSupply);
     }
   }
 
@@ -307,7 +307,9 @@ export class SystemProfiler {
 
   getEnclosureExpanders(index: number): EnclosureElement[] | EnclosureElementsGroup[] {
     if (this.rearIndex && index === this.rearIndex) { index = this.headIndex; }
-    const raw = this.enclosures[index].elements.filter((item) => item.name === 'SAS Expander');
+    const raw = (this.enclosures[index].elements as EnclosureElementsGroup[]).filter((item) => {
+      return item.name === 'SAS Expander';
+    });
 
     if (raw.length > 0) {
       return raw[0].elements;

@@ -23,6 +23,8 @@ import { NetworkService, VmService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+const specifyCustom = 'Specify custom';
+
 @UntilDestroy()
 @Component({
   templateUrl: './device-form.component.html',
@@ -85,19 +87,38 @@ export class DeviceFormComponent implements OnInit {
   });
 
   usbForm = this.formBuilder.group({
+    controller_type: ['', Validators.required],
     device: ['', Validators.required],
+    usb: this.formBuilder.group({
+      vendor_id: ['', Validators.required],
+      product_id: ['', Validators.required],
+    }),
   });
 
   readonly helptext = helptext;
   readonly VmDeviceType = VmDeviceType;
-
-  readonly usbOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
+  readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
-      return Object.entries(usbDevices).map(([id, device]) => {
+      const options = Object.entries(usbDevices).map(([id, device]) => {
         let label = id;
         label += device.capability?.product ? ` ${device.capability.product}` : '';
         label += device.capability?.vendor ? ` (${device.capability.vendor})` : '';
         return { label, value: id };
+      });
+      options.push({
+        label: specifyCustom,
+        value: specifyCustom,
+      });
+      return options;
+    }),
+  );
+  readonly usbControllerOptions$ = this.ws.call('vm.device.usb_controller_choices').pipe(
+    map((usbControllers) => {
+      return Object.entries(usbControllers).map(([key, controller]) => {
+        return {
+          label: controller,
+          value: key,
+        };
       });
     }),
   );
@@ -206,6 +227,15 @@ export class DeviceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.generateMacWhenNicIsSelected();
+
+    this.usbForm.controls.usb.disable();
+    this.usbForm.controls.device.valueChanges.pipe(untilDestroyed(this)).subscribe((device) => {
+      if (device === specifyCustom) {
+        this.usbForm.controls.usb.enable();
+      } else {
+        this.usbForm.controls.usb.disable();
+      }
+    });
   }
 
   setVirtualMachineId(id: number): void {
@@ -247,6 +277,9 @@ export class DeviceFormComponent implements OnInit {
         this.cdromForm.patchValue(device.attributes);
         break;
       case VmDeviceType.Usb:
+        if (!device.attributes.device) {
+          device.attributes.device = specifyCustom;
+        }
         this.usbForm.patchValue(device.attributes);
         break;
       default:
@@ -300,8 +333,12 @@ export class DeviceFormComponent implements OnInit {
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
-    if ('sectorsize' in this.typeSpecificForm.value) {
-      const { sectorsize, ...otherAttributes } = this.typeSpecificForm.value;
+    const values = this.typeSpecificForm.value;
+    if ('device' in values && values.device === specifyCustom) {
+      values.device = null;
+    }
+    if ('sectorsize' in values) {
+      const { sectorsize, ...otherAttributes } = values;
       return {
         ...otherAttributes,
         logical_sectorsize: sectorsize === 0 ? null : sectorsize,
@@ -309,7 +346,7 @@ export class DeviceFormComponent implements OnInit {
       };
     }
 
-    return this.typeSpecificForm.value;
+    return values;
   }
 
   /**
