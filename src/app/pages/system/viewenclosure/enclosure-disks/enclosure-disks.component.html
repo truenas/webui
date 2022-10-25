@@ -127,7 +127,19 @@
             <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
               <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk?.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+                <div
+                  *ngFor="let disk of selectedVdevDisks; let i = index"
+                  class="vdev-disk {{disk}}"
+                  (mouseenter)="highlightPath(disk)"
+                  (mouseleave)="unhighlightPath(disk)"
+                >
+                  <div
+                    class="swatch"
+                    [style.background]="selectedDisk?.devname == disk ? theme.yellow : theme.cyan"
+                  >
+                  </div>
+                  {{disk}}
+                  <span> {{ selectedEnclosure.disks[disk] }}</span>
                   <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
                 </div>
               </div>
@@ -243,7 +255,7 @@
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
                   <div class="label">Pool</div>
-                  <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</div>
+                  <div class="value">{{ selectedDisk.vdev?.pool ? selectedDisk.vdev.pool : (selectedDisk?.pool ? selectedDisk.pool : 'Disk not attached to any pools.')}}</div>
                 </div>
               </div>
 

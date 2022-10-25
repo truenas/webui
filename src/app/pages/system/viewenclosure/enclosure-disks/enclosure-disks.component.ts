@@ -20,6 +20,7 @@ import { R20B } from 'app/core/classes/hardware/r20b';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { R50B } from 'app/core/classes/hardware/r50b';
+import { R50BM } from 'app/core/classes/hardware/r50bm';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
@@ -419,6 +420,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R50B(true);
         this.showCaption = false;
         break;
+      case 'R50BM':
+        this.chassis = new R50BM(true);
+        this.showCaption = false;
+        break;
       case 'M Series':
         const rearChassis = !!this.system.rearIndex;
         this.chassis = new M50(rearChassis);
@@ -527,8 +532,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new R40();
         break;
       case 'R50':
-      case 'R50B':
         chassis = new R50();
+        break;
+      case 'R50B':
+        chassis = new R50B();
+        break;
+      case 'R50BM':
+        chassis = new R50BM();
         break;
       case 'M Series':
         chassis = new M50();
