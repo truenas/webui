@@ -110,6 +110,7 @@
   "Add groups": "",
   "Add listen": "",
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
+  "Adding large catalogs can take minutes. Please check on the progress in Task Manager.": "",
   "Additional  <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>  parameters.": "",
   "Additional Domains:": "",
   "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
@@ -4014,7 +4015,6 @@
   "Update in Progress": "Производится обновление",
   "Update is complete, please reboot the system.": "Обновление завершено, пожалуйста, перезагрузите систему.",
   "Update successful. Please reboot for the update to take effect. Reboot now?": "Обновление прошло успешно. Пожалуйста, перезагрузитесь, чтобы обновление вступило в силу. Перезагрузить сейчас?",
-  "Updated": "Обновлен",
   "Updates successfully downloaded": "Обновления успешно загружены",
   "Updating": "Обновление",
   "Updating group members": "Обновление членов группы",
@@ -4075,7 +4075,6 @@
   "VM system time. Default is <i>Local</i>.": "Системное время ВМ. По умолчанию <i>Местное</i>.",
   "VMWare Sync": "Синхронизация VMWare",
   "VMware Sync": "Синхронизация VMware",
-  "Valid": "Действителен",
   "Validate Certificates": "Проверить сертификаты",
   "Validate Remote Path": "Проверить удаленный путь",
   "Value": "Значение",
@@ -4141,6 +4140,5 @@
   "rpc.lockd(8) bind port": "Порт rpc.lockd(8)",
   "rpc.statd(8) bind port": "Порт rpc.statd(8)",
   "was successfully attached.": "был успешно подключен.",
-  "{service} Service": "{service} Сервис",
   "{used} of {total} ({used_pct})": "{used} из {total} ({used_cpt})"
 }
