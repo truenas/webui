@@ -4,7 +4,7 @@ import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 
-export const fakeJob: Job = {
+const fakeJob: Job = {
   abortable: true,
   arguments: [1],
   description: null,

@@ -32,7 +32,7 @@ describe('PasswordValidation', () => {
 
       expect(() => {
         thisControl.setValue('test');
-      }).toThrowError('matchOtherValidator(): other control is not found in parent group');
+      }).toThrow('matchOtherValidator(): other control is not found in parent group');
     });
 
     it('should not have matchOther error', () => {
@@ -73,7 +73,7 @@ describe('PasswordValidation', () => {
 
       expect(() => {
         thisControl.setValue('test');
-      }).toThrowError('doesNotEqual(): other control is not found in parent group');
+      }).toThrow('doesNotEqual(): other control is not found in parent group');
     });
 
     it('should have matchesOther error', () => {

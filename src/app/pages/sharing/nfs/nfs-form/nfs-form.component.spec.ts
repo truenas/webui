@@ -174,8 +174,8 @@ describe('NfsFormComponent', () => {
       'Maproot Group': 'operator',
       'Maproot User': 'news',
     });
-    expect(networks.length).toBe(1);
-    expect(hosts.length).toBe(2);
+    expect(networks).toHaveLength(1);
+    expect(hosts).toHaveLength(2);
     expect(await networks[0].getValue()).toBe('192.168.1.78/21');
     expect(await hosts[0].getValue()).toBe('127.0.0.1');
     expect(await hosts[1].getValue()).toBe('192.168.1.23');

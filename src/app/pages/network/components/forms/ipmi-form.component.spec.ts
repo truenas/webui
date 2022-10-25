@@ -91,7 +91,7 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it('it loads remote controller data', async () => {
+    it('loads remote controller data', async () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
       const form = await loader.getHarness(IxFormHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
@@ -108,7 +108,7 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it('it disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
+    it('disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
       const checkboxDhcp = await loader.getHarness(IxCheckboxHarness.with({ label: 'DHCP' }));
       await checkboxDhcp.setValue(true);
       const ipaddress = await loader.getHarness(IxInputHarness.with({ label: 'IPv4 Address' }));

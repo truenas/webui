@@ -71,18 +71,18 @@ describe('IxChipsComponent', () => {
     expect(input.getValue()).toBeTruthy();
   });
 
-  it('it renders chips in the interface, if the form control has an initial value', async () => {
+  it('renders chips in the interface, if the form control has an initial value', async () => {
     formControl.setValue(['operator', 'staff']);
     const chips = await matChipList.getChips();
     const operatorChipText = await chips[0].getText();
     const staffChipText = await chips[1].getText();
 
-    expect(chips.length).toBe(2);
+    expect(chips).toHaveLength(2);
     expect(operatorChipText).toBe('operator');
     expect(staffChipText).toBe('staff');
   });
 
-  it('it sets value when user types it in', async () => {
+  it('sets value when user types it in', async () => {
     const input = await matChipList.getInput();
     await input.setValue('operator');
     await input.sendSeparatorKey(TestKey.ENTER);
@@ -92,7 +92,7 @@ describe('IxChipsComponent', () => {
     expect(formControl.value).toEqual(['operator', 'root']);
   });
 
-  it('it creates chip after leaving the focus of the input', async () => {
+  it('creates chip after leaving the focus of the input', async () => {
     const input = await matChipList.getInput();
     await input.setValue('www-date');
     await input.blur();
@@ -109,7 +109,7 @@ describe('IxChipsComponent', () => {
     staffRemoveBtn.click();
     const listOfChips = await matChipList.getChips();
 
-    expect(listOfChips.length).toBe(0);
+    expect(listOfChips).toHaveLength(0);
     expect(formControl.value).toEqual([]);
   });
 
@@ -161,7 +161,7 @@ describe('IxChipsComponent', () => {
       const isOpen = await matAutocomplete.isOpen();
 
       expect(isOpen).toBeFalsy();
-      expect(chips.length).toBe(1);
+      expect(chips).toHaveLength(1);
       expect(formControl.value).toEqual(['ssl-cert']);
     }));
 
@@ -175,7 +175,7 @@ describe('IxChipsComponent', () => {
       const isOpen = await matAutocomplete.isOpen();
       const chips = await matChipList.getChips();
 
-      expect(chips.length).toBe(1);
+      expect(chips).toHaveLength(1);
       expect(isOpen).toBeTruthy();
     }));
 

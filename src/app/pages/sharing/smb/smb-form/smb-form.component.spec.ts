@@ -187,7 +187,7 @@ describe('SmbFormComponent', () => {
   it('should have error for duplicate share name', async () => {
     const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
     await nameControl.setValue('ds222');
-    expect(await nameControl.getErrorText()).toEqual('The name "ds222" is already in use.');
+    expect(await nameControl.getErrorText()).toBe('The name "ds222" is already in use.');
   });
 
   it('when a preset is selected, the relevant fields should be impacted', async () => {
@@ -286,7 +286,7 @@ describe('SmbFormComponent', () => {
     const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
     await pathControl.setValue('/mnt/pool2/ds22');
 
-    expect(await nameControl.getValue()).toEqual('ds22');
+    expect(await nameControl.getValue()).toBe('ds22');
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
       title: helptextSharingSmb.stripACLDialog.title,

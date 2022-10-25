@@ -252,8 +252,8 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-list')).toBeVisible();
-      expect(spectator.queryAll('ix-list-item').length).toEqual(1);
-      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(listSchema.items.length);
+      expect(spectator.queryAll('ix-list-item')).toHaveLength(1);
+      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items.length);
       expect(spectator.query(IxListComponent).empty).toBe(false);
       expect(spectator.query(IxListComponent).label).toBe(listSchema.title);
 
@@ -275,7 +275,7 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('.label')).toHaveText('Label Dict');
-      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(dictSchema.attrs.length);
+      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs.length);
 
       spectator.queryAll(IxListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
@@ -335,7 +335,7 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      expect(spectator.queryAll(IxListItemComponent).length).toEqual(1);
+      expect(spectator.queryAll(IxListItemComponent)).toHaveLength(1);
       spectator.query(IxListItemComponent).delete.emit();
 
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledWith({

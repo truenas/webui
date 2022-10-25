@@ -57,7 +57,7 @@ describe('DiskFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('it disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
+  it('disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
     const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
     const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
     await clearPassword.setValue(true);
@@ -84,7 +84,7 @@ describe('DiskFormComponent', () => {
     });
   });
 
-  it('it saves disk settings when form is saved', async () => {
+  it('saves disk settings when form is saved', async () => {
     spectator.component.setFormDisk(dataDisk);
     const changeValue = {
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',

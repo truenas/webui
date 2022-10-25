@@ -79,7 +79,7 @@ describe('DatasetDetailsCardComponent', () => {
 
   it('shows details', () => {
     const details = spectator.queryAll('.details-item');
-    expect(details.length).toEqual(8);
+    expect(details).toHaveLength(8);
 
     expect(details[0].querySelector('.label')).toHaveText('Type:');
     expect(details[0].querySelector('.value')).toHaveText('FILESYSTEM');

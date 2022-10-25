@@ -58,17 +58,10 @@ export class FailoverSettingsComponent implements OnInit {
     const values = this.form.getRawValue();
 
     this.ws.call('failover.update', [values])
-      .pipe(
-        switchMap(() => {
-          return this.dialogService.info(
-            this.translate.instant('Failover'),
-            this.translate.instant('Settings saved.'),
-          );
-        }),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          this.snackbar.success(this.translate.instant('Settings saved.'));
           this.isLoading = false;
           this.cdr.markForCheck();
 

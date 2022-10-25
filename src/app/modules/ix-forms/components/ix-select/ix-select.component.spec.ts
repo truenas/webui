@@ -63,7 +63,7 @@ describe('IxSelectComponent', () => {
       expect(spectator.component.isDisabled).toBeTruthy();
     });
 
-    it('MatSelect should be disabled', async () => {
+    it('disables MatSelect when setDisabledState is true', async () => {
       spectator.component.setDisabledState(true);
 
       const select = await loader.getHarness(MatSelectHarness);
@@ -111,7 +111,7 @@ describe('IxSelectComponent', () => {
 
       const select = await loader.getHarness(MatSelectHarness);
       const currentValue = await select.getValueText();
-      expect(currentValue).toEqual('FRA');
+      expect(currentValue).toBe('FRA');
     });
 
     it('writes values when option is selected from the dropdown', async () => {
@@ -120,7 +120,7 @@ describe('IxSelectComponent', () => {
       const select = await loader.getHarness(MatSelectHarness);
       await select.open();
       await select.clickOptions({ text: 'GBR' });
-      expect(control.value).toEqual('Great Britain');
+      expect(control.value).toBe('Great Britain');
     });
 
     it('shows \'No options\' if options length === 0', async () => {

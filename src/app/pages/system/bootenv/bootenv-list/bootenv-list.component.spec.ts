@@ -1,59 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import {
-  Spectator,
-  createComponentFactory,
-  mockProvider,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import {
-  mockWebsocket,
-  mockCall,
-} from 'app/core/testing/utils/mock-websocket.utils';
-import { Bootenv } from 'app/interfaces/bootenv.interface';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
+import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-
-export const fakeBootEnvironmentsDataSource = [
-  {
-    id: 'CLONE',
-    realname: 'CLONE',
-    name: 'CLONE',
-    active: '',
-    activated: false,
-    can_activate: true,
-    mountpoint: '-',
-    space: '384.0K',
-    created: {
-      $date: 1661185620000,
-    },
-    keep: false,
-    rawspace: 393216,
-  },
-  {
-    id: '22.12-MASTER-20220808-020013',
-    realname: '22.12-MASTER-20220808-020013',
-    name: '22.12-MASTER-20220808-020013',
-    active: 'NR',
-    activated: true,
-    can_activate: true,
-    mountpoint: 'legacy',
-    space: '2.61G',
-    created: {
-      $date: 1660053120000,
-    },
-    keep: false,
-    rawspace: 2797170688,
-  },
-] as Bootenv[];
 
 describe('BootEnvironmentListComponent', () => {
   let spectator: Spectator<BootEnvironmentListComponent>;

@@ -38,15 +38,15 @@ describe('UserMenuComponent', () => {
     const apiKeys = await menu.getItems({ text: /API Keys$/ });
     const apiKeysElement = await apiKeys[0].host();
 
-    expect(await apiKeysElement.getAttribute('href')).toEqual('/apikeys');
+    expect(await apiKeysElement.getAttribute('href')).toBe('/apikeys');
   });
 
   it('has a Guide menu item that opens user guide', async () => {
     const guide = await menu.getItems({ text: /Guide$/ });
     const guideElement = await guide[0].host();
 
-    expect(await guideElement.getAttribute('href')).toEqual('https://www.truenas.com/docs/');
-    expect(await guideElement.getAttribute('target')).toEqual('_blank');
+    expect(await guideElement.getAttribute('href')).toBe('https://www.truenas.com/docs/');
+    expect(await guideElement.getAttribute('target')).toBe('_blank');
   });
 
   it('has an About menu item that opens AboutDialogComponent when clicked', async () => {

@@ -166,7 +166,7 @@ describe('NetworkConfigurationComponent', () => {
     );
   });
 
-  it('saves activity as ALLOW with activities = [] when "Deny All" is selected ', async () => {
+  it('saves activity as ALLOW with activities = [] when "Deny All" is selected', async () => {
     const outboundRadioGroup = await loader.getHarness(IxRadioGroupHarness.with({ selector: '.outbound-network-radio' }));
     await outboundRadioGroup.setValue('Deny All');
 

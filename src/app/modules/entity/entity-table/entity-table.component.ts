@@ -45,6 +45,7 @@ import {
 import { EntityUtils } from 'app/modules/entity/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -209,6 +210,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     public changeDetectorRef: ChangeDetectorRef,
     protected layoutService: LayoutService,
     protected slideIn: IxSlideInService,
+    private snackbar: SnackbarService,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
@@ -1016,7 +1018,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
                   }
                 }
                 if (message === '') {
-                  this.dialogService.info(this.translate.instant('Items deleted'), '');
+                  this.snackbar.success(this.translate.instant('Items deleted'));
                 } else {
                   message = '<ul>' + message + '</ul>';
                   this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);

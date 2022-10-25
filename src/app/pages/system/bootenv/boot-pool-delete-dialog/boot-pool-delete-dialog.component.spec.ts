@@ -15,7 +15,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
-import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component.spec';
+import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 const mockSuccessBulkResponse = [{
