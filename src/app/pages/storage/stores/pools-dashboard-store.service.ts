@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {
   combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -164,7 +164,12 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   }
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
-    return this.ws.call('disk.temperature_agg', [disksNames, 14]);
+    return this.ws.call('disk.temperature_agg', [disksNames, 14]).pipe(
+      catchError((error: WebsocketError) => {
+        console.error('Error loading temperature: ', error);
+        return of({});
+      }),
+    );
   }
 
   getProcessedDisks(
