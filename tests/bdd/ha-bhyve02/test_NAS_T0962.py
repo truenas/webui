@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -15,8 +16,11 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
+pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='Active_Directory', scope='session')
 @scenario('features/NAS-T962.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_verify_active_directory_works_after_failover_with_new_system_dataset(driver):
     """Verify Active Directory works after failover with new system dataset."""
@@ -24,8 +28,9 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
+    depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:
@@ -52,6 +57,8 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
+    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
@@ -209,6 +216,7 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
     assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
+    time.sleep(10)
 
 
 @then('wait for the login page to appear')
@@ -216,6 +224,7 @@ def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
     assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    driver.refresh()
     assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
 
 
@@ -359,11 +368,13 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page(driver):
     driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
     time.sleep(1)
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Updating Dataset ACL")]')
 
 
 @then(parsers.parse('click on the "{dataset_name}" 3 dots button, select View Permissions'))
 def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
     """click on the "my_ad_dataset" 3 dots button, select View Permissions."""
+
     assert wait_on_element(driver, 15, f'//div[contains(text(),"{dataset_name}")]')
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()

@@ -15,6 +15,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T954.feature', 'Edit User enable Password')
@@ -24,8 +25,9 @@ def test_edit_user_enable_password(driver):
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_user}"."""
+    depends(request, ['First_User', 'Setup_SSH'], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:

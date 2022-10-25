@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -13,16 +14,20 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
+pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='SMB_ACTIVE_Directory', scope='session')
 @scenario('features/NAS-T963.feature', 'Add an ACL Item and verify is preserve')
 def test_add_an_acl_item_and_verify_is_preserve(driver):
     """Add an ACL Item and verify is preserve."""
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
+    depends(request, ['Active_Directory'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -47,7 +52,7 @@ def if_the_login_page_appears_enter__user_and_password(driver, user, password):
 @then('on the Dashboard, click Storage on the left sidebar')
 def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
     """on the Dashboard, click Storage on the left sidebar."""
-    assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
@@ -110,6 +115,7 @@ def click_the_save_button_should_be_returned_to_the_storage_page(driver):
     assert wait_on_element(driver, 5, '//button[contains(.,"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Updating Dataset ACL")]')
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
 
 
@@ -132,4 +138,4 @@ def the_dataset_permissions_box_should_appear(driver):
 @then(parsers.parse('verify the new ACL item for user "{name}" still exist'))
 def verify_the_new_acl_item_for_user_ericbsd_still_exist(driver, name):
     """verify the new ACL item for user "ericbsd" still exist."""
-    assert wait_on_element(driver, 5, '//div[text()="User - ericbsd"]')
+    assert wait_on_element(driver, 5, '//div[@class="name" and text()="User - ericbsd"]')

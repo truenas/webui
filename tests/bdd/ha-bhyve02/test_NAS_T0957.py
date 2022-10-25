@@ -13,6 +13,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T957.feature', 'Verify invalid email cannot enter be in the User Edit Page')
@@ -22,8 +23,9 @@ def test_verify_invalid_email_cannot_enter_be_in_the_user_edit_page(driver):
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """The browser is open navigate to "{nas_url}"."""
+    depends(request, ['First_User'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         time.sleep(1)

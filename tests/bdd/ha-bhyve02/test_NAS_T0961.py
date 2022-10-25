@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -14,8 +15,11 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
+pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='System_Dataset', scope='session')
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
 def test_creating_new_pool_and_set_it_as_system_dataset(driver):
     """Creating new pool and set it as System Dataset."""
@@ -23,16 +27,15 @@ def test_creating_new_pool_and_set_it_as_system_dataset(driver):
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
+    depends(request, ["Setup_HA"], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         time.sleep(1)
-    else:
-        driver.refresh()
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -88,12 +91,13 @@ def the_pool_manager_page_should_open(driver):
 
 
 @then(parsers.parse('enter {pool_name} for pool name, check the box next to {disk}'))
-def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name, disk):
+def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name):
     """enter dozer for pool name, check the box next to sdb."""
     assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys(pool_name)
-    driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
+    # click the first disk on the list
+    driver.find_element_by_xpath('(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]').click()
 
 
 @then('press right arrow under data vdev, click on the Force checkbox')
@@ -157,11 +161,8 @@ def navigate_to_system_setting_and_click_misc(driver):
 @then('the Advanced page should open')
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Cron Jobs")]')
-    element = driver.find_element_by_xpath('//h3[contains(.,"Cron Jobs")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//h1[text()="Advanced"]')
+    assert wait_on_element(driver, 7, '//h3[text()="System Dataset Pool"]')
 
 
 @then('click on System Dataset')
@@ -177,12 +178,14 @@ def click_on_system_dataset(driver):
 @then('the System Dataset page should open')
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
-    assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
+    assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool") and @class="ix-formtitle"]')
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
+    assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
+    time.sleep(1)  # needed on my local machine or the test fails.
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
     assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{pool_name}")]')
@@ -211,10 +214,13 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    # driver.refresh()
+    assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodeb") and @class="mat-list-item-content"]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
-    # 5 second to let the system get ready for the next step.
-    time.sleep(5)
+    # 30 second to let the system get ready for the next step.
+    # ALso triggering a failover directly after changing a system dataset is
+    # not real world scenario
+    time.sleep(120)
 
 
 @then('verify the system dataset is dozer on the active node')
@@ -237,12 +243,16 @@ def press_Initiate_Failover_and_confirm(driver):
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
     assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
+    time.sleep(10)
 
 
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
-    assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 120, '//input[@data-placeholder="Username"]')
+    driver.refresh()
+    # Wait for HA is enable before login in. The UI will act up if HA is not enable.
+    assert wait_on_element(driver, 180, '//p[text()="HA is enabled."]')
     assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
@@ -254,9 +264,10 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    assert wait_on_element(driver, 120, '//div[contains(text(),"tn-bhyve01-nodea") and @class="mat-list-item-content"]')
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
-    time.sleep(5)
+    time.sleep(60)
 
 
 @then('verify the system dataset is dozer on the active node after failover')
