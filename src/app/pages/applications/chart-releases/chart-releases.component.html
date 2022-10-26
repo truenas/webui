@@ -7,16 +7,16 @@
       <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button *ngIf="!areAllAppsSelected" mat-menu-item (click)="onSelectAll()">
+      <button *ngIf="!areAllAppsSelected" mat-menu-item (click)="$event.stopPropagation(); onSelectAll()">
         <ix-icon name="mdi-check-circle-outline"></ix-icon>
         <span>{{ 'Select All' | translate }}</span>
       </button>
-      <button *ngIf="areAllAppsSelected" mat-menu-item (click)="onUnselectAll()">
+      <button *ngIf="areAllAppsSelected" mat-menu-item (click)="$event.stopPropagation(); onUnselectAll()">
         <ix-icon name="mdi-check-circle"></ix-icon>
         <span>{{ 'Unselect All' | translate }}</span>
       </button>
       <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkStart()">
-        <ix-icon name="mdi-play-arrow"></ix-icon>
+        <ix-icon name="mdi-play"></ix-icon>
         <span>{{ 'Start' | translate }}</span>
       </button>
       <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkStop()">
