@@ -139,9 +139,9 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
 
     # on the Add Dataset page, input the dataset name "{dataset_name}"
     assert wait_on_element(driver, 10, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 10, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
+    assert wait_on_element(driver, 10, '//input[@ix-auto="textarea__Name"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="textarea__Name"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="textarea__Name"]').send_keys(dataset_name)
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
