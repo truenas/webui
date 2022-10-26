@@ -22,7 +22,7 @@ export class ChartUpgradeDialogComponent {
   dialogConfig: ChartUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptext;
-  versionOptions: Record<string, Version> = {};
+  versionOptions = new Map<string, Version>();
   selectedVersionKey: string;
   selectedVersion: Version;
 
@@ -35,26 +35,28 @@ export class ChartUpgradeDialogComponent {
   ) {
     this.dialogConfig = data;
 
-    this.versionOptions[this.dialogConfig.upgradeSummary.latest_version] = this.dialogConfig.upgradeSummary;
-    this.versionOptions[this.dialogConfig.upgradeSummary.latest_version].fetched = true;
+    this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {
+      ...this.dialogConfig.upgradeSummary,
+      fetched: true,
+    });
 
     if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
       this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
         if (!(availableVersion.version in this.versionOptions)) {
-          this.versionOptions[availableVersion.version] = {
+          this.versionOptions.set(availableVersion.version, {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
             changelog: null,
             container_images_to_update: null,
             item_update_available: null,
             available_versions_for_upgrade: null,
-          };
+          });
         }
       });
     }
 
     this.selectedVersionKey = Object.keys(this.versionOptions)[0];
-    this.selectedVersion = this.versionOptions[this.selectedVersionKey];
+    this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
   }
 
   hasUpdateImages(): boolean {
@@ -63,7 +65,7 @@ export class ChartUpgradeDialogComponent {
   }
 
   onVersionOptionChanged(): void {
-    this.selectedVersion = this.versionOptions[this.selectedVersionKey];
+    this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
     if (!this.selectedVersion.fetched) {
       this.appLoaderService.open();
       this.appService.getUpgradeSummary(this.dialogConfig.appInfo.name, this.selectedVersionKey)

@@ -1,0 +1,70 @@
+<h1 matDialogTitle>{{ 'Upgrade' | translate }}</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p *ngIf="!isJobCompleted">
+    <strong>
+      {{ 'The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
+    </strong>
+  </p>
+  <p *ngIf="isJobCompleted">
+    <strong *ngIf="failedCount">
+      {{ 'Warning: {n} of {total} applications could not be upgraded.' | translate: { n: failedCount, total: bulkItems.size } }}
+    </strong>
+    <strong *ngIf="successCount">
+      {{ '{n, plural, one {# application} other {# applications}} has been upgraded.' | translate: { n: successCount } }}
+    </strong>
+  </p>
+
+  <div class="bulk-list">
+    <ix-bulk-list-item
+      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackById"
+      [item]="bulkItem.value"
+    >
+      {{ bulkItem.key }}
+
+      <div class="version">
+        <span *ngIf="!wasSubmitted">{{ bulkItem.value.item.human_version }}</span>
+        <ng-container *ngIf="options.has(bulkItem.key) && !wasSubmitted">
+          <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+          <ix-select
+            [formControlName]="bulkItem.key"
+            [required]="true"
+            [tooltip]="tooltips.tag | translate"
+            [options]="options.get(bulkItem.key)"
+          ></ix-select>
+        </ng-container>
+        <ng-container *ngIf="wasSubmitted || !options.has(bulkItem.key)">
+          <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+          <span>{{ form.get(bulkItem.key)?.value }}</span>
+        </ng-container>
+        <ng-container *ngIf="bulkItem?.value?.message">
+          <ix-icon name="mdi-circle-small"></ix-icon>
+          <span>{{ bulkItem.value.message }}</span>
+        </ng-container>
+      </div>
+    </ix-bulk-list-item>
+  </div>
+
+  <div class="form-actions">
+    <button
+      *ngIf="!wasSubmitted"
+      mat-button
+      type="submit"
+      color="primary"
+      [disabled]="form.invalid || bulkItems.size === 0"
+    >
+      {{ 'Upgrade' | translate }}
+    </button>
+    <button *ngIf="!wasSubmitted" mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      *ngIf="wasSubmitted"
+      mat-button
+      type="button"
+      [matDialogClose]="true"
+      [disabled]="!isJobCompleted"
+    >
+      {{ 'Close' | translate }}
+    </button>
+  </div>
+</form>
