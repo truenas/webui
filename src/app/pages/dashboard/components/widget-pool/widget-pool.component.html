@@ -47,7 +47,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }}</span>
             </div>
           </h3>
@@ -89,7 +89,7 @@
         </mat-toolbar-row>
 
         <!-- Carousel -->
-        <div *ngIf="poolState && path" class="carousel" #carousel>
+        <div *ngIf="poolState && path" #carousel class="carousel">
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
               <ix-icon name="error"></ix-icon>
@@ -204,7 +204,7 @@
                     </div>
                     <!-- END ROW -->
 
-                    <div class="disk-errors tr" *ngIf="poolState.status == PoolStatus.Online">
+                    <div *ngIf="poolState.status == PoolStatus.Online" class="disk-errors tr">
                       <div class="td label">
                         <strong>Disks with Errors:</strong>
                       </div>
@@ -236,7 +236,7 @@
                 fxLayout="column"
                 fxLayoutAlign="space-around center"
               >
-                <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked">
+                <div *ngIf="poolState.topology && poolState.topology.data; else locked" fxFlex="100">
                   <div class="list-subheader">
                     <span class="capitalize">{{ 'Overview' | translate }}</span>
                   </div>
@@ -313,10 +313,10 @@
                     </mat-list-item>
 
                     <mat-list-item
-                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                       [ngClass]="{
                         clickable: poolState.topology.spare.length > 0
                       }"
+                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                     >
                       <strong>
                         {{ 'Spares' | translate }}:

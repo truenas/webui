@@ -10,7 +10,7 @@
   >
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <h5 class="title" *ngIf="title">
+        <h5 *ngIf="title" class="title">
           <ng-container *ngIf="titleHref; else plainTitle">
             <a [routerLink]="titleHref">
               {{ title }}

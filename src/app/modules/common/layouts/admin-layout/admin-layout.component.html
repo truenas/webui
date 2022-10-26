@@ -9,9 +9,9 @@
 >
   <!-- Main side navigation -->
   <mat-sidenav
-    [fxFlex]="sidenavWidth"
     #sidenav
     class="sidebar-panel not-alerts"
+    [fxFlex]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"
     (closedStart)="onMenuClosed()"
@@ -25,16 +25,16 @@
       >
         <a routerLink="/dashboard" class="logo">
           <mat-icon
-            [svgIcon]="themeService.isDefaultTheme ? 'ix:truenas_scale_logomark_color': 'ix:truenas_scale_logomark'"
             alt="TrueNAS SCALE"
             class="app-logo"
+            [svgIcon]="themeService.isDefaultTheme ? 'ix:truenas_scale_logomark_color': 'ix:truenas_scale_logomark'"
           ></mat-icon>
         </a>
         <a routerLink="/dashboard" class="logo-text">
           <mat-icon
-            [svgIcon]="themeService.isDefaultTheme? 'ix:truenas_scale_logotype_color': 'ix:truenas_scale_logotype'"
             alt="TrueNAS SCALE"
             class="app-logo-text"
+            [svgIcon]="themeService.isDefaultTheme? 'ix:truenas_scale_logotype_color': 'ix:truenas_scale_logotype'"
           ></mat-icon>
         </a>
       </div>

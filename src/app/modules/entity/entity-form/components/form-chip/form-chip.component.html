@@ -37,7 +37,7 @@
         (removed)="remove(item)"
       >
         {{ item }}
-        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
       </mat-chip>
       <input
         *ngIf="!config.autocomplete; else autoCompleteBlock"
@@ -50,8 +50,8 @@
       />
       <ng-template #autoCompleteBlock>
         <input
-          [placeholder]="config.placeholder | translate"
           #chipInput
+          [placeholder]="config.placeholder | translate"
           [formControl]="chipCtrl"
           [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"

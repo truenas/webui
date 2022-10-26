@@ -47,7 +47,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }} </span>
             </div>
           </h3>
@@ -55,15 +55,15 @@
           <div class="controls">
             <button
               mat-icon-button
-              [ix-auto]="nicState.name"
               ix-auto-type="button"
               ix-auto-identifier="configure"
+              [ix-auto]="nicState.name"
               (click)="manageInterface(nicState)"
             >
               <mat-icon
-                [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
                 matTooltipPosition="above"
                 aria-label="Configure Interface"
+                [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
               >
                 edit
               </mat-icon>
@@ -71,15 +71,15 @@
 
             <button
               mat-icon-button
-              [ix-auto]="nicState.name"
               ix-auto-type="button"
               ix-auto-identifier="networkReports"
+              [ix-auto]="nicState.name"
               (click)="router.navigate(['reportsdashboard/network'])"
             >
               <mat-icon
-                [matTooltip]="'Network Reports' | translate"
                 matTooltipPosition="above"
                 aria-label="Network Reports"
+                [matTooltip]="'Network Reports' | translate"
               >
                 insert_chart
               </mat-icon>
@@ -87,7 +87,7 @@
           </div>
         </mat-toolbar-row>
         <!-- Carousel -->
-        <div class="carousel" #carousel [class.lagg]="nicState.lagg_ports">
+        <div #carousel class="carousel" [class.lagg]="nicState.lagg_ports">
           <div
             fxFlex="100"
             class="slide overview"
@@ -187,15 +187,15 @@
                     </ng-container>
                   </mat-list-item>
                   <mat-list-item
-                    (click)="updateSlide(PathEnum.Addresses, ipAddresses.length > 1, 1)"
                     [ngClass]="{ clickable: ipAddresses.length > 1 }"
+                    (click)="updateSlide(PathEnum.Addresses, ipAddresses.length > 1, 1)"
                   >
                     <strong>{{ 'IP Addresses' | translate }}:</strong>
                     {{ ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length }}
                     <span *ngIf="ipAddresses.length > 0">
                       /{{ ipAddresses[0].netmask }}
                     </span>
-                    <span class="more-addresses" *ngIf="ipAddresses.length > 1">
+                    <span *ngIf="ipAddresses.length > 1" class="more-addresses">
                       ({{ '{n} more' | translate: { n: ipAddresses.length - 1 } }})
                     </span>
                     <mat-icon
@@ -283,9 +283,9 @@
                 <mat-icon
                   *ngIf="vlan.aliases.length"
                   class="next-slide"
-                  [ix-auto]="vlan.name"
                   ix-auto-type="button"
                   ix-auto-identifier="nextSlide"
+                  [ix-auto]="vlan.name"
                 >
                   chevron_right
                 </mat-icon>
@@ -317,8 +317,8 @@
           ></div>
 
           <div
-            class="slide vlan-addresses"
             *ngIf="path[2].name === PathEnum.VlanAddresses"
+            class="slide vlan-addresses"
             fxFlex="100"
           >
             <div class="list-subheader">{{ 'VLAN Addresses' | translate }}</div>

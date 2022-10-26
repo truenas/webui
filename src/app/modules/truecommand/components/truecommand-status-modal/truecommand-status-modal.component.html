@@ -13,12 +13,12 @@
     </mat-icon>
     <span>{{ tc.status | translate }}</span>
   </div>
-  <div id="error" *ngIf="tc.status_reason">
+  <div *ngIf="tc.status_reason" id="error">
     {{ tc.status_reason | translate }}
   </div>
   <div
-    id="tc-ip"
     *ngIf="tc.status === TrueCommandStatus.Connected && tc.remote_ip_address"
+    id="tc-ip"
   >
     <mat-icon svgIcon="ix:truecommand_logo_blue" class="tc-icon"></mat-icon>
     <span>{{ tc.remote_ip_address }}</span>

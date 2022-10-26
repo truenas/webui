@@ -1,4 +1,4 @@
-<div class={{id}} [ngClass]="id !== slideInModalId ? 'jw-modal' : ''" cdkScrollable>
+<div class={{id}} cdkScrollable [ngClass]="id !== slideInModalId ? 'jw-modal' : ''">
   <div class="jw-modal-body">
     <div class="slidein-title-bar" fxLayout="row">
       <div fxFlex="90%" fxLayout="row" fxLayoutAlign="start center">
@@ -9,12 +9,12 @@
     <ng-container *ngIf="!wizard; else wizardBlock">
       <ng-container *appLet="asFormConfig(conf) as formConf">
         <ng-container *ngIf="formOpen && formConf && (!formConf.formType || formConf.formType == 'EntityFormComponent')">
-          <ix-entity-form *ngIf="formConf.fieldSets" [conf]="formConf" class="slidein-entity-form"></ix-entity-form>
+          <ix-entity-form *ngIf="formConf.fieldSets" class="slidein-entity-form" [conf]="formConf"></ix-entity-form>
         </ng-container>
       </ng-container>
     </ng-container>
     <ng-template #wizardBlock>
-      <ix-entity-wizard [conf]="asWizardConfig(conf)" *ngIf="formOpen" class="slidein-entity-form"></ix-entity-wizard>
+      <ix-entity-wizard *ngIf="formOpen" class="slidein-entity-form" [conf]="asWizardConfig(conf)"></ix-entity-wizard>
     </ng-template>
   </div>
 </div>
