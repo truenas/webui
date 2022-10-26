@@ -1156,6 +1156,8 @@
   "Group to which this ACL entry applies.": "",
   "Group:": "",
   "Groups could not be loaded": "",
+  "HA Disabled": "",
+  "HA Enabled": "",
   "HA is administratively disabled.": "",
   "HA is in a faulted state": "",
   "HEX": "",
