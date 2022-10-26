@@ -129,7 +129,7 @@
                       svgIcon="ix:freenas_certified"
                     ></mat-icon>
                   </ng-template>
-                  <div class="generic alert" *ngIf="isPassive && haStatus !== 'HA Enabled'">
+                  <div class="generic alert" *ngIf="showImgAlert">
                     <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
                   <div *ngIf="productImage && isHa && !isPassive" class="ha-node-status">
@@ -138,7 +138,7 @@
                   <div *ngIf="productImage && isHa && isPassive && haStatus === 'HA Enabled'" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise" class="ha-node-status">
+                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise && haStatus === 'HA Enabled'" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
