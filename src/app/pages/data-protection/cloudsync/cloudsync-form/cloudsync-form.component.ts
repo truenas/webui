@@ -17,9 +17,12 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import {
+  BwLimit, CloudCredential, CloudSyncTaskUi, CloudSyncTaskUpdate,
+} from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -84,7 +87,12 @@ export class CloudsyncFormComponent {
     encryption_password: [''],
     encryption_salt: [''],
     transfers: [null as number],
-    bwlimit: [[] as string[]],
+    bwlimit: [[] as BwLimit[] | string | string[]],
+    attributes: ['' as unknown as { [key: string]: string | number | boolean }],
+    path: [null as string],
+    include: [[] as string[]],
+    schedule: [null as Schedule],
+    args: [''],
   });
 
   isLoading = false;
@@ -492,11 +500,11 @@ export class CloudsyncFormComponent {
     this.form.patchValue({
       ...task,
       cloudsync_picker: scheduleToCrontab(task.schedule) as CronPresetValue,
-      credentials: task.credentials.id,
+      credentials: (task.credentials as CloudCredential).id,
       encryption: task.encryption,
-      bwlimit: task.bwlimit.map((bwlimit) => {
+      bwlimit: (task.bwlimit as BwLimit[]).map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth)}`
+          ? `${bwlimit.time}, ${filesize(+bwlimit.bandwidth)}`
           : `${bwlimit.time}, off`;
       }),
     });
@@ -544,7 +552,7 @@ export class CloudsyncFormComponent {
     }
   }
 
-  prepareBwlimit(bwlimit: string): { time: string; bandwidth: string }[] {
+  prepareBwlimit(bwlimit: string): BwLimit[] {
     const bwlimtArr = [];
 
     for (const limit of bwlimit) {
@@ -572,8 +580,7 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  prepareData(formValue: any): CloudSyncTaskUpdate {
-    const value = _.cloneDeep(formValue);
+  prepareData(value: CloudsyncFormComponent['form']['value']): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
     if (value.direction === Direction.Pull) {
@@ -652,17 +659,18 @@ export class CloudsyncFormComponent {
     delete value.cloudsync_picker;
 
     if (value.bwlimit !== undefined) {
-      value.bwlimit = this.prepareBwlimit(value.bwlimit);
+      value.bwlimit = this.prepareBwlimit(value.bwlimit as string);
     }
 
     if (value.direction === Direction.Pull) {
       value.snapshot = false;
     }
+
     return value;
   }
 
   onDryRun(): void {
-    const payload = this.prepareData(this.form.value);
+    const payload = this.prepareData({ ...this.form.value });
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.job_dialog_title_dry_run },
       disableClose: true,
@@ -688,10 +696,11 @@ export class CloudsyncFormComponent {
   }
 
   onSubmit(): void {
-    const payload = this.prepareData(this.form.value);
+    const payload = this.prepareData({ ...this.form.value });
 
     this.isLoading = true;
     let request$: Observable<unknown>;
+
     if (this.isNew) {
       request$ = this.ws.call('cloudsync.create', [payload]);
     } else {

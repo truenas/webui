@@ -11,7 +11,7 @@ import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudCredential, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
@@ -469,7 +469,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   cloudsyncDataSourceHelper(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
     const cloudsyncData = data.map((task) => {
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.credential = task.credentials.name;
+      task.credential = (task.credentials as CloudCredential).name;
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');

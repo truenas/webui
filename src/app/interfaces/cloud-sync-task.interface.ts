@@ -13,14 +13,14 @@ export interface CloudCredential {
 
 export interface BwLimit {
   time: string;
-  bandwidth: number;
+  bandwidth: string | number;
 }
 
 export interface CloudSyncTask {
   args: string;
   attributes: { [key: string]: string | number | boolean };
-  bwlimit: BwLimit[];
-  credentials: CloudCredential;
+  bwlimit: BwLimit[] | string | string[];
+  credentials: number | CloudCredential;
   description: string;
   direction: Direction;
   enabled: boolean;
