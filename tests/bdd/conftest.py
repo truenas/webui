@@ -165,9 +165,9 @@ def pytest_runtest_makereport(item):
                 if handle != initial_tab:
                     web_driver.close()
             web_driver.switch_to.window(initial_tab)
-        if 'T1010' in screenshot_name or 'T933' in screenshot_name:
+        if 'T1010' in screenshot_name or 'T0933' in screenshot_name:
             disable_active_directory()
-        elif 'T1013' in screenshot_name or 'T940' in screenshot_name:
+        elif 'T1013' in screenshot_name or 'T0940' in screenshot_name:
             disable_ldap()
 
 
