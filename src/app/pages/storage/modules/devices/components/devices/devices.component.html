@@ -106,13 +106,14 @@
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
               (click)="viewDetails(poolId, vdev.guid)"
-              (keydown.enter)="isTreeNodePressed($event) ? viewDetails(poolId, vdev.guid) : null"
+              (keydown.enter)="viewDetails(poolId, vdev.guid)"
             >
               <button
                 mat-icon-button
                 ixTreeNodeToggle
                 [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
                 (click)="$event.preventDefault()"
+                (keydown.enter)="$event.stopPropagation()"
               >
                 <mat-icon>
                   {{ treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right' }}

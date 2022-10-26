@@ -283,8 +283,4 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
   }
-
-  isTreeNodePressed(event: Event): boolean {
-    return (event.target as HTMLElement).localName !== 'button';
-  }
 }

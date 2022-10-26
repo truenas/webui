@@ -191,10 +191,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  isTreeNodePressed(event: Event): boolean {
-    return (event.target as HTMLElement).localName !== 'button';
-  }
-
   closeMobileDetails(): void {
     this.showMobileDetails = false;
   }

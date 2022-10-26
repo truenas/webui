@@ -87,13 +87,14 @@
                 routerLinkActive="selected"
                 [routerLink]="['/datasets', dataset.id]"
                 (click)="viewDetails(dataset)"
-                (keydown.enter)="isTreeNodePressed($event) ? viewDetails(dataset) : null"
+                (keydown.enter)="viewDetails(dataset)"
               >
                 <button
                   mat-icon-button
                   ixTreeNodeToggle
                   [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
                   (click)="$event.preventDefault()"
+                  (keydown.enter)="$event.stopPropagation()"
                 >
                   <mat-icon class="mat-icon-rtl-mirror">
                     {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
