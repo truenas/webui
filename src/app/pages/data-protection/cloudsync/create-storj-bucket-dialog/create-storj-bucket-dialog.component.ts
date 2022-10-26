@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -24,6 +25,7 @@ export class CreateStorjBucketDialogComponent {
     private appLoader: AppLoaderService,
     private dialogService: DialogService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },
+    private formErrorHandler: FormErrorHandlerService,
   ) {}
 
   onSubmit(): void {
@@ -35,8 +37,7 @@ export class CreateStorjBucketDialogComponent {
       },
       error: (error) => {
         this.appLoader.close();
-        this.dialogService.errorReportMiddleware(error);
-        this.dialogRef.close(false);
+        this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
   }
