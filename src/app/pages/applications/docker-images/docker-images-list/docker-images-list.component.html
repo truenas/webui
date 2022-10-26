@@ -132,7 +132,7 @@
       mat-row
     ></tr>
 
-    <tr class="mat-row no-data-row" *matNoDataRow>
+    <tr *matNoDataRow class="mat-row no-data-row">
       <td class="mat-cell" [attr.colspan]="displayedColumns.length">
         <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
       </td>

@@ -29,9 +29,9 @@
     >
       <div>
         <mat-spinner
-          [diameter]="40"
           *ngIf="spinner"
           class="spinner"
+          [diameter]="40"
         ></mat-spinner>
       </div>
 
@@ -67,17 +67,17 @@
 
     <!-- Enclosure Selector -->
     <div
+      *ngIf="showEnclosureSelector && events && system && system.pools && system.enclosures && system.enclosures.length > 1 && supportedHardware"
+      #navigation
       fxFlex="240px"
       fxFlex.lt-lg="180px"
-      #navigation
-      *ngIf="showEnclosureSelector && events && system && system.pools && system.enclosures && system.enclosures.length > 1 && supportedHardware"
       class="enclosure-selector"
     >
       <ng-container *ngFor="let enclosure of system.profile; let i = index">
         <div
           *ngIf="enclosure.enclosureKey != system.rearIndex"
-          (click)="selectEnclosure(i)"
           class="enclosure enclosure-{{ i }} {{ selectedEnclosure.enclosureKey == i ? 'active' : '' }}"
+          (click)="selectEnclosure(i)"
         >
           <div *ngIf="system.enclosures[enclosure.enclosureKey].label == system.enclosures[enclosure.enclosureKey].name">
             {{ enclosure.model }} ({{ i }})

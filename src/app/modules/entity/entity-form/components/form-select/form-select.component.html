@@ -31,11 +31,11 @@
   </ng-container>
   <mat-form-field
     #field
+    value="fromFormField"
     [ngClass]="{
       'full-width': !config.inlineLabel,
       'half-width': config.inlineLabel
     }"
-    value="fromFormField"
   >
     <mat-spinner
       *ngIf="config.isLoading"

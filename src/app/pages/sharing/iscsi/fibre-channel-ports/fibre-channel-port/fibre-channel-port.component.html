@@ -1,9 +1,9 @@
 <div class="fc-row-detail">
   <form
-    (ngSubmit)="onSubmit()"
-    [formGroup]="formGroup"
-    class="form-wrap"
     #entityForm="ngForm"
+    class="form-wrap"
+    [formGroup]="formGroup"
+    (ngSubmit)="onSubmit()"
   >
     <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
       <div

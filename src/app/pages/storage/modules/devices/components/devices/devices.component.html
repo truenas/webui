@@ -79,8 +79,8 @@
                   mat-icon-button
                   ixTreeNodeToggle
                   class="vdev-group-toggle"
-                  (click)="$event.preventDefault()"
                   [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
+                  (click)="$event.preventDefault()"
                 >
                   <mat-icon>
                     {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
@@ -139,8 +139,8 @@
   </div>
   <div
     class="details-container"
-    [class.details-container-mobile]="showMobileDetails"
     ixDetailsHeight="rightside-content-hold"
+    [class.details-container-mobile]="showMobileDetails"
   >
     <ix-disk-details-panel
       *ngIf="selectedNode"

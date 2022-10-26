@@ -1,9 +1,9 @@
 <mat-card id="train-card">
   <mat-spinner
-    [diameter]="40"
-    id="update-spinner"
     *ngIf="showSpinner"
     #updatespinner
+    id="update-spinner"
+    [diameter]="40"
   >
   </mat-spinner>
   <form class="ix-form-container" [formGroup]="form">
@@ -15,8 +15,8 @@
       ></ix-checkbox>
     </div>
     <div
-      class="train-card-row train-select-row"
       *ngIf="trains.length > 1; else trainName"
+      class="train-card-row train-select-row"
     >
       <ix-select
         formControlName="train"
@@ -112,7 +112,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card class="p-0" *ngIf="releaseNotes">
+<mat-card *ngIf="releaseNotes" class="p-0">
   <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
       <div class="mat-card-title-text">{{ 'Release Notes' | translate }}</div>
@@ -125,7 +125,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightlyTrain">
+<mat-card *ngIf="changeLog && nightlyTrain" class="p-0" id="changelog-card">
   <mat-card-title id="changelog-title">
     <div>{{ 'Change log' | translate }}</div>
   </mat-card-title>
@@ -185,7 +185,7 @@
   </h4>
 </mat-card>
 
-<mat-card id="button-card" *ngIf="!isUpdateRunning">
+<mat-card *ngIf="!isUpdateRunning" id="button-card">
   <div class="row">
     <div class="col-md-12">
       <button
@@ -227,7 +227,7 @@
     </div>
   </div>
 </mat-card>
-<mat-card id="update-in-progress-card" *ngIf="isUpdateRunning">
+<mat-card *ngIf="isUpdateRunning" id="update-in-progress-card">
   <div class="row">
     <div class="col-md-12">
       <p>

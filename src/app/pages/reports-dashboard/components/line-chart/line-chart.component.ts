@@ -50,7 +50,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() labelY?: string = 'Label Y';
   @Input() interactive = false;
 
-  library = 'dygraph'; // dygraph or chart.js
+  library: 'dygraph' | 'chart.js' = 'dygraph';
 
   chart: Dygraph;
 

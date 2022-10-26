@@ -1,10 +1,10 @@
 <mat-card>
-  <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <div class="form-wrap">
       <div
-        [ngClass]="'form-line'"
         fxFlex="100%"
         fxFlex.gt-xs="calc(100% - 16px)"
+        [ngClass]="'form-line'"
       >
         <div
           id="dynamicField_allow_all_initiators"
@@ -23,8 +23,8 @@
         <label>{{ 'Connected Initiators' | translate }}</label>
         <ix-tooltip [message]="connectedInitiatorsTooltip"></ix-tooltip>
         <mat-selection-list
-          class="connected-initiators-list"
           #connectedInitiatorsList
+          class="connected-initiators-list"
           [disabled]="connectedInitiatorsDisabled"
         >
           <mat-list-option
@@ -51,17 +51,17 @@
       </div>
 
       <div
-        [ngClass]="'form-inline'"
         fxFlex="100%"
         fxFlex.gt-xs="calc(50% - 16px)"
+        class="form-inline"
       >
         <ix-dynamic-list [config]="fieldConfig[1] | cast" [group]="formGroup">
         </ix-dynamic-list>
       </div>
       <div
-        [ngClass]="'form-line'"
         fxFlex="100%"
         fxFlex.gt-xs="calc(100% - 16px)"
+        class="form-line"
       >
         <div
           id="dynamicField_comment"

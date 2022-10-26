@@ -6,8 +6,8 @@
       <ng-container [ngSwitch]="topologyState.health">
         <mat-icon
           *ngSwitchCase="topologyHealthLevel.Safe"
-          [matTooltip]="'Everything is fine' | translate"
           class="pool-icon icon-online"
+          [matTooltip]="'Everything is fine' | translate"
         >
           check_circle
         </mat-icon>

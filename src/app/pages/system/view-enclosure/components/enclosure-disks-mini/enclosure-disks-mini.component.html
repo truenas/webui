@@ -4,10 +4,10 @@
   ngClass.md="md"
   ngClass.sm="sm"
   ngClass.xs="xs"
+  id="{{ currentTab.alias }}"
   [ngClass]="{
     'multiple-enclosures': system && system.profile && system.profile.length > 1
   }"
-  id="{{ currentTab.alias }}"
   (window:resize)="onResize()"
 >
   <mat-toolbar id="Disks-toolbar">
@@ -40,7 +40,7 @@
       <div class="header-container" id="legend">
         <h3 class="header">{{ 'Pools' | translate }}</h3>
         <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-          <div class="legend-item" *ngFor="let pool of enclosurePools; let i = index">
+          <div *ngFor="let pool of enclosurePools; let i = index" class="legend-item">
             <div
               class="swatch"
               [style.background]="theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]"
@@ -63,9 +63,9 @@
       <div fxLayout="row" id="disks-overview" [class]="currentView">
         <!-- DISK NAMES -->
         <div
+          *ngIf="enclosure && enclosure.driveTrayObjects"
           fxFlex
           class="disks-overlay names"
-          *ngIf="enclosure && enclosure.driveTrayObjects"
         >
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i = index">
             <div
@@ -89,7 +89,7 @@
         <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
 
         <!-- DISK STATUS -->
-        <div fxFlex *ngIf="enclosure" class="disks-overlay status">
+        <div *ngIf="enclosure" fxFlex class="disks-overlay status">
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i = index">
             <div *ngIf="findDiskBySlotNumber(i + 1)" [style.top]="'calc(' + stackPositions()[i].y + 'px + 8px)'">
               <div class="status-icon">
@@ -114,10 +114,10 @@
     </div>
 
     <!-- DETAILS/OVERVIEW -->
-    <div fxFlex id="disks-details" #diskDetails>
+    <div #diskDetails fxFlex id="disks-details">
       <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
         <!-- DISK SELECTED -->
-        <div class="header-container" #disksdetails id="details">
+        <div #disksdetails class="header-container" id="details">
           <button class="back-btn" mat-button (click)="clearDisk()">
             <mat-icon>close</mat-icon>
           </button>
@@ -212,7 +212,7 @@
                 <div class="capacity">{{ converter(selectedDisk.size) }}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
-                <ul class="disk-stats" *ngIf="selectedDisk.stats; else nostats">
+                <ul *ngIf="selectedDisk.stats; else nostats" class="disk-stats">
                   <li>
                     <strong>{{ 'Read Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
