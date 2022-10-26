@@ -3,13 +3,11 @@
 <form [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
     <p>{{ 'Add a new bucket to your Storj account.' | translate }}</p>
-    <ix-fieldset>
-      <ix-input
-        formControlName="bucket"
-        [required]="true"
-        [label]="'Bucket name' | translate"
-      ></ix-input>
-    </ix-fieldset>
+    <ix-input
+      formControlName="bucket"
+      [required]="true"
+      [label]="'Bucket name' | translate"
+    ></ix-input>
   </div>
   <div mat-dialog-actions>
     <span fxFlex></span>

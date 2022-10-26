@@ -18,7 +18,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncBucket } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -31,6 +31,8 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService, DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+const newStorjBucket = 'new_storj_bucket';
 
 @UntilDestroy()
 @Component({
@@ -110,6 +112,7 @@ export class CloudsyncFormComponent {
     { label: this.translate.instant('MOVE'), value: TransferMode.Move },
   ]);
 
+  credentialsList: CloudsyncCredential[] = [];
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
       return options.map((option) => (
@@ -173,23 +176,24 @@ export class CloudsyncFormComponent {
     this.form.controls.encryption_salt.disable();
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
-      if (selectedOption === 'new_storj_bucket') {
-        const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
-          width: '500px',
-          data: {
-            credentialsId: this.form.controls.credentials.value,
-          },
-        });
-        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
-          if (bucket !== false) {
-            this.isLoading = true;
-            this.setBucketOptions(this.form.controls.credentials.value, 'STORJ_IX');
-            this.form.controls.bucket.setValue(bucket);
-          } else {
-            this.form.controls.bucket.setValue('');
-          }
-        });
+      if (selectedOption !== newStorjBucket) {
+        return;
       }
+      const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+        width: '500px',
+        data: {
+          credentialsId: this.form.controls.credentials.value,
+        },
+      });
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+        if (bucket !== false) {
+          this.isLoading = true;
+          this.loadBucketOptions();
+          this.form.controls.bucket.setValue(bucket);
+        } else {
+          this.form.controls.bucket.setValue('');
+        }
+      });
     });
     this.form.controls.direction.valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
       if (direction === Direction.Pull || this.form.controls.transfer_mode.value === TransferMode.Move) {
@@ -247,6 +251,7 @@ export class CloudsyncFormComponent {
 
         this.cloudCredentialService.getCloudsyncCredentials()
           .pipe(untilDestroyed(this)).subscribe((credentialsList) => {
+            this.credentialsList = credentialsList;
             this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providersList) => {
               const targetCredentials = _.find(credentialsList, { id: credentials });
               const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
@@ -266,7 +271,7 @@ export class CloudsyncFormComponent {
                   this.bucketInputTooltip = helptext.bucket_input_tooltip;
                 }
 
-                this.setBucketOptions(targetCredentials.id, targetCredentials.provider);
+                this.loadBucketOptions();
 
                 this.cdr.markForCheck();
               } else {
@@ -392,18 +397,19 @@ export class CloudsyncFormComponent {
     });
   }
 
-  setBucketOptions(id: number, provider: string): void {
-    this.getBuckets(id).pipe(untilDestroyed(this)).subscribe({
+  loadBucketOptions(): void {
+    const targetCredentials = _.find(this.credentialsList, { id: this.form.controls.credentials.value });
+    this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
       next: (buckets) => {
         const bucketOptions = buckets.map((bucket) => ({
           label: bucket.Name,
           value: bucket.Path,
           disabled: !bucket.Enabled,
         }));
-        if (provider === 'STORJ_IX') {
+        if (targetCredentials.provider === CloudsyncProviderName.Storj) {
           bucketOptions.unshift({
             label: this.translate.instant('Add new'),
-            value: 'new_storj_bucket',
+            value: newStorjBucket,
             disabled: false,
           });
         }
@@ -424,7 +430,7 @@ export class CloudsyncFormComponent {
           hideCheckBox: true,
           buttonMsg: this.translate.instant('Fix Credential'),
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id } };
+          const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
           this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
         });
         this.cdr.markForCheck();
