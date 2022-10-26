@@ -664,7 +664,7 @@ export class CloudsyncFormComponent {
   }
 
   onDryRun(): void {
-    const payload = this.prepareData({ ...this.form.value } as unknown as CloudSyncTaskForm);
+    const payload = this.prepareData({ ...this.form.value } as CloudSyncTaskForm);
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.job_dialog_title_dry_run },
       disableClose: true,
@@ -690,7 +690,7 @@ export class CloudsyncFormComponent {
   }
 
   onSubmit(): void {
-    const payload = this.prepareData({ ...this.form.value } as unknown as CloudSyncTaskForm);
+    const payload = this.prepareData({ ...this.form.value } as CloudSyncTaskForm);
 
     this.isLoading = true;
     let request$: Observable<unknown>;

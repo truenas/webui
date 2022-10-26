@@ -17,17 +17,17 @@ export interface BwLimit {
 }
 
 export interface CloudSyncTaskForm extends CloudSyncTask {
-  folder_destination: string;
-  path_source: string;
-  path_destination: string;
-  folder_source: string;
+  folder_destination: string[];
+  path_source: string[];
+  path_destination: string[];
+  folder_source: string[];
   bucket: string;
   bucket_input: string;
-  bucket_policy_only: string;
+  bucket_policy_only: boolean;
   task_encryption: string;
   storage_class: string;
-  fast_list: string;
-  chunk_size: string;
+  fast_list: boolean;
+  chunk_size: number;
   cloudsync_picker: string;
 }
 
