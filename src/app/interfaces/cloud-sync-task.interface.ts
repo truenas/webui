@@ -16,6 +16,21 @@ export interface BwLimit {
   bandwidth: string | number;
 }
 
+export interface CloudSyncTaskForm extends CloudSyncTask {
+  folder_destination: string;
+  path_source: string;
+  path_destination: string;
+  folder_source: string;
+  bucket: string;
+  bucket_input: string;
+  bucket_policy_only: string;
+  task_encryption: string;
+  storage_class: string;
+  fast_list: string;
+  chunk_size: string;
+  cloudsync_picker: string;
+}
+
 export interface CloudSyncTask {
   args: string;
   attributes: { [key: string]: string | number | boolean };

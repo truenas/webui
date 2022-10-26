@@ -18,11 +18,10 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import {
-  BwLimit, CloudCredential, CloudSyncTaskUi, CloudSyncTaskUpdate,
+  BwLimit, CloudCredential, CloudSyncTaskUi, CloudSyncTaskUpdate, CloudSyncTaskForm,
 } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
-import { Schedule } from 'app/interfaces/schedule.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -87,12 +86,7 @@ export class CloudsyncFormComponent {
     encryption_password: [''],
     encryption_salt: [''],
     transfers: [null as number],
-    bwlimit: [[] as BwLimit[] | string | string[]],
-    attributes: ['' as unknown as { [key: string]: string | number | boolean }],
-    path: [null as string],
-    include: [[] as string[]],
-    schedule: [null as Schedule],
-    args: [''],
+    bwlimit: [[] as string[]],
   });
 
   isLoading = false;
@@ -580,7 +574,7 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  prepareData(value: CloudsyncFormComponent['form']['value']): CloudSyncTaskUpdate {
+  prepareData(value: CloudSyncTaskForm): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
     if (value.direction === Direction.Pull) {
@@ -670,7 +664,7 @@ export class CloudsyncFormComponent {
   }
 
   onDryRun(): void {
-    const payload = this.prepareData({ ...this.form.value });
+    const payload = this.prepareData({ ...this.form.value } as unknown as CloudSyncTaskForm);
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.job_dialog_title_dry_run },
       disableClose: true,
@@ -696,7 +690,7 @@ export class CloudsyncFormComponent {
   }
 
   onSubmit(): void {
-    const payload = this.prepareData({ ...this.form.value });
+    const payload = this.prepareData({ ...this.form.value } as unknown as CloudSyncTaskForm);
 
     this.isLoading = true;
     let request$: Observable<unknown>;
