@@ -26,11 +26,11 @@ def test_setting_up_ldap_and_verify_that_ldap_still_work_after_failover():
     """Setting up LDAP and verify that LDAP still work after failover."""
 
 
-@given(parsers.parse('the browser is open on "{virtal_hostname}" and logged in'))
-def the_browser_is_open_on_virtal_hostname_and_logged_in(driver, virtal_hostname):
-    """the browser is open on "{virtal_hostname}" and logged in."""
-    if virtal_hostname not in driver.current_url:
-        driver.get(f"http://{virtal_hostname}/ui/dashboard/")
+@given(parsers.parse('the browser is open on "{virtual_hostname}" and logged in'))
+def the_browser_is_open_on_virtual_hostname_and_logged_in(driver, virtual_hostname):
+    """the browser is open on "{virtual_hostname}" and logged in."""
+    if virtual_hostname not in driver.current_url:
+        driver.get(f"http://{virtual_hostname}/ui/dashboard/")
         time.sleep(1)
     if not is_element_present(driver, xpaths.sideMenu.dashboard):
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -106,17 +106,17 @@ def click_save_then_please_wait_should_appear_and_you_should_see_settings_saved(
 
 
 @then(parsers.parse('ssh to virtual node and run "{pdbedit_cmd}", return "{ldap_user}" info'))
-def ssh_to_virtual_node_and_run_pdbedit_cmd_return_ldap_user_info(pdbedit_cmd, ldap_user, virtal_hostname):
+def ssh_to_virtual_node_and_run_pdbedit_cmd_return_ldap_user_info(pdbedit_cmd, ldap_user, virtual_hostname):
     """ssh to virtual node and run "{pdbedit_cmd}", return "{ldap_user}" info."""
-    ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtal_hostname)
+    ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtual_hostname)
     assert ssh_result['result'] is True, str(ssh_result['output'])
     assert ldap_user in ssh_result['output'], str(ssh_result['output'])
 
 
 @then(parsers.parse('run "{getent_cmd}" and verify it return LDAP user info'))
-def run_getent_cmd_and_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtal_hostname):
+def run_getent_cmd_and_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtual_hostname):
     """run "{getent_cmd}" and verify it return LDAP user info."""
-    ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtal_hostname)
+    ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtual_hostname)
     assert ssh_result['result'], ssh_result['output']
     assert ldap_user in ssh_result['output'], ssh_result['output']
 
@@ -170,16 +170,16 @@ def on_the_dashboard_make_sure_ha_is_enabled(driver):
 
 
 @then('ssh to the virtual node again to verify the pdbedit command still works')
-def ssh_to_the_virtual_node_again_to_verify_the_pdbedit_command_still_works(pdbedit_cmd, ldap_user, virtal_hostname):
+def ssh_to_the_virtual_node_again_to_verify_the_pdbedit_command_still_works(pdbedit_cmd, ldap_user, virtual_hostname):
     """ssh to the virtual node again to verify the pdbedit command still works."""
-    ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtal_hostname)
+    ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtual_hostname)
     assert ssh_result['result'] is True, str(ssh_result)
     assert ldap_user in ssh_result['output'], str(ssh_result)
 
 
 @then('rerun the getent command to verify it return LDAP user info')
-def rerun_the_getent_command_to_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtal_hostname):
+def rerun_the_getent_command_to_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtual_hostname):
     """rerun the getent command to verify it return LDAP user info."""
-    ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtal_hostname)
+    ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtual_hostname)
     assert ssh_result['result'], str(ssh_result)
     assert ldap_user in ssh_result['output'], str(ssh_result)

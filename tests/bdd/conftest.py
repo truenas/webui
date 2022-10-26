@@ -258,33 +258,37 @@ def enable_failover():
 
 
 def disable_active_directory():
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
-    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]')
+    assert wait_on_element(driver, 5, '//li[span/a/text()="LDAP"]')
+    assert wait_on_element(driver, 5, '//h4[contains(text(),"Domain Credentials")]')
+    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
     wait_on_element(7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    if wait_on_element_disappear(120, '//h6[contains(.,"Please wait")]') is False:
-        web_driver.refresh()
+    assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
 def disable_ldap():
     wait_on_element(5, '//span[contains(.,"root")]')
     element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__LDAP"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__LDAP"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
-    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]')
+    assert wait_on_element(driver, 5, '//li[span/a/text()="LDAP"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Server Credentials")]')
+    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'clickable')
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
     wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    if wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]') is False:
-        web_driver.refresh()
+    assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
