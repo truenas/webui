@@ -8,6 +8,7 @@ from function import (
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
+    refresh_if_element_missing,
     put
 
 )
@@ -145,4 +146,5 @@ def wait_on_the_login_to_appear(driver):
     assert wait_on_element(driver, 60, xpaths.login.user_input)
     # wait for HA is enabled to avoid UI refreshing
     driver.refresh()
-    assert wait_on_element(driver, 60, xpaths.login.ha_status('HA is enabled'))
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 120, xpaths.login.ha_status('HA is enabled'))
