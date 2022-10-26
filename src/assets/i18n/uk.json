@@ -57,6 +57,7 @@
   "OpenVPN": "",
   "Other node is currently processing a failover event.": "",
   "Others": "",
+  "PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.": "",
   "POSIX": "",
   "Pin vcpus": "",
   "Pod Shell": "",

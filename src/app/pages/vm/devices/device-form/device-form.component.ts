@@ -19,7 +19,9 @@ import {
 import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { NetworkService, VmService, WebSocketService } from 'app/services';
+import {
+  DialogService, NetworkService, VmService, WebSocketService,
+} from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -223,6 +225,7 @@ export class DeviceFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private slideIn: IxSlideInService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -303,6 +306,25 @@ export class DeviceFormComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
+
+    if (this.typeControl.value === VmDeviceType.Pci) {
+      this.ws.call('vm.device.passthrough_device_choices')
+        .pipe(untilDestroyed(this)).subscribe((passthroughDevices) => {
+          if (!passthroughDevices[this.pciForm.controls.pptdev.value]?.reset_mechanism_defined) {
+            this.dialogService.confirm({
+              title: this.translate.instant('Warning'),
+              message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
+            }).pipe(untilDestroyed(this)).subscribe((res) => res && this.onSend());
+          } else {
+            this.onSend();
+          }
+        });
+    } else {
+      this.onSend();
+    }
+  }
+
+  private onSend(): void {
     this.isLoading = true;
 
     const update: VmDeviceUpdate = {

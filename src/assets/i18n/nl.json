@@ -22,6 +22,7 @@
   "Max length allowed for pool name is 50": "",
   "Other node is currently processing a failover event.": "",
   "Others": "",
+  "PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.": "",
   "Product ID": "",
   "Repeat first Vdev": "",
   "Replacing Boot Pool Disk": "",

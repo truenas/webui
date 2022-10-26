@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
@@ -22,7 +23,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -61,8 +62,12 @@ describe('DeviceFormComponent', () => {
           } as VmUsbPassthroughDeviceChoice,
         }),
         mockCall('vm.device.passthrough_device_choices', {
-          pci_0000_00_1c_0: {} as VmPassthroughDeviceChoice,
-          pci_0000_00_1c_5: {} as VmPassthroughDeviceChoice,
+          pci_0000_00_1c_0: {
+            reset_mechanism_defined: true,
+          } as VmPassthroughDeviceChoice,
+          pci_0000_00_1c_5: {
+            reset_mechanism_defined: false,
+          } as VmPassthroughDeviceChoice,
         }),
         mockCall('vm.random_mac', '00:a0:98:30:09:90'),
         mockCall('vm.device.nic_attach_choices', {
@@ -78,6 +83,9 @@ describe('DeviceFormComponent', () => {
           'pci-ohci': 'pci-ohci',
         }),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
     ],
@@ -430,6 +438,8 @@ describe('DeviceFormComponent', () => {
       });
       await saveButton.click();
 
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
         attributes: {
           pptdev: 'pci_0000_00_1c_0',
@@ -456,6 +466,13 @@ describe('DeviceFormComponent', () => {
         'PCI Passthrough Device': 'pci_0000_00_1c_5',
       });
       await saveButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Warning',
+          message: 'PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.',
+        }),
+      );
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [4, {
         attributes: {

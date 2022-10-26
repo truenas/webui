@@ -255,6 +255,7 @@
   "Others": "",
   "Outbound Activity": "",
   "PCI Passthrough Device": "",
+  "PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.": "",
   "Parent": "",
   "Password is not set": "",
   "Password is set": "",
