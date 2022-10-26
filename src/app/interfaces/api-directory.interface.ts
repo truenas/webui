@@ -411,6 +411,7 @@ export type ApiDirectory = {
     params: [id: number, update: CloudsyncCredentialUpdate];
     response: CloudsyncCredential;
   };
+  'cloudsync.create_bucket': { params: [number, string]; response: void };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
   'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: CloudsyncCredentialVerifyResult };
   'cloudsync.onedrive_list_drives': { params: [CloudsyncOneDriveParams]; response: CloudsyncOneDriveDrive[] };

@@ -20,6 +20,7 @@ import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -99,6 +100,7 @@ export class UpdateComponent implements OnInit {
     protected storage: StorageService,
     private store$: Store<AppState>,
     private fb: FormBuilder,
+    private snackbar: SnackbarService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -540,7 +542,7 @@ export class UpdateComponent implements OnInit {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             dialogRef.close(false);
-            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '');
+            this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
             this.pendingupdates();
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

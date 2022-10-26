@@ -114,8 +114,9 @@ export class AlertConfigFormComponent implements OnInit {
       }
     }
 
-    this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe(
-      { next: () => this.snackbarService.success(this.translate.instant('Settings saved')), error: (error) => new EntityUtils().handleWsError(this, error, this.dialog) },
-    ).add(() => this.isFormLoading = false);
+    this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe({
+      next: () => this.snackbarService.success(this.translate.instant('Settings saved.')),
+      error: (error) => new EntityUtils().handleWsError(this, error, this.dialog),
+    }).add(() => this.isFormLoading = false);
   }
 }
