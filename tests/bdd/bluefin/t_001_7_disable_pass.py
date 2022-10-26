@@ -37,11 +37,11 @@ def test_disable_pass(driver, nas_ip):
 
     # change should be saved, open the user page and verify the user Disable Password is true
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
 
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]/td', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]')
     
     #Updated value should be visible.
