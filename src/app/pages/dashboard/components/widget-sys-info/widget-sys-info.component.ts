@@ -68,6 +68,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   haStatusText = HaStatusText;
   uptimeString: string;
   dateTime: string;
+  widgetDisabled = false;
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
@@ -103,12 +104,20 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
       ).subscribe((haStatus) => {
+        this.widgetDisabled = false;
         if (haStatus.status === HaStatusText.HaEnabled) {
           this.ws.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
             .subscribe((systemInfo: SystemInfo) => {
               this.processSysInfo(systemInfo);
             });
+
+          if (this.data) {
+            this.setProductImage(this.data);
+          }
+        } else if (haStatus.status === HaStatusText.HaDisabled) {
+          this.productImage = '';
+          this.widgetDisabled = true;
         }
         this.haStatus = haStatus.status;
       });
