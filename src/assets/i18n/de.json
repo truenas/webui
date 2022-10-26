@@ -3309,8 +3309,6 @@
   "Group to which this ACL entry applies.": "Gruppe, für die dieser ACL-Eintrag gilt.",
   "Guest Account": "Gastkonto",
   "Guest Operating System": "Gastbetriebssystem",
-  "HA Disabled": "HA deaktiviert",
-  "HA Enabled": "HA aktiviert",
   "HA Status": "HA-Status",
   "HA is enabled": "HA ist aktiviert",
   "HA is enabled.": "HA ist aktiviert.",

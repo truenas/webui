@@ -2523,8 +2523,6 @@
   "Group to which this ACL entry applies.": "Groupe auquel cette entrée ACL s'applique.",
   "Guest Account": "Compte invité",
   "Guest Operating System": "Système d'exploitation invité",
-  "HA Disabled": "HA désactivé",
-  "HA Enabled": "HA activé",
   "HA Status": "Statut HA",
   "HA is administratively disabled.": "HA est administrativement désactivée.",
   "HA is enabled": "HA est activé",

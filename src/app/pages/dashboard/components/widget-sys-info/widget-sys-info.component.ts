@@ -10,6 +10,7 @@ import {
   differenceInSeconds, differenceInDays, addSeconds, format,
 } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
+import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -64,6 +65,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   haStatus: string;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
+  haStatusText = HaStatusText;
   uptimeString: string;
   dateTime: string;
 
@@ -101,10 +103,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
       ).subscribe((haStatus) => {
-        if (haStatus.status === 'HA Enabled' && !this.data) {
-          this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((systemInfo: SystemInfo) => {
-            this.processSysInfo(systemInfo);
-          });
+        if (haStatus.status === HaStatusText.HaEnabled) {
+          this.ws.call('failover.call_remote', ['system.info'])
+            .pipe(untilDestroyed(this))
+            .subscribe((systemInfo: SystemInfo) => {
+              this.processSysInfo(systemInfo);
+            });
         }
         this.haStatus = haStatus.status;
       });

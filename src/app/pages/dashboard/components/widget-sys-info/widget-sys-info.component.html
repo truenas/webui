@@ -129,7 +129,7 @@
                       svgIcon="ix:freenas_certified"
                     ></mat-icon>
                   </ng-template>
-                  <div class="generic alert" *ngIf="!productImage && isPassive && haStatus !== 'HA Enabled'">
+                  <div class="generic alert" *ngIf="!productImage && isPassive && haStatus !== haStatusText.HaEnabled">
                     <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
                   <div *ngIf="productImage && isHa" class="ha-node-status">
@@ -162,7 +162,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
+                    [disabled]="!haStatus || haStatus !== haStatusText.HaEnabled"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -181,7 +181,7 @@
               </div>
 
               <div
-                *ngIf="!data && isHa && isPassive && haStatus && haStatus !== 'HA Enabled'"
+                *ngIf="!data && isHa && isPassive && haStatus && haStatus !== haStatusText.HaEnabled"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -269,7 +269,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
+                    [disabled]="!haStatus || haStatus !== haStatusText.HaEnabled"
                     color="primary"
                   ></ix-simple-failover-button>
                 </div>

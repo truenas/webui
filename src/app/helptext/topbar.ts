@@ -1,12 +1,13 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
   ha_status: T('HA Status'),
-  ha_status_text_enabled: T('HA Enabled'),
+  ha_status_text_enabled: T(HaStatusText.HaEnabled),
   ha_is_enabled: T('HA is enabled'),
-  ha_status_text_disabled: T('HA Disabled'),
+  ha_status_text_disabled: T(HaStatusText.HaDisabled),
   ha_disabled_reasons: {
     [FailoverDisabledReason.NoVolume]: T('No pools are configured.'),
     [FailoverDisabledReason.NoVip]: T('No interfaces configured with Virtual IP.'),
