@@ -1257,7 +1257,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .slidein-nav {
     background-color: var(--contrast-darker);
-    height: 100vh;
+    height: calc(100vh - 48px);
     left: -239px;
     position: absolute;
     top: 48px;
