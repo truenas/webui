@@ -39,7 +39,7 @@ def test_disable_pass(driver, nas_ip):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
 
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]/td', 'clickable')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"ericbsd")]/td', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Password Disabled:")]')
