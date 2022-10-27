@@ -128,7 +128,13 @@
             <ul>
               <li>
                 <strong>{{ 'Pool' | translate }}:</strong> &nbsp;&nbsp;&nbsp;
-                {{ selectedDisk.vdev ? selectedDisk.vdev.pool : ('Disk not attached to any pools.' | translate) }}
+                {{
+                  selectedDisk.vdev?.pool
+                    ? selectedDisk.vdev.pool
+                    : selectedDisk?.pool
+                      ? selectedDisk.pool
+                      : ('Disk not attached to any pools.' | translate)
+                }}
               </li>
 
               <li>

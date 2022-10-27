@@ -188,7 +188,7 @@
   },
   "lint-staged": {
     "*.{ts,html}": "eslint --cache --fix",
-    "*.html": "markuplint --fix",
+    "*.html": "markuplint",
     "*.scss": "stylelint --fix"
   }
 }

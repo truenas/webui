@@ -16,7 +16,7 @@ export type ApiEventDirectory = {
   'chart.release.query': { response: ChartRelease };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
-  'failover.disabled.reasons': { response: FailoverDisabledReason[] };
+  'failover.disabled.reasons': { response: { disabled_reasons: FailoverDisabledReason[] } };
   'service.query': { response: Service };
   'truecommand.config': { response: TrueCommandConfig };
   'vm.query': { response: VirtualMachine };
