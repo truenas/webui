@@ -16,7 +16,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1560.feature', 'Group Tests')
+@scenario('features/NAS-T1558.feature', 'Group Tests')
 def test_group_tests(driver,):
     """group tests."""
     pass

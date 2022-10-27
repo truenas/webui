@@ -17,7 +17,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
-@scenario('features/NAS-T1558.feature', 'Storage Tests')
+@scenario('features/NAS-T1560.feature', 'Storage Tests')
 def test_storage_tests(driver):
     """storage tests."""
     pass
