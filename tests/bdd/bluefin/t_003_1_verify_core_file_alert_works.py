@@ -44,14 +44,14 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
 
 
     # wait for the alert and verify the core files warning alert
-    assert wait_on_element(driver, 7, '//mat-icon[contains(text(),"notifications")]')
+    assert wait_on_element(driver, 10, '//mat-icon[contains(text(),"notifications")]')
     assert wait_on_element(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
-    assert wait_on_element(driver, 7, '//mat-icon[contains(.,"notifications")]', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-icon[contains(.,"notifications")]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[contains(.,"notifications")]').click()
-    assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//h3[contains(.,"WARNING")]')
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
-    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//mat-icon[text()="warning"]')
+    assert wait_on_element(driver, 20, '//h3[text()="Alerts"]')
+    assert wait_on_element(driver, 20, '//mat-list-item[contains(.,"Core files")]//h3[contains(.,"WARNING")]')
+    assert wait_on_element(driver, 20 '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
+    assert wait_on_element(driver, 20, '//mat-list-item[contains(.,"Core files")]//mat-icon[text()="warning"]')
 
 
     # click on the core files warning Dismiss and verify it is dismissed
