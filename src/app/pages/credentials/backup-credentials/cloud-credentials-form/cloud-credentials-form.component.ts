@@ -191,10 +191,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.valid) {
-            this.dialogService.info(
-              this.translate.instant('Valid'),
-              this.translate.instant('The credentials are valid.'),
-            );
+            this.snackbarService.success(this.translate.instant('The credentials are valid.'));
           } else {
             this.dialogService.errorReport('Error', response.excerpt, response.error);
           }

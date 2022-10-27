@@ -1,16 +1,22 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import {
+  filter, map, switchMap, take,
+} from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
+import { haSettingsUpdated } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
@@ -47,6 +53,8 @@ export class FailoverSettingsComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -59,16 +67,12 @@ export class FailoverSettingsComponent implements OnInit {
 
     this.ws.call('failover.update', [values])
       .pipe(
-        switchMap(() => {
-          return this.dialogService.info(
-            this.translate.instant('Failover'),
-            this.translate.instant('Settings saved.'),
-          );
-        }),
+        map(() => { this.store$.dispatch(haSettingsUpdated()); }),
         untilDestroyed(this),
       )
       .subscribe({
         next: () => {
+          this.snackbar.success(this.translate.instant('Settings saved.'));
           this.isLoading = false;
           this.cdr.markForCheck();
 

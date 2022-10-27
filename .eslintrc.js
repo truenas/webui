@@ -294,7 +294,13 @@ module.exports = {
       "rules": {
         "jest/no-large-snapshots": ["error"],
         "jest/prefer-equality-matcher": ["error"],
-        "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }]
+        "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }],
+        "jest/expect-expect": [
+          "error",
+          {
+            "assertFunctionNames": ["expect", "expectObservable"],
+          }
+        ]
       }
     },
     {

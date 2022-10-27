@@ -13,6 +13,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  Inject,
 } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,6 +26,7 @@ import {
   filter,
   map,
 } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -96,6 +98,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
@@ -270,10 +273,14 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate(['/storage', 'create']);
   }
 
-  // Expose hidden details on mobile
-  openMobileDetails(): void {
+  viewDetails(dataset: DatasetDetails): void {
+    this.router.navigate(['/datasets', dataset.id]);
+
     if (this.isMobileView) {
       this.showMobileDetails = true;
+
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
   }
 }
