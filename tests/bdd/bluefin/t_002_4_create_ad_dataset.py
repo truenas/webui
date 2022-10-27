@@ -17,6 +17,7 @@ def test_create_ad_dataset(driver, dataset_name, group_name):
     """test_create_ad_dataset"""
 
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
+        assert wait_on_element_disappear(driver, 15, '//div[contains(@class,"cdk-overlay-backdrop-showing")]')
         assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
         driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
