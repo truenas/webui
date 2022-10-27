@@ -142,6 +142,6 @@ def reopen_the_user_edit_page_and_ensure_that_the_additional_group_was_saved(dri
 @then('Aux Group added should be visible')
 def aux_group_added_should_be_visible(driver):
     """Aux Group added should be visible."""
-    assert wait_on_element(driver, 7, '//mat-select[contains(.,"root,")]')
+    assert wait_on_element(driver, 7, '//mat-select[contains(.,"42,")]')
     assert wait_on_element(driver, 7, '//ix-modal-header//mat-icon[contains(.,"cancel")]', 'clickable')
     driver.find_element_by_xpath('//ix-modal-header//mat-icon[contains(.,"cancel")]').click()
