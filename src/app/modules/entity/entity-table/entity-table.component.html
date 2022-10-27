@@ -102,9 +102,9 @@
             [sticky]="isLeftStickyColumnNo(i)"
           >
             <th
+              *matHeaderCellDef
               class="data-column"
               mat-header-cell
-              *matHeaderCellDef
               [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
               [class.sticky-border-right]="
                 isLeftStickyColumnNo(i) && isTableOverflow()
@@ -117,10 +117,10 @@
               {{ currentColumns[i].name | translate }}
             </th>
             <td
-              [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
+              *matCellDef="let element"
               class="data-column"
               mat-cell
-              *matCellDef="let element"
+              [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
               [class.sticky-border-right]="
                 isLeftStickyColumnNo(i) && isTableOverflow()
               "
@@ -168,8 +168,8 @@
               <ng-container *ngIf="hasDetails() === true">
                 <ng-container *ngIf="element === expandedElement">
                   <button
-                    [attr.aria-label]="'Close expanded row' | translate"
                     class="transparent-btn"
+                    [attr.aria-label]="'Close expanded row' | translate"
                   >
                     <mat-icon
                       fontSet="mdi-set"
@@ -181,8 +181,8 @@
                 </ng-container>
                 <ng-container *ngIf="element !== expandedElement">
                   <button
-                    [attr.aria-label]="'Expand row' | translate"
                     class="transparent-btn"
+                    [attr.aria-label]="'Expand row' | translate"
                   >
                     <mat-icon
                       fontSet="mdi-set"
@@ -203,15 +203,15 @@
             stickyEnd
           >
             <th
+              *matHeaderCellDef
               class="threedot-column"
               mat-header-cell
-              *matHeaderCellDef
               [ngClass]="{ 'sticky-border-left': isTableOverflow() }"
             ></th>
             <td
+              *matCellDef="let element"
               class="threedot-column"
               mat-cell
-              *matCellDef="let element"
               [ngClass]="{ 'sticky-border-left': isTableOverflow() }"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
@@ -232,7 +232,7 @@
             matColumnDef="{{ column }}"
             sticky
           >
-            <th class="multiselect-column" *matHeaderCellDef mat-header-cell>
+            <th *matHeaderCellDef class="multiselect-column" mat-header-cell>
               <mat-checkbox
                 color="primary"
                 ix-auto
@@ -244,9 +244,9 @@
               ></mat-checkbox>
             </th>
             <td
+              *matCellDef="let element"
               class="multiselect-column"
               mat-cell
-              *matCellDef="let element"
               [ngStyle]="{ cursor: checkLength() ? 'auto' : 'pointer' }"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
@@ -270,9 +270,9 @@
             matColumnDef="{{ column }}"
           >
             <th
+              *matHeaderCellDef
               class="toggle-column"
               mat-header-cell
-              *matHeaderCellDef
               [class.padded-away]="
                 !shouldApplyStickyOffset(i) &&
                 !(isLeftStickyColumnNo(i) && isTableOverflow())
@@ -281,9 +281,9 @@
               {{ currentColumns[i].name | translate }}
             </th>
             <td
+              *matCellDef="let element"
               class="toggle-column"
               mat-cell
-              *matCellDef="let element"
               [class.padded-away]="
                 !shouldApplyStickyOffset(i) &&
                 !(isLeftStickyColumnNo(i) && isTableOverflow())
@@ -292,8 +292,8 @@
               (mouseout)="onHover($event, false)"
             >
               <mat-spinner
-                [diameter]="40"
                 *ngIf="element['onChanging']; else actionButtons"
+                [diameter]="40"
               ></mat-spinner>
               <ng-template #actionButtons>
                 <!-- Toggle -->
@@ -356,20 +356,20 @@
             matColumnDef="{{ column }}"
           >
             <th
+              *matHeaderCellDef
+              class="toggle-column"
+              mat-header-cell
               [class.padded-away]="
                 !shouldApplyStickyOffset(i) &&
                 !(isLeftStickyColumnNo(i) && isTableOverflow())
               "
-              class="toggle-column"
-              mat-header-cell
-              *matHeaderCellDef
             >
               {{ currentColumns[i].name | translate }}
             </th>
             <td
+              *matCellDef="let element"
               class="toggle-column"
               mat-cell
-              *matCellDef="let element"
               [class.padded-away]="
                 !shouldApplyStickyOffset(i) &&
                 !(isLeftStickyColumnNo(i) && isTableOverflow())
@@ -399,8 +399,8 @@
               {{ currentColumns[i].name | translate }}
             </th>
             <td
-              mat-cell
               *matCellDef="let element"
+              mat-cell
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
@@ -421,14 +421,12 @@
         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
         <ng-container matColumnDef="expandedDetail">
           <td
-            mat-cell
             *matCellDef="let element"
+            mat-cell
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="
-                element == expandedElement ? 'expanded' : 'collapsed'
-              "
+              [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
@@ -438,7 +436,7 @@
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="columnsProps"></tr>
+        <tr *matHeaderRowDef="columnsProps" mat-header-row></tr>
         <tr
           *matRowDef="let element; columns: columnsProps; let i = dataIndex"
           mat-row
@@ -453,9 +451,9 @@
 
         <ng-container *ngIf="hasDetails() === true">
           <tr
+            *matRowDef="let row; columns: ['expandedDetail']"
             mat-row
             class="details-row"
-            *matRowDef="let row; columns: ['expandedDetail']"
           ></tr>
         </ng-container>
       </table>

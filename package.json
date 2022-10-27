@@ -114,6 +114,7 @@
     "lodash": "~4.17.21",
     "markuplint": "~2.9.0",
     "markuplint-angular-parser": "~1.1.3",
+    "markuplint-angular-rules": "~0.1.1",
     "messageformat": "~2.3.0",
     "messageformat-parser": "~4.1.3",
     "mime-types": "~2.1.35",

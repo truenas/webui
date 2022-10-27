@@ -1,6 +1,6 @@
 <ng-container matColumnDef="actions">
   <th *matHeaderCellDef mat-header-cell></th>
-  <td mat-cell *matCellDef="let row">
+  <td *matCellDef="let row" mat-cell>
     <button
       mat-icon-button
       [matTooltip]="(expandedRow === row ? 'Collapse Row' : 'Expand Row') | translate"

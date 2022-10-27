@@ -42,10 +42,8 @@
       ix-auto-identifier="{{ field.placeholder }}_toggle-pw"
       (click)="togglePassword()"
     >
-      <mat-icon matTooltip="Hide" *ngIf="showPassword">visibility</mat-icon>
-      <mat-icon matTooltip="Show" *ngIf="!showPassword"
-        >visibility_off</mat-icon
-      >
+      <mat-icon *ngIf="showPassword" matTooltip="Hide">visibility</mat-icon>
+      <mat-icon *ngIf="!showPassword" matTooltip="Show">visibility_off</mat-icon>
     </button>
   </ng-container>
   <span [innerHTML]="conf.warning | translate"></span>
@@ -58,8 +56,8 @@
 
 <div mat-dialog-actions>
   <mat-checkbox
-    color="primary"
     *ngIf="confirmCheckbox"
+    color="primary"
     id="confirm-dialog__confirm-checkbox"
     name="confirm_checkbox"
     class="confirm-checkbox"
@@ -72,8 +70,8 @@
   </mat-checkbox>
   <span fxFlex></span>
   <button
-    mat-button
     *ngIf="!conf.hideCancel"
+    mat-button
     class="mat-button mat-accent action-btn"
     [name]="cancelButtonText + '_button'"
     (click)="cancel()"

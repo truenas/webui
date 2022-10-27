@@ -146,9 +146,9 @@
       >
         <mat-icon
           *appLet="alertBadgeCount$ | async as alertBadgeCount"
-          [matBadge]="alertBadgeCount"
           matBadgeSize="small"
           matBadgeColor="warn"
+          [matBadge]="alertBadgeCount"
           [matBadgeHidden]="alertBadgeCount === 0"
         >
           notifications

@@ -2095,6 +2095,21 @@
     postcss-selector-parser "^6.0.10"
     tslib "^2.3.1"
 
+"@markuplint/ml-core@~2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@markuplint/ml-core/-/ml-core-2.3.4.tgz#9353152ebe68be81e4569a699ad26807c2543b3e"
+  integrity sha512-DmYXDAWK7dsw//c9EqfSfvik4yRuYjQohm/vh8sqP2f4h6+8JDn0QqOhzOt1jzowBT/13R/bXJgCfNA24dalcg==
+  dependencies:
+    "@markuplint/i18n" "2.1.1"
+    "@markuplint/ml-ast" "2.0.1-dev.20220307.0"
+    "@markuplint/ml-config" "2.1.0"
+    "@markuplint/ml-spec" "2.1.1"
+    "@markuplint/parser-utils" "2.2.1"
+    debug "^4.3.4"
+    dom-accessibility-api "^0.5.13"
+    postcss-selector-parser "^6.0.10"
+    tslib "^2.3.1"
+
 "@markuplint/ml-spec@2.1.1":
   version "2.1.1"
   resolved "https://registry.npmjs.org/@markuplint/ml-spec/-/ml-spec-2.1.1.tgz"
@@ -9130,6 +9145,13 @@ markuplint-angular-parser@~1.1.3:
     "@markuplint/parser-utils" "^2.2.1"
     angular-html-parser "^1.8.0"
     tslib "^2.4.0"
+
+markuplint-angular-rules@~0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/markuplint-angular-rules/-/markuplint-angular-rules-0.1.1.tgz#8263cdb2747ab5dad001fbdf8feb46f185fbe3c6"
+  integrity sha512-NC5GDqBwv9ej7plqK3xDXxiuj1GlhD34+K+oTtEoRcLzC1qVMS5w6K+j+vIwA2CD76p+Ij8mmu6IkisqsFrxSA==
+  dependencies:
+    "@markuplint/ml-core" "~2.3.4"
 
 markuplint@~2.9.0:
   version "2.9.0"

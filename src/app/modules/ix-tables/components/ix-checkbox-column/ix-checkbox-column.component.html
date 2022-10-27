@@ -8,7 +8,7 @@
       (change)="onChange($event)"
     ></mat-checkbox>
   </th>
-  <td mat-cell *matCellDef="let item; dataSource: getDataSource()" [style.width.px]="40">
+  <td *matCellDef="let item; dataSource: getDataSource()" mat-cell [style.width.px]="40">
     <mat-checkbox
       color="primary"
       [checked]="selection.isSelected(item)"

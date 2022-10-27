@@ -39,17 +39,17 @@
         ix-auto-type="input"
         ix-auto-identifier="{{ config.placeholder }}"
         [placeholder]="config.placeholder | translate"
-        [(ngModel)]="address"
         [ngModelOptions]="{ standalone: true }"
         [readonly]="config.readonly"
         [required]="config.required"
         [pattern]="network.ipv4OrIpv6CidrOptional"
+        [(ngModel)]="address"
         (blur)="setAddress($event)"
       />
     </mat-form-field>
     <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
       <div fxFlex class="divider">/</div>
-      <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset">
+      <mat-form-field *ngIf="!config.netmaskPreset" fxFlex="64px">
         <mat-select
           ix-auto
           ix-auto-type="input"

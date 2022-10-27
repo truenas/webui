@@ -26,13 +26,13 @@
       </button>
     </div>
   </div>
-  <div class="spinner-wrapper" *ngIf="isLoading">
-    <mat-spinner [diameter]="40" id="dir-service-monitor-spinner"></mat-spinner>
+  <div *ngIf="isLoading" class="spinner-wrapper">
+    <mat-spinner id="dir-service-monitor-spinner" [diameter]="40"></mat-spinner>
   </div>
   <mat-table
     *ngIf="!isLoading"
-    [dataSource]="dataSource"
     class="mat-elevation-z8"
+    [dataSource]="dataSource"
   >
     <!-- Icon Column -->
     <ng-container matColumnDef="icon">

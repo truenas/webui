@@ -6,10 +6,10 @@
       threshold="40"
       content="{{ catalogApp.name }} {{ 'Application Summary' | translate }}"
     ></strong>
-    <span class="status active" *ngIf="catalogApp.healthy">
+    <span *ngIf="catalogApp.healthy" class="status active">
       {{ 'Healthy' | translate }}
     </span>
-    <span class="status other" *ngIf="!catalogApp.healthy">
+    <span *ngIf="!catalogApp.healthy" class="status other">
       {{ 'Unhealthy' | translate }}
     </span>
   </div>

@@ -31,7 +31,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }}</span>
             </div>
           </h3>
@@ -149,7 +149,7 @@
                           {{ poolInfoMap[pool.name]?.disksWithError?.value }}
                         </span>
                       </li>
-                      <li fxLayout="row" *ngIf="cols === 2 && rows === 2">
+                      <li *ngIf="cols === 2 && rows === 2" fxLayout="row">
                         <span class="icon safe">
                           <mat-icon>arrow_circle_right</mat-icon>
                         </span>
@@ -195,8 +195,8 @@
                           </span>
                         </li>
                       </ul>
-                      <div class="divider" *ngIf="pool.topology"></div>
-                      <ul fxLayout="column" fxFlex="31" *ngIf="pool.topology">
+                      <div *ngIf="pool.topology" class="divider"></div>
+                      <ul *ngIf="pool.topology" fxLayout="column" fxFlex="31">
                         <li fxLayout="row">
                           <span class="label">
                             {{ 'Data' | translate }}:
