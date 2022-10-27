@@ -228,10 +228,7 @@ def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
 @then('after settings are applied you should see "Settings applied"')
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
-    assert wait_on_element(driver, 7, '//span[text()="Failover"]')
-    assert wait_on_element(driver, 7, '//div[text()="Settings saved."]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Close")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
+    assert wait_on_element(driver, 15, '//div[text()="Settings saved."]')
     assert wait_on_element(driver, 7, '//h1[text()="Failover"]')
 
 
@@ -420,6 +417,7 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
 
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 15, '//div[text()="Settings saved."]')
 
 
 @then('navigate to dashboard, wait for HA to be online')
@@ -448,6 +446,7 @@ def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
 @then('navigate to dashboard, verify both contorler hostname')
 def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     """navigate to dashboard, verify both contorler hostname."""
+    time.sleep(5)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
