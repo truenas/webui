@@ -135,7 +135,7 @@
                   <div *ngIf="productImage && isHa && !isPassive" class="ha-node-status">
                     ({{ 'Active' | translate }})
                   </div>
-                  <div *ngIf="productImage && isHa && isPassive && haStatus === 'HA Enabled'" class="ha-node-status">
+                  <div *ngIf="productImage && isHa && isPassive && haStatus === HaStatusText.HaEnabled" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
                   <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise && !widgetDisabled" class="ha-node-status">
@@ -165,7 +165,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
+                    [disabled]="!haStatus || haStatus !== HaStatusText.HaEnabled"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -184,7 +184,7 @@
               </div>
 
               <div
-                *ngIf="!data || (isHa && isPassive && haStatus && haStatus !== 'HA Enabled')"
+                *ngIf="!data || (isHa && isPassive && haStatus && haStatus !== HaStatusText.HaEnabled)"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -195,7 +195,7 @@
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div *ngIf="(data && !isPassive) || (data && isPassive && haStatus === 'HA Enabled')" class="data-container" fxFlex>
+              <div *ngIf="(data && !isPassive) || (data && isPassive && haStatus === HaStatusText.HaEnabled)" class="data-container" fxFlex>
                 <div fxHide.gt-xs class="list-subheader">
                   {{ (isPassive ? 'System Information (Standby)' : 'System Information') | translate }}
                 </div>
@@ -272,7 +272,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
+                    [disabled]="!haStatus || haStatus !== HaStatusText.HaEnabled"
                     color="primary"
                   ></ix-simple-failover-button>
                 </div>
