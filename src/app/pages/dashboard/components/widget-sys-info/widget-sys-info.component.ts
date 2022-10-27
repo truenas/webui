@@ -65,13 +65,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   haStatus: string;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
-  haStatusText = HaStatusText;
   uptimeString: string;
   dateTime: string;
   widgetDisabled = false;
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
+  readonly HaStatusText = HaStatusText;
 
   private _updateBtnStatus = 'default';
 
