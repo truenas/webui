@@ -33,9 +33,9 @@ def test_create_ldap_dataset(driver, dataset_name, user):
 
     # the Dataset window should open, input dataset name "{dataset_name}" and click save
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
+    assert wait_on_element(driver, 10, '//div[@ix-auto="textarea__Name"]//div//textarea')
+    driver.find_element_by_xpath('//div[@ix-auto="textarea__Name"]//div//textarea').click()
+    driver.find_element_by_xpath('//div[@ix-auto="textarea__Name"]//div//textarea').send_keys(dataset_name)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')

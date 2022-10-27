@@ -28,9 +28,9 @@ def test_create_ericbsd_dataset(driver, dataset_name, user):
 
     # the add datasetpage should open, input "{dataset_name}" for the naem and click save'
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
+    assert wait_on_element(driver, 10, '//div[@ix-auto="textarea__Name"]//div//textarea')
+    driver.find_element_by_xpath('//div[@ix-auto="textarea__Name"]//div//textarea').click()
+    driver.find_element_by_xpath('//div[@ix-auto="textarea__Name"]//div//textarea').send_keys(dataset_name)
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
