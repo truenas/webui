@@ -44,9 +44,9 @@
               [routerLink]="['/reportsdashboard/disk']"
             >
               <mat-icon
-                matTooltip="{{ 'Disk Reports' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Disk Reports"
+                [matTooltip]="'Disk Reports' | translate"
               >
                 insert_chart
               </mat-icon>
@@ -92,9 +92,9 @@
                         <mat-icon
                           fontSet="mdi-set"
                           fontIcon="mdi-database"
-                          matTooltip="{{ 'Pool Status' | translate }}"
                           matTooltipPosition="above"
                           aria-label="Configure Pools"
+                          [matTooltip]="'Pool Status' | translate"
                         >
                         </mat-icon>
                       </a>

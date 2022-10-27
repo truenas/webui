@@ -82,16 +82,13 @@
     <button
       *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
       type="button"
-      id="cust_button_{{ custBtn.id }}"
       mat-button
       class="mat-button action-btn"
       ix-auto-type="button"
-      ix-auto-identifier="{{ custBtn.name | uppercase }}"
-      ix-auto-type="button"
+      id="cust_button_{{ custBtn.id }}"
       ix-auto-identifier="{{ cancelButtonText | uppercase }}"
       [ix-auto]=""
       [name]="custBtn.name + '_button'"
-      [ix-auto]=""
       (click)="custBtn['function']()"
     >
       {{ custBtn.name | translate }}

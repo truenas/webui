@@ -15,24 +15,24 @@
     (focusChange)="onTabChange($event)"
   >
     <mat-tab
-      label="{{ 'All' | translate }}"
       ix-auto
       ix-auto-type="tab"
       ix-auto-identifier="filter-all"
+      [label]="'All' | translate"
     ></mat-tab>
 
     <mat-tab
-      label="{{ 'Active' | translate }}"
       ix-auto
       ix-auto-type="tab"
       ix-auto-identifier="filter-active"
+      [label]="'Active' | translate"
     ></mat-tab>
 
     <mat-tab
-      label="{{ 'Failed' | translate }}"
       ix-auto
       ix-auto-type="tab"
       ix-auto-identifier="filter-failed"
+      [label]="'Failed' | translate"
     ></mat-tab>
   </mat-tab-group>
 </div>

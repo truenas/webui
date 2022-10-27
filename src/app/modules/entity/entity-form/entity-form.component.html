@@ -36,11 +36,11 @@
       >
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
           <div
-            class="entity-form fieldset divider-{{ fieldSet.divider }}"
             fxLayout="row wrap"
             fxLayoutGap.gt-sm="24px"
             fxLayoutAlign="start start"
             fxFlex="100%"
+            class="entity-form fieldset divider-{{ fieldSet.divider }}"
             fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
             [ngClass]="[
               fieldSet.class ? fieldSet.class : '',
@@ -62,8 +62,8 @@
               [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
             >
               <div
-                id="form_field_{{ field.name }}"
                 dynamicField
+                id="form_field_{{ field.name }}"
                 [config]="field"
                 [group]="formGroup"
                 [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
@@ -79,8 +79,8 @@
             type="submit"
             mat-button
             ix-auto-type="button"
-            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
             color="primary"
+            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
             [ix-auto]=""
           >
@@ -103,10 +103,10 @@
           <span *ngFor="let custBtn of conf.customActions">
             <button
               *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
-              id="cust_button_{{ custBtn.name }}"
               mat-button
               class="mat-basic"
               ix-auto-type="button"
+              id="cust_button_{{ custBtn.name }}"
               ix-auto-identifier="{{ custBtn.name | uppercase }}"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"

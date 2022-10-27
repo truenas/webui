@@ -1,10 +1,10 @@
 <mat-card
   class="view-card rackmount"
-  id="{{ currentTab.alias }}"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
   ngClass.xs="xs"
+  [id]="currentTab.alias"
   [ngClass]="{
     'multiple-enclosures': system && system.profile && system.profile.length > 1
   }"

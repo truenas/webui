@@ -2,15 +2,13 @@
   "parser": {
     ".html$": "markuplint-angular-parser"
   },
-  "plugins": ["markuplint-angular-rules"],
   "rules": {
     "attr-equal-space-after": "never",
     "attr-equal-space-before": "never",
     "indentation": {
       "value": 2,
       "severity": "error"
-    },
-    "markuplint-angular-rules/attribute-group-order": true
+    }
   },
   "excludeFiles": [
     "./src/index.html"

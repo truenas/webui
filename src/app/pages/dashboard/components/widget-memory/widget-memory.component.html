@@ -45,9 +45,9 @@
               (click)="router.navigate(['reportsdashboard/memory'])"
             >
               <mat-icon
-                matTooltip="{{ 'Memory Reports' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Memory Reports"
+                [matTooltip]="'Memory Reports' | translate"
               >
                 insert_chart
               </mat-icon>

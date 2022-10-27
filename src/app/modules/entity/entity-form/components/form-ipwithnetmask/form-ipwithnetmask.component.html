@@ -53,8 +53,8 @@
         <mat-select
           ix-auto
           ix-auto-type="input"
-          ix-auto-identifier="{{ config.placeholder }}"
           disableOptionCentering
+          [ix-auto-identifier]="config.placeholder"
           [value]="netmask"
           [placeholder]="'Netmask' | translate"
           (selectionChange)="setNetmask($event)"

@@ -103,8 +103,8 @@
                     *ngSwitchCase="'checkbox'"
                     ix-auto
                     ix-auto-type="checkbox"
-                    ix-auto-identifier="{{ element[column.prop] }}-checkbox"
                     color="primary"
+                    ix-auto-identifier="{{ element[column.prop] }}-checkbox"
                     [disabled]="!column.onChange"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
@@ -115,8 +115,8 @@
                     *ngSwitchCase="'slide-toggle'"
                     ix-auto
                     ix-auto-type="slide-toggle"
-                    ix-auto-identifier="{{ element[column.prop] }}-slide-toggle"
                     color="primary"
+                    ix-auto-identifier="{{ element[column.prop] }}-slide-toggle"
                     [disabled]="!column.onChange"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
@@ -127,8 +127,8 @@
                     *ngSwitchCase="'state-button'"
                     ix-auto
                     ix-auto-type="button"
-                    ix-auto-identifier="{{ element[column.prop] }}-task-state"
                     mat-stroked-button
+                    ix-auto-identifier="{{ element[column.prop] }}-task-state"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"
                   >

@@ -75,8 +75,8 @@
               </button>
 
               <div
-                class="platform-logo-wrapper {{ productType.toLowerCase() }}"
                 fxFlex="20"
+                class="platform-logo-wrapper {{ productType.toLowerCase() }}"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <mat-icon
@@ -108,9 +108,9 @@
                 >
                   <img
                     *ngIf="productImage; else generic"
-                    id="{{ productModel }}"
                     matTooltip="View Enclosure"
                     matTooltipPosition="above"
+                    [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
                     [src]="'assets/images/' + productImage"

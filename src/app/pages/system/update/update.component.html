@@ -119,7 +119,7 @@
     </div>
   </mat-card-title>
   <mat-card-content>
-    <a mat-button href="{{ releaseNotes }}" target="_blank">
+    <a mat-button target="_blank" [href]="releaseNotes">
       {{ 'Check Release Notes' | translate }}
     </a>
   </mat-card-content>
