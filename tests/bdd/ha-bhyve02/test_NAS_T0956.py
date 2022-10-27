@@ -122,5 +122,5 @@ def you_should_not_be_able_to_save_the_changes(driver):
     assert class_attribute == 'true'
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
     assert wait_on_element(driver, 30, '//h3[text()="Edit User"]')
-    assert wait_on_element(driver, 30, '//mat-error[contains(.,"Password and confirmation should match.")]')
+    assert wait_on_element(driver, 30, '//mat-error[contains(.,"New password and confirmation should match.")]')
     driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
