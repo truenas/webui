@@ -21,3 +21,11 @@ export const haStatusLoaded = createAction(
 export const loadHaStatus = createAction(
   '[System Info API] Load HA Status',
 );
+
+export const haSettingsUpdated = createAction(
+  '[System Info API] HA Settings Updated',
+);
+
+export const passiveNodeReplaced = createAction(
+  '[System Info API] Passive Node Replaced',
+);

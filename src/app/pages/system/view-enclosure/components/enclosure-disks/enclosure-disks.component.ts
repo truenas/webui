@@ -44,6 +44,7 @@ import { R20B } from 'app/pages/system/view-enclosure/classes/hardware/r20b';
 import { R40 } from 'app/pages/system/view-enclosure/classes/hardware/r40';
 import { R50 } from 'app/pages/system/view-enclosure/classes/hardware/r50';
 import { R50B } from 'app/pages/system/view-enclosure/classes/hardware/r50b';
+import { R50Bm } from 'app/pages/system/view-enclosure/classes/hardware/r50bm';
 import {
   SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
 } from 'app/pages/system/view-enclosure/classes/system-profiler';
@@ -427,6 +428,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R50B(true);
         this.showCaption = false;
         break;
+      case 'TRUENAS-R50BM':
+      case 'R50BM':
+        this.chassis = new R50Bm(true);
+        this.showCaption = false;
+        break;
       case 'M Series': {
         const rearChassis = !!this.system.rearIndex;
         this.chassis = new M50(rearChassis);
@@ -552,6 +558,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'TRUENAS-R50B':
       case 'R50B':
         extractedChassis = new R50B();
+        break;
+      case 'TRUENAS-R50BM':
+      case 'R50BM':
+        extractedChassis = new R50Bm();
         break;
       case 'M Series':
         extractedChassis = new M50();
