@@ -7,7 +7,8 @@ from function import (
     wait_on_element,
     wait_on_element_disappear,
     is_element_present,
-    refresh_if_element_missing
+    refresh_if_element_missing,
+    get
 )
 from pytest_bdd import (
     given,
@@ -51,10 +52,12 @@ def login_appear_enter_root_and_password(driver, password):
 
 
 @then(parsers.parse('you should see the dashboard and "{information}"'))
-def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information):
+def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information, nas_url):
     """you should see the dashboard and "information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 7, f'//span[contains(.,"{information}")]')
+    assert get(nas_url, 'system/ready/', ('root', 'testing')) is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')) is True
 
 
 @then('navigate to System and click Support')
