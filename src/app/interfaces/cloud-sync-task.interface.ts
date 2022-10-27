@@ -44,10 +44,11 @@ export interface CloudSyncTask {
   create_empty_src_dirs: boolean;
 }
 
-export type CloudSyncTaskRequestPart = Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption'>;
+export type CloudSyncTaskRequestPart = Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption' | 'bwlimit'>;
 
 export interface CloudSyncTaskUpdate extends CloudSyncTaskRequestPart {
   credentials: number;
+  bwlimit: { time: string; bandwidth: string }[];
 }
 
 export interface CloudSyncTaskUi extends CloudSyncTask {

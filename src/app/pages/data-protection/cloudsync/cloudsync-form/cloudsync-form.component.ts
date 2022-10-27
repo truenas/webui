@@ -17,7 +17,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { BwLimit, CloudSyncTaskUpdate, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUpdate, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
@@ -550,7 +550,7 @@ export class CloudsyncFormComponent {
     }
   }
 
-  prepareBwlimit(bwlimit: string[]): BwLimit[] {
+  prepareBwlimit(bwlimit: string[]): CloudSyncTaskUpdate['bwlimit'] {
     const bwlimtArr = [];
 
     for (const limit of bwlimit) {
@@ -570,7 +570,7 @@ export class CloudsyncFormComponent {
       }
       const subLimit = {
         time: sublimitArr[0],
-        bandwidth: sublimitArr[1] === 'off' ? null : +sublimitArr[1],
+        bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
       };
 
       bwlimtArr.push(subLimit);
