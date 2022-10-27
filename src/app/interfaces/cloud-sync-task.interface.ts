@@ -13,7 +13,7 @@ export interface CloudCredential {
 
 export interface BwLimit {
   time: string;
-  bandwidth: string | number;
+  bandwidth: number;
 }
 
 export interface CloudSyncTask {

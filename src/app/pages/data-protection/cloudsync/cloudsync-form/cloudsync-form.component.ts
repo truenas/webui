@@ -570,7 +570,7 @@ export class CloudsyncFormComponent {
       }
       const subLimit = {
         time: sublimitArr[0],
-        bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
+        bandwidth: sublimitArr[1] === 'off' ? null : +sublimitArr[1],
       };
 
       bwlimtArr.push(subLimit);
