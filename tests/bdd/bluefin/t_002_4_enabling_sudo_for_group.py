@@ -67,7 +67,7 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
 
-    assert wait_on_element(driver, 10, '//tr[contains(.,"qetestuser")]//mat-icon', 'clickable')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"qetestuser")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]//mat-icon').click()
 
     assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')

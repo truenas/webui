@@ -27,8 +27,8 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
     #assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 15, '//mat-icon[contains(text(),"notifications")]')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+        assert wait_on_element(driver, 7, '//mat-icon[contains(.,"notifications")]', 'clickable')
+        driver.find_element_by_xpath('//mat-icon[contains(.,"notifications")]').click()
         assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
         assert wait_on_element(driver, 7, '//small[contains(text(),"Dismiss All Alerts")]', 'clickable')
         driver.find_element_by_xpath('//small[contains(text(),"Dismiss All Alerts")]').click()
@@ -46,8 +46,8 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
     # wait for the alert and verify the core files warning alert
     assert wait_on_element(driver, 7, '//mat-icon[contains(text(),"notifications")]')
     assert wait_on_element(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+    assert wait_on_element(driver, 7, '//mat-icon[contains(.,"notifications")]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[contains(.,"notifications")]').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
     assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//h3[contains(.,"WARNING")]')
     assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
@@ -76,7 +76,7 @@ def test_verify_core_file_alert_works(driver, nas_ip, root_password):
 
     # verify that the core file alert disappear
     assert wait_on_element_disappear(driver, 180, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+    driver.find_element_by_xpath('//mat-icon[contains(.,"notifications")]').click()
     assert wait_on_element(driver, 7, '//h3[text()="Alerts"]')
     assert not is_element_present(driver, '//h4[contains(.,"Core files")]')
     assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
