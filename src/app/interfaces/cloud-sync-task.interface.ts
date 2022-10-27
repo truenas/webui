@@ -16,26 +16,11 @@ export interface BwLimit {
   bandwidth: string | number;
 }
 
-export interface CloudSyncTaskForm extends CloudSyncTask {
-  folder_destination: string[];
-  path_source: string[];
-  path_destination: string[];
-  folder_source: string[];
-  bucket: string;
-  bucket_input: string;
-  bucket_policy_only: boolean;
-  task_encryption: string;
-  storage_class: string;
-  fast_list: boolean;
-  chunk_size: number;
-  cloudsync_picker: string;
-}
-
 export interface CloudSyncTask {
   args: string;
   attributes: { [key: string]: string | number | boolean };
-  bwlimit: BwLimit[] | string | string[];
-  credentials: number | CloudCredential;
+  bwlimit: BwLimit[];
+  credentials: CloudCredential;
   description: string;
   direction: Direction;
   enabled: boolean;
@@ -59,7 +44,11 @@ export interface CloudSyncTask {
   create_empty_src_dirs: boolean;
 }
 
-export type CloudSyncTaskUpdate = Omit<CloudSyncTask, 'id' | 'job' | 'locked'>;
+export type CloudSyncTaskRequestPart = Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption'>;
+
+export interface CloudSyncTaskUpdate extends CloudSyncTaskRequestPart {
+  credentials: number;
+}
 
 export interface CloudSyncTaskUi extends CloudSyncTask {
   credential: string;
