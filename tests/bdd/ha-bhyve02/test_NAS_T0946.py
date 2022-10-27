@@ -17,11 +17,11 @@ from pytest_bdd import (
 )
 
 
-@pytest.mark.dependency(name='Setup_HA')
+# @pytest.mark.dependency(name='Setup_HA')
 @scenario('features/NAS-T946.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
     """Verify setting up HA works with a single failover group."""
-    pass
+#     pass
 
 
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
@@ -68,68 +68,48 @@ def the_support_page_license_information_should_load(driver):
     assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
 
 
-@then('under Support click Enter License')
-def under_support_click_enter_license(driver):
-    """under Support click Enter License."""
+@then('under Support click Enter License the "License" box should open')
+def under_support_click_enter_license_the_license_box_should_open(driver):
+    """under Support click Enter License the "License" box should open."""
     assert wait_on_element(driver, 7, '//h3[contains(.,"Support")]')
     assert wait_on_element(driver, 7, '//button[@id="update-license-btn"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="update-license-btn"]').click()
-
-
-@then('the "License" widget should open')
-def the_license_widget_should_open(driver):
-    """the "License" widget should open."""
     assert wait_on_element(driver, 7, '//h3[contains(.,"License")]')
 
 
-@then(parsers.parse('enter "{License}"'))
-def enter_license(driver, License):
-    """enter "License"."""
+@then('input the <license>, and click Save')
+def input_the_license_and_click_save(driver, license):
+    """input the <license>, and click Save."""
     assert wait_on_element(driver, 7, '//textarea', 'inputable')
     driver.find_element_by_xpath('//textarea').clear()
-    driver.find_element_by_xpath('//textarea').send_keys(License)
-
-
-@then('click Save')
-def click_save(driver):
-    """click Save."""
+    driver.find_element_by_xpath('//textarea').send_keys(license)
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-
-
-@then('The following should appear "Reload the page for the license to take effect"')
-def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
-    """The following should appear "Reload the page for the license to take effect"."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+
+
+@then('the "Reload the page for the license to take effect" should appear')
+def the_reload_the_page_for_the_license_to_take_effect_should_appear(driver):
+    """the "Reload the page for the license to take effect" should appear."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Reload the page")]')
 
 
-@then('Click reload now')
-def click_reload_now(driver):
-    """Click reload now."""
+@then(parsers.parse('click reload now and "{agreement}" should appear'))
+def click_reload_now_and_end_user_license_agreement__truenas_should_appear(driver, agreement):
+    """click reload now and "End User License Agreement - TrueNAS" should appear."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__RELOAD NOW"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
-
-
-@then(parsers.parse('"{agreement}" should appear'))
-def end_user_license_agreement_truenas_should_appear(driver, agreement):
-    """"End User License Agreement - TrueNAS" should appear."""
     assert wait_on_element(driver, 10, f'//h1[contains(.,"{agreement}")]')
 
 
-@then('Click Agree')
-def click_agree(driver):
-    """Click Agree."""
+@then('click Agree we should be returned to the General page')
+def click_agree_we_should_be_returned_to_the_general_page(driver):
+    """click Agree we should be returned to the General page."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     if wait_on_element(driver, 1, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-
-
-@then('we should be returned to the General page')
-def we_should_be_returned_to_license_information(driver):
-    """we should be returned to the General page."""
     if is_element_present(driver, '//h1[text()="Dashboard"]'):
         assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
@@ -292,15 +272,28 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-
-
-@then('Please wait should appear wait for Save Changes then click Save Changes')
-def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driver):
-    """Please wait should appear wait for Save Changes then click Save Changes."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save Changes")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save Changes")]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]', 'clickable')
+
+
+@then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
+def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_hostname, password):
+    """switch to the virtual hostname "{virtual_hostname}" and login."""
+    driver.get(f"http://{virtual_hostname}")
+    assert wait_on_element(driver, 7, '//input[@data-placeholder="Username"]')
+    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
+    assert wait_on_element(driver, 7, '//button[@name="signin_button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+
+
+@then('on the virtual hostname Dashboard Save the network interface changes')
+def on_the_virtual_hostname_dashboard_save_the_network_interface_changes(driver):
+    """on the virtual hostname Dashboard Save the network interface changes."""
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
@@ -408,6 +401,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 @then('click disable failover to uncheck it, click save and confirm changes')
 def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     """click disable failover to uncheck it, click save and confirm changes."""
+    assert wait_on_element(driver, 7, '//h1[text()="Failover"]')
     assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Disable Failover")]', 'clickable')
     element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]')
     global class_attribute
