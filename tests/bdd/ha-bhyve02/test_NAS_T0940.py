@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -17,6 +18,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='NAS-T940')
 @scenario('features/NAS-T940.feature', 'Setting up LDAP')
 def test_setting_up_ldap(driver):
     """Setting up LDAP."""

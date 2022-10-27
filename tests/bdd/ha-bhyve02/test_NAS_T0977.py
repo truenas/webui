@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve03) feature tests."""
 
+import xpaths
 import time
 import random
 import string
@@ -27,7 +28,7 @@ MOUNT_POINT = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=3))}'
 def click_summit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, xpaths.popupTitle.please_wait)
 
 
 @scenario('features/NAS-T977.feature', 'Verify that iSCSI connection on HA works')
@@ -47,13 +48,13 @@ def the_browser_is_open_navigate_to_nas_hostname(driver, nas_hostname):
 def if_login_page_appear_enter_root_and_password(driver, nas_user, password):
     """If login page appear enter "{nas_user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(nas_user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 7, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 5, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(nas_user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 7, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -62,7 +63,7 @@ def if_login_page_appear_enter_root_and_password(driver, nas_user, password):
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 20, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 20, xpaths.dashboard.system_information)
 
 
 @then('go to sharing then click iscsi the iscsi page should open')
