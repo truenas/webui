@@ -56,8 +56,8 @@ def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, i
     """you should see the dashboard and "information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 7, f'//span[contains(.,"{information}")]')
-    assert get(nas_url, 'system/ready/', ('root', 'testing')) is True
-    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')) is True
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('navigate to System and click Support')
