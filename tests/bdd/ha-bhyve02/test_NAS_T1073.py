@@ -147,4 +147,4 @@ def wait_on_the_login_to_appear(driver):
     # wait for HA is enabled to avoid UI refreshing
     driver.refresh()
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 120, xpaths.login.ha_status('HA is enabled'))
+    assert wait_on_element(driver, 120, xpaths.login.ha_status('HA is enabled'))

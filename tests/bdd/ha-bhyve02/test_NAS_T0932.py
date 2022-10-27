@@ -195,6 +195,6 @@ def ha_should_be_disable_wait_for_it_to_be_enable(driver):
     """HA should be disable wait for it to be enable."""
     assert is_element_present(driver, xpaths.topToolbar.ha_disabled)
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 420, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 420, xpaths.topToolbar.ha_enable)
     # This 5 seconds of sleep is to let the system ketchup.
     time.sleep(5)
