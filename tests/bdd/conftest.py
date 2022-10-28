@@ -258,7 +258,7 @@ def disable_active_directory():
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
     wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
-    assert wait_on_element(5, '//li[span/a/text()="LDAP"]')
+    assert wait_on_element(5, '//li[span/a/text()="Active Directory"]')
     assert wait_on_element(5, '//h4[contains(text(),"Domain Credentials")]')
     wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')

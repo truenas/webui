@@ -427,7 +427,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 
 
 @then('navigate to System then Failover, uncheck disable failover, click save')
-def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
+def navigate_to_system_then_failover_click_disable_failover_click_save(driver, nas_url):
     """navigate to System then Failover, uncheck disable failover, click save."""
     # scroll up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -438,6 +438,8 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Reporting"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -458,7 +460,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 600, '//div[contains(.,"truenas-b")]')
+    assert refresh_if_element_missing(driver, 300, '//div[contains(.,"truenas-b")]')
     assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
     time.sleep(5)
 
