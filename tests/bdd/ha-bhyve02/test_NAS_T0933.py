@@ -267,7 +267,7 @@ def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
     assert wait_on_element(driver, 120, xpaths.login.user_input)
     # wait for HA is enabled to avoid UI refreshing
-    assert wait_on_element(driver, 300, xpaths.login.ha_status('HA is enabled'))
+    assert wait_on_element_disappear(driver, 300, xpaths.login.ha_status('HA is enabled'))
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
