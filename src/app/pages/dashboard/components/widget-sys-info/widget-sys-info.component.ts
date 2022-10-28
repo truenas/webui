@@ -62,7 +62,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   loader = false;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
-  haStatus: string;
+  hasHa: boolean;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
   uptimeString: string;
@@ -105,7 +105,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         untilDestroyed(this),
       ).subscribe((haStatus) => {
         this.widgetDisabled = false;
-        if (haStatus.status === HaStatusText.HaEnabled) {
+        if (haStatus.hasHa) {
           this.ws.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
             .subscribe((systemInfo: SystemInfo) => this.processSysInfo(systemInfo));
@@ -113,11 +113,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
           if (this.data) {
             this.setProductImage(this.data);
           }
-        } else if (haStatus.status === HaStatusText.HaDisabled) {
+        } else if (!haStatus.hasHa) {
           this.productImage = '';
           this.widgetDisabled = true;
         }
-        this.haStatus = haStatus.status;
+        this.hasHa = haStatus.hasHa;
       });
     } else {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
