@@ -13,7 +13,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { existingReplication } from 'app/pages/data-protection/replication/replication-form/tests/test-data';
+import { existingReplication } from 'app/pages/data-protection/replication/replication-form/tests/replication-form-test-data';
 import { KeychainCredentialService, LanguageService, ModalService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';

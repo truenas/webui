@@ -1,0 +1,111 @@
+import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
+import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { TransportMode } from 'app/enums/transport-mode.enum';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+
+export const existingReplication = {
+  allow_from_scratch: false,
+  also_include_naming_schema: [],
+  auto: false,
+  compressed: true,
+  compression: null,
+  direction: Direction.Push,
+  enabled: true,
+  encryption: true,
+  encryption_key: 'somekey',
+  encryption_key_format: EncryptionKeyFormat.Hex,
+  encryption_key_location: truenasDbKeyLocation,
+  exclude: [],
+  hold_pending_snapshots: false,
+  id: 1,
+  large_block: true,
+  lifetime_unit: null,
+  lifetime_value: null,
+  logging_level: null,
+  name: 'test',
+  name_regex: 'snapshot-.*',
+  naming_schema: [],
+  only_matching_schedule: false,
+  periodic_snapshot_tasks: [
+    {
+      id: 1,
+    },
+  ],
+  properties: true,
+  properties_exclude: [],
+  properties_override: {},
+  readonly: ReadOnlyMode.Require,
+  recursive: false,
+  replicate: false,
+  restrict_schedule: null,
+  retention_policy: RetentionPolicy.None,
+  retries: 2,
+  schedule: {
+    begin: '14:00',
+    dom: '*',
+    dow: '*',
+    end: '23:59',
+    hour: '*',
+    minute: '0',
+    month: '*',
+  },
+  source_datasets: [
+    'source/dataset1',
+    'source/dataset2',
+  ],
+  speed_limit: 100202020,
+  ssh_credentials: 1,
+  state: {
+    state: JobState.Pending,
+  },
+  target_dataset: 'remote/target',
+  transport: TransportMode.Ssh,
+} as ReplicationTask;
+
+export const existingReplicationFormValues = {
+  'Replication from scratch': false,
+  'Run Automatically': false,
+  'Allow Compressed WRITE Records': true,
+  'Stream Compression': 'Disabled',
+  Direction: 'PUSH',
+  Enabled: true,
+  Encryption: true,
+  'Encryption Key Format': 'HEX',
+  'Generate Encryption Key': false,
+  'Encryption Key': 'somekey',
+  'Store Encryption key in Sending TrueNAS database': true,
+  'Properties Exclude': [],
+  'Save Pending Snapshots': false,
+  'Allow Blocks Larger than 128KB': true,
+
+  'Also include snapshots with the name': 'Matching regular expression',
+  Begin: '14:00:00',
+  Destination: '',
+  'Destination Dataset Read-only Policy': 'REQUIRE',
+  End: '23:59:00',
+  Frequency: 'Hourly (0 * * * *)  At the start of each hour',
+  'Full Filesystem Replication': false,
+  'Include Dataset Properties': true,
+  'Limit(Examples: 500 KiB, 500M, 2 TB)': '96 MiB',
+  'Logging Level': 'DEFAULT',
+  'Matching regular expression': 'snapshot-.*',
+  Name: 'test',
+  'Number of retries for failed replications': '2',
+  'Only Replicate Snapshots Matching Schedule': false,
+  'Periodic Snapshot Tasks': [
+    'pool/dataset - auto-%Y-%m-%d_%H-%M - 2 WEEK (S) - Enabled',
+  ],
+  'Properties Override': [],
+  Recursive: false,
+  'Replicate Specific Snapshots': false,
+  'Replication from scratch': false,
+  'SSH Connection': '',
+  Schedule: true,
+  'Snapshot Retention Policy': 'None',
+  Source: '',
+  Transport: 'SSH',
+};

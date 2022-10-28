@@ -118,7 +118,7 @@
 
         <ix-fieldset [title]="'Source' | translate">
           <ix-explorer
-            [title]="'Source' | translate"
+            [label]="'Source' | translate"
             formControlName="source_datasets"
             [root]="''"
             [required]="true"
@@ -233,7 +233,7 @@
 
         <ix-fieldset [title]="'Destination' | translate">
           <ix-explorer
-            [title]="'Destination' | translate"
+            [label]="'Destination' | translate"
             formControlName="target_dataset"
             [required]="true"
             [root]="''"
@@ -304,7 +304,7 @@
             [required]="true"
             [tooltip]="helptext.retention_policy_tooltip | translate"
           ></ix-select>
-          <ng-container *ngIf="form.value.retention_policy === RetentionPolicy.Custom">
+          <div *ngIf="form.value.retention_policy === RetentionPolicy.Custom" class="retention-policy">
             <ix-input
               formControlName="lifetime_value"
               [label]="'Snapshot Lifetime' | translate"
@@ -313,11 +313,12 @@
             ></ix-input>
             <ix-select
               *ngIf="form.value.retention_policy === RetentionPolicy.Custom"
+              [label]="'Unit' | translate"
               formControlName="lifetime_unit"
               [options]="lifetimeUnits$"
               [required]="true"
             ></ix-select>
-          </ng-container>
+          </div>
         </ix-fieldset>
 
         <ix-fieldset [title]="'Replication Schedule' | translate">
