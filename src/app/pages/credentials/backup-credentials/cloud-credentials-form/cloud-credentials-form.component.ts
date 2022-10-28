@@ -248,7 +248,17 @@ export class CloudCredentialsFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.renderProviderForm();
+
+        this.setDefaultName();
       });
+  }
+
+  private setDefaultName(): void {
+    if (!this.isNew || this.commonForm.controls.name.touched) {
+      return;
+    }
+
+    this.commonForm.controls.name.setValue(this.selectedProvider.title);
   }
 
   private renderProviderForm(): void {
