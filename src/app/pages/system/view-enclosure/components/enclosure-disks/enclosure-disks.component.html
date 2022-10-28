@@ -1,14 +1,14 @@
 <mat-card
   class="view-card rackmount"
-  [ngClass]="{
-    'multiple-enclosures': system && system.profile && system.profile.length > 1
-  }"
-  id="{{ currentTab.alias }}"
-  (window:resize)="onResize()"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
   ngClass.xs="xs"
+  [id]="currentTab.alias"
+  [ngClass]="{
+    'multiple-enclosures': system && system.profile && system.profile.length > 1
+  }"
+  (window:resize)="onResize()"
 >
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure" class="mat-card-title-text">
@@ -36,8 +36,8 @@
 
   <!-- Tabs other than Disks -->
   <ix-tab-content
-    class="other-tab"
     *ngIf="currentTab.alias !== 'Disks'"
+    class="other-tab"
     [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex] | cast"
   ></ix-tab-content>
 
@@ -146,8 +146,8 @@
         </div>
 
         <div
-          #domLabels
           *ngIf="currentView == 'details' || exitingView == 'details'"
+          #domLabels
           class="details stage-right dom-overlay"
         >
           <div
@@ -222,8 +222,8 @@
           <div *ngIf="expanders" class="content">
             <div
               *ngFor="let expander of expanders"
-              [style.width]="(100 / expanders.length).toString() + '%'"
               class="expander-item"
+              [style.width]="(100 / expanders.length).toString() + '%'"
             >
               <div class="primary-number">{{ $any(expander).status }}</div>
               <div class="title">{{ expander.descriptor }}</div>
@@ -262,9 +262,9 @@
             <div
               fxFlex
               class="tiles"
-              [class.active]="currentView == 'pools'"
               fxLayout="column"
               fxLayoutAlign="center center"
+              [class.active]="currentView == 'pools'"
             >
               Loading...
             </div>

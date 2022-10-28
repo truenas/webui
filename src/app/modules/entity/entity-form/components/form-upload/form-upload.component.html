@@ -52,8 +52,8 @@
           #fileInput
           id="fb"
           type="file"
-          accept="{{ config.acceptedFiles }}"
           multiple
+          accept="{{ config.acceptedFiles }}"
           [formControlName]="config.name"
           (change)="upload(config.fileLocation)"
         />

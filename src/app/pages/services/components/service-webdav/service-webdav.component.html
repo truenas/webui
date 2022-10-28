@@ -28,7 +28,7 @@
           [tooltip]="tcpportssl.tooltip"
         ></ix-input>
 
-        <div class="linked-select" *ngIf="!certssl.hidden">
+        <div *ngIf="!certssl.hidden" class="linked-select">
           <div class="link-wrapper">
             <a class="link" (click)="certificatesLinkClicked()">
               {{ 'Manage Certificates' | translate }}

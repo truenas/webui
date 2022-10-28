@@ -39,11 +39,11 @@
     ></ng-container>
 
     <ng-container
-      headerCustomActions
       *ngTemplateOutlet="
         extraAction;
         context: { tableExtraActions: nfsTableConf?.tableExtraActions }
       "
+      headerCustomActions
     ></ng-container>
   </ix-expandable-table>
 
@@ -113,7 +113,7 @@
   </ng-template>
 
   <ng-template #extraAction let-tableExtraActions="tableExtraActions">
-    <div id="customActions" *ngIf="tableExtraActions">
+    <div *ngIf="tableExtraActions" id="customActions">
       <button
         mat-icon-button
         aria-label="Table Actions of Expandable Table"

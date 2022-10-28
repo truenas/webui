@@ -6,7 +6,6 @@
   ix-auto-type="list"
   ix-auto-identifier="{{ config.placeholder }}"
   [formGroup]="group"
-  [ngClass]="fieldShow"
   [ngClass]="{ box: config.box, 'sub-box': !config.box }"
   [attr.id]="config.name"
 >
@@ -37,8 +36,8 @@
       *ngFor="let liControl of listsFromArray.controls; let i = index"
       ix-auto
       ix-auto-type="list-item"
-      ix-auto-identifier="{{ i }}"
       class="form-list-item"
+      ix-auto-identifier="{{ i }}"
       [fxLayout]="config.width == '100%' ? 'row wrap' : ''"
     >
       <ng-container *ngFor="let field of config.listFields[i]; let ii = index">

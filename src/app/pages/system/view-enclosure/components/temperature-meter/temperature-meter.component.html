@@ -1,4 +1,4 @@
-<div class="meter" *ngIf="source && value && unit">
+<div *ngIf="source && value && unit" class="meter">
   <div class="source">{{ source }}</div>
   <div class="value">
     {{ value }}<span *ngIf="symbolText">{{ symbolText }}</span>

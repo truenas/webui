@@ -4,9 +4,9 @@
       class="container"
       fxLayoutGap="16px"
       fxLayout.lt-lg="row wrap"
+      fxLayoutAlign="space-evenly center"
       [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
       [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
-      fxLayoutAlign="space-evenly center"
     >
       <div
         class="product-image"
@@ -35,7 +35,7 @@
         ></ix-sys-info>
 
         <div class="links-wrapper">
-          <div class="links" *ngFor="let link of links">
+          <div *ngFor="let link of links" class="links">
             <div [innerHTML]="link"></div>
           </div>
         </div>
@@ -58,9 +58,9 @@
         >
           <button
             id="update-license-btn"
-            (click)="updateLicense()"
             mat-button
             color="default"
+            (click)="updateLicense()"
           >
             {{ licenseButtonText | translate }}
           </button>

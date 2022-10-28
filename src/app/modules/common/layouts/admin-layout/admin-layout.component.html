@@ -18,10 +18,10 @@
   >
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div
-        class="branding topbar {{'truenas-' + (productType$ | async | lowercase)}}"
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="logo"
+        class="branding topbar {{'truenas-' + (productType$ | async | lowercase)}}"
       >
         <a routerLink="/dashboard" class="logo">
           <mat-icon
@@ -65,8 +65,8 @@
       <div
         *ngIf="isSidenavCollapsed"
         class="sidenav-copyright-icon"
-        matTooltip="TrueNAS {{productType$ | async | mapValue: productTypeLabels}}® © {{ copyrightYear$ | async }} by iXsystems Inc."
         matTooltipPosition="right"
+        matTooltip="TrueNAS {{productType$ | async | mapValue: productTypeLabels}}® © {{ copyrightYear$ | async }} by iXsystems Inc."
       >
         <mat-icon>copyright</mat-icon>
       </div>
@@ -74,8 +74,8 @@
   </mat-sidenav>
 
   <mat-sidenav-content
-    fxFlex="calc(100% - {{ sidenavWidth }})"
     class="fn-maincontent"
+    fxFlex="calc(100% - {{ sidenavWidth }})"
     [style.margin-left]="sidenavWidth"
   >
     <!-- Top Bar -->

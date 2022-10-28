@@ -6,7 +6,7 @@
   </ix-page-title-header>
 </ng-template>
 
-<div class="vm-summary" *ngIf="hasVirtualizationSupport">
+<div *ngIf="hasVirtualizationSupport" class="vm-summary">
   <p *ngIf="availableMemory">
     <strong>{{ memTitle | translate }}</strong> {{ availableMemory }} -
     {{ memWarning | translate }}

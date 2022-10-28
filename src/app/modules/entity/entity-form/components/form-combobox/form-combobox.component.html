@@ -2,8 +2,8 @@
   *ngIf="!config['isHidden']"
   ix-auto
   ix-auto-type="combobox"
-  ix-auto-identifier="{{ config.placeholder }}"
   class="dynamic-field form-select form-element form-combobox"
+  ix-auto-identifier="{{ config.placeholder }}"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -70,9 +70,9 @@
       </mat-autocomplete>
     </mat-form-field>
     <span
-      id="{{ config.name }}-select"
       ix-auto
       ix-auto-type="button"
+      id="{{ config.name }}-select"
       ix-auto-identifier="{{ config.name }}"
       [matMenuTriggerFor]="options"
       (menuOpened)="onOpenMenu()"
