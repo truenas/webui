@@ -44,7 +44,6 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
@@ -198,7 +197,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private dialog: DialogService,
     private storageService: StorageService,
     private loader: AppLoaderService,
-    private modalService: ModalService,
     private translate: TranslateService,
     private tableService: TableService,
     private matDialog: MatDialog,

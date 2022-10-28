@@ -6,16 +6,16 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-form/replication-form.component';
+import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('ReplicationFormComponent', () => {
-  let spectator: Spectator<ReplicationFormComponent>;
+describe('ReplicationSettingsFormComponent', () => {
+  let spectator: Spectator<ReplicationSettingsComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
   const createComponent = createComponentFactory({
-    component: ReplicationFormComponent,
+    component: ReplicationSettingsComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

@@ -14,6 +14,9 @@ export interface ModalServiceMessage {
 
 export const slideInModalId = 'slide-in-form';
 
+/**
+ * @deprecated Use MatDialog for dialogs and IxSlideInService for slide-ins
+ */
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private modals: ModalComponent[] = [];
@@ -37,21 +40,15 @@ export class ModalService {
     this.refreshTable$.next();
   }
 
-  refreshForm(): void {
-    this.refreshForm$.next();
-  }
-
   message(message: ModalServiceMessage): void {
     this.message$.next(message);
   }
 
   add(modal: ModalComponent): void {
-    // add modal to array of active modals
     this.modals.push(modal);
   }
 
   remove(id: string): void {
-    // remove modal from array of active modals
     this.modals = this.modals.filter((modal) => modal.id !== id);
   }
 
