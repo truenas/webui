@@ -215,6 +215,7 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Disable Failover")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
 @then('after settings are applied you should see "Settings applied"')
@@ -450,6 +451,7 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver, n
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
 @then('navigate to dashboard, wait for HA to be online')
