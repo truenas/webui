@@ -5,15 +5,11 @@
 </p>
 
 <div class="form-actions">
-  <button
-    mat-button
-    type="submit"
-    color="primary"
-    (click)="onDownload()"
-  >{{ 'Download Key' | translate }}</button>
-  <button
-    mat-button
-    type="button"
-    [matDialogClose]="false"
-  >{{ 'Close' | translate }}</button>
+  <button mat-button type="submit" color="primary" (click)="onDownload()">
+    {{ 'Download Key' | translate }}
+  </button>
+
+  <button mat-button type="button" [matDialogClose]="false">
+    {{ 'Close' | translate }}
+  </button>
 </div>

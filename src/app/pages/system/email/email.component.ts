@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
@@ -18,7 +17,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -85,6 +84,7 @@ export class EmailComponent implements OnInit {
     private validatorService: IxValidatorsService,
     @Inject(WINDOW) private window: Window,
     private snackbar: SnackbarService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   get hasSmtpAuthentication(): boolean {
@@ -153,18 +153,18 @@ export class EmailComponent implements OnInit {
 
     this.ws.call('mail.update', [update])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Email settings updated.'));
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
         },
-      );
+      });
   }
 
   private loadEmailConfig(): void {
@@ -173,8 +173,8 @@ export class EmailComponent implements OnInit {
 
     this.ws.call('mail.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.isLoading = false;
           this.form.patchValue(config);
           if (config.oauth?.client_id) {
@@ -183,16 +183,16 @@ export class EmailComponent implements OnInit {
           }
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           new EntityUtils().handleWsError(this, error);
         },
-      );
+      });
   }
 
   private sendTestEmail(): void {
-    const productType = this.window.localStorage.getItem('product_type') as ProductType;
+    const productType = this.systemGeneralService.getProductType();
     const email = {
       subject: 'Test Message',
       text: `This is a test message from TrueNAS ${productType}.`,

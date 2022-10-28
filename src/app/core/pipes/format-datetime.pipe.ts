@@ -1,7 +1,10 @@
-import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
+import {
+  ChangeDetectorRef, Inject, Pipe, PipeTransform,
+} from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { format, utcToZonedTime } from 'date-fns-tz';
+import { WINDOW } from 'app/helpers/window.helper';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -18,16 +21,17 @@ export class FormatDateTimePipe implements PipeTransform {
   constructor(
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;
       this.cdr.markForCheck();
     });
-    if (window.localStorage.dateFormat) {
-      this.dateFormat = window.localStorage.getItem('dateFormat');
+    if (this.window.localStorage.dateFormat) {
+      this.dateFormat = this.window.localStorage.getItem('dateFormat');
     }
-    if (window.localStorage.timeFormat) {
-      this.timeFormat = window.localStorage.getItem('timeFormat');
+    if (this.window.localStorage.timeFormat) {
+      this.timeFormat = this.window.localStorage.getItem('timeFormat');
     }
   }
 

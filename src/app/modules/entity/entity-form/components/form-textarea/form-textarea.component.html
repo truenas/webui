@@ -1,19 +1,24 @@
 <div
   *ngIf="!config['isHidden']"
-  id="{{config.name}}"
   class="dynamic-field form-textarea form-element"
-  [formGroup]="group"
-  [ngClass]="fieldShow"
+  ix-auto
+  ix-auto-type="textarea"
+  ix-auto-identifier="{{ config.placeholder }}"
   [class.has-tooltip]="config.tooltip"
-  ix-auto ix-auto-type="textarea" ix-auto-identifier="{{config.placeholder}}"
+  [ngClass]="fieldShow"
+  [formGroup]="group"
+  [attr.id]="config.name"
 >
-
   <div class="label-container">
     <label class="label text-input">
-      {{config.placeholder | translate}}
+      {{ config.placeholder | translate }}
       <span *ngIf="config.required">*</span>
     </label>
-    <ix-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
+    <ix-tooltip
+      *ngIf="config.tooltip"
+      [header]="config.placeholder"
+      [message]="config.tooltip"
+    ></ix-tooltip>
   </div>
 
   <div class="full-width">
@@ -23,24 +28,48 @@
       [ngClass]="config.class"
       [required]="config.required"
       [readonly]="config.readonly"
-      (blur)='blurEvent()'
+      [class.no-rows]="!config.textAreaRows"
+      (blur)="blurEvent()"
       (paste)="onPaste($event)"
-      (input)="onInput()">
+      (input)="onInput()"
+    >
     </textarea>
     <div *ngIf="config.filereader">
-      <input id="fb" #fileInput type="file" (change)="changeListener($event)" class="display-none" />
+      <input
+        #fileInput
+        id="fb"
+        type="file"
+        class="display-none"
+        (change)="changeListener($event)"
+      />
       <div class="textarea-filereader">
-        <span [style.margin-right.px]="10">{{'Paste value above or choose a file.' | translate}}</span>
-        <button type="button" mat-button color="accent" class="btn-default" (click)="fileBtnClick()">
+        <span [style.margin-right.px]="10">
+          {{ 'Paste value above or choose a file.' | translate }}
+        </span>
+        <button
+          type="button"
+          mat-button
+          color="accent"
+          class="btn-default"
+          (click)="fileBtnClick()"
+        >
           {{ 'Choose File' | translate }}
         </button>
       </div>
     </div>
-
   </div>
   <div class="margin-for-error">
-    <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
-    <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+    <ix-form-errors
+      [control]="group.controls[config.name]"
+      [config]="config"
+    ></ix-form-errors>
+
+    <mat-error *ngIf="config['hasErrors']">
+      <div [innerHTML]="config['errors']"></div>
+    </mat-error>
+
+    <mat-error *ngIf="config.warnings">
+      <div [innerHTML]="config.warnings | translate"></div>
+    </mat-error>
   </div>
 </div>

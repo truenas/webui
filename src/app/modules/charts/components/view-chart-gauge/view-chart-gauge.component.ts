@@ -4,6 +4,10 @@ import {
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
 
+export type GaugeDataItem = string | number;
+
+export type GaugeData = GaugeDataItem[];
+
 export interface GaugeConfig {
   label: boolean; // to turn off the min/max labels.
   units: string;
@@ -12,7 +16,7 @@ export interface GaugeConfig {
   min?: number; // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
   max?: number; // 100 is default
   width?: number; // for adjusting arc thickness
-  data: (string | number)[];
+  data: GaugeData;
   subtitle?: string;
 }
 
@@ -24,7 +28,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   subtitle = '';
   chartType = 'gauge';
   chartClass = 'view-chart-gauge';
-  private _data: (string | number)[];
+  private _data: GaugeData;
   private arc: d3.Arc<unknown, d3.DefaultArcObject>;
   chartId = UUID.UUID();
   private doublePi = 2 * Math.PI;
@@ -43,18 +47,18 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
         this.data = changes.config.currentValue.data;
         if (!this.arc) {
           this.render();
-        } else {
-          this.update(changes.config.currentValue.data[1]);
         }
+        this.update(changes.config.currentValue.data[1]);
       }
     }
   }
 
   ngAfterViewInit(): void {
     this.render();
+    this.update(this.config.data[1]);
   }
 
-  get data(): (string | number)[] {
+  get data(): GaugeData {
     return this._data;
   }
 
@@ -76,7 +80,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
       .attr('height', height);
 
     // Arc Group
-    const arcGroup = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+    const arcGroup = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`);
 
     // Text Group
     const textGroup = svg.append('g').attr('class', 'text-group');
@@ -103,7 +107,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
     }
     // Subtitle as text
     subtext.style('fill', 'var(--fg2)')
-      .style('font-size', (this.config.fontSize / 2) + 'px')
+      .style('font-size', `${this.config.fontSize / 2}px`)
       .style('font-weight', 400)
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central');
@@ -135,19 +139,17 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
       .style('fill', 'var(--primary)')
       .attr('class', 'value')
       .attr('d', this.arc);
-
-    this.update(this.config.data[1] as number);
   }
 
-  update(value: number): void {
+  update(value: GaugeDataItem): void {
     if (!document.hidden) {
       d3.transition()
         .select('#gauge-' + this.chartId + ' path.value')
         .duration(750)
-        .attrTween('d', this.load(this.percentToAngle(value)));
+        .attrTween('d', this.load(this.percentToAngle(Number(value))));
 
       d3.select('#gauge-' + this.chartId + ' text#text-value')
-        .text(value + this.config.units);
+        .text(String(value) + this.config.units);
     }
   }
 

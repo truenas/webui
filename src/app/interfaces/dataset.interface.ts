@@ -147,7 +147,7 @@ export interface DatasetUpdate {
   refquota_critical?: WithInherit<number>;
   reservation?: number;
   refreservation?: number;
-  special_small_block_size?: number;
+  special_small_block_size?: WithInherit<number>;
   copies?: WithInherit<number>;
   snapdir?: DatasetSnapdir;
   snapdev?: DatasetSnapdev;
@@ -206,4 +206,13 @@ export interface DatasetDetails {
   refquota_warning?: ZfsProperty<number>;
   quota_critical?: ZfsProperty<number>;
   quota_warning?: ZfsProperty<number>;
+  comments?: ZfsProperty<string>;
 }
+
+export enum DiskSpaceKey {
+  UsedByDataset = 'usedbydataset',
+  UsedBySnapshots = 'usedbysnapshots',
+  UsedByChildren = 'usedbychildren',
+}
+export type DiskSpace = { [key in DiskSpaceKey]?: number };
+export type SwatchColors = { [key in DiskSpaceKey]?: { backgroundColor: string } };

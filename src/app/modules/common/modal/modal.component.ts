@@ -5,7 +5,7 @@ import {
   FormModalConfiguration,
   ModalConfiguration, WizardModalConfiguration,
 } from 'app/modules/common/modal/modal-configuration.interface';
-import { ModalService } from 'app/services/modal.service';
+import { ModalService, slideInModalId } from 'app/services/modal.service';
 
 @Component({
   selector: 'ix-jw-modal',
@@ -18,6 +18,7 @@ export class ModalComponent implements OnInit, OnDestroy {
       this.close();
     }
   }
+  readonly slideInModalId = slideInModalId;
   @Input() id: string;
   private element: HTMLElement;
   conf: ModalConfiguration;

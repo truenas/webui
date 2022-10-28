@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -42,10 +41,6 @@ describe('OneDriveProviderFormComponent', () => {
           },
         ]),
       ]),
-      {
-        provide: WINDOW,
-        useValue: {} as Window,
-      },
     ],
   });
 

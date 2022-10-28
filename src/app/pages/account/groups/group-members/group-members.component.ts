@@ -56,12 +56,15 @@ export class GroupMembersComponent implements OnInit {
     const userIds = this.selectedMembers.map((user) => user.id);
     this.ws.call('group.update', [this.group.id, { users: userIds }]).pipe(
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.router.navigate(['/', 'credentials', 'groups']);
-    }, (error) => {
-      this.isFormLoading = false;
-      new EntityUtils().handleWsError(this, error, this.dialog);
+    ).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.router.navigate(['/', 'credentials', 'groups']);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(this, error, this.dialog);
+      },
     });
   }
 }

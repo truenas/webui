@@ -84,7 +84,7 @@ describe('IxComboboxComponent', () => {
       await new Promise((smth) => setTimeout(smth, 300));
       spectator.typeInElement('test', 'input');
 
-      expect(spectator.queryAll('mat-option').length).toEqual(4);
+      expect(spectator.queryAll('mat-option')).toHaveLength(4);
       spectator.queryAll('mat-option').forEach((item, idx) => {
         expect(item).toHaveText(provider[idx].label);
       });
@@ -98,7 +98,7 @@ describe('IxComboboxComponent', () => {
       spectator.component.hasErrorInOptions = true;
       spectator.detectComponentChanges();
 
-      expect(spectator.queryAll('mat-option').length).toEqual(1);
+      expect(spectator.queryAll('mat-option')).toHaveLength(1);
       expect(spectator.query('mat-option')).toHaveText('Options cannot be loaded');
     });
 
@@ -112,7 +112,7 @@ describe('IxComboboxComponent', () => {
       await new Promise((smth) => setTimeout(smth, 300));
       spectator.typeInElement('test', 'input');
 
-      expect(spectator.queryAll('mat-option').length).toEqual(2);
+      expect(spectator.queryAll('mat-option')).toHaveLength(2);
       spectator.click(spectator.queryAll('mat-option')[1]);
       expect(formControl.value).toBe('value2');
     });

@@ -15,7 +15,6 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
@@ -123,13 +122,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.showSuccessDialog();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -150,13 +152,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.loader.open();
     this.ws.call('pool.dataset.change_key', [this.data.dataset.id, body])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      }, (error: WebsocketError) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.loader.close();
+          this.showSuccessDialog();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -169,8 +174,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
     this.ws.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (datasets: Dataset[]) => {
+      .subscribe({
+        next: (datasets: Dataset[]) => {
           this.loader.close();
           const pbkdf2iters = datasets[0].pbkdf2iters;
 
@@ -182,11 +187,11 @@ export class EncryptionOptionsDialogComponent implements OnInit {
             pbkdf2iters: Number(pbkdf2iters.rawvalue),
           });
         },
-        (error: WebsocketError) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   private setFormValues(): void {

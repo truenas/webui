@@ -1,6 +1,6 @@
-import {
-  Component, Input, ViewChild, ElementRef,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
 @Component({
   selector: 'ix-copy-btn',
@@ -8,23 +8,42 @@ import {
   styleUrls: ['./copy-btn.component.scss'],
 })
 export class CopyButtonComponent {
-  @ViewChild('el', { static: false }) el: ElementRef;
   @Input() text: string;
-  @Input() showPopup = true;
-  popupIsVisible = false;
 
-  onIconClick(): void {
-    this.popupIsVisible = !this.popupIsVisible;
-    this.copyToClipboard();
+  constructor(
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+  ) {}
+
+  private showSuccessMessage(): void {
+    this.snackbar.success(this.translate.instant('Copied to clipboard'));
   }
 
-  onPopupClose(): void {
-    this.popupIsVisible = false;
+  private copyViaDeprecatedExecCommand(): Promise<void> {
+    const textArea = document.createElement('textarea');
+    textArea.value = this.text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    return new Promise((resolve) => {
+      document.execCommand('copy');
+      textArea.remove();
+      resolve();
+    });
+  }
+
+  private handleCopyToClipboard(): Promise<void> {
+    if (navigator.clipboard) {
+      return navigator.clipboard.writeText(this.text);
+    }
+
+    return this.copyViaDeprecatedExecCommand();
   }
 
   copyToClipboard(): void {
-    this.el.nativeElement.focus();
-    this.el.nativeElement.select();
-    document.execCommand('copy');
+    this.handleCopyToClipboard().then(() => this.showSuccessMessage());
   }
 }

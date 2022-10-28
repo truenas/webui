@@ -2,49 +2,55 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
-    <a
-      *ngIf="canEditPermissions"
-      mat-button
-      [routerLink]="editPermissionsUrl"
-    >{{ 'Edit' | translate }}</a>
+    <a *ngIf="canEditPermissions" mat-button [routerLink]="editPermissionsUrl">
+      {{ 'Edit' | translate }}
+    </a>
   </mat-card-header>
 
   <mat-card-content>
-    <div class="file-information">
-      <div *ngIf="stat?.user || isLoading;" class="details-item">
+    <div *ngIf="stat?.user || isLoading" class="file-information">
+      <div class="details-item">
         <div class="label">{{ 'Owner:' | translate }}</div>
-        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">{{ stat.user }}</div>
+        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">
+          {{ stat.user }}
+        </div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Group:' | translate }}</div>
-        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">{{ stat.group }}</div>
-      </div>
-
-      <div class="details-item">
-        <div class="label">{{ 'Path:' | translate }}</div>
-        <div class="value">{{ dataset.mountpoint }}</div>
+        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">
+          {{ stat.group }}
+        </div>
       </div>
     </div>
     <div *ngIf="acl; else loaderPermissions" class="permissions">
-      <ix-view-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></ix-view-trivial-permissions>
+      <ix-view-trivial-permissions
+        *ngIf="acl.trivial; else nonTrivial"
+        [stat]="stat"
+      ></ix-view-trivial-permissions>
 
       <ng-template #nonTrivial>
         <ng-container [ngSwitch]="acl.acltype">
-          <ix-view-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl | cast"></ix-view-posix-permissions>
-          <ix-view-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl | cast"></ix-view-nfs-permissions>
+          <ix-view-posix-permissions
+            *ngSwitchCase="AclType.Posix1e"
+            [acl]="acl | cast"
+          ></ix-view-posix-permissions>
+
+          <ix-view-nfs-permissions
+            *ngSwitchCase="AclType.Nfs4"
+            [acl]="acl | cast"
+          ></ix-view-nfs-permissions>
         </ng-container>
       </ng-template>
     </div>
-
   </mat-card-content>
 </mat-card>
 
 <ng-template #loaderDetailsItem>
   <ngx-skeleton-loader></ngx-skeleton-loader>
 </ng-template>
+
 <ng-template #loaderPermissions>
   <div class="permissions loader-permissions">
     <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
   </div>
 </ng-template>
-

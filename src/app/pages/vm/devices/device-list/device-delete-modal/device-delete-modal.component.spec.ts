@@ -77,6 +77,7 @@ describe('DeviceDeleteModalComponent', () => {
       { filledValues: { zvol: false, force: true }, expectedValues: { zvol: false, raw_file: false, force: true } },
     ].forEach(({ filledValues, expectedValues }) => {
       describe(
+        // eslint-disable-next-line jest/valid-title
         `when zvol = '${String(filledValues.zvol)}' and `
          + `force = '${String(filledValues.force)}' filled and submitted`,
         () => {
@@ -151,6 +152,7 @@ describe('DeviceDeleteModalComponent', () => {
       },
     ].forEach(({ filledValues, expectedValues }) => {
       describe(
+        // eslint-disable-next-line jest/valid-title
         `when raw_file = '${String(filledValues.raw_file)}' `
         + `and force = '${String(filledValues.force)}' filled and submitted`,
         () => {

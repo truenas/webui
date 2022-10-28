@@ -125,7 +125,7 @@ describe('UserFormComponent', () => {
     });
 
     it('checks download ssh key button is hidden', async () => {
-      const downloadButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
+      const downloadButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download Authorized Keys' }));
       expect(downloadButtons).toHaveLength(0);
     });
 
@@ -163,8 +163,8 @@ describe('UserFormComponent', () => {
     it('check change password', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Password: 'changepwd',
-        'Confirm Password': 'changepwd',
+        'New Password': 'changepwd',
+        'Confirm New Password': 'changepwd',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -178,11 +178,11 @@ describe('UserFormComponent', () => {
     it('shows download ssh key button', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'SSH Public Key': 'test-key',
+        'Authorized Keys': 'test-key',
         Username: 'test-user',
       });
 
-      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download SSH Public Key' }));
+      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Authorized Keys' }));
       await downloadButton.click();
 
       expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
@@ -194,7 +194,7 @@ describe('UserFormComponent', () => {
 
       expect(values).toEqual({
         'Auxiliary Groups': ['test-group'],
-        'Confirm Password': '',
+        'Confirm New Password': '',
         'Create New Primary Group': false,
         'Disable Password': false,
         'Full Name': 'test',
@@ -204,10 +204,10 @@ describe('UserFormComponent', () => {
         'Permit Sudo': false,
         'Primary Group': 'test-group',
         'Samba Authentication': true,
-        'SSH Public Key': '',
+        'Authorized Keys': '',
         UID: '1004',
         Email: '',
-        Password: '',
+        'New Password': '',
         Shell: 'bash',
         Username: 'test',
       });

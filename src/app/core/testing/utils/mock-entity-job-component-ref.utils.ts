@@ -18,6 +18,7 @@ export const mockEntityJobComponentRef = {
     success: of(null),
     failure: new EventEmitter(),
     wsshow: jest.fn(),
+    wspost: jest.fn(),
   },
   close: jest.fn(),
 } as unknown as MatDialogRef<EntityJobComponent>;

@@ -49,7 +49,7 @@ export class BootenvNodeItemComponent {
       case PoolStatus.Faulted:
         return 'var(--red)';
       case PoolStatus.Offline:
-        return 'var(--magenta)';
+        return 'var(--alt-bg2)';
       default:
         return '';
     }

@@ -1,0 +1,10 @@
+<div
+  class="footer-console-bar"
+  ix-auto
+  ix-auto-type="shell"
+  ix-auto-identifier="footer-console"
+>
+  <pre #messageContainer class="messages" (click)="onShowConsolePanel()">
+    {{ lastThreeLogLines$ | async }}
+  </pre>
+</div>

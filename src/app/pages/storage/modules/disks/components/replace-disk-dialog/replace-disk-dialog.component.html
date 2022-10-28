@@ -1,0 +1,28 @@
+<h1 matDialogTitle>
+  {{ 'Replacing disk {name}' | translate: { name: data.diskName } }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-select
+    formControlName="replacement"
+    [label]="'Member Disk' | translate"
+    [required]="true"
+    [options]="unusedDisksOptions$"
+    [tooltip]="helptext.dialogFormFields.disk.tooltip | translate"
+  ></ix-select>
+
+  <ix-checkbox
+    formControlName="force"
+    [label]="'Force' | translate"
+    [tooltip]="helptext.dialogFormFields.force.tooltip | translate"
+  ></ix-checkbox>
+
+  <div class="form-actions">
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Replace Disk' | translate }}
+    </button>
+
+    <button mat-button type="button" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

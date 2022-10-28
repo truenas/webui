@@ -49,30 +49,33 @@ export class RsyncConfigureComponent implements OnInit {
   ngOnInit(): void {
     this.loader.open();
 
-    this.ws.call('rsyncd.config').pipe(untilDestroyed(this)).subscribe(
-      (config: RsyncConfigUpdate) => {
+    this.ws.call('rsyncd.config').pipe(untilDestroyed(this)).subscribe({
+      next: (config: RsyncConfigUpdate) => {
         this.form.patchValue(config);
         this.loader.close();
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
-    );
+    });
   }
 
   onSubmit(): void {
     this.loader.open();
 
     const values = this.form.value;
-    this.ws.call('rsyncd.update', [values] as [RsyncConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.router.navigate(['services']);
-    }, (error) => {
-      this.loader.close();
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    this.ws.call('rsyncd.update', [values] as [RsyncConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loader.close();
+        this.router.navigate(['services']);
+      },
+      error: (error) => {
+        this.loader.close();
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 

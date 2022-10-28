@@ -86,8 +86,7 @@ describe('SelectPresetModalComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  // TODO: Enable when [required] is added to the select
-  xit('loads acl presets for given path and shows them in the select', async () => {
+  it('loads acl presets for given path and shows them in the select', async () => {
     const ws = spectator.inject(WebSocketService);
     const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
 
@@ -98,7 +97,8 @@ describe('SelectPresetModalComponent', () => {
       },
       path: '/mnt/pool/dataset',
     }]);
-    expect(await presetSelect.getOptionLabels()).toEqual(['POSIX_HOME', 'POSIX_OFFICE']);
+    expect(await presetSelect.getOptionLabels()).toContain('POSIX_HOME');
+    expect(await presetSelect.getOptionLabels()).toContain('POSIX_OFFICE');
   });
 
   it('hides the preset select when Create a custom ACL is selected', async () => {

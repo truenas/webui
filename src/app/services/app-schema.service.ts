@@ -283,7 +283,7 @@ export class AppSchemaService {
         altDefault = false;
       }
 
-      const value = schema.default !== undefined ? schema.default : altDefault;
+      const value = schema.default !== undefined && isNew ? schema.default : altDefault;
 
       const newFormControl = new CustomUntypedFormControl(value, [
         schema.required ? Validators.required : Validators.nullValidator,
@@ -497,7 +497,7 @@ export class AppSchemaService {
                 parentControl.hidden$.pipe(
                   take(1),
                 ).subscribe((isParentHidden) => {
-                  if (value !== null && isParentHidden) {
+                  if (value !== null && !isParentHidden) {
                     const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
                     if (!formField.hidden$) {
                       formField.hidden$ = new BehaviorSubject<boolean>(false);
@@ -601,6 +601,9 @@ export class AppSchemaService {
     const result = {} as HierarchicalObjectMap<ChartFormValue>;
     Object.keys(groupValue).forEach((key) => {
       result[key] = this.serializeFormValue(groupValue[key]) as HierarchicalObjectMap<ChartFormValue>;
+      if (result[key] === null) {
+        delete result[key];
+      }
     });
     return result;
   }
@@ -614,5 +617,46 @@ export class AppSchemaService {
       }
       return this.serializeFormValue(listItem[Object.keys(listItem)[0]]);
     }) as HierarchicalObjectMap<ChartFormValue>[];
+  }
+
+  /**
+   * Restores keys from a form group
+   * @param config Object without keys. Example: { objectList: [{ nestedList: ['test4', 'test5'] }] }
+   * @param form Form group to restore keys from
+   * @returns Object with keys. Example: { objectList: [{ key2: 'test4' }, { key2: 'test5' }] }
+   */
+  restoreKeysFromFormGroup(
+    config: HierarchicalObjectMap<ChartFormValue>,
+    form: FormGroup,
+  ): HierarchicalObjectMap<ChartFormValue> {
+    const newConfig = {} as HierarchicalObjectMap<ChartFormValue>;
+    for (const [keyConfig, valueConfig] of Object.entries(config)) {
+      const formConfig = form.controls[keyConfig] as FormGroup;
+      if (!formConfig) {
+        continue;
+      }
+
+      if (_.isArray(valueConfig)) {
+        newConfig[keyConfig] = valueConfig.map((valueItem, idxItem) => {
+          if (_.isPlainObject(valueItem)) {
+            return this.restoreKeysFromFormGroup(
+              valueItem as HierarchicalObjectMap<ChartFormValue>,
+              formConfig.controls[idxItem] as FormGroup,
+            );
+          }
+          const keyItem = Object.keys(formConfig.value[idxItem])[0];
+          return { [keyItem]: valueItem };
+        });
+      } else if (_.isPlainObject(valueConfig)) {
+        newConfig[keyConfig] = this.restoreKeysFromFormGroup(
+          valueConfig as HierarchicalObjectMap<ChartFormValue>,
+          formConfig,
+        );
+      } else {
+        newConfig[keyConfig] = valueConfig;
+      }
+    }
+
+    return newConfig;
   }
 }

@@ -63,7 +63,7 @@ describe('IxSelectComponent', () => {
       expect(spectator.component.isDisabled).toBeTruthy();
     });
 
-    it('MatSelect should be disabled', async () => {
+    it('disables MatSelect when setDisabledState is true', async () => {
       spectator.component.setDisabledState(true);
 
       const select = await loader.getHarness(MatSelectHarness);
@@ -111,7 +111,7 @@ describe('IxSelectComponent', () => {
 
       const select = await loader.getHarness(MatSelectHarness);
       const currentValue = await select.getValueText();
-      expect(currentValue).toEqual('FRA');
+      expect(currentValue).toBe('FRA');
     });
 
     it('writes values when option is selected from the dropdown', async () => {
@@ -120,7 +120,7 @@ describe('IxSelectComponent', () => {
       const select = await loader.getHarness(MatSelectHarness);
       await select.open();
       await select.clickOptions({ text: 'GBR' });
-      expect(control.value).toEqual('Great Britain');
+      expect(control.value).toBe('Great Britain');
     });
 
     it('shows \'No options\' if options length === 0', async () => {
@@ -135,7 +135,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'Options cannot be loaded\' if options has some error', async () => {
-      spectator.component.options = throwError('Some Error');
+      spectator.component.options = throwError(() => new Error('Some Error'));
       spectator.component.ngOnChanges();
 
       const select = await loader.getHarness(MatSelectHarness);
@@ -143,6 +143,21 @@ describe('IxSelectComponent', () => {
       const options = await select.getOptions();
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
       expect(optionLabels).toEqual(['Options cannot be loaded']);
+    });
+
+    it('allows some options to be disabled', async () => {
+      spectator.component.options = of([
+        { label: 'GBR', value: 'Great Britain' },
+        { label: 'GRL', value: 'Greenland', disabled: true },
+      ]);
+      spectator.component.ngOnChanges();
+
+      const select = await loader.getHarness(MatSelectHarness);
+      await select.open();
+      const options = await select.getOptions();
+      expect(await options[1].isDisabled()).toBe(false);
+      expect(await options[2].getText()).toBe('GRL');
+      expect(await options[2].isDisabled()).toBe(true);
     });
   });
 

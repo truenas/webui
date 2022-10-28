@@ -1,4 +1,7 @@
-<div class="sys-license-wrapper" *ngIf="hasLicense && licenseInfo; else infoBlock">
+<div
+  *ngIf="hasLicense && licenseInfo; else infoBlock"
+  class="sys-license-wrapper"
+>
   <div class="sys-info-row">
     <span class="label">{{ 'Customer Name' | translate }}:</span>
     <span class="value">{{ licenseInfo.customer_name }}</span>
@@ -13,12 +16,16 @@
   </div>
   <div class="sys-info-row">
     <span class="label">{{ 'Expiration Date' | translate }}:</span>
-    <span class="value">{{ licenseInfo.expiration_date }}
-      <span *ngIf="licenseInfo.daysLeftinContract > 0">( {{ 'expires in {n, plural, one {# day} other {# days} }' | translate: {n: licenseInfo.daysLeftinContract} }} )
+    <span class="value"
+      >{{ licenseInfo.expiration_date }}
+      <span *ngIf="licenseInfo.daysLeftinContract > 0">
+        ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: licenseInfo.daysLeftinContract } }})
       </span>
-      <span *ngIf="licenseInfo.daysLeftinContract === 0">( {{ 'EXPIRES TODAY' | translate }} )
+      <span *ngIf="licenseInfo.daysLeftinContract === 0">
+        ( {{ 'EXPIRES TODAY' | translate }} )
       </span>
-      <span *ngIf="licenseInfo.daysLeftinContract < 0 ">( {{ 'EXPIRED' | translate }} )
+      <span *ngIf="licenseInfo.daysLeftinContract < 0">
+        ( {{ 'EXPIRED' | translate }} )
       </span>
     </span>
   </div>
@@ -39,23 +46,23 @@
 <ng-template #infoBlock>
   <div class="sys-info-wrapper">
     <div class="sys-info-row">
-      <span class="label">{{ "OS Version" | translate }}:</span>
+      <span class="label">{{ 'OS Version' | translate }}:</span>
       <span class="value">{{ systemInfo.version }}</span>
     </div>
     <div class="sys-info-row">
-      <span class="label">{{ "Product" | translate }}:</span>
+      <span class="label">{{ 'Product' | translate }}:</span>
       <span class="value">{{ systemInfo.system_product }}</span>
     </div>
     <div *ngIf="systemInfo.model" class="sys-info-row">
-      <span class="label">{{ "Model" | translate }}:</span>
+      <span class="label">{{ 'Model' | translate }}:</span>
       <span class="value">{{ systemInfo.model }}</span>
     </div>
     <div *ngIf="systemInfo.memory" class="sys-info-row">
-      <span class="label">{{ "Memory" | translate }}:</span>
+      <span class="label">{{ 'Memory' | translate }}:</span>
       <span class="value">{{ systemInfo.memory }}</span>
     </div>
     <div *ngIf="systemInfo.serial" class="fn-sys-info-row">
-      <span class="label">{{ "Serial Number" | translate }}:</span>
+      <span class="label">{{ 'Serial Number' | translate }}:</span>
       <span class="value">{{ systemInfo.serial }}</span>
     </div>
   </div>

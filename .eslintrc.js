@@ -1,4 +1,5 @@
-const { rules: airbnbRules } = require('eslint-config-airbnb-typescript/lib/shared');
+const { rules: airbnbSharedRules } = require('eslint-config-airbnb-typescript/lib/shared');
+const { rules: airbnbVariableRules } = require('eslint-config-airbnb-base/rules/variables');
 
 module.exports = {
   "root": true,
@@ -24,13 +25,15 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:rxjs/recommended"
       ],
       "plugins": [
         "rxjs",
         "rxjs-angular",
         "unicorn",
         "angular-file-naming",
-        "@shopify"
+        "@shopify",
+        "unused-imports",
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -53,6 +56,7 @@ module.exports = {
           "ignoreStrings": true, // TODO: Consider enabling later.
           "ignoreTemplateLiterals": true
         }],
+        "radix": "off",
         "no-console": ["error", { allow: ["warn", "error", "info"] }],
         "import/order": ["error", {
           "groups": ["builtin", "external", ["internal", "parent", "sibling", "index"]],
@@ -132,16 +136,26 @@ module.exports = {
         "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
-        "no-restricted-syntax": "off",
-        "guard-for-in": "off",
+        "no-restricted-syntax": ["error",
+          // TODO: Partially implemented. ForOfStatement is allowed for now.
+          {
+            "selector": "ForInStatement",
+            "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+          },
+          {
+            "selector": "LabeledStatement",
+            "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+          },
+          {
+            "selector": "WithStatement",
+            "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+          }
+        ],
         "no-param-reassign": "off",
-        "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
         "@typescript-eslint/no-shadow": "off",
-        "no-case-declarations": "off",
         "no-multi-str": "off",
-        "no-useless-escape": "off",
         "no-mixed-operators": ["error", {
           groups: [
             // TODO: Some operators from default config not implemented.
@@ -153,31 +167,39 @@ module.exports = {
           allowSamePrecedence: true
         }],
         "default-case": "off",
-        "import/no-cycle": "off",
-        "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
 
         // Other temporary disables
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
+        "rxjs/no-implicit-any-catch": ["off"],
+        "rxjs/no-nested-subscribe": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
-          ...airbnbRules['@typescript-eslint/indent'][2],
+          ...airbnbSharedRules['@typescript-eslint/indent'][2],
           ignoredNodes: [
-            ...airbnbRules['@typescript-eslint/indent'][2]['ignoredNodes'],
+            ...airbnbSharedRules['@typescript-eslint/indent'][2]['ignoredNodes'],
             "PropertyDefinition[decorators]",
           ]
         }],
+        "@typescript-eslint/restrict-plus-operands": ["error", { allowAny: true }],
+        "no-restricted-globals": [
+          "error",
+          ...airbnbVariableRules['no-restricted-globals'].slice(1),
+          {
+            "name": "window",
+            "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
+          }
+        ],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
@@ -240,7 +262,7 @@ module.exports = {
         "rxjs-angular/prefer-takeuntil": ["error", {
           "alias": ["untilDestroyed"],
           "checkComplete": false,
-          "checkDecorators": ["Component"], // default
+          "checkDecorators": ["Component"],
           "checkDestroy": false
         }],
         "rxjs/finnish": ["error", {
@@ -250,6 +272,7 @@ module.exports = {
           "functions": false,
           "methods": false,
         }],
+        "rxjs/prefer-observer": ["error"],
         "id-length": ["error", {
           exceptions: ['a', 'b', 'x', 'y', '_', 'i', 'n'],
           properties: 'never',
@@ -266,13 +289,33 @@ module.exports = {
       }
     },
     {
+      "files": ["**/*.spec.ts"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "rules": {
+        "jest/no-large-snapshots": ["error"],
+        "jest/prefer-equality-matcher": ["error"],
+        "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }],
+        "jest/expect-expect": [
+          "error",
+          {
+            "assertFunctionNames": ["expect", "expectObservable"],
+          }
+        ]
+      }
+    },
+    {
       "files": ["*.html"],
-      "parser": "@angular-eslint/template-parser",
-      "plugins": [
-        "@angular-eslint/template",
-        "unused-imports",
-      ],
-      "rules": {}
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {
+        "@angular-eslint/template/attributes-order": ["error"],
+
+        // TODO: To be enabled later
+        "@angular-eslint/template/no-duplicate-attributes": ['off'],
+        '@angular-eslint/template/use-track-by-function': ['off'],
+        '@angular-eslint/template/eqeqeq': ['off'],
+        '@angular-eslint/template/no-negated-async': ['off'],
+      }
     }
   ]
 }

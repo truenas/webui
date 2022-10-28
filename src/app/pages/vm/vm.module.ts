@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -25,6 +26,9 @@ import {
 } from 'app/services';
 import { DeviceListComponent } from './devices/device-list/device-list.component';
 import { VmFormComponent } from './vm-form/vm-form.component';
+import { CloneVmDialogComponent } from './vm-list/clone-vm-dialog/clone-vm-dialog.component';
+import { DeleteVmDialogComponent } from './vm-list/delete-vm-dialog/delete-vm-dialog.component';
+import { StopVmDialogComponent } from './vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VmListComponent } from './vm-list/vm-list.component';
 import { VmWizardComponent } from './vm-wizard/vm-wizard.component';
 import { routing } from './vm.routing';
@@ -48,6 +52,7 @@ import { routing } from './vm.routing';
     IxFormsModule,
     CastModule,
     LayoutModule,
+    MatDialogModule,
   ],
   declarations: [
     VmListComponent,
@@ -57,6 +62,9 @@ import { routing } from './vm.routing';
     VmSerialShellComponent,
     DeviceFormComponent,
     DeviceDeleteModalComponent,
+    DeleteVmDialogComponent,
+    StopVmDialogComponent,
+    CloneVmDialogComponent,
   ],
   providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService],
 })

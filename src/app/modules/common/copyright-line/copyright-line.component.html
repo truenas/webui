@@ -1,0 +1,6 @@
+TrueNAS {{ productType | mapValue: productTypeLabels }} ® © {{ copyrightYear$ | async }}
+<a href="https://www.ixsystems.com/" target="_blank" title="iXsystems, Inc.">
+  <img *ngIf="withIxLogo" class="ix-logo" src="assets/images/ix_logo_full.png" alt="iX Systems">
+  <ng-container *ngIf="!withIxLogo"> - iXsystems, Inc</ng-container>
+</a>
+

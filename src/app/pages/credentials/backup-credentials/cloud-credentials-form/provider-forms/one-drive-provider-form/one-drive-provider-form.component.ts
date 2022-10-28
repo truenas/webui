@@ -103,8 +103,8 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
       token: this.form.value.token,
     }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (drives) => {
+      .subscribe({
+        next: (drives) => {
           this.drives = drives;
           this.drives$ = of(
             drives.map((drive) => ({
@@ -113,9 +113,9 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
             })),
           );
         },
-        (error) => {
+        error: (error) => {
           new EntityUtils().handleWsError(null, error, this.dialogService);
         },
-      );
+      });
   }
 }

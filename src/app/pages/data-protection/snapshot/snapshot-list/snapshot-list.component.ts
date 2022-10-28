@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
-import { PeriodicSnapshotTask, PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import {
+  PeriodicSnapshotTask,
+  PeriodicSnapshotTaskUi,
+  PeriodicSnapshotTaskUpdate,
+} from 'app/interfaces/periodic-snapshot-task.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -59,6 +63,14 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     },
   };
 
+  customActions = [{
+    id: 'snapshots',
+    name: this.translate.instant('Snapshots'),
+    function: () => {
+      this.router.navigate(['/datasets/snapshots']);
+    },
+  }];
+
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -66,6 +78,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
+    private router: Router,
     private store$: Store<AppState>,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
@@ -112,17 +125,19 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   onCheckboxChange(row: PeriodicSnapshotTaskUi): void {
     row.enabled = !row.enabled;
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (task) => {
-        if (!task) {
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (task) => {
+          if (!task) {
+            row.enabled = !row.enabled;
+          }
+        },
+        error: (err) => {
           row.enabled = !row.enabled;
-        }
-      },
-      (err) => {
-        row.enabled = !row.enabled;
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
-    );
+          new EntityUtils().handleWsError(this, err, this.dialogService);
+        },
+      });
   }
 
   doAdd(): void {

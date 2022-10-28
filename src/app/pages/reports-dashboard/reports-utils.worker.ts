@@ -3,6 +3,33 @@
 // Write a bunch of pure functions above
 // and add it to our commands below
 
+export interface CoreEvent {
+  name: string;
+  sender?: unknown;
+  data?: unknown;
+}
+
+export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
+
+export interface ReportingData {
+  end: number;
+  identifier: string;
+  legend: string[];
+  name: string;
+  start: number;
+  step: number;
+  data: number[][];
+  aggregations: {
+    [key in ReportingAggregationKeys]: (string | number)[];
+  };
+}
+
+export interface Command {
+  command: string; // Use '|' or '--pipe' to use the output of previous command as input
+  input: unknown;
+  options?: unknown[]; // Function parameters
+}
+
 const maxDecimals = (input: number, max?: number): number => {
   if (!max) {
     max = 2;
@@ -82,7 +109,7 @@ function convertKmgt(input: number, units: string): { value: number; prefix: str
 
   if (units === 'bits') {
     shortName = shortName.replace(/i/, '').trim();
-    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
+    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`;
   }
 
   return { value: output, prefix, shortName };
@@ -128,21 +155,21 @@ function formatValue(value: number, units: string): string | number {
   return output;
 }
 
-function convertAggregations(input: any, labelY?: string): any {
+function convertAggregations(input: ReportingData, labelY?: string): ReportingData {
   const output = { ...input };
   const units = inferUnits(labelY);
   const keys = Object.keys(output.aggregations);
 
-  keys.forEach((key) => {
-    (output.aggregations[key] as any[]).forEach((value, index) => {
-      output.aggregations[key][index] = formatValue(value, units);
+  keys.forEach((key: ReportingAggregationKeys) => {
+    (output.aggregations[key]).forEach((value, index) => {
+      output.aggregations[key][index] = formatValue(value as number, units);
     });
   });
   return output;
 }
 
-function optimizeLegend(input: any): any {
-  const output: { legend: string[] } = input;
+function optimizeLegend(input: ReportingData): ReportingData {
+  const output = input;
   // Do stuff
   switch (input.name) {
     case 'upsbatterycharge':
@@ -239,7 +266,7 @@ function optimizeLegend(input: any): any {
   return output;
 }
 
-function avgCpuTempReport(report: any): any {
+function avgCpuTempReport(report: ReportingData): ReportingData {
   const output = { ...report };
   // Handle Data
   output.data = avgFromReportData(report.data);
@@ -249,8 +276,8 @@ function avgCpuTempReport(report: any): any {
 
   // Handle Aggregations
   const keys = Object.keys(output.aggregations);
-  keys.forEach((key) => {
-    output.aggregations[key] = [arrayAvg(output.aggregations[key])];
+  keys.forEach((key: ReportingAggregationKeys) => {
+    output.aggregations[key] = [arrayAvg(output.aggregations[key] as number[])];
   });
 
   return output;
@@ -278,48 +305,49 @@ const commands = {
     console.log(output);
     return output;
   },
-  avgFromReportData: (input: any) => {
+  avgFromReportData: (input: number[][]) => {
     const output = avgFromReportData(input);
     return output;
   },
-  optimizeLegend: (input: any) => {
+  optimizeLegend: (input: ReportingData) => {
     const output = optimizeLegend(input);
     return output;
   },
-  convertAggregations: (input: any, options?: any) => {
+  convertAggregations: (input: ReportingData, options?: [string]) => {
     const output = options ? convertAggregations(input, ...options) : input;
     if (!options) {
       console.warn('You must specify a label to parse. (Usually the Y axis label). Returning input value instead');
     }
     return output;
   },
-  avgCpuTempReport: (input: any) => {
+  avgCpuTempReport: (input: ReportingData) => {
     const output = avgCpuTempReport(input);
     return output;
   },
-  arrayAvg: (input: any) => {
+  arrayAvg: (input: number[]) => {
     const output = arrayAvg(input);
     return output;
   },
-  maxDecimals: (input: any, options?: any) => {
+  maxDecimals: (input: number, options?: [number]) => {
     const output = options ? maxDecimals(input, ...options) : maxDecimals(input);
     return output;
   },
 };
 
-function processCommands(list: any[]): any {
-  let output: any;
+function processCommands(list: Command[]): unknown {
+  let output: unknown;
   list.forEach((item) => {
     const input = item.input === '--pipe' || item.input === '|' ? output : item.input;
+    const command = commands[item.command as keyof typeof commands];
     output = item.options
-      ? (commands as any)[item.command](input, item.options)
-      : (commands as any)[item.command](input);
+      ? (command as (input: unknown, options: unknown[]) => unknown)(input, item.options)
+      : (command as (input: unknown) => unknown)(input);
   });
 
   return output;
 }
 
-function emit(evt: any): void {
+function emit(evt: CoreEvent): void {
   postMessage(evt);
 }
 
@@ -328,10 +356,11 @@ addEventListener('message', ({ data }) => { // eslint-disable-line no-restricted
   let output;
 
   switch (evt.name) {
-    case 'SayHello':
+    case 'SayHello': {
       const response = evt.data + ' World!';
       emit({ name: 'Response', data: response });
       break;
+    }
     case 'ProcessCommands':
       output = processCommands(evt.data);
       emit({ name: 'Response', data: output, sender: evt.sender });

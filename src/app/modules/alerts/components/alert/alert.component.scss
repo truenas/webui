@@ -18,6 +18,13 @@
 .alert-message {
   font-size: inherit;
   font-weight: normal;
+  margin-bottom: 6px;
+  margin-top: 3px;
+}
+
+.alert-node {
+  font-size: 0.75rem;
+  margin-bottom: 1px;
 }
 
 .alert-level {
@@ -26,11 +33,19 @@
   text-transform: uppercase;
 
   &.warn {
-    color: var(--red);
+    color: var(--orange);
   }
 
   &.accent {
     color: var(--accent);
+  }
+
+  &.primary {
+    color: var(--primary);
+  }
+
+  &.error {
+    color: var(--red);
   }
 }
 
@@ -38,7 +53,6 @@
   font-size: 0.75rem;
   line-height: 0.75rem;
   margin-bottom: 3px;
-  margin-top: 3px;
 }
 
 .action-link {

@@ -1,19 +1,33 @@
-<div class="encryption-description" *ngIf="!dataset.encrypted; else encryptedCell">{{ 'Unencrypted' | translate }}</div>
+<div
+  *ngIf="!dataset.encrypted; else encryptedCell"
+  class="encryption-description"
+>
+  {{ 'Unencrypted' | translate }}
+</div>
 <ng-template #encryptedCell>
-
   <ng-container *ngIf="dataset.locked; else unlockedCell">
-    <mat-icon fontSet="mdi-set" fontIcon="mdi-lock{{ isEncryptionRoot ? '' : '-outline'}}"></mat-icon>
+    <mat-icon
+      fontSet="mdi-set"
+      fontIcon="mdi-lock{{ isEncryptionRoot ? '' : '-outline' }}"
+    ></mat-icon>
     <div class="encryption-description">
       <div>{{ 'Locked' | translate }}</div>
-      <div *ngIf="!isEncryptionRoot" class="by-ancestor">{{ 'by ancestor' | translate }}</div>
+      <div *ngIf="!isEncryptionRoot" class="by-ancestor">
+        {{ 'by ancestor' | translate }}
+      </div>
     </div>
   </ng-container>
 
   <ng-template #unlockedCell>
-    <mat-icon fontSet="mdi-set" fontIcon="mdi-lock-open-variant{{ isEncryptionRoot ? '' : '-outline'}}"></mat-icon>
+    <mat-icon
+      fontSet="mdi-set"
+      fontIcon="mdi-lock-open-variant{{ isEncryptionRoot ? '' : '-outline' }}"
+    ></mat-icon>
     <div class="encryption-description">
       <div>{{ 'Unlocked' | translate }}</div>
-      <div *ngIf="!isEncryptionRoot" class="by-ancestor">{{ 'by ancestor' | translate }}</div>
+      <div *ngIf="!isEncryptionRoot" class="by-ancestor">
+        {{ 'by ancestor' | translate }}
+      </div>
     </div>
   </ng-template>
 </ng-template>

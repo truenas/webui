@@ -39,7 +39,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   values: string[] = [];
   isDisabled = false;
 
-  inputReset$ = new Subject();
+  inputReset$ = new Subject<void>();
 
   onChange: (value: string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};

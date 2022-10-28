@@ -146,22 +146,25 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   downloadLogs(job: Job): void {
-    const filename = job.id + '.log';
-    this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe(
-      ([_, url]) => {
+    const filename = `${job.id}.log`;
+    this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe({
+      next: ([_, url]) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, filename, mimetype)
           .pipe(untilDestroyed(this))
-          .subscribe((file) => {
-            this.storage.downloadBlob(file, filename);
-          }, (err) => {
-            new EntityUtils().handleWsError(this, err, this.dialogService);
+          .subscribe({
+            next: (file) => {
+              this.storage.downloadBlob(file, filename);
+            },
+            error: (err) => {
+              new EntityUtils().handleWsError(this, err, this.dialogService);
+            },
           });
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 
   onSearch(query: string): void {

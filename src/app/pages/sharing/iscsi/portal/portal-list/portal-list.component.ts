@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { lastValueFrom } from 'rxjs';
 import { Choices } from 'app/interfaces/choices.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -89,25 +90,18 @@ export class PortalListComponent implements EntityTableConfig {
   }
 
   prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve) => {
-      await this.iscsiService.getIpChoices().toPromise().then(
-        (ips) => {
-          this.ipChoices = ips;
-          resolve(true);
-        },
-        () => {
-          resolve(true);
-        },
-      );
+    return lastValueFrom(this.iscsiService.getIpChoices()).then((ips) => {
+      this.ipChoices = ips;
+      return true;
     });
   }
 
   dataHandler(entityTable: EntityTableComponent): void {
     entityTable.rows.forEach((row) => {
-      for (const ip in row.listen) {
+      Object.keys(row.listen).forEach((ip) => {
         const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
         row.listen[ip] = listenIp + ':' + row.listen[ip].port;
-      }
+      });
     });
   }
 }

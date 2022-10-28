@@ -8,6 +8,15 @@ interface VmPciPassthroughAttributes {
   type: string;
 }
 
+interface VmUsbPassthroughAttributes {
+  controller_type: string;
+  device: string | null;
+  usb?: {
+    product_id?: string;
+    vendor_id?: string;
+  };
+}
+
 export interface VmDisplayAttributes {
   bind: string;
   password: string;
@@ -84,8 +93,14 @@ export interface VmDiskDevice extends BaseVmDevice {
   attributes: VmDiskAttributes;
 }
 
+export interface VmUsbPassthroughDevice extends BaseVmDevice {
+  dtype: VmDeviceType.Usb;
+  attributes: VmUsbPassthroughAttributes;
+}
+
 export type VmDevice =
   | VmPciPassthroughDevice
+  | VmUsbPassthroughDevice
   | VmRawFileDevice
   | VmNicDevice
   | VmDisplayDevice
@@ -126,4 +141,17 @@ export interface VmPassthroughDeviceChoice {
   available: boolean;
   error: unknown;
   reset_mechanism_defined: boolean;
+}
+
+export interface VmUsbPassthroughDeviceChoice {
+  capability: {
+    product: string;
+    vendor: string;
+    product_id: string;
+    vendor_id: string;
+    bus: string;
+    device: string;
+  };
+  available: boolean;
+  error: unknown;
 }

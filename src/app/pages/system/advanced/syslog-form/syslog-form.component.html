@@ -1,24 +1,31 @@
-<ix-modal-header [title]="'Syslog' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  [title]="'Syslog' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
           formControlName="fqdn_syslog"
           [label]="'Use FQDN for Logging' | translate"
           [tooltip]="tooltips.fqdn_syslog"
         ></ix-checkbox>
+
         <ix-select
           formControlName="sysloglevel"
           [label]="'Syslog Level' | translate"
           [tooltip]="tooltips.sysloglevel"
           [options]="levelOptions$"
         ></ix-select>
+
         <ix-input
           formControlName="syslogserver"
           [label]="'Syslog Server' | translate"
           [tooltip]="tooltips.syslogserver"
         ></ix-input>
+
         <ix-select
           formControlName="syslog_transport"
           [label]="'Syslog Transport' | translate"
@@ -33,6 +40,7 @@
             [tooltip]="tooltips.syslog_transport"
             [options]="certificateOptions$"
           ></ix-select>
+
           <ix-select
             formControlName="syslog_tls_certificate_authority"
             [label]="'Syslog TLS Certificate Authority' | translate"
@@ -53,9 +61,11 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

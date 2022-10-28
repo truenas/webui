@@ -21,7 +21,7 @@ export class JobService {
   ) {}
 
   getJobStatus(jobId: number): Observable<Job> {
-    const source = Observable.create((observer: Observer<Job>) => {
+    return new Observable((observer: Observer<Job>) => {
       this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
         if (event.id === jobId) {
           observer.next(event.fields);
@@ -31,7 +31,6 @@ export class JobService {
         }
       });
     });
-    return source;
   }
 
   showLogs(job: Job, title?: string, cancelMsg?: string): void {
@@ -60,8 +59,8 @@ export class JobService {
           disableClose: true,
         }).pipe(
           filter(Boolean),
-          switchMap(() => this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], targetJob.id + '.log'])),
-          switchMap(([, url]) => this.storage.downloadUrl(url, targetJob.id + '.log', 'text/plain')),
+          switchMap(() => this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], `${targetJob.id}.log`])),
+          switchMap(([, url]) => this.storage.downloadUrl(url, `${targetJob.id}.log`, 'text/plain')),
           catchError((error) => {
             new EntityUtils().handleWsError(this, error);
             return EMPTY;

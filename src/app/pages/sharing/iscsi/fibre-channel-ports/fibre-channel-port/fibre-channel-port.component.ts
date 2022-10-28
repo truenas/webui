@@ -10,6 +10,7 @@ import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/mo
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   WebSocketService, IscsiService, AppLoaderService, DialogService,
 } from 'app/services';
@@ -88,18 +89,21 @@ export class FibreChannelPortComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
+    private snackbar: SnackbarService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
-    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      targetField.options = targets.map((target) => {
-        return {
-          label: target.name,
-          value: target.id,
-        };
-      });
-    },
-    (err) => {
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe({
+      next: (targets) => {
+        targetField.options = targets.map((target) => {
+          return {
+            label: target.name,
+            value: target.id,
+          };
+        });
+      },
+      error: (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
     });
   }
 
@@ -122,11 +126,11 @@ export class FibreChannelPortComponent implements OnInit {
         this.formGroup.controls['target'].updateValueAndValidity();
       }
     });
-    for (const i in this.config) {
+    Object.keys(this.config).forEach((i) => {
       if (this.formGroup.controls[i]) {
         this.formGroup.controls[i].setValue(this.config[i as keyof FibreChannelPortUpdate]);
       }
-    }
+    });
   }
 
   isShow(field: string): boolean {
@@ -144,18 +148,17 @@ export class FibreChannelPortComponent implements OnInit {
       value['target'] = null;
     }
     this.loader.open();
-    this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
-        this.dialogService.info(
-          this.translate.instant('Updated'),
+        this.snackbar.success(
           this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }),
         );
       },
-      (err) => {
+      error: (err) => {
         this.loader.close();
         this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted);
       },
-    );
+    });
   }
 }

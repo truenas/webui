@@ -80,14 +80,14 @@ export class WebdavListComponent implements EntityTableConfig, OnInit {
   onCheckboxChange(row: WebDavShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as WebDavShareUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (share) => {
+      .subscribe({
+        next: (share) => {
           row.enabled = share.enabled;
         },
-        (err) => {
+        error: (err) => {
           row.enabled = !row.enabled;
           new EntityUtils().handleWsError(this, err, this.dialog);
         },
-      );
+      });
   }
 }

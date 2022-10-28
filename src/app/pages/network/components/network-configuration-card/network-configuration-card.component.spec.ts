@@ -83,7 +83,7 @@ describe('NetworkConfigurationCardComponent', () => {
     const ipv4Section = spectator.query(byText('IPv4:')).parentElement;
     const addresses = ipv4Section.querySelectorAll('li');
 
-    expect(addresses.length).toBe(1);
+    expect(addresses).toHaveLength(1);
     expect(addresses[0]).toHaveExactText('192.168.1.1');
   });
 
@@ -91,7 +91,7 @@ describe('NetworkConfigurationCardComponent', () => {
     const ipv4Section = spectator.query(byText('IPv6:')).parentElement;
     const addresses = ipv4Section.querySelectorAll('li');
 
-    expect(addresses.length).toBe(1);
+    expect(addresses).toHaveLength(1);
     expect(addresses[0]).toHaveExactText('fe80::a00:27ff:fe09:c274');
   });
 
@@ -100,7 +100,7 @@ describe('NetworkConfigurationCardComponent', () => {
     const detailsItems = detailsList.reduce((items, element) => {
       const label = element.querySelector('.label').textContent;
       const value = element.querySelector('.value').textContent;
-      items[label] = value;
+      items[label.trim()] = value.trim();
       return items;
     }, {} as Record<string, string>);
 

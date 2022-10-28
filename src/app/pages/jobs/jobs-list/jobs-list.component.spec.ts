@@ -19,7 +19,7 @@ import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.co
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { JobsListComponent } from './jobs-list.component';
 
-export const fakeJobDataSource: Job[] = [{
+const fakeJobDataSource: Job[] = [{
   abortable: true,
   arguments: [1],
   description: null,
@@ -108,8 +108,8 @@ describe('JobsListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'State', 'ID', 'Started', 'Finished', 'Arguments/Logs'],
-      ['highlight_offcloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'ViewDownload Logs'],
-      ['check_circle_outlinecloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View'],
+      ['highlight_off  cloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View  Download Logs'],
+      ['check_circle_outline  cloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View'],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -133,7 +133,7 @@ describe('JobsListComponent', () => {
     await firstExpandButton.click();
     await secondExpandButton.click();
 
-    expect(spectator.queryAll('.expanded').length).toEqual(1);
+    expect(spectator.queryAll('.expanded')).toHaveLength(1);
   });
 
   it('should download logs text file when click Download Logs button', async () => {

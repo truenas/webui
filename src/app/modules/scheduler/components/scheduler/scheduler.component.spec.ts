@@ -76,14 +76,14 @@ describe('SchedulerComponent', () => {
     const select = await loader.getHarness(MatSelectHarness);
     const currentValue = await select.getValueText();
     spectator.detectChanges();
-    expect(currentValue).toEqual('Custom (0 2 15-28 * mon)');
+    expect(currentValue).toBe('Custom (0 2 15-28 * mon)');
   });
 
   it('writes values to form group when preset is selected from the dropdown', async () => {
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
     await select.clickOptions({ text: 'Daily (0 0 * * *)  At 00:00 (12:00 AM)' });
-    expect(control.value).toEqual('0 0 * * *');
+    expect(control.value).toBe('0 0 * * *');
   });
 
   it('shows Scheduler modal when custom option is selected', async () => {
@@ -106,6 +106,6 @@ describe('SchedulerComponent', () => {
     await select.open();
     await select.clickOptions({ text: 'Custom  Create custom schedule' });
 
-    expect(control.value).toEqual('0 2 */4 * 0');
+    expect(control.value).toBe('0 2 */4 * 0');
   });
 });

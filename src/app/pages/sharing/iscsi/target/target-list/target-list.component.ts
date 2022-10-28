@@ -116,13 +116,13 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.entityList.loader.open();
               this.entityList.loaderOpen = true;
-              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
-                () => { this.entityList.getData(); },
-                (error: WebsocketError) => {
+              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
+                next: () => this.entityList.getData(),
+                error: (error: WebsocketError) => {
                   new EntityUtils().handleWsError(this, error, this.entityList.dialogService);
                   this.entityList.loader.close();
                 },
-              );
+              });
             });
           },
         );

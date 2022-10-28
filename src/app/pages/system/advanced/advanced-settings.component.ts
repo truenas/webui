@@ -7,6 +7,8 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { uniqBy } from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -96,8 +98,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                 filter((run) => !!run),
                 switchMap(() => this.ws.call('cronjob.run', [row.id])),
               )
-              .pipe(untilDestroyed(this)).subscribe(
-                () => {
+              .pipe(untilDestroyed(this)).subscribe({
+                next: () => {
                   const message = row.enabled
                     ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
                     : this.translate.instant('This job will not run again until it is enabled.');
@@ -107,8 +109,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
                     true,
                   );
                 },
-                (err: WebsocketError) => new EntityUtils().handleError(this, err),
-              );
+                error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              });
           },
         },
       ];
@@ -225,10 +227,11 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    return this.dialog
-      .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
-      .pipe(tap(() => this.isFirstTime = false))
-      .toPromise();
+    return lastValueFrom(
+      this.dialog
+        .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
+        .pipe(tap(() => this.isFirstTime = false)),
+    );
   }
 
   formatSyslogLevel(level: string): string {
@@ -309,7 +312,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
             },
           ],
         },
-        // TODO: Supposedly temporarly disabled https://jira.ixsystems.com/browse/NAS-115361
+        // TODO: Supposedly temporarly disabled https://ixsystems.atlassian.net/browse/NAS-115361
         // {
         //   title: helptextSystemAdvanced.fieldset_kernel,
         //   id: AdvancedCardId.Kernel,
@@ -364,7 +367,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
         (sedPassword) => {
           this.sedPassword = sedPassword;
-          this.dataCards.push({
+
+          const sedCard = {
             title: helptextSystemAdvanced.fieldset_sed,
             id: AdvancedCardId.Sed,
             items: [
@@ -374,17 +378,21 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
               },
               {
                 label: this.translate.instant('Password'),
-                value: sedPassword ? '\*'.repeat(sedPassword.length) : '–',
+                value: sedPassword ? '*'.repeat(sedPassword.length) : '–',
               },
             ],
-          });
+          };
+
+          this.addDataCard(sedCard);
         },
       );
 
       this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
-        const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
-          (pciId: string) => pciId === gpu.addr.pci_slot,
-        ) > -1).map((gpu: Device) => gpu.description).join(', ');
+        const isolatedGpus = gpus.filter((gpu: Device) => {
+          const index = advancedConfig.isolated_gpu_pci_ids.findIndex((pciId: string) => pciId === gpu.addr.pci_slot);
+          return index > -1;
+        }).map((gpu: Device) => gpu.description).join(', ');
+
         const gpuCard = {
           title: this.translate.instant('Isolated GPU Device(s)'),
           id: AdvancedCardId.Gpus,
@@ -399,7 +407,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
             message: this.translate.instant('To configure Isolated GPU Device(s), click the "Configure" button.'),
           };
         }
-        this.dataCards.push(gpuCard);
+
+        this.addDataCard(gpuCard);
       });
     });
   }
@@ -457,5 +466,9 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         ),
       };
     });
+  }
+
+  private addDataCard(card: DataCard<AdvancedCardId>): void {
+    this.dataCards = uniqBy([...this.dataCards, card], (cardElement) => cardElement.id);
   }
 }

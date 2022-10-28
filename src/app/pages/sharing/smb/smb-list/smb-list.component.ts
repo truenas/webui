@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -28,7 +27,6 @@ export class SmbListComponent implements EntityTableConfig {
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
-  productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No SMB Shares have been configured yet'),
@@ -93,7 +91,6 @@ export class SmbListComponent implements EntityTableConfig {
 
   getActions(row: SmbShare): EntityTableAction[] {
     const rowName = row.path.replace('/mnt/', '');
-    const poolName = rowName.split('/')[0];
     const optionDisabled = !rowName.includes('/');
     return [
       {
@@ -136,24 +133,19 @@ export class SmbListComponent implements EntityTableConfig {
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
           const datasetId = rowName;
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-            (isLocked) => {
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({
+            next: (isLocked) => {
               if (isLocked) {
                 this.lockedPathDialog(row.path);
-              } else if (this.productType.includes(ProductType.Scale)) {
-                this.router.navigate(
-                  ['/'].concat(['storage', 'id', poolName, 'dataset', 'posix-acl', datasetId]),
-                );
               } else {
-                this.router.navigate(
-                  ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]),
-                );
+                this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
               }
-            }, (err) => {
+            },
+            error: (err) => {
               this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
-          );
+          });
         },
       },
       {
@@ -174,14 +166,14 @@ export class SmbListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: SmbShare): void {
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (share) => {
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+      next: (share) => {
         row.enabled = share.enabled;
       },
-      (err) => {
+      error: (err) => {
         row.enabled = !row.enabled;
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 }

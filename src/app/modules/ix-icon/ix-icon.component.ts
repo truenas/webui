@@ -20,6 +20,8 @@ import {
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'ix-icon',
+    '[attr.data-mat-icon-name]': '(_svgIcon && _svgName) || fontIcon',
+    '[attr.data-mat-icon-namespace]': '(_svgIcon && _svgNamespace) || fontSet',
   },
   styleUrls: ['./ix-icon.component.scss'],
   templateUrl: 'ix-icon.component.html',
@@ -75,19 +77,33 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.updateIcon(this.iconName);
+    this.updateIcon(this.name);
   }
 
   private updateIcon(iconName: string): void {
-    if (iconName.startsWith('ix:')) {
-      this.svgIcon = iconName;
-    } else if (iconName.startsWith('mdi')) {
-      this.fontSet = 'mdi-set';
-      this.fontIcon = iconName;
-    } else {
-      this.fontSet = null;
-      this.fontIcon = iconName;
-      this.iconLigature = null;
+    switch (true) {
+      case ((!iconName)):
+        this.svgIcon = '';
+        this.fontSet = '';
+        this.fontIcon = '';
+        this.iconLigature = '';
+        break;
+      case (iconName.startsWith('ix:')):
+        this.fontIcon = '';
+        this.fontSet = '';
+        this.svgIcon = iconName;
+        break;
+      case (iconName.startsWith('mdi')):
+        this.svgIcon = '';
+        this.iconLigature = '';
+        this.fontSet = 'mdi-set';
+        this.fontIcon = iconName;
+        break;
+      default:
+        this.fontSet = '';
+        this.svgIcon = '';
+        this.fontIcon = iconName;
+        this.iconLigature = iconName;
     }
   }
 }

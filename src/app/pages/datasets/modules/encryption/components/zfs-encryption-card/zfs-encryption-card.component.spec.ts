@@ -79,14 +79,14 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': 'Yes',
+      'Encryption Root:': ' Yes ',
       'Current State:': 'Unlocked',
-      'Type:': 'Key',
+      'Type:': ' Key ',
       'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(2);
+    expect(buttons).toHaveLength(2);
     expect(await buttons[0].getText()).toBe('Edit');
     expect(await buttons[1].getText()).toBe('Export Key');
   });
@@ -96,14 +96,14 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': 'Yes',
+      'Encryption Root:': ' Yes ',
       'Current State:': 'Unlocked',
-      'Type:': 'Passphrase',
+      'Type:': ' Passphrase ',
       'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(2);
+    expect(buttons).toHaveLength(2);
     expect(await buttons[0].getText()).toBe('Edit');
     expect(await buttons[1].getText()).toBe('Lock');
   });
@@ -118,14 +118,14 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': 'Yes',
+      'Encryption Root:': ' Yes ',
       'Current State:': 'Locked',
-      'Type:': 'Passphrase',
+      'Type:': ' Passphrase ',
       'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(1);
+    expect(buttons).toHaveLength(1);
     expect(await buttons[0].getText()).toBe('Unlock');
   });
 
@@ -142,12 +142,12 @@ describe('ZfsEncryptionCardComponent', () => {
     expect(details).toEqual({
       'Encryption Root:': '/pool',
       'Current State:': 'Locked by ancestor',
-      'Type:': 'Passphrase',
+      'Type:': ' Passphrase ',
       'Algorithm:': 'aes-256-cbc',
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(0);
+    expect(buttons).toHaveLength(0);
 
     const goToLink = spectator.query('a');
     expect(goToLink).toHaveText('Go To Encryption Root');
@@ -164,7 +164,7 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(0);
+    expect(buttons).toHaveLength(0);
   });
 
   it('has an Unlock button that takes user to unlock screen', async () => {

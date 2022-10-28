@@ -9,6 +9,7 @@ import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DataProtectionTaskState } from './data-protection-task-state.interface';
@@ -59,7 +60,7 @@ export interface ReplicationTask {
   source_datasets?: string[];
   source_datasets_from: string;
   speed_limit?: number;
-  ssh_credentials?: any; // TODO: SshCredentials | number[];
+  ssh_credentials?: KeychainSshCredentials;
   state: DataProtectionTaskState;
   target_dataset: string;
   target_dataset_from: string;

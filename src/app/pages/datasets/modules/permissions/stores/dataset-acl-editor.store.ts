@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
-import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { omit } from 'lodash';
 import {
@@ -12,16 +11,14 @@ import {
   catchError, filter, map, switchMap, takeUntil, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,
@@ -47,7 +44,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     private ws: WebSocketService,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private translate: TranslateService,
     private router: Router,
     private storageService: StorageService,
     private userService: UserService,
@@ -58,8 +54,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
     return mountpoints$.pipe(
       tap((mountpoint) => {
-        this.setState({
-          ...initialState,
+        this.patchState({
           mountpoint,
           isLoading: true,
         });
@@ -77,7 +72,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             });
           }),
           catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
+            this.dialog.errorReportMiddleware(error);
 
             this.patchState({
               isLoading: false,
@@ -170,55 +165,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     };
   });
 
-  readonly stripAcl = this.effect((trigger$: Observable<void>) => {
-    return trigger$.pipe(
-      tap(() => {
-        const conf: DialogFormConfiguration = {
-          title: helptext.stripACL_dialog.title,
-          message: helptext.stripACL_dialog.message,
-          fieldConfig: [
-            {
-              type: 'checkbox',
-              name: 'traverse',
-              placeholder: helptext.stripACL_dialog.traverse_checkbox,
-            },
-          ],
-          saveButtonText: helptext.dataset_acl_stripacl_placeholder,
-          customSubmit: (entityDialog: EntityDialogComponent) => {
-            entityDialog.dialogRef.close();
-
-            const dialogRef = this.matDialog.open(EntityJobComponent, {
-              data: {
-                title: this.translate.instant('Stripping ACLs'),
-              },
-            });
-            dialogRef.componentInstance.setDescription(this.translate.instant('Stripping ACLs...'));
-
-            dialogRef.componentInstance.setCall('filesystem.setacl', [{
-              path: this.get().mountpoint,
-              dacl: [],
-              options: {
-                recursive: true,
-                traverse: Boolean(entityDialog.formValue.traverse),
-                stripacl: true,
-              },
-            }]);
-            dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
-              dialogRef.close();
-              this.router.navigate(['/datasets']);
-            });
-            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
-              dialogRef.close();
-              new EntityUtils().errorReport(err, this.dialog);
-            });
-            dialogRef.componentInstance.submit();
-          },
-        };
-        this.dialog.dialogFormWide(conf);
-      }),
-    );
-  });
-
   readonly saveAcl = this.effect((saveParams$: Observable<AclSaveFormParams>) => {
     return saveParams$.pipe(
       // Warn user about risks when changing top level dataset
@@ -244,13 +190,26 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
 
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
-        dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
-          dialogRef.close();
-          this.router.navigate(['/datasets']);
+        dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
+          next: () => {
+            const ngUrl = ['datasets', this.get()?.mountpoint.replace(`${mntPath}/`, '')];
+            dialogRef.close();
+            this.router.navigate(ngUrl);
+          },
+          error: (error) => {
+            dialogRef.close();
+            this.dialog.errorReportMiddleware(error);
+          },
         });
-        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
-          dialogRef.close();
-          new EntityUtils().errorReport(err, this.dialog);
+        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
+          next: (error) => {
+            dialogRef.close();
+            this.dialog.errorReportMiddleware(error);
+          },
+          error: (error) => {
+            dialogRef.close();
+            this.dialog.errorReportMiddleware(error);
+          },
         });
         dialogRef.componentInstance.submit();
       }),
@@ -273,8 +232,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadHomeSharePreset = this.effect((trigger$: Observable<void>) => {
     return trigger$.pipe(
       tap(() => {
-        this.setState({
-          ...initialState,
+        this.patchState({
           isLoading: true,
         });
       }),
@@ -332,7 +290,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           this.userService.getUserByName(ace.who).pipe(
             tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
             catchError((error) => {
-              new EntityUtils().errorReport(error, this.dialog);
+              this.dialog.errorReportMiddleware(error);
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -347,7 +305,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           this.userService.getGroupByName(ace.who).pipe(
             tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
             catchError((error) => {
-              new EntityUtils().errorReport(error, this.dialog);
+              this.dialog.errorReportMiddleware(error);
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -360,7 +318,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       this.userService.getUserByName(options.owner).pipe(
         tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
         catchError((error) => {
-          new EntityUtils().errorReport(error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
           return EMPTY;
         }),
       ),
@@ -370,7 +328,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       this.userService.getGroupByName(options.ownerGroup).pipe(
         tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
         catchError((error) => {
-          new EntityUtils().errorReport(error, this.dialog);
+          this.dialog.errorReportMiddleware(error);
           return EMPTY;
         }),
       ),

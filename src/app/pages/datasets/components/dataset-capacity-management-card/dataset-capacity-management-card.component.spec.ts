@@ -100,7 +100,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     it('shows chart block', () => {
       const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
-      expect(chartExtra.length).toEqual(2);
+      expect(chartExtra).toHaveLength(2);
       expect(chartExtra[0].querySelector('.label')).toHaveText('Reserved for Dataset:');
       expect(chartExtra[0].querySelector('.value')).toHaveText('1 KiB');
       expect(chartExtra[1].querySelector('.label')).toHaveText('Reserved for Dataset & Children:');
@@ -109,11 +109,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     it('shows details block', () => {
       const details = spectator.queryAll('.details');
-      expect(details.length).toEqual(2);
+      expect(details).toHaveLength(2);
 
       let items = details[0].querySelectorAll('.details-item');
-      expect(items.length).toEqual(3);
-      expect(items[0].querySelector('.label')).toHaveText('Space Available to Dataset:');
+      expect(items).toHaveLength(3);
+      expect(items[0].querySelector('.label')).toHaveText('Space Available to Dataset  :');
       expect(items[0].querySelector('.value')).toHaveText('1 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Applied Dataset Quota:');
       expect(items[1].querySelector('.value')).toHaveText('8 MiB');
@@ -121,7 +121,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       expect(items[2].querySelector('.value')).toHaveText('16 MiB');
 
       items = details[1].querySelectorAll('.details-item');
-      expect(items.length).toEqual(2);
+      expect(items).toHaveLength(2);
       expect(items[0].querySelector('.label')).toHaveText('User Quotas:');
       expect(items[0].querySelector('.value')).toHaveText('Quotas set for 2 users');
       expect(items[1].querySelector('.label')).toHaveText('Group Quotas:');
@@ -149,7 +149,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     it('shows chart block', () => {
       const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
-      expect(chartExtra.length).toEqual(2);
+      expect(chartExtra).toHaveLength(2);
       expect(chartExtra[0].querySelector('.label')).toHaveText('Provisioning Type:');
       expect(chartExtra[0].querySelector('.value')).toHaveText('Thick');
       expect(chartExtra[1].querySelector('.label')).toHaveText('Volume Size:');
@@ -158,17 +158,17 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     it('shows details block', () => {
       const details = spectator.queryAll('.details');
-      expect(details.length).toEqual(2);
+      expect(details).toHaveLength(2);
 
       let items = details[0].querySelectorAll('.details-item');
-      expect(items.length).toEqual(2);
-      expect(items[0].querySelector('.label')).toHaveText('Space Available to Zvol:');
+      expect(items).toHaveLength(2);
+      expect(items[0].querySelector('.label')).toHaveText('Space Available to Zvol  :');
       expect(items[0].querySelector('.value')).toHaveText('3 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Inherited Quotas:');
       expect(items[1].querySelector('.value')).toHaveText('16 MiB');
 
       items = details[1].querySelectorAll('.details-item');
-      expect(items.length).toEqual(2);
+      expect(items).toHaveLength(2);
       expect(items[0]).toHaveText('User Quotas: None');
       expect(items[1]).toHaveText('Group Quotas: None');
     });

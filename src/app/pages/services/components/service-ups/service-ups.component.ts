@@ -26,14 +26,14 @@ export class ServiceUpsComponent implements OnInit {
   isMasterMode = true;
 
   form = this.fb.group({
-    identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/)]],
+    identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
     mode: [null as string],
     remotehost: [null as string, Validators.required],
     remoteport: [null as number, Validators.required],
     driver: [null as string, Validators.required],
     port: [null as string, Validators.required],
     monuser: [null as string, Validators.required],
-    monpwd: [null as string, Validators.pattern(/^((?![\#|\s]).)*$/)],
+    monpwd: [null as string, Validators.pattern(/^((?![#|\s]).)*$/)],
     extrausers: [null as string],
     rmonitor: [false],
     shutdown: [null as string],
@@ -135,18 +135,18 @@ export class ServiceUpsComponent implements OnInit {
   private loadConfig(): void {
     this.ws.call('ups.config')
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
+      .subscribe({
+        next: (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWsError(this, error, this.dialogService);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onSubmit(): void {
@@ -162,18 +162,18 @@ export class ServiceUpsComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('ups.update', [params as UpsConfigUpdate])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
-        (error) => {
+        error: (error) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
-      );
+      });
   }
 
   onCancel(): void {

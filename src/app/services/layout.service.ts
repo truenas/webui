@@ -1,6 +1,7 @@
-import { Injectable, TemplateRef } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { Inject, Injectable, TemplateRef } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import * as domHelper from 'app/helpers/dom.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable({
   providedIn: 'root',
@@ -8,10 +9,14 @@ import * as domHelper from 'app/helpers/dom.helper';
 export class LayoutService {
   private readonly collapsedMenuClass = 'collapsed-menu';
 
-  readonly pageHeaderUpdater$ = new ReplaySubject<TemplateRef<unknown>>();
+  readonly pageHeaderUpdater$ = new BehaviorSubject<TemplateRef<unknown>>(null);
+
+  constructor(
+    @Inject(WINDOW) private window: Window,
+  ) {}
 
   get isMobile(): boolean {
-    return window.innerWidth < 960;
+    return this.window.innerWidth < 960;
   }
 
   get isMenuCollapsed(): boolean {

@@ -125,12 +125,12 @@ describe('IxInputComponent', () => {
       spectator.setInput('type', 'password');
 
       expect(spectator.query('input')).toHaveClass('password-field');
-      expect(spectator.query('.toggle_pw')).toHaveExactText('visibility_off');
+      expect(spectator.query('.toggle_pw').textContent.trim()).toBe('visibility_off');
 
       spectator.click('.toggle_pw');
 
       expect(spectator.query('input')).not.toHaveClass('password-field');
-      expect(spectator.query('.toggle_pw')).toHaveExactText('visibility');
+      expect(spectator.query('.toggle_pw').textContent.trim()).toBe('visibility');
     });
   });
 

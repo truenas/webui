@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
+import {
+  DeleteExtentDialogComponent,
+} from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -62,7 +61,8 @@ export class ExtentListComponent implements EntityTableConfig {
 
   constructor(
     private slideInService: IxSlideInService,
-    protected translate: TranslateService,
+    private translate: TranslateService,
+    private dialog: MatDialog,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -88,61 +88,26 @@ export class ExtentListComponent implements EntityTableConfig {
       id: 'edit',
       icon: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (rowinner: IscsiExtent) => { this.entityTable.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiExtent) => this.entityTable.doEdit(rowinner.id),
     }, {
       name: 'delete',
       id: 'delete',
       icon: 'delete',
       label: this.translate.instant('Delete'),
-      onClick: (rowinner: IscsiExtent) => { this.doDelete(rowinner); },
+      onClick: (rowinner: IscsiExtent) => this.showDeleteDialog(rowinner),
     }] as EntityTableAction[];
   }
 
-  doDelete(row: IscsiExtent): void {
-    const id = row.id;
-    const entityTable = this.entityTable;
-    const isFile = row.type === IscsiExtentType.File;
-    const deleteMsg = entityTable.getDeleteMessage(row);
-    const conf: DialogFormConfiguration = {
-      title: this.translate.instant('Delete iSCSI extent {name}?', { name: row.name }),
-      fieldConfig: [
-        {
-          type: 'paragraph',
-          name: 'delete_msg',
-          paraText: deleteMsg,
-        },
-        {
-          type: 'checkbox',
-          name: 'remove',
-          placeholder: this.translate.instant('Remove file?'),
-          isHidden: !isFile,
-          value: false,
-        },
-        {
-          type: 'checkbox',
-          name: 'force',
-          placeholder: this.translate.instant('Force'),
-          value: false,
-        },
-      ],
-      saveButtonText: this.translate.instant('Delete'),
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        const value = entityDialog.formValue;
-        entityTable.loader.open();
-        entityTable.loaderOpen = true;
-        entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            entityDialog.dialogRef.close(true);
-            entityTable.getData();
-            entityTable.excuteDeletion = true;
-          },
-          (err: WebsocketError) => {
-            entityTable.loader.close();
-            new EntityUtils().handleWsError(entityTable, err, entityTable.dialogService);
-          },
-        );
-      },
-    };
-    this.entityTable.dialogService.dialogForm(conf);
+  showDeleteDialog(extent: IscsiExtent): void {
+    this.dialog.open(DeleteExtentDialogComponent, { data: extent })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((wasDeleted) => {
+        if (!wasDeleted) {
+          return;
+        }
+
+        this.entityTable.getData();
+      });
   }
 }

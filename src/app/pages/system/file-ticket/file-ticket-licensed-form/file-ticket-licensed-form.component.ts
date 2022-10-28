@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,14 +19,14 @@ import {
 } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Job } from 'app/interfaces/job.interface';
 import {
   CreateNewTicket, NewTicketResponse,
 } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services';
@@ -49,7 +49,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     cc: [[] as string[], [
       this.validatorsService.customValidator(
         (control: AbstractControl) => {
-          return !control.value?.every((item: string) => EmailValidator.validate(item));
+          return control.value?.every((item: string) => EmailValidator.validate(item));
         },
         this.translate.instant(helptext.cc.err),
       ),
@@ -97,6 +97,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     private dialog: DialogService,
     private router: Router,
     private validatorsService: IxValidatorsService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
@@ -133,69 +134,74 @@ export class FileTicketLicensedFormComponent implements OnInit {
       tap((job) => this.jobs$.next([this.getJobStatus(job.id)])),
       filter((job) => job.state === JobState.Success),
       untilDestroyed(this),
-    ).subscribe((job) => {
-      if (this.screenshots.length) {
-        this.fileUpload.onUploading$.pipe(
-          untilDestroyed(this),
-        ).subscribe({
-          error: () => {
-            this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
-          },
-        });
-        this.fileUpload.onUploaded$.pipe(
-          take(this.screenshots.length),
-          untilDestroyed(this),
-        ).subscribe(
-          () => {
+    ).subscribe({
+      next: (job) => {
+        if (this.screenshots.length) {
+          this.fileUpload.onUploading$.pipe(
+            untilDestroyed(this),
+          ).subscribe({
+            error: () => {
+              this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
+            },
+          });
+          this.fileUpload.onUploaded$.pipe(
+            take(this.screenshots.length),
+            untilDestroyed(this),
+          ).subscribe({
+            next: () => {
             /** TODO:
              * Improve UX for uploading screenshots
              * HttpResponse have `job_id`, it can be used to show progress.
              * const jobId = (res.body as { job_id: number }).job_id;
              * this.jobs$.next([this.getJobStatus(jobId), ...this.jobs$.value]);
             */
-          },
-          (error) => {
-            // TODO: Improve error handling
-            console.error(error);
-          },
-          () => {
-            this.isFormLoading = false;
-            this.slideIn.close();
-            this.openSuccessDialog(job.result);
-          },
-        );
-        for (const file of this.screenshots) {
-          this.fileUpload.upload(file, 'support.attach_ticket', [{
-            ticket: job.result.ticket,
-            filename: file.name,
-          }]);
+            },
+            error: (error) => {
+              // TODO: Improve error handling
+              console.error(error);
+            },
+            complete: () => {
+              this.isFormLoading = false;
+              this.slideIn.close();
+              this.openSuccessDialog(job.result);
+            },
+          });
+          this.screenshots.forEach((file) => {
+            this.fileUpload.upload(file, 'support.attach_ticket', [{
+              ticket: job.result.ticket,
+              filename: file.name,
+            }]);
+          });
+        } else {
+          this.isFormLoading = false;
+          this.slideIn.close();
+          this.openSuccessDialog(job.result);
         }
-      } else {
+      },
+      error: (error) => {
+        console.error(error);
         this.isFormLoading = false;
-        this.slideIn.close();
-        this.openSuccessDialog(job.result);
-      }
-    }, (error) => {
-      console.error(error);
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleWsFormError(error, this.form);
+      },
     });
   }
 
   openSuccessDialog(params: NewTicketResponse): void {
-    const conf: DialogFormConfiguration = {
+    const dialogConfig: GeneralDialogConfig = {
       title: this.translate.instant('Ticket'),
       message: this.translate.instant('Congratulations! Your ticket has been submitted successfully. It may take some time before images appear.'),
-      fieldConfig: [],
-      cancelButtonText: this.translate.instant('Close'),
-      saveButtonText: this.translate.instant('Open Ticket'),
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close();
-        window.open(params.url, '_blank');
-        this.dialog.closeAllDialogs();
-      },
+      confirmBtnMsg: this.translate.instant('Open Ticket'),
+      cancelBtnMsg: this.translate.instant('Close'),
     };
-    this.dialog.dialogForm(conf);
+    this.dialog.generalDialog(dialogConfig)
+      .pipe(untilDestroyed(this))
+      .subscribe((shouldOpen) => {
+        if (!shouldOpen) {
+          return;
+        }
+
+        this.window.open(params.url, '_blank');
+      });
   }
 
   getJobStatus(id: number): Observable<Job> {
@@ -206,7 +212,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   }
 
   onUserGuidePressed(): void {
-    window.open('https://www.truenas.com/docs/hub/');
+    this.window.open('https://www.truenas.com/docs/hub/');
   }
 
   onEulaPressed(): void {

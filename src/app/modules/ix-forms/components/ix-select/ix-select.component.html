@@ -6,32 +6,60 @@
     [required]="required"
   ></ix-label>
 
-  <div class="input-container" [class.disabled]="isDisabled">
+  <div class="input-container" [class.disabled]="disabledState">
     <mat-select
-      [(ngModel)]="value"
       [required]="required"
-      [disabled]="isDisabled"
+      [disabled]="disabledState"
       [multiple]="multiple"
+      [(ngModel)]="value"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >
+      <mat-select-trigger *ngIf="multiple">
+        {{ value }}
+      </mat-select-trigger>
+
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
-        <mat-option *ngIf="opts.length === 0" [value]="null" [disabled]="true">{{ 'No options' | translate  }}</mat-option>
-        <mat-option *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue">--</mat-option>
-        <mat-option *ngFor="let option of opts" [value]="option.value">{{ option.label }}</mat-option>
+        <mat-option *ngIf="opts.length === 0" [value]="null" [disabled]="true">
+          {{ 'No options' | translate }}
+        </mat-option>
+
+        <mat-option *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue">
+          --
+        </mat-option>
+
+        <mat-option
+          *ngFor="let option of opts"
+          #ixOption
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
+          <ix-icon
+            *ngIf="multiple"
+            [name]="ixOption.selected ? 'check_circle' : 'remove'"
+          ></ix-icon>
+
+          {{ option.label }}
+        </mat-option>
       </ng-container>
 
       <ng-template #loadingOrError>
         <ng-container *ngIf="hasErrorInOptions">
-          <mat-option [disabled]="true">{{ 'Options cannot be loaded' | translate }}</mat-option>
+          <mat-option [disabled]="true">
+            {{ 'Options cannot be loaded' | translate }}
+          </mat-option>
         </ng-container>
       </ng-template>
     </mat-select>
-    <mat-progress-spinner *ngIf="isLoading" class="loader" mode="indeterminate" [diameter]="15"></mat-progress-spinner>
+    <mat-progress-spinner
+      *ngIf="isLoadingState"
+      class="loader"
+      mode="indeterminate"
+      [diameter]="15"
+    ></mat-progress-spinner>
   </div>
 
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
-
 </div>

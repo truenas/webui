@@ -9,7 +9,7 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/components/report/report.component';
+import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -50,25 +50,25 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() labelY?: string = 'Label Y';
   @Input() interactive = false;
 
-  library = 'dygraph'; // dygraph or chart.js
+  library: 'dygraph' | 'chart.js' = 'dygraph';
 
   chart: Dygraph;
 
   units = '';
   yLabelPrefix: string;
-  showLegendValues = false;
 
   theme: Theme;
   timeFormat = '%H:%M';
   culling = 6;
-  controlUid: string;
+  controlUid = `chart_${UUID.UUID()}`;
 
-  private utils: ThemeUtils;
+  private utils: ThemeUtils = new ThemeUtils();
   private _data: ReportingData;
 
-  constructor(private core: CoreService, public themeService: ThemeService) {
-    this.utils = new ThemeUtils();
-    this.controlUid = 'chart_' + UUID.UUID();
+  constructor(
+    private core: CoreService,
+    public themeService: ThemeService,
+  ) {
   }
 
   render(update?: boolean): void {
@@ -77,6 +77,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   // dygraph renderer
   renderGraph(update?: boolean): void {
+    if (!this.data?.legend) {
+      return;
+    }
+
     if (this.isReversed) {
       this.data.legend = this.data.legend.reverse();
       this.data.data.forEach((row, i) => this.data.data[i] = row.slice().reverse());
@@ -91,11 +95,11 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
     const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
-    const gridLineColor = 'rgba(' + fg2Rgb[0] + ', ' + fg2Rgb[1] + ', ' + fg2Rgb[2] + ', 0.25)';
+    const gridLineColor = `rgba(${fg2Rgb[0]}, ${fg2Rgb[1]}, ${fg2Rgb[2]}, 0.25)`;
     const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
-    // TODO: Try: dygraphs.Options
     const options: dygraphs.Options = {
+      animatedZooms: true,
       drawPoints: false, // Must be disabled for smoothPlotter
       pointSize: 1,
       includeZero: true,
@@ -113,7 +117,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           axisLabelFormatter: (numero: number) => {
             const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
             const suffix = converted.suffix ? converted.suffix : '';
-            return this.limitDecimals(converted.value).toString() + suffix;
+            return `${this.limitDecimals(converted.value)} ${suffix}`;
           },
         },
       },
@@ -131,7 +135,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
           const suffix = getSuffix(converted);
-          clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
+          clone.series[index].yHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
           if (!clone.stackedTotal) {
             clone.stackedTotal = 0;
           }
@@ -140,20 +144,20 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         if (clone.stackedTotal >= 0) {
           const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
           const suffix = getSuffix(converted);
-          clone.stackedTotalHTML = this.limitDecimals(converted.value).toString() + suffix;
+          clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
         }
-        this.core.emit({ name: 'LegendEvent-' + this.chartId, data: clone, sender: this });
+        this.core.emit({ name: `LegendEvent-${this.chartId}`, data: clone, sender: this });
         return '';
       },
       series: () => {
-        const series: any = {};
+        const series: { [item: string]: { plotter: typeof smoothPlotter } } = {};
         this.data.legend.forEach((item) => {
           series[item] = { plotter: smoothPlotter };
         });
 
         return series;
       },
-      drawCallback: (dygraph: any) => {
+      drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
         if (dygraph.axes_) {
           const numero = dygraph.axes_[0].maxyval;
           const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
@@ -176,7 +180,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  protected makeTimeAxis(rd: ReportingData): any[] {
+  protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const structure = this.library === 'chart.js' ? 'columns' : 'rows';
     if (structure === 'rows') {
       // Push dates to row based data...
@@ -209,22 +213,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         columns.push(date);
       }
 
-      return columns;
-    }
-  }
-
-  fetchData(rrdOptions: { start: number; end: number }, timeformat?: string, culling?: number): void {
-    if (timeformat) {
-      this.timeFormat = timeformat;
-    }
-    if (culling) {
-      this.culling = culling;
-    }
-
-    // Convert from milliseconds to seconds for epoch time
-    rrdOptions.start = Math.floor(rrdOptions.start / 1000);
-    if (rrdOptions.end) {
-      rrdOptions.end = Math.floor(rrdOptions.end / 1000);
+      return columns as unknown as dygraphs.DataArray;
     }
   }
 
@@ -320,7 +309,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (units === 'bits') {
       shortName = shortName.replace(/i/, '').trim();
-      shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
+      shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
     }
 
     return { value: output, prefix, shortName };
@@ -333,9 +322,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) {
       this.render();
-    }
 
-    if (changes.data) {
       if (this.chart) {
         this.render(true);
       } else {
@@ -346,7 +333,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-
-    this.chart.destroy();
+    this.chart?.destroy();
   }
 }

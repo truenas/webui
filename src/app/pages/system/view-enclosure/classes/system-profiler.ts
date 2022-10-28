@@ -44,8 +44,8 @@ export class SystemProfiler {
   headIndex: number;
   rearIndex: number;
 
-  private _diskData: Disk[];
-  get diskData(): Disk[] {
+  private _diskData: (Disk & { vdev?: VDevMetadata })[];
+  get diskData(): (Disk & { vdev?: VDevMetadata })[] {
     return this._diskData;
   }
   set diskData(obj) {
@@ -165,7 +165,7 @@ export class SystemProfiler {
         };
       }) as EnclosureElement[];
       const powerSupply = { name: 'Power Supply', elements, header: ['Descriptor', 'Status', 'Value'] } as EnclosureElementsGroup;
-      this.enclosures[this.headIndex].elements.push(powerSupply);
+      (this.enclosures[this.headIndex].elements as EnclosureElementsGroup[]).push(powerSupply);
     }
   }
 
@@ -218,9 +218,9 @@ export class SystemProfiler {
   }
 
   storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: TopologyItemStats }): void {
-    for (const diskName in vdev.disks) {
+    Object.keys(vdev.disks).forEach((diskName) => {
       this.addVdevToDiskInfo(diskName, vdev, stats[diskName]);
-    }
+    });
   }
 
   addVdevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: TopologyItemStats): void {
@@ -307,7 +307,9 @@ export class SystemProfiler {
 
   getEnclosureExpanders(index: number): EnclosureElement[] | EnclosureElementsGroup[] {
     if (this.rearIndex && index === this.rearIndex) { index = this.headIndex; }
-    const raw = this.enclosures[index].elements.filter((item) => item.name === 'SAS Expander');
+    const raw = (this.enclosures[index].elements as EnclosureElementsGroup[]).filter((item) => {
+      return item.name === 'SAS Expander';
+    });
 
     if (raw.length > 0) {
       return raw[0].elements;
@@ -318,7 +320,7 @@ export class SystemProfiler {
   rawCapacity(): number {
     if (!this.diskData || this.diskData.length === 0) { return; }
     let capacity = 0;
-    this.diskData.forEach((disk: any) => {
+    this.diskData.forEach((disk) => {
       if (disk.vdev && disk.vdev.topology === 'data') {
         capacity += disk.size;
       }

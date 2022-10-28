@@ -1,10 +1,15 @@
-<ix-modal-header [title]="'File Ticket' | translate" [loading]="isFormLoading"></ix-modal-header>
-<div class="ix-modal-subheader" *ngFor="let job$ of jobs$ | async">
+<ix-modal-header
+  [title]="'File Ticket' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
+<div *ngFor="let job$ of jobs$ | async" class="ix-modal-subheader">
   <ix-job-item *ngIf="job$ | async as job" [job]="job"></ix-job-item>
 </div>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">
         <div class="column">
           <ix-fieldset>
@@ -14,23 +19,27 @@
               [tooltip]="tooltips.name | translate"
               [required]="true"
             ></ix-input>
+
             <ix-input
               formControlName="email"
               [label]="'Email' | translate"
               [tooltip]="tooltips.email | translate"
               [required]="true"
             ></ix-input>
+
             <ix-chips
               formControlName="cc"
               [label]="'CC' | translate"
               [tooltip]="tooltips.cc | translate"
             ></ix-chips>
+
             <ix-input
               formControlName="phone"
               [label]="'Phone' | translate"
               [tooltip]="tooltips.phone | translate"
               [required]="true"
             ></ix-input>
+
             <ix-select
               formControlName="category"
               [label]="'Type' | translate"
@@ -38,6 +47,7 @@
               [tooltip]="tooltips.category | translate"
               [required]="true"
             ></ix-select>
+
             <ix-select
               formControlName="environment"
               [label]="'Environment' | translate"
@@ -45,6 +55,7 @@
               [tooltip]="tooltips.environment | translate"
               [required]="true"
             ></ix-select>
+
             <ix-select
               formControlName="criticality"
               [label]="'Criticality' | translate"
@@ -54,6 +65,7 @@
             ></ix-select>
           </ix-fieldset>
         </div>
+
         <div class="column">
           <ix-fieldset>
             <ix-input
@@ -63,6 +75,7 @@
               [placeholder]="tooltips.title | translate"
               [required]="true"
             ></ix-input>
+
             <ix-textarea
               formControlName="body"
               [label]="'Description' | translate"
@@ -71,11 +84,13 @@
               [rows]="8"
               [required]="true"
             ></ix-textarea>
+
             <ix-checkbox
               formControlName="attach_debug"
               [label]="'Attach Debug' | translate"
               [tooltip]="tooltips.attach_debug | translate"
             ></ix-checkbox>
+
             <ix-file-input
               formControlName="screenshot"
               [label]="'Attach screenshots' | translate"
@@ -91,19 +106,19 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          (click)="onUserGuidePressed()"
-        >{{ 'User Guide' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          (click)="onEulaPressed()"
-        >{{ 'EULA' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="onUserGuidePressed()">
+          {{ 'User Guide' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="onEulaPressed()">
+          {{ 'EULA' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

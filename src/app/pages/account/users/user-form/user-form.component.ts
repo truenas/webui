@@ -37,14 +37,17 @@ import { AppState } from 'app/store';
 })
 export class UserFormComponent {
   private editingUser: User;
-  get isNew(): boolean {
-    return !this.editingUser;
-  }
-  get title(): string {
-    return this.isNew ? this.translate.instant('Add User') : this.translate.instant('Edit User');
-  }
+
   isFormLoading = false;
   subscriptions: Subscription[] = [];
+
+  get isNewUser(): boolean {
+    return !this.editingUser;
+  }
+
+  get title(): string {
+    return this.isNewUser ? this.translate.instant('Add User') : this.translate.instant('Edit User');
+  }
 
   form = this.fb.group({
     full_name: ['', [Validators.required]],
@@ -56,18 +59,14 @@ export class UserFormComponent {
     email: ['', [Validators.email]],
     password: ['', [
       this.validatorsService.validateOnCondition(
-        () => this.isNew,
+        () => this.isNewUser,
         Validators.required,
       ),
     ]],
     password_conf: ['', [
       this.validatorsService.validateOnCondition(
-        () => this.isNew,
+        () => this.isNewUser,
         Validators.required,
-      ),
-      this.validatorsService.withMessage(
-        matchOtherValidator('password'),
-        this.translate.instant(this.isNew ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
       ),
     ]],
     uid: [null as number, [Validators.required]],
@@ -132,6 +131,13 @@ export class UserFormComponent {
   setupForm(user?: User): void {
     this.editingUser = user;
 
+    this.form.get('password_conf').addValidators(
+      this.validatorsService.withMessage(
+        matchOtherValidator('password'),
+        this.translate.instant(this.isNewUser ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
+      ),
+    );
+
     if (user?.home && user.home !== '/nonexistent') {
       this.storageService.filesystemStat(user.home).pipe(untilDestroyed(this)).subscribe((stat) => {
         this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
@@ -147,7 +153,7 @@ export class UserFormComponent {
       this.form.get('group').disabledWhile(this.form.get('group_create').value$),
     );
 
-    if (this.isNew) {
+    if (this.isNewUser) {
       this.setupNewUserForm();
     } else {
       this.setupEditUserForm(user);
@@ -174,7 +180,7 @@ export class UserFormComponent {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
+    if (this.isNewUser) {
       request$ = this.ws.call('user.create', [{
         ...body,
         group_create: values.group_create,
@@ -193,19 +199,22 @@ export class UserFormComponent {
       switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
       map((users) => users[0]),
       untilDestroyed(this),
-    ).subscribe((user) => {
-      if (this.isNew) {
-        this.store$.dispatch(userAdded({ user }));
-      } else {
-        this.store$.dispatch(userChanged({ user }));
-      }
-      this.isFormLoading = false;
-      this.slideIn.close();
-      this.cdr.markForCheck();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (user) => {
+        if (this.isNewUser) {
+          this.store$.dispatch(userAdded({ user }));
+        } else {
+          this.store$.dispatch(userChanged({ user }));
+        }
+        this.isFormLoading = false;
+        this.slideIn.close();
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 

@@ -1,0 +1,54 @@
+<ix-modal-header
+  [title]="'Bulk Edit Disks' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset [title]="helptextBulkEdit.title | translate">
+        <ix-chips
+          formControlName="disknames"
+          [label]="'Disks to be edited:' | translate"
+          [tooltip]="helptextBulkEdit.disks.tooltip | translate"
+        ></ix-chips>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="helptextBulkEdit.label | translate">
+        <ix-select
+          formControlName="hddstandby"
+          [label]="'HDD Standby' | translate"
+          [tooltip]="helptext.disk_form_hddstandby_tooltip | translate"
+          [options]="hddstandbyOptions$"
+          [required]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="advpowermgmt"
+          [label]="'Advanced Power Management' | translate"
+          [tooltip]="helptext.disk_form_advpowermgmt_tooltip | translate"
+          [options]="advpowermgmtOptions$"
+          [required]="true"
+        ></ix-select>
+
+        <ix-checkbox
+          formControlName="togglesmart"
+          [label]="'Enable S.M.A.R.T.' | translate"
+          [tooltip]="helptext.disk_form_togglesmart_tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-input
+          formControlName="smartoptions"
+          [label]="'S.M.A.R.T. Extra Options' | translate"
+          [tooltip]="helptext.disk_form_smartoptions_tooltip | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button mat-button type="submit" color="primary" [disabled]="isLoading">
+          {{ 'Save' | translate }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

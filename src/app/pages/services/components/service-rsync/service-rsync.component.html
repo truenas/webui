@@ -1,12 +1,24 @@
 <mat-card>
   <nav mat-tab-nav-bar>
-    <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive"
-      ix-auto ix-auto-type="tab" ix-auto-identifier="{{link.label}}">
-      {{link.label}}
+    <a
+      *ngFor="let link of navLinks"
+      #rla="routerLinkActive"
+      mat-tab-link
+      routerLinkActive
+      ix-auto
+      ix-auto-type="tab"
+      ix-auto-identifier="{{ link.label }}"
+      [active]="rla.isActive"
+      [routerLink]="link.path"
+    >
+      {{ link.label }}
     </a>
   </nav>
+
   <router-outlet>
     <ix-rsync-configure *ngIf="activedTab == 'configure'"></ix-rsync-configure>
-    <ix-rsync-module-list *ngIf="activedTab == 'rsync-module'"></ix-rsync-module-list>
+    <ix-rsync-module-list
+      *ngIf="activedTab == 'rsync-module'"
+    ></ix-rsync-module-list>
   </router-outlet>
 </mat-card>

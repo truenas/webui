@@ -1,6 +1,8 @@
 <div id="wrapper">
   <mat-card id="shutdown-card">
-    <mat-card-content id="message">{{ "System is failing over..." | translate }}</mat-card-content>
+    <mat-card-content id="message">
+      {{ 'System is failing over...' | translate }}
+    </mat-card-content>
     <mat-icon
       class="logo"
       svgIcon="ix:truenas_scale_logo_full"
@@ -8,7 +10,7 @@
     ></mat-icon>
     <div>
       <span fxFlex class="copyright-txt">
-        TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+        <ix-copyright-line></ix-copyright-line>
       </span>
     </div>
   </mat-card>

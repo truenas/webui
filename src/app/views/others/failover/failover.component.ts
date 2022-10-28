@@ -1,13 +1,16 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+import { Store } from '@ngrx/store';
+import { WINDOW } from 'app/helpers/window.helper';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { LocaleService } from 'app/services/locale.service';
+import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -15,25 +18,16 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./failover.component.scss'],
 })
 export class FailoverComponent implements OnInit {
-  productType: ProductType;
-  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-
-  readonly productTypeLabels = productTypeLabels;
-
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
     protected dialog: MatDialog,
-    private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService,
     private location: Location,
-  ) {
-    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
-      this.productType = productType;
-    });
-  }
+    @Inject(WINDOW) private window: Window,
+    private store$: Store<AlertSlice>,
+  ) {}
 
   isWsConnected(): void {
     if (this.ws.connected) {
@@ -48,28 +42,26 @@ export class FailoverComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
-
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/session/signin');
-
     this.dialog.closeAll();
-    // TODO: Check if next and error should trade places
-    this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe(
-      (res: any) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
+    this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
+      error: (res: WebsocketError) => { // error on reboot
+        this.dialogService.errorReport(String(res.error), res.reason, res.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);
           });
       },
-      () => { // show reboot screen
+      complete: () => { // show reboot screen
+        this.store$.dispatch(passiveNodeReplaced());
+
         this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWsConnected();
         }, 1000);
       },
-    );
+    });
   }
 }

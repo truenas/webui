@@ -46,6 +46,7 @@ import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 // TODO: Test what happens when ssh credential is no longer valid
+// TODO: Port recent changes by Alex about showing one field but not the other
 @UntilDestroy()
 @Component({
   templateUrl: './replication-form.component.html',
@@ -278,15 +279,17 @@ export class ReplicationFormComponent implements OnInit {
     operation$
       .pipe(untilDestroyed(this))
       .subscribe(
-        () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.slideIn.close();
-        },
-        (error) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.errorHandler.handleWsFormError(error, this.form);
+        {
+          next: () => {
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            this.slideIn.close();
+          },
+          error: (error) => {
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            this.errorHandler.handleWsFormError(error, this.form);
+          },
         },
       );
   }
@@ -345,28 +348,30 @@ export class ReplicationFormComponent implements OnInit {
     this.ws.call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this))
       .subscribe(
-        (eligibleSnapshots) => {
-          this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
-          this.eligibleSnapshotsMessage = this.translate.instant(
-            '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
-            {
-              eligible: eligibleSnapshots.eligible,
-              total: eligibleSnapshots.total,
-              targetDataset: formValues.target_dataset,
-            },
-          );
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
-        (error) => {
-          this.isEligibleSnapshotsMessageRed = true;
-          this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
-          if ('reason' in error) {
-            this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${error.reason}`;
-          }
+        {
+          next: (eligibleSnapshots) => {
+            this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
+            this.eligibleSnapshotsMessage = this.translate.instant(
+              '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
+              {
+                eligible: eligibleSnapshots.eligible,
+                total: eligibleSnapshots.total,
+                targetDataset: formValues.target_dataset,
+              },
+            );
+            this.isLoading = false;
+            this.cdr.markForCheck();
+          },
+          error: (error) => {
+            this.isEligibleSnapshotsMessageRed = true;
+            this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
+            if ('reason' in error) {
+              this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${error.reason}`;
+            }
 
-          this.isLoading = false;
-          this.cdr.markForCheck();
+            this.isLoading = false;
+            this.cdr.markForCheck();
+          },
         },
       );
   }

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -17,6 +18,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -27,6 +29,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { CreateSnapshotDialogComponent } from 'app/pages/datasets/modules/snapshots/create-snapshot-dialog/create-snapshot-dialog.component';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
+import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotListComponent } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { routing } from 'app/pages/datasets/modules/snapshots/snapshots.routing';
@@ -57,6 +60,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     MatDialogModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    MatCheckboxModule,
     RouterModule,
     ReactiveFormsModule,
     routing,
@@ -67,6 +71,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     AppCommonModule,
     MatSlideToggleModule,
     LayoutModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     SnapshotListComponent,
@@ -75,6 +80,7 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     SnapshotBatchDeleteDialogComponent,
     SnapshotAddFormComponent,
     CreateSnapshotDialogComponent,
+    SnapshotDetailsRowComponent,
   ],
   exports: [
     SnapshotListComponent,

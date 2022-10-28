@@ -2,11 +2,12 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -14,6 +15,8 @@ import { TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
+import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { DialogService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -55,6 +58,7 @@ export class BootStatusListComponent implements OnInit {
     private router: Router,
     private ws: WebSocketService,
     private dialog: DialogService,
+    private mdDialog: MatDialog,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -68,33 +72,41 @@ export class BootStatusListComponent implements OnInit {
     this.ws.call('boot.get_state').pipe(
       tap(() => this.isLoading$.next(true)),
       untilDestroyed(this),
-    ).subscribe((poolInstance) => {
-      this.poolInstance = poolInstance;
-      this.createDataSource(poolInstance);
-      this.openGroupNodes();
-      this.isLoading$.next(false);
-      this.cdr.markForCheck();
-    },
-    (err) => {
-      this.isLoading$.next(false);
-      this.cdr.markForCheck();
-      new EntityUtils().handleError(this, err);
+    ).subscribe({
+      next: (poolInstance) => {
+        this.poolInstance = poolInstance;
+        this.createDataSource(poolInstance);
+        this.openGroupNodes();
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+        new EntityUtils().handleError(this, err);
+      },
     });
   }
 
-  attach(diskPath: string): void {
-    this.router.navigate(['/', 'system', 'boot', 'attach', diskPath]);
+  attach(): void {
+    this.mdDialog.open(BootPoolAttachDialogComponent)
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
-    this.router.navigate(['/', 'system', 'boot', 'replace', diskPath]);
+    this.mdDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.loadPoolInstance());
   }
 
   detach(diskPath: string): void {
     const disk = diskPath.substring(5, diskPath.length);
     this.loader.open();
-    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
-      () => {
+    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
         this.loader.close();
         this.router.navigate(['/', 'system', 'boot']);
         this.dialog.info(
@@ -102,11 +114,11 @@ export class BootStatusListComponent implements OnInit {
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
       },
-      (error) => {
+      error: (error) => {
         this.loader.close();
         this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
       },
-    );
+    });
   }
 
   doAction(event: BootPoolActionEvent): void {
@@ -115,7 +127,7 @@ export class BootStatusListComponent implements OnInit {
         this.replace(event.node.name);
         break;
       case BootPoolActionType.Attach:
-        this.attach(event.node.name);
+        this.attach();
         break;
       case BootPoolActionType.Detach:
         this.detach(event.node.name);

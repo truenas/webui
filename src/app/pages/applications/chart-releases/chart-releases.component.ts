@@ -22,8 +22,12 @@ import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-co
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
+import {
+  ChartRollbackModalComponent,
+} from 'app/pages/applications/chart-rollback-modal/chart-rollback-modal.component';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
@@ -52,7 +56,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   @Output() switchTab = new EventEmitter<string>();
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
-  private rollbackChartName: string;
 
   private selectedAppName: string;
   private podList: string[] = [];
@@ -70,25 +73,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       label: this.translate.instant('View Catalog'),
       action: this.viewCatalog.bind(this),
     },
-  };
-
-  rollBackChart: DialogFormConfiguration = {
-    title: helptext.charts.rollback_dialog.title,
-    fieldConfig: [{
-      type: 'select',
-      name: 'item_version',
-      placeholder: helptext.charts.rollback_dialog.version.placeholder,
-      tooltip: helptext.charts.rollback_dialog.version.tooltip,
-      required: true,
-    }, {
-      type: 'checkbox',
-      name: 'rollback_snapshot',
-      placeholder: helptext.charts.rollback_dialog.snapshot.placeholder,
-      tooltip: helptext.charts.rollback_dialog.snapshot.tooltip,
-    }],
-    method_ws: 'chart.release.rollback',
-    saveButtonText: helptext.charts.rollback_dialog.action,
-    customSubmit: (entityDialog) => this.doRollback(entityDialog),
   };
 
   choosePod: DialogFormConfiguration = {
@@ -153,6 +137,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     protected ws: WebSocketService,
     private redirect: RedirectService,
     private layoutService: LayoutService,
+    private snackbar: SnackbarService,
   ) { }
 
   get isSomethingSelected(): boolean {
@@ -195,13 +180,13 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   onBulkStart(): void {
     const checkedItems = this.getSelectedItems();
     checkedItems.forEach((name) => this.start(name));
-    this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
   onBulkStop(): void {
     const checkedItems = this.getSelectedItems();
     checkedItems.forEach((name) => this.stop(name));
-    this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
   }
 
   viewCatalog(): void {
@@ -376,39 +361,20 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     });
   }
 
-  rollback(name: string): void {
-    this.rollbackChartName = name;
-    this.dialogService.dialogForm(this.rollBackChart, true);
-    const rollBackList = Object.keys(this.chartItems[this.rollbackChartName].history);
-    const rollBackConfig = this.rollBackChart.fieldConfig[0] as FormSelectConfig;
-    rollBackConfig.value = rollBackList[0];
-    rollBackConfig.options = rollBackList.map((item) => ({
-      label: item,
-      value: item,
-    }));
-  }
+  onRollback(name: string): void {
+    const chartRelease = this.chartItems[name];
+    this.mdDialog.open(ChartRollbackModalComponent, {
+      data: chartRelease,
+    })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((wasRolledBack) => {
+        if (!wasRolledBack) {
+          return;
+        }
 
-  doRollback(entityDialog: EntityDialogComponent): void {
-    const form = entityDialog.formGroup.controls;
-    const payload = {
-      item_version: form['item_version'].value,
-      rollback_snapshot: form['rollback_snapshot'].value,
-    };
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-      data: {
-        title: helptext.charts.rollback_dialog.job,
-      },
-    });
-    this.dialogRef.componentInstance.setCall('chart.release.rollback', [this.rollbackChartName, payload]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.refreshChartReleases();
-    });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.closeAllDialogs();
-      new EntityUtils().handleWsError(this, error, this.dialogService);
-    });
+        this.refreshChartReleases();
+      });
   }
 
   edit(name: string): void {
@@ -569,37 +535,40 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
-      this.appLoaderService.close();
-      this.podDetails = { ...consoleChoices };
-      this.podList = Object.keys(this.podDetails);
-      if (this.podList.length === 0) {
-        this.dialogService.confirm({
-          title: helptext.podConsole.nopod.title,
-          message: helptext.podConsole.nopod.message,
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Close'),
-          hideCancel: true,
-        });
-      } else {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
+      next: (consoleChoices) => {
+        this.appLoaderService.close();
+        this.podDetails = { ...consoleChoices };
+        this.podList = Object.keys(this.podDetails);
+        if (this.podList.length === 0) {
+          this.dialogService.confirm({
+            title: helptext.podConsole.nopod.title,
+            message: helptext.podConsole.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: this.translate.instant('Close'),
+            hideCancel: true,
+          });
+        } else {
         // Pods
-        const podsConfig = this.choosePod.fieldConfig[0] as FormSelectConfig;
-        podsConfig.value = this.podList[0];
-        podsConfig.options = this.podList.map((item) => ({
-          label: item,
-          value: item,
-        }));
-        // Containers
-        const containerConfig = this.choosePod.fieldConfig[1] as FormSelectConfig;
-        containerConfig.value = this.podDetails[this.podList[0]][0];
-        containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
-          label: item,
-          value: item,
-        }));
-        this.dialogService.dialogForm(this.choosePod, true);
-      }
-    }, () => {
-      this.appLoaderService.close();
+          const podsConfig = this.choosePod.fieldConfig[0] as FormSelectConfig;
+          podsConfig.value = this.podList[0];
+          podsConfig.options = this.podList.map((item) => ({
+            label: item,
+            value: item,
+          }));
+          // Containers
+          const containerConfig = this.choosePod.fieldConfig[1] as FormSelectConfig;
+          containerConfig.value = this.podDetails[this.podList[0]][0];
+          containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
+            label: item,
+            value: item,
+          }));
+          this.dialogService.dialogForm(this.choosePod, true);
+        }
+      },
+      error: () => {
+        this.appLoaderService.close();
+      },
     });
   }
 
@@ -608,37 +577,40 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
-      this.appLoaderService.close();
-      this.podDetails = { ...consoleChoices };
-      this.podList = Object.keys(this.podDetails);
-      if (this.podList.length === 0) {
-        this.dialogService.confirm({
-          title: helptext.podConsole.nopod.title,
-          message: helptext.podConsole.nopod.message,
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Close'),
-          hideCancel: true,
-        });
-      } else {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
+      next: (consoleChoices) => {
+        this.appLoaderService.close();
+        this.podDetails = { ...consoleChoices };
+        this.podList = Object.keys(this.podDetails);
+        if (this.podList.length === 0) {
+          this.dialogService.confirm({
+            title: helptext.podConsole.nopod.title,
+            message: helptext.podConsole.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: this.translate.instant('Close'),
+            hideCancel: true,
+          });
+        } else {
         // Pods
-        const podsConfig = this.choosePodForLogs.fieldConfig[0] as FormSelectConfig;
-        podsConfig.value = this.podList[0];
-        podsConfig.options = this.podList.map((item) => ({
-          label: item,
-          value: item,
-        }));
-        // Containers
-        const containerConfig = this.choosePodForLogs.fieldConfig[1] as FormSelectConfig;
-        containerConfig.value = this.podDetails[this.podList[0]][0];
-        containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
-          label: item,
-          value: item,
-        }));
-        this.dialogService.dialogForm(this.choosePodForLogs, true);
-      }
-    }, () => {
-      this.appLoaderService.close();
+          const podsConfig = this.choosePodForLogs.fieldConfig[0] as FormSelectConfig;
+          podsConfig.value = this.podList[0];
+          podsConfig.options = this.podList.map((item) => ({
+            label: item,
+            value: item,
+          }));
+          // Containers
+          const containerConfig = this.choosePodForLogs.fieldConfig[1] as FormSelectConfig;
+          containerConfig.value = this.podDetails[this.podList[0]][0];
+          containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
+            label: item,
+            value: item,
+          }));
+          this.dialogService.dialogForm(this.choosePodForLogs, true);
+        }
+      },
+      error: () => {
+        this.appLoaderService.close();
+      },
     });
   }
 

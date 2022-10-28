@@ -1,3 +1,7 @@
+.dir-service-monitor-dialog {
+  width: 350px;
+}
+
 .header {
   background: var(--bg2);
   border-bottom: 1px solid var(--lines);
@@ -23,23 +27,23 @@
   }
 }
 
-mat-icon.state-healthy {
+.mat-icon.state-healthy {
   color: var(--green);
 }
 
-mat-icon.state-faulted {
+.mat-icon.state-faulted {
   color: var(--red);
 }
 
-mat-icon.state-joining {
+.mat-icon.state-joining {
   color: var(--primary);
 }
 
-mat-icon.state-leaving {
+.mat-icon.state-leaving {
   color: var(--accent);
 }
 
-mat-icon.state-disabled {
+.mat-icon.state-disabled {
   color: var(--grey);
 }
 

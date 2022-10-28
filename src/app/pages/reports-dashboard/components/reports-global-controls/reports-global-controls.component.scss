@@ -1,15 +1,43 @@
-.menu-toggle {
+:host {
   color: var(--fg2);
+
+  .menu-toggle {
+    color: var(--fg2);
+  }
 }
 
-.config-form-button {
-  margin-left: 8px;
+.reports-toolbar ::ng-deep {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  ix-slide-toggle {
+    align-items: center;
+    display: flex;
+    margin: 0;
+    min-height: 36px;
+
+    .mat-slide-toggle-content {
+      font-family: var(--font-family-body);
+    }
+  }
+
+  ix-select {
+    display: flex;
+    margin: 0;
+    padding: 0;
+
+    .input-container {
+      width: 180px;
+    }
+  }
 }
 
-.disks-selects {
-  margin-right: 10px;
-}
-
-.toolbar-control {
-  margin-right: 10px;
+.reports-menu ::ng-deep {
+  .mat-menu-item {
+    &.selected {
+      background-color: var(--primary);
+    }
+  }
 }

@@ -6,7 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
@@ -33,7 +32,7 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
-  IscsiService,
+  IscsiService, SystemGeneralService,
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
@@ -90,6 +89,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.getInitialServiceStatus();
   }
@@ -374,9 +374,10 @@ export class SharesDashboardComponent implements AfterViewInit {
           limitRows: 5,
           isActionVisible: (actionId: string, row: SmbShare) => {
             switch (actionId) {
-              case 'edit_acl':
+              case 'edit_acl': {
                 const rowName = row.path.replace('/mnt/', '');
                 return rowName.includes('/');
+              }
               default:
                 return true;
             }
@@ -412,17 +413,13 @@ export class SharesDashboardComponent implements AfterViewInit {
                 matTooltip: helptextSharingSmb.action_edit_acl,
                 onClick: (row: SmbShare) => {
                   const rowName = row.path.replace('/mnt/', '');
-                  const poolName = rowName.split('/')[0];
                   const datasetId = rowName;
-                  const productType = window.localStorage.getItem('product_type') as ProductType;
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
                       if (isLocked) {
                         this.lockedPathDialog(row.path);
-                      } else if (productType.includes(ProductType.Scale)) {
-                        this.router.navigate(['/', 'storage', 'id', poolName, 'dataset', 'posix-acl', datasetId]);
                       } else {
-                        this.router.navigate(['/', 'storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]);
+                        this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
                       }
                     },
                   );
@@ -523,15 +520,15 @@ export class SharesDashboardComponent implements AfterViewInit {
         return;
     }
 
-    this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
-      (updatedEntity) => {
+    this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe({
+      next: (updatedEntity) => {
         row[param] = updatedEntity[param];
       },
-      (err: WebsocketError) => {
+      error: (err: WebsocketError) => {
         row[param] = !row[param];
         new EntityUtils().handleWsError(this, err, this.dialog);
       },
-    );
+    });
   }
 
   updateTableServiceStatus(service: Service): void {
@@ -565,43 +562,46 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
           this.ws.call(rpc, [service.service, { silent: false }])
             .pipe(untilDestroyed(this))
-            .subscribe((hasChanged: boolean) => {
-              if (hasChanged) {
-                if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-                  this.dialog.warn(
-                    this.translate.instant('Service failed to stop'),
-                    this.translate.instant(
-                      'The {service} service failed to stop.',
-                      { service: serviceNames.get(service.service) || service.service },
-                    ),
-                  );
+            .subscribe({
+              next: (hasChanged: boolean) => {
+                if (hasChanged) {
+                  if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
+                    this.dialog.warn(
+                      this.translate.instant('Service failed to stop'),
+                      this.translate.instant(
+                        'The {service} service failed to stop.',
+                        { service: serviceNames.get(service.service) || service.service },
+                      ),
+                    );
+                  }
+                  service.state = ServiceStatus.Running;
+                } else {
+                  if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
+                    this.dialog.warn(
+                      this.translate.instant('Service failed to start'),
+                      this.translate.instant(
+                        'The {service} service failed to start.',
+                        { service: serviceNames.get(service.service) || service.service },
+                      ),
+                    );
+                  }
+                  service.state = ServiceStatus.Stopped;
                 }
-                service.state = ServiceStatus.Running;
-              } else {
-                if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-                  this.dialog.warn(
-                    this.translate.instant('Service failed to start'),
-                    this.translate.instant(
-                      'The {service} service failed to start.',
-                      { service: serviceNames.get(service.service) || service.service },
-                    ),
-                  );
-                }
-                service.state = ServiceStatus.Stopped;
-              }
-              this.updateTableServiceStatus(service);
-            }, (error) => {
-              let message = this.translate.instant(
-                'Error starting service {serviceName}.',
-                { serviceName: serviceNames.get(service.service) || service.service },
-              );
-              if (rpc === 'service.stop') {
-                message = this.translate.instant(
-                  'Error stopping service {serviceName}.',
+                this.updateTableServiceStatus(service);
+              },
+              error: (error) => {
+                let message = this.translate.instant(
+                  'Error starting service {serviceName}.',
                   { serviceName: serviceNames.get(service.service) || service.service },
                 );
-              }
-              this.dialog.errorReport(message, error.reason, error.trace.formatted);
+                if (rpc === 'service.stop') {
+                  message = this.translate.instant(
+                    'Error stopping service {serviceName}.',
+                    { serviceName: serviceNames.get(service.service) || service.service },
+                  );
+                }
+                this.dialog.errorReport(message, error.reason, error.trace.formatted);
+              },
             });
         },
       },

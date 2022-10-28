@@ -19,19 +19,17 @@
   padding: 8px;
 }
 
-.label-container {
-  align-items: flex-end;
-  display: flex;
-}
-
 .link {
+  align-items: center;
   color: var(--primary);
   cursor: pointer;
-  display: block;
+  display: flex;
   font-size: x-small;
   margin-left: auto;
 
-  mat-icon {
+  .mat-icon {
+    align-items: center;
+    display: flex;
     line-height: 40px;
     margin-left: 3px;
     margin-right: 1px;
@@ -39,7 +37,7 @@
   }
 }
 
-:host-context(ix-system-alert) {
+:host-context(ix-alert-config-form) {
   .inline-label label.label.input-select {
     padding: 8px !important;
   }
@@ -50,7 +48,7 @@
   right: 0;
 }
 
-.alert-icon mat-icon {
+.alert-icon .mat-icon {
   font-size: 1rem;
   height: auto;
   width: auto;

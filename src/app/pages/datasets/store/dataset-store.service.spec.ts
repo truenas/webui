@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { take } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeState, DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -88,7 +88,7 @@ describe('DatasetTreeStore', () => {
         selectedDatasetId: 'parent1/child2/child1',
       } as DatasetTreeState);
 
-      const selectedBranch = await spectator.service.selectedBranch$.pipe(take(1)).toPromise();
+      const selectedBranch = await firstValueFrom(spectator.service.selectedBranch$);
       expect(selectedBranch).toEqual([
         expect.objectContaining({ id: 'parent1' }),
         expect.objectContaining({ id: 'parent1/child2' }),

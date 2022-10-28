@@ -1,4 +1,4 @@
-import { UntypedFormGroup } from '@angular/forms';
+import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
@@ -158,10 +158,10 @@ const afterEnum = [[{
     required: true,
     title: 'Label Select Int',
     tooltip: undefined,
-    options: {
-      _isScalar: false,
+    // TODO: Rework not to rely on rxjs internals
+    options: expect.objectContaining({
       _subscribe: expect.any(Function),
-    },
+    }),
     type: 'select',
   }, {
     controlName: 'variable_select_string',
@@ -170,10 +170,9 @@ const afterEnum = [[{
     required: false,
     title: 'Label Select String',
     tooltip: undefined,
-    options: {
-      _isScalar: false,
+    options: expect.objectContaining({
       _subscribe: expect.any(Function),
-    },
+    }),
     type: 'select',
   }] as DynamicFormSchemaSelect[],
   controlName: 'variable_dict',
@@ -375,22 +374,22 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "int" with default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_with_default'].value).toEqual(9401);
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_with_default'].value).toBe(9401);
     });
     it('creates form for "string" with default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_with_default'].value).toEqual('test input string');
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_with_default'].value).toBe('test input string');
     });
     it('creates form for "boolean" with default value', () => {
-      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toEqual(true);
+      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toBe(true);
     });
     it('creates form for "int" without default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_without_default'].value).toEqual(null);
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_without_default'].value).toBeNull();
     });
     it('creates form for "string" without default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_without_default'].value).toEqual('');
+      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_without_default'].value).toBe('');
     });
     it('creates form for "boolean" without default value', () => {
-      expect(dynamicForm.controls['variable_boolean'].value).toEqual(false);
+      expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
     });
 
     beforeBoolean.forEach((item) => {
@@ -398,8 +397,8 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "boolean"', () => {
-      expect(dynamicForm.controls['variable_boolean'].value).toEqual(false);
-      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toEqual(true);
+      expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
+      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toBe(true);
     });
 
     beforeList.forEach((item) => {
@@ -415,26 +414,64 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for hidden field', () => {
-      expect(dynamicForm.controls['hidden_field'].value).toEqual('hidden_field');
-      expect(dynamicForm.controls['hidden_field'].disabled).toEqual(true);
-      expect((dynamicForm.controls['if_field'])).toEqual(undefined);
+      expect(dynamicForm.controls['hidden_field'].value).toBe('hidden_field');
+      expect(dynamicForm.controls['hidden_field'].disabled).toBe(true);
+      expect((dynamicForm.controls['if_field'])).toBeUndefined();
     });
   });
   describe('serializeFormValue()', () => {
     it('serialization validation', () => {
-      expect(service.serializeFormValue(undefined)).toEqual(undefined);
-      expect(service.serializeFormValue(true)).toEqual(true);
-      expect(service.serializeFormValue(1)).toEqual(1);
-      expect(service.serializeFormValue('1')).toEqual('1');
-      expect(service.serializeFormValue('')).toEqual('');
-      expect(service.serializeFormValue('test')).toEqual('test');
-      expect(service.serializeFormValue(12)).toEqual(12);
+      expect(service.serializeFormValue(undefined)).toBeUndefined();
+      expect(service.serializeFormValue(true)).toBe(true);
+      expect(service.serializeFormValue(1)).toBe(1);
+      expect(service.serializeFormValue('1')).toBe('1');
+      expect(service.serializeFormValue('')).toBe('');
+      expect(service.serializeFormValue('test')).toBe('test');
+      expect(service.serializeFormValue(12)).toBe(12);
       expect(service.serializeFormValue({})).toEqual({});
       expect(service.serializeFormValue([])).toEqual([]);
       expect(service.serializeFormValue([{ a: 1 }, { a: 2 }, { a: 3 }])).toEqual([1, 2, 3]);
       expect(service.serializeFormValue({ a: 1 })).toEqual({ a: 1 });
       expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
+      expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null })).toEqual({ a: { d: 'test' } });
+    });
+  });
+
+  describe('restoreKeysFromFormGroup()', () => {
+    it('restores keys from form group', () => {
+      const config = {
+        noObjectList: ['test1', 'test2', 'test3'],
+        objectList: [{ nestedList: ['test4', 'test5'] }],
+        object: { nestedList: ['test6', 'test7'] },
+      };
+      const form = new FormGroup({
+        noObjectList: new FormArray([
+          new FormControl({ key1: '' }),
+          new FormControl({ key1: '' }),
+          new FormControl({ key1: '' }),
+        ]),
+        objectList: new FormArray([
+          new FormGroup({
+            nestedList: new FormArray([
+              new FormControl({ key2: '' }),
+              new FormControl({ key2: '' }),
+            ]),
+          }),
+        ]),
+        object: new FormGroup({
+          nestedList: new FormArray([
+            new FormControl({ key3: '' }),
+            new FormControl({ key3: '' }),
+          ]),
+        }),
+      });
+      const result = service.restoreKeysFromFormGroup(config, form);
+      expect(result).toEqual({
+        noObjectList: [{ key1: 'test1' }, { key1: 'test2' }, { key1: 'test3' }],
+        objectList: [{ nestedList: [{ key2: 'test4' }, { key2: 'test5' }] }],
+        object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },
+      });
     });
   });
 });

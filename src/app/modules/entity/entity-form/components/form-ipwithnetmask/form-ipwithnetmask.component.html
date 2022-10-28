@@ -1,20 +1,26 @@
 <div
-	id="{{config.name}}"
-	class="dynamic-field form-input form-element form-ip-netmask"
-	[formGroup]="group"
-	[ngClass]="fieldShow"
-	[class.has-pwtoggle]="config.togglePw"
-	[class.has-tooltip]="config.tooltip"
-	*ngIf="!config['isHidden']"
+  *ngIf="!config['isHidden']"
+  class="dynamic-field form-input form-element form-ip-netmask"
   fxLayout="row wrap"
-	fxLayoutAlign="start center"
-  ix-auto ix-auto-type="array"
-  ix-auto-identifier="{{config.placeholder}}"
+  fxLayoutAlign="start center"
+  ix-auto
+  ix-auto-type="array"
+  ix-auto-identifier="{{ config.placeholder }}"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [class.has-pwtoggle]="config.togglePw"
+  [class.has-tooltip]="config.tooltip"
+  [attr.id]="config.name"
 >
   <div class="label-container" fxFlex="100" fxLayoutAlign="start center">
-    <label class="label input-text">{{config.placeholder | translate}}</label>
+    <label class="label input-text">{{ config.placeholder | translate }}</label>
     <span *ngIf="config.required">*</span>
-    <ix-tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></ix-tooltip>
+    <ix-tooltip
+      *ngIf="config.tooltip"
+      fxFlex="48px"
+      [header]="config.placeholder"
+      [message]="config.tooltip"
+    ></ix-tooltip>
   </div>
   <div fxFlex="100" fxLayout="row" fxLayoutGap="3px">
     <mat-form-field fxFlex="calc(100% - 72px - 16px)" class="display-none">
@@ -24,48 +30,59 @@
         [placeholder]="config.placeholder | translate"
         [attr.value]="config.value"
         [formControlName]="config.name"
-      >
+      />
     </mat-form-field>
     <mat-form-field fxFlex="calc(100% - 72px - 16px)">
       <input
         matInput
+        ix-auto
+        ix-auto-type="input"
+        ix-auto-identifier="{{ config.placeholder }}"
         [placeholder]="config.placeholder | translate"
-        [(ngModel)]="address"
-        [ngModelOptions]="{standalone: true}"
+        [ngModelOptions]="{ standalone: true }"
         [readonly]="config.readonly"
         [required]="config.required"
-        (blur)="setAddress($event)"
         [pattern]="network.ipv4OrIpv6CidrOptional"
-        ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
-      >
+        [(ngModel)]="address"
+        (blur)="setAddress($event)"
+      />
     </mat-form-field>
     <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
       <div fxFlex class="divider">/</div>
-      <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset">
+      <mat-form-field *ngIf="!config.netmaskPreset" fxFlex="64px">
         <mat-select
+          ix-auto
+          ix-auto-type="input"
           disableOptionCentering
+          [ix-auto-identifier]="config.placeholder"
           [value]="netmask"
           [placeholder]="'Netmask' | translate"
           (selectionChange)="setNetmask($event)"
-          ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
         >
-          <mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
-            ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+          <mat-option
+            *ngFor="let option of netmaskOptions"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{ option.label }}"
+            [value]="option.value"
+          >
             {{ option.label | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field fxFlex="72px" *ngIf="config.netmaskPreset" >
+      <mat-form-field *ngIf="config.netmaskPreset" fxFlex="72px">
         <mat-select
           disableOptionCentering
           class="disabled-select"
-          [value]="config.netmaskPreset"
           disabled
-          ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}"
+          ix-auto
+          ix-auto-type="select"
+          ix-auto-identifier="{{ config.placeholder }}"
+          [value]="config.netmaskPreset"
         >
           <mat-option [value]="config.netmaskPreset">
-            {{config.netmaskPreset}}
+            {{ config.netmaskPreset }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -73,7 +90,9 @@
   </div>
 
   <div class="margin-for-error">
-    <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
-    <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
+    <mat-error *ngIf="config['hasErrors']">{{ config['errors'] }}</mat-error>
+    <mat-error *ngIf="config.warnings">
+      {{ config.warnings | translate }}
+    </mat-error>
   </div>
 </div>

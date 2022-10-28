@@ -1,21 +1,24 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Injectable()
 export class NavigationService {
   readonly hasFailover$ = new BehaviorSubject(false);
   readonly hasEnclosure$ = new BehaviorSubject(false);
+  readonly hasVms$ = new BehaviorSubject(false);
+  readonly hasApps$ = new BehaviorSubject(false);
 
   readonly menuItems: MenuItem[] = [
     {
@@ -30,7 +33,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Storage'),
       icon: 'dns',
-      state: 'storage2',
+      state: 'storage',
     },
     {
       name: T('Datasets'),
@@ -38,13 +41,6 @@ export class NavigationService {
       tooltip: T('Datasets'),
       icon: 'ix:dataset',
       state: 'datasets',
-    },
-    {
-      name: T('Storage (Deprecated)'),
-      type: MenuItemType.Link,
-      tooltip: T('Storage (Deprecated)'),
-      icon: 'dns',
-      state: 'storage',
     },
     {
       name: T('Shares'),
@@ -83,7 +79,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: of(this.window.localStorage.getItem('product_type') === ProductType.ScaleEnterprise),
+          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise),
         },
       ],
     },
@@ -93,6 +89,7 @@ export class NavigationService {
       tooltip: T('Virtualization'),
       icon: 'computer',
       state: 'vm',
+      isVisible$: this.hasVms$,
     },
     {
       name: T('Apps'),
@@ -100,6 +97,7 @@ export class NavigationService {
       tooltip: T('Apps'),
       icon: 'apps',
       state: 'apps',
+      isVisible$: this.hasApps$,
     },
     {
       name: T('Reporting'),
@@ -137,11 +135,12 @@ export class NavigationService {
 
   constructor(
     private ws: WebSocketService,
-    @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.checkForFailoverSupport();
     this.checkForEnclosureSupport();
+    this.checkForEnterpriseLicenses();
   }
 
   private checkForFailoverSupport(): void {
@@ -154,6 +153,23 @@ export class NavigationService {
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this))
       .subscribe((features: SystemFeatures) => {
         this.hasEnclosure$.next(features.enclosure);
+      });
+  }
+
+  private checkForEnterpriseLicenses(): void {
+    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
+      this.hasVms$.next(true);
+      this.hasApps$.next(true);
+      return;
+    }
+
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
+      .subscribe((systemInfo) => {
+        const hasVms = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Vm));
+        this.hasVms$.next(hasVms);
+
+        const hasApps = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Jails));
+        this.hasApps$.next(hasApps);
       });
   }
 }

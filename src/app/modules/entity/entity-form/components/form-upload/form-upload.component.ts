@@ -8,7 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +24,6 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;
   fileList: FileList;
   fbrowser: HTMLInputElement;
@@ -34,6 +34,7 @@ export class FormUploadComponent {
     private loader: AppLoaderService,
     public dialog: DialogService,
     public translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   fileBtnClick(): void {
@@ -63,20 +64,23 @@ export class FormUploadComponent {
         reportProgress: true,
       });
       this.loader.open();
-      this.http.request(req).pipe(untilDestroyed(this)).subscribe((event) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          const percentDone = Math.round(100 * event.loaded / event.total);
-          this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
-        } else if (event instanceof HttpResponse) {
-          if (event.statusText === 'OK') {
-            this.newMessage(location + '/' + fileBrowser.files[0].name);
-            this.loader.close();
-            this.dialog.info(this.translate.instant('File upload complete'), '');
+      this.http.request(req).pipe(untilDestroyed(this)).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const percentDone = Math.round(100 * event.loaded / event.total);
+            this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
+          } else if (event instanceof HttpResponse) {
+            if (event.statusText === 'OK') {
+              this.newMessage(location + '/' + fileBrowser.files[0].name);
+              this.loader.close();
+              this.snackbar.success(this.translate.instant('File upload complete'));
+            }
           }
-        }
-      }, (error) => {
-        this.loader.close();
-        this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
+        },
+        error: (error) => {
+          this.loader.close();
+          this.dialog.errorReport(this.translate.instant('Error'), error.statusText, error.message);
+        },
       });
     } else {
       this.dialog.warn(this.translate.instant('Please make sure to select a file'), '');

@@ -1,14 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
+import { HaStatusText } from 'app/enums/ha-status-text.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
-  haStatusLoaded, loadHaStatus, systemFeaturesLoaded, systemInfoLoaded,
+  haSettingsUpdated,
+  haStatusLoaded,
+  loadHaStatus, passiveNodeReplaced,
+  systemFeaturesLoaded,
+  systemInfoLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -30,7 +36,7 @@ export class SystemInfoEffects {
   loadSystemFeatures = createEffect(() => this.actions$.pipe(
     ofType(systemInfoLoaded),
     switchMap(({ systemInfo }) => {
-      window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
+      this.window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
       const features: SystemFeatures = {
         HA: false,
         enclosure: false,
@@ -59,15 +65,30 @@ export class SystemInfoEffects {
   ));
 
   loadHaStatus = createEffect(() => this.actions$.pipe(
-    ofType(loadHaStatus),
+    ofType(loadHaStatus, haSettingsUpdated, passiveNodeReplaced),
     mergeMap(() => {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {
           const haEnabled = failoverDisabledReasons.length === 0;
 
-          const enabledText = failoverDisabledReasons.length === 0 ? 'HA Enabled' : 'HA Disabled';
+          const enabledText = failoverDisabledReasons.length === 0 ? HaStatusText.HaEnabled : HaStatusText.HaDisabled;
 
-          window.sessionStorage.setItem('ha_status', haEnabled.toString());
+          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
+          return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });
+        }),
+      );
+    }),
+  ));
+
+  subscribeToHa = createEffect(() => this.actions$.pipe(
+    ofType(loadHaStatus),
+    mergeMap(() => {
+      return this.ws.subscribe('failover.disabled.reasons').pipe(
+        map((event) => {
+          const failoverDisabledReasons = event.fields?.disabled_reasons;
+          const haEnabled = failoverDisabledReasons.length === 0;
+          const enabledText = failoverDisabledReasons.length === 0 ? HaStatusText.HaEnabled : HaStatusText.HaDisabled;
+          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
           return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });
         }),
       );
@@ -77,5 +98,6 @@ export class SystemInfoEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 }

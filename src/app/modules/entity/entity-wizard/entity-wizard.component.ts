@@ -17,6 +17,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -33,7 +34,7 @@ export class EntityWizardComponent implements OnInit {
   formGroup: UntypedFormGroup;
   showSpinner = false;
 
-  summaryValue: any;
+  summaryValue: unknown;
   summaryFieldConfigs: FieldConfig[] = [];
 
   saveSubmitText: string = this.translate.instant('Save');
@@ -50,6 +51,7 @@ export class EntityWizardComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private dialog: DialogService,
     protected translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -164,9 +166,9 @@ export class EntityWizardComponent implements OnInit {
 
   onSubmit(): void {
     let value = {};
-    for (const i in this.formGroup.value.formArray) {
-      value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
-    }
+    Object.values(this.formGroup.value.formArray).forEach((controlValue) => {
+      value = _.merge(value, _.cloneDeep(controlValue));
+    });
 
     value = new EntityUtils().changeNullString2Null(value);
 
@@ -180,22 +182,22 @@ export class EntityWizardComponent implements OnInit {
     } else {
       this.loader.open();
 
-      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
+      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe({
+        next: (res) => {
           this.loader.close();
           if (res.error) {
             this.dialog.errorReport(res.error, (res as any).reason, res.exception);
           } else if (this.conf.routeSuccess) {
             this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
           } else {
-            this.dialog.info(this.translate.instant('Settings saved'), '');
+            this.snackbar.success(this.translate.instant('Settings saved.'));
           }
         },
-        (res) => {
+        error: (res) => {
           this.loader.close();
           new EntityUtils().handleError(this, res);
         },
-      );
+      });
     }
   }
 
@@ -221,9 +223,9 @@ export class EntityWizardComponent implements OnInit {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex === this.conf.wizardConfig.length) {
         let value = {};
-        for (const i in this.formGroup.value.formArray) {
-          value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
-        }
+        Object.values(this.formGroup.value.formArray).forEach((controlValue) => {
+          value = _.merge(value, _.cloneDeep(controlValue));
+        });
         this.summaryValue = value;
       }
     }

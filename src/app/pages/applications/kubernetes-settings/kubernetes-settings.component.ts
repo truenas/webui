@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  EMPTY, forkJoin, of,
+  EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
   catchError, filter, map, switchMap, tap,
@@ -37,6 +37,7 @@ export class KubernetesSettingsComponent implements OnInit {
     enable_container_image_update: [true],
     configure_gpus: [true],
     servicelb: [true],
+    validate_host_path: [true],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
@@ -67,6 +68,11 @@ export class KubernetesSettingsComponent implements OnInit {
 
   private oldConfig: KubernetesConfig;
 
+  get validateHostPathWarning(): string {
+    return !this.form.controls.validate_host_path.value
+      ? helptext.kubForm.validateHostPathWarning.modalWarning : '';
+  }
+
   constructor(
     protected ws: WebSocketService,
     private loader: AppLoaderService,
@@ -83,8 +89,8 @@ export class KubernetesSettingsComponent implements OnInit {
     forkJoin([
       this.ws.call('kubernetes.config'),
       this.appService.getContainerConfig(),
-    ]).pipe(untilDestroyed(this)).subscribe(
-      ([kubernetesConfig, containerConfig]) => {
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([kubernetesConfig, containerConfig]) => {
         this.form.patchValue({
           ...kubernetesConfig,
           enable_container_image_update: containerConfig.enable_image_updates,
@@ -94,25 +100,18 @@ export class KubernetesSettingsComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
-    );
+    });
   }
 
   onSubmit(): void {
     const { enable_container_image_update: enableContainerImageUpdate, ...values } = this.form.value;
 
-    (
-      this.wereReInitFieldsChanged(values)
-        ? this.dialogService.confirm({
-          title: helptext.kubForm.reInit.title,
-          message: helptext.kubForm.reInit.modalWarning,
-        })
-        : of(true)
-    ).pipe(
+    this.showReInitConfirm(values).pipe(
       filter(Boolean),
       switchMap(() => {
         this.loader.open();
@@ -129,7 +128,6 @@ export class KubernetesSettingsComponent implements OnInit {
           }),
           catchError((error) => {
             this.loader.close();
-
             this.errorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),
@@ -143,5 +141,14 @@ export class KubernetesSettingsComponent implements OnInit {
     const reInitFields = ['cluster_cidr', 'service_cidr', 'cluster_dns_ip'] as const;
 
     return reInitFields.some((field) => newValues[field] !== this.oldConfig[field]);
+  }
+
+  private showReInitConfirm(values: Partial<KubernetesConfigUpdate>): Observable<boolean> {
+    return this.wereReInitFieldsChanged(values)
+      ? this.dialogService.confirm({
+        title: helptext.kubForm.reInit.title,
+        message: helptext.kubForm.reInit.modalWarning,
+      })
+      : of(true);
   }
 }

@@ -25,7 +25,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   tabFormGroup: UntypedFormGroup;
   protected control: AbstractControl;
   protected activeTabField: FieldConfig;
-  protected value: any;
+  protected value: string | number | string[] | number[];
   protected init: boolean;
   @ViewChild('tabGroup', { static: true }) tabGroup: MatTabGroup;
 
@@ -41,11 +41,11 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
     this.control = this.group.controls[this.config.name];
-    for (const item in this.tabFormGroup.controls) {
-      this.tabFormGroup.controls[item].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    Object.values(this.tabFormGroup.controls).forEach((control) => {
+      control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setControlValue();
       });
-    }
+    });
 
     this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.init && res) {
@@ -72,10 +72,10 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   setControlValue(): void {
     this.value = this.tabFormGroup.controls[this.activeTabField.name].value;
     if (this.activeTabField.type === 'slider' && this.value) {
-      this.value = '*/' + this.value;
+      this.value = `*/${String(this.value)}`;
     }
     if (this.activeTabField.type === 'togglebutton' && this.value) {
-      this.value = this.value.join();
+      this.value = (this.value as unknown[]).join();
     }
     this.control.setValue(this.value);
   }

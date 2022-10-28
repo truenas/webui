@@ -50,10 +50,8 @@ export class TargetFormComponent {
     map((initiators) => {
       const opts: Option[] = [];
       initiators.forEach((initiator) => {
-        const optionLabel = initiator.id
-          + ' ('
-          + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
-          + ')';
+        const initiatorsAllowed = initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString();
+        const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
         opts.push({ label: optionLabel, value: initiator.id });
       });
       return opts;
@@ -116,13 +114,16 @@ export class TargetFormComponent {
       request$ = this.ws.call('iscsi.target.update', [this.editingTarget.id, values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.slideInService.close();
-    }, (error) => {
-      this.isLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 

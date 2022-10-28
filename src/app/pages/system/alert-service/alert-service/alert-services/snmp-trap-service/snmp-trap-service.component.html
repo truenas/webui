@@ -1,49 +1,55 @@
 <ng-container [formGroup]="form">
   <ix-input
-    [label]="'Hostname' | translate"
     formControlName="host"
+    [label]="'Hostname' | translate"
     [required]="true"
     [tooltip]="helptext.SNMPTrap_host_tooltip | translate"
   ></ix-input>
+
   <ix-input
-    [label]="'Port' | translate"
     formControlName="port"
     type="number"
+    [label]="'Port' | translate"
     [tooltip]="helptext.SNMPTrap_port_tooltip | translate"
   ></ix-input>
+
   <ix-checkbox
-    [label]="'SNMPv3 Security Model' | translate"
     formControlName="v3"
+    [label]="'SNMPv3 Security Model' | translate"
     [tooltip]="helptext.SNMPTrap_v3_tooltip | translate"
   ></ix-checkbox>
 
   <ng-container *ngIf="isV3">
     <ix-input
-      [label]="'Username' | translate"
       formControlName="v3_username"
+      [label]="'Username' | translate"
       [required]="true"
       [tooltip]="helptext.SNMPTrap_v3_username_tooltip | translate"
     ></ix-input>
+
     <ix-input
-      [label]="'Secret Authentication Key' | translate"
       formControlName="v3_authkey"
+      [label]="'Secret Authentication Key' | translate"
       [tooltip]="helptext.SNMPTrap_v3_authkey_tooltip | translate"
     ></ix-input>
+
     <ix-input
-      [label]="'Secret Encryption Key' | translate"
       formControlName="v3_privkey"
+      [label]="'Secret Encryption Key' | translate"
       [tooltip]="helptext.SNMPTrap_v3_privkey_tooltip | translate"
     ></ix-input>
+
     <ix-select
-      [label]="'Authentication Protocol' | translate"
       formControlName="v3_authprotocol"
+      [label]="'Authentication Protocol' | translate"
       [options]="authProtocols$"
       [required]="true"
       [tooltip]="helptext.SNMPTrap_v3_authprotocol_tooltip | translate"
     ></ix-select>
+
     <ix-select
-      [label]="'Encryption Protocol' | translate"
       formControlName="v3_privprotocol"
+      [label]="'Encryption Protocol' | translate"
       [options]="privProtocols$"
       [required]="true"
       [tooltip]="helptext.SNMPTrap_v3_privprotocol_tooltip | translate"
@@ -51,8 +57,8 @@
   </ng-container>
 
   <ix-input
-    [label]="'SNMP Community' | translate"
     formControlName="community"
+    [label]="'SNMP Community' | translate"
     [tooltip]="helptext.SNMPTrap_community_tooltip | translate"
   ></ix-input>
 </ng-container>

@@ -1,22 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { filter, pairwise, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -40,10 +44,8 @@ export class UpdateComponent implements OnInit {
   updated = false;
   progress: Record<string, unknown> = {};
   error: string;
-  autoCheck = false;
   checkable = false;
-  train: string;
-  trains: { name: string; description: string }[] = [];
+  trains: Option[] = [];
   selectedTrain: string;
   generalUpdateError: string;
   updateDownloaded = false;
@@ -74,6 +76,12 @@ export class UpdateComponent implements OnInit {
                                   the downloaded update.');
   trainVersion: string = null;
   updateTitle = this.translate.instant('Update');
+
+  form = this.fb.group({
+    auto_check: [false],
+    train: ['', Validators.required],
+  });
+
   private wasConfigurationSaved = false;
 
   readonly clickForInformationLink = helptext.clickForInformationLink;
@@ -91,14 +99,37 @@ export class UpdateComponent implements OnInit {
     public translate: TranslateService,
     protected storage: StorageService,
     private store$: Store<AppState>,
+    private fb: FormBuilder,
+    private snackbar: SnackbarService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
     });
   }
 
+  get trains$(): Observable<Option[]> {
+    return of(this.trains);
+  }
+
+  get trainValue(): string {
+    return this.form.controls.train.value;
+  }
+
+  set trainValue(value) {
+    this.form.controls.train.patchValue(value);
+  }
+
+  get autoCheckValue(): boolean {
+    return this.form.controls.auto_check.value;
+  }
+
+  set autoCheckValue(value) {
+    this.form.controls.auto_check.patchValue(value);
+  }
+
   ngOnInit(): void {
-    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = this.sysGenService.getProductType();
 
     this.store$.pipe(waitForSystemInfo)
       .pipe(untilDestroyed(this))
@@ -107,49 +138,50 @@ export class UpdateComponent implements OnInit {
       });
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
-      this.autoCheck = isAutoDownloadOn;
+      this.autoCheckValue = isAutoDownloadOn;
 
-      this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((trains) => {
-        this.checkable = true;
-        this.fullTrainList = trains.trains;
+      this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe({
+        next: (trains) => {
+          this.checkable = true;
+          this.fullTrainList = trains.trains;
 
-        // On page load, make sure we are working with train of the current OS
-        this.train = trains.current;
-        this.selectedTrain = trains.current;
+          this.trainValue = trains.selected || '';
+          this.selectedTrain = trains.selected;
 
-        if (this.autoCheck) {
-          this.check();
-        }
-
-        this.trains = [];
-        for (const i in trains.trains) {
-          this.trains.push({ name: i, description: trains.trains[i].description });
-        }
-        if (this.trains.length > 0) {
-          this.singleDescription = this.trains[0].description;
-        }
-
-        if (this.fullTrainList[trains.current]) {
-          if (this.fullTrainList[trains.current].description.toLowerCase().includes('[nightly]')) {
-            this.currentTrainDescription = '[nightly]';
-          } else if (this.fullTrainList[trains.current].description.toLowerCase().includes('[release]')) {
-            this.currentTrainDescription = '[release]';
-          } else if (this.fullTrainList[trains.current].description.toLowerCase().includes('[prerelease]')) {
-            this.currentTrainDescription = '[prerelease]';
-          } else {
-            this.currentTrainDescription = trains.trains[this.selectedTrain].description.toLowerCase();
+          if (this.autoCheckValue) {
+            this.check();
           }
-        } else {
-          this.currentTrainDescription = '';
-        }
-        // To remember train descrip if user switches away and then switches back
-        this.trainDescriptionOnPageLoad = this.currentTrainDescription;
-      },
-      (err) => {
-        this.dialogService.warn(
-          err.trace.class,
-          this.translate.instant('TrueNAS was unable to reach update servers.'),
-        );
+
+          this.trains = Object.entries(trains.trains).map(([name, train]) => ({
+            label: `${name} - ${train.description}`,
+            value: name,
+          }));
+          if (this.trains.length > 0) {
+            this.singleDescription = Object.values(trains.trains)[0]?.description;
+          }
+
+          if (this.fullTrainList[trains.current]) {
+            if (this.fullTrainList[trains.current].description.toLowerCase().includes('[nightly]')) {
+              this.currentTrainDescription = '[nightly]';
+            } else if (this.fullTrainList[trains.current].description.toLowerCase().includes('[release]')) {
+              this.currentTrainDescription = '[release]';
+            } else if (this.fullTrainList[trains.current].description.toLowerCase().includes('[prerelease]')) {
+              this.currentTrainDescription = '[prerelease]';
+            } else {
+              this.currentTrainDescription = trains.trains[this.selectedTrain].description.toLowerCase();
+            }
+          } else {
+            this.currentTrainDescription = '';
+          }
+          // To remember train descrip if user switches away and then switches back
+          this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+        },
+        error: (err) => {
+          this.dialogService.warn(
+            err.trace.class,
+            this.translate.instant('TrueNAS was unable to reach update servers.'),
+          );
+        },
       });
     });
 
@@ -166,20 +198,28 @@ export class UpdateComponent implements OnInit {
     } else {
       this.checkForUpdateRunning();
     }
+
+    this.form.controls.train.valueChanges.pipe(pairwise(), untilDestroyed(this)).subscribe(([prevTrain, newTrain]) => {
+      this.onTrainChanged(newTrain, prevTrain);
+    });
+
+    this.form.controls.auto_check.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.toggleAutoCheck();
+    });
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (jobs) => {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (jobs) => {
         if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
           this.showRunningUpdate(jobs[0].id);
         }
       },
-      (err) => {
+      error: (err) => {
         console.error(err);
       },
-    );
+    });
   }
 
   checkUpgradePending(): void {
@@ -209,16 +249,16 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  onTrainChanged(event: string): void {
+  onTrainChanged(newTrain: string, prevTrain: string): void {
     // For the case when the user switches away, then BACK to the train of the current OS
-    if (event === this.selectedTrain) {
+    if (newTrain === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
-      this.setTrainAndCheck();
+      this.setTrainAndCheck(newTrain, prevTrain);
       return;
     }
 
     let warning = '';
-    if (this.fullTrainList[event].description.includes('[nightly]')) {
+    if (this.fullTrainList[newTrain] && this.fullTrainList[newTrain].description.includes('[nightly]')) {
       warning = this.translate.instant('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
@@ -227,27 +267,26 @@ export class UpdateComponent implements OnInit {
       message: warning + this.translate.instant('Switch update trains?'),
     }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
       if (confirmSwitch) {
-        this.train = event;
         this.setTrainDescription();
-        this.setTrainAndCheck();
+        this.setTrainAndCheck(newTrain, prevTrain);
       } else {
-        this.train = this.selectedTrain;
+        this.trainValue = prevTrain;
         this.setTrainDescription();
       }
     });
   }
 
   setTrainDescription(): void {
-    if (this.fullTrainList[this.train]) {
-      this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+    if (this.fullTrainList[this.trainValue]) {
+      this.currentTrainDescription = this.fullTrainList[this.trainValue].description.toLowerCase();
     } else {
       this.currentTrainDescription = '';
     }
   }
 
   toggleAutoCheck(): void {
-    this.ws.call('update.set_auto_download', [this.autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.autoCheck) {
+    this.ws.call('update.set_auto_download', [this.autoCheckValue]).pipe(untilDestroyed(this)).subscribe(() => {
+      if (this.autoCheckValue) {
         this.check();
       }
     });
@@ -261,16 +300,20 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  setTrainAndCheck(): void {
+  setTrainAndCheck(newTrain: string, prevTrain: string): void {
     this.showSpinner = true;
-    this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.check();
-    }, (err) => {
-      new EntityUtils().handleWsError(this, err, this.dialogService);
-      this.showSpinner = false;
-    },
-    () => {
-      this.showSpinner = false;
+    this.ws.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.check();
+      },
+      error: (err) => {
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+        this.trainValue = prevTrain;
+        this.showSpinner = false;
+      },
+      complete: () => {
+        this.showSpinner = false;
+      },
     });
   }
 
@@ -283,8 +326,8 @@ export class UpdateComponent implements OnInit {
     this.pendingupdates();
     this.error = null;
     sessionStorage.updateLastChecked = Date.now();
-    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
-      (update) => {
+    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe({
+      next: (update) => {
         if (update.version) {
           this.trainVersion = update.version;
         }
@@ -298,8 +341,8 @@ export class UpdateComponent implements OnInit {
               this.packages.push({
                 operation: 'Upgrade',
                 name: change.old.name + '-' + change.old.version
-                  + ' -> ' + change.new.name + '-'
-                  + change.new.version,
+                + ' -> ' + change.new.name + '-'
+                + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Install) {
               this.packages.push({
@@ -345,14 +388,14 @@ export class UpdateComponent implements OnInit {
         }
         this.showSpinner = false;
       },
-      (err) => {
+      error: (err) => {
         this.generalUpdateError = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
-      () => {
+      complete: () => {
         this.showSpinner = false;
       },
-    );
+    });
   }
 
   // Shows an update in progress as a job dialog on the update page
@@ -372,18 +415,18 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (jobs) => {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
+      next: (jobs) => {
         if (jobs[0]) {
           this.showRunningUpdate(jobs[0].id);
         } else {
           this.startUpdate();
         }
       },
-      (err) => {
+      error: (err) => {
         new EntityUtils().handleWsError(this, err, this.dialogService);
       },
-    );
+    });
   }
 
   applyPendingUpdate(): void {
@@ -405,8 +448,8 @@ export class UpdateComponent implements OnInit {
   startUpdate(): void {
     this.error = null;
     this.loader.open();
-    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
-      (update) => {
+    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe({
+      next: (update) => {
         this.loader.close();
         this.status = update.status;
         if (update.status === SystemUpdateStatus.Available) {
@@ -416,8 +459,8 @@ export class UpdateComponent implements OnInit {
               this.packages.push({
                 operation: 'Upgrade',
                 name: change.old.name + '-' + change.old.version
-                  + ' -> ' + change.new.name + '-'
-                  + change.new.version,
+                + ' -> ' + change.new.name + '-'
+                + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Install) {
               this.packages.push({
@@ -425,7 +468,7 @@ export class UpdateComponent implements OnInit {
                 name: change.new.name + '-' + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Delete) {
-              // FIXME: For some reason new is populated instead of old?
+            // FIXME: For some reason new is populated instead of old?
               if (change.old) {
                 this.packages.push({
                   operation: 'Delete',
@@ -455,15 +498,15 @@ export class UpdateComponent implements OnInit {
           this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
       },
-      (err) => {
+      error: (err) => {
         this.loader.close();
         new EntityUtils().handleWsError(this, err, this.dialogService);
         this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), err.reason, err.trace.formatted);
       },
-      () => {
+      complete: () => {
         this.loader.close();
       },
-    );
+    });
   }
 
   // Continues the update process began in startUpdate(), after passing through the Save Config dialog
@@ -499,7 +542,7 @@ export class UpdateComponent implements OnInit {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             dialogRef.close(false);
-            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '');
+            this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
             this.pendingupdates();
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
@@ -513,19 +556,15 @@ export class UpdateComponent implements OnInit {
   }
 
   update(): void {
-    window.sessionStorage.removeItem('updateLastChecked');
-    window.sessionStorage.removeItem('updateAvailable');
+    this.window.sessionStorage.removeItem('updateLastChecked');
+    this.window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.isHa) {
       dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       dialogRef.componentInstance.submit();
-
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob: any) => {
-        this.dialogService.errorReport(failedJob.error, failedJob.reason, failedJob.trace.formatted);
-      });
     } else {
-      this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.ws.call('update.set_train', [this.trainValue]).pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.componentInstance.setCall('failover.upgrade');
         dialogRef.componentInstance.disableProgressValue(true);
         dialogRef.componentInstance.submit();
@@ -552,7 +591,7 @@ export class UpdateComponent implements OnInit {
   // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
     switch (this.updateType) {
-      case 'applyPending':
+      case 'applyPending': {
         const message = this.isHaLicensed
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
           : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
@@ -563,6 +602,7 @@ export class UpdateComponent implements OnInit {
           this.update();
         });
         break;
+      }
       case 'standard':
         this.confirmAndUpdate();
     }

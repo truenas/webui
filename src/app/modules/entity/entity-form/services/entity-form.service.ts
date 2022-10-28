@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
@@ -119,8 +120,9 @@ export class EntityFormService {
       typeFilter = [['type', '=', FileType.Directory]];
     }
 
-    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
-      { order_by: ['name'], limit: 1000 }]).toPromise().then((files) => {
+    return lastValueFrom(
+      this.ws.call('filesystem.listdir', [node.data.name, typeFilter, { order_by: ['name'], limit: 1000 }]),
+    ).then((files) => {
       files = _.sortBy(files, (file) => file.name.toLowerCase());
 
       const children: ListdirChild[] = [];
@@ -152,7 +154,7 @@ export class EntityFormService {
    */
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
     const nodes: ListdirChild[] = [];
-    return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
+    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((res) => {
       res.forEach((filesystem) => {
         const pathArr = filesystem.split('/');
         if (pathArr.length === 1) {
@@ -183,18 +185,11 @@ export class EntityFormService {
     });
   }
 
-  clearFormError(fieldConfig: FieldConfig[]): void {
-    fieldConfig.forEach((config) => {
-      config['errors'] = '';
-      config['hasErrors'] = false;
-    });
-  }
-
-  phraseInputData(value: any, config: InputUnitConfig): string | number {
+  phraseInputData(value: string, config: InputUnitConfig): string | number {
     if (!value) {
       return value;
     }
-    let num = 0;
+    let num: number | string = 0;
     let unit = '';
 
     value = value.replace(/\s+/g, '');
@@ -230,14 +225,14 @@ export class EntityFormService {
     const matchUnits = unit.match(config.type === UnitType.Size ? this.sizeRegex : this.durationRegex);
 
     if (matchUnits && matchUnits[0] === unit) {
-      const humanReableUnit = this.getHumanReadableUnit(num, unit, config.type);
+      const humanReadableUnit = this.getHumanReadableUnit(num as unknown as number, unit, config.type);
       if (config.allowUnits) {
-        const singleUnit = _.endsWith(humanReableUnit, 'S') ? humanReableUnit.substring(0, humanReableUnit.length - 1) : humanReableUnit;
+        const singleUnit = _.endsWith(humanReadableUnit, 'S') ? humanReadableUnit.substring(0, humanReadableUnit.length - 1) : humanReadableUnit;
         if (_.indexOf(config.allowUnits, singleUnit) < 0) {
           return NaN;
         }
       }
-      return num + ' ' + humanReableUnit;
+      return `${num} ${humanReadableUnit}`;
     }
     return NaN;
   }

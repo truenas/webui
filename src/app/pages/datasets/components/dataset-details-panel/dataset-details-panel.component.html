@@ -1,51 +1,61 @@
 <div class="header">
   <h3 class="title">
-    {{ 'Details for' | translate }}
-    <ng-container *ngIf="!isRoot">
-      {{ parentPath }}
-    </ng-container>
-    <span class="own-name-and-icon">
-      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
-      {{ ownName }}
+    <div class="mobile-prefix">
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
+      </a>
+      {{ 'Details for' | translate }}
+    </div>
+
+    <span class="prefix">
+      {{ 'Details for' | translate }}
     </span>
+
+    <div class="full-path">
+      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+      <span class="own-name" [matTooltip]="ownName">{{ ownName }}</span>
+    </div>
   </h3>
 
-  <div *ngIf="!dataset.locked && !isZvol" class="add-buttons">
-    <button
-      mat-button
-      (click)="onAddZvol()"
-    >{{ 'Add Zvol' | translate }}</button>
-    <button
-      mat-button
-      color="primary"
-      (click)="onAddDataset()"
-    >{{ 'Add Dataset' | translate }}</button>
+  <div class="add-buttons">
+    <ng-container *ngIf="!dataset.locked && !isZvol">
+      <button mat-button (click)="onAddZvol()">
+        {{ 'Add Zvol' | translate }}
+      </button>
+      <button mat-button color="primary" (click)="onAddDataset()">
+        {{ 'Add Dataset' | translate }}
+      </button>
+    </ng-container>
   </div>
 </div>
 
 <div class="cards">
-  <div class="cards-column">
+  <div class="scroll-window">
     <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
-    <ix-data-protection-card [dataset]="dataset"></ix-data-protection-card>
-    <ix-permissions-card
-      *ngIf="hasPermissions && !dataset.locked"
+    <ix-dataset-capacity-management-card
+      *ngIf="isCapacityAllowed"
       [dataset]="dataset"
-    ></ix-permissions-card>
-  </div>
-  <div class="cards-column">
-    <ix-roles-card
-      *ngIf="datasetHasRoles"
-      [dataset]="dataset"
-      [hasChildrenWithShares]="datasetHasChildrenWithShares"
-    ></ix-roles-card>
+    ></ix-dataset-capacity-management-card>
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
       [dataset]="dataset"
       [parentDataset]="selectedParentDataset$ | async"
     ></ix-zfs-encryption-card>
-    <ix-dataset-capacity-management-card
-      *ngIf="isCapacityAllowed"
+    <ix-data-protection-card [dataset]="dataset"></ix-data-protection-card>
+    <ix-roles-card
+      *ngIf="datasetHasRoles"
       [dataset]="dataset"
-    ></ix-dataset-capacity-management-card>
+      [hasChildrenWithShares]="datasetHasChildrenWithShares"
+      [systemDataset]="systemDataset"
+    ></ix-roles-card>
+    <ix-permissions-card
+      *ngIf="hasPermissions && !dataset.locked"
+      [dataset]="dataset"
+    ></ix-permissions-card>
   </div>
 </div>

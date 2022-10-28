@@ -1,8 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-search-input
-      (search)="onSearch($event)"
-    ></ix-search-input>
+    <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
     <button mat-button (click)="doAdd()">{{ 'Pull Image' | translate }}</button>
 
@@ -10,10 +8,13 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
+<ix-entity-empty
+  *ngIf="isLoading$ | async; else loaded"
+  [conf]="loadingConfig"
+></ix-entity-empty>
 
 <ng-template #loaded>
-  <div *ngIf="checkboxColumn?.selection.selected.length" class="bulk-actions-toolbar">
+  <div *ngIf="checkboxColumn?.selection.selected.length" class="bulk-actions-toolbar">
     <div class="title">
       <strong>{{ 'Bulk Operations' | translate }}</strong>
     </div>
@@ -21,16 +22,13 @@
     <div class="actions">
       <button
         mat-button
-        (click)="doUpdate(checkboxColumn?.selection.selected);"
         [disabled]="!selectionHasUpdates"
+        (click)="doUpdate(checkboxColumn?.selection.selected)"
       >
         <mat-icon>update</mat-icon>
         {{ 'Update' | translate }}
       </button>
-      <button
-        mat-button
-        (click)="doDelete(checkboxColumn?.selection.selected);"
-      >
+      <button mat-button (click)="doDelete(checkboxColumn?.selection.selected)">
         <mat-icon>delete</mat-icon>
         {{ 'Delete' | translate }}
       </button>
@@ -39,9 +37,9 @@
 
   <table
     ix-table
-    [dataSource]="dataSource"
     matSort
     matSortDisableClear="true"
+    [dataSource]="dataSource"
     [matSortActive]="defaultSort.active"
     [matSortDirection]="defaultSort.direction"
     [fixedLayout]="true"
@@ -49,46 +47,66 @@
     <ix-checkbox-column></ix-checkbox-column>
 
     <ng-container matColumnDef="repo_tags">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Tags' | translate }}</th>
-      <td mat-cell *matCellDef="let image; dataSource: dataSource" [title]="image.repo_tags">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Tags' | translate }}
+      </th>
+      <td
+        *matCellDef="let image; dataSource: dataSource"
+        mat-cell
+        [title]="image.repo_tags"
+      >
         {{ image.repo_tags.join(', ') }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Image ID' | translate }}</th>
-      <td mat-cell *matCellDef="let image; dataSource: dataSource" [title]="image.id">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Image ID' | translate }}
+      </th>
+      <td
+        *matCellDef="let image; dataSource: dataSource"
+        mat-cell
+        [title]="image.id"
+      >
         {{ image.id }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="created">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Date Created' | translate }}</th>
-      <td mat-cell *matCellDef="let dockerImage; dataSource: dataSource">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Date Created' | translate }}
+      </th>
+      <td *matCellDef="let dockerImage; dataSource: dataSource" mat-cell>
         {{ dockerImage.created.$date | formatDateTime }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="size">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Image Size' | translate }}</th>
-      <td mat-cell *matCellDef="let image; dataSource: dataSource">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Image Size' | translate }}
+      </th>
+      <td *matCellDef="let image; dataSource: dataSource" mat-cell>
         {{ image.size ? formatter.convertBytesToHumanReadable(image.size) : ('Unknown' | translate) }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="update">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'State' | translate }}</th>
-      <td mat-cell *matCellDef="let image; dataSource: dataSource">
-        {{ (image.update_available ? 'Update available' : 'Up to date') | translate }}
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'State' | translate }}
+      </th>
+      <td *matCellDef="let image; dataSource: dataSource" mat-cell>
+        {{
+          (image.update_available ? 'Update available' : 'Up to date') | translate
+        }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let image; dataSource: dataSource">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let image; dataSource: dataSource" mat-cell>
         <button
-          [title]="'Settings' | translate"
           mat-icon-button
+          [title]="'Settings' | translate"
           [matMenuTriggerFor]="actionsMenu"
         >
           <mat-icon>more_vert</mat-icon>
@@ -96,26 +114,33 @@
         <mat-menu #actionsMenu="matMenu">
           <a
             mat-menu-item
-            (click)="doUpdate([image])"
             [disabled]="!image.update_available"
-          >{{ (image.update_available ? 'Update available' : 'Up to date') | translate }}</a>
-          <a
-            mat-menu-item
-            (click)="doDelete([image])"
-          >{{ 'Delete' | translate }}</a>
+            (click)="doUpdate([image])"
+          >
+            {{ (image.update_available ? 'Update available' : 'Up to date') | translate }}
+          </a>
+          <a mat-menu-item (click)="doDelete([image])">
+            {{ 'Delete' | translate }}
+          </a>
         </mat-menu>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr
+      *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"
+      mat-row
+    ></tr>
 
-    <tr class="mat-row no-data-row" *matNoDataRow>
+    <tr *matNoDataRow class="mat-row no-data-row">
       <td class="mat-cell" [attr.colspan]="displayedColumns.length">
         <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
       </td>
     </tr>
   </table>
 
-  <ix-table-paginator [dataSource]="dataSource" [pageSize]="10"></ix-table-paginator>
+  <ix-table-paginator
+    [dataSource]="dataSource"
+    [pageSize]="10"
+  ></ix-table-paginator>
 </ng-template>

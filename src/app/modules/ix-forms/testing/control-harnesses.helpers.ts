@@ -55,6 +55,7 @@ export async function getControlValues(
   controlsDict: { [label: string]: SupportedFormControlHarness },
 ): Promise<{ [label: string]: IxFormBasicValueType }> {
   const result: { [label: string]: IxFormBasicValueType } = {};
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in controlsDict) {
     const control = controlsDict[label] as IxFormControlHarness;
 
@@ -68,6 +69,7 @@ export async function fillControlValues(
   controlsDict: { [label: string]: SupportedFormControlHarness },
   values: { [label: string]: unknown },
 ): Promise<void> {
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in values) {
     const control = controlsDict[label] as IxFormControlHarness;
 

@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -34,11 +35,13 @@ describe('ReplicationService', () => {
         sshCredential: 2,
       });
 
-      const childNodes = await treeNodeProvider({
-        data: {
-          path: 'parent',
-        },
-      } as TreeNode<ExplorerNodeData>).toPromise();
+      const childNodes = await lastValueFrom(
+        treeNodeProvider({
+          data: {
+            path: 'parent',
+          },
+        } as TreeNode<ExplorerNodeData>),
+      );
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
         'replication.list_datasets',
@@ -66,11 +69,13 @@ describe('ReplicationService', () => {
         sshCredential: 2,
       });
 
-      const nodes = await treeNodeProvider({
-        data: {
-          path: '',
-        },
-      } as TreeNode<ExplorerNodeData>).toPromise();
+      const nodes = await lastValueFrom(
+        treeNodeProvider({
+          data: {
+            path: '',
+          },
+        } as TreeNode<ExplorerNodeData>),
+      );
 
       expect(nodes).toEqual([
         {
@@ -94,16 +99,20 @@ describe('ReplicationService', () => {
         sshCredential: 2,
       });
 
-      await treeNodeProvider({
-        data: {
-          path: '',
-        },
-      } as TreeNode<ExplorerNodeData>).toPromise();
-      await treeNodeProvider({
-        data: {
-          path: '',
-        },
-      } as TreeNode<ExplorerNodeData>).toPromise();
+      await lastValueFrom(
+        treeNodeProvider({
+          data: {
+            path: '',
+          },
+        } as TreeNode<ExplorerNodeData>),
+      );
+      await lastValueFrom(
+        treeNodeProvider({
+          data: {
+            path: '',
+          },
+        } as TreeNode<ExplorerNodeData>),
+      );
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledTimes(1);
     });

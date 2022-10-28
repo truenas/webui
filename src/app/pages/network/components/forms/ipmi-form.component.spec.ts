@@ -6,7 +6,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -15,7 +14,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IpmiFormComponent } from 'app/pages/network/components/forms/ipmi-form.component';
-import { DialogService, RedirectService, WebSocketService } from 'app/services';
+import {
+  DialogService, RedirectService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('IpmiFormComponent', () => {
@@ -31,20 +32,13 @@ describe('IpmiFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      {
-        provide: WINDOW,
-        useFactory: () => {
-          return {
-            localStorage: {
-              getItem: () => {
-                return productType === ProductType.ScaleEnterprise
-                  ? ProductType.ScaleEnterprise
-                  : ProductType.Scale;
-              },
-            },
-          };
+      mockProvider(SystemGeneralService, {
+        getProductType(): ProductType {
+          return productType === ProductType.ScaleEnterprise
+            ? ProductType.ScaleEnterprise
+            : ProductType.Scale;
         },
-      },
+      }),
       mockProvider(RedirectService),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
@@ -97,7 +91,7 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it('it loads remote controller data', async () => {
+    it('loads remote controller data', async () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
       const form = await loader.getHarness(IxFormHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
@@ -114,7 +108,7 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it('it disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
+    it('disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
       const checkboxDhcp = await loader.getHarness(IxCheckboxHarness.with({ label: 'DHCP' }));
       await checkboxDhcp.setValue(true);
       const ipaddress = await loader.getHarness(IxInputHarness.with({ label: 'IPv4 Address' }));

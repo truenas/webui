@@ -1,4 +1,4 @@
-@import '../../../../../../node_modules/text-security/text-security.css';
+@import '~text-security/text-security.css';
 
 :host {
   color: var(--fg1);
@@ -6,6 +6,15 @@
   margin-bottom: 12px;
   margin-top: 12px;
   padding: 8px 0;
+}
+
+.disabled {
+  opacity: 0.38;
+
+  input {
+    cursor: not-allowed;
+    opacity: 1;
+  }
 }
 
 .input-container {
@@ -24,16 +33,6 @@
 
   &:focus-within {
     border-color: var(--primary);
-    border-width: 1px;
-  }
-
-  &.disabled {
-    opacity: 0.38;
-
-    input {
-      cursor: not-allowed;
-      opacity: 1;
-    }
   }
 
   &.readonly {
@@ -75,7 +74,7 @@
   padding-left: 16px;
 }
 
-.input-container mat-icon {
+.input-container .mat-icon {
   font-size: 1rem;
   height: auto;
   max-width: 16px;

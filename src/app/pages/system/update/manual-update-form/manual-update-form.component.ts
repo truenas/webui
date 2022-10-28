@@ -116,16 +116,16 @@ export class ManualUpdateFormComponent implements OnInit {
 
   checkForUpdateRunning(): void {
     this.ws.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
-      .pipe(untilDestroyed(this)).subscribe(
-        (jobs) => {
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (jobs) => {
           if (jobs && jobs.length > 0) {
             this.showRunningUpdate(jobs[0].id);
           }
         },
-        (err) => {
+        error: (err) => {
           console.error(err);
         },
-      );
+      });
   }
 
   showRunningUpdate(jobId: number): void {
@@ -162,6 +162,7 @@ export class ManualUpdateFormComponent implements OnInit {
     }
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: helptext.manual_update_action },
+      disableClose: true,
     });
     if (this.isHa) {
       dialogRef.componentInstance.disableProgressValue(true);
@@ -184,13 +185,13 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.prefailure.pipe(
       tap(() => dialogRef.close(false)),
       untilDestroyed(this),
-    ).subscribe(this.handleUpdatePreFailure);
+    ).subscribe((error) => this.handleUpdatePreFailure(error));
 
     dialogRef.componentInstance.failure.pipe(
       take(1),
       tap(() => dialogRef.close(false)),
       untilDestroyed(this),
-    ).subscribe(this.handleUpdateFailure);
+    ).subscribe((error) => this.handleUpdateFailure(error));
 
     dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading$.next(false);
@@ -243,16 +244,16 @@ export class ManualUpdateFormComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe(() => {});
   }
 
-  handleUpdatePreFailure = (prefailure: HttpErrorResponse): void => {
+  handleUpdatePreFailure(prefailure: HttpErrorResponse): void {
     this.isFormLoading$.next(false);
     this.dialogService.errorReport(
       helptext.manual_update_error_dialog.message,
       `${prefailure.status.toString()} ${prefailure.statusText}`,
     );
     this.cdr.markForCheck();
-  };
+  }
 
-  handleUpdateFailure = (failure: Job<null, unknown[]>): void => {
+  handleUpdateFailure = (failure: Job): void => {
     this.isFormLoading$.next(false);
     this.dialogService.errorReport(failure.error, failure.state, failure.exception);
     this.cdr.markForCheck();

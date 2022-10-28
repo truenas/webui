@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -8,7 +9,9 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isDatasetHasShares, isIocageMounted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import {
+  isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
+} from 'app/pages/datasets/utils/dataset.utils';
 import { ModalService } from 'app/services';
 
 @UntilDestroy()
@@ -20,12 +23,14 @@ import { ModalService } from 'app/services';
 })
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
+  @Input() systemDataset: string;
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
     private modalService: ModalService,
     private translate: TranslateService,
     private datasetStore: DatasetTreeStore,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -37,9 +42,12 @@ export class DatasetDetailsPanelComponent implements OnInit {
   get datasetHasRoles(): boolean {
     return !!this.dataset.apps?.length
     || this.datasetHasChildrenWithShares
+    || !!this.dataset.vms?.length
     || !!this.dataset.smb_shares?.length
     || !!this.dataset.nfs_shares?.length
-    || !!this.dataset.iscsi_shares?.length;
+    || !!this.dataset.iscsi_shares?.length
+    || this.isSystemDataset
+    || this.dataset.name.endsWith(ixApplications);
   }
 
   get datasetHasChildrenWithShares(): boolean {
@@ -58,11 +66,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
     return this.dataset.encrypted;
   }
 
-  get parentPath(): string {
-    const parentPath = this.dataset.name.split('/').slice(0, -1).join('/');
-    return `/${parentPath}/`;
-  }
-
   get ownName(): string {
     return this.dataset.name.split('/').slice(-1)[0];
   }
@@ -73,6 +76,10 @@ export class DatasetDetailsPanelComponent implements OnInit {
 
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
+  }
+
+  get isSystemDataset(): boolean {
+    return this.dataset.name === this.systemDataset;
   }
 
   onAddDataset(): void {
@@ -86,5 +93,9 @@ export class DatasetDetailsPanelComponent implements OnInit {
     const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent);
     addZvolComponent.setParent(this.dataset.id);
     addZvolComponent.isNew = true;
+  }
+
+  onCloseMobileDetails(): void {
+    this.router.navigate(['/datasets'], { state: { hideMobileDetails: true } });
   }
 }

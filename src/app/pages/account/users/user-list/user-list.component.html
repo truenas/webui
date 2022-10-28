@@ -2,76 +2,105 @@
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
     <mat-slide-toggle
-      (change)="toggleBuiltins()"
+      color="primary"
       [checked]="!this.hideBuiltinUsers"
+      (change)="toggleBuiltins()"
     >
       <label>{{ 'Show Built-in Users' | translate }}</label>
     </mat-slide-toggle>
-    <button
-      (click)="doAdd()"
-      [color]="'primary'"
-      mat-button
-    >
+    <button mat-button [color]="'primary'" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty *ngIf="isLoading$ | async; else loaded" [conf]="loadingConfig"></ix-entity-empty>
+<ix-entity-empty
+  *ngIf="isLoading$ | async; else loaded"
+  [conf]="loadingConfig"
+></ix-entity-empty>
 
 <ng-template #loaded>
   <mat-card>
     <mat-card-content>
       <table
         ix-table
-        [dataSource]="dataSource"
         matSort
         matSortDisableClear="true"
         [matSortActive]="defaultSort.active"
+        [dataSource]="dataSource"
         [matSortDirection]="defaultSort.direction"
         [multiTemplateDataRows]="true"
         [fixedLayout]="true"
       >
         <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Username' | translate }}</th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.username }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Username' | translate }}
+          </th>
+          <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+            {{ user.username }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="uid">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'UID' | translate }}</th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.uid }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'UID' | translate }}
+          </th>
+          <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+            {{ user.uid }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="builtin">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Builtin' | translate }}</th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.builtin }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Builtin' | translate }}
+          </th>
+          <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+            {{ user.builtin }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="home">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Home' | translate }}</th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.home }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Home' | translate }}
+          </th>
+          <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+            {{ user.home }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="full_name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Full Name' | translate }}</th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">{{ user.full_name }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'Full Name' | translate }}
+          </th>
+          <td *matCellDef="let user; dataSource: dataSource" mat-cell>
+            {{ user.full_name }}
+          </td>
         </ng-container>
 
-        <ix-expand-toggle-column [expandedRow]="expandedRow" (toggle)="onToggle($event)"></ix-expand-toggle-column>
+        <ix-expand-toggle-column
+          [expandedRow]="expandedRow"
+          (toggle)="onToggle($event)"
+        ></ix-expand-toggle-column>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
         <tr
+          *matRowDef="
+            let user;
+            columns: displayedColumns;
+            dataSource: dataSource
+          "
           mat-row
-          *matRowDef="let user; columns: displayedColumns; dataSource: dataSource"
           [ixDetailRow]="user"
           [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
           [ixDetailRowTemplate]="expandedRowTemplate"
           (toggle)="onToggle($event)"
         ></tr>
 
-        <tr class="mat-row no-data-row" *matNoDataRow>
+        <tr *matNoDataRow class="mat-row no-data-row">
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
+            <ix-entity-empty
+              [conf]="emptyOrErrorConfig$ | async"
+            ></ix-entity-empty>
           </td>
         </tr>
       </table>

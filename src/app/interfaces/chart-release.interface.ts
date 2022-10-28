@@ -40,15 +40,6 @@ export interface ChartResources {
   statefulsets: unknown[];
 }
 
-export interface ChartReleaseCreate {
-  values: { [key: string]: string };
-  catalog: string;
-  item: string;
-  release_name: string;
-  train: string;
-  version: string;
-}
-
 export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[];
 
 export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
@@ -78,11 +69,42 @@ export interface ChartRelease {
   container_images_update_available: boolean;
   portals: { [portal: string]: string[] };
   chart_schema: ChartSchema;
-  history: { [key: string]: string };
+  history: { [key: string]: ChartReleaseVersion };
   resources?: ChartResources;
 
   // TODO: Frontend field, move to another interface.
   selected?: boolean;
+}
+
+export interface ChartReleaseVersion {
+  catalog: string;
+  catalog_train: string;
+  chart_metadata: ChartMetadata;
+  config: { [key: string]: ChartFormValue };
+  human_version: string;
+  id: string;
+  info: ChartInfo;
+  name: string;
+  namespace: string;
+  version: number;
+}
+
+export interface ChartReleaseCreate {
+  values: { [key: string]: ChartFormValue };
+  catalog: string;
+  item: string;
+  release_name: string;
+  train: string;
+  version: string;
+}
+
+export interface ChartReleaseUpdate {
+  values: { [key: string]: ChartFormValue };
+}
+
+export interface ChartReleaseUpgrade {
+  item_version?: string;
+  values?: { [key: string]: ChartFormValue };
 }
 
 export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
@@ -158,5 +180,5 @@ export interface ChartSchema {
     };
   };
   supported: boolean;
-  values: any;
+  values: { [key: string]: ChartFormValue };
 }

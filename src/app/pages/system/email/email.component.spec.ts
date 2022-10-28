@@ -8,6 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -17,7 +18,7 @@ import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailComponent } from './email.component';
 
@@ -63,33 +64,28 @@ describe('EmailComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
-      {
-        provide: WINDOW,
-        useFactory: () => {
-          return {
-            open: jest.fn(),
-            localStorage: {
-              getItem: () => ProductType.Scale,
+      mockProvider(SystemGeneralService, {
+        getProductType: () => ProductType.Scale,
+      }),
+      mockWindow({
+        open: jest.fn(),
+        location: {
+          toString: () => 'http://truenas.com/system/email',
+        } as Location,
+        addEventListener: jest.fn((_, listener: EventListener) => {
+          listener({
+            data: {
+              oauth_portal: true,
+              result: {
+                refresh_token: 'new_token',
+                client_secret: 'new_secret',
+                client_id: 'new_client_id',
+              },
             },
-            location: {
-              toString: () => 'http://truenas.com/system/email',
-            } as Location,
-            addEventListener: jest.fn((_, listener) => {
-              listener({
-                data: {
-                  oauth_portal: true,
-                  result: {
-                    refresh_token: 'new_token',
-                    client_secret: 'new_secret',
-                    client_id: 'new_client_id',
-                  },
-                },
-              } as OauthMessage<GmailOauthConfig>);
-            }),
-            removeEventListener: jest.fn(),
-          } as unknown as Window;
-        },
-      },
+          } as OauthMessage<GmailOauthConfig>);
+        }),
+        removeEventListener: jest.fn(),
+      }),
     ],
   });
 

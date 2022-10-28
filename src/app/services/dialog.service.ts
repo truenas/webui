@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
@@ -88,6 +89,17 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
+  errorReportMiddleware(error: WebsocketError | Job): void {
+    if ('trace' in error && error.trace.formatted) {
+      this.errorReport(error.trace.class, error.reason, error.trace.formatted);
+    } else if ('state' in error && error.error && error.exception) {
+      this.errorReport(error.state, error.error, error.exception);
+    } else {
+      // if it can't print the error at least put it on the console.
+      console.error(error);
+    }
+  }
+
   errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
     const dialogRef = this.dialog.open(ErrorDialogComponent);
 
@@ -123,15 +135,11 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
+  /**
+   * @deprecated Build a separate dialog component instead of using this method.
+   */
   dialogForm(conf: DialogFormConfiguration, disableClose = false): Observable<boolean> {
     const dialogRef = this.dialog.open(EntityDialogComponent, { maxWidth: '420px', minWidth: '350px', disableClose });
-    dialogRef.componentInstance.conf = conf;
-
-    return dialogRef.afterClosed();
-  }
-
-  dialogFormWide(conf: DialogFormConfiguration): Observable<boolean> {
-    const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();

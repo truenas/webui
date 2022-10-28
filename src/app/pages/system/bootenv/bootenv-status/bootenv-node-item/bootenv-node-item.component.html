@@ -26,8 +26,8 @@
     <button
       *ngIf="isDisk || isMirror"
       mat-icon-button
-      [matMenuTriggerFor]="menu"
       aria-label="Actions"
+      [matMenuTriggerFor]="menu"
     >
       <ix-icon name="more_vert"></ix-icon>
     </button>
@@ -36,11 +36,11 @@
         <ix-icon name="mdi-file-replace"></ix-icon>
         <span>{{ 'Replace' | translate }}</span>
       </button>
-      <button mat-menu-item  (click)="attach()" *ngIf="isDisk && oneDisk">
+      <button *ngIf="isDisk && oneDisk" mat-menu-item (click)="attach()">
         <ix-icon name="mdi-attachment-plus"></ix-icon>
         <span>{{ 'Attach' | translate }}</span>
       </button>
-      <button mat-menu-item (click)="detach()" *ngIf="isMirror">
+      <button *ngIf="isMirror" mat-menu-item (click)="detach()">
         <ix-icon name="mdi-attachment-minus"></ix-icon>
         <span>{{ 'Detach' | translate }}</span>
       </button>

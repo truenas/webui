@@ -36,7 +36,7 @@ describe('SchedulerDateExamplesComponent', () => {
       },
     });
 
-    const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent);
+    const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent.trim());
     expect(examples).toEqual([
       '2022-02-23 00:00:00',
       '2022-02-24 00:00:00',
@@ -47,7 +47,7 @@ describe('SchedulerDateExamplesComponent', () => {
     ]);
   });
 
-  it('shows a message when there are more examples ', () => {
+  it('shows a message when there are more examples', () => {
     spectator = createComponent({
       props: {
         cronPreview: new CronSchedulePreview({
@@ -58,7 +58,7 @@ describe('SchedulerDateExamplesComponent', () => {
     });
 
     const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent);
-    expect(examples.length).toEqual(spectator.component.maxExamples);
+    expect(examples).toHaveLength(spectator.component.maxExamples);
     expect(spectator.query('.only-first-results-message')).toExist();
   });
 });

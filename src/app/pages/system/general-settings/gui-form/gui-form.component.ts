@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
+  ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -15,6 +15,7 @@ import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -80,6 +81,7 @@ export class GuiFormComponent {
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.loadCurrentValues();
     this.setupThemePreview();
@@ -89,7 +91,7 @@ export class GuiFormComponent {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
-      window.location.replace(href);
+      this.window.location.replace(href);
     } else {
       setTimeout(() => {
         this.reconnect(href);
@@ -125,14 +127,17 @@ export class GuiFormComponent {
         return this.ws.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.handleServiceRestart(params as SystemGeneralConfigUpdate);
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.handleServiceRestart(params as SystemGeneralConfigUpdate);
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -178,10 +183,10 @@ export class GuiFormComponent {
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
-        const hostname = window.location.hostname;
-        const protocol = window.location.protocol;
-        let port = window.location.port;
-        let href = window.location.href;
+        const hostname = this.window.location.hostname;
+        const protocol = this.window.location.protocol;
+        let port = this.window.location.port;
+        let href = this.window.location.href;
 
         if (httpPortChanged && protocol === 'http:') {
           port = changed.ui_port.toString();
@@ -189,18 +194,18 @@ export class GuiFormComponent {
           port = changed.ui_httpsport.toString();
         }
 
-        href = protocol + '//' + hostname + ':' + port + window.location.pathname;
+        href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;
 
         this.loader.open();
         this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
         this.ws.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
-        ).subscribe(
-          () => {
+        ).subscribe({
+          next: () => {
             this.ws.reconnect(protocol, hostname + ':' + port);
             this.reconnect(href);
           },
-          (error: WebsocketError) => {
+          error: (error: WebsocketError) => {
             this.loader.close();
             this.dialog.errorReport(
               helptext.dialog_error_title,
@@ -208,7 +213,7 @@ export class GuiFormComponent {
               error.trace.formatted,
             );
           },
-        );
+        });
       });
     } else {
       this.slideInService.close(null, true);

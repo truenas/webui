@@ -1,7 +1,8 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Path' | translate">
         <ix-explorer
           formControlName="path"
@@ -11,48 +12,56 @@
           [nodeProvider]="treeNodeProvider"
         ></ix-explorer>
       </ix-fieldset>
+
       <ix-fieldset [title]="'General Options' | translate">
         <ix-input
           formControlName="comment"
           [label]="'Description' | translate"
           [tooltip]="helptext.tooltip_comment | translate"
         ></ix-input>
+
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
           [tooltip]="helptext.tooltip_enabled | translate"
         ></ix-checkbox>
       </ix-fieldset>
+
       <ix-fieldset *ngIf="isAdvancedMode" [title]="'Access' | translate">
         <ix-checkbox
           formControlName="ro"
           [label]="'Read Only' | translate"
           [tooltip]="helptext.tooltip_ro | translate"
         ></ix-checkbox>
+
         <ix-combobox
           formControlName="maproot_user"
           [label]="'Maproot User' | translate"
           [tooltip]="helptext.tooltip_maproot_user | translate"
           [provider]="userProvider"
         ></ix-combobox>
+
         <ix-combobox
           formControlName="maproot_group"
           [label]="'Maproot Group' | translate"
           [tooltip]="helptext.tooltip_maproot_group | translate"
           [provider]="groupProvider"
         ></ix-combobox>
+
         <ix-combobox
           formControlName="mapall_user"
           [label]="'Mapall User' | translate"
           [tooltip]="helptext.tooltip_mapall_user | translate"
           [provider]="userProvider"
         ></ix-combobox>
+
         <ix-combobox
           formControlName="mapall_group"
           [label]="'Mapall Group' | translate"
           [tooltip]="helptext.tooltip_mapall_group | translate"
           [provider]="groupProvider"
         ></ix-combobox>
+
         <ix-select
           formControlName="security"
           [label]="'Security' | translate"
@@ -60,11 +69,12 @@
           [multiple]="true"
         ></ix-select>
       </ix-fieldset>
+
       <ix-fieldset>
         <ix-list
+          formArrayName="networks"
           [empty]="form.controls.networks.controls.length === 0"
           [label]="'Networks' | translate"
-          formArrayName="networks"
           (add)="addNetworkControl()"
         >
           <ix-list-item
@@ -80,10 +90,11 @@
             ></ix-ip-input-with-netmask>
           </ix-list-item>
         </ix-list>
+
         <ix-list
+          formArrayName="hosts"
           [empty]="form.controls.hosts.controls.length === 0"
           [label]="'Hosts' | translate"
-          formArrayName="hosts"
           (add)="addHostControl()"
         >
           <ix-list-item
@@ -105,14 +116,19 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          (click)="toggleAdvancedMode()"
-        >{{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}</button>
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="toggleAdvancedMode()">
+          {{
+            isAdvancedMode
+              ? ('Basic Options' | translate)
+              : ('Advanced Options' | translate)
+          }}
+        </button>
       </div>
     </form>
   </mat-card-content>

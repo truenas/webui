@@ -1,24 +1,26 @@
 <div
-  id="{{config.name}}"
+  *ngIf="!config['isHidden']"
   class="dynamic-field form-checkbox form-element {{ config.inlineLabel ? 'inline-label' : 'not' }}"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
-  *ngIf="!config['isHidden']"
   [class.expanded-height]="config.expandedHeight"
+  [attr.id]="config.name"
 >
-
   <ng-container *ngIf="config.inlineLabel">
     <div class="label half-width"></div>
   </ng-container>
+
   <mat-checkbox
     *ngIf="!config.updater && !config.customEventMethod"
     color="primary"
+    ix-auto
+    ix-auto-type="checkbox"
+    class="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
+    ix-auto-identifier="{{ config.placeholder }}"
     [formControlName]="config.name"
     [required]="config.required"
-    ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{config.placeholder}}"
-    (click)="(config.readonly && preventClick($event))"
-    class="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
+    (click)="config.readonly && preventClick($event)"
     (change)="onChangeCheckbox($event)"
   >
     {{ config.placeholder | translate }}
@@ -31,7 +33,7 @@
     [formControlName]="config.name"
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
-    (click)="((config.readonly && preventClick($event)) || checkboxUpdate())"
+    (click)="(config.readonly && preventClick($event)) || checkboxUpdate()"
   >
     {{ config.placeholder | translate }}
   </mat-checkbox>
@@ -43,7 +45,7 @@
     [formControlName]="config.name"
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
-    (click)="( preventClick($event) && config.customEventMethod())"
+    (click)="preventClick($event) && config.customEventMethod()"
   >
     {{ config.placeholder | translate }}
   </mat-checkbox>
@@ -54,6 +56,12 @@
     [header]="config.placeholder"
     [message]="config.tooltip"
   ></ix-tooltip>
-  <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-  <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+
+  <mat-error *ngIf="config['hasErrors']">
+    <div [innerHTML]="config['errors']"></div>
+  </mat-error>
+
+  <mat-error *ngIf="config.warnings">
+    <div [innerHTML]="config.warnings | translate"></div>
+  </mat-error>
 </div>

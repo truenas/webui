@@ -21,4 +21,13 @@
       padding: 8px 28px;
     }
   }
+
+  .keep-td {
+    align-items: center;
+    display: flex;
+
+    ix-icon {
+      margin-right: 10px;
+    }
+  }
 }

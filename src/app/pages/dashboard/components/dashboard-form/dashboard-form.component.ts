@@ -97,16 +97,19 @@ export class DashboardFormComponent {
     // Save to backend
     this.ws.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
       untilDestroyed(this),
-    ).subscribe((res) => {
-      this.isFormLoading = false;
-      this.onSubmit$.next(this.dashState);
-      this.slideInService.close();
+    ).subscribe({
+      next: (res) => {
+        this.isFormLoading = false;
+        this.onSubmit$.next(this.dashState);
+        this.slideInService.close();
 
-      if (!res) {
-        throw new Error('Unable to save Dashboard State');
-      }
-    }, (err) => {
-      console.error(err);
+        if (!res) {
+          throw new Error('Unable to save Dashboard State');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      },
     });
   }
 }

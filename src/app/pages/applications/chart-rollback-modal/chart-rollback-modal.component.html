@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>{{ 'Roll Back' | translate }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <ix-select
+      formControlName="item_version"
+      [label]="'Version' | translate"
+      [required]="true"
+      [options]="versionOptions$"
+      [tooltip]="'Enter the version to roll back to.' | translate"
+    ></ix-select>
+
+    <ix-checkbox
+      formControlName="rollback_snapshot"
+      [label]="'Roll back snapshots' | translate"
+      [tooltip]="'Roll back snapshots of ix_volumes' | translate"
+    ></ix-checkbox>
+  </form>
+</div>
+<div mat-dialog-actions class="buttons">
+  <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="primary"
+    [disabled]="form.invalid"
+    (click)="onRollback()"
+  >
+    {{ 'Roll Back' | translate }}
+  </button>
+</div>

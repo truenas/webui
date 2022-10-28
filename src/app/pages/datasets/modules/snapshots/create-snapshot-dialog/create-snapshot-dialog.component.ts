@@ -67,15 +67,18 @@ export class CreateSnapshotDialogComponent implements OnInit {
 
     this.ws.call('zfs.snapshot.create', [params])
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.snackbar.success(
-          this.translate.instant('Snapshot successfully taken.'),
-        );
-        this.loader.close();
-        this.dialogRef.close();
-      }, (error) => {
-        this.loader.close();
-        this.errorHandler.handleWsFormError(error, this.form);
+      .subscribe({
+        next: () => {
+          this.snackbar.success(
+            this.translate.instant('Snapshot successfully taken.'),
+          );
+          this.loader.close();
+          this.dialogRef.close();
+        },
+        error: (error) => {
+          this.loader.close();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
       });
   }
 
@@ -87,8 +90,13 @@ export class CreateSnapshotDialogComponent implements OnInit {
   private checkForVmsInDataset(): void {
     this.ws.call('vmware.dataset_has_vms', [this.rowId, this.form.controls['recursive'].value])
       .pipe(untilDestroyed(this))
-      .subscribe((hasVmsInDataset) => {
-        this.hasVmsInDataset = hasVmsInDataset;
+      .subscribe({
+        next: (hasVmsInDataset) => {
+          this.hasVmsInDataset = hasVmsInDataset;
+        },
+        error: (error) => {
+          this.dialog.errorReportMiddleware(error);
+        },
       });
   }
 }

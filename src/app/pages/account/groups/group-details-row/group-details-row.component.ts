@@ -1,16 +1,17 @@
 import {
   Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Group } from 'app/interfaces/group.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  DeleteGroupDialogComponent,
+} from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import {
-  WebSocketService, DialogService,
+  WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -29,9 +30,9 @@ export class GroupDetailsRowComponent {
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private slideIn: IxSlideInService,
     private router: Router,
+    private matDialog: MatDialog,
   ) {}
 
   doEdit(group: Group): void {
@@ -46,34 +47,15 @@ export class GroupDetailsRowComponent {
   }
 
   doDelete(group: Group): void {
-    const confirmOptions: DialogFormConfiguration = {
-      title: this.translate.instant('Delete Group'),
-      message: this.translate.instant('Are you sure you want to delete group <b>"{name}"</b>?', { name: group.group }),
-      saveButtonText: this.translate.instant('Confirm'),
-      confirmCheckbox: true,
-      fieldConfig: [{
-        type: 'checkbox',
-        name: 'delete_users',
-        placeholder: this.translate.instant('Delete {n, plural, one {# user} other {# users}} with this primary group?', { n: group.users.length }),
-        value: false,
-        isHidden: true,
-      }],
-      preInit: () => {
-        confirmOptions.fieldConfig[0].isHidden = !group.users.length;
-      },
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close(true);
-        this.ws.call('group.delete', [group.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.update.emit();
-          },
-          (err) => {
-            new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
-          },
-        );
-      },
-    };
+    this.matDialog.open(DeleteGroupDialogComponent, { data: group })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((wasDeleted) => {
+        if (!wasDeleted) {
+          return;
+        }
 
-    this.dialogService.dialogForm(confirmOptions);
+        this.update.emit();
+      });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
@@ -10,6 +10,7 @@ import {
 import { filter, share, switchMap } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-event.interface';
@@ -19,40 +20,40 @@ import { Job } from 'app/interfaces/job.interface';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  private authStatus$: Subject<boolean>;
-  onCloseSubject$: Subject<boolean>;
-  onOpenSubject$: Subject<boolean>;
-  pendingCalls: Map<string, {
+  onCloseSubject$ = new Subject<boolean>();
+  onOpenSubject$ = new Subject<boolean>();
+
+  socket: WebSocket;
+  connected = false;
+  loggedIn = false;
+  @LocalStorage() token: string;
+  shuttingdown = false;
+
+  private authStatus$ = new Subject<boolean>();
+  private pendingCalls = new Map<string, {
     method: ApiMethod;
     args: unknown;
     observer: Subscriber<unknown>;
-  }>;
-  pendingSubs: {
+  }>();
+  private pendingSubs: {
     [name: string]: {
       observers: {
         [id: string]: Subscriber<unknown>;
       };
     };
   } = {};
-  pendingMessages: unknown[] = [];
-  socket: WebSocket;
-  connected = false;
-  loggedIn = false;
-  @LocalStorage() token: string;
-  redirectUrl = '';
-  shuttingdown = false;
+  private pendingMessages: unknown[] = [];
 
-  protocol: string;
-  remote: string;
+  private protocol: string;
+  private remote: string;
 
-  subscriptions = new Map<string, Observer<unknown>[]>();
+  private subscriptions = new Map<string, Observer<unknown>[]>();
 
-  constructor(protected router: Router) {
-    this.authStatus$ = new Subject<boolean>();
-    this.onOpenSubject$ = new Subject();
-    this.onCloseSubject$ = new Subject();
-    this.pendingCalls = new Map();
-    this.protocol = window.location.protocol;
+  constructor(
+    protected router: Router,
+    @Inject(WINDOW) protected window: Window,
+  ) {
+    this.protocol = this.window.location.protocol;
     this.remote = environment.remote;
     this.connect();
   }
@@ -61,7 +62,7 @@ export class WebSocketService {
     return this.authStatus$.asObservable();
   }
 
-  reconnect(protocol = window.location.protocol, remote = environment.remote): void {
+  reconnect(protocol = this.window.location.protocol, remote = environment.remote): void {
     this.protocol = protocol;
     this.remote = remote;
     this.socket.close();
@@ -149,8 +150,7 @@ export class WebSocketService {
 
     const collectionName = data.collection?.replace('.', '_');
     if (collectionName && this.pendingSubs[collectionName]?.observers) {
-      for (const uuid in this.pendingSubs[collectionName].observers) {
-        const subObserver = this.pendingSubs[collectionName].observers[uuid];
+      Object.values(this.pendingSubs[collectionName].observers).forEach((subObserver) => {
         if (data.error) {
           console.error('Error: ', data.error);
           subObserver.error(data.error);
@@ -160,7 +160,7 @@ export class WebSocketService {
         } else if (subObserver && !data.fields) {
           subObserver.next(data);
         }
-      }
+      });
     }
   }
 
@@ -173,14 +173,13 @@ export class WebSocketService {
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K | '*'): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    const source = Observable.create((observer: Subscriber<ApiEventDirectory[K]['response']>) => {
+    return new Observable((observer) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
         this.subscriptions.set(name, [observer]);
       }
     });
-    return source;
   }
 
   unsubscribe(observer: any): void {
@@ -279,7 +278,7 @@ export class WebSocketService {
     const params: LoginParams = otpToken
       ? [username, password, otpToken]
       : [username, password];
-    return Observable.create((observer: Subscriber<boolean>) => {
+    return new Observable((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });
@@ -333,7 +332,7 @@ export class WebSocketService {
       this.clearCredentials();
       this.socket.close();
       this.router.navigate(['/sessions/signin']);
-      window.location.reload();
+      this.window.location.reload();
     });
   }
 }

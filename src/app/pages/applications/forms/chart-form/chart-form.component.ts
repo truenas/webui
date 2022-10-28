@@ -4,9 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  noop, of, Subject, Subscription,
-} from 'rxjs';
+import { of, Subject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -159,6 +157,7 @@ export class ChartFormComponent implements OnDestroy {
       });
       this.dynamicSection = this.dynamicSection.filter((section) => section.schema.length > 0);
       if (!this.isNew) {
+        this.config = this.appSchemaService.restoreKeysFromFormGroup(this.config, this.form);
         this.form.patchValue(this.config);
       }
     } catch (error: unknown) {
@@ -197,7 +196,7 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   getFieldsHiddenOnForm(
-    data: any,
+    data: unknown,
     deleteField$: Subject<string>,
     path = '',
   ): void {
@@ -213,65 +212,46 @@ export class ChartFormComponent implements OnDestroy {
       });
     }
     if (_.isPlainObject(data)) {
-      for (const key in data) {
-        this.getFieldsHiddenOnForm(data[key], deleteField$, path ? path + '.' + key : key);
-      }
+      Object.keys(data).forEach((key) => {
+        this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
+      });
     }
     if (_.isArray(data)) {
       for (let i = 0; i < data.length; i++) {
-        this.getFieldsHiddenOnForm(data[i], deleteField$, path + '.' + i);
+        this.getFieldsHiddenOnForm(data[i], deleteField$, `${path}.${i}`);
       }
     }
   }
 
   deleteFieldFromData(
-    data: any,
+    data: ChartFormValues,
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
-    let value: any = data;
-    for (let i = 0; i < keys.length - 1; i++) {
-      value = value[keys[i]];
-      if (value === undefined || value === null) {
-        break;
-      }
-    }
-    if (value !== undefined && value !== null) {
-      if (this.isNew) {
-        delete value[keys[keys.length - 1]];
-      } else {
-        let configValue: any = this.config;
-        for (let i = 0; i < keys.length - 1; i++) {
-          configValue = configValue[keys[i]];
-          if (configValue === undefined || configValue === null) {
-            break;
-          }
-        }
-        if (!configValue || !configValue[keys[keys.length - 1]]) {
-          delete value[keys[keys.length - 1]];
-        }
-      }
+    if (this.isNew) {
+      _.unset(data, keys);
+    } else if (!_.get(this.config, keys)) {
+      _.unset(data, keys);
     }
   }
 
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
     const deleteField$: Subject<string> = new Subject();
-    deleteField$.pipe(untilDestroyed(this)).subscribe(
-      (fieldTobeDeleted) => {
+    deleteField$.pipe(untilDestroyed(this)).subscribe({
+      next: (fieldTobeDeleted) => {
         this.deleteFieldFromData(data, fieldTobeDeleted);
       },
-      noop,
-      () => {
+      complete: () => {
         this.saveData(data);
       },
-    );
+    });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
     deleteField$.complete();
   }
 
-  saveData(data: any): void {
+  saveData(data: ChartFormValues): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,
@@ -294,21 +274,21 @@ export class ChartFormComponent implements OnDestroy {
     }
 
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(this.onSuccess);
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(this.onFailure);
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => this.onFailure(error));
   }
 
-  onFailure = (failedJob: Job<null, unknown[]>): void => {
+  onFailure(failedJob: Job): void {
     if (failedJob.exc_info && failedJob.exc_info.extra) {
       new EntityUtils().handleWsError(this, failedJob);
     } else {
       this.dialogService.errorReport('Error', failedJob.error, failedJob.exception);
     }
-  };
+  }
 
-  onSuccess = (): void => {
+  onSuccess(): void {
     this.dialogService.closeAllDialogs();
     this.slideInService.close();
-  };
+  }
 }

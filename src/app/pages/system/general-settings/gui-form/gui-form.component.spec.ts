@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { WINDOW } from 'app/helpers/window.helper';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -99,15 +99,15 @@ describe('GuiFormComponent', () => {
         ],
       }),
       ThemeService,
-      {
-        provide: WINDOW,
-        useValue: {
-          sessionStorage: {
-            getItem: () => 'ix-dark',
-            setItem: () => {},
-          },
+      mockWindow({
+        location: {
+          replace: jest.fn(),
         },
-      },
+        sessionStorage: {
+          getItem: () => 'ix-dark',
+          setItem: () => {},
+        },
+      }),
     ],
   });
 

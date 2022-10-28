@@ -1,9 +1,24 @@
-<div id="{{config.name}}" class="dynamic-field form-array" [formGroup]="group.controls[config.name]"
-	ix-auto ix-auto-type="array" ix-auto-identifier="{{config.placeholder}}">
-  <fieldset class="formarray-fieldset" *ngFor="let array of group.controls[config.name]['controls']; let i = index ">
-    <ng-container *ngFor="let field of config.formarray" dynamicField [config]="field" [group]="group.controls[config.name].controls[i]">
-    </ng-container>
+<div
+  class="dynamic-field form-array"
+  ix-auto
+  ix-auto-type="array"
+  ix-auto-identifier="{{ config.placeholder }}"
+  [formGroup]="group.controls[config.name] | cast"
+  [attr.id]="config.name"
+>
+  <fieldset *ngFor="let array of asFormArray(group.controls[config.name]).controls; let i = index" class="formarray-fieldset">
+    <ng-container
+      *ngFor="let field of config.formarray"
+      dynamicField
+      [config]="field"
+      [group]="asFormArray(group.controls[config.name]).controls[i] | cast"
+    ></ng-container>
   </fieldset>
-  <ix-form-errors [control]="group.controls[config.name]" [config]="config"></ix-form-errors>
-  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+
+  <ix-form-errors
+    [control]="group.controls[config.name]"
+    [config]="config"
+  ></ix-form-errors>
+
+  <mat-error *ngIf="config['hasErrors']">{{ config['errors'] }}</mat-error>
 </div>

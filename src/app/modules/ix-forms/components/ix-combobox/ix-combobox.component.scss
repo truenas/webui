@@ -14,7 +14,7 @@
 
 .input-container {
   background: var(--bg1);
-  border: 1.5px solid var(--lines);
+  border: solid 1.5px var(--lines);
   border-radius: 2px;
   display: flex;
   flex-direction: row;
@@ -58,7 +58,7 @@
   user-select: none;
 }
 
-.input-container mat-icon {
+.input-container .mat-icon {
   font-size: 1rem;
   height: auto;
   margin-left: 4px;

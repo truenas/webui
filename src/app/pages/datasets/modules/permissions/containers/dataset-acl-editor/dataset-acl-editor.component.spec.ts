@@ -1,17 +1,15 @@
-import {
-  fakeAsync, flush, tick,
-} from '@angular/core/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import {
-  createRoutingFactory, mockProvider, SpectatorRouting, byText,
+  createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -36,6 +34,9 @@ import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
 import {
+  StripAclModalComponent,
+} from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
+import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -45,6 +46,7 @@ describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
   let websocket: MockWebsocketService;
   let matDialog: MatDialog;
+  let loader: HarnessLoader;
   const acl = {
     acltype: AclType.Nfs4,
     trivial: false,
@@ -114,6 +116,7 @@ describe('DatasetAclEditorComponent', () => {
     spectator = createComponent();
     websocket = spectator.inject(MockWebsocketService);
     matDialog = spectator.inject(MatDialog);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('preset modal', () => {
@@ -125,8 +128,9 @@ describe('DatasetAclEditorComponent', () => {
       jest.restoreAllMocks();
     });
 
-    it('shows preset modal if user presses "Use Preset"', () => {
-      spectator.click(byButton('Use ACL Preset'));
+    it('shows preset modal if user presses "Use Preset"', async () => {
+      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use ACL Preset' }));
+      await usePresetButton.click();
 
       expect(matDialog.open).toHaveBeenCalledWith(
         SelectPresetModalComponent,
@@ -162,35 +166,19 @@ describe('DatasetAclEditorComponent', () => {
   });
 
   describe('editing', () => {
-    it('strips ACL when "Strip ACL" button is pressed', fakeAsync(() => {
-      spectator.click(byButton('Strip ACL'));
-      tick();
+    it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
+      jest.spyOn(matDialog, 'open').mockImplementation();
+      const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
+      await stripButton.click();
 
-      spectator.click(spectator.query(
-        byText('Remove the ACL and permissions from child datasets of the current dataset'),
-        { root: true },
-      ));
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
+        data: { path: '/mnt/pool/dataset' },
+      });
+    });
 
-      spectator.click(spectator.query(
-        byButton('Strip ACLs'),
-        { root: true },
-      ));
-
-      expect(websocket.job).toHaveBeenCalledWith('filesystem.setacl', [{
-        dacl: [],
-        options: {
-          recursive: true,
-          stripacl: true,
-          traverse: true,
-        },
-        path: '/mnt/pool/dataset',
-      }]);
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets']);
-      flush();
-    }));
-
-    it('adds another ace when Add item is pressed', () => {
-      spectator.click(byButton('Add Item'));
+    it('adds another ace when Add item is pressed', async () => {
+      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
+      await addAceButton.click();
 
       const items = spectator.queryAll('ix-permissions-item');
       expect(items).toHaveLength(4);
@@ -211,8 +199,9 @@ describe('DatasetAclEditorComponent', () => {
       jest.restoreAllMocks();
     });
 
-    it('saves acl items when Save Access Control List is pressed', () => {
-      spectator.click(byButton('Save Access Control List'));
+    it('saves acl items when Save Access Control List is pressed', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+      await saveButton.click();
 
       expect(store.saveAcl).toHaveBeenCalledWith({
         recursive: false,
@@ -223,24 +212,5 @@ describe('DatasetAclEditorComponent', () => {
         ownerGroup: 'johns',
       });
     });
-
-    // TODO: Doesn't work because of entryComponents. Try again after upgrading Angular.
-    xit('shows a warning when `recursive` checkbox is pressed', fakeAsync(() => {
-      spectator.click(byText('Apply permissions recursively'));
-      tick();
-
-      expect(spectator.query('.mat-dialog-container', { root: true })).toExist();
-
-      spectator.click(spectator.query(
-        byText('Confirm'),
-        { root: true },
-      ));
-
-      spectator.click(spectator.query(byButton('Continue'), { root: true }));
-
-      spectator.click(byButton('Save Access Control List'));
-
-      expect(store.saveAcl).toHaveBeenCalledWith(234);
-    }));
   });
 });

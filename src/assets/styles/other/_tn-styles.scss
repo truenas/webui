@@ -1,82 +1,20 @@
 @use '@angular/material' as mat;
+@import '~assets/styles/scss-imports/cssvars';
+$standard-height: 40px;
 @import '~@angular/material/theming';
 @include mat.core();
-@import '../scss-imports/cssvars';
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
 $ix-accent: mat.define-palette($md-accent);
-
 // include the custom theme components into a theme object
 $ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
-@mixin ix-tree-theme($theme) {
-  $primary: map-get($theme, primary);
-  $background: map-get($theme, background);
-  $foreground: map-get($theme, foreground);
-
-  .ix-tree {
-    background: var(--bg2);
-    color: var(--fg2);
-  }
-
-  .ix-tree-node,
-  .ix-nested-tree-node {
-    color: var(--fg2);
-  }
-}
-
-// Bring theme colors to various ripple effects
-@mixin mat-ripple-theme($theme) {
-  .mat-checkbox .mat-ripple-element,
-  .mat-radio-button .mat-ripple-element {
-    @include variable(background, --accent, $accent, !important);
-  }
-
-  .mat-button.mat-primary .mat-ripple-element,
-  .mat-icon-button.mat-primary .mat-ripple-element,
-  .mat-tab-label .mat-ripple-element {
-    @include variable(background, --primary, $primary, !important);
-  }
-
-  .mat-button.mat-accent .mat-ripple-element,
-  .mat-icon-button.mat-accent .mat-ripple-element,
-  .mat-slide-toggle .mat-ripple-element {
-    @include variable(background, --primary, $primary, !important);
-  }
-
-  .mat-button .mat-ripple-element,
-  .mat-raised-button .mat-ripple-element {
-    background: rgba(0, 0, 0, 0.12);
-  }
-}
-
 // include the custom theme object into the angular material theme
 .ix-dark {
   @include mat.all-component-themes($ix-theme);
-  @include ix-tree-theme($ix-theme);
-
-  // UI SHELL
-  .mat-sidenav-container {
-    height: 100vh;
-  }
-
-  ix-topbar .mat-toolbar-multiple-rows {
-    min-height: unset;
-  }
-
-  .mat-sidenav {
-    min-width: 240px;
-  }
-
-  // END UI SHELL
-
-  img.fn-img {
-    margin: 10%;
-    width: 80%;
-  }
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -108,14 +46,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox-label {
     color: var(--fg1);
-  }
-
-  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: var(--primary);
-  }
-
-  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-    background-color: var(--primary);
   }
 
   .mat-bg-accent {
@@ -317,6 +247,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg2, $fg2, !important);
   }
 
+  .mat-option.mat-option-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   .mat-form-field-underline {
     @include variable(background-color, --fg2, $fg2, !important);
     opacity: 0.35;
@@ -510,7 +445,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-checkbox {
-    margin: 4px;
+    margin: 4px 8px;
   }
 
   .form-line .mat-checkbox {
@@ -550,27 +485,27 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-dialog-title {
     .warning-icon {
-      color: #ffc107;
-      font-size: 35px;
+      color: var(--orange);
       margin-right: 10px;
       position: relative;
-      top: 8px;
+      top: 6px;
     }
   }
 
   .mat-dialog-content {
     overflow: hidden;
-    padding-bottom: -3px;
+    padding-bottom: 0;
 
     .more-info {
-      margin-bottom: 4px;
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      min-height: 40px;
     }
 
     .more-info .mat-icon {
-      cursor: pointer;
-      margin: 0 4px 12px;
-      position: relative;
-      top: 7px;
+      margin: 0 4px;
     }
 
     .info-panel {
@@ -649,11 +584,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(stroke, --primary, $primary, !important);
   }
 
-  // Add a visual effect when any sidenav menu item is clicked
-  .highlight {
-    opacity: 0.5;
-  }
-
   // Add rule for entity wizards to make text light on dark themes
   .mat-step-header .mat-step-label.mat-step-label-active {
     @include variable(color, --fg2, $fg2);
@@ -669,6 +599,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .node-content-wrapper:hover,
   .node-content-wrapper-focused {
     background-color: var(--bg2);
+    box-shadow: none;
   }
 
   // Give vdev and dual-list arrow buttons theme colors
@@ -1156,7 +1087,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding-left: 3px;
   }
 
-  tree-node-content mat-icon {
+  tree-node-content .mat-icon {
     vertical-align: top;
   }
 
@@ -1269,7 +1200,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--red) !important;
     color: white !important;
 
-    mat-icon {
+    .mat-icon {
       color: white !important;
       opacity: 0.8 !important;
     }
@@ -1314,7 +1245,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     .mat-list-item-content > a {
       background-color: var(--bg2);
 
-      mat-icon {
+      ix-icon {
         color: var(--primary);
       }
     }
@@ -1326,7 +1257,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .slidein-nav {
     background-color: var(--contrast-darker);
-    height: 100vh;
+    height: calc(100vh - 48px);
     left: -239px;
     position: absolute;
     top: 48px;
@@ -1441,7 +1372,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.5;
     user-select: none;
 
-    mat-icon {
+    .mat-icon {
       font-size: 150%;
     }
 

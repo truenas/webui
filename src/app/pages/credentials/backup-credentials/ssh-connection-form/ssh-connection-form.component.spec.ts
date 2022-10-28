@@ -159,6 +159,7 @@ describe('SshConnectionFormComponent', () => {
       'TrueNAS URL': 'https://truenas.com',
       Username: 'john',
       Password: '12345678',
+      'One-Time Password (if necessary)': '1234',
       'Private Key': 'key2',
 
       Cipher: 'Fast',
@@ -177,6 +178,7 @@ describe('SshConnectionFormComponent', () => {
         cipher: CipherType.Fast,
         connect_timeout: 10,
         password: '12345678',
+        otp_token: '1234',
         url: 'https://truenas.com',
         username: 'john',
       },
@@ -228,6 +230,7 @@ describe('SshConnectionFormComponent', () => {
       semi_automatic_setup: {
         cipher: CipherType.Standard,
         connect_timeout: 10,
+        otp_token: '',
         password: '123456',
         url: 'https://truenas.com',
         username: 'root',

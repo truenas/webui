@@ -9,7 +9,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +32,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     private websocket: WebSocketService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -60,21 +61,26 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
       untilDestroyed(this),
-    ).subscribe((results: CoreBulkResponse<boolean>[]) => {
-      results.forEach((item) => {
-        if (item.error) {
-          this.jobErrors.push(item.error);
-        } else {
-          this.jobSuccess.push(item.result);
-        }
-      });
-      this.isJobCompleted = true;
-      this.cdr.markForCheck();
+    ).subscribe({
+      next: (results: CoreBulkResponse<boolean>[]) => {
+        results.forEach((item) => {
+          if (item.error) {
+            this.jobErrors.push(item.error);
+          } else {
+            this.jobSuccess.push(item.result);
+          }
+        });
+        this.isJobCompleted = true;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.errorReportMiddleware(error);
+      },
     });
   }
 
   getErrorMessage(): string {
-    return this.jobErrors.map((err) => err + '\n')
+    return this.jobErrors.map((error) => error + '\n')
       .toString()
       .split(',')
       .join('')

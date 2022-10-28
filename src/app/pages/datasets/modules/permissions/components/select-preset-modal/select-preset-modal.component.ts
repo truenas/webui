@@ -8,7 +8,6 @@ import { Observable, of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
   SelectPresetModalConfig,
@@ -79,8 +78,8 @@ export class SelectPresetModalComponent implements OnInit {
       },
     }])
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (presets) => {
+      .subscribe({
+        next: (presets) => {
           this.presets = presets;
           this.presetOptions$ = of(presets.map((preset) => ({
             label: preset.name,
@@ -88,11 +87,11 @@ export class SelectPresetModalComponent implements OnInit {
           })));
           this.loader.close();
         },
-        (error) => {
+        error: (error) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.errorReportMiddleware(error);
         },
-      );
+      });
   }
 
   onContinuePressed(): void {

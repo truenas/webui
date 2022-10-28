@@ -12,7 +12,7 @@ import { TaskService } from 'app/services';
   styleUrls: ['./entity-table-row-details.component.scss'],
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
-  @Input() config: any;
+  @Input() config: Record<string, unknown>;
   @Input() parent: EntityTableComponent;
 
   columns: EntityTableColumn[] = [];

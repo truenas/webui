@@ -41,7 +41,7 @@ describe('IxDynamicFormComponent', () => {
         props: { dynamicForm, dynamicSection },
       });
 
-      expect(spectator.queryAll('ix-fieldset').length).toEqual(dynamicSection.length);
+      expect(spectator.queryAll('ix-fieldset')).toHaveLength(dynamicSection.length);
     });
 
     it('renders a correct number of dynamic form', () => {
@@ -52,7 +52,7 @@ describe('IxDynamicFormComponent', () => {
       let dynamicFormsAmount = 0;
       dynamicSection.forEach((section) => dynamicFormsAmount += section.schema.length);
 
-      expect(spectator.queryAll('ix-dynamic-form-item').length).toEqual(dynamicFormsAmount);
+      expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dynamicFormsAmount);
     });
   });
 

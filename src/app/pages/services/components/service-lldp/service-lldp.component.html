@@ -1,19 +1,25 @@
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <mat-progress-bar
+      *ngIf="isFormLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
+
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
         <ix-checkbox
           [formControlName]="intdesc.fcName | translate"
           [label]="intdesc.label | translate"
           [tooltip]="intdesc.tooltip | translate"
         ></ix-checkbox>
+
         <ix-combobox
           [formControlName]="country.fcName | translate"
           [label]="country.label | translate"
           [tooltip]="country.tooltip | translate"
           [provider]="locationProvider"
         ></ix-combobox>
+
         <ix-input
           [formControlName]="location.fcName | translate"
           [label]="location.label | translate"
@@ -25,14 +31,15 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
-        <button
-          mat-button
-          type="button"
-          (click)="onCancel()"
-        >{{ 'Cancel' | translate }}</button>
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button mat-button type="button" (click)="onCancel()">
+          {{ 'Cancel' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

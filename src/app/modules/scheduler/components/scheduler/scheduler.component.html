@@ -1,5 +1,4 @@
 <div class="full-width container has-tooltip">
-
   <ix-label
     *ngIf="label || tooltip"
     [label]="label"
@@ -9,25 +8,25 @@
 
   <div class="input-container" [class.disabled]="isDisabled">
     <mat-select
-      [(ngModel)]="crontab"
       [required]="required"
       [disabled]="isDisabled"
+      [(ngModel)]="crontab"
       (blur)="onTouched()"
       (ngModelChange)="onChange($event)"
     >
       <mat-option
         *ngFor="let preset of defaultPresets"
-        [value]="preset.value"
         class="schedule-option"
+        [value]="preset.value"
       >
         {{ preset.label }}
         <span class="crontab">({{ preset.value }})</span>&nbsp;
         <span class="preset-description">{{ preset.description }}</span>
       </mat-option>
       <mat-option
+        class="schedule-option"
         [value]="customCrontab"
         (click)="onCustomOptionSelected()"
-        class="schedule-option"
       >
         {{ 'Custom' | translate }}
         <span *ngIf="customCrontab" class="crontab">({{ customCrontab }})</span>

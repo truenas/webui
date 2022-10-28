@@ -68,16 +68,18 @@ export class SshKeypairFormComponent {
 
   onGenerateButtonPressed(): void {
     this.loader.open();
-    this.ws.call('keychaincredential.generate_ssh_key_pair').pipe(untilDestroyed(this)).subscribe((keyPair) => {
-      this.loader.close();
-      this.form.patchValue({
-        public_key: keyPair.public_key,
-        private_key: keyPair.private_key,
-      });
-    },
-    (err) => {
-      this.loader.close();
-      new EntityUtils().handleWsError(this, err, this.dialogService);
+    this.ws.call('keychaincredential.generate_ssh_key_pair').pipe(untilDestroyed(this)).subscribe({
+      next: (keyPair) => {
+        this.loader.close();
+        this.form.patchValue({
+          public_key: keyPair.public_key,
+          private_key: keyPair.private_key,
+        });
+      },
+      error: (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
     });
   }
 
@@ -113,14 +115,17 @@ export class SshKeypairFormComponent {
       ]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.slideInService.close();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.form);
-      this.cdr.markForCheck();
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInService.close();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

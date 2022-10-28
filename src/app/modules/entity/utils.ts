@@ -47,34 +47,32 @@ export class EntityUtils {
   handleObjError(entity: EntityErrorHandler, error: any): void {
     let scroll = false;
     entity.error = '';
-    for (const i in error.error) {
-      if (error.error.hasOwnProperty(i)) {
-        const field = error.error[i];
-        const fc = _.find(entity.fieldConfig, { name: i });
-        if (fc) {
-          const element = document.getElementById(i);
-          if (element) {
-            if (entity.conf && entity.conf.advancedFields
-              && _.indexOf(entity.conf.advancedFields, i) > -1
-              && entity.conf.isBasicMode) {
-              entity.conf.isBasicMode = false;
-            }
-            if (!scroll) {
-              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
-              scroll = true;
-            }
+    Object.keys(error.error).forEach((i) => {
+      const field = error.error[i];
+      const fc = _.find(entity.fieldConfig, { name: i });
+      if (fc) {
+        const element = document.getElementById(i);
+        if (element) {
+          if (entity.conf && entity.conf.advancedFields
+            && _.indexOf(entity.conf.advancedFields, i) > -1
+            && entity.conf.isBasicMode) {
+            entity.conf.isBasicMode = false;
           }
-          let errors = '';
-          field.forEach((item: string) => { errors += item + ' '; });
-          fc['hasErrors'] = true;
-          fc['errors'] = errors;
-        } else if (typeof field === 'string') {
-          entity.error = field;
-        } else {
-          field.forEach((item: string) => { entity.error += item + '<br />'; });
+          if (!scroll) {
+            element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
+            scroll = true;
+          }
         }
+        let errors = '';
+        field.forEach((item: string) => { errors += item + ' '; });
+        fc['hasErrors'] = true;
+        fc['errors'] = errors;
+      } else if (typeof field === 'string') {
+        entity.error = field;
+      } else {
+        field.forEach((item: string) => { entity.error += item + '<br />'; });
       }
-    }
+    });
   }
 
   handleWsError(
@@ -120,9 +118,11 @@ export class EntityUtils {
           if (fc && !fc['isHidden']) {
             const element = document.getElementById(field);
             if (element) {
-              if (entity.conf && entity.conf.advancedFields
+              if (
+                entity.conf && entity.conf.advancedFields
                 && _.indexOf(entity.conf.advancedFields, field) > -1
-                && entity.conf.isBasicMode) {
+                && entity.conf.isBasicMode
+              ) {
                 entity.conf.isBasicMode = false;
               }
               if (!scroll) {
@@ -150,7 +150,7 @@ export class EntityUtils {
   }
 
   errorReport(res: WebsocketError | Job, dialog: DialogService): void {
-    if ('trace' in res && res.trace.formatted && dialog) {
+    if ('trace' in res && res.trace?.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
     } else if ('state' in res && res.error && res.exception && dialog) {
       dialog.errorReport(res.state, res.error, res.exception);
@@ -197,7 +197,7 @@ export class EntityUtils {
       cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
         .split(',')
         // TODO: Probably a bug
-        .map((element) => (dowOptions as any)[element] || element)
+        .map((element) => dowOptions[Number(element)] || element)
         .join(',');
     }
     return cronArray.join(' ');
@@ -272,9 +272,5 @@ export class EntityUtils {
 
   snakeToHuman(str: string): string {
     return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  }
-
-  getCleanMethod(str: string): string {
-    return 'clean' + this.snakeToPascal(str);
   }
 }

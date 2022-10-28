@@ -1,78 +1,106 @@
 import {
-  Component, EventEmitter, Input, OnChanges, Output,
+  ChangeDetectionStrategy,
+  Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { ReportTab } from 'app/enums/report-tab.enum';
-import { Option } from 'app/interfaces/option.interface';
-import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
-import { Tab } from 'app/pages/reports-dashboard/reports-dashboard.component';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs';
+import { ReportsConfigFormComponent } from 'app/pages/reports-dashboard/components/reports-config-form/reports-config-form.component';
+import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
   styleUrls: ['./reports-global-controls.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportsGlobalControlsComponent implements OnChanges {
-  @Input() activeTab: Tab;
-  @Input() diskMetrics: Option[];
-  @Input() diskDevices: Option[];
-  @Input() selectedDisks: string[];
-  @Input() allTabs: Tab[];
-  @Input() activeTabVerified: boolean;
+export class ReportsGlobalControlsComponent implements OnInit {
+  form = this.fb.group({
+    autoRefresh: [false],
+    devices: [[] as string[]],
+    metrics: [[] as string[]],
+  });
+  activeTab: ReportTab;
+  selectedDisks: string[];
+  allTabs: ReportTab[] = this.reportsService.getReportTabs();
+  diskDevices$ = this.reportsService.getDiskDevices();
+  diskMetrics$ = this.reportsService.getDiskMetrics();
+  @Output() diskOptionsChanged = new EventEmitter<{ devices: string[]; metrics: string[] }>();
 
-  @Output() showConfigForm = new EventEmitter<void>();
-  @Output() navigateToTab = new EventEmitter<Tab>();
-  @Output() diskOptionsChanged = new EventEmitter<{ devices: Option[]; metrics: Option[] }>();
-
-  devicesControl: ControlConfig;
-  metricsControl: ControlConfig;
-
-  readonly ReportTab = ReportTab;
+  readonly ReportType = ReportType;
 
   constructor(
-    private translate: TranslateService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private store$: Store<AppState>,
+    private reportsService: ReportsService,
+    private slideIn: IxSlideInService,
   ) {}
 
-  onShowConfigForm(): void {
-    this.showConfigForm.emit();
+  ngOnInit(): void {
+    this.activeTab = this.allTabs.find((tab) => tab.value === this.route.routeConfig.path);
+    this.setAutoRefreshControl();
+    this.setupDisksTab();
   }
 
-  onNavigateToTab(tab: Tab): void {
-    this.navigateToTab.emit(tab);
+  showConfigForm(): void {
+    this.slideIn.open(ReportsConfigFormComponent);
   }
 
-  ngOnChanges(): void {
-    this.setDiskControls();
+  onNavigateToTab(tab: ReportTab): void {
+    this.router.navigate(['/reportsdashboard', tab.value]);
   }
 
-  onDiskOptionsChanged(): void {
-    this.diskOptionsChanged.emit({
-      devices: this.devicesControl.value,
-      metrics: this.metricsControl.value,
+  isActiveTab(tab: ReportTab): boolean {
+    return this.activeTab.value === tab.value;
+  }
+
+  private setupDisksTab(): void {
+    if (this.activeTab.value !== ReportType.Disk) {
+      return;
+    }
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.diskOptionsChanged.emit({
+        devices: values.devices,
+        metrics: values.metrics,
+      });
+    });
+    this.diskDevices$.pipe(untilDestroyed(this)).subscribe((disks) => {
+      const disksNames = this.route.snapshot.queryParams.disks;
+      let devices: string[];
+      if (disksNames) {
+        devices = Array.isArray(disksNames) ? disksNames : [disksNames];
+      } else {
+        devices = disks.map((device) => String(device.value));
+      }
+      this.form.patchValue({ devices });
+    });
+    this.diskMetrics$.pipe(untilDestroyed(this)).subscribe((metrics) => {
+      this.form.patchValue({ metrics: metrics.map((device) => String(device.value)) });
     });
   }
 
-  private setDiskControls(): void {
-    this.devicesControl = {
-      label: this.translate.instant('Devices'),
-      placeholder: this.translate.instant('Devices'),
-      multiple: true,
-      options: this.diskDevices,
-      customTriggerValue: this.translate.instant('Select Disks'),
-      value: this.diskDevices?.length && this.selectedDisks
-        ? this.diskDevices.filter((device) => this.selectedDisks.includes(device.value as string))
-        : [],
-    };
-
-    this.metricsControl = {
-      label: this.translate.instant('Metrics'),
-      placeholder: this.translate.instant('Metrics'),
-      customTriggerValue: this.translate.instant('Select Reports'),
-      multiple: true,
-      options: this.diskMetrics ? this.diskMetrics : [this.translate.instant('Not Available')],
-      value: this.selectedDisks ? this.diskMetrics : [],
-    };
+  private setAutoRefreshControl(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
+      this.form.patchValue({ autoRefresh: preferences.autoRefreshReports });
+      this.form.get('autoRefresh').valueChanges.pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.store$.dispatch(autoRefreshReportsToggled());
+      });
+    });
   }
 }

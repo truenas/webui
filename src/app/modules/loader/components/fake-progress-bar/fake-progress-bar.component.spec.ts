@@ -62,6 +62,6 @@ describe('FakeProgressBarComponent', () => {
     tick();
 
     const progressBar = await loader.getHarnessOrNull(MatProgressBarHarness);
-    expect(progressBar).toBe(null);
+    expect(progressBar).toBeNull();
   }));
 });

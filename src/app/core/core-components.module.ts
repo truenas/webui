@@ -15,7 +15,6 @@ import { HtmlTooltipComponent } from 'app/core/components/directives/html-toolti
 import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
 import { TextLimiterTooltipComponent } from 'app/core/components/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
-import { DisplayComponent } from 'app/core/components/display/display.component';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -37,7 +36,6 @@ import { StorageService } from 'app/services/storage.service';
     CommonDirectivesModule,
   ],
   declarations: [
-    DisplayComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
     IxDetailsHeightDirective,
@@ -53,7 +51,6 @@ import { StorageService } from 'app/services/storage.service';
     OverlayModule,
     PortalModule,
     FlexLayoutModule,
-    DisplayComponent,
     TextLimiterDirective,
     IxDetailsHeightDirective,
     HtmlTooltipDirective,

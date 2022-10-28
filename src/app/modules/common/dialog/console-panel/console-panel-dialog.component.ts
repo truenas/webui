@@ -1,69 +1,49 @@
 import {
-  Component, ViewChild, ElementRef, EventEmitter, OnInit,
+  ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
-import { Interval } from 'app/interfaces/timeout.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
 
+@UntilDestroy()
 @Component({
-  styleUrls: ['./console-panel-dialog.component.scss'],
   templateUrl: './console-panel-dialog.component.html',
+  styleUrls: ['./console-panel-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsolePanelDialogComponent implements OnInit {
-  refreshMsg = this.translate.instant('Check to stop refresh');
-  intervalPing: Interval;
-  consoleMsg = this.translate.instant('Loading...');
-  @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
-  onEventEmitter = new EventEmitter();
+  @ViewChild('messageContainer', { static: true }) messageContainer: ElementRef<HTMLElement>;
+
+  lines$ = this.messagesStore.lines$;
 
   constructor(
-    protected translate: TranslateService,
-    public dialogRef: MatDialogRef<ConsolePanelDialogComponent>,
-  ) { }
+    private messagesStore: ConsoleMessagesStore,
+  ) {}
+
+  get isScrolledToBottom(): boolean {
+    const delta = 3;
+    const nativeElement = this.messageContainer.nativeElement;
+    return nativeElement.scrollHeight - nativeElement.scrollTop - nativeElement.clientHeight <= delta;
+  }
 
   ngOnInit(): void {
-    this.getLogConsoleMsg();
+    this.scrollToBottomOnNewMessages();
   }
 
-  scrollToBottomOnFooterBar(): void {
-    try {
-      this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch (err: unknown) { }
-  }
-
-  getLogConsoleMsg(): void {
-    this.intervalPing = setInterval(() => {
-      let isScrollBottom = false;
-      const delta = 3;
-
-      const nativeElement = this.footerBarScroll.nativeElement;
-      if (nativeElement.scrollTop + nativeElement.offsetHeight + delta >= nativeElement.scrollHeight) {
-        isScrollBottom = true;
+  private scrollToBottomOnNewMessages(): void {
+    this.lines$.pipe(untilDestroyed(this)).subscribe(() => {
+      if (!this.isScrolledToBottom) {
+        // User scrolled up, don't scroll down
+        return;
       }
-      this.onEventEmitter.emit();
-      if (isScrollBottom) {
-        const timeout = setTimeout(() => {
-          this.scrollToBottomOnFooterBar();
-          clearTimeout(timeout);
-        }, 500);
-      }
-    }, 1000);
 
-    // First, will load once.
-    const timeout = setTimeout(() => {
-      this.scrollToBottomOnFooterBar();
-      clearTimeout(timeout);
-    }, 1500);
+      this.scrollToBottom();
+    });
   }
 
-  onStopRefresh(data: MatCheckboxChange): void {
-    if (data.checked) {
-      clearInterval(this.intervalPing);
-      this.refreshMsg = this.translate.instant('Uncheck to restart refresh');
-    } else {
-      this.getLogConsoleMsg();
-      this.refreshMsg = this.translate.instant('Check to stop refresh');
-    }
+  private scrollToBottom(): void {
+    const nativeElement = this.messageContainer.nativeElement;
+    setTimeout(() => {
+      nativeElement.scroll({ top: nativeElement.scrollHeight });
+    });
   }
 }
