@@ -34,6 +34,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const newStorjBucket = 'new_storj_bucket';
 
+type FormAttribute = 'bucket' | 'bucket_input' | 'bucket_policy_only' | 'storage_class' | 'fast_list' | 'chunk_size';
+
 @UntilDestroy()
 @Component({
   templateUrl: './cloudsync-form.component.html',
@@ -581,9 +583,28 @@ export class CloudsyncFormComponent {
   prepareData(formValue: CloudsyncFormComponent['form']['value']): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
-    const value = this.buildInitialRequestBody(formValue);
+    const value: CloudSyncTaskUpdate = {
+      attributes,
+      include: undefined,
+      path: undefined,
+      bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
+      schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
+      create_empty_src_dirs: formValue.create_empty_src_dirs,
+      credentials: formValue.credentials,
+      description: formValue.description,
+      direction: formValue.direction,
+      enabled: formValue.enabled,
+      encryption: formValue.encryption,
+      exclude: formValue.exclude,
+      follow_symlinks: formValue.follow_symlinks,
+      post_script: formValue.post_script,
+      pre_script: formValue.pre_script,
+      snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
+      transfer_mode: formValue.transfer_mode,
+      transfers: formValue.transfers,
+    };
 
-    if (value.direction === Direction.Pull) {
+    if (formValue.direction === Direction.Pull) {
       value.path = _.isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
 
       if (!formValue.folder_source.length || !_.isArray(formValue.folder_source)) {
@@ -618,35 +639,15 @@ export class CloudsyncFormComponent {
       }
     }
 
-    if (formValue.bucket !== undefined) {
-      attributes.bucket = formValue.bucket;
-    }
-    if (formValue.bucket_input !== undefined) {
-      attributes.bucket = formValue.bucket_input;
-    }
-    if (formValue.bucket_policy_only !== undefined) {
-      attributes.bucket_policy_only = formValue.bucket_policy_only;
-    }
-    if (formValue.task_encryption !== undefined) {
-      attributes.encryption = formValue.task_encryption === '' ? null : formValue.task_encryption;
-    }
-    if (formValue.storage_class !== undefined) {
-      attributes.storage_class = formValue.storage_class;
-    }
-    if (formValue.fast_list !== undefined) {
-      attributes.fast_list = formValue.fast_list;
-    }
-    if (formValue.chunk_size !== undefined) {
-      attributes.chunk_size = formValue.chunk_size;
-    }
+    const atrributesToFill = ['bucket', 'bucket_input', 'bucket_policy_only', 'storage_class', 'fast_list', 'chunk_size'];
+
+    atrributesToFill.forEach((name: FormAttribute) => {
+      if (formValue[name] !== undefined) {
+        attributes[name] = formValue[name] === '' ? null : formValue[name];
+      }
+    });
 
     value.attributes = attributes;
-
-    value.schedule = formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {};
-
-    if (formValue.direction === Direction.Pull) {
-      value.snapshot = false;
-    }
 
     return value;
   }
@@ -700,28 +701,5 @@ export class CloudsyncFormComponent {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  private buildInitialRequestBody(formValue: CloudsyncFormComponent['form']['value']): CloudSyncTaskUpdate {
-    return {
-      attributes: undefined,
-      bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
-      create_empty_src_dirs: formValue.create_empty_src_dirs,
-      credentials: formValue.credentials,
-      description: formValue.description,
-      direction: formValue.direction,
-      enabled: formValue.enabled,
-      encryption: formValue.encryption,
-      exclude: formValue.exclude,
-      follow_symlinks: formValue.follow_symlinks,
-      include: undefined,
-      path: undefined,
-      post_script: formValue.post_script,
-      pre_script: formValue.pre_script,
-      schedule: undefined,
-      snapshot: formValue.snapshot,
-      transfer_mode: formValue.transfer_mode,
-      transfers: formValue.transfers,
-    };
   }
 }
