@@ -188,7 +188,9 @@
                 class="data-container ha-status"
                 fxFlex
               >
-                <h3>{{ hasHa ? HaStatusText.HaEnabled : HaStatusText.HaDisabled }}</h3>
+                <h3>
+                  {{ hasHa ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}
+                </h3>
               </div>
 
               <div *ngIf="!data && !isHa" class="loader">

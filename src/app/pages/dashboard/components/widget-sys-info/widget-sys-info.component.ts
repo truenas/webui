@@ -10,7 +10,6 @@ import {
   differenceInSeconds, differenceInDays, addSeconds, format,
 } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
-import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -71,7 +70,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
-  readonly HaStatusText = HaStatusText;
 
   private _updateBtnStatus = 'default';
 
