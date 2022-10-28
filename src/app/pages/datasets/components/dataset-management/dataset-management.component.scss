@@ -145,6 +145,11 @@ $scrollbar-offset: 20px;
 
   ::ng-deep .header h3.title {
     width: calc(100% - 16px);
+
+    @media(max-width: $breakpoint-tablet) {
+      margin-left: -40px;
+      width: 100%;
+    }
   }
 
   ::ng-deep .cards .scroll-window {

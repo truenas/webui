@@ -10,8 +10,7 @@
 
   .scroll-window {
     column-gap: 8px;
-    columns: 2;
-    columns: calc(50vw / 2.6);
+    columns: calc(50vw / 2.7);
     min-height: 100vh;
 
     @media (max-width: $breakpoint-tablet) {

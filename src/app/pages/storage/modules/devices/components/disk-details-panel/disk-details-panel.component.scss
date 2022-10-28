@@ -71,7 +71,6 @@
       display: flex;
       margin-left: 40px;
       margin-top: 4px;
-      max-width: calc(100% - 48px);
     }
 
     @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
@@ -114,23 +113,24 @@
 .header {
   align-items: center;
   display: flex;
-  margin-bottom: 16px;
-  padding: 12px 12px 12px 0;
-  place-content: flex-start;
-
+  margin: 0 0.333333rem 16px;
+  padding: 12px 0;
+  place-content: space-between;
 
   @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
     border-bottom: solid 1px var(--lines);
+    margin: 0 16px 16px 0;
   }
 
   @media (max-width: $breakpoint-tablet) {
     flex-direction: column;
+    margin: 0 20px;
   }
 
   @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     flex-wrap: wrap;
     margin-bottom: 8px;
-    padding-bottom: 0;
+    padding: 0;
   }
 
 
