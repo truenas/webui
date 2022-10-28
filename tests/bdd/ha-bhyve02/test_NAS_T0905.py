@@ -312,7 +312,7 @@ def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_ho
 
 
 @then('on the virtual hostname Dashboard Save the network interface changes')
-def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(driver):
+def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(driver, nas_url):
     """on the virtual hostname Dashboard Save the network interface changes."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 7, '//h1[text()="Save Changes"]')
@@ -320,6 +320,8 @@ def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(dr
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('navigate to Storage click Disks then click name several times to sort in alphabetical order')
@@ -390,8 +392,10 @@ def navigate_to_storage_click_pools_click_add_select_create_new_pool(driver):
 
 
 @then('click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL')
-def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver):
+def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver, nas_url):
     """click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL."""
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
@@ -414,6 +418,8 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list')
