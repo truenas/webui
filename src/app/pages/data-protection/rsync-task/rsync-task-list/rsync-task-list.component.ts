@@ -24,14 +24,14 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncTaskListComponent implements EntityTableConfig {
+export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   title = this.translate.instant('Rsync Tasks');
   queryCall = 'rsynctask.query' as const;
   wsDelete = 'rsynctask.delete' as const;
   routeAdd: string[] = ['tasks', 'rsync', 'add'];
   routeAddTooltip = this.translate.instant('Add Rsync Task');
   routeEdit: string[] = ['tasks', 'rsync', 'edit'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<RsyncTaskUi>;
   asyncView = true;
   filterValue = '';
 
@@ -84,7 +84,7 @@ export class RsyncTaskListComponent implements EntityTableConfig {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<RsyncTaskUi>): void {
     this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();

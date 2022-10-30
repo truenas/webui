@@ -17,7 +17,7 @@ import { EntityTableService } from 'app/services/entity-table.service';
 })
 export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
-  @Input() entity: EntityTableComponent;
+  @Input() entity: EntityTableComponent<Record<string, unknown>>;
   filterValue = '';
 
   actions: EntityTableAction[];

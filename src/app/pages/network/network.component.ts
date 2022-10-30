@@ -94,7 +94,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       if (this.isHaEnabled) {
         this.dialog.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        this.tableService.delete(table, row, deleteAction);
+        this.tableService.delete(table, row as unknown as Record<string, unknown>, deleteAction);
       }
     },
     afterDelete: this.afterDelete.bind(this),
