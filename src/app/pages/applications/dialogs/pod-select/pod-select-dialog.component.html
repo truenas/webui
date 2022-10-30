@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>{{ hasPods ? 'Choose pod' : 'No Pools Found' | translate }}</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onPodSelect()">
+  <div *ngIf="podList.length" mat-dialog-content>
+    <ix-select
+      formControlName="pods"
+      [label]="'Pods' | translate"
+      [tooltip]="'Pods' | translate"
+      [required]="true"
+      [options]="pods$"
+    ></ix-select>
+    <ix-select
+      formControlName="containers"
+      [label]="'Containers' | translate"
+      [tooltip]="'Containers' | translate"
+      [required]="true"
+      [options]="containers$"
+    ></ix-select>
+    <ix-input
+      *ngIf="dialogType === podSelectDialogType.Shell"
+      formControlName="command"
+      [label]="'Commands' | translate"
+      [tooltip]="'Commands' | translate"
+    ></ix-input>
+    <ix-input
+      *ngIf="dialogType === podSelectDialogType.Logs"
+      formControlName="tail_lines"
+      [label]="'Tail Lines' | translate"
+      [tooltip]="'Tail Lines' | translate"
+      [required]="true"
+      type="number"
+    ></ix-input>
+  </div>
+
+  <div *ngIf="!podList.length" mat-dialog-content>
+    {{ 'At least one pool must be available to use apps' | translate }}
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button
+      *ngIf="podList.length"
+      mat-button
+      type="submit"
+      color="primary"
+      [disabled]="form.invalid"
+    >
+      {{ 'Choose' | translate }}
+    </button>
+    <button mat-button type="button" color="secondary" (click)="dialogRef.close()">
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

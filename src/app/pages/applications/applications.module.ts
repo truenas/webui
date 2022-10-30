@@ -33,6 +33,7 @@ import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/ca
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-select/pod-select-dialog.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/applications/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/applications/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component';
@@ -99,6 +100,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     ManageCatalogSummaryDialogComponent,
     PodLogsComponent,
     PodShellComponent,
+    PodSelectDialogComponent,
     PullImageFormComponent,
     SelectPoolDialogComponent,
     ChartRollbackModalComponent,
