@@ -38,7 +38,7 @@ def test_add_email(driver):
 
     # change should be saved, open the user dropdown, the email value should be visible
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 20, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 20, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     driver.find_element_by_xpath('//div[contains(.,"Email:")]')
