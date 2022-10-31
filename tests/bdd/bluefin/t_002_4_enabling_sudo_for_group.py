@@ -64,16 +64,16 @@ def test_enabling_sudo_for_group(driver, nas_ip):
 
     #verify in UI
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
+    assert wait_on_element(driver, 20, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 20, '//div[contains(.,"qetestuser")]')
 
     assert wait_on_element(driver, 20, '//tr[contains(.,"qetestuser")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]//mat-icon').click()
 
-    assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
-    assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]')
 
-    assert wait_on_element(driver, 7, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
     element_text = driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
     assert element_text == 'false'
 
