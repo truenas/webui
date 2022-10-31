@@ -1,6 +1,8 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import pytest
+import xpaths
 import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -9,7 +11,8 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     attribute_value_exist,
-    ssh_cmd
+    ssh_cmd,
+    refresh_if_element_missing
 )
 from pytest_bdd import (
     given,
@@ -20,6 +23,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name="NAS-T933")
 @scenario('features/NAS-T933.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_setting_up_active_directory_with_the_new_system_dataset(driver):
     """Verify Active Directory works after failover with new system dataset."""
@@ -41,13 +45,13 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
     global passwd
     passwd = password
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 4, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -68,7 +72,7 @@ def verify_midclt_call_smb_get_smb_ha_mode_return_UNIFIED_or_LEGACY(driver):
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 5, xpaths.dashboard.system_information)
 
 
 @then('Navigate to Network then Global Configuration')
@@ -102,15 +106,15 @@ def click_save_please_wait_should_appear_while_settings_are_being_applied(driver
     """Click SAVE "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
 @then('Navigate to Directory Services then Active Directory')
 def navigate_to_directory_services_then_active_directory(driver):
     """Navigate to Directory Services then Active Directory."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services)
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
 
@@ -155,7 +159,7 @@ def check_the_enable_box_and_click_save(driver):
 @then('Active Directory should successfully save and start without an error')
 def active_directory_should_successfully_save_and_start_without_an_error(driver):
     """Active Directory should successfully save and start without an error."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
     assert wait_on_element_disappear(driver, 20, '//h1[contains(text(),"Configuring Active Directory")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
@@ -242,42 +246,46 @@ def navigate_to_dashboard(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_information)
 
 
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
-    assert wait_on_element(driver, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
-    assert wait_on_element(driver, 5, '//h1[contains(.,"Initiate Failover")]')
-    driver.find_element_by_xpath('//mat-checkbox').click()
-    assert wait_on_element(driver, 5, '//div[2]/button[2]/span')
-    driver.find_element_by_xpath('//div[2]/button[2]/span').click()
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
+    assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 5, xpaths.button.failover)
+    driver.find_element_by_xpath(xpaths.button.failover).click()
 
 
 @then('Wait for the login page to appear')
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
-    assert wait_on_element(driver, 120, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 120, xpaths.login.user_input)
     # wait for HA is enabled to avoid UI refreshing
-    assert wait_on_element(driver, 300, '//p[contains(.,"HA is enabled")]')
+    assert wait_on_element_disappear(driver, 300, xpaths.login.ha_status('HA is enabled'))
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
 def at_the_login_page_enter_root_and_password(driver, user, password):
     """At the login page enter "{user}" and "{password}"."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Username"]')
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
-    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
-    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+    assert wait_on_element(driver, 7, xpaths.login.user_input)
+    driver.find_element_by_xpath(xpaths.login.user_input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+    driver.find_element_by_xpath(xpaths.login.password_input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+    assert wait_on_element(driver, 4, xpaths.login.signin_button)
+    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
+    if wait_on_element(driver, 5, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))
@@ -341,7 +349,7 @@ def input_dataset_name_my_acl_dataset_and_click_save(driver, dataset_name):
 @then(parsers.parse('"{dataset_name}" should be created'))
 def my_acl_dataset_should_be_created(driver, dataset_name):
     """"my_acl_dataset" should be created."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 10, f'//span[contains(.,"{dataset_name}")]')
 
 
@@ -394,7 +402,7 @@ def click_the_save_button(driver):
     """Click the Save button, should be return to pool page"""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 5, '//mat-panel-title[contains(.,"dozer")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__dozer_name"]')
 

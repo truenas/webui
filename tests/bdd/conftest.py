@@ -74,6 +74,7 @@ def browser():
     # application/gzip is use for .tgz
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
+    profile.set_preference("browser.download.alwaysOpenPanel", False)
     # browser.link.open_newwindow is frozen 2 the only way to change it is like bellow
     profile.DEFAULT_PREFERENCES["frozen"]["browser.link.open_newwindow"] = 3
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
@@ -96,8 +97,8 @@ def driver():
 
 
 # Close Firefox after all tests are completed
-# def pytest_sessionfinish(session, exitstatus):
-#     web_driver.quit()
+def pytest_sessionfinish(session, exitstatus):
+    web_driver.quit()
 
 
 @pytest.mark.hookwrapper
@@ -160,9 +161,9 @@ def pytest_runtest_makereport(item):
                 if handle != initial_tab:
                     web_driver.close()
             web_driver.switch_to.window(initial_tab)
-        if 'T1010' in screenshot_name:
+        if 'T1010' in screenshot_name or 'T0933' in screenshot_name:
             disable_active_directory()
-        elif 'T1013' in screenshot_name:
+        elif 'T1013' in screenshot_name or 'T0940' in screenshot_name:
             disable_ldap()
 
 
@@ -253,33 +254,37 @@ def enable_failover():
 
 
 def disable_active_directory():
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
-    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]')
+    assert wait_on_element(5, '//li[span/a/text()="Active Directory"]')
+    assert wait_on_element(5, '//h4[contains(text(),"Domain Credentials")]')
+    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
     wait_on_element(7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    if wait_on_element_disappear(120, '//h6[contains(.,"Please wait")]') is False:
-        web_driver.refresh()
+    assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
 
 
 def disable_ldap():
     wait_on_element(5, '//span[contains(.,"root")]')
     element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__LDAP"]')
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__LDAP"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
-    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]')
+    assert wait_on_element(5, '//li[span/a/text()="LDAP"]')
+    assert wait_on_element(5, '//div[contains(.,"Server Credentials")]')
+    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'clickable')
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
     wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    if wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]') is False:
-        web_driver.refresh()
+    assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')

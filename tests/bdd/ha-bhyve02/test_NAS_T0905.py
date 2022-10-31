@@ -1,8 +1,15 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import xpaths
 import time
-from function import wait_on_element, wait_on_element_disappear, is_element_present
+from function import (
+    wait_on_element,
+    wait_on_element_disappear,
+    is_element_present,
+    refresh_if_element_missing,
+    get
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -29,13 +36,13 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def login_appear_enter_root_and_password(driver, password):
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         """login appear enter "root" and "password"."""
-        assert wait_on_element(driver, 7, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 7, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 7, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 7, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
         assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -45,10 +52,12 @@ def login_appear_enter_root_and_password(driver, password):
 
 
 @then(parsers.parse('you should see the dashboard and "{information}"'))
-def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information):
+def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information, nas_url):
     """you should see the dashboard and "information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
     assert wait_on_element(driver, 7, f'//span[contains(.,"{information}")]')
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('navigate to System and click Support')
@@ -95,7 +104,7 @@ def click_save_license(driver):
 @then('the following should appear "Reload the page for the license to take effect"')
 def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
     """the following should appear "Reload the page for the license to take effect"."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Reload the page")]')
 
 
@@ -117,7 +126,7 @@ def click_agree(driver):
     """click Agree."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+    if wait_on_element(driver, 2, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
@@ -181,7 +190,7 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_the_same_global_configuration_screen_and_settings_saved_should_appear_below_the_save_button_at_the_bottom(driver):
     """"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
@@ -197,13 +206,16 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Reporting"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Disable Failover")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Disable Failover")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
 @then('after settings are applied you should see "Settings applied"')
@@ -270,31 +282,47 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"TEST CHANGES")]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[contains(.,"TEST CHANGES")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"TEST CHANGES")]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__TEST CHANGES"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
-@then('Please wait should appear while settings are being applied')
-def please_wait_should_appear_while_settings_are_being_applied(driver):
-    """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"SAVE CHANGES")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]')
+@then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
+def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_hostname, password):
+    """switch to the virtual hostname "{virtual_hostname}" and login."""
+    driver.get(f"http://{virtual_hostname}")
+    time.sleep(1)
+    """login appear enter "root" and "password"."""
+    assert wait_on_element(driver, 7, xpaths.login.user_input)
+    driver.find_element_by_xpath(xpaths.login.user_input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+    driver.find_element_by_xpath(xpaths.login.password_input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+    assert wait_on_element(driver, 7, xpaths.login.signin_button)
+    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+
+
+@then('on the virtual hostname Dashboard Save the network interface changes')
+def once_on_the_virtual_hostname_Dashboard_Save_the_network_interface_changes(driver, nas_url):
+    """on the virtual hostname Dashboard Save the network interface changes."""
+    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
+    assert wait_on_element(driver, 7, '//h1[text()="Save Changes"]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('navigate to Storage click Disks then click name several times to sort in alphabetical order')
@@ -314,9 +342,9 @@ def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alp
         ada0 = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
 
 
-@then('the list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools')
-def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_the_boot_devices_and_da0_to_da15_the_disks_we_will_wipe_in_next_step_to_create_pools(driver):
-    """the list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools."""
+@then('the list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1')
+def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_the_boot_devices_and_da0_to_da1(driver):
+    """the list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1."""
     # Verify disk are sorted
     disk_list = {1: 'ada0', 2: 'da0', 3: 'da1'}
     for num in list(disk_list.keys()):
@@ -365,8 +393,10 @@ def navigate_to_storage_click_pools_click_add_select_create_new_pool(driver):
 
 
 @then('click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL')
-def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver):
+def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver, nas_url):
     """click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL."""
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
@@ -389,6 +419,8 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
 
 
 @then('create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list')
@@ -402,7 +434,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 
 
 @then('navigate to System then Failover, uncheck disable failover, click save')
-def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
+def navigate_to_system_then_failover_click_disable_failover_click_save(driver, nas_url):
     """navigate to System then Failover, uncheck disable failover, click save."""
     # scroll up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -413,10 +445,13 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Reporting"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Failover Configuration")]')
+    assert get(nas_url, 'system/ready/', ('root', 'testing')).json() is True
+    assert get(nas_url.replace('nodea', 'nodeb'), 'system/ready/', ('root', 'testing')).json() is True
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
 
 
 @then('navigate to dashboard, wait for HA to be online')
@@ -429,11 +464,12 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     time.sleep(0.5)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"truenas")]')
-    assert wait_on_element(driver, 600, '//div[contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 300, '//div[contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
     time.sleep(5)
 
 
@@ -460,7 +496,7 @@ def enter_hostname_and_hostname_truenas_controller_2(driver, host1, host2):
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
 def please_wait_should_appear_while_settings_are_being_applied_and_you_should_be_returned_to_network_page(driver):
     """"Please wait" should appear while settings are being applied and You should be returned to Network page."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     time.sleep(2)
 
@@ -474,8 +510,8 @@ def navigate_to_dashboard_verify_both_controller_hostname(driver):
     time.sleep(0.5)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
-    assert wait_on_element(driver, 20, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
+    assert wait_on_element(driver, 20, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 20, '//div[contains(.,"tn-bhyve03-nodea")]')
     assert wait_on_element(driver, 20, '//div[contains(.,"tn-bhyve03-nodeb")]')
 

@@ -1,7 +1,12 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
-from function import wait_on_element, wait_on_element_disappear
+import xpaths
+from function import (
+    wait_on_element,
+    wait_on_element_disappear,
+    is_element_present
+)
 import time
 from pytest_bdd import (
     given,
@@ -20,27 +25,29 @@ def test_add_user(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
-    driver.get(f"http://{nas_url}")
-    time.sleep(3)
+    if nas_url not in driver.current_url:
+        driver.get(f"http://{nas_url}")
+        time.sleep(1)
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Username"]')
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    assert wait_on_element(driver, 7, '//button[@name="signin_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        assert wait_on_element(driver, 5, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
 
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    if wait_on_element(driver, 3, '//div[contains(.,"Looking for help?")]'):
+    if wait_on_element(driver, 3, xpaths.popupTitle.help):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
@@ -109,6 +116,6 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[@ix-auto="value__ericbsd_Username"]')
