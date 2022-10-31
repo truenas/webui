@@ -229,10 +229,10 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"System InformationStandby")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
-    assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
+    assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
