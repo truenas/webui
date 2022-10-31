@@ -35,8 +35,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
-    if is_element_present(driver, '//input[@data-placeholder="Username"]'):
+    if wait_on_element(driver, 3, '//input[@data-placeholder="Username"]'):
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
