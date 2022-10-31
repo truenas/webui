@@ -28,9 +28,9 @@
         <mat-form-field class="full-width" id="formexinput">
           <textarea
             *ngIf="config.multiple; else textInput"
+            #autosize="cdkTextareaAutosize"
             matInput
             cdkTextareaAutosize
-            #autosize="cdkTextareaAutosize"
             cdkAutosizeMinRows="1"
             cdkAutosizeMaxRows="4"
             [placeholder]="config.placeholder | translate"
@@ -89,10 +89,10 @@
         <span title="{{ node.data.name }}">
           {{ node.data.subTitle }}
           <span
-            class="dataset-subtitle"
-            matTooltip="{{ 'An ACL is present in this path' | translate }}"
-            matTooltipPosition="right"
             *ngIf="node.data['acl']"
+            class="dataset-subtitle"
+            matTooltipPosition="right"
+            matTooltip="{{ 'An ACL is present in this path' | translate }}"
           >
             ACL
           </span>

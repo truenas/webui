@@ -32,8 +32,8 @@
 
         <ix-input
           formControlName="password"
-          [label]="'Password' | translate"
           type="password"
+          [label]="'Password' | translate"
           [tooltip]="tooltips.password | translate"
         ></ix-input>
       </ix-fieldset>
@@ -42,8 +42,8 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
+          [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>

@@ -1,9 +1,9 @@
 <div class="page-wrap height-100 login-form">
   <div class="session-form-hold">
     <mat-progress-bar
-      [mode]="connected() ? 'determinate' : 'indeterminate'"
       value="0"
       class="session-progress"
+      [mode]="connected() ? 'determinate' : 'indeterminate'"
     ></mat-progress-bar>
     <mat-card>
       <mat-card-content>
@@ -45,16 +45,16 @@
                       &nbsp;&nbsp;
                     </span>
                     <input
+                      #username="ngModel"
                       autofocus
                       matInput
                       name="username"
                       required
-                      #username="ngModel"
                       value=""
                       autocorrect="off"
                       autocomplete="off"
-                      [(ngModel)]="signinData.username"
                       [placeholder]="'Username' | translate"
+                      [(ngModel)]="signinData.username"
                     />
                     <mat-error *ngIf="username.errors && (username.dirty || username.touched) && username.errors.required">
                       <span *ngIf="!failed">
@@ -78,14 +78,14 @@
                       &nbsp;&nbsp;
                     </span>
                     <input
+                      #password="ngModel"
                       type="password"
                       name="password"
                       required
                       matInput
-                      #password="ngModel"
                       value=""
-                      [(ngModel)]="signinData.password"
                       [placeholder]="'Password' | translate"
+                      [(ngModel)]="signinData.password"
                     />
                     <mat-error *ngIf="password.errors && (password.dirty || password.touched) && password.errors.required">
                       <span *ngIf="!failed">
@@ -104,13 +104,13 @@
                       &nbsp;&nbsp;
                     </span>
                     <input
+                      #otp="ngModel"
                       matInput
                       name="otp"
-                      #otp="ngModel"
                       required
                       autocomplete="off"
-                      [(ngModel)]="signinData.otp"
                       [placeholder]="'Two-Factor Authentication Code' | translate"
+                      [(ngModel)]="signinData.otp"
                     />
                     <mat-error>
                       <span *ngIf="!failed">
@@ -135,9 +135,9 @@
               </form>
               <div [hidden]="hasRootPassword">
                 <form
-                  (ngSubmit)="setpassword()"
-                  [formGroup]="setPasswordFormGroup"
                   #setPasswordForm="ngForm"
+                  [formGroup]="setPasswordFormGroup"
+                  (ngSubmit)="setpassword()"
                 >
                   <div>
                     <span>

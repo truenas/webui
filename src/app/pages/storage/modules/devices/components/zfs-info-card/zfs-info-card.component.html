@@ -4,7 +4,7 @@
   </mat-card-header>
   <mat-card-content>
     <div>
-      <div class="details-item" *ngIf="topologyParentItem?.name">
+      <div *ngIf="topologyParentItem?.name" class="details-item">
         <span class="label">{{ 'Parent' | translate }}:</span>
         <span class="value">{{ topologyParentItem.name | uppercase }}</span>
       </div>

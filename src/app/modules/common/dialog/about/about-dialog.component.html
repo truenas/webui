@@ -34,8 +34,8 @@
     </div>
 
     <div
-      id="open-source"
       *appLet="systemType | mapValue: productTypeLabels as product"
+      id="open-source"
       [innerHtml]="helptext.opensource | translate: { product }"
     ></div>
   </div>

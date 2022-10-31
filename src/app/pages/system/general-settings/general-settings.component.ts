@@ -100,6 +100,7 @@ export class GeneralSettingsComponent implements OnInit, AfterViewInit {
       this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
         this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
           const keyboardMap = mapchoices.find((option) => option.value === this.configData.kbdmap);
+          const keyboardMapLabel = config.kbdmap && keyboardMap?.label ? keyboardMap.label : helptext.default;
           const dateTime = this.localeService.getDateAndTime(config.timezone);
           this.localeData = {
             title: helptext.localeTitle,
@@ -109,7 +110,7 @@ export class GeneralSettingsComponent implements OnInit, AfterViewInit {
               { label: helptext.date_format.placeholder, value: dateTime[0] },
               { label: helptext.time_format.placeholder, value: dateTime[1] },
               { label: helptext.stg_timezone.placeholder, value: config.timezone },
-              { label: helptext.stg_kbdmap.placeholder, value: config.kbdmap ? keyboardMap.label : helptext.default },
+              { label: helptext.stg_kbdmap.placeholder, value: keyboardMapLabel },
             ],
           };
           this.localizationSettings = {

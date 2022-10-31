@@ -1,0 +1,23 @@
+<h1 matDialogTitle>{{ 'Update Production Status' | translate }}</h1>
+
+<p>{{ 'Set production status as active' | translate }}</p>
+
+<ix-checkbox
+  [formControl]="sendInitialDebugCheckbox"
+  [label]="'Send initial debug' | translate"
+></ix-checkbox>
+
+<div class="form-actions">
+  <button
+    mat-button
+    type="submit"
+    color="primary"
+    (click)="onSubmit()"
+  >
+    {{ 'Proceed' | translate }}
+  </button>
+
+  <button mat-button type="button" matDialogClose>
+    {{ 'Cancel' | translate }}
+  </button>
+</div>

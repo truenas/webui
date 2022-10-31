@@ -31,7 +31,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }}</span>
             </div>
           </h3>
@@ -45,9 +45,9 @@
               (click)="router.navigate(['reportsdashboard/memory'])"
             >
               <mat-icon
-                matTooltip="{{ 'Memory Reports' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Memory Reports"
+                [matTooltip]="'Memory Reports' | translate"
               >
                 insert_chart
               </mat-icon>
@@ -61,7 +61,7 @@
           fxLayoutAlign="space-around center"
         >
           <div *ngIf="!memData" class="spinner-wrapper">
-            <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
+            <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
           </div>
 
           <div class="primary-stat-wrapper" fxFlex.gt-xs="45" fxFlex.xs="100">
@@ -82,8 +82,8 @@
               <div *ngIf="memData; else noLegend" id="memory-legend-values">
                 <!-- Desktop -->
                 <div
-                  fxHide.xs
                   *ngFor="let legendItem of memData.data; let i = index"
+                  fxHide.xs
                   class="legend-item"
                 >
                   <div

@@ -29,10 +29,10 @@
       cpPosition="bottom"
       cpWidth="180px"
       class="picker-input"
-      [(colorPicker)]="colorProxy"
       [cpToggle]="picker"
       [cpPositionRelativeToArrow]="true"
       [formControlName]="config.name"
+      [(colorPicker)]="colorProxy"
       (cpInputChange)="inputListener('cpInputChange', $event)"
       (colorPickerChange)="cpListener('cpInputChange', $event)"
     />

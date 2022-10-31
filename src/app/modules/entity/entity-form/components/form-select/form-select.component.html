@@ -6,7 +6,7 @@
   [hidden]="config.isHidden"
   [attr.id]="config.name"
 >
-  <div class="label-container" *ngIf="config.placeholder || config.tooltip">
+  <div *ngIf="config.placeholder || config.tooltip" class="label-container">
     <ng-container *ngIf="config.inlineLabel">
       <div class="label half-width"></div>
     </ng-container>
@@ -20,7 +20,7 @@
       [message]="config.tooltip"
     ></ix-tooltip>
 
-    <a *ngIf="config.linkText" (click)="linkClicked()" class="link">
+    <a *ngIf="config.linkText" class="link" (click)="linkClicked()">
       {{ config.linkText | translate }}
       <mat-icon style="font-size: x-small">open_in_new</mat-icon>
     </a>
@@ -30,8 +30,8 @@
     <div class="label half-width">{{ config.inlineLabel }}</div>
   </ng-container>
   <mat-form-field
-    value="fromFormField"
     #field
+    value="fromFormField"
     [ngClass]="{
       'full-width': !config.inlineLabel,
       'half-width': config.inlineLabel

@@ -12,10 +12,12 @@ import {
   AfterViewInit,
   TemplateRef,
   ViewChild,
+  Inject,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
   Disk, isTopologyDisk, isVdev, TopologyDisk,
@@ -23,7 +25,6 @@ import {
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService, DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -34,6 +35,7 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
@@ -53,13 +55,13 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   isMobileView = false;
 
   constructor(
+    private router: Router,
     private layoutService: LayoutService,
-    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
-    private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   getDisk(node: DeviceNestedDataNode): Disk {
@@ -178,10 +180,14 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Expose hidden details on mobile
-  openMobileDetails(): void {
+  viewDetails(poolId: number, guid: string): void {
+    this.router.navigate(['/storage', poolId, 'devices', guid]);
+
     if (this.isMobileView) {
       this.showMobileDetails = true;
+
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
   }
 

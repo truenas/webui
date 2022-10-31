@@ -12,10 +12,10 @@
     </div>
   </div>
   <div
+    *ngIf="selectedVersion.item_update_available; else noItemUpdate"
     class="resource"
     fxLayout="row"
     fxLayoutAlign="start center"
-    *ngIf="selectedVersion.item_update_available; else noItemUpdate"
   >
     <span>{{ 'Version to be upgraded to' | translate }}:</span>
     <mat-form-field class="form-element">

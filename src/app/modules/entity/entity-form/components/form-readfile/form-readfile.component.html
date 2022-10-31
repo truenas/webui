@@ -2,8 +2,8 @@
   *ngIf="!config['isHidden']"
   ix-auto
   ix-auto-type="readfile"
-  ix-auto-identifier="{{ config.placeholder }}"
   class="dynamic-field form-readfile"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"

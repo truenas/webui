@@ -29,7 +29,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ 'TrueNAS Help' | translate }}</span>
             </div>
           </h3>

@@ -17,11 +17,11 @@
   </div>
 
   <mat-selection-list
-    id="{{ config.name }}_selectionlist"
     ix-auto
     ix-auto-type="selection-list"
     ix-auto-identifier="config.name"
     class="form-selection-list"
+    id="{{ config.name }}_selectionlist"
     [formControlName]="config.name"
     [fxLayout]="selectionListLayout"
     (selectionChange)="onChangeSelectedItems($event)"
@@ -30,11 +30,11 @@
       <mat-list-option
         checkboxPosition="before"
         fxFlex="100%"
-        id="{{ config.name }}_{{ option.value }}_listoption"
         color="primary"
         class="form-checkbox"
         ix-auto
         ix-auto-type="list-option"
+        id="{{ config.name }}_{{ option.value }}_listoption"
         ix-auto-identifier="{{ config.name }}_{{ option.label }}"
         [value]="option.value"
         [fxFlex.gt-md]="listOptionFlex"

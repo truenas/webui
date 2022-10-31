@@ -15,11 +15,11 @@
       <input
         #filter
         matInput
-        placeholder="{{ 'Filter' | translate }} {{ entity.title | translate }}"
         ix-auto
         ix-auto-type="input"
-        ix-auto-identifier="Filter {{ conf.title }}"
         autocomplete="off"
+        placeholder="{{ 'Filter' | translate }} {{ entity.title | translate }}"
+        ix-auto-identifier="Filter {{ conf.title }}"
         [value]="filterValue"
       />
       <span
@@ -40,13 +40,13 @@
     <span *ngFor="let custBtn of conf.customActions">
       <button
         *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
-        id="cust_button_{{ custBtn.name }}"
         mat-button
         ix-auto
         ix-auto-type="button"
-        ix-auto-identifier="{{ custBtn.name }}"
         type="button"
         color="default"
+        id="cust_button_{{ custBtn.name }}"
+        ix-auto-identifier="{{ custBtn.name }}"
         (click)="custBtn['function']()"
       >
         {{ custBtn.name | translate }}
@@ -97,9 +97,9 @@
         <button
           *ngFor="let col of entity.allColumns"
           mat-menu-item
-          id="menu_option-{{ col.name }}"
           ix-auto
           ix-auto-type="action"
+          id="menu_option-{{ col.name }}"
           ix-auto-identifier="COLUMNS_{{ col.name }}"
           (click)="entity.toggle(col)"
         >
@@ -131,17 +131,17 @@
   <!-- END COLUMN FILTER -->
 
   <!-- OLD TEMPLATE START -->
-  <div class="entity-add-actions-wrapper" *ngIf="this.totalActions > 0">
+  <div *ngIf="this.totalActions > 0" class="entity-add-actions-wrapper">
     <button
+      *ngIf="this.totalActions > 1; else elseBlock"
       mat-button
       color="primary"
-      [matMenuTriggerFor]="menu"
       class="menu-toggle"
-      *ngIf="this.totalActions > 1; else elseBlock"
-      matTooltip="{{ this.menuTriggerMessage | translate }}"
       ix-auto
       ix-auto-type="button"
+      matTooltip="{{ this.menuTriggerMessage | translate }}"
       ix-auto-identifier="{{ entity.conf.title }}_ACTIONS"
+      [matMenuTriggerFor]="menu"
     >
       {{ 'Actions' | translate }}
       <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
@@ -160,10 +160,10 @@
       </button>
       <button
         *ngFor="let action of actions"
-        id="add_action_button_{{ action?.label }}"
         mat-menu-item
         ix-auto
         ix-auto-type="button"
+        id="add_action_button_{{ action?.label }}"
         ix-auto-identifier="{{ entity.conf.title }}_{{ action.label }}"
         (click)="action.onClick()"
       >
@@ -177,10 +177,10 @@
         *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
         mat-button
         color="primary"
-        matTooltip="{{ this.entity.conf.routeAddTooltip | translate }}"
         id="add_action_button"
         ix-auto
         ix-auto-type="button"
+        matTooltip="{{ this.entity.conf.routeAddTooltip | translate }}"
         ix-auto-identifier="{{ entity.conf.title }}_ADD"
         [disabled]="entity.conf.addBtnDisabled"
         (click)="this.entity.doAdd()"
@@ -189,12 +189,12 @@
       </button>
       <button
         *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions == 1"
-        id="add_action_button_{{ actions[0]?.label }}"
         mat-button
         color="primary"
-        matTooltip="{{ actions[0].label | translate }}"
         ix-auto
         ix-auto-type="button"
+        id="add_action_button_{{ actions[0]?.label }}"
+        matTooltip="{{ actions[0].label | translate }}"
         ix-auto-identifier="{{ entity.conf.title }}_{{ this.actions[0].label }}"
         (click)="this.actions[0].onClick()"
       >
@@ -207,9 +207,9 @@
   <div *ngIf="conf.globalConfig" id="config">
     <button
       mat-icon-button
-      id="{{ conf.globalConfig.id }}"
       ix-auto
       ix-auto-type="settings"
+      id="{{ conf.globalConfig.id }}"
       ix-auto-identifier="{{ entity.title }}"
       [matTooltip]="conf.globalConfig.tooltip"
       (click)="conf.globalConfig.onClick()"
@@ -223,10 +223,10 @@
 
   <mat-spinner
     *ngIf="!entity.showDefaults && entity.showSpinner"
-    [diameter]="40"
-    id="entity-spinner"
     #entityspinner
+    id="entity-spinner"
     class="spinner"
+    [diameter]="40"
   >
   </mat-spinner>
 

@@ -111,9 +111,9 @@
 
             <ix-input
               formControlName="size"
+              type="number"
               [label]="'Raw Filesize' | translate"
               [tooltip]="helptext.raw_size_tooltip | translate"
-              type="number"
             ></ix-input>
           </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Pci">

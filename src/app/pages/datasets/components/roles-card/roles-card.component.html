@@ -3,20 +3,20 @@
     <h3 mat-card-title>{{ 'Roles' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    <div class="details-item" *ngIf="dataset.apps?.length || isApplications">
+    <div *ngIf="dataset.apps?.length || isApplications" class="details-item">
       <mat-icon class="icon">apps</mat-icon>
       <div class="label">{{ 'Apps' | translate }}:</div>
-      <div class="apps value" *ngIf="!isApplications">
+      <div *ngIf="!isApplications" class="apps value">
         {{ 'This dataset is used by: {apps}' | translate: { apps: appsNames } }}
       </div>
-      <div class="apps value" *ngIf="isApplications">
+      <div *ngIf="isApplications" class="apps value">
         {{ 'This dataset is used to store Kubernetes config and other container related data' | translate }}
       </div>
       <a class="action" [routerLink]="['/apps']">
         {{ 'Manage Apps Settings' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="isSystemDataset">
+    <div *ngIf="isSystemDataset" class="details-item">
       <ix-icon class="icon" name="ix:truenas_scale_logomark"></ix-icon>
       <div class="label">{{ 'System Dataset' | translate }}:</div>
       <div class="system-dataset value">
@@ -26,14 +26,14 @@
         {{ 'Manage Advanced Settings' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="hasChildrenWithShares">
+    <div *ngIf="hasChildrenWithShares" class="details-item">
       <mat-icon class="icon">share</mat-icon>
       <div class="label">{{ 'Child Shares' | translate }}:</div>
       <div class="children-with-shares value">
         {{ 'This dataset has children with shares' | translate }}
       </div>
     </div>
-    <div class="details-item" *ngIf="dataset.vms?.length">
+    <div *ngIf="dataset.vms?.length" class="details-item">
       <mat-icon class="icon">computer</mat-icon>
       <div class="label">{{ 'VM' | translate }}:</div>
       <div class="vms value">
@@ -43,7 +43,7 @@
         {{ 'Manage VM Settings' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="dataset.smb_shares?.length">
+    <div *ngIf="dataset.smb_shares?.length" class="details-item">
       <mat-icon svgIcon="ix:smb_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="smb-shares value">
@@ -53,7 +53,7 @@
         {{ 'Manage SMB Shares' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="dataset.nfs_shares?.length">
+    <div *ngIf="dataset.nfs_shares?.length" class="details-item">
       <mat-icon svgIcon="ix:nfs_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="nfs-shares value">
@@ -63,7 +63,7 @@
         {{ 'Manage NFS Shares' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="dataset.iscsi_shares?.length">
+    <div *ngIf="dataset.iscsi_shares?.length" class="details-item">
       <mat-icon svgIcon="ix:iscsi_share" class="icon"></mat-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="iscsi-shares value">

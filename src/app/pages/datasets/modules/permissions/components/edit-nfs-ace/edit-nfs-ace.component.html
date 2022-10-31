@@ -1,7 +1,7 @@
 <form [formGroup]="form">
   <ix-fieldset
-    [title]="'Access Control Entry' | translate"
     class="general-fields"
+    [title]="'Access Control Entry' | translate"
   >
     <ix-select
       formControlName="tag"
@@ -31,12 +31,12 @@
 
     <ix-radio-group
       formControlName="type"
+      inlineFieldFlex="25%"
       [label]="'ACL Type' | translate"
       [tooltip]="tooltips.type | translate"
       [required]="true"
       [options]="aclTypes$"
       [inlineFields]="true"
-      inlineFieldFlex="25%"
     ></ix-radio-group>
   </ix-fieldset>
 

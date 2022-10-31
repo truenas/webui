@@ -26,8 +26,8 @@
       </div>
 
       <div
-        class="sticky-header"
         #ixTreeHeader
+        class="sticky-header"
         (scroll)="updateScroll(scrollTypes.IxTreeHeader)"
       >
         <div class="dataset-tree-header" [style.width.px]="ixTreeHeaderWidth">
@@ -64,7 +64,8 @@
               [ixTreeNodeToggleRecursive]="false"
               [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
-              (click)="openMobileDetails()"
+              (click)="viewDetails(dataset)"
+              (keydown.enter)="viewDetails(dataset)"
             >
               <button mat-icon-button disabled></button>
               <ix-dataset-node
@@ -85,13 +86,15 @@
                 class="dataset-nested-tree-root-node"
                 routerLinkActive="selected"
                 [routerLink]="['/datasets', dataset.id]"
-                (click)="openMobileDetails()"
+                (click)="viewDetails(dataset)"
+                (keydown.enter)="viewDetails(dataset)"
               >
                 <button
                   mat-icon-button
                   ixTreeNodeToggle
                   [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
                   (click)="$event.preventDefault()"
+                  (keydown.enter)="$event.stopPropagation()"
                 >
                   <mat-icon class="mat-icon-rtl-mirror">
                     {{ treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right' }}
@@ -119,6 +122,7 @@
     </div>
 
     <div
+      *ngIf="selectedDataset$ | async as dataset"
       class="details-container"
       ixDetailsHeight="rightside-content-hold"
       [class.details-container-mobile]="showMobileDetails"
@@ -129,7 +133,6 @@
         [loading]="isLoading$ | async"
       ></ix-fake-progress-bar>
       <ix-dataset-details-panel
-        *ngIf="selectedDataset$ | async as dataset"
         [dataset]="dataset"
         [systemDataset]="systemDataset"
       ></ix-dataset-details-panel>

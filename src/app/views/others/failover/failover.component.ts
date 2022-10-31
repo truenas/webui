@@ -1,12 +1,16 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
+import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +25,8 @@ export class FailoverComponent implements OnInit {
     protected dialogService: DialogService,
     protected dialog: MatDialog,
     private location: Location,
+    @Inject(WINDOW) private window: Window,
+    private store$: Store<AlertSlice>,
   ) {}
 
   isWsConnected(): void {
@@ -38,7 +44,6 @@ export class FailoverComponent implements OnInit {
   ngOnInit(): void {
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/session/signin');
-
     this.dialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (res: WebsocketError) => { // error on reboot
@@ -49,6 +54,8 @@ export class FailoverComponent implements OnInit {
           });
       },
       complete: () => { // show reboot screen
+        this.store$.dispatch(passiveNodeReplaced());
+
         this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {

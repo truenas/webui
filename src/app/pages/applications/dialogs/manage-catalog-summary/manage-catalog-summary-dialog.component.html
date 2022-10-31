@@ -6,10 +6,10 @@
       threshold="40"
       content="{{ catalog.label }} {{ 'Catalog Summary' | translate }}"
     ></strong>
-    <span class="status active" *ngIf="catalog.healthy">
+    <span *ngIf="catalog.healthy" class="status active">
       {{ 'Healthy' | translate }}
     </span>
-    <span class="status other" *ngIf="!catalog.healthy">
+    <span *ngIf="!catalog.healthy" class="status other">
       {{ 'Unhealthy' | translate }}
     </span>
   </div>

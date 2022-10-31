@@ -1,18 +1,18 @@
 <h1 matDialogTitle>{{ 'Manage SED Password' | translate }}</h1>
 <form class="ix-form-container" (submit)="onSubmit($event)">
   <ix-input
+    type="password"
     [formControl]="passwordControl"
     [label]="'SED Password' | translate"
     [tooltip]="helptext.disk_form_passwd_tooltip | translate"
-    type="password"
   ></ix-input>
 
   <div class="form-actions">
     <button
       mat-button
       type="submit"
-      [disabled]="passwordControl.invalid"
       color="primary"
+      [disabled]="passwordControl.invalid"
     >
       {{ 'Save' | translate }}
     </button>
