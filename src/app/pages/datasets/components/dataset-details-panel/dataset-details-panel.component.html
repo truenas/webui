@@ -43,6 +43,7 @@
     ></ix-dataset-capacity-management-card>
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
+      [poolsWithEncryptedDatasets]="poolsWithEncryptedDatasets"
       [dataset]="dataset"
       [parentDataset]="selectedParentDataset$ | async"
     ></ix-zfs-encryption-card>

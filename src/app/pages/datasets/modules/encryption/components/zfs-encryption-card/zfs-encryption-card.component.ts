@@ -31,6 +31,7 @@ import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/
 export class ZfsEncryptionCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() parentDataset: DatasetDetails | undefined;
+  @Input() poolsWithEncryptedDatasets: { [pool: string]: boolean };
 
   constructor(
     private matDialog: MatDialog,

@@ -55,6 +55,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
 
+  poolsWithEncryptedDatasets: { [pool: string]: boolean } = {};
+
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
@@ -116,6 +118,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.loadSystemDatasetConfig();
     this.listenForLoading();
     this.listenForDatasetScrolling();
+    this.loadEncryptedRoots();
   }
 
   private setupTree(): void {
@@ -282,5 +285,21 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       // focus on details container
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
+  }
+
+  loadEncryptedRoots(): void {
+    this.ws.call('pool.dataset.query_encrypted_roots_keys')
+      .pipe(untilDestroyed(this))
+      .subscribe((encryptedPaths) => {
+        const rootsWithEncryptedDatasets: { [pool: string]: boolean } = {};
+        const paths = Object.keys(encryptedPaths);
+        for (const key of paths) {
+          if (encryptedPaths.hasOwnProperty(key)) {
+            const pool = key.split('/')[0];
+            rootsWithEncryptedDatasets[pool] = true;
+          }
+        }
+        this.poolsWithEncryptedDatasets = rootsWithEncryptedDatasets;
+      });
   }
 }
