@@ -17,11 +17,10 @@ from pytest_bdd import (
 )
 
 
-# @pytest.mark.dependency(name='Setup_HA')
+@pytest.mark.dependency(name='Setup_HA')
 @scenario('features/NAS-T946.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
     """Verify setting up HA works with a single failover group."""
-#     pass
 
 
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
@@ -440,9 +439,10 @@ def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
 @then('navigate to dashboard, verify both contorler hostname')
 def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     """navigate to dashboard, verify both contorler hostname."""
-    time.sleep(5)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    driver.refresh()
+    time.sleep(2)
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ix:ha_enabled"]')
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
