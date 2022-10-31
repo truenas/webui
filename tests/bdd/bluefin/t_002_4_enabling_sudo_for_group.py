@@ -102,10 +102,10 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     time.sleep(1)
 
     #verify in ui
-    assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//td[contains(text(),"qetest")]', 'clickable')
+    assert wait_on_element(driver, 20, '//h1[contains(text(),"Groups")]')
+    assert wait_on_element(driver, 20, '//td[contains(text(),"qetest")]', 'clickable')
     driver.find_element_by_xpath('//td[contains(text(),"qetest")]').click()
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Edit")]', 'clickable')
+    assert wait_on_element(driver, 20, '//span[contains(text(),"Edit")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Edit")]').click()
 
     # check the enable sudo box and click save
