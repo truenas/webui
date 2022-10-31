@@ -1,32 +1,16 @@
+import { SystemInfo } from '../../../../interfaces/system-info.interface';
 import {
-  Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer2, ElementRef,
+  Component, OnInit, OnDestroy, AfterViewInit, Input,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { MaterialModule } from 'app/appMaterial.module';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
+import { CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService, SystemGeneralService } from '../../../../services';
 import { LocaleService } from 'app/services/locale.service';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
-import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
-
-import filesize from 'filesize';
+import { MediaObserver } from '@angular/flex-layout';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';
-
 import { TranslateService } from '@ngx-translate/core';
-
 import { T } from '../../../../translate-marker';
-
-interface BrandingConfig {
-  software_platform: string; // Core || Enterprise || Scale
-  hardware_platform: string; // M50 R50 etc
-  product_image: string; // Path to product image
-}
 
 @Component({
   selector: 'widget-sysinfo',
@@ -40,7 +24,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input('enclosure') enclosureSupport = false;
 
   title: string = T('System Info');
-  data: any;
+  data: SystemInfo;
   memory: string;
   imagePath = 'assets/images/';
   ready = false;
@@ -84,8 +68,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
   }
 
-  log(str) { console.log(str); }
-
   ngAfterViewInit() {
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
@@ -103,7 +85,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).subscribe((evt: CoreEvent) => {
-        if (evt.data.status == 'HA Enabled' && !this.data) {
+        if (evt.data.status == 'HA Enabled') {
           this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
             const evt = { name: 'SysInfoPassive', data: res };
             this.processSysInfo(evt);
