@@ -199,6 +199,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
     assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"tank")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"dozer")]')
+    time.sleep(5)
 
 
 @then('navigate to the dashboard')
@@ -230,7 +231,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
     assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
