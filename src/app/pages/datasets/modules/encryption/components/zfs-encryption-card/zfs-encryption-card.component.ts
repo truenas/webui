@@ -10,6 +10,7 @@ import {
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import {
   ExportDatasetKeyDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/export-dataset-key-dialog/export-dataset-key-dialog.component';
@@ -67,6 +68,10 @@ export class ZfsEncryptionCardComponent {
     return !this.hasPassphrase && this.dataset.key_loaded;
   }
 
+  get canExportAllKeys(): boolean {
+    return this.poolsWithEncryptedDatasets[this.dataset.name] && this.isEncryptionRoot;
+  }
+
   get canEdit(): boolean {
     return this.dataset.encrypted && !this.dataset.locked;
   }
@@ -99,6 +104,12 @@ export class ZfsEncryptionCardComponent {
 
   onExportKey(): void {
     this.matDialog.open(ExportDatasetKeyDialogComponent, {
+      data: this.dataset,
+    });
+  }
+
+  onExportAllKeys(): void {
+    this.matDialog.open(ExportAllKeysDialogComponent, {
       data: this.dataset,
     });
   }
