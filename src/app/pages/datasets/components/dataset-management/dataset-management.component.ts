@@ -16,15 +16,17 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
-import { Subject, Subscription } from 'rxjs';
+import { mergeMap, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
   map,
 } from 'rxjs/operators';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -34,9 +36,12 @@ import {
 } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { datasetManagementEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
+import { selectSnapshots } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -54,7 +59,25 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
 
   isLoading$ = this.datasetStore.isLoading$;
-  selectedDataset$ = this.datasetStore.selectedDataset$;
+  // The DatasetDetails.snapshot_count field does not contain the actual count of snapshots for the zvol
+  // https://ixsystems.atlassian.net/browse/NAS-118753
+  selectedDataset$ = this.datasetStore.selectedDataset$
+    .pipe(
+      mergeMap((dataset) => {
+        return this.store$.pipe(
+          select(selectSnapshots),
+          map((snapshots) => {
+            if (dataset?.type === DatasetType.Volume) {
+              const snapshotsCount = snapshots.filter((snapshot) => {
+                return dataset.id === snapshot.dataset;
+              });
+              return { ...dataset, snapshot_count: snapshotsCount.length };
+            }
+            return dataset;
+          }),
+        );
+      }),
+    );
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
   treeControl = new NestedTreeControl<DatasetDetails, string>(
     (dataset) => dataset.children,
@@ -96,6 +119,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
+    private store$: Store<AppState>,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
@@ -108,6 +132,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
+    this.store$.dispatch(datasetManagementEntered());
     this.setupTree();
     this.listenForRouteChanges();
     this.loadSystemDatasetConfig();

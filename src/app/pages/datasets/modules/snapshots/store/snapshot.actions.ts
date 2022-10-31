@@ -2,6 +2,8 @@ import { createAction, props } from '@ngrx/store';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export const snapshotPageEntered = createAction('[Snapshots API] Load');
+export const datasetManagementEntered = createAction('[Snapshots API] Load from Dataset Management');
+export const datasetDeleted = createAction('[Snapshots API] Dataset Deleted');
 
 export const snapshotsLoaded = createAction('[Snapshots API] Loaded', props<{ snapshots: ZfsSnapshot[] }>());
 export const snapshotsNotLoaded = createAction('[Snapshots API] Not Loaded', props<{ error: string }>());

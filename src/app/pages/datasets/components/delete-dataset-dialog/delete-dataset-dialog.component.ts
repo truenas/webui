@@ -5,18 +5,22 @@ import { Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, EMPTY, Observable, of, throwError,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { datasetDeleted } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { DialogService, WebSocketService } from 'app/services';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -46,6 +50,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
     @Inject(MAT_DIALOG_DATA) public dataset: VolumesListDataset,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +71,9 @@ export class DeleteDatasetDialogComponent implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
+        if (this.dataset.type === DatasetType.Volume) {
+          this.store$.dispatch(datasetDeleted());
+        }
         this.loader.close();
         this.dialogRef.close(true);
       }),
