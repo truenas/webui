@@ -80,7 +80,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class CloudCredentialsFormComponent implements OnInit {
   commonForm = this.formBuilder.group({
-    name: ['', Validators.required],
+    name: ['Storj', Validators.required],
     provider: [CloudsyncProviderName.Storj],
   });
 
