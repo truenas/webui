@@ -24,7 +24,7 @@
   <input name="DummyPassword" type="password" />
 
   <div
-    *ngIf="config.inputType != 'file'; else elseBlock"
+    *ngIf="config.inputType !== 'file'; else elseBlock"
     class="full-width"
     [ngClass]="{ has_toggle_pw: config.togglePw }"
   >

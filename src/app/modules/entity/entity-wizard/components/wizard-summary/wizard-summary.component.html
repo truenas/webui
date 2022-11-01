@@ -4,7 +4,7 @@
 >
   <ng-container *ngFor="let fieldConfig of fieldConfigs">
     <li *ngIf="isVisible(fieldConfig)">
-      <div *ngIf="fieldConfig.type == 'dict'; else notDict">
+      <div *ngIf="fieldConfig.type === 'dict'; else notDict">
         <ng-container *ngIf="value[fieldConfig.name]">
           <label>{{ fieldConfig.placeholder | translate }}:</label>
 

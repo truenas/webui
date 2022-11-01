@@ -104,7 +104,7 @@
                   class="product-image {{ productEnclosure }}"
                   [class.truenas]="productType === ProductType.ScaleEnterprise"
                   [class.freenas]="productType !== ProductType.ScaleEnterprise"
-                  [class.ix-logo]="productImage == 'ix-original.svg'"
+                  [class.ix-logo]="productImage === 'ix-original.svg'"
                 >
                   <img
                     *ngIf="productImage; else generic"
@@ -207,7 +207,7 @@
                   <mat-list-item>
                     <strong>{{ 'Platform' | translate }}:</strong>
                     <span>
-                      {{ data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic' }}
+                      {{ data.system_product && manufacturer === 'ixsystems' ? data.system_product : 'Generic' }}
                     </span>
                   </mat-list-item>
                   <mat-list-item>
@@ -232,7 +232,7 @@
                     {{ data.license.contract_end.$value }}
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.system_serial && manufacturer == 'ixsystems'">
+                  <mat-list-item *ngIf="data.system_serial && manufacturer === 'ixsystems'">
                     <strong>{{ 'Serial Number' | translate }}:</strong>
                     <span>{{ data.system_serial }}</span>
                   </mat-list-item>
