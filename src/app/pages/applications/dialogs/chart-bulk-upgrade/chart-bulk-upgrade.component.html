@@ -20,6 +20,7 @@
       (afterExpand)="onExpand(bulkItem)"
     >
       <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+        <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
         <mat-panel-title>
           <ix-bulk-list-item [item]="bulkItem.value">
             {{ bulkItem.key }}
@@ -27,7 +28,12 @@
             <div class="version">
               <span>{{ bulkItem.value.item.human_version }}</span>
               <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-              <span>{{ form.get(bulkItem.key)?.value }}</span>
+              <ng-container *ngIf="optionsMap.has(bulkItem.key)">
+                <span *appLet="optionsMap.get(bulkItem.key) | async as options">{{ options[0].label }}</span>
+              </ng-container>
+              <ng-container *ngIf="!optionsMap.has(bulkItem.key)">
+                <span>{{ form.get(bulkItem.key)?.value }}</span>
+              </ng-container>
             </div>
 
             <div class="logo">
@@ -39,59 +45,49 @@
           </ix-bulk-list-item>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div class="expansion-content" [class.loading]="isLoadingDetails">
-        <mat-spinner
-          *ngIf="isLoadingDetails; else loadedTemplate"
-          [diameter]="40"
-        ></mat-spinner>
 
-        <ng-template #loadedTemplate>
-          <ng-container>
-            <ix-select
-              [formControlName]="bulkItem.key"
-              [label]="'Version to be upgraded to' | translate"
-              [required]="true"
-              [options]="optionsMap.get(bulkItem.key)"
-            ></ix-select>
+      <ng-template matExpansionPanelContent>
+        <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
+          <ix-select
+            [formControlName]="bulkItem.key"
+            [label]="'Version to be upgraded to' | translate"
+            [required]="true"
+            [options]="optionsMap.get(bulkItem.key)"
+          ></ix-select>
 
-            <mat-accordion
-              *ngIf="upgradeSummaryMap.get(bulkItem.key) as summary"
-              class="details-list"
-              displayMode="flat"
-            >
-              <mat-expansion-panel>
-                <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-                  <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
-                </mat-expansion-panel-header>
-                <div *ngIf="hasUpdatesForImages(bulkItem.key)" class="details-expansion-content">
-                  <ol>
-                    <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder;">
-                      {{ containerImage.key }}
-                    </li>
-                  </ol>
+          <mat-accordion class="details-list" displayMode="flat">
+            <mat-expansion-panel>
+              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="details-expansion-content">
+                <ol *ngIf="hasUpdatesForImages(bulkItem.key); else noUpdatesForImages">
+                  <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder">
+                    {{ containerImage.key }}
+                  </li>
+                </ol>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="details-expansion-content">
+                <div
+                  fxLayout="row"
+                  fxLayoutAlign="start start"
+                  class="detail-row row-dark"
+                >
+                  <ng-container *ngIf="summary?.changelog; else noChangeLogs">
+                    <div [innerHTML]="summary.changelog"></div>
+                  </ng-container>
                 </div>
-              </mat-expansion-panel>
-
-              <mat-expansion-panel>
-                <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-                  <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
-                </mat-expansion-panel-header>
-                <div class="details-expansion-content">
-                  <div
-                    fxLayout="row"
-                    fxLayoutAlign="start start"
-                    class="detail-row row-dark"
-                  >
-                    <ng-container *ngIf="summary.changelog; else noChangeLogs">
-                      <div [innerHTML]="summary.changelog"></div>
-                    </ng-container>
-                  </div>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </ng-container>
-        </ng-template>
-      </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </ng-template>
     </mat-expansion-panel>
   </mat-accordion>
 

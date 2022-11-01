@@ -7,7 +7,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime,
   filter, map, Observable, of, pairwise, startWith, tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
@@ -36,7 +35,7 @@ export class ChartBulkUpgradeComponent {
   bulkItems = new Map<string, BulkListItem<ChartRelease>>();
   upgradeSummaryMap = new Map<string, UpgradeSummary>();
   optionsMap = new Map<string, Observable<Option[]>>();
-  isLoadingDetails = true;
+  loadingMap = new Map<string, boolean>();
   imagePlaceholder = appImagePlaceholder;
   readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
   readonly JobState = JobState;
@@ -60,7 +59,8 @@ export class ChartBulkUpgradeComponent {
     this.apps = this.apps.filter((app) => app.update_available || app.container_images_update_available);
     this.apps.forEach((app) => {
       this.bulkItems.set(app.name, { state: BulkListItemState.Initial, item: app });
-      const latestVersionValue = app.human_latest_version.split('_')[1];
+      this.loadingMap.set(app.name, false);
+      const latestVersionValue = app.human_latest_version;
       this.form.addControl(app.name, this.fb.control<string>(latestVersionValue));
     });
 
@@ -136,35 +136,25 @@ export class ChartBulkUpgradeComponent {
     this.getUpgradeSummary(row.value.item.name);
   }
 
-  onCollapse(): void {
-    this.isLoadingDetails = false;
-    this.cdr.markForCheck();
-  }
-
   getUpgradeSummary(name: string, version?: string): void {
+    this.loadingMap.set(name, true);
     this.appService.getUpgradeSummary(name, version).pipe(
-      tap(() => {
-        this.isLoadingDetails = true;
-        this.cdr.markForCheck();
-      }),
       untilDestroyed(this),
     ).subscribe({
       next: (summary) => {
         const availableOptions = summary.available_versions_for_upgrade.map((item) => {
-          return { value: item.version, label: item.version } as Option;
+          return { value: item.version, label: item.human_version } as Option;
         });
         this.upgradeSummaryMap.set(name, summary);
         this.optionsMap.set(name, of(availableOptions));
         this.form.patchValue({
-          [name]: version || String(availableOptions[availableOptions.length - 1].value),
+          [name]: version || String(availableOptions[0].value),
         });
-        this.isLoadingDetails = false;
-        this.cdr.markForCheck();
+        this.loadingMap.set(name, false);
       },
       error: (error) => {
         console.error(error);
-        this.isLoadingDetails = false;
-        this.cdr.markForCheck();
+        this.loadingMap.set(name, false);
       },
     });
   }
@@ -172,7 +162,6 @@ export class ChartBulkUpgradeComponent {
   detectFormChanges(): void {
     this.form.valueChanges.pipe(
       startWith(this.form.value),
-      debounceTime(500),
       pairwise(),
       map(([oldValues, newValues]) => {
         return Object.entries(newValues).find(([app, version]) => oldValues[app] !== version);

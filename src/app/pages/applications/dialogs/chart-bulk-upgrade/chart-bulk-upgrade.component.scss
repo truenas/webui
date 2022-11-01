@@ -9,6 +9,14 @@
     }
   }
 
+  ix-fake-progress-bar {
+    height: 2px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: 10;
+  }
+
   .form-actions {
     align-items: center;
     border-top: 1px solid var(--lines);
@@ -20,11 +28,12 @@
 
   .version {
     align-items: center;
-    color: var(--alt-fg1);
     display: flex;
     flex: 1;
+    font-size: 14px;
     gap: 8px;
     margin-left: 16px;
+    opacity: 0.5;
   }
 
 
@@ -72,7 +81,10 @@
         &.mat-expanded {
           background: var(--bg1);
           border-bottom: 1px solid var(--lines);
-          border-top: 1px solid var(--lines);
+        }
+
+        > .mat-expansion-panel-header.mat-expanded {
+          border-top: 2px solid var(--lines);
         }
 
         &.mat-expansion-panel-spacing {
@@ -86,13 +98,8 @@
   .expansion-content {
     display: flex;
     flex-direction: column;
-    min-height: 170px;
+    overflow-y: auto;
     padding-top: 16px;
-
-    &.loading {
-      align-items: center;
-      justify-content: center;
-    }
   }
 
   .logo {
@@ -111,30 +118,5 @@
       object-fit: contain;
       width: 100%;
     }
-  }
-
-  .resource {
-    padding: 5px 0;
-    white-space: nowrap;
-    width: 100%;
-  }
-
-  .chart-name {
-    font-size: 20px;
-    font-weight: bold;
-    margin-right: 10px;
-  }
-
-  .version {
-    font-size: 14px;
-  }
-
-  .version-tooltip {
-    margin-left: 10px;
-  }
-
-  .value {
-    margin-left: 12px;
-    opacity: 0.5;
   }
 }

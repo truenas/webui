@@ -25,6 +25,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { ApplicationsRoutingModule } from 'app/pages/applications/applications-routing.module';
 import { ApplicationsComponent } from 'app/pages/applications/applications.component';
@@ -53,6 +54,7 @@ import { ChartBulkUpgradeComponent } from './dialogs/chart-bulk-upgrade/chart-bu
 
 @NgModule({
   imports: [
+    AppLoaderModule,
     AppCommonModule,
     ApplicationsRoutingModule,
     CastModule,
