@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DataProtectionCardComponent } from './data-protection-card.component';
 
@@ -13,6 +14,9 @@ describe('DataProtectionComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DataProtectionCardComponent,
+    providers: [
+      mockProvider(WebSocketService),
+    ],
   });
   beforeEach(() => {
     spectator = createComponent({
