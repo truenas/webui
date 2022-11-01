@@ -14,35 +14,92 @@
     </strong>
   </p>
 
-  <div class="bulk-list">
-    <ix-bulk-list-item
-      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackById"
-      [item]="bulkItem.value"
+  <mat-accordion displayMode="flat" class="bulk-list">
+    <mat-expansion-panel
+      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackById; let i = index"
+      (afterExpand)="onExpand(bulkItem)"
     >
-      {{ bulkItem.key }}
+      <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+        <mat-panel-title>
+          <ix-bulk-list-item [item]="bulkItem.value">
+            {{ bulkItem.key }}
 
-      <div class="version">
-        <span *ngIf="!wasSubmitted">{{ bulkItem.value.item.human_version }}</span>
-        <ng-container *ngIf="options.has(bulkItem.key) && !wasSubmitted">
-          <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-          <ix-select
-            [formControlName]="bulkItem.key"
-            [required]="true"
-            [tooltip]="tooltips.tag | translate"
-            [options]="options.get(bulkItem.key)"
-          ></ix-select>
-        </ng-container>
-        <ng-container *ngIf="wasSubmitted || !options.has(bulkItem.key)">
-          <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-          <span>{{ form.get(bulkItem.key)?.value }}</span>
-        </ng-container>
-        <ng-container *ngIf="bulkItem?.value?.message">
-          <ix-icon name="mdi-circle-small"></ix-icon>
-          <span>{{ bulkItem.value.message }}</span>
-        </ng-container>
+            <div class="version">
+              <span>{{ bulkItem.value.item.human_version }}</span>
+              <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+              <span>{{ form.get(bulkItem.key)?.value }}</span>
+            </div>
+
+            <div class="logo">
+              <img
+                [src]="bulkItem.value.item.chart_metadata.icon"
+                [src-fallback]="imagePlaceholder"
+              />
+            </div>
+          </ix-bulk-list-item>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="expansion-content" [class.loading]="isLoadingDetails">
+        <mat-spinner
+          *ngIf="isLoadingDetails; else loadedTemplate"
+          [diameter]="40"
+        ></mat-spinner>
+
+        <ng-template #loadedTemplate>
+          <ng-container>
+            <ix-select
+              [formControlName]="bulkItem.key"
+              [label]="'Version to be upgraded to' | translate"
+              [required]="true"
+              [options]="optionsMap.get(bulkItem.key)"
+            ></ix-select>
+
+            <mat-accordion
+              *ngIf="upgradeSummaryMap.get(bulkItem.key) as summary"
+              class="details-list"
+              displayMode="flat"
+            >
+              <mat-expansion-panel>
+                <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                  <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div *ngIf="hasUpdatesForImages(bulkItem.key)" class="details-expansion-content">
+                  <ol>
+                    <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder;">
+                      {{ containerImage.key }}
+                    </li>
+                  </ol>
+                </div>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel>
+                <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                  <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="details-expansion-content">
+                  <div
+                    fxLayout="row"
+                    fxLayoutAlign="start start"
+                    class="detail-row row-dark"
+                  >
+                    <ng-container *ngIf="summary.changelog; else noChangeLogs">
+                      <div [innerHTML]="summary.changelog"></div>
+                    </ng-container>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </ng-container>
+        </ng-template>
       </div>
-    </ix-bulk-list-item>
-  </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <ng-template #noUpdatesForImages>
+    {{ 'There are no images requiring upgrade' | translate }}
+  </ng-template>
+
+  <ng-template #noChangeLogs>{{ 'No Changelog' | translate }}</ng-template>
 
   <div class="form-actions">
     <button

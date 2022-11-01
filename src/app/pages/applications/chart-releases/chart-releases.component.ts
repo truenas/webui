@@ -624,8 +624,9 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
           this.dialogService.dialogForm(this.choosePodForLogs, true);
         }
       },
-      error: () => {
+      error: (error) => {
         this.appLoaderService.close();
+        this.dialogService.errorReportMiddleware(error);
       },
     });
   }
