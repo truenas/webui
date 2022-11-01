@@ -18,7 +18,7 @@ import {
   LockDatasetDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/dataset.utils';
+import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 // TODO: Add support for exporting all keys on root dataset.
 // TODO: Bug with spaces in dataset name
@@ -32,7 +32,6 @@ import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/
 export class ZfsEncryptionCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() parentDataset: DatasetDetails | undefined;
-  @Input() poolsWithEncryptedDatasets: { [pool: string]: boolean };
 
   constructor(
     private matDialog: MatDialog,
@@ -66,10 +65,6 @@ export class ZfsEncryptionCardComponent {
 
   get canExportKey(): boolean {
     return !this.hasPassphrase && this.dataset.key_loaded;
-  }
-
-  get canExportAllKeys(): boolean {
-    return this.poolsWithEncryptedDatasets[this.dataset.name] && this.isEncryptionRoot;
   }
 
   get canEdit(): boolean {
@@ -112,5 +107,9 @@ export class ZfsEncryptionCardComponent {
     this.matDialog.open(ExportAllKeysDialogComponent, {
       data: this.dataset,
     });
+  }
+
+  get isRoot(): boolean {
+    return isRootDataset(this.dataset);
   }
 }

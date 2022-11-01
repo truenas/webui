@@ -24,7 +24,6 @@ import { ModalService } from 'app/services';
 export class DatasetDetailsPanelComponent implements OnInit {
   @Input() dataset: DatasetDetails;
   @Input() systemDataset: string;
-  @Input() poolsWithEncryptedDatasets: { [pool: string]: boolean };
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(
