@@ -8,7 +8,12 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Total Snapshots' | translate }}:</div>
-      <div class="total-snapshots value">{{ dataset.snapshot_count }}</div>
+      <div class="total-snapshots value">
+        <ng-container *ngIf="!isLoading; else loadSnapshotsCount">{{ dataset.snapshot_count }}</ng-container>
+        <ng-template #loadSnapshotsCount>
+          <ngx-skeleton-loader></ngx-skeleton-loader>
+        </ng-template>
+      </div>
       <a class="action" [routerLink]="['/datasets/snapshots', dataset.id]">
         {{ 'Manage Snapshots' | translate }}
       </a>

@@ -11,14 +11,12 @@ import {
   combineLatest, EMPTY, Observable, of, throwError,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { datasetDeleted } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 
@@ -71,9 +69,6 @@ export class DeleteDatasetDialogComponent implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        if (this.dataset.type === DatasetType.Volume) {
-          this.store$.dispatch(datasetDeleted());
-        }
         this.loader.close();
         this.dialogRef.close(true);
       }),
