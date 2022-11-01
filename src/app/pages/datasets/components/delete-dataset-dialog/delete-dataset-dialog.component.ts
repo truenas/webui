@@ -5,7 +5,6 @@ import { Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, EMPTY, Observable, of, throwError,
@@ -18,7 +17,6 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +46,6 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
     @Inject(MAT_DIALOG_DATA) public dataset: VolumesListDataset,
-    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

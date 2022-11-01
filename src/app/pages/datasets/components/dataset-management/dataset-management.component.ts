@@ -17,7 +17,6 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
 import { Subject, Subscription } from 'rxjs';
@@ -40,7 +39,6 @@ import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-w
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, WebSocketService } from 'app/services';
-import { AppState } from 'app/store';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -100,7 +98,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
-    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
