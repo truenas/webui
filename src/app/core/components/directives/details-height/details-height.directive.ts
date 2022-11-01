@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
-import { headerHeight, footerHeight } from 'app/modules/common/layouts/admin-layout/admin-layout.component.const';
+import { headerHeight, footerHeight } from 'app/modules/layout/components/admin-layout/admin-layout.component.const';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
