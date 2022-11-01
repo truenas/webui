@@ -1,13 +1,5 @@
 <ng-template #pageHeader>
   <ix-page-title-header *ngIf="screenType === ScreenType.Desktop">
-    <!-- TODO: Remove before merging -->
-    <button
-      *appIfNightly
-      mat-button
-      color="warn"
-    >
-      {{ "Only visible on nightlies" | translate }}
-    </button>
     <ng-container *ngIf="isLoaded">
       <button mat-button [color]="'primary'" (click)="showConfigForm()">
         {{ 'Configure' | translate }}
