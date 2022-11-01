@@ -822,6 +822,7 @@ export type ApiDirectory = {
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
   'system.environment': { params: void; response: string };
+  'system.set_time': { params: [number]; response: void };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };

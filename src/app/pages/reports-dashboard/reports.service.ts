@@ -8,6 +8,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { getReportTypeLabels, ReportTab } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -38,6 +39,7 @@ export enum ReportingDatabaseError {
 export class ReportsService implements OnDestroy {
   serverTime: Date;
   showTimeDiffWarning = false;
+  timeInterval: Timeout;
   private reportingGraphs$ = new BehaviorSubject([]);
   private diskMetrics$ = new BehaviorSubject([]);
   private reportsUtils: Worker;
@@ -102,13 +104,19 @@ export class ReportsService implements OnDestroy {
       const now = Date.now();
       const datetime = systemInfo.datetime.$date;
       this.serverTime = new Date(datetime);
-      const timeDiffInSeconds = differenceInSeconds(datetime, now);
-      const timeDiffInDays = differenceInDays(datetime, now);
+      const timeDiffInSeconds = Math.abs(differenceInSeconds(datetime, now));
+      const timeDiffInDays = Math.abs(differenceInDays(datetime, now));
       if (timeDiffInSeconds > 300 || timeDiffInDays > 0) {
         this.showTimeDiffWarning = true;
+      } else {
+        this.showTimeDiffWarning = false;
       }
 
-      setInterval(() => {
+      if (this.timeInterval) {
+        clearInterval(this.timeInterval);
+      }
+
+      this.timeInterval = setInterval(() => {
         this.serverTime = addSeconds(this.serverTime, 1);
       }, 1000);
     });
