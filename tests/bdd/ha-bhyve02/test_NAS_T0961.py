@@ -199,7 +199,6 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
     assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"tank")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"dozer")]')
-    time.sleep(5)
 
 
 @then('navigate to the dashboard')
@@ -213,7 +212,8 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_disabled"]')
+    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
@@ -231,21 +231,22 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
-    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 20, '//mat-icon[@svgicon="ix:ha_enabled"]')
     assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
+    assert wait_on_element(driver, 5, '//button[span/text()=" Failover "]', 'clickable')
+    driver.find_element_by_xpath('//button[span/text()=" Failover "]').click()
+    time.sleep(10)
 
 
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
     assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
-    assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
