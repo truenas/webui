@@ -18,10 +18,15 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
+import { AuthLayoutComponent } from 'app/modules/layout/components/auth-layout/auth-layout.component';
 import { BreadcrumbComponent } from 'app/modules/layout/components/breadcrumb/breadcrumb.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+import { ConsoleFooterComponent } from 'app/modules/layout/components/console-footer/console-footer.component';
+import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
+import { ModalComponent } from 'app/modules/layout/components/modal/modal.component';
 import { NavigationComponent } from 'app/modules/layout/components/navigation/navigation.component';
 import { PageTitleHeaderComponent } from 'app/modules/layout/components/page-title-header/page-title-header.component';
 import { SecondaryMenuComponent } from 'app/modules/layout/components/secondary-menu/secondary-menu.component';
@@ -64,6 +69,11 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     PowerMenuComponent,
     TopbarComponent,
     UserMenuComponent,
+    AuthLayoutComponent,
+    AdminLayoutComponent,
+    ModalComponent,
+    CopyrightLineComponent,
+    ConsoleFooterComponent,
     DirectoryServicesIndicatorComponent,
     JobsIndicatorComponent,
   ],
@@ -72,7 +82,10 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     PageTitleHeaderComponent,
     SecondaryMenuComponent,
     NavigationComponent,
+    ModalComponent,
+    CopyrightLineComponent,
     TopbarComponent,
+    CopyrightLineComponent,
   ],
 })
 export class LayoutModule {}

@@ -4,7 +4,7 @@ import {
 import {
   FormModalConfiguration,
   ModalConfiguration, WizardModalConfiguration,
-} from 'app/modules/common/modal/modal-configuration.interface';
+} from 'app/modules/layout/components/modal/modal-configuration.interface';
 import { ModalService, slideInModalId } from 'app/services/modal.service';
 
 @Component({

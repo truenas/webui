@@ -101,6 +101,7 @@ import { AppLoaderService, JobService } from 'app/services';
 
 @NgModule({
   imports: [
+    LayoutModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
