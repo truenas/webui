@@ -113,7 +113,6 @@ import { AppLoaderService, JobService } from 'app/services';
     MatListModule,
     MatDividerModule,
     IxIconModule,
-
     MatTooltipModule,
     MatProgressSpinnerModule,
     MatTableModule,
