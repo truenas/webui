@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
@@ -264,17 +265,22 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   private loadDiskData(): void {
     this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((disks) => {
-      this.system.diskData = disks;
-
-      this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
-        this.system.pools = pools;
-        this.events.next({ name: 'PoolsChanged', sender: this });
-        this.addViews();
-      });
-
+      this.handleLoadedDisks(disks);
       setTimeout(() => {
         this.spinner = false;
       }, 1500);
+    });
+    this.ws.subscribe('disk.query').pipe(untilDestroyed(this)).subscribe((disks) => {
+      this.handleLoadedDisks(disks.fields);
+    });
+  }
+
+  handleLoadedDisks(disks: Disk[]): void {
+    this.system.diskData = disks;
+    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+      this.system.pools = pools;
+      this.events.next({ name: 'PoolsChanged', sender: this });
+      this.addViews();
     });
   }
 }
