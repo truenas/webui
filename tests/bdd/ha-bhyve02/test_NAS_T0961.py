@@ -6,6 +6,7 @@ import time
 from function import (
     wait_on_element,
     wait_on_element_disappear,
+    refresh_if_element_missing,
     get
 )
 from pytest_bdd import (
@@ -213,8 +214,8 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_disabled"]')
-    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
-    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert refresh_if_element_missing(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert refresh_if_element_missing(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -258,8 +259,8 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert refresh_if_element_missing(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
+    assert refresh_if_element_missing(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
 

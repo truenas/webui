@@ -66,6 +66,26 @@ def wait_on_element_disappear(driver, wait, xpath):
         return False
 
 
+def refresh_if_element_missing(driver, wait, xpath):
+    timeout = time.time() + wait
+    while time.time() <= timeout:
+        time.sleep(5)
+        if wait_on_element(driver, 3, '//input[@data-placeholder="Username"]'):
+            """login appear enter "root" and "password"."""
+            assert wait_on_element(driver, 7, '//input[@data-placeholder="Username"]')
+            driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+            driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+            driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+            driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
+            assert wait_on_element(driver, 7, '//button[@name="signin_button"]', 'clickable')
+            driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+            if wait_on_element(driver, 3, xpath):
+                return True
+            driver.refresh()
+    else:
+        return False
+
+
 def attribute_value_exist(driver, xpath, attribute, value):
     element = driver.find_element_by_xpath(xpath)
     class_attribute = element.get_attribute(attribute)
