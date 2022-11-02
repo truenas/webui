@@ -17,7 +17,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudSyncTaskUi, CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
@@ -33,13 +33,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const newStorjBucket = 'new_storj_bucket';
-
-type CloudSyncTaskRequestPart = Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption' | 'bwlimit'>;
-
-interface CloudSyncTaskUpdate extends CloudSyncTaskRequestPart {
-  credentials: number;
-  bwlimit: { time: string; bandwidth: string }[];
-}
 
 @UntilDestroy()
 @Component({
