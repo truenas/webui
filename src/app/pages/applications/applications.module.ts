@@ -9,7 +9,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -32,6 +31,7 @@ import { ApplicationsComponent } from 'app/pages/applications/applications.compo
 import { CatalogComponent } from 'app/pages/applications/catalog/catalog.component';
 import { ChartReleasesComponent } from 'app/pages/applications/chart-releases/chart-releases.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ChartBulkUpgradeComponent } from 'app/pages/applications/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
@@ -50,7 +50,6 @@ import { PodShellComponent } from 'app/pages/applications/pod-shell/pod-shell.co
 import { SelectPoolDialogComponent } from 'app/pages/applications/select-pool-dialog/select-pool-dialog.component';
 import { ChartRollbackModalComponent } from './chart-rollback-modal/chart-rollback-modal.component';
 import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
-import { ChartBulkUpgradeComponent } from './dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 
 @NgModule({
   imports: [
@@ -73,7 +72,6 @@ import { ChartBulkUpgradeComponent } from './dialogs/chart-bulk-upgrade/chart-bu
     MatDialogModule,
     MatExpansionModule,
     MatFormFieldModule,
-    MatProgressSpinnerModule,
     IxIconModule,
     MatMenuModule,
     MatProgressBarModule,
