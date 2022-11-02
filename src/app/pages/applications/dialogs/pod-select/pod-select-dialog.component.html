@@ -25,10 +25,10 @@
     <ix-input
       *ngIf="dialogType === podSelectDialogType.Logs"
       formControlName="tail_lines"
+      type="number"
       [label]="'Tail Lines' | translate"
       [tooltip]="'Tail Lines' | translate"
       [required]="true"
-      type="number"
     ></ix-input>
   </div>
 
