@@ -6,11 +6,13 @@ import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import { combineLatest } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
+import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -30,10 +32,18 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
+    private core: CoreService,
   ) {}
 
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
+
+    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
+      .pipe(untilDestroyed(this)).subscribe((evt: NetworkInterfacesChangedEvent) => {
+        if (evt) {
+          this.loadNetworkConfigAndSummary();
+        }
+      });
   }
 
   get serviceAnnouncement(): string {
