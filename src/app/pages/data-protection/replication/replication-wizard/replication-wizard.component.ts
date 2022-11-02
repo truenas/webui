@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { lastValueFrom } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -1309,7 +1310,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             : data['encryption_key_hex'];
         }
 
-        payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? '$TrueNAS' : data['encryption_key_location'];
+        payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
       }
 
       // schedule option
