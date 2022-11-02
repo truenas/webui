@@ -10,7 +10,6 @@ import {
   differenceInSeconds, differenceInDays, addSeconds, format,
 } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
-import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -36,7 +35,7 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   // HA
-  @Input() isHa = false;
+  @Input() isHaLicensed = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
@@ -62,7 +61,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   loader = false;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
-  haStatus: string;
+  hasHa: boolean;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
   uptimeString: string;
@@ -71,7 +70,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
-  readonly HaStatusText = HaStatusText;
 
   private _updateBtnStatus = 'default';
 
@@ -99,13 +97,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   ngOnInit(): void {
-    if (this.isHa && this.isPassive) {
+    if (this.isHaLicensed && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
       ).subscribe((haStatus) => {
         this.widgetDisabled = false;
-        if (haStatus.status === HaStatusText.HaEnabled) {
+        if (haStatus.hasHa) {
           this.ws.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
             .subscribe((systemInfo: SystemInfo) => this.processSysInfo(systemInfo));
@@ -113,11 +111,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
           if (this.data) {
             this.setProductImage(this.data);
           }
-        } else if (haStatus.status === HaStatusText.HaDisabled) {
+        } else if (!haStatus.hasHa) {
           this.productImage = '';
           this.widgetDisabled = true;
         }
-        this.haStatus = haStatus.status;
+        this.hasHa = haStatus.hasHa;
       });
     } else {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
