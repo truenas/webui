@@ -19,9 +19,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./data-protection-card.component.scss'],
 })
 export class DataProtectionCardComponent implements OnInit, OnChanges {
+  @Input() dataset: DatasetDetails;
+
   readonly console = console;
   changeEvent$: Subject<string> = new Subject();
   isLoading = false;
+
   constructor(
     private slideIn: IxSlideInService,
     private snackbarService: SnackbarService,
@@ -43,8 +46,6 @@ export class DataProtectionCardComponent implements OnInit, OnChanges {
       this.cdr.markForCheck();
     });
   }
-
-  @Input() dataset: DatasetDetails;
 
   ngOnChanges(): void {
     if (this.dataset.type === DatasetType.Volume) {
