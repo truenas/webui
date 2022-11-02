@@ -12,7 +12,6 @@
     <ix-select
       formControlName="containers"
       [label]="'Containers' | translate"
-      [tooltip]="'Containers' | translate"
       [required]="true"
       [options]="containers$"
     ></ix-select>
@@ -20,14 +19,12 @@
       *ngIf="dialogType === podSelectDialogType.Shell"
       formControlName="command"
       [label]="'Commands' | translate"
-      [tooltip]="'Commands' | translate"
     ></ix-input>
     <ix-input
       *ngIf="dialogType === podSelectDialogType.Logs"
       formControlName="tail_lines"
       type="number"
       [label]="'Tail Lines' | translate"
-      [tooltip]="'Tail Lines' | translate"
       [required]="true"
     ></ix-input>
   </div>
