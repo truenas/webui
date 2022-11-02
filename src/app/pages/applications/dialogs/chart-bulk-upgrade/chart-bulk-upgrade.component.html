@@ -46,48 +46,46 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <ng-template matExpansionPanelContent>
-        <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
-          <ix-select
-            [formControlName]="bulkItem.key"
-            [label]="'Version to be upgraded to' | translate"
-            [required]="true"
-            [options]="optionsMap.get(bulkItem.key)"
-          ></ix-select>
+      <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
+        <ix-select
+          [formControlName]="bulkItem.key"
+          [label]="'Version to be upgraded to' | translate"
+          [required]="true"
+          [options]="optionsMap.get(bulkItem.key)"
+        ></ix-select>
 
-          <mat-accordion class="details-list" displayMode="flat">
-            <mat-expansion-panel>
-              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-                <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
-              </mat-expansion-panel-header>
-              <div class="details-expansion-content">
-                <ol *ngIf="hasUpdatesForImages(bulkItem.key); else noUpdatesForImages">
-                  <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder">
-                    {{ containerImage.key }}
-                  </li>
-                </ol>
-              </div>
-            </mat-expansion-panel>
+        <mat-accordion class="details-list" displayMode="flat">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+              <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-expansion-content">
+              <ol *ngIf="hasUpdatesForImages(bulkItem.key); else noUpdatesForImages">
+                <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder">
+                  {{ containerImage.key }}
+                </li>
+              </ol>
+            </div>
+          </mat-expansion-panel>
 
-            <mat-expansion-panel>
-              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-                <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
-              </mat-expansion-panel-header>
-              <div class="details-expansion-content">
-                <div
-                  fxLayout="row"
-                  fxLayoutAlign="start start"
-                  class="detail-row row-dark"
-                >
-                  <ng-container *ngIf="summary?.changelog; else noChangeLogs">
-                    <div [innerHTML]="summary.changelog"></div>
-                  </ng-container>
-                </div>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+              <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="details-expansion-content">
+              <div
+                fxLayout="row"
+                fxLayoutAlign="start start"
+                class="detail-row row-dark"
+              >
+                <ng-container *ngIf="summary?.changelog; else noChangelog">
+                  <div [innerHTML]="summary.changelog"></div>
+                </ng-container>
               </div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
-      </ng-template>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
     </mat-expansion-panel>
   </mat-accordion>
 
@@ -95,7 +93,7 @@
     {{ 'There are no images requiring upgrade' | translate }}
   </ng-template>
 
-  <ng-template #noChangeLogs>{{ 'No Changelog' | translate }}</ng-template>
+  <ng-template #noChangelog>{{ 'No Changelog' | translate }}</ng-template>
 
   <div class="form-actions">
     <button

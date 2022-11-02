@@ -1,6 +1,7 @@
 :host {
   display: block;
-  min-width: 600px;
+  max-width: 100%;
+  width: 600px;
 
   ::ng-deep {
     ix-select {
@@ -13,7 +14,7 @@
     height: 2px;
     left: 0;
     position: absolute;
-    top: 0;
+    top: -2px;
     z-index: 10;
   }
 
@@ -96,8 +97,6 @@
   }
 
   .expansion-content {
-    display: flex;
-    flex-direction: column;
     overflow-y: auto;
     padding-top: 16px;
   }

@@ -1,9 +1,10 @@
 import { KeyValue } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, TrackByFunction, ViewChild,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatAccordion } from '@angular/material/expansion';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -37,6 +38,7 @@ export class ChartBulkUpgradeComponent {
   optionsMap = new Map<string, Observable<Option[]>>();
   loadingMap = new Map<string, boolean>();
   imagePlaceholder = appImagePlaceholder;
+  @ViewChild(MatAccordion) accordion: MatAccordion;
   readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
   readonly JobState = JobState;
 
@@ -59,9 +61,8 @@ export class ChartBulkUpgradeComponent {
     this.apps = this.apps.filter((app) => app.update_available || app.container_images_update_available);
     this.apps.forEach((app) => {
       this.bulkItems.set(app.name, { state: BulkListItemState.Initial, item: app });
+      this.form.addControl(app.name, this.fb.control<string>(app.human_latest_version));
       this.loadingMap.set(app.name, false);
-      const latestVersionValue = app.human_latest_version;
-      this.form.addControl(app.name, this.fb.control<string>(latestVersionValue));
     });
 
     this.detectFormChanges();
@@ -69,10 +70,14 @@ export class ChartBulkUpgradeComponent {
 
   onSubmit(): void {
     this.wasSubmitted = true;
+    this.accordion.closeAll();
 
-    const payload = Object.entries(this.form.value).map(([name, version]) => {
+    const payload: ChartReleaseUpgradeParams[] = [];
+    Object.entries(this.form.value).forEach(([name, version]) => {
       this.bulkItems.set(name, { ...this.bulkItems.get(name), state: BulkListItemState.Running });
-      return [name, { item_version: version }];
+      this.loadingMap.set(name, true);
+      this.form.get(name).disable();
+      payload.push([name, { item_version: version }]);
     });
 
     this.ws.job('core.bulk', ['chart.release.upgrade', payload]).pipe(
@@ -100,7 +105,10 @@ export class ChartBulkUpgradeComponent {
             message: item.error.replace('[EFAULT]', ''),
           });
         } else {
-          app = this.apps.find((iteration) => iteration.name === item.result?.name);
+          const appFromResults = this.apps.find((iteration) => iteration.name === item.result?.name);
+          if (appFromResults) {
+            app = appFromResults;
+          }
           this.bulkItems.set(app.name, {
             ...this.bulkItems.get(app.name),
             state: BulkListItemState.Success,
