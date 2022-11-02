@@ -34,6 +34,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const newStorjBucket = 'new_storj_bucket';
 
+type FormValue = CloudsyncFormComponent['form']['value'];
+
 @UntilDestroy()
 @Component({
   templateUrl: './cloudsync-form.component.html',
@@ -473,6 +475,7 @@ export class CloudsyncFormComponent {
       if (bucket === '') {
         delete data.attributes.bucket;
       }
+
       return this.ws.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
@@ -578,29 +581,24 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  prepareData(formValue: CloudsyncFormComponent['form']['value']): CloudSyncTaskUpdate {
+  prepareData(formValue: FormValue): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
     const value: CloudSyncTaskUpdate = {
+      ...formValue,
       attributes,
       include: undefined,
       path: undefined,
       bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
-      create_empty_src_dirs: formValue.create_empty_src_dirs,
-      credentials: formValue.credentials,
-      description: formValue.description,
-      direction: formValue.direction,
-      enabled: formValue.enabled,
-      encryption: formValue.encryption,
-      exclude: formValue.exclude,
-      follow_symlinks: formValue.follow_symlinks,
-      post_script: formValue.post_script,
-      pre_script: formValue.pre_script,
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
-      transfer_mode: formValue.transfer_mode,
-      transfers: formValue.transfers,
     };
+
+    const attributesToFill = ['bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption', 'storage_class', 'fast_list', 'chunk_size'] as const;
+
+    (['path_source', 'path_destination', 'folder_source', 'folder_destination', 'cloudsync_picker', ...attributesToFill] as const).forEach((key) => {
+      delete (value as unknown as FormValue)[key];
+    });
 
     if (formValue.direction === Direction.Pull) {
       value.path = _.isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
@@ -637,11 +635,13 @@ export class CloudsyncFormComponent {
       }
     }
 
-    const attributesToFill = ['bucket', 'bucket_input', 'bucket_policy_only', 'storage_class', 'fast_list', 'chunk_size'] as const;
-
     attributesToFill.forEach((name) => {
-      if (formValue[name] !== undefined) {
-        attributes[name] = formValue[name] === '' ? null : formValue[name];
+      if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
+        if (name === 'task_encryption') {
+          attributes[name] = formValue[name] === '' ? null : formValue[name];
+        } else {
+          attributes[name] = formValue[name];
+        }
       }
     });
 
