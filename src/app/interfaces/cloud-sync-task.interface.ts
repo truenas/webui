@@ -16,11 +16,6 @@ export interface BwLimit {
   bandwidth: number;
 }
 
-export interface CloudSyncTaskUpdate extends Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption' | 'bwlimit'> {
-  credentials: number;
-  bwlimit: { time: string; bandwidth: string }[];
-}
-
 export interface CloudSyncTask {
   args: string;
   attributes: { [key: string]: string | number | boolean };
@@ -47,6 +42,11 @@ export interface CloudSyncTask {
   transfer_mode: TransferMode;
   transfers: number;
   create_empty_src_dirs: boolean;
+}
+
+export interface CloudSyncTaskUpdate extends Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption' | 'bwlimit'> {
+  credentials: number;
+  bwlimit: { time: string; bandwidth: string }[];
 }
 
 export interface CloudSyncTaskUi extends CloudSyncTask {
