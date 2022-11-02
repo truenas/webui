@@ -76,7 +76,7 @@ def under_support_click_enter_license_the_license_box_should_open(driver):
     assert wait_on_element(driver, 7, '//h3[contains(.,"License")]')
 
 
-@then('input the {license}, and click Save')
+@then(parsers.parse('input the {license}, and click Save'))
 def input_the_license_and_click_save(driver, license):
     """input the <license>, and click Save."""
     assert wait_on_element(driver, 7, '//textarea', 'inputable')
