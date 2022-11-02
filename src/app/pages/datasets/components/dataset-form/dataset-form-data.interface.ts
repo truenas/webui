@@ -1,7 +1,6 @@
 import { AclMode } from 'app/enums/acl-type.enum';
-import { DatasetChecksum } from 'app/enums/dataset-checksum.enum';
 import {
-  DatasetAclType, DatasetRecordSize, DatasetSnapdev, DatasetSnapdir, DatasetSync,
+  DatasetAclType, DatasetChecksum, DatasetRecordSize, DatasetSnapdev, DatasetSnapdir, DatasetSync,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';

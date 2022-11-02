@@ -1,6 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-entity-table-add-actions [entity]="this"></ix-entity-table-add-actions>
+    <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
   </ix-page-title-header>
 </ng-template>
 
@@ -217,7 +217,7 @@
               (mouseout)="onHover($event, false)"
             >
               <ix-entity-table-actions
-                [entity]="this"
+                [entity]="asGenericTable(this)"
                 [row]="element"
                 (mouseover)="onHover($event, true)"
                 (mouseout)="onHover($event, false)"
@@ -430,7 +430,7 @@
             >
               <ix-entity-table-row-details
                 [config]="element"
-                [parent]="this"
+                [parent]="asGenericTable(this)"
               ></ix-entity-table-row-details>
             </div>
           </td>

@@ -18,7 +18,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class SmbListComponent implements EntityTableConfig {
+export class SmbListComponent implements EntityTableConfig<SmbShare> {
   title = 'Samba';
   queryCall = 'sharing.smb.query' as const;
   updateCall = 'sharing.smb.update' as const;
@@ -26,7 +26,7 @@ export class SmbListComponent implements EntityTableConfig {
   routeAdd: string[] = ['sharing', 'smb', 'add'];
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
-  private entityList: EntityTableComponent;
+  private entityList: EntityTableComponent<SmbShare>;
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No SMB Shares have been configured yet'),
@@ -70,7 +70,7 @@ export class SmbListComponent implements EntityTableConfig {
     private translate: TranslateService,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<SmbShare>): void {
     this.entityList = entityList;
   }
 

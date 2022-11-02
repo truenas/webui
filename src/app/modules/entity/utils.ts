@@ -9,10 +9,10 @@ import { DialogService } from 'app/services';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ItemBeforeFlattening = object & {
+export type ItemBeforeFlattening = {
   id: string | number;
   children?: ItemBeforeFlattening[];
+  [key: string]: unknown;
 };
 
 type DataBeforeFlattening = ItemBeforeFlattening | ItemBeforeFlattening[];
