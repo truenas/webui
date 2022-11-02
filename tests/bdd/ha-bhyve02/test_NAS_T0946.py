@@ -275,14 +275,14 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 
 
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
-def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_hostname, password):
+def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_hostname):
     """switch to the virtual hostname "{virtual_hostname}" and login."""
     driver.get(f"http://{virtual_hostname}")
     assert wait_on_element(driver, 7, '//input[@data-placeholder="Username"]')
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
     assert wait_on_element(driver, 7, '//button[@name="signin_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 
