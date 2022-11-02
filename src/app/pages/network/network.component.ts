@@ -247,8 +247,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
-        .subscribe((isHa) => {
-          if (isHa) {
+        .subscribe((isHaLicensed) => {
+          if (isHaLicensed) {
             this.ws
               .call('failover.disabled.reasons')
               .pipe(untilDestroyed(this))

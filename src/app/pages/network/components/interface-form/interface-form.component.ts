@@ -54,7 +54,7 @@ export class InterfaceFormComponent implements OnInit {
   readonly defaultMtu = 1500;
 
   isLoading = false;
-  isHa = false;
+  isHaLicensed = false;
   ipLabelSuffix = '';
   failoverLabelSuffix = '';
 
@@ -194,14 +194,14 @@ export class InterfaceFormComponent implements OnInit {
       address: ['', [Validators.required, ipv4or6cidrValidator()]],
       failover_address: ['', [
         this.validatorsService.validateOnCondition(
-          () => this.isHa,
+          () => this.isHaLicensed,
           Validators.required,
         ),
         ipv4or6Validator(),
       ]],
       failover_virtual_address: ['', [
         this.validatorsService.validateOnCondition(
-          () => this.isHa,
+          () => this.isHaLicensed,
           Validators.required,
         ),
         ipv4or6Validator(),
@@ -276,9 +276,9 @@ export class InterfaceFormComponent implements OnInit {
       this.ws.call('failover.node'),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(([isHa, failoverNode]) => {
-        this.isHa = isHa;
-        if (isHa) {
+      .subscribe(([isHaLicensed, failoverNode]) => {
+        this.isHaLicensed = isHaLicensed;
+        if (isHaLicensed) {
           if (failoverNode === 'A') {
             this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)');
             this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)');
@@ -312,7 +312,7 @@ export class InterfaceFormComponent implements OnInit {
     const aliases = formAliasesToInterfaceAliases(formValues.aliases);
     params.aliases = aliases.aliases;
 
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       params.failover_aliases = aliases.failover_aliases;
       params.failover_virtual_aliases = aliases.failover_virtual_aliases;
     }
@@ -340,7 +340,7 @@ export class InterfaceFormComponent implements OnInit {
       };
     }
 
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       params = {
         ...params,
         failover_critical: formValues.failover_critical,

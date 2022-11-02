@@ -108,7 +108,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   // For widgetsysinfo
-  isHa: boolean;
+  isHaLicensed: boolean;
   sysinfoReady = false;
 
   // For CPU widget
@@ -143,7 +143,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.checkScreenSize();
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       if (hasFailover) {
-        this.isHa = true;
+        this.isHaLicensed = true;
       }
     });
     this.sysinfoReady = true;
@@ -353,7 +353,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       { name: 'System Information', rendered: true, id: '0' },
     ];
 
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       conf.push({
         id: conf.length.toString(),
         name: 'System Information(Standby)',

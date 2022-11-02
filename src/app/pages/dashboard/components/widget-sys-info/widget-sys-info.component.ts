@@ -35,7 +35,7 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   // HA
-  @Input() isHa = false;
+  @Input() isHaLicensed = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
@@ -97,7 +97,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   ngOnInit(): void {
-    if (this.isHa && this.isPassive) {
+    if (this.isHaLicensed && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),

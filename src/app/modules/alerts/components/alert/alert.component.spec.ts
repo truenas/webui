@@ -81,7 +81,7 @@ describe('AlertComponent', () => {
   });
 
   it('shows an alert node on an HA system', () => {
-    spectator.setInput('isHa', true);
+    spectator.setInput('isHaLicensed', true);
     expect(alert.nodeElement).toHaveExactText('Active Controller (A)');
   });
 
