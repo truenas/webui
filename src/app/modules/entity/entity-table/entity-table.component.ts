@@ -43,9 +43,10 @@ import {
   EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog,
 } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, JobService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -203,7 +204,6 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     public loader: AppLoaderService,
     protected translate: TranslateService,
     public storageService: StorageService,
-    protected job: JobService,
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
     public modalService: ModalService,
@@ -944,7 +944,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
             }),
           );
         }),
-        switchMap((jobId: number) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
+        switchMap((jobId: number) => (jobId ? this.store$.select(selectJob(jobId)) : of(false))),
       );
   }
 
