@@ -93,7 +93,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       if (this.isHaEnabled) {
         this.dialog.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        this.tableService.delete(table, row, deleteAction);
+        this.tableService.delete(table, row as unknown as Record<string, unknown>, deleteAction);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -245,8 +245,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
-        .subscribe((isHa) => {
-          if (isHa) {
+        .subscribe((isHaLicensed) => {
+          if (isHaLicensed) {
             this.ws
               .call('failover.disabled.reasons')
               .pipe(untilDestroyed(this))

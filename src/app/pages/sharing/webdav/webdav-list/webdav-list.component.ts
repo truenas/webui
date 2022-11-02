@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class WebdavListComponent implements EntityTableConfig, OnInit {
+export class WebdavListComponent implements EntityTableConfig<WebDavShare>, OnInit {
   title = this.translate.instant('WebDAV');
   queryCall = 'sharing.webdav.query' as const;
   updateCall = 'sharing.webdav.update' as const;
@@ -51,7 +51,7 @@ export class WebdavListComponent implements EntityTableConfig, OnInit {
     },
   };
 
-  private tableComponent: EntityTableComponent;
+  private tableComponent: EntityTableComponent<WebDavShare>;
 
   constructor(
     private ws: WebSocketService,
@@ -66,12 +66,12 @@ export class WebdavListComponent implements EntityTableConfig, OnInit {
     });
   }
 
-  doAdd(id: string, tableComponent: EntityTableComponent): void {
+  doAdd(id: string, tableComponent: EntityTableComponent<WebDavShare>): void {
     this.tableComponent = tableComponent;
     this.slideInService.open(WebdavFormComponent);
   }
 
-  doEdit(rowId: string, tableComponent: EntityTableComponent): void {
+  doEdit(rowId: number, tableComponent: EntityTableComponent<WebDavShare>): void {
     this.tableComponent = tableComponent;
     const webdavForm = this.slideInService.open(WebdavFormComponent);
     webdavForm.setWebdavForEdit(tableComponent.rows.find((row) => row.id === rowId));

@@ -55,8 +55,11 @@
         fxFlex.gt-xs="calc(50% - 16px)"
         class="form-inline"
       >
-        <ix-dynamic-list [config]="fieldConfig[1] | cast" [group]="formGroup">
-        </ix-dynamic-list>
+        <ix-dynamic-list
+          [config]="fieldConfig[1] | cast"
+          [group]="formGroup"
+          [source]="connectedInitiatorsList"
+        ></ix-dynamic-list>
       </div>
       <div
         fxFlex="100%"

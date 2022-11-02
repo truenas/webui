@@ -126,7 +126,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     );
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
     this.checkMemory();
     this.entityList = entityList;
 
@@ -145,7 +145,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       entityList.patchCurrentRows(
         (row: VirtualMachineRow) => row.id === event.id,
-        (changedRow) => {
+        (changedRow: VirtualMachineRow) => {
           if (!event.fields) {
             return;
           }

@@ -72,9 +72,9 @@
     >
       <ng-template
         *ngIf="
-          config.explorerType == ExplorerType.Directory ||
-          config.explorerType == ExplorerType.Dataset ||
-          config.explorerType == ExplorerType.File ||
+          config.explorerType === ExplorerType.Directory ||
+          config.explorerType === ExplorerType.Dataset ||
+          config.explorerType === ExplorerType.File ||
           !config.explorerType
         "
         #treeNodeTemplate

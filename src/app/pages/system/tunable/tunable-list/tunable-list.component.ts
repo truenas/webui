@@ -13,14 +13,14 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class TunableListComponent implements EntityTableConfig {
+export class TunableListComponent implements EntityTableConfig<Tunable> {
   title: string = this.translate.instant('Sysctl');
   wsDelete = 'tunable.delete' as const;
   queryCall = 'tunable.query' as const;
   routeAddTooltip: string = this.translate.instant('Add Sysctl');
   protected routeSuccess: string[] = ['system', 'sysctl'];
   protected productType: ProductType;
-  protected entityList: EntityTableComponent;
+  protected entityList: EntityTableComponent<Tunable>;
 
   wsMultiDelete = 'core.bulk' as const;
   multiActions = [
@@ -60,7 +60,7 @@ export class TunableListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
   ) {}
 
-  preInit(entityList: EntityTableComponent): void {
+  preInit(entityList: EntityTableComponent<Tunable>): void {
     this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;

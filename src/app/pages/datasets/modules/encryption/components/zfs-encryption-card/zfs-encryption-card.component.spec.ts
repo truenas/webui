@@ -37,6 +37,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
   const passwordEncryptedRoot = {
     id: 'pool/dataset',
+    name: 'pool/dataset',
     encryption_root: 'pool/dataset',
     locked: false,
     encrypted: true,

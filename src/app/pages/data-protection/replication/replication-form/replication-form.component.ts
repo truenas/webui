@@ -1210,7 +1210,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.toggleNamingSchemaOrRegex();
   }
 
-  resourceTransformIncomingRestData(wsResponse: any): any {
+  resourceTransformIncomingRestData(wsResponse: any): unknown {
     this.queryRes = _.cloneDeep(wsResponse);
     wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
     wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];

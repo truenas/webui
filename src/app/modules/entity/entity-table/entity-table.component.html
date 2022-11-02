@@ -1,6 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-entity-table-add-actions [entity]="this"></ix-entity-table-add-actions>
+    <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
   </ix-page-title-header>
 </ng-template>
 
@@ -49,7 +49,7 @@
           &nbsp;
         </div>
 
-        <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
+        <div *ngIf="!conf.multiActions || conf.multiActions.length === 0">
           <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
             <!-- With Labels -->
             <ng-container>
@@ -147,7 +147,7 @@
 
           <!-- Expansion Chevrons -->
           <ng-container
-            *ngIf="column == 'expansion-chevrons'"
+            *ngIf="column === 'expansion-chevrons'"
             stickyEnd
             matColumnDef="{{ column }}"
           >
@@ -198,7 +198,7 @@
 
           <!-- Threedot Actions -->
           <ng-container
-            *ngIf="column == 'action'"
+            *ngIf="column === 'action'"
             stickyEnd
             matColumnDef="{{ column }}"
           >
@@ -217,7 +217,7 @@
               (mouseout)="onHover($event, false)"
             >
               <ix-entity-table-actions
-                [entity]="this"
+                [entity]="asGenericTable(this)"
                 [row]="element"
                 (mouseover)="onHover($event, true)"
                 (mouseout)="onHover($event, false)"
@@ -228,7 +228,7 @@
 
           <!-- Multiselect Checkboxes -->
           <ng-container
-            *ngIf="column == 'multiselect'"
+            *ngIf="column === 'multiselect'"
             sticky
             matColumnDef="{{ column }}"
           >
@@ -266,7 +266,7 @@
 
           <!-- Interactive Toggle Column -->
           <ng-container
-            *ngIf="column == 'state' && isInteractive(column)"
+            *ngIf="column === 'state' && isInteractive(column)"
             matColumnDef="{{ column }}"
           >
             <th
@@ -426,11 +426,11 @@
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+              [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
-                [parent]="this"
+                [parent]="asGenericTable(this)"
               ></ix-entity-table-row-details>
             </div>
           </td>

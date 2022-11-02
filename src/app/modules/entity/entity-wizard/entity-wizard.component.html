@@ -48,7 +48,7 @@
                   fxFlex="100%"
                   fxFlex.gt-xs="calc({{ field.width ? field.width : '100%'}} - 16px)"
                   id="{{ k }}"
-                  [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+                  [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
                 >
                   <div
                     dynamicField
@@ -82,7 +82,7 @@
             </button>
 
             <button
-              *ngIf="i == 0 ? false : true"
+              *ngIf="i !== 0"
               mat-button
               matStepperPrevious
               color="accent"
