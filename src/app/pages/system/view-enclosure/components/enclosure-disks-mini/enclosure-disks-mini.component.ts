@@ -1,6 +1,7 @@
 import {
   Component, ViewChild, ElementRef, ChangeDetectorRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
@@ -36,8 +37,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,
+    protected matDialog: MatDialog,
   ) {
-    super(core, cdr, dialogService, translate, ws, store$, themeService, diskTemperatureService);
+    super(core, cdr, dialogService, translate, ws, store$, themeService, diskTemperatureService, matDialog);
     this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }

@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="true">
-  <div fxLayout="column" fxLayoutAlign="center center" *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
+  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
     <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
     <div class="actions">
       <button mat-button (click)="openActiveDirectoryForm()">
@@ -39,9 +39,9 @@
 </ng-container>
 
 <cdk-accordion-item
+  #expansionPanel="cdkAccordionItem"
   class="advanced-settings"
   [class.expanded]="expansionPanel.expanded"
-  #expansionPanel="cdkAccordionItem"
 >
   <h3 class="header">
     {{ 'Advanced Settings' | translate }}

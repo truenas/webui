@@ -1,6 +1,7 @@
 import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,9 +23,7 @@ import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.inter
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
@@ -49,6 +48,9 @@ import {
   SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
 } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { VDevLabelsSvg } from 'app/pages/system/view-enclosure/classes/v-dev-labels-svg';
+import {
+  SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
+} from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -174,6 +176,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,
+    protected matDialog: MatDialog,
   ) {
     this.themeUtils = new ThemeUtils();
     this.diskTemperatureService.listenForTemperatureUpdates();
@@ -1122,61 +1125,29 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  setEnclosureLabel(value?: string): void {
+  labelForm(): void {
     const enclosure = this.system.enclosures[this.selectedEnclosure.enclosureKey];
-    if (!value) {
-      value = enclosure.name;
-    }
+    const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : this.selectedEnclosure.model;
 
-    this.ws.call('enclosure.update', [enclosure.id, { label: value }])
+    this.matDialog.open(SetEnclosureLabelDialogComponent, {
+      data: {
+        currentLabel,
+        defaultLabel: enclosure.name,
+        enclosureId: enclosure.id,
+      } as SetEnclosureLabelDialogData,
+    })
+      .afterClosed()
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
+      .subscribe((newLabel: string) => {
         this.core.emit({
           name: 'EnclosureLabelChanged',
           sender: this,
-          data: { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value },
+          data: {
+            index: this.selectedEnclosure.enclosureKey,
+            id: enclosure.id,
+            label: newLabel,
+          },
         } as EnclosureLabelChangedEvent);
       });
-  }
-
-  labelForm(): void {
-    const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
-    const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
-    const conf: DialogFormConfiguration = {
-      title: this.translate.instant('Change Enclosure Label'),
-      fieldConfig: [
-        {
-          type: 'input',
-          inputType: 'text',
-          value: currentLabel,
-          name: 'label',
-          required: false,
-          placeholder: 'Enclosure Label',
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [{
-                name: 'reset',
-                value: true,
-              }],
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          value: false,
-          name: 'reset',
-          placeholder: 'Reset to default',
-        },
-      ],
-      saveButtonText: this.translate.instant('SAVE'),
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        this.pendingDialog = entityDialog;
-        entityDialog.loader.open();
-        this.setEnclosureLabel(entityDialog.formValue.label as string);
-      },
-    };
-
-    this.dialogService.dialogForm(conf);
   }
 }

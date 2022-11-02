@@ -25,9 +25,9 @@
     ></mat-spinner>
 
     <form
-      [formGroup]="formGroup"
-      class="form-wrap"
       #entityForm="ngForm"
+      class="form-wrap"
+      [formGroup]="formGroup"
       (ngSubmit)="onSubmit($event)"
     >
       <div
@@ -36,16 +36,16 @@
       >
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
           <div
-            [ngClass]="[
-              fieldSet.class ? fieldSet.class : '',
-              isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
-            ]"
-            class="entity-form fieldset divider-{{ fieldSet.divider }}"
             fxLayout="row wrap"
             fxLayoutGap.gt-sm="24px"
             fxLayoutAlign="start start"
             fxFlex="100%"
+            class="entity-form fieldset divider-{{ fieldSet.divider }}"
             fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
+            [ngClass]="[
+              fieldSet.class ? fieldSet.class : '',
+              isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
+            ]"
           >
             <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
             <h4
@@ -59,11 +59,11 @@
               fxFlex="100%"
               fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
               id="{{ fieldSet.name }}-{{ ii }}"
-              [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+              [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
             >
               <div
-                id="form_field_{{ field.name }}"
                 dynamicField
+                id="form_field_{{ field.name }}"
                 [config]="field"
                 [group]="formGroup"
                 [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
@@ -79,8 +79,8 @@
             type="submit"
             mat-button
             ix-auto-type="button"
-            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
             color="primary"
+            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
             [ix-auto]=""
           >
@@ -103,10 +103,10 @@
           <span *ngFor="let custBtn of conf.customActions">
             <button
               *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
-              id="cust_button_{{ custBtn.name }}"
               mat-button
               class="mat-basic"
               ix-auto-type="button"
+              id="cust_button_{{ custBtn.name }}"
               ix-auto-identifier="{{ custBtn.name | uppercase }}"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
@@ -121,11 +121,11 @@
             <button
               name="compactCustomActions"
               mat-icon-button
-              [matMenuTriggerFor]="keymenu"
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="keymenu"
               type="button"
+              [matMenuTriggerFor]="keymenu"
             >
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -151,9 +151,9 @@
             mat-button
             class="btn btn-block btn-danger"
             type="button"
-            [ix-auto]=""
             ix-auto-type="button"
             ix-auto-identifier="DELETE"
+            [ix-auto]=""
           >
             {{ 'Delete' | translate }}
           </button>

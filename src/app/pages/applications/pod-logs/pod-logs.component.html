@@ -28,9 +28,9 @@
     <span class="name">{{ containerName }}</span>
   </div>
   <div
+    #logContainer
     class="pod-logs"
     [ngStyle]="{ 'font-size': fontSize + 'px' }"
-    #logContainer
   >
     <div *ngFor="let podLog of podLogs" class="log-row">
       <span class="timestamp">{{ podLog.timestamp }}</span>

@@ -13,8 +13,8 @@
       [required]="required"
       [disabled]="isDisabled"
       [readonly]="readonly"
-      [(ngModel)]="value"
       [placeholder]="placeholder"
+      [(ngModel)]="value"
       (ngModelChange)="onChange($event)"
       (blur)="onTouch()"
     ></textarea>

@@ -4,7 +4,7 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="fieldsets">
-        <ix-fieldset [title]="'Source' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'Source' | translate">
           <ix-explorer
             formControlName="path"
             [label]="'Path' | translate"
@@ -36,7 +36,7 @@
           ></ix-input>
         </ix-fieldset>
 
-        <ix-fieldset [title]="'Remote' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'Remote' | translate">
           <ix-select
             formControlName="mode"
             [label]="'Rsync Mode' | translate"
@@ -80,9 +80,9 @@
 
               <ix-input
                 formControlName="remoteport"
+                type="number"
                 [label]="'Remote SSH Port' | translate"
                 [required]="true"
-                type="number"
                 [tooltip]="helptext.rsync_remoteport_tooltip"
               ></ix-input>
             </ng-container>
@@ -110,7 +110,7 @@
           </ng-template>
         </ix-fieldset>
 
-        <ix-fieldset [title]="'Schedule' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'Schedule' | translate">
           <ix-scheduler
             formControlName="schedule"
             [required]="true"
@@ -131,7 +131,7 @@
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset [title]="'More Options' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'More Options' | translate">
           <ix-checkbox
             formControlName="times"
             [label]="'Times' | translate"
@@ -192,8 +192,8 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
+          [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>

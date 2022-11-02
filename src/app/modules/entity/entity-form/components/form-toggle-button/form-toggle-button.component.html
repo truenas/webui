@@ -18,8 +18,8 @@
       ix-auto-type="button"
       ix-auto-identifier="{{ option.label }}"
       [value]="option.value"
-      (change)="check(option)"
       [checked]="option.checked"
+      (change)="check(option)"
     >
       {{ option.label | translate }}
     </mat-button-toggle>

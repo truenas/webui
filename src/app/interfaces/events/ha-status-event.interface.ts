@@ -1,6 +1,7 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { HaStatusText } from 'app/enums/ha-status-text.enum';
 
 export interface HaStatus {
-  status: 'HA Enabled' | 'HA Disabled';
+  status: HaStatusText;
   reasons?: FailoverDisabledReason[];
 }

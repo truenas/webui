@@ -42,8 +42,8 @@
         ix-auto
         ix-auto-type="option"
         [ix-auto-identifier]="tab.label"
-        (click)="onNavigateToTab(tab)"
         [class.selected]="isActiveTab(tab)"
+        (click)="onNavigateToTab(tab)"
       >{{ tab.label | translate }}</button>
     </div>
   </mat-menu>

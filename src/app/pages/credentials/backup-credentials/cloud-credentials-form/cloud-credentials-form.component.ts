@@ -80,7 +80,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class CloudCredentialsFormComponent implements OnInit {
   commonForm = this.formBuilder.group({
-    name: ['', Validators.required],
+    name: ['Storj', Validators.required],
     provider: [CloudsyncProviderName.Storj],
   });
 
@@ -248,7 +248,17 @@ export class CloudCredentialsFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.renderProviderForm();
+
+        this.setDefaultName();
       });
+  }
+
+  private setDefaultName(): void {
+    if (!this.isNew || this.commonForm.controls.name.touched) {
+      return;
+    }
+
+    this.commonForm.controls.name.setValue(this.selectedProvider.title);
   }
 
   private renderProviderForm(): void {

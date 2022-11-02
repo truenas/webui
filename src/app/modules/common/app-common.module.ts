@@ -51,6 +51,7 @@ import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ConsoleFooterComponent } from './console-footer/console-footer.component';
 import { CopyrightLineComponent } from './copyright-line/copyright-line.component';
+import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dialog.component';
 
 @NgModule({
   imports: [
@@ -103,6 +104,7 @@ import { CopyrightLineComponent } from './copyright-line/copyright-line.componen
     AuthLayoutComponent,
     AdminLayoutComponent,
     ConsoleFooterComponent,
+    ShowLogsDialogComponent,
   ],
   providers: [
     LanguageService,
@@ -113,6 +115,7 @@ import { CopyrightLineComponent } from './copyright-line/copyright-line.componen
     SearchInputComponent,
     CopyrightLineComponent,
     ModalComponent,
+    ShowLogsDialogComponent,
   ],
 })
 export class AppCommonModule {}

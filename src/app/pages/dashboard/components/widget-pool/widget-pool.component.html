@@ -15,7 +15,7 @@
 
           <!-- Mobile Only: Exit widget -->
           <button
-            *ngIf="currentSlide == '0'"
+            *ngIf="currentSlide === '0'"
             fxHide.gt-xs
             class="mat-card-title-text primary-nav"
             mat-icon-button
@@ -47,7 +47,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }}</span>
             </div>
           </h3>
@@ -63,9 +63,9 @@
               <mat-icon
                 fontSet="mdi-set"
                 fontIcon="mdi-database"
-                matTooltip="{{ 'Pool Status' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Configure Pools"
+                [matTooltip]="'Pool Status' | translate"
               ></mat-icon>
             </a>
 
@@ -78,9 +78,9 @@
               [queryParams]="{ disks: poolDisks }"
             >
               <mat-icon
-                matTooltip="{{ 'Disk Reports' | translate }}"
                 matTooltipPosition="above"
                 aria-label="Disk Reports"
+                [matTooltip]="'Disk Reports' | translate"
               >
                 insert_chart
               </mat-icon>
@@ -89,7 +89,7 @@
         </mat-toolbar-row>
 
         <!-- Carousel -->
-        <div *ngIf="poolState && path" class="carousel" #carousel>
+        <div *ngIf="poolState && path" #carousel class="carousel">
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
               <ix-icon name="error"></ix-icon>
@@ -165,9 +165,7 @@
                     <div class="used-space tr">
                       <ng-container *ngIf="!volumeData || !volumeData.used_pct">
                         <div class="td label">
-                          <strong>
-                            {{ 'Used Space' | translate }}:</strong
-                            >&nbsp;
+                          <strong>{{ 'Used Space' | translate }}:</strong>&nbsp;
                         </div>
                         <div class="td">
                           <span class="value-used">Unknown</span>
@@ -204,22 +202,22 @@
                     </div>
                     <!-- END ROW -->
 
-                    <div class="disk-errors tr" *ngIf="poolState.status == PoolStatus.Online">
+                    <div *ngIf="poolState.status === PoolStatus.Online" class="disk-errors tr">
                       <div class="td label">
                         <strong>Disks with Errors:</strong>
                       </div>
                       <div class="td">
                         {{ unhealthyDisks.totalErrors }}
-                        <span *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
+                        <span *ngIf="unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown'">
                           Disks
                         </span>
                         <span
-                          *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'"
+                          *ngIf="unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown'"
                           class="error icon"
                         >
                           <ix-icon class="disk-errors" name="error"></ix-icon>
                         </span>
-                        <span  *ngIf="unhealthyDisks.totalErrors == '0'" class="safe icon">
+                        <span *ngIf="unhealthyDisks.totalErrors === 0" class="safe icon">
                           <ix-icon class="healthy" name="check_circle"></ix-icon>
                         </span>
                       </div>
@@ -236,7 +234,7 @@
                 fxLayout="column"
                 fxLayoutAlign="space-around center"
               >
-                <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked">
+                <div *ngIf="poolState.topology && poolState.topology.data; else locked" fxFlex="100">
                   <div class="list-subheader">
                     <span class="capitalize">{{ 'Overview' | translate }}</span>
                   </div>
@@ -260,7 +258,7 @@
                         <span *ngIf="displayValue !== 'Unknown'" class="value">
                           {{ 'Gathering data...' | translate }}
                         </span>
-                        <span *ngIf="displayValue == 'Unknown'" class="value">
+                        <span *ngIf="displayValue === 'Unknown'" class="value">
                           {{ 'Unknown' | translate }}
                         </span>
                       </ng-template>
@@ -313,10 +311,10 @@
                     </mat-list-item>
 
                     <mat-list-item
-                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                       [ngClass]="{
                         clickable: poolState.topology.spare.length > 0
                       }"
+                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                     >
                       <strong>
                         {{ 'Spares' | translate }}:
@@ -391,7 +389,7 @@
                   <ix-icon name="error"></ix-icon>
                 </span>
 
-                <span *ngIf="vdev.type == 'DISK'" class="vdev">
+                <span *ngIf="vdev.type === 'DISK'" class="vdev">
                   <span>
                     {{ trimMultipath(vdev.disk).name }}
                   </span>
@@ -452,14 +450,13 @@
                 *ngFor="let disk of path[currentSlideIndex].dataSource.children; let i = index"
                 role="listitem"
                 [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk)"
-                (click)="getDiskDetails('name', disk.disk)"
+                (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk); getDiskDetails('name', disk.disk)"
               >
                 <strong>
                   <span *ngIf="disk.status !== 'UNAVAIL'">
                     {{ trimMultipath(disk.disk).fullName }}
                   </span>
-                  <span *ngIf="disk.status == 'UNAVAIL'">
+                  <span *ngIf="disk.status === 'UNAVAIL'">
                     {{ 'Unknown Disk' | translate }}
                   </span>
                   :
@@ -486,12 +483,11 @@
               </mat-list-item>
             </mat-list>
 
-            <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
+            <mat-list *ngIf="path[currentSlideIndex].dataSource.type === 'DISK'">
               <mat-list-item
                 role="listitem"
                 [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource)"
-                (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk)"
+                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource); getDiskDetails('name', path[currentSlideIndex].dataSource.disk)"
               >
                 <strong>
                   {{ trimMultipath(path[2].dataSource.disk).fullName }}
@@ -558,7 +554,7 @@
               </div>
               <mat-list>
                 <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                  <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
+                  <mat-list-item *ngIf="key !== 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
                     <strong class="detail-key"> {{ key }}:</strong>
                     {{ currentDiskDetails[diskKey(key)] }}
                   </mat-list-item>

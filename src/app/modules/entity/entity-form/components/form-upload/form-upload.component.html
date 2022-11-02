@@ -40,20 +40,20 @@
     <mat-card-content class="display-none">
       <input
         *ngIf="!config.multiple; else multipleFiles"
+        #fileInput
         id="fb"
         type="file"
-        #fileInput
         accept="{{ config.acceptedFiles }}"
         [formControlName]="config.name"
         (change)="upload(config.fileLocation)"
       />
       <ng-template #multipleFiles>
         <input
+          #fileInput
           id="fb"
           type="file"
-          #fileInput
-          accept="{{ config.acceptedFiles }}"
           multiple
+          accept="{{ config.acceptedFiles }}"
           [formControlName]="config.name"
           (change)="upload(config.fileLocation)"
         />
@@ -69,9 +69,9 @@
   <ng-template #showButton>
     <mat-card-content class="display-none">
       <input
+        #fileInput
         id="fb"
         type="file"
-        #fileInput
         accept="{{ config.acceptedFiles }}"
         [formControlName]="config.name"
       />

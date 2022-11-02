@@ -240,6 +240,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
                     this.haStatusText = this.translate.instant('HA is reconnecting.');
                   } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
                     this.haStatusText = this.translate.instant('HA is administratively disabled.');
+                  } else {
+                    this.haStatusText = this.reasonText[this.disabledReason(reasons[0])];
                   }
                   this.haStatus = false;
                 } else {

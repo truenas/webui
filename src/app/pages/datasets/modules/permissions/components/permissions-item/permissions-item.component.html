@@ -1,4 +1,4 @@
-<div [ngSwitch]="item.type" class="icon">
+<div class="icon" [ngSwitch]="item.type">
   <mat-icon *ngSwitchCase="PermissionsItem.Group">people</mat-icon>
   <mat-icon *ngSwitchCase="PermissionsItem.Other">groups</mat-icon>
   <mat-icon *ngSwitchDefault>person</mat-icon>
