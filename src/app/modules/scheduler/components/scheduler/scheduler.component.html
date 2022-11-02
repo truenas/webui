@@ -8,9 +8,9 @@
 
   <div class="input-container" [class.disabled]="isDisabled">
     <mat-select
-      [(ngModel)]="crontab"
       [required]="required"
       [disabled]="isDisabled"
+      [(ngModel)]="crontab"
       (blur)="onTouched()"
       (ngModelChange)="onChange($event)"
     >

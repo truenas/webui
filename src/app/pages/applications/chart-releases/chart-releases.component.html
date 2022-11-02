@@ -34,7 +34,7 @@
 </ng-template>
 
 <div fxLayout="row wrap" fxLayoutAlign="center center">
-  <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
+  <mat-card *ngFor="let item of filteredChartItems" class="chart-item">
     <div class="content-wrapper" fxLayout="row">
       <div class="logo-container">
         <div class="logo">
@@ -238,7 +238,7 @@
   </mat-card>
 
   <ix-entity-empty
-    *ngIf="filteredChartItems.length == 0"
+    *ngIf="filteredChartItems.length === 0"
     [conf]="emptyPageConf"
   ></ix-entity-empty>
 </div>

@@ -8,10 +8,10 @@
 
   <div class="input-container" [class.disabled]="disabledState">
     <mat-select
-      [(ngModel)]="value"
       [required]="required"
       [disabled]="disabledState"
       [multiple]="multiple"
+      [(ngModel)]="value"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
     >

@@ -44,10 +44,10 @@
     class="toggle_pw"
     (click)="onPasswordToggled()"
   >
-    <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">
+    <i *ngIf="showPassword" class="material-icons" matTooltip="Hide">
       visibility
     </i>
-    <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">
+    <i *ngIf="!showPassword" class="material-icons" matTooltip="Show">
       visibility_off
     </i>
   </button>

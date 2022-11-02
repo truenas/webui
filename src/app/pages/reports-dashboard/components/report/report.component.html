@@ -112,7 +112,7 @@
           </div>
         </div>
 
-        <section class="legend" #legendElement fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
+        <section #legendElement class="legend" fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
           <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px" fxLayoutAlign="start center">
             <h4 *ngIf="data && legendData?.xHTML" fxLayoutGap="8px" fxLayoutAlign="start center">
               <strong>{{ 'Time' | translate }}:</strong>

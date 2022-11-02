@@ -4,8 +4,8 @@
         mat-flat-button
         name="vdev_add-button"
         class="vdev-action-btn"
-        (click)="addSelectedDisks()"
         [disabled]="!manager.selected.length"
+        (click)="addSelectedDisks()"
       >
         <mat-icon class="arrow">arrow_forward</mat-icon>
       </button>
@@ -14,8 +14,8 @@
         mat-flat-button
         name="vdev_remove-button"
         class="vdev-action-btn"
-        (click)="removeSelectedDisks()"
         [disabled]="!selected.length"
+        (click)="removeSelectedDisks()"
       >
         <mat-icon class="arrow">arrow_back</mat-icon>
       </button>
@@ -48,8 +48,8 @@
               <mat-select
                 matSelect
                 id="vdev__option-menu"
-                [formControl]="typeControl"
                 class="form-control"
+                [formControl]="typeControl"
               >
                 <mat-option value="stripe">{{ 'Stripe' | translate }}</mat-option>
                 <mat-option
@@ -78,11 +78,11 @@
             </div>
           </div>
         </div>
-        
+
       </div>
       <ngx-datatable
-        id="vdev__disk-table"
         #table
+        id="vdev__disk-table"
         class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow table-background"
         [rows]="getDisks()"
         [headerHeight]="50"
@@ -95,7 +95,7 @@
         (sort)="reorderEvent($event)"
         (select)="onSelect($event)"
       >
-        <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
+        <ngx-datatable-row-detail #myDetailRow [rowHeight]="100">
           <ng-template
             let-row="row"
             let-expanded="expanded"
@@ -150,23 +150,23 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          [width]="165"
           name="{{'Disk' | translate}}"
+          [width]="165"
         >
           <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
             {{ row.devname }}
-            <ix-warning class="inline-warn" *ngIf="row.exported_zpool" [message]="'('+row.exported_zpool+')'"></ix-warning>
+            <ix-warning *ngIf="row.exported_zpool" class="inline-warn" [message]="'('+row.exported_zpool+')'"></ix-warning>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          [width]="100"
-          name="{{ 'Type' | translate }}"
           prop="type"
+          name="{{ 'Type' | translate }}"
+          [width]="100"
         ></ngx-datatable-column>
         <ngx-datatable-column
-          [width]="120"
-          name="{{ 'Capacity' | translate }}"
           prop="capacity"
+          name="{{ 'Capacity' | translate }}"
+          [width]="120"
         ></ngx-datatable-column>
         <ngx-datatable-column
           [width]="50"
@@ -191,9 +191,9 @@
           </ng-template>
         </ngx-datatable-column>
       </ngx-datatable>
-      
 
-      <div *ngIf="error" [innerHTML]="error" class="size-message red"></div>
+
+      <div *ngIf="error" class="size-message red" [innerHTML]="error"></div>
 
       <div *ngIf="showDiskSizeError" class="size-message orange">
         {{ diskSizeErrorMsg }}

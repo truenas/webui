@@ -6,15 +6,15 @@
       <ng-container [ngSwitch]="health">
         <mat-icon
           *ngSwitchCase="usageHealthLevel.Safe"
-          [matTooltip]="'Everything is fine' | translate"
           class="pool-icon icon-online"
+          [matTooltip]="'Everything is fine' | translate"
         >
           check_circle
         </mat-icon>
         <mat-icon
           *ngSwitchCase="usageHealthLevel.Warn"
-          [matTooltip]="(isLowCapacity ? 'Low Capacity' : 'Warning') | translate"
           class="pool-icon icon-warning"
+          [matTooltip]="(isLowCapacity ? 'Low Capacity' : 'Warning') | translate"
         >
           error
         </mat-icon>

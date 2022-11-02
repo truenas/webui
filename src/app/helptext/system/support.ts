@@ -149,12 +149,4 @@ export const helptextSystemSupport = {
    failed to attach. Please download the debug manually \
    (System → Advanced → Save Debug), upload it to a third-party storage service and provide\
     a link in the JIRA issue comment.'),
-
-  updateProd: {
-    title: T('Update Production Status'),
-    message: T('Set production status as active'),
-    checkbox: T('Send initial debug'),
-    button: T('Proceed'),
-  },
-
 };

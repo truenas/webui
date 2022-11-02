@@ -270,5 +270,33 @@ describe('CloudCredentialsFormComponent', () => {
       expect(spectator.inject(IxSlideInService).close).toHaveBeenCalledWith();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
+
+    it('sets default name when provider is selected and name field has not been touched by the user', async () => {
+      await form.fillForm({
+        Provider: 'Amazon S3',
+      });
+      expect(await form.getValues()).toMatchObject({
+        Name: 'Amazon S3',
+      });
+
+      await form.fillForm({
+        Provider: 'Box',
+      });
+      expect(await form.getValues()).toMatchObject({
+        Name: 'Box',
+      });
+
+      await form.fillForm({
+        Name: 'My Box',
+      });
+      await form.fillForm({
+        Provider: 'Amazon S3',
+      });
+
+      expect(await form.getValues()).toEqual({
+        Name: 'My Box',
+        Provider: 'Amazon S3',
+      });
+    });
   });
 });

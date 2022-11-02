@@ -7,11 +7,12 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { TruecommandSignupModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
+import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
+import {
+  TruecommandSignupModalComponent,
+} from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -68,7 +69,7 @@ export class TruecommandButtonComponent implements OnInit {
 
   handleUpdate(): void {
     this.dialog
-      .open(TruecommandSignupModalComponent, {
+      .open(TruecommandConnectModalComponent, {
         maxWidth: '420px',
         minWidth: '350px',
         data: {
@@ -116,27 +117,16 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   private openSignupDialog(): void {
-    const conf: DialogFormConfiguration = {
-      title: helptext.signupDialog.title,
-      message: helptext.signupDialog.content,
-      fieldConfig: [],
-      saveButtonText: helptext.signupDialog.connect_btn,
-      customActions: [
-        {
-          id: 'signup',
-          name: helptext.signupDialog.singup_btn,
-          function: () => {
-            this.window.open('https://portal.ixsystems.com');
-            this.dialogService.closeAllDialogs();
-          },
-        },
-      ],
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close();
+    this.dialog.open(TruecommandSignupModalComponent)
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((shouldConnect) => {
+        if (!shouldConnect) {
+          return;
+        }
+
         this.handleUpdate();
-      },
-    };
-    this.dialogService.dialogForm(conf);
+      });
   }
 
   private openStatusDialog(): void {

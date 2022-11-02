@@ -3,7 +3,7 @@
   [loading]="isFormLoading"
 ></ix-modal-header>
 
-<div class="ix-modal-subheader" *ngFor="let job$ of jobs$ | async">
+<div *ngFor="let job$ of jobs$ | async" class="ix-modal-subheader">
   <ix-job-item *ngIf="job$ | async as job" [job]="job"></ix-job-item>
 </div>
 

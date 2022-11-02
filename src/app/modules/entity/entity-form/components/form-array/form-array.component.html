@@ -6,7 +6,7 @@
   [formGroup]="group.controls[config.name] | cast"
   [attr.id]="config.name"
 >
-  <fieldset class="formarray-fieldset" *ngFor="let array of asFormArray(group.controls[config.name]).controls; let i = index">
+  <fieldset *ngFor="let array of asFormArray(group.controls[config.name]).controls; let i = index" class="formarray-fieldset">
     <ng-container
       *ngFor="let field of config.formarray"
       dynamicField

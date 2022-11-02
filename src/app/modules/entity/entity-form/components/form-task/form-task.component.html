@@ -14,9 +14,9 @@
     <mat-tab-group #tabGroup (selectChange)="onSelectChange()">
       <mat-tab
         *ngFor="let field of config.tabs"
-        label="{{ field.tabName | translate }}"
         ix-auto
         ix-auto-type="tab"
+        [label]="field.tabName | translate"
         ix-auto-identifier="{{ field.tabName }}"
       >
         <ng-container

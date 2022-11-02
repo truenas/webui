@@ -20,7 +20,7 @@
     </label>
   </div>
   <div *ngIf="value && value.length">
-    <p class="file" *ngFor="let file of value">
+    <p *ngFor="let file of value" class="file">
       <span
         class="file-action"
         [matTooltip]="'Remove file' | translate"

@@ -8,7 +8,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div class="file-information" *ngIf="stat?.user || isLoading">
+    <div *ngIf="stat?.user || isLoading" class="file-information">
       <div class="details-item">
         <div class="label">{{ 'Owner:' | translate }}</div>
         <div *ngIf="!isLoading; else loaderDetailsItem" class="value">

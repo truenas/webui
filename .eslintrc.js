@@ -32,7 +32,8 @@ module.exports = {
         "rxjs-angular",
         "unicorn",
         "angular-file-naming",
-        "@shopify"
+        "@shopify",
+        "unused-imports",
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -305,12 +306,15 @@ module.exports = {
     },
     {
       "files": ["*.html"],
-      "parser": "@angular-eslint/template-parser",
-      "plugins": [
-        "@angular-eslint/template",
-        "unused-imports",
-      ],
-      "rules": {}
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {
+        "@angular-eslint/template/attributes-order": ["error"],
+        "@angular-eslint/template/no-duplicate-attributes": ['error'],
+
+        // TODO: To be enabled later
+        '@angular-eslint/template/use-track-by-function': ['off'],
+        '@angular-eslint/template/no-negated-async': ['off'],
+      }
     }
   ]
 }
