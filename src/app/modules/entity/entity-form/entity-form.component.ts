@@ -22,6 +22,7 @@ import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ApiDirectory, ApiParams } from 'app/interfaces/api-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import {
   FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
@@ -404,27 +405,27 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.router.navigate(new Array('/').concat(route));
   }
 
-  addCall(body: any): Observable<any> {
-    const payload = [];
+  addCall(body: unknown): Observable<unknown> {
+    const payload: unknown[] = [];
     const call = this.conf.addCall;
     payload.push(body);
 
     if (this.conf.isCreateJob) {
-      return this.ws.job(call, payload);
+      return this.ws.job(call, payload as ApiParams<keyof ApiDirectory>);
     }
-    return this.ws.call(call, payload);
+    return this.ws.call(call, payload as ApiParams<keyof ApiDirectory>);
   }
 
-  editCall(body: any): Observable<any> {
-    const payload = [body];
+  editCall(body: unknown): Observable<unknown> {
+    const payload: unknown[] = [body];
     if (this.pk) {
       payload.unshift(this.pk);
     }
 
     if (this.conf.isEditJob) {
-      return this.ws.job(this.conf.editCall, payload);
+      return this.ws.job(this.conf.editCall, payload as ApiParams<keyof ApiDirectory>);
     }
-    return this.ws.call(this.conf.editCall, payload);
+    return this.ws.call(this.conf.editCall, payload as ApiParams<keyof ApiDirectory>);
   }
 
   onSubmit(event: Event): void {
@@ -483,11 +484,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.loader.close();
             this.loaderOpen = false;
 
-            if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
-              if (res.exc_info && res.exc_info.extra) {
-                new EntityUtils().handleWsError(this, res);
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && (res as Job).error) {
+              if ((res as Job).exc_info && (res as Job).exc_info.extra) {
+                new EntityUtils().handleWsError(this, res as Job);
               } else {
-                this.dialog.errorReport('Error', res.error, res.exception);
+                this.dialog.errorReport('Error', (res as Job).error, (res as Job).exception);
               }
             } else {
               if (this.conf.afterSave) {

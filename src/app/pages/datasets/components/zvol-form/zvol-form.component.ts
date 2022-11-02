@@ -18,7 +18,6 @@ import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
@@ -28,6 +27,7 @@ import {
   FormSelectConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { FormSelectOption } from 'app/modules/entity/entity-form/models/form-select-option.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -575,7 +575,7 @@ export class ZvolFormComponent implements FormConfiguration {
         });
 
         const inheritTr = this.translate.instant('Inherit');
-        const readonlyInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].readonly.rawvalue})`, value: inherit }];
+        const readonlyInherit: FormSelectOption[] = [{ label: `${inheritTr} (${pkDatasets[0].readonly.rawvalue})`, value: inherit }];
         const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
         readonly.options = readonlyInherit.concat(readonly.options);
         let readonlyValue;
@@ -600,19 +600,19 @@ export class ZvolFormComponent implements FormConfiguration {
         const snapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
 
         if (pkDatasets && pkDatasets[0].type === DatasetType.Filesystem) {
-          const syncInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].sync.rawvalue})`, value: inherit }];
+          const syncInherit: FormSelectOption[] = [{ label: `${inheritTr} (${pkDatasets[0].sync.rawvalue})`, value: inherit }];
           sync.options = syncInherit.concat(sync.options);
 
-          const compressionInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].compression.rawvalue})`, value: inherit }];
+          const compressionInherit: FormSelectOption[] = [{ label: `${inheritTr} (${pkDatasets[0].compression.rawvalue})`, value: inherit }];
           compression.options = compressionInherit.concat(compression.options);
 
-          const deduplicationInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].deduplication.rawvalue})`, value: inherit }];
+          const deduplicationInherit: FormSelectOption[] = [{ label: `${inheritTr} (${pkDatasets[0].deduplication.rawvalue})`, value: inherit }];
           deduplication.options = deduplicationInherit.concat(deduplication.options);
 
-          const volblocksizeInherit: Option[] = [{ label: `${inheritTr}`, value: inherit }];
+          const volblocksizeInherit: FormSelectOption[] = [{ label: `${inheritTr}`, value: inherit }];
           volblocksize.options = volblocksizeInherit.concat(volblocksize.options);
 
-          const snapdevInherit: Option[] = [{ label: `${inheritTr} (${pkDatasets[0].snapdev.rawvalue})`, value: inherit }];
+          const snapdevInherit: FormSelectOption[] = [{ label: `${inheritTr} (${pkDatasets[0].snapdev.rawvalue})`, value: inherit }];
           snapdev.options = snapdevInherit.concat(snapdev.options);
 
           entityForm.formGroup.controls['sync'].setValue(inherit);
@@ -641,9 +641,9 @@ export class ZvolFormComponent implements FormConfiguration {
               volblocksize.isHidden = true;
 
               this.customFilter = [[['id', '=', this.parent]]];
-              let syncOptions: Option[];
-              let compressionOptions: Option[];
-              let deduplicationOptions: Option[];
+              let syncOptions: FormSelectOption[];
+              let compressionOptions: FormSelectOption[];
+              let deduplicationOptions: FormSelectOption[];
 
               const volumesize = pkDatasets[0].volsize.parsed;
 
@@ -704,7 +704,7 @@ export class ZvolFormComponent implements FormConfiguration {
               }
               entityForm.formGroup.controls['deduplication'].setValue(pkDatasets[0].deduplication.value);
 
-              const snapdevOptions: Option[] = [{ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit }];
+              const snapdevOptions: FormSelectOption[] = [{ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit }];
               snapdev.options = snapdevOptions.concat(snapdev.options);
               if (
                 pkDatasets[0].snapdev.source === ZfsPropertySource.Inherited

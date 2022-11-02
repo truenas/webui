@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -134,7 +135,11 @@ export class ExportDisconnectModalComponent implements OnInit {
       next: (failureData) => {
         let conditionalErrMessage = '';
         if (failureData.error) {
-          if (failureData.exc_info.extra && failureData.exc_info.extra['code'] === 'control_services') {
+          if (
+            _.isObject(failureData.exc_info.extra)
+            && !Array.isArray(failureData.exc_info.extra)
+            && failureData.exc_info.extra['code'] === 'control_services'
+          ) {
             this.dialogRef.close(true);
             this.isFormLoading = false;
             entityJobRef.close(true);
