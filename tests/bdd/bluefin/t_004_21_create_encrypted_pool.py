@@ -64,7 +64,7 @@ def test_create_encrypted_pool(driver):
     driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
     assert wait_on_element(driver, 7, '//span[contains(.,"Create Pool")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Create Pool")]').click()
-    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 20, '//h1[contains(.,"WARNING!")]')
     assert wait_on_element(driver, 30, '//button[contains(text(),"Done")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Done")]').click()
