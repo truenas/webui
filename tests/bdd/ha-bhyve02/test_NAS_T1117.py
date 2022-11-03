@@ -164,8 +164,6 @@ def click_on_Directory_Services_and_select_NIS_then_disable_NIS(driver):
     driver.find_element_by_xpath(xpaths.sideMenu.directory_services_nis).click()
     assert wait_on_element(driver, 5, '//li[span/a/text()="NIS"]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Network Information Service (NIS)")]')
-    assert wait_on_element(driver, 5, '//mat-chip[contains(.,"nistestbsd.tn.ixsystems.net")]//mat-icon' 'clickable')
-    driver.find_element_by_xpath('//mat-chip[contains(.,"nistestbsd.tn.ixsystems.net")]//mat-icon').click()
     assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.enable).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
