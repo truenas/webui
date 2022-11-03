@@ -53,7 +53,7 @@ def test_lock_and_unlock_encrypted_dataset(driver):
 
     # enter wrong password
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("1234abcd")
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
@@ -64,6 +64,7 @@ def test_lock_and_unlock_encrypted_dataset(driver):
 
     # enter abcd1234 and confirm
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]'').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Force"]', 'clickable')

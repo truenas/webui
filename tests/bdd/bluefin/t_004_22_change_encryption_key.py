@@ -45,20 +45,21 @@ def test_change_encryption_key(driver):
 
 
     # enter acbd1234 and 1234abcd and verify that an error shows
-    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="passphrase"]').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="passphrase"]').send_keys("abcd1234")
-    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="confirm_passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]').send_keys("1234abcd")
-    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]')
+    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="passphrase"]//div//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="passphrase"]//div//input').click()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="passphrase"]//div//input').send_keys("abcd1234")
+    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="confirm_passphrase"]//div//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//div//input').click()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//div//input').send_keys("1234abcd")
+    assert wait_on_element(driver, 10, '//mat-error[contains(.,"Passphrase and confirmation should match.")]')
 
 
     # enter abcd1234 for both fields and confirm and save
-    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="confirm_passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]').send_keys("abcd1234")
-    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
+    assert wait_on_element(driver, 10, '//ix-input[@formcontrolname="confirm_passphrase"]//div//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//div//input').click()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//div//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="confirm_passphrase"]//div//input').send_keys("abcd1234")
+    assert wait_on_element(driver, 10, '//mat-error[contains(.,"Passphrase and confirmation should match.")]') is False
     
     assert wait_on_element(driver, 10, '//mat-checkbox//ancestor::ix-checkbox//span[contains(.,"Confirm")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox//ancestor::ix-checkbox//span[contains(.,"Confirm")]').click()
@@ -86,7 +87,7 @@ def test_change_encryption_key(driver):
     driver.find_element_by_xpath('//mat-card-header//div//h3[contains(text(),"ZFS Encryption")]//ancestor::mat-card-header//a//span[contains(.,"Unlock")]').click() 
     assert wait_on_element(driver, 10, '//h4[contains(.,"Unlock Datasets")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Force"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Force"]').click()

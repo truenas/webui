@@ -64,11 +64,11 @@ def test_create_smb_share_on_system(driver, nas_ip, root_password, systemsmbpath
         assert wait_on_element(driver, 10, '//span[contains(text(),"Restart Service")]', 'clickable')
         driver.find_element_by_xpath('//span[contains(text(),"Restart Service")]').click()
 
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
     # "{smbname}" should be added, Click on service and the Service page should open
-    assert wait_on_element(driver, 5, '//div[contains(.,"mysmbshare")]')
+    assert wait_on_element(driver, 20, '//div[contains(.,"mysmbshare")]')
     time.sleep(2)
 
 
