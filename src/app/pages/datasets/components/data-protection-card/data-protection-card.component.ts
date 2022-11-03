@@ -22,7 +22,7 @@ export class DataProtectionCardComponent implements OnInit {
     private slideIn: IxSlideInService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.slideIn.onClose$.pipe(
