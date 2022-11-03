@@ -39,7 +39,7 @@ def test_change_encryption_key(driver):
 
     # set key type to passphrase
     assert wait_on_element(driver, 10, '//ix-select[@formcontrolname="encryption_type"]')
-    driver.find_element_by_xpath('//ix-select[@formcontrolname="encryption_type"]').click()
+    driver.find_element_by_xpath('//ix-select[@formcontrolname="encryption_type"]//div//div//mat-select').click()
     assert wait_on_element(driver, 10, '//span[contains(text(),"Passphrase")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Passphrase")]').click()
 
