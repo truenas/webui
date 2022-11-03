@@ -15,9 +15,9 @@ from function import (
 def test_import_disk(driver):
     """test_import_disk"""
     if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
-        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage (Deprecated))]', 'clickable')
-        driver.find_element_by_xpath('//span[contains(text(),"Storage (Deprecated))]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
+        driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
 
 
     # Click on dropdown and import disk

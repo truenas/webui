@@ -174,22 +174,22 @@ def import_disk(driver):
 @then('create encrypted pool')
 def create_encrypted_pool(driver):
     """create encrypted pool"""
-#    import t_004_21_test_create_encrypted_pool
-#    t_004_21_create_encrypted_pool.test_create_encrypted_pool(driver)
+    import t_004_21_test_create_encrypted_pool
+    t_004_21_create_encrypted_pool.test_create_encrypted_pool(driver)
 
 
 @then('change encryption key')
 def change_encryption_key(driver):
     """change encryption key"""
-#    import t_004_22_test_change_encryption_key
-#    t_004_22_change_encryption_key.test_change_encryption_key(driver)
+    import t_004_22_test_change_encryption_key
+    t_004_22_change_encryption_key.test_change_encryption_key(driver)
 
 
 @then('lock and unlock encrypted dataset')
 def lock_and_unlock_encrypted_dataset(driver):
     """lock and unlock encrypted dataset"""
-#    import t_004_23_test_lock_and_unlock_encrypted_dataset
-#    t_004_23_lock_and_unlock_encrypted_dataset.test_lock_and_unlock_encrypted_dataset(driver)
+    import t_004_23_test_lock_and_unlock_encrypted_dataset
+    t_004_23_lock_and_unlock_encrypted_dataset.test_lock_and_unlock_encrypted_dataset(driver)
 
 
 @then('verify fullaudit for smb')
