@@ -11,7 +11,8 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   haSettingsUpdated,
   haStatusLoaded,
-  loadHaStatus, passiveNodeReplaced,
+  loadHaStatus,
+  passiveNodeReplaced,
   systemFeaturesLoaded,
   systemInfoLoaded,
 } from 'app/store/system-info/system-info.actions';
@@ -68,21 +69,6 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {
-          const haEnabled = failoverDisabledReasons.length === 0;
-          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
-
-          return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
-        }),
-      );
-    }),
-  ));
-
-  subscribeToHa = createEffect(() => this.actions$.pipe(
-    ofType(loadHaStatus),
-    mergeMap(() => {
-      return this.ws.subscribe('failover.disabled.reasons').pipe(
-        map((event) => {
-          const failoverDisabledReasons = event.fields?.disabled_reasons;
           const haEnabled = failoverDisabledReasons.length === 0;
           this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
 

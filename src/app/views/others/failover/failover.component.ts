@@ -25,8 +25,8 @@ export class FailoverComponent implements OnInit {
     protected dialogService: DialogService,
     protected dialog: MatDialog,
     private location: Location,
-    @Inject(WINDOW) private window: Window,
     private store$: Store<AlertSlice>,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   isWsConnected(): void {
@@ -34,6 +34,7 @@ export class FailoverComponent implements OnInit {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
+      this.window.location.reload();
     } else {
       setTimeout(() => {
         this.isWsConnected();

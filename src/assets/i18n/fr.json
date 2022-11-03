@@ -406,6 +406,8 @@
   "Loading devices. Please wait.": "",
   "Loading...": "",
   "Local": "",
+  "Local heartbeat interface does not exist.": "",
+  "Local heartbeat interface is down.": "",
   "Localization Settings": "",
   "Lock Dataset": "",
   "Lock Dataset {datasetName}?": "",
