@@ -121,8 +121,8 @@ export class ServiceSmbComponent implements OnInit {
       this.subscriptions.push(
         this.form.get('netbiosname_b').disabledWhile(
           this.ws.call('failover.licensed').pipe(
-            tap((isHa) => this.hasSecondController = isHa),
-            map((isHa) => !isHa),
+            tap((isHaLicensed) => this.hasSecondController = isHaLicensed),
+            map((isHaLicensed) => !isHaLicensed),
           ),
         ),
       );

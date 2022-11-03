@@ -14,8 +14,9 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./data-protection-card.component.scss'],
 })
 export class DataProtectionCardComponent implements OnInit {
-  readonly console = console;
   @Input() dataset: DatasetDetails;
+
+  readonly console = console;
 
   constructor(
     private slideIn: IxSlideInService,

@@ -2,13 +2,13 @@
 <mat-divider></mat-divider>
 <div mat-dialog-content class="tc-dialog-content">
   <div id="status">
-    <mat-icon *ngIf="tc.status == TrueCommandStatus.Connected" class="status-connected">
+    <mat-icon *ngIf="tc.status === TrueCommandStatus.Connected" class="status-connected">
       check_circle
     </mat-icon>
-    <mat-icon *ngIf="tc.status == TrueCommandStatus.Failed" class="status-failed">
+    <mat-icon *ngIf="tc.status === TrueCommandStatus.Failed" class="status-failed">
       cancel
     </mat-icon>
-    <mat-icon *ngIf="tc.status == TrueCommandStatus.Disabled" class="status-disabled">
+    <mat-icon *ngIf="tc.status === TrueCommandStatus.Disabled" class="status-disabled">
       pause_circle_filled
     </mat-icon>
     <span>{{ tc.status | translate }}</span>

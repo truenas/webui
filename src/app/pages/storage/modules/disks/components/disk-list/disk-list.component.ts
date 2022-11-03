@@ -163,16 +163,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     return actions as EntityTableAction[];
   }
 
-  dataHandler(entityList: EntityTableComponent): void {
-    this.diskUpdate(entityList);
-  }
-
-  diskUpdate(entityList: EntityTableComponent): void {
-    entityList.rows.forEach((disk) => {
-      disk.readable_size = filesize(disk.size, { standard: 'iec' });
-    });
-  }
-
   prerequisite(): Promise<boolean> {
     return lastValueFrom(
       forkJoin([
@@ -192,7 +182,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     );
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<Disk>): void {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
@@ -211,6 +201,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     return disks.map((disk) => ({
       ...disk,
       pool: this.getPoolColumn(disk),
+      readable_size: filesize(disk.size, { standard: 'iec' }),
     }));
   }
 

@@ -46,6 +46,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dialog.component';
 
 @NgModule({
   imports: [
@@ -93,6 +94,7 @@ import { LocaleService } from 'app/services/locale.service';
     SearchInputComponent,
     UpdateDialogComponent,
     ResilverProgressDialogComponent,
+    ShowLogsDialogComponent,
   ],
   providers: [
     LanguageService,
@@ -101,6 +103,7 @@ import { LocaleService } from 'app/services/locale.service';
   ],
   exports: [
     SearchInputComponent,
+    ShowLogsDialogComponent,
   ],
 })
 export class AppCommonModule {}

@@ -24,7 +24,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   routeAddTooltip = this.translate.instant('Add Unix (NFS) Share');
   routeEdit: string[] = ['sharing', 'nfs', 'edit'];
   protected routeDelete: string[] = ['sharing', 'nfs', 'delete'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<NfsShare>;
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No NFS Shares have been configured yet'),
@@ -61,7 +61,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     private translate: TranslateService,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<NfsShare>): void {
     this.entityList = entityList;
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

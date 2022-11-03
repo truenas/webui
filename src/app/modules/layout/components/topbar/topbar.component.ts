@@ -11,7 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -338,7 +337,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
-    if (info.status === HaStatusText.HaEnabled) {
+    if (info.hasHa) {
       this.haStatusText = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();

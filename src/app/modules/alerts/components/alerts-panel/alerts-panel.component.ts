@@ -32,7 +32,7 @@ export class AlertsPanelComponent implements OnInit {
   unreadAlerts$ = this.store$.select(selectUnreadAlerts);
   dismissedAlerts$ = this.store$.select(selectDismissedAlerts);
 
-  isHa = false;
+  isHaLicensed = false;
 
   readonly trackByAlertId: TrackByFunction<Alert> = (_, alert) => alert.id;
 
@@ -70,8 +70,8 @@ export class AlertsPanelComponent implements OnInit {
       return;
     }
 
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa: boolean) => {
-      this.isHa = isHa;
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed: boolean) => {
+      this.isHaLicensed = isHaLicensed;
       this.cdr.markForCheck();
     });
   }

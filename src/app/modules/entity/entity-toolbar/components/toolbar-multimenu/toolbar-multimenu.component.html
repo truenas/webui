@@ -47,16 +47,16 @@
           <span>{{ option.label | translate }}</span>
           <span *ngIf="option.labelIcon" class="icon-suffix {{ option.labelIconType }}">
             &nbsp;
-            <mat-icon *ngIf="!option.labelIconType || option.labelIconType == 'default'">
+            <mat-icon *ngIf="!option.labelIconType || option.labelIconType === 'default'">
               {{ option.labelIcon }}
             </mat-icon>
             <mat-icon
-              *ngIf="option.labelIconType && option.labelIconType == 'community'"
+              *ngIf="option.labelIconType && option.labelIconType === 'community'"
               fontSet="mdi-set"
               fontIcon="mdi-{{ option.labelIcon }}"
             ></mat-icon>
             <mat-icon
-              *ngIf="option.labelIconType && option.labelIconType == 'custom'"
+              *ngIf="option.labelIconType && option.labelIconType === 'custom'"
               [svgIcon]="option.labelIcon"
             ></mat-icon>
           </span>

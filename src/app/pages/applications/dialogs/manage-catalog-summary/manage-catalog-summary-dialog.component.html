@@ -57,7 +57,7 @@
       <div
         *ngFor="let item of filteredItems; let i = index"
         class="detail-row value-row"
-        [ngClass]="{ 'row-dark': i % 2 == 0, 'row-light': i % 2 == 1 }"
+        [ngClass]="{ 'row-dark': i % 2 === 0, 'row-light': i % 2 === 1 }"
       >
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="25%" class="item-train">

@@ -22,7 +22,7 @@
       </label>
     </div>
 
-    <mat-form-field *ngIf="config.inputType != 'file'">
+    <mat-form-field *ngIf="config.inputType !== 'file'">
       <div class="input-container">
         <span *ngIf="config.searchable" class="searchable">
           <mat-icon>search</mat-icon>

@@ -16,7 +16,11 @@ export class IxLabelHarness extends ComponentHarness {
   }
 
   async getLabel(): Promise<string> {
-    const label = await this.locatorFor('label')();
+    const label = await this.locatorForOptional('label')();
+    if (!label) {
+      return '';
+    }
+
     return label.text({ exclude: '.required' });
   }
 }

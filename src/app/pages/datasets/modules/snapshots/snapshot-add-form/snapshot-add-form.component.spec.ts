@@ -37,6 +37,7 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('zfs.snapshot.create'),
         mockCall('pool.dataset.query', mockDatasets),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
+        mockCall('pool.dataset.details'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
@@ -67,7 +68,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('zfs.snapshot.create', [
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.create', [
       {
         dataset: 'APPS',
         name: 'test-snapshot-name',
@@ -87,7 +88,7 @@ describe('SnapshotAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('zfs.snapshot.create', [
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.create', [
       {
         dataset: 'APPS',
         naming_schema: '%Y %H %d %M %m',
