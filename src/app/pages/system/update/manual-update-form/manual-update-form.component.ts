@@ -49,7 +49,7 @@ export class ManualUpdateFormComponent implements OnInit {
   currentVersion = '';
   fileLocationOptions$: Observable<Option[]>;
 
-  isHa = false;
+  isHaLicensed = false;
 
   constructor(
     private dialogService: DialogService,
@@ -106,8 +106,8 @@ export class ManualUpdateFormComponent implements OnInit {
 
   checkHaLicenseAndUpdateStatus(): void {
     if (this.systemService.isEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.isHa = isHa;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isHaLicensed = isHaLicensed;
         this.checkForUpdateRunning();
         this.cdr.markForCheck();
       });
@@ -130,7 +130,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   showRunningUpdate(jobId: number): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
     dialogRef.componentInstance.jobId = jobId;
@@ -164,7 +164,7 @@ export class ManualUpdateFormComponent implements OnInit {
       data: { title: helptext.manual_update_action },
       disableClose: true,
     });
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
 
@@ -175,7 +175,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
-      if (this.isHa) {
+      if (this.isHaLicensed) {
         this.finishHaUpdate();
       } else {
         this.finishNonHaUpdate();
@@ -202,7 +202,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   generateFormData(files: FileList, fileLocation: string): FormData {
     const formData = new FormData();
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       formData.append('data', JSON.stringify({
         method: 'failover.upgrade',
       }));

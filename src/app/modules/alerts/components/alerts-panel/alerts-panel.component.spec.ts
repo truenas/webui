@@ -96,8 +96,8 @@ describe('AlertsPanelComponent', () => {
   it('checks for HA status and passes it to the ix-alert', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.licensed');
 
-    expect(alertPanel.unreadAlertComponents[0].isHa).toBe(true);
-    expect(alertPanel.dismissedAlertComponents[0].isHa).toBe(true);
+    expect(alertPanel.unreadAlertComponents[0].isHaLicensed).toBe(true);
+    expect(alertPanel.dismissedAlertComponents[0].isHaLicensed).toBe(true);
   });
 
   it('shows a list of unread alerts', () => {

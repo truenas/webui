@@ -16,9 +16,9 @@
   </nav>
 
   <router-outlet>
-    <ix-rsync-configure *ngIf="activedTab == 'configure'"></ix-rsync-configure>
+    <ix-rsync-configure *ngIf="activedTab === 'configure'"></ix-rsync-configure>
     <ix-rsync-module-list
-      *ngIf="activedTab == 'rsync-module'"
+      *ngIf="activedTab === 'rsync-module'"
     ></ix-rsync-module-list>
   </router-outlet>
 </mat-card>

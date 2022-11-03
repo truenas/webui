@@ -309,11 +309,10 @@ module.exports = {
       "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {
         "@angular-eslint/template/attributes-order": ["error"],
+        "@angular-eslint/template/no-duplicate-attributes": ['error'],
 
         // TODO: To be enabled later
-        "@angular-eslint/template/no-duplicate-attributes": ['off'],
         '@angular-eslint/template/use-track-by-function': ['off'],
-        '@angular-eslint/template/eqeqeq': ['off'],
         '@angular-eslint/template/no-negated-async': ['off'],
       }
     }

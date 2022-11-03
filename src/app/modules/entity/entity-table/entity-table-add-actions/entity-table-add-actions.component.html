@@ -25,7 +25,7 @@
       <span
         class="reset-icon-wrapper"
         matSuffix
-        [class.invisible]="!filterValue || filterValue.length == 0"
+        [class.invisible]="!filterValue || filterValue.length === 0"
       >
         <mat-icon
           fontSet="mdi-set"
@@ -188,7 +188,7 @@
         {{ 'Add' | translate }}
       </button>
       <button
-        *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions == 1"
+        *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions === 1"
         mat-button
         color="primary"
         ix-auto

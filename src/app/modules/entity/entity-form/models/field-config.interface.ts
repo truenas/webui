@@ -197,7 +197,7 @@ export interface FormRadioConfig<P = unknown> extends BaseFieldConfig<P>{
 
 export interface FormRadioOption {
   label: string;
-  value: any;
+  value: unknown;
   hiddenFromDisplay?: boolean;
   tooltip?: string;
 }
@@ -298,7 +298,7 @@ export interface FormReadFileConfig<P = unknown> extends BaseFieldConfig<P> {
  */
 export interface FormInputListConfig<P = unknown> extends BaseFieldConfig<P> {
   type: 'input-list';
-  customEventMethod: (parent: any) => void;
+  customEventMethod: (parent: unknown) => void;
 }
 
 export type FieldConfig<P = unknown> =
