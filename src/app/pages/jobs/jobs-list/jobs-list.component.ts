@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -11,18 +12,17 @@ import {
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, EMPTY } from 'rxjs';
 import {
+  catchError,
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
@@ -47,7 +47,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
   dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
-  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments_logs'];
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs', 'actions'];
   expandedRow: Job;
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
@@ -63,6 +63,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   selector$ = new BehaviorSubject(selectJobs);
 
   readonly JobState = JobState;
+  readonly JobTab = JobTab;
   readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
 
   constructor(
@@ -123,8 +124,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onTabChange(tab: MatTabChangeEvent): void {
-    this.selectedIndex = tab.index;
+  onTabChange(tab: JobTab): void {
+    this.selectedIndex = tab;
     switch (this.selectedIndex) {
       case JobTab.Failed:
         this.selector$.next(selectFailedJobs);
@@ -146,25 +147,14 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   downloadLogs(job: Job): void {
-    const filename = `${job.id}.log`;
-    this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe({
-      next: ([_, url]) => {
-        const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(url, filename, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (file) => {
-              this.storage.downloadBlob(file, filename);
-            },
-            error: (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
-            },
-          });
-      },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
-    });
+    this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
+      switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
+      catchError((error: HttpErrorResponse) => {
+        this.dialogService.errorReport(error.name, error.message);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   onSearch(query: string): void {

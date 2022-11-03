@@ -34,7 +34,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   routeAdd: string[] = ['tasks', 'cron', 'add'];
   routeAddTooltip = this.translate.instant('Add Cron Job');
   routeEdit: string[] = ['tasks', 'cron', 'edit'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<CronjobRow>;
 
   columns = [
     { name: this.translate.instant('Users'), prop: 'user', always_display: true },
@@ -74,7 +74,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     private store$: Store<AppState>,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<CronjobRow>): void {
     this.entityList = entityList;
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -93,7 +93,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     cronForm.setCronForEdit(row);
   }
 
-  getActions(tableRow: CronjobRow): EntityTableAction[] {
+  getActions(tableRow: CronjobRow): EntityTableAction<CronjobRow>[] {
     return [
       {
         name: this.config.name,

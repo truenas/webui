@@ -70,7 +70,7 @@ export class TableService {
       });
   }
 
-  delete(table: TableComponent, item: Record<string, any>, action?: string): void {
+  delete(table: TableComponent, item: Record<string, unknown>, action?: string): void {
     const deleteMsg: string = table.tableConf.confirmDeleteDialog?.isMessageComplete
       ? ''
       : this.getDeleteMessage(table, item, action);

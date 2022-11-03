@@ -23,9 +23,9 @@
           fxFlex="100%"
           fxFlex.gt-xs="calc({{ field.width }} - 16px)"
           id="{{ fieldSet.name }}-{{ ii }}"
-          [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+          [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
         >
-          <div *ngIf="field.name == 'initiators'; else template">
+          <div *ngIf="field.name === 'initiators'; else template">
             <label *ngIf="isShow(field.name)">
               {{ field.placeholder }} ({{ config.initiators.length }})
             </label>

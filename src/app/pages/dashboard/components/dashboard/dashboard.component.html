@@ -10,7 +10,7 @@
       <button
         *ngIf="reorderMode"
         mat-button
-        [color]="'primary'"
+        color="primary"
         (click)="onConfirm()"
       >
         {{ 'Save' | translate }}
@@ -18,7 +18,7 @@
       <button
         *ngIf="!reorderMode && !isEmpty"
         mat-button
-        [color]="'primary'"
+        color="primary"
         (click)="onEnter()"
       >
         {{ 'Reorder' | translate }}
@@ -72,7 +72,7 @@
               ixDrag
               fxFlex="{{ widgetWidth }}px"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
@@ -87,7 +87,7 @@
               ixDrag
               fxFlex="{{ widgetWidth }}px"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
@@ -210,7 +210,7 @@
               *ngSwitchCase="'system information'"
               id="active"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
               [widgetSize]="medium"
               (back)="onMobileBack()"
@@ -221,7 +221,7 @@
               *ngSwitchCase="'system information(standby)'"
               id="passive"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
               [widgetSize]="medium"
               (back)="onMobileBack()"

@@ -49,7 +49,7 @@
           <div
             *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: originalOrder; let i = index"
             class="detail-row"
-            [ngClass]="{ 'row-dark': i % 2 == 0 }"
+            [ngClass]="{ 'row-dark': i % 2 === 0 }"
           >
             <div fxLayout="row" fxLayoutAlign="start center">
               <span fxFlex="10" class="text-center">{{ i + 1 }}</span>

@@ -59,7 +59,7 @@
               fxFlex="100%"
               fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
               id="{{ fieldSet.name }}-{{ ii }}"
-              [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+              [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
             >
               <div
                 dynamicField
