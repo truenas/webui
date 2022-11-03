@@ -38,6 +38,7 @@ export class RebootComponent implements OnInit {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
+      window.location.reload();
     } else {
       setTimeout(() => {
         this.isWSConnected();

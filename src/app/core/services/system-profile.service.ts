@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
-import helptext from '../../helptext/topbar';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"
@@ -65,27 +64,33 @@ export class SystemProfileService extends BaseService {
   constructor() {
     super();
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'SysInfoRequest',
-    }).subscribe((evt: CoreEvent) => {
-      const ready = this.dataAvailable(evt);
-      if (ready) {
-        this.respond({ name: 'SysInfoRequest', sender: this });
-      }
-    });
-
-    this.core.register({
-      observerClass: this,
-      eventName: 'HAStatusRequest',
-    }).subscribe((evt: CoreEvent) => {
-      if (this.cache && this.features.HA) {
-        // This is a TrueNAS box with HA support
-        if (this.ha_status && this.ha_status.status.length > 0) {
-          this.core.emit({ name: 'HA_Status', data: this.ha_status, sender: this });
+    this.core
+      .register({
+        observerClass: this,
+        eventName: 'SysInfoRequest',
+      })
+      .subscribe((evt: CoreEvent) => {
+        const ready = this.dataAvailable(evt);
+        if (ready) {
+          this.respond({ name: 'SysInfoRequest', sender: this });
         }
-      }
-    });
+      });
+
+    this.core
+      .register({
+        observerClass: this,
+        eventName: 'HAStatusRequest',
+      })
+      .subscribe((evt: CoreEvent) => {
+        if (this.features.HA) {
+          // This is a TrueNAS box with HA support
+          this.core.emit({
+            name: 'HA_Status',
+            data: this.ha_status,
+            sender: this,
+          });
+        }
+      });
 
     this.websocket.call('failover.disabled_reasons').subscribe((res) => {
       this.updateHA(res);
@@ -104,13 +109,15 @@ export class SystemProfileService extends BaseService {
   private dataAvailable(evt: CoreEvent) {
     if (this.cache && this.authenticated) {
       return true;
-    } if (!this.cache && this.authenticated) {
+    }
+    if (!this.cache && this.authenticated) {
       if (this.buffer.length == 0) {
         this.fetchProfile();
       }
       this.buffer.push(evt);
       return false;
-    } if (!this.authenticated) {
+    }
+    if (!this.authenticated) {
       return false;
     }
   }
@@ -157,12 +164,18 @@ export class SystemProfileService extends BaseService {
       return this.features;
     }
 
-    if (profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')) {
+    if (
+      profile.system_product.includes('FREENAS-MINI-3.0')
+      || profile.system_product.includes('TRUENAS-')
+    ) {
       this.features.enclosure = true;
     }
 
     // HIGH AVAILABILITY SUPPORT
-    if ((profile.license && profile.license.system_serial_ha) || profile.system_product == 'BHYVE') {
+    if (
+      (profile.license && profile.license.system_serial_ha)
+      || profile.system_product == 'BHYVE'
+    ) {
       this.features.HA = true;
     }
 
@@ -171,8 +184,6 @@ export class SystemProfileService extends BaseService {
 
   updateHA(res) {
     const ha_enabled = res.length == 0;
-    const ha_status_text = res.length == 0 ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
-
     const enabled_txt = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
 
     window.sessionStorage.setItem('ha_status', ha_enabled.toString());
