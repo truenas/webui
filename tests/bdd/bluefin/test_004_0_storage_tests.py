@@ -48,57 +48,57 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 @then('wipe one disk')
 def wipe_one_disk(driver):
     """wipe one disk"""
-#    import t_004_1_wipe_one_disk
-#    t_004_1_wipe_one_disk.test_wipe_one_disk(driver)
+    import t_004_1_wipe_one_disk
+    t_004_1_wipe_one_disk.test_wipe_one_disk(driver)
 
 
 @then('create pool for system dataset')
 def create_pool_for_system_dataset(driver):
     """create pool for system dataset"""
-#    import t_004_2_create_pool_for_system_dataset
-#    t_004_2_create_pool_for_system_dataset.test_create_pool_for_system_dataset(driver)
+    import t_004_2_create_pool_for_system_dataset
+    t_004_2_create_pool_for_system_dataset.test_create_pool_for_system_dataset(driver)
 
 
 @then(parsers.parse('setup ad with "{ad_ns}" "{ad_domain}" "{ad_user}" "{ad_password}" "{ca_ou}" "{cmd1}" "{ad_object1}" "{cmd2}" "{dataset_name}" "{group_name}"'))
 def setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name):
     """setup ad"""
-#    import t_004_3_setup_ad
-#    t_004_3_setup_ad.test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
+    import t_004_3_setup_ad
+    t_004_3_setup_ad.test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_password, ca_ou, cmd1, ad_object1, cmd2, dataset_name, group_name)
 
 
 @then(parsers.parse('create ad dataset with "{dataset_name}" "{group_name}"'))
 def create_ad_dataset(driver, dataset_name, group_name):
     """create ad dataset"""
-#    import t_004_4_create_ad_dataset
-#    t_004_4_create_ad_dataset.test_create_ad_dataset(driver, dataset_name, group_name)
+    import t_004_4_create_ad_dataset
+    t_004_4_create_ad_dataset.test_create_ad_dataset(driver, dataset_name, group_name)
 
 
 @then(parsers.parse('add acl item on tank with "{input}" "{user}"'))
 def add_acl_item_on_tank(driver, input, user):
     """add acl item on tank"""
-#    import t_004_5_add_acl_item_on_tank
-#    t_004_5_add_acl_item_on_tank.test_add_acl_item_on_tank(driver, input, user)
+    import t_004_5_add_acl_item_on_tank
+    t_004_5_add_acl_item_on_tank.test_add_acl_item_on_tank(driver, input, user)
 
 
 @then(parsers.parse('add acl item on system with "{input}" "{user}"'))
 def add_acl_item_on_system(driver, input, user):
     """add acl item on tank"""
-#    import t_004_6_add_acl_item_on_system
-#    t_004_6_add_acl_item_on_system.test_add_acl_item_on_system(driver, input, user)
+    import t_004_6_add_acl_item_on_system
+    t_004_6_add_acl_item_on_system.test_add_acl_item_on_system(driver, input, user)
 
 
 @then(parsers.parse('create smb share on system with "{systemsmbpath}" "{systemsmbname}" "{systemsmbdescription}" "{mysmbshare}" "{user}" "{password}"'))
 def create_smb_share_on_system(driver, nas_ip, root_password, systemsmbpath, systemsmbname, systemsmbdescription, mysmbshare, user, password):
     """create smb share on system with"""
-#    import t_004_7_create_smb_share_on_system
-#    t_004_7_create_smb_share_on_system.test_create_smb_share_on_system(driver, nas_ip, root_password, systemsmbpath, systemsmbname, systemsmbdescription, mysmbshare, user, password)
+    import t_004_7_create_smb_share_on_system
+    t_004_7_create_smb_share_on_system.test_create_smb_share_on_system(driver, nas_ip, root_password, systemsmbpath, systemsmbname, systemsmbdescription, mysmbshare, user, password)
 
 
 @then(parsers.parse('create smb share on tank with "{tanksmbpath}" "{tanksmbname}" "{tanksmbdescription}" "{mysmbshare}" "{user}" "{password}"'))
 def create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password):
     """test_create_smb_share_on_tank"""
-#    import t_004_8_create_smb_share_on_tank
-#    t_004_8_create_smb_share_on_tank.test_create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password)
+    import t_004_8_create_smb_share_on_tank
+    t_004_8_create_smb_share_on_tank.test_create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmbname, tanksmbdescription, mysmbshare, user, password)
 
 
 @then(parsers.parse('setup ldap with "{hostname}" "{base_DN}" "{bind_DN}" "{bind_password}" "{command}" "{user}"'))
@@ -174,8 +174,8 @@ def import_disk(driver):
 @then('create encrypted pool')
 def create_encrypted_pool(driver):
     """create encrypted pool"""
-#    import t_004_21_create_encrypted_pool
-#    t_004_21_create_encrypted_pool.test_create_encrypted_pool(driver)
+    import t_004_21_create_encrypted_pool
+    t_004_21_create_encrypted_pool.test_create_encrypted_pool(driver)
 
 
 @then('change encryption key')
