@@ -2,6 +2,8 @@
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
 import pytest
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from function import (
     wait_on_element,
     is_element_present,
@@ -53,33 +55,31 @@ def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
     """on the Dashboard, click Storage on the left sidebar."""
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Datasets"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Datasets"]').click()
 
 
 @then(parsers.parse('on the Storage page, click on the "{dataset_name}" 3 dots button,'))
 def on_the_storage_page_click_on_the_my_ad_dataset_3_dots_button(driver, dataset_name):
     """on the Storage page, click on the "my_ad_dataset" 3 dots button,."""
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
-    assert wait_on_element(driver, 7, f'//div[contains(text(),"{dataset_name}")]')
-    assert wait_on_element(driver, 7, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
+    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
+    assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')
+    driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
 
 
 @then('select View Permissions, and click on the pencil beside Dataset Permissions')
 def select_view_permissions_and_click_on_the_pencil_beside_dataset_permissions(driver):
     """select View Permissions, and click on the pencil beside Dataset Permissions."""
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[text()="Dataset Permissions"]')
-    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
+    assert wait_on_element(driver, 5, '//h3[text()="Permissions"]')
+    assert wait_on_element(driver, 5, '//a[*/text()=" Edit "]')
+    driver.find_element_by_xpath('//a[*/text()=" Edit "]').click()
 
 
 @then('on the Edit ACL page, click on Add Item')
 def on_the_edit_acl_page_click_on_add_item(driver):
     """on the Edit ACL page, click on Add Item."""
-    assert wait_on_element(driver, 7, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Add Item")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Add Item")]').click()
 
@@ -88,14 +88,13 @@ def on_the_edit_acl_page_click_on_add_item(driver):
 def the_new_acl_item_should_appear(driver):
     """the new ACL item should appear."""
     assert wait_on_element(driver, 7, '//div[text()="User - ?"]')
-    assert wait_on_element(driver, 7, '//mat-error[normalize-space(text())="User is required."]')
 
 
 @then('click on who select User')
 def click_on_who_select_user(driver):
     """click on who select User."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Who") and @id="tag"]//mat-select', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Who") and @id="tag"]//mat-select').click()
+    assert wait_on_element(driver, 7, '//ix-select[@formcontrolname="tag"]//mat-select', 'clickable')
+    driver.find_element_by_xpath('//ix-select[@formcontrolname="tag"]//mat-select').click()
     assert wait_on_element(driver, 5, '//mat-option[contains(.,"User")]', 'clickable')
     driver.find_element_by_xpath('//mat-option[contains(.,"User")]').click()
 
@@ -103,8 +102,9 @@ def click_on_who_select_user(driver):
 @then(parsers.parse('in User input, enter "{name}"'))
 def in_user_input_enter_ericb_and_select_ericbsd(driver, name):
     """in User input, enter "ericb" and select "ericbsd"."""
-    assert wait_on_element(driver, 7, '//input[@data-placeholder="User"]', 'inputable')
-    driver.find_element_by_xpath('//input[@data-placeholder="User"]').send_keys(name)
+    assert wait_on_element(driver, 7, '//ix-combobox[@formcontrolname="user"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="user"]//input').send_keys(name)
+    ActionChains(driver).send_keys(Keys.TAB).perform()
     assert wait_on_element(driver, 7, '//div[text()="User - ericbsd"]')
 
 
@@ -113,24 +113,22 @@ def click_the_save_button_should_be_returned_to_the_storage_page(driver):
     """click the Save button, should be returned to the Storage page."""
     assert wait_on_element(driver, 5, '//button[contains(.,"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element_disappear(driver, 60, '//h1[text()="Updating Dataset ACL"]')
+    assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
 
 
 @then(parsers.parse('click on the "{dataset_name}" 3 dots button, select view Permissions'))
 def click_on_the_my_acl_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
     """click on the "my_acl_dataset" 3 dots button, select view Permissions."""
-    assert wait_on_element(driver, 7, f'//div[contains(text(),"{dataset_name}")]')
-    assert wait_on_element(driver, 7, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
+    assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')
+    driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
 
 
 @then('the Dataset Permissions box should appear')
 def the_dataset_permissions_box_should_appear(driver):
     """the Dataset Permissions box should appear."""
-    assert wait_on_element(driver, 5, '//div[text()="Dataset Permissions"]')
+    assert wait_on_element(driver, 5, '//h3[text()="Permissions"]')
 
 
 @then(parsers.parse('verify the new ACL item for user "{name}" still exist'))
