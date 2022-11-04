@@ -29,7 +29,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
-    depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
+    #depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:
@@ -269,7 +269,7 @@ def after_click_storage_on_the_left_sidebar_storage(driver):
 def on_the_storage_page_click_on_the_dozer_3_dots_button_select_add_dataset(driver):
     """on the Storage page, click on the dozer 3 dots button, select Add Dataset."""
     assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
-    assert wait_on_element(driver, 7, '//span[text()="dozer" and contains(@class,"name")]')
+    assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
     driver.find_element_by_xpath('//ix-dataset-node[contains(.,"dozer")]/div').click()
     assert wait_on_element(driver, 7, '//span[text()="dozer" and contains(@class,"own-name")]')
     assert wait_on_element(driver, 5, '//button[contains(*/text(),"Add Dataset")]', 'clickable')
@@ -326,18 +326,22 @@ def on_the_edit_acl_select_the_user_name(driver, user_name):
     assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="owner"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-combobox[@formcontrolname="owner"]//input').clear()
     driver.find_element_by_xpath('//ix-combobox[@formcontrolname="owner"]//input').send_keys(user_name)
-    assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Apply Owner")]')
+    assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{user_name}")]', 'clickable')
+    driver.find_element_by_xpath(f'//mat-option[contains(.,"{user_name}")]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Apply Owner")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(.,"Apply Owner")]').click()
 
 
 @then(parsers.parse('select "{group_name}" for Group name'))
 def select_the_group_name(driver, group_name):
     """select "{group_name}" for Group name."""
-    assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="owner"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="owner"]//input').clear()
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="owner"]//input').send_keys(group_name)
-    assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Apply Group)]')
-    driver.find_element_by_xpath('//mat-checkbox[contains(.,"Apply Group)]').click()
+    assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="ownerGroup"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="ownerGroup"]//input').clear()
+    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="ownerGroup"]//input').send_keys(group_name)
+    assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{group_name}")]', 'clickable')
+    driver.find_element_by_xpath(f'//mat-option[contains(.,"{group_name}")]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Apply Group")]')
+    driver.find_element_by_xpath('//mat-checkbox[contains(.,"Apply Group")]').click()
 
 
 @then('click the Save Access Control List button, permission should be Save')
@@ -353,7 +357,7 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page(driver):
 def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
     """click on the "my_ad_dataset" 3 dots button, select View Permissions."""
     assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
-    assert wait_on_element(driver, 7, '//span[text()="dozer" and contains(@class,"name")]')
+    assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
     assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')
     driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
@@ -361,14 +365,13 @@ def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dat
     driver.execute_script("arguments[0].scrollIntoView();", element)
 
 
-@then(parsers.parse('on the permission box, verify that the user is "{use_name}"'))
+@then(parsers.parse('on the permission box, verify that the user is "{user_name}"'))
 def on_the_permission_box_verify_that_the_user_is_user_name(driver, user_name):
     """on the permission box, verify that the user is "{user_name}"."""
-    '//div[*/text()="Group:" and */text()="{user_name}"]'
-    assert wait_on_element(driver, 5, f'//div[*/text()="Owner:" and */text()="{user_name}"]')
+    assert wait_on_element(driver, 5, f'//div[text()="owner@ - {user_name}"]')
 
 
 @then(parsers.parse('verify the group name is "{group_name}"'))
 def verify_the_group_name_is_group_name(driver, group_name):
     """verify the group name is "{group_name}"."""
-    assert wait_on_element(driver, 5, f'//div[*/text()="Group:" and */text()="{group_name}"]')
+    assert wait_on_element(driver, 5, f'//div[text()="group@ - {group_name}"]')
