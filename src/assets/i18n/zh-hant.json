@@ -1400,6 +1400,8 @@
   "Loading": "",
   "Loading devices. Please wait.": "",
   "Local Master": "",
+  "Local heartbeat interface does not exist.": "",
+  "Local heartbeat interface is down.": "",
   "Localization Settings": "",
   "Locked by ancestor": "",
   "Locking Dataset": "",

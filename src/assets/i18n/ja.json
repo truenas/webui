@@ -1599,6 +1599,8 @@
   "Local User Download Bandwidth": "",
   "Local User Upload Bandwidth: ": "",
   "Local Users": "",
+  "Local heartbeat interface does not exist.": "",
+  "Local heartbeat interface is down.": "",
   "Locality": "",
   "Localization": "",
   "Localization Settings": "",
