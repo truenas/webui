@@ -49,7 +49,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   routeAddTooltip = this.translate.instant('Add Cloud Sync Task');
   routeEdit: string[] = ['tasks', 'cloudsync', 'edit'];
   wsDelete = 'cloudsync.delete' as const;
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<CloudSyncTaskUi>;
   asyncView = true;
   filterValue = '';
 
@@ -103,7 +103,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<CloudSyncTaskUi>): void {
     this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();

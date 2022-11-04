@@ -65,7 +65,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   catalogSyncJobIds: number[] = [];
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
-  protected entityList: EntityTableComponent;
+  protected entityList: EntityTableComponent<Catalog>;
 
   constructor(
     private mdDialog: MatDialog,
@@ -113,7 +113,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     }
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<Catalog>): void {
     this.entityList = entityList;
   }
 

@@ -215,7 +215,7 @@ export class CertificatesDashComponent implements OnInit {
                 hideCancel: true,
               });
             } else {
-              this.tableService.delete(table, row);
+              this.tableService.delete(table, row as unknown as Record<string, unknown>);
             }
           },
         },

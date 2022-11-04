@@ -34,7 +34,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   routeAdd: string[] = ['tasks', 'snapshot', 'add'];
   routeAddTooltip = this.translate.instant('Add Periodic Snapshot Task');
   routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<PeriodicSnapshotTaskUi>;
   asyncView = true;
   filterValue = '';
 
@@ -84,7 +84,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
     this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
