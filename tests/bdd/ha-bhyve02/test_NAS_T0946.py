@@ -320,8 +320,6 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
 @then('wipe all disk without a pool')
 def wipe_all_disk_without_a_pool(driver):
     """wipe all disk without a pool."""
-    # making a dynamic list of disk instead of using a static list
-    disk_list = []
     disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
     for disk_element in disk_elements:
         disk = disk_element.text

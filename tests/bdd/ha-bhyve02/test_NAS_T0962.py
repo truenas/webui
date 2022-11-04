@@ -23,7 +23,6 @@ from pytest_dependency import depends
 @scenario('features/NAS-T962.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_verify_active_directory_works_after_failover_with_new_system_dataset(driver):
     """Verify Active Directory works after failover with new system dataset."""
-    pass
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
@@ -257,17 +256,17 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
 
 
-@then('after click Storage on the left sidebar Storage')
-def after_click_storage_on_the_left_sidebar_storage(driver):
-    """after click Storage on the left sidebar Storage."""
+@then('after click Dataset on the left sidebar')
+def after_click_dataset_on_the_left_sidebar(driver):
+    """after click Dataset on the left sidebar."""
     assert wait_on_element(driver, 20, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Datasets"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Datasets"]').click()
 
 
-@then('on the Storage page, click on the dozer 3 dots button, select Add Dataset')
-def on_the_storage_page_click_on_the_dozer_3_dots_button_select_add_dataset(driver):
-    """on the Storage page, click on the dozer 3 dots button, select Add Dataset."""
+@then('on the Dataset page, click on the dozer tree and click Add Dataset')
+def on_the_dataset_page_click_on_the_dozer_tree_and_click_add_dataset(driver):
+    """on the Dataset page, click on the dozer tree and click Add Dataset."""
     assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
     assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
     driver.find_element_by_xpath('//ix-dataset-node[contains(.,"dozer")]/div').click()
@@ -276,9 +275,9 @@ def on_the_storage_page_click_on_the_dozer_3_dots_button_select_add_dataset(driv
     driver.find_element_by_xpath('//button[contains(*/text(),"Add Dataset")]').click()
 
 
-@then(parsers.parse('on the Add Dataset page, input the dataset name "{dataset_name}"'))
-def on_the_add_dataset_page_input_the_dataset_name_my_acl_dataset(driver, dataset_name):
-    """on the Add Dataset page, input the dataset name "my_acl_dataset"."""
+@then(parsers.parse('on the Add Dataset slide, input Name "{dataset_name}" and Share Type SMB'))
+def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_name):
+    """on the Add Dataset slide, input Name "my_ad_dataset" and Share Type SMB."""
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
     assert wait_on_element(driver, 5, '//div[@id="name"]//textarea', 'inputable')
     driver.find_element_by_xpath('//div[@id="name"]//textarea').clear()
@@ -289,39 +288,28 @@ def on_the_add_dataset_page_input_the_dataset_name_my_acl_dataset(driver, datase
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
 
 
-@then(parsers.parse('click Summit the "{dataset_name}" data should be created'))
-def click_summit_the_my_acl_dataset_data_should_be_created(driver, dataset_name):
-    """click Summit the "my_acl_dataset" data should be created."""
+@then(parsers.parse('click Save the "{dataset_name}" data should be created'))
+def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
+    """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, '//button[*/text()=" Save "]', 'clickable')
     driver.find_element_by_xpath('//button[*/text()=" Save "]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
 
 
-@then(parsers.parse('click on the "{dataset_name}" 3 dots button, select View Permissions'))
-def click_on_the_my_acl_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
-    """click on the "my_acl_dataset" 3 dots button, select View Permissions."""
+@then(parsers.parse('click on the "{dataset_name}" tree, click on Edit beside Permissions'))
+def click_on_the_my_ad_dataset_tree_click_on_edit_beside_permissions(driver, dataset_name):
+    """click on the "my_ad_dataset" tree, click on Edit beside Permissions."""
     assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')
     driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
-
-
-@then('the Dataset Permissions side box should open')
-def the_dataset_permissions_side_box_should_open(driver):
-    """the Dataset Permissions side box should open."""
-    element = driver.find_element_by_xpath('//h3[text()="Permissions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-
-
-@then('click on the pencil beside Dataset Permissions')
-def click_on_the_pencil_beside_dataset_permissions(driver):
-    """click on the pencil beside Dataset Permissions."""
+    assert wait_on_element(driver, 5, '//h3[text()="Permissions"]')
     assert wait_on_element(driver, 5, '//a[*/text()=" Edit "]')
     driver.find_element_by_xpath('//a[*/text()=" Edit "]').click()
 
 
-@then(parsers.parse('on the Edit ACL, select "{user_name}" for User name'))
-def on_the_edit_acl_select_the_user_name(driver, user_name):
-    """On the Edit ACL, select "{user_name}" for User name."""
+@then(parsers.parse('on the Edit ACL page, input "{user_name}" for User name'))
+def on_the_edit_acl_input_the_user_name(driver, user_name):
+    """On the Edit ACL, input "{user_name}" for User name."""
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
     assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="owner"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-combobox[@formcontrolname="owner"]//input').clear()
@@ -332,9 +320,9 @@ def on_the_edit_acl_select_the_user_name(driver, user_name):
     driver.find_element_by_xpath('//mat-checkbox[contains(.,"Apply Owner")]').click()
 
 
-@then(parsers.parse('select "{group_name}" for Group name'))
-def select_the_group_name(driver, group_name):
-    """select "{group_name}" for Group name."""
+@then(parsers.parse('input "{group_name}" for Group name'))
+def input_the_group_name(driver, group_name):
+    """input "{group_name}" for Group name."""
     assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="ownerGroup"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-combobox[@formcontrolname="ownerGroup"]//input').clear()
     driver.find_element_by_xpath('//ix-combobox[@formcontrolname="ownerGroup"]//input').send_keys(group_name)
@@ -344,30 +332,30 @@ def select_the_group_name(driver, group_name):
     driver.find_element_by_xpath('//mat-checkbox[contains(.,"Apply Group")]').click()
 
 
-@then('click the Save Access Control List button, permission should be Save')
-def click_the_save_button_which_should_be_returned_to_the_storage_page(driver):
-    """click the Save Access Control List button, permission should be Save."""
+@then('click the Save Access Control List button')
+def click_the_save_access_control_list_button(driver):
+    """click the Save Access Control List button."""
     assert wait_on_element(driver, 5, '//button[contains(*/text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(*/text(),"Save Access Control List")]').click()
     time.sleep(1)
     assert wait_on_element_disappear(driver, 60, '//h1[text()="Updating Dataset ACL"]')
 
 
-@then(parsers.parse('click on the "{dataset_name}" 3 dots button, select View Permissions'))
-def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
-    """click on the "my_ad_dataset" 3 dots button, select View Permissions."""
+@then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))
+def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
+    """on the Dataset page click on the "my_ad_dataset" tree."""
     assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
     assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
     assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')
     driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
+
+
+@then(parsers.parse('on the permission card, verify the user is "{user_name}"'))
+def on_the_permission_card_verify_the_user_is_user_name(driver, user_name):
+    """on the permission card, verify the user is "{user_name}"."""
     element = driver.find_element_by_xpath('//h3[text()="Permissions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-
-
-@then(parsers.parse('on the permission box, verify that the user is "{user_name}"'))
-def on_the_permission_box_verify_that_the_user_is_user_name(driver, user_name):
-    """on the permission box, verify that the user is "{user_name}"."""
     assert wait_on_element(driver, 5, f'//div[text()="owner@ - {user_name}"]')
 
 
