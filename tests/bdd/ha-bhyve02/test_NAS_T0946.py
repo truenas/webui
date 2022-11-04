@@ -325,24 +325,22 @@ def wipe_all_disk_without_a_pool(driver):
     disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
     for disk_element in disk_elements:
         disk = disk_element.text
-        if is_element_present(driver, f'//tr[contains(.,"{disk}")]//div[text()="N/A"]'):
-            disk_list.append(disk)
-    for disk in disk_list:
-        assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
-        driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
-        assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
-        driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
-        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//div[@class="form-actions"]//button[contains(.,"Wipe")]', 'clickable')
-        driver.find_element_by_xpath('//div[@class="form-actions"]//button[contains(.,"Wipe")]').click()
-        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
-        assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 5, '//button[contains(.,"Close")]', 'clickable')
-        driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
+        if is_element_present(driver, f'//tr[contains(.,"{disk}")]//div[contains(text(),"N/A") or contains(text(),"Exported")]'):
+            assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
+            driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
+            assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
+            driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
+            assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
+            assert wait_on_element(driver, 7, '//div[@class="form-actions"]//button[contains(.,"Wipe")]', 'clickable')
+            driver.find_element_by_xpath('//div[@class="form-actions"]//button[contains(.,"Wipe")]').click()
+            assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
+            assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
+            driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+            assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+            assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
+            assert wait_on_element(driver, 5, '//button[contains(.,"Close")]', 'clickable')
+            driver.find_element_by_xpath('//button[contains(.,"Close")]').click()
 
 
 @then('navigate to Storage click Create')
