@@ -97,8 +97,12 @@
   }
 
   .expansion-content {
-    overflow-y: auto;
+    overflow: hidden auto;
     padding-top: 16px;
+
+    ix-job-item {
+      margin: 0 -12px;
+    }
   }
 
   .logo {

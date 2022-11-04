@@ -30,17 +30,20 @@ type BulkUpgradeArguments = ['chart.release.upgrade', ChartReleaseUpgradeParams]
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartBulkUpgradeComponent {
+  @ViewChild(MatAccordion) accordion: MatAccordion;
+
   form = this.fb.group<{ [key: string]: string }>({});
   isJobCompleted = false;
   wasSubmitted = false;
+  selectedJob: Job<CoreBulkResponse<ChartRelease>[], BulkUpgradeArguments>;
   bulkItems = new Map<string, BulkListItem<ChartRelease>>();
   upgradeSummaryMap = new Map<string, UpgradeSummary>();
   optionsMap = new Map<string, Observable<Option[]>>();
   loadingMap = new Map<string, boolean>();
-  imagePlaceholder = appImagePlaceholder;
-  @ViewChild(MatAccordion) accordion: MatAccordion;
+
   readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
   readonly JobState = JobState;
+  readonly imagePlaceholder = appImagePlaceholder;
 
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;
@@ -70,18 +73,18 @@ export class ChartBulkUpgradeComponent {
 
   onSubmit(): void {
     this.wasSubmitted = true;
-    this.accordion.closeAll();
+    // this.accordion.closeAll();
 
     const payload: ChartReleaseUpgradeParams[] = [];
     Object.entries(this.form.value).forEach(([name, version]) => {
       this.bulkItems.set(name, { ...this.bulkItems.get(name), state: BulkListItemState.Running });
-      this.loadingMap.set(name, true);
       this.form.get(name).disable();
       payload.push([name, { item_version: version }]);
     });
 
     this.ws.job('core.bulk', ['chart.release.upgrade', payload]).pipe(
       tap((job: Job<CoreBulkResponse<ChartRelease>[], BulkUpgradeArguments>) => {
+        this.selectedJob = job;
         if (job?.progress?.percent) {
           const name = job.arguments[1][0][0];
           if (this.bulkItems.has(name)) {
@@ -124,10 +127,6 @@ export class ChartBulkUpgradeComponent {
     });
   }
 
-  originalOrder(): number {
-    return 0;
-  }
-
   hasUpdatesForImages(name: string): boolean {
     const summary = this.upgradeSummaryMap.get(name);
     if (!summary) {
@@ -137,7 +136,7 @@ export class ChartBulkUpgradeComponent {
   }
 
   onExpand(row: KeyValue<string, BulkListItem<ChartRelease>>): void {
-    if (this.upgradeSummaryMap.has(row.key)) {
+    if (this.upgradeSummaryMap.has(row.key) || this.wasSubmitted) {
       return;
     }
 
@@ -179,5 +178,9 @@ export class ChartBulkUpgradeComponent {
     ).subscribe(([app, version]) => {
       this.getUpgradeSummary(app, version);
     });
+  }
+
+  originalOrder(): number {
+    return 0;
   }
 }

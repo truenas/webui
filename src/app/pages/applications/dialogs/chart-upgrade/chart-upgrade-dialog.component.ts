@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import {
   Component, Inject,
 } from '@angular/core';
@@ -6,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
@@ -42,7 +44,7 @@ export class ChartUpgradeDialogComponent {
 
     if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
       this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
-        if (!(availableVersion.version in this.versionOptions)) {
+        if (!this.versionOptions.has(availableVersion.version)) {
           this.versionOptions.set(availableVersion.version, {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
@@ -60,7 +62,7 @@ export class ChartUpgradeDialogComponent {
   }
 
   hasUpdateImages(): boolean {
-    return this.selectedVersion.container_images_to_update
+    return this.selectedVersion?.container_images_to_update
       && Object.keys(this.selectedVersion.container_images_to_update).length > 0;
   }
 
@@ -87,5 +89,9 @@ export class ChartUpgradeDialogComponent {
 
   originalOrder(): number {
     return 0;
+  }
+
+  containerImagesOrder(a: KeyValue<string, ChartContainerImage>, b: KeyValue<string, ChartContainerImage>): number {
+    return a.value.id.localeCompare(b.value.id);
   }
 }

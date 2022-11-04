@@ -1,7 +1,7 @@
 import {
   Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -54,11 +54,9 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   chartItems = new Map<string, ChartRelease>();
   @Output() switchTab = new EventEmitter<string>();
 
-  private dialogRef: MatDialogRef<EntityJobComponent>;
-  imagePlaceholder = appImagePlaceholder;
-
+  readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
-  chartsSubscription: Subscription;
+  private chartsSubscription: Subscription;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -298,18 +296,18 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
           } as ChartUpgradeDialogConfig,
         });
         dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
-          this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+          const dialogRef = this.mdDialog.open(EntityJobComponent, {
             data: {
               title: helptext.charts.upgrade_dialog.job,
             },
           });
-          this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
           });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
             this.dialogService.closeAllDialogs();
             new EntityUtils().handleWsError(this, error, this.dialogService);
           });
@@ -416,14 +414,14 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   executeDelete(name: string, deleteUnusedImages: boolean): void {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.charts.delete_dialog.job,
       },
     });
-    this.dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+    dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refreshChartReleases();
     });
@@ -432,7 +430,10 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   onBulkUpgrade(): void {
     const selectedAppsNames = this.getSelectedItems();
     const apps = selectedAppsNames.map((name) => this.chartItems.get(name));
-    const dialogRef = this.mdDialog.open(ChartBulkUpgradeComponent, { data: apps });
+    const dialogRef = this.mdDialog.open(ChartBulkUpgradeComponent, {
+      disableClose: true,
+      data: apps,
+    });
 
     dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.refreshChartReleases();
@@ -446,14 +447,14 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       title: helptext.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      const dialogRef = this.mdDialog.open(EntityJobComponent, {
         data: {
           title: helptext.charts.delete_dialog.job,
         },
       });
-      this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedItems.map((item) => [item])]);
-      this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
+      dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedItems.map((item) => [item])]);
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
         (job: Job<CoreBulkResponse[]>) => {
           this.dialogService.closeAllDialogs();
           let message = '';

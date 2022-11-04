@@ -48,11 +48,14 @@
 
       <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
         <ix-select
+          *ngIf="!wasSubmitted"
           [formControlName]="bulkItem.key"
           [label]="'Version to be upgraded to' | translate"
           [required]="true"
           [options]="optionsMap.get(bulkItem.key)"
         ></ix-select>
+
+        <ix-job-item *ngIf="selectedJob" [job]="selectedJob"></ix-job-item>
 
         <mat-accordion class="details-list" displayMode="flat">
           <mat-expansion-panel>
