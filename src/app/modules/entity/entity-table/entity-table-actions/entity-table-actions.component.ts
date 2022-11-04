@@ -10,7 +10,7 @@ import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.
   templateUrl: './entity-table-actions.component.html',
 })
 export class EntityTableActionsComponent implements OnInit, OnChanges {
-  @Input() entity: EntityTableComponent;
+  @Input() entity: EntityTableComponent<Record<string, unknown>>;
   @Input() row: Record<string, unknown>;
   @Input() iconName = 'more_vert';
   @Input() action: string;

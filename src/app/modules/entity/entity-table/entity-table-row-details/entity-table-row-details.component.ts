@@ -13,7 +13,7 @@ import { TaskService } from 'app/services';
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() config: Record<string, unknown>;
-  @Input() parent: EntityTableComponent;
+  @Input() parent: EntityTableComponent<Record<string, unknown>>;
 
   columns: EntityTableColumn[] = [];
   actions: EntityTableAction[] = [];

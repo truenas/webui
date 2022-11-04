@@ -15,13 +15,13 @@ import {
   DatasetChecksum,
   DatasetEncryptionType, DatasetRecordSize,
   DatasetShareType,
-  DatasetSync, DatasetSnapdev,
+  DatasetSync, DatasetSnapdev, DatasetSnapdir,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { inherit } from 'app/enums/with-inherit.enum';
+import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -29,13 +29,13 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { FormSelectOption } from 'app/modules/entity/entity-form/models/form-select-option.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -1254,47 +1254,47 @@ export class DatasetFormComponent implements FormConfiguration {
             });
 
             const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
-            const syncInherit: Option[] = [{ label: `Inherit (${pkDataset[0].sync.rawvalue})`, value: inherit }];
+            const syncInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].sync.rawvalue})`, value: inherit }];
             sync.options = syncInherit.concat(sync.options);
             entityForm.formGroup.controls['sync'].setValue(inherit);
 
             const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
-            const compressionInherit: Option[] = [{ label: `Inherit (${pkDataset[0].compression.rawvalue})`, value: inherit }];
+            const compressionInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].compression.rawvalue})`, value: inherit }];
             compression.options = compressionInherit.concat(compression.options);
             entityForm.formGroup.controls['compression'].setValue(inherit);
 
             const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
-            const deduplicationInherit: Option[] = [{ label: `Inherit (${pkDataset[0].deduplication.rawvalue})`, value: inherit }];
+            const deduplicationInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].deduplication.rawvalue})`, value: inherit }];
             deduplication.options = deduplicationInherit.concat(deduplication.options);
             entityForm.formGroup.controls['deduplication'].setValue(inherit);
 
             const checksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-            const checksumInherit = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: inherit }];
+            const checksumInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].checksum.rawvalue})`, value: inherit }];
             checksum.options = checksumInherit.concat(checksum.options);
             entityForm.formGroup.controls['checksum'].setValue(inherit);
 
             const exec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
-            const execInherit: Option[] = [{ label: `Inherit (${pkDataset[0].exec.rawvalue})`, value: inherit }];
+            const execInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].exec.rawvalue})`, value: inherit }];
             exec.options = execInherit.concat(exec.options);
             entityForm.formGroup.controls['exec'].setValue(inherit);
 
             const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
-            const readonlyInherit: Option[] = [{ label: `Inherit (${pkDataset[0].readonly.rawvalue})`, value: inherit }];
+            const readonlyInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].readonly.rawvalue})`, value: inherit }];
             readonly.options = readonlyInherit.concat(readonly.options);
             entityForm.formGroup.controls['readonly'].setValue(inherit);
 
             const atime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
-            const atimeInherit: Option[] = [{ label: `Inherit (${pkDataset[0].atime.rawvalue})`, value: inherit }];
+            const atimeInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].atime.rawvalue})`, value: inherit }];
             atime.options = atimeInherit.concat(atime.options);
             entityForm.formGroup.controls['atime'].setValue(inherit);
 
             const snapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
-            const snapdevInherit: Option[] = [{ label: `Inherit (${pkDataset[0].snapdev.rawvalue})`, value: inherit }];
+            const snapdevInherit: FormSelectOption[] = [{ label: `Inherit (${pkDataset[0].snapdev.rawvalue})`, value: inherit }];
             snapdev.options = snapdevInherit.concat(snapdev.options);
             entityForm.formGroup.controls['snapdev'].setValue(inherit);
 
             const specialSmallBlockSize = _.find(this.fieldConfig, { name: 'special_small_block_size' }) as FormSelectConfig;
-            const specialSmallBlockSizeInherit: Option[] = [{
+            const specialSmallBlockSizeInherit: FormSelectOption[] = [{
               label: `Inherit (${pkDataset[0].special_small_block_size.value})`,
               value: inherit,
             }];
@@ -1303,7 +1303,7 @@ export class DatasetFormComponent implements FormConfiguration {
 
             const recordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
             this.storageService.convertHumanStringToNum(pkDataset[0].recordsize.value);
-            const recordsizeInherit: Option[] = [{ label: `Inherit (${this.storageService.humanReadable})`, value: inherit }];
+            const recordsizeInherit: FormSelectOption[] = [{ label: `Inherit (${this.storageService.humanReadable})`, value: inherit }];
             recordsize.options = recordsizeInherit.concat(recordsize.options);
             entityForm.formGroup.controls['recordsize'].setValue(inherit);
 
@@ -1330,7 +1330,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 }
 
                 const editSync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
-                const editSyncCollection: Option[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: inherit }];
+                const editSyncCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.sync.rawvalue})`, value: inherit }];
                 editSync.options = editSyncCollection.concat(editSync.options);
                 let syncValue = pkDataset[0].sync.value;
                 if (pkDataset[0].sync.source === ZfsPropertySource.Default) {
@@ -1339,7 +1339,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['sync'].setValue(syncValue);
 
                 const editCompression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
-                const editCompressionCollection: Option[] = [{ label: `Inherit (${this.parentDataset.compression.rawvalue})`, value: inherit }];
+                const editCompressionCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.compression.rawvalue})`, value: inherit }];
                 editCompression.options = editCompressionCollection.concat(editCompression.options);
                 let compressionValue = pkDataset[0].compression.value;
                 if ([
@@ -1351,7 +1351,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['compression'].setValue(compressionValue);
 
                 const editDeduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
-                const editDeduplicationCollection: Option[] = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: inherit }];
+                const editDeduplicationCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.deduplication.rawvalue})`, value: inherit }];
                 editDeduplication.options = editDeduplicationCollection.concat(editDeduplication.options);
                 let deduplicationValue = pkDataset[0].deduplication.value;
                 if (
@@ -1362,7 +1362,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['deduplication'].setValue(deduplicationValue);
 
                 const editExec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
-                const editExecCollection: Option[] = [{ label: `Inherit (${this.parentDataset.exec.rawvalue})`, value: inherit }];
+                const editExecCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.exec.rawvalue})`, value: inherit }];
                 editExec.options = editExecCollection.concat(editExec.options);
                 let execValue = pkDataset[0].exec.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].exec.source)) {
@@ -1371,7 +1371,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['exec'].setValue(execValue);
 
                 const editChecksum = _.find(this.fieldConfig, { name: 'checksum' }) as FormSelectConfig;
-                const editChecksumCollection = [{ label: `Inherit (${this.parentDataset.checksum.rawvalue})`, value: inherit }];
+                const editChecksumCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.checksum.rawvalue})`, value: inherit }];
                 editChecksum.options = editChecksumCollection.concat(editChecksum.options);
                 let checksumValue = pkDataset[0].checksum.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].checksum.source)) {
@@ -1380,7 +1380,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['checksum'].setValue(checksumValue);
 
                 const editReadonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
-                const editReadonlyCollection: Option[] = [{ label: `Inherit (${this.parentDataset.readonly.rawvalue})`, value: inherit }];
+                const editReadonlyCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.readonly.rawvalue})`, value: inherit }];
                 editReadonly.options = editReadonlyCollection.concat(editReadonly.options);
                 let readonlyValue = pkDataset[0].readonly.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].readonly.source)) {
@@ -1389,7 +1389,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['readonly'].setValue(readonlyValue);
 
                 const editAtime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
-                const editAtimeCollection: Option[] = [{ label: `Inherit (${this.parentDataset.atime.rawvalue})`, value: inherit }];
+                const editAtimeCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.atime.rawvalue})`, value: inherit }];
                 editAtime.options = editAtimeCollection.concat(editAtime.options);
                 let atimeValue = pkDataset[0].atime.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].atime.source)) {
@@ -1398,7 +1398,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['atime'].setValue(atimeValue);
 
                 const editSnapdev = _.find(this.fieldConfig, { name: 'snapdev' }) as FormSelectConfig;
-                const editSnapdevCollection: Option[] = [{ label: `Inherit (${this.parentDataset.snapdev.rawvalue})`, value: inherit }];
+                const editSnapdevCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.snapdev.rawvalue})`, value: inherit }];
                 editSnapdev.options = editSnapdevCollection.concat(editSnapdev.options);
                 let snapdevValue = pkDataset[0].snapdev.value;
                 if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pkDataset[0].snapdev.source)) {
@@ -1407,7 +1407,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 entityForm.formGroup.controls['snapdev'].setValue(snapdevValue);
 
                 const specialSmallBlockSize = _.find(this.fieldConfig, { name: 'special_small_block_size' }) as FormSelectConfig;
-                const specialSmallBlockSizeCollection: Option[] = [{ label: `Inherit (${this.parentDataset.special_small_block_size.value})`, value: inherit }];
+                const specialSmallBlockSizeCollection: FormSelectOption[] = [{ label: `Inherit (${this.parentDataset.special_small_block_size.value})`, value: inherit }];
                 specialSmallBlockSize.options = specialSmallBlockSizeCollection.concat(specialSmallBlockSize.options);
                 let specialSmallBlockSizeValue: number | string = Number(
                   pkDataset[0].special_small_block_size.rawvalue,
@@ -1425,7 +1425,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   ? `${this.parentDataset.recordsize.value.slice(0, -1)} ${lastChar}iB`
                   : this.parentDataset.recordsize.value;
                 const editRecordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
-                const editRecordsizeCollection: Option[] = [{ label: `Inherit (${formattedLabel})`, value: inherit }];
+                const editRecordsizeCollection: FormSelectOption[] = [{ label: `Inherit (${formattedLabel})`, value: inherit }];
                 editRecordsize.options = editRecordsizeCollection.concat(editRecordsize.options);
                 let recordsizeValue = pkDataset[0].recordsize.value;
                 if ([
@@ -1447,14 +1447,15 @@ export class DatasetFormComponent implements FormConfiguration {
     }
   }
 
-  getFieldValueOrRaw(field: ZfsProperty<unknown>): any {
+  getFieldValueOrRaw(field: ZfsProperty<unknown>): string {
     if (field === undefined || field.value === undefined) {
-      return field;
+      // TODO: Probably meant to return undefined.
+      return field as unknown as string;
     }
     return field.value;
   }
 
-  getFieldValueOrNone(field: ZfsProperty<unknown>): any {
+  getFieldValueOrNone(field: ZfsProperty<unknown>): string {
     if (field === undefined || field.value === undefined) {
       return null;
     }
@@ -1475,19 +1476,19 @@ export class DatasetFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(wsResponse: Dataset): DatasetFormData {
     this.dataset = wsResponse;
     const quotaWarning = this.getFieldValueOrNone(wsResponse.quota_warning)
-      ? this.getFieldValueOrNone(wsResponse.quota_warning)
+      ? Number(this.getFieldValueOrNone(wsResponse.quota_warning))
       : this.warning;
     const quotaWarningInherit = this.isInherited(wsResponse.quota_warning, quotaWarning);
     const quotaCritical = this.getFieldValueOrNone(wsResponse.quota_critical)
-      ? this.getFieldValueOrNone(wsResponse.quota_critical)
+      ? Number(this.getFieldValueOrNone(wsResponse.quota_critical))
       : this.critical;
     const quotaCriticalInherit = this.isInherited(wsResponse.quota_critical, quotaCritical);
     const refquotaWarning = this.getFieldValueOrNone(wsResponse.refquota_warning)
-      ? this.getFieldValueOrNone(wsResponse.refquota_warning)
+      ? Number(this.getFieldValueOrNone(wsResponse.refquota_warning))
       : this.warning;
     const refquotaWarningInherit = this.isInherited(wsResponse.refquota_warning, refquotaWarning);
     const refquotaCritical = this.getFieldValueOrNone(wsResponse.refquota_critical)
-      ? this.getFieldValueOrNone(wsResponse.refquota_critical)
+      ? Number(this.getFieldValueOrNone(wsResponse.refquota_critical))
       : this.critical;
     const refquotaCriticalInherit = this.isInherited(wsResponse.refquota_critical, refquotaCritical);
     const sizeValues: { [field in SizeField]?: string | number } = {};
@@ -1503,18 +1504,18 @@ export class DatasetFormComponent implements FormConfiguration {
 
     const returnValue: DatasetFormData = {
       name: wsResponse.name,
-      atime: this.getFieldValueOrRaw(wsResponse.atime),
+      atime: this.getFieldValueOrRaw(wsResponse.atime) as WithInherit<OnOff>,
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
-      acltype: this.getFieldValueOrRaw(wsResponse.acltype),
-      aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
+      acltype: this.getFieldValueOrRaw(wsResponse.acltype) as DatasetAclType,
+      aclmode: this.getFieldValueOrRaw(wsResponse.aclmode) as AclMode,
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
       comments: wsResponse.comments?.source === ZfsPropertySource.Local
         ? wsResponse.comments.value
         : undefined,
       compression: this.getFieldValueOrRaw(wsResponse.compression),
-      copies: this.getFieldValueOrRaw(wsResponse.copies),
-      deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-      checksum: this.getFieldValueOrRaw(wsResponse.checksum),
+      copies: Number(this.getFieldValueOrRaw(wsResponse.copies)),
+      deduplication: this.getFieldValueOrRaw(wsResponse.deduplication) as DeduplicationSetting,
+      checksum: this.getFieldValueOrRaw(wsResponse.checksum) as DatasetChecksum,
       quota_warning: quotaWarning,
       quota_warning_inherit: quotaWarningInherit,
       quota_critical: quotaCritical,
@@ -1524,15 +1525,15 @@ export class DatasetFormComponent implements FormConfiguration {
       refquota_critical: refquotaCritical,
       refquota_critical_inherit: refquotaCriticalInherit,
       quota: this.originalHumanSize['quota'] as number,
-      readonly: this.getFieldValueOrRaw(wsResponse.readonly),
-      exec: this.getFieldValueOrRaw(wsResponse.exec),
-      recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
+      readonly: this.getFieldValueOrRaw(wsResponse.readonly) as WithInherit<OnOff>,
+      exec: this.getFieldValueOrRaw(wsResponse.exec) as WithInherit<OnOff>,
+      recordsize: this.getFieldValueOrRaw(wsResponse.recordsize) as WithInherit<DatasetRecordSize>,
       refquota: this.originalHumanSize['refquota'] as number,
       refreservation: this.originalHumanSize['refreservation'] as number,
       reservation: this.originalHumanSize['reservation'] as number,
-      snapdev: this.getFieldValueOrRaw(wsResponse.snapdev),
-      snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
-      sync: this.getFieldValueOrRaw(wsResponse.sync),
+      snapdev: this.getFieldValueOrRaw(wsResponse.snapdev) as DatasetSnapdev,
+      snapdir: this.getFieldValueOrRaw(wsResponse.snapdir) as DatasetSnapdir,
+      sync: this.getFieldValueOrRaw(wsResponse.sync) as DatasetSync,
       special_small_block_size: specialSmallBlockSize,
     };
 

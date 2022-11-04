@@ -236,9 +236,9 @@ export class NetworkConfigurationComponent implements OnInit {
     );
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.hostnameB.hidden = !isHa;
-        this.hostnameVirtual.hidden = !isHa;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.hostnameB.hidden = !isHaLicensed;
+        this.hostnameVirtual.hidden = !isHaLicensed;
       });
     }
   }

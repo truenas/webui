@@ -1,27 +1,37 @@
 <td [attr.colspan]="colspan">
   <div class="list-item">
     <h4>{{ 'Arguments' | translate }}</h4>
-    <pre>
-      {{ job.arguments.length > 0 ? (job.arguments | json) : ('No arguments are passed' | translate) }}
-    </pre>
+    <div *ngIf="job?.arguments?.length > 0; else noneTemplate" class="logs">
+      <pre><code>{{ job.arguments | json }}</code></pre>
+      <ix-copy-btn *ngIf="job?.arguments?.length > 0" [text]="job.arguments | json"></ix-copy-btn>
+    </div>
+    <ng-template #noneTemplate>{{ 'No arguments are passed' | translate }}</ng-template>
   </div>
 
   <div class="list-item">
     <h4>{{ 'Log Path' | translate }}</h4>
-    <div>{{ job.logs_path ? job.logs_path : '–' }}</div>
+    <div *ngIf="job.logs_path; else notAvailable" class="logs">
+      <pre><code>{{ job.logs_path }}</code></pre>
+      <ix-copy-btn *ngIf="job.logs_path" [text]="job.logs_path"></ix-copy-btn>
+    </div>
+    <ng-template #notAvailable>{{ 'N/A' | translate }}</ng-template>
   </div>
 
   <div class="list-item">
     <h4>{{ 'Log Excerpt' | translate }}</h4>
-    <div class="text-formatted">
-      {{ job.logs_excerpt ? job.logs_excerpt : ('No logs are available' | translate) }}
+    <div *ngIf="job.logs_excerpt; else noLogsTemplate" class="logs">
+      <pre><code>{{ job.logs_excerpt }}</code></pre>
+      <ix-copy-btn *ngIf="job.logs_excerpt" [text]="job.logs_excerpt"></ix-copy-btn>
     </div>
+    <ng-template #noLogsTemplate>{{ 'No logs are available' | translate }}</ng-template>
   </div>
 
   <div class="list-item">
     <h4>{{ 'Error' | translate }}</h4>
-    <div class="text-formatted">
-      {{ job.error ? job.error : ('No errors' | translate) }}
+    <div *ngIf="job.error; else noErrorTemplate" class="logs">
+      <pre><code>{{ job.error }}</code></pre>
+      <ix-copy-btn *ngIf="job.error" [text]="job.error"></ix-copy-btn>
     </div>
+    <ng-template #noErrorTemplate>{{ 'No errors' | translate }}</ng-template>
   </div>
 </td>

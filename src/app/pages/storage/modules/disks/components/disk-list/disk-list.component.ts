@@ -173,16 +173,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     return actions as EntityTableAction[];
   }
 
-  dataHandler(entityList: EntityTableComponent): void {
-    this.diskUpdate(entityList);
-  }
-
-  diskUpdate(entityList: EntityTableComponent): void {
-    entityList.rows.forEach((disk) => {
-      disk.readable_size = filesize(disk.size, { standard: 'iec' });
-    });
-  }
-
   prerequisite(): Promise<boolean> {
     return lastValueFrom(
       forkJoin([
@@ -202,7 +192,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     );
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<Disk>): void {
     const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
     disksUpdateTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
@@ -218,6 +208,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     return disks.map((disk) => ({
       ...disk,
       pool: this.getPoolColumn(disk),
+      readable_size: filesize(disk.size, { standard: 'iec' }),
     }));
   }
 

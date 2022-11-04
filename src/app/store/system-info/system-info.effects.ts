@@ -4,7 +4,6 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
-import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
@@ -70,11 +69,9 @@ export class SystemInfoEffects {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {
           const haEnabled = failoverDisabledReasons.length === 0;
-
-          const enabledText = failoverDisabledReasons.length === 0 ? HaStatusText.HaEnabled : HaStatusText.HaDisabled;
-
           this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
-          return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });
+
+          return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
         }),
       );
     }),
@@ -87,9 +84,9 @@ export class SystemInfoEffects {
         map((event) => {
           const failoverDisabledReasons = event.fields?.disabled_reasons;
           const haEnabled = failoverDisabledReasons.length === 0;
-          const enabledText = failoverDisabledReasons.length === 0 ? HaStatusText.HaEnabled : HaStatusText.HaDisabled;
           this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
-          return haStatusLoaded({ haStatus: { status: enabledText, reasons: failoverDisabledReasons } });
+
+          return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
         }),
       );
     }),

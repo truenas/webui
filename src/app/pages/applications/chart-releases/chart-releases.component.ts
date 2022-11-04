@@ -2,7 +2,6 @@ import {
   Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -15,10 +14,7 @@ import { ApplicationUserEvent, ApplicationUserEventName, UpgradeSummary } from '
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -30,6 +26,8 @@ import {
 } from 'app/pages/applications/chart-rollback-modal/chart-rollback-modal.component';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-select/pod-select-dialog.component';
+import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dialog.enum';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { RedirectService } from 'app/services';
@@ -56,10 +54,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   @Output() switchTab = new EventEmitter<string>();
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
-
-  private selectedAppName: string;
-  private podList: string[] = [];
-  private podDetails: Record<string, string[]> = {};
   imagePlaceholder = appImagePlaceholder;
 
   readonly officialCatalog = officialCatalog;
@@ -75,53 +69,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     },
   };
 
-  choosePod: DialogFormConfiguration = {
-    title: helptext.podConsole.choosePod.title,
-    fieldConfig: [{
-      type: 'select',
-      name: 'pods',
-      placeholder: helptext.podConsole.choosePod.placeholder,
-      required: true,
-    }, {
-      type: 'select',
-      name: 'containers',
-      placeholder: helptext.podConsole.chooseContainer.placeholder,
-      required: true,
-    }, {
-      type: 'input',
-      name: 'command',
-      placeholder: helptext.podConsole.chooseCommand.placeholder,
-      value: '/bin/sh',
-    }],
-    saveButtonText: helptext.podConsole.choosePod.action,
-    customSubmit: (entityDialog) => this.doPodSelect(entityDialog),
-    afterInit: (entityDialog) => this.afterShellDialogInit(entityDialog),
-  };
-
-  choosePodForLogs: DialogFormConfiguration = {
-    title: helptext.podLogs.title,
-    fieldConfig: [{
-      type: 'select',
-      name: 'pods',
-      placeholder: helptext.podLogs.choosePod.placeholder,
-      required: true,
-    }, {
-      type: 'select',
-      name: 'containers',
-      placeholder: helptext.podLogs.chooseContainer.placeholder,
-      required: true,
-    }, {
-      type: 'input',
-      name: 'tail_lines',
-      placeholder: helptext.podLogs.tailLines.placeholder,
-      value: 500,
-      required: true,
-    }],
-    saveButtonText: helptext.podConsole.choosePod.action,
-    customSubmit: (entityDialog) => this.doPodSelectForLogs(entityDialog),
-    afterInit: (entityDialog) => this.afterLogsDialogInit(entityDialog),
-  };
-
   readonly ChartReleaseStatus = ChartReleaseStatus;
   readonly isEmpty = _.isEmpty;
 
@@ -133,7 +80,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     public appService: ApplicationsService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
-    private router: Router,
     protected ws: WebSocketService,
     private redirect: RedirectService,
     private layoutService: LayoutService,
@@ -531,126 +477,20 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   openShell(name: string): void {
-    this.podList = [];
-    this.podDetails = {};
-    this.selectedAppName = name;
-    this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
-      next: (consoleChoices) => {
-        this.appLoaderService.close();
-        this.podDetails = { ...consoleChoices };
-        this.podList = Object.keys(this.podDetails);
-        if (this.podList.length === 0) {
-          this.dialogService.confirm({
-            title: helptext.podConsole.nopod.title,
-            message: helptext.podConsole.nopod.message,
-            hideCheckBox: true,
-            buttonMsg: this.translate.instant('Close'),
-            hideCancel: true,
-          });
-        } else {
-        // Pods
-          const podsConfig = this.choosePod.fieldConfig[0] as FormSelectConfig;
-          podsConfig.value = this.podList[0];
-          podsConfig.options = this.podList.map((item) => ({
-            label: item,
-            value: item,
-          }));
-          // Containers
-          const containerConfig = this.choosePod.fieldConfig[1] as FormSelectConfig;
-          containerConfig.value = this.podDetails[this.podList[0]][0];
-          containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
-            label: item,
-            value: item,
-          }));
-          this.dialogService.dialogForm(this.choosePod, true);
-        }
-      },
-      error: () => {
-        this.appLoaderService.close();
-      },
+    this.mdDialog.open(PodSelectDialogComponent, {
+      width: '50vw',
+      minWidth: '650px',
+      maxWidth: '850px',
+      data: { appName: name, type: PodSelectDialogType.Shell },
     });
   }
 
   openLogs(name: string): void {
-    this.podList = [];
-    this.podDetails = {};
-    this.selectedAppName = name;
-    this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
-      next: (consoleChoices) => {
-        this.appLoaderService.close();
-        this.podDetails = { ...consoleChoices };
-        this.podList = Object.keys(this.podDetails);
-        if (this.podList.length === 0) {
-          this.dialogService.confirm({
-            title: helptext.podConsole.nopod.title,
-            message: helptext.podConsole.nopod.message,
-            hideCheckBox: true,
-            buttonMsg: this.translate.instant('Close'),
-            hideCancel: true,
-          });
-        } else {
-        // Pods
-          const podsConfig = this.choosePodForLogs.fieldConfig[0] as FormSelectConfig;
-          podsConfig.value = this.podList[0];
-          podsConfig.options = this.podList.map((item) => ({
-            label: item,
-            value: item,
-          }));
-          // Containers
-          const containerConfig = this.choosePodForLogs.fieldConfig[1] as FormSelectConfig;
-          containerConfig.value = this.podDetails[this.podList[0]][0];
-          containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
-            label: item,
-            value: item,
-          }));
-          this.dialogService.dialogForm(this.choosePodForLogs, true);
-        }
-      },
-      error: () => {
-        this.appLoaderService.close();
-      },
-    });
-  }
-
-  doPodSelect(entityDialog: EntityDialogComponent): void {
-    const pod = entityDialog.formGroup.controls['pods'].value;
-    const command = entityDialog.formGroup.controls['command'].value;
-    this.router.navigate(new Array('/apps/1/shell/').concat([this.selectedAppName, pod, command]));
-    this.dialogService.closeAllDialogs();
-  }
-
-  doPodSelectForLogs(entityDialog: EntityDialogComponent): void {
-    const pod = entityDialog.formGroup.controls['pods'].value;
-    const container = entityDialog.formGroup.controls['containers'].value;
-    const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
-    this.router.navigate(new Array('/apps/1/logs/').concat([this.selectedAppName, pod, container, tailLines]));
-    this.dialogService.closeAllDialogs();
-  }
-
-  afterShellDialogInit(entityDialog: EntityDialogComponent): void {
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const containers = this.podDetails[value];
-      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
-
-      containerFc.options = containers.map((item) => ({
-        label: item,
-        value: item,
-      }));
-      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
-    });
-  }
-
-  afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const containers = this.podDetails[value];
-      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
-      containerFc.options = containers.map((item) => ({
-        label: item,
-        value: item,
-      }));
-      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
+    this.mdDialog.open(PodSelectDialogComponent, {
+      width: '50vw',
+      minWidth: '650px',
+      maxWidth: '850px',
+      data: { appName: name, type: PodSelectDialogType.Logs },
     });
   }
 

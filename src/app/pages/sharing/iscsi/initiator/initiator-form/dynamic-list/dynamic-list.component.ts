@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UntypedFormGroup, AbstractControl } from '@angular/forms';
+import { MatSelectionList } from '@angular/material/list';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FieldConfig, FormInputListConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
@@ -13,6 +14,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 export class DynamicListComponent implements OnInit {
   @Input() config: FormInputListConfig;
   @Input() group: UntypedFormGroup;
+  @Input() source: MatSelectionList;
 
   listControl: AbstractControl;
   inputConfig: FieldConfig;

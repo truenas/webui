@@ -5,7 +5,13 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 
-export interface EntityTableConfig<Row = unknown> {
+export interface SomeRow {
+  id?: string | number;
+  multiselect_id?: string | number;
+  [key: string]: any;
+}
+
+export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   columns: EntityTableColumn[];
   title?: string;
 
@@ -14,7 +20,7 @@ export interface EntityTableConfig<Row = unknown> {
   columnFilter?: boolean;
   hideTopActions?: boolean;
   queryCall?: ApiMethod;
-  queryCallOption?: any;
+  queryCallOption?: unknown;
   queryCallJob?: boolean;
   resourceName?: string;
   routeEdit?: string | string[];
@@ -54,29 +60,29 @@ export interface EntityTableConfig<Row = unknown> {
    */
   getCustomEmptyConfig?: (emptyType: EmptyType) => EmptyConfig;
   wsDeleteParams?: (row: Row, id: string | number) => unknown;
-  addRows?: (entity: EntityTableComponent) => void;
-  changeEvent?: (entity: EntityTableComponent) => void;
-  preInit?: (entity: EntityTableComponent) => void;
-  afterInit?: (entity: EntityTableComponent) => void;
-  dataHandler?: (entity: EntityTableComponent) => unknown;
+  addRows?: (entity: EntityTableComponent<Row>) => void;
+  changeEvent?: (entity: EntityTableComponent<Row>) => void;
+  preInit?: (entity: EntityTableComponent<Row>) => void;
+  afterInit?: (entity: EntityTableComponent<Row>) => void;
+  dataHandler?: (entity: EntityTableComponent<Row>) => unknown;
   resourceTransformIncomingRestData?: (data: unknown) => unknown;
   getActions?: (row: Row) => EntityTableAction<Row>[];
-  getAddActions?: () => EntityTableAction[];
+  getAddActions?: () => EntityTableAction<Row>[];
   rowValue?: (row: unknown, attr: string) => unknown;
   wsMultiDeleteParams?: (selected: Row[]) => [string, (string[][] | number[][])?];
-  doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
-  doEdit?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
+  doAdd?: (id?: string | number, tableComponent?: EntityTableComponent<Row>) => void;
+  doEdit?: (id?: string | number, tableComponent?: EntityTableComponent<Row>) => void;
   onCheckboxChange?: (row: Row) => void;
   onSliderChange?: (row: Row) => void;
   onButtonClick?: (row: Row) => void;
-  callGetFunction?: (entity: EntityTableComponent) => void;
-  prerequisiteFailedHandler?: (entity: EntityTableComponent) => void;
+  callGetFunction?: (entity: EntityTableComponent<Row>) => void;
+  prerequisiteFailedHandler?: (entity: EntityTableComponent<Row>) => void;
   afterDelete?(): void;
 
   onRowClick?: (row: Row) => void;
 }
 
-export interface EntityTableAction<Row = unknown> {
+export interface EntityTableAction<Row extends SomeRow = SomeRow> {
   id: string | number;
   // TODO: Either name or actionName may be unnecessary
   name: string;
@@ -87,7 +93,7 @@ export interface EntityTableAction<Row = unknown> {
   onClick: (row?: Row) => void;
   title?: string;
   disabled?: boolean;
-  actions?: EntityTableAction[];
+  actions?: EntityTableAction<Row>[];
   matTooltip?: string;
   ttposition?: TooltipPosition;
 }
