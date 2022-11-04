@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -29,8 +30,14 @@ export class SystemConfigEffects {
     }),
   ));
 
+  advancedConfigUpdated$ = createEffect(() => this.actions$.pipe(
+    ofType(advancedConfigUpdated),
+    map(() => this.window.location.reload()),
+  ), { dispatch: false });
+
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 }

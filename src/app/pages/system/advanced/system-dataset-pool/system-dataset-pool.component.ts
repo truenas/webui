@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,7 +45,6 @@ export class SystemDatasetPoolComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
-    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +82,6 @@ export class SystemDatasetPoolComponent implements OnInit {
             this.store$.dispatch(advancedConfigUpdated());
             this.cdr.markForCheck();
             this.slideInService.close();
-            this.router.navigate(['/others/failover'], { skipLocationChange: true });
           }),
           catchError((error) => {
             this.isFormLoading = false;
