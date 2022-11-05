@@ -370,6 +370,8 @@
   "Link aggregation interface": "",
   "Loading devices. Please wait.": "",
   "Local": "",
+  "Local heartbeat interface does not exist.": "",
+  "Local heartbeat interface is down.": "",
   "Localization Settings": "",
   "Lock Dataset": "",
   "Lock Dataset {datasetName}?": "",

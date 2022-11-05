@@ -423,7 +423,7 @@ export type ApiDirectory = {
   'cloudsync.restore': { params: CloudsyncRestoreParams; response: void };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.delete': { params: [id: number]; response: boolean };
-  'cloudsync.sync_onetime': { params: [task: Partial<CloudSyncTask>, params: { dry_run?: boolean }]; response: void };
+  'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 
   // Container
   'container.config': { params: void; response: ContainerConfig };

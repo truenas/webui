@@ -18,6 +18,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -58,6 +59,7 @@ export class SnapshotAddFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private slideIn: IxSlideInService,
+    private datasetStore: DatasetTreeStore,
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +107,7 @@ export class SnapshotAddFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.slideIn.close(null, true);
+        this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },
       error: (error) => {
