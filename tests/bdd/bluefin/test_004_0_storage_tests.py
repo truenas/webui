@@ -104,22 +104,22 @@ def create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmb
 @then(parsers.parse('setup ldap with "{hostname}" "{base_DN}" "{bind_DN}" "{bind_password}" "{command}" "{user}"'))
 def setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user):
     """setup ldap"""
-#    import t_004_9_setup_ldap
-#    t_004_9_setup_ldap.test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user)
+    import t_004_9_setup_ldap
+    t_004_9_setup_ldap.test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user)
 
 
 @then(parsers.parse('create ldap dataset with "{dataset_name}" "{user}"'))
 def create_ldap_dataset(driver, dataset_name, user):
     """create ldap dataset"""
-#    import t_004_10_create_ldap_dataset
-#    t_004_10_create_ldap_dataset.test_create_ldap_dataset(driver, dataset_name, user)
+    import t_004_10_create_ldap_dataset
+    t_004_10_create_ldap_dataset.test_create_ldap_dataset(driver, dataset_name, user)
 
 
 @then(parsers.parse('create smb share on ldap datasetwith "{smb_ldap_path}" "{ldapsmbsharename}" "{ldapsmbsharedescription}" "{ldapsmbshare}" "{ldap_user}" "{ldap_password}"'))
 def create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password):
     """create smb share on ldap dataset"""
-#    import t_004_11_create_smb_share_on_ldap_dataset
-#    t_004_11_create_smb_share_on_ldap_dataset.test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password)
+    import t_004_11_create_smb_share_on_ldap_dataset
+    t_004_11_create_smb_share_on_ldap_dataset.test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password)
 
 
 @then('create second user for smb share')

@@ -15,7 +15,10 @@ from function import (
 
 def test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user):
     """test_setup_ldap"""
-
+#    if not is_element_present(driver, '//h1[contains(.,"Storage")]'):
+#        assert wait_on_element(driver, 10, '//span[contains(text(),"Storage")]', 'clickable')
+#        driver.find_element_by_xpath('//span[contains(text(),"Storage")]').click()
+#    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
 
    # click on sharing and click add
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')

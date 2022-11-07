@@ -21,14 +21,14 @@ def test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_lda
     # uncomment next line when running test solo since it will be starting at a different page
     #assert wait_on_element(driver, 10, '//h1[contains(text(),"Dashboard")]')
     # click on sharing and click add
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    #assert wait_on_element(driver, 10, '//h1[contains(.,"Datasets")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Sharing")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click() 
 
-
+    
     # set Path to the LDAP dataset at "{path}"
     assert wait_on_element(driver, 5, '//h3[contains(.,"Add SMB")]')
     assert wait_on_element(driver, 5, '//ix-explorer//ix-label//label//span[contains(text(),"Path")]//ancestor::ix-explorer/div/input', 'inputable')
@@ -55,7 +55,7 @@ def test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_lda
         assert wait_on_element(driver, 10, '//span[contains(text(),"Restart Service")]', 'clickable')
         driver.find_element_by_xpath('//span[contains(text(),"Restart Service")]').click()
 
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
     if not is_element_present(driver, '//h1[contains(.,"Sharing")]'):
         assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
@@ -106,8 +106,5 @@ def test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_lda
     assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
     #assert wait_on_element(driver, 7, '//span[contains(text(),"Configure Active Directory")]', 'clickable')
     #assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')
-
-
-
 
 
