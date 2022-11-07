@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,8 +36,6 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { SshSemiAutomaticSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   FieldConfig,
   FormExplorerConfig,
@@ -52,6 +51,9 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import {
+  SshConnectionFormComponent,
+} from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import {
   AppLoaderService,
   DialogService,
@@ -645,6 +647,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ],
     },
   ];
+  private sshCredentials: { label: string; value: number }[];
 
   protected dialogFieldConfig: FieldConfig[] = [
     {
@@ -826,6 +829,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private entityFormService: EntityFormService,
     private modalService: ModalService,
     private translate: TranslateService,
+    protected matDialog: MatDialog,
   ) {
     this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {
       this.namesInUse.push(...replications.map((replication) => replication.name));
@@ -888,11 +892,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const sshCredentialsSourceField = _.find(this.sourceFieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
     const sshCredentialsTargetField = _.find(this.targetFieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
-      connections.forEach((connection) => {
-        sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
-        sshCredentialsTargetField.options.push({ label: connection.name, value: connection.id });
-      });
+    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
+      this.sshCredentials = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
+      sshCredentialsSourceField.options = [...this.sshCredentials];
+      sshCredentialsTargetField.options = [...this.sshCredentials];
       sshCredentialsSourceField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
       sshCredentialsTargetField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
     });
@@ -1469,93 +1472,30 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   createSshConnection(activatedField: string): void {
-    const conf: DialogFormConfiguration = {
-      title: this.translate.instant('Create SSH Connection'),
-      fieldConfig: this.dialogFieldConfig,
-      saveButtonText: this.translate.instant('Create SSH Connection'),
-      customSubmit: async (entityDialog: EntityDialogComponent) => {
-        const value = entityDialog.formValue;
-        let prerequisite = true;
-        this.entityWizard.loader.open();
+    const dialogRef = this.matDialog.open(SshConnectionFormComponent, {
+      data: { dialog: true },
+      width: '600px',
+      panelClass: 'ix-overflow-dialog',
+    });
 
-        if (value['private_key'] === 'NEW') {
-          await this.replicationService.genSshKeypair().then(
-            (keyPair) => {
-              value['sshkeypair'] = keyPair;
-            },
-            (err) => {
-              prerequisite = false;
-              new EntityUtils().handleWsError(this, err, this.dialogService);
-            },
-          );
-        }
-        if (value['setup_method'] === 'manual') {
-          await this.getRemoteHostKey(value as { host: string; port: number }).then(
-            (res) => {
-              value['remote_host_key'] = res;
-            },
-            (err) => {
-              prerequisite = false;
-              new EntityUtils().handleWsError(this, err, this.dialogService);
-            },
-          );
-        }
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+      this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
+        const newCredential = credentials.find((credential) => {
+          return !this.sshCredentials.find((existingCredential) => existingCredential.value === credential.id);
+        });
 
-        if (!prerequisite) {
-          this.entityWizard.loader.close();
+        if (!newCredential) {
+          this.entityWizard.formArray.get([0]).get([activatedField]).setValue(null);
           return;
         }
-        const createdItems: CreatedItems = {
-          private_key: null,
-          ssh_credentials: null,
-        };
-        let hasError = false;
-        // eslint-disable-next-line no-restricted-syntax,guard-for-in
-        for (const createdItem in createdItems) {
-          if (!createdItems.hasOwnProperty(createdItem)) {
-            return;
-          }
-          const item = createdItem as 'private_key' | 'ssh_credentials';
-          if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
-            await this.doCreate(value, item).then(
-              (res: KeychainCredential | KeychainSshCredentials) => {
-                value[item] = res.id;
-                createdItems[item] = res.id;
-                if (item === 'private_key') {
-                  const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
-                  privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                }
-                if (item === 'ssh_credentials') {
-                  const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-                  const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-                  sshCredentialsSourceField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  sshCredentialsTargetField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  this.entityWizard.formArray.get([0]).get([activatedField]).setValue(res.id);
-                }
-              },
-              (err) => {
-                hasError = true;
-                this.rollBack(createdItems);
-                new EntityUtils().handleWsError(this, err, this.dialogService, this.dialogFieldConfig);
-              },
-            );
-          }
-        }
-        this.entityWizard.loader.close();
-        if (!hasError) {
-          entityDialog.dialogRef.close(true);
-        }
-      },
-    };
-    this.dialogService.dialogForm(conf, true);
-  }
-
-  getRemoteHostKey(value: { host: string; port: number }): Promise<string> {
-    const payload = {
-      host: value['host'],
-      port: value['port'],
-    };
-    return lastValueFrom(this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]));
+        const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+        const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+        sshCredentialsSourceField.options.push({ label: newCredential.name + ' (New Created)', value: newCredential.id });
+        sshCredentialsTargetField.options.push({ label: newCredential.name + ' (New Created)', value: newCredential.id });
+        this.entityWizard.formArray.get([0]).get([activatedField]).setValue(newCredential.id);
+        this.sshCredentials = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
+      });
+    });
   }
 
   genTaskName(): void {
