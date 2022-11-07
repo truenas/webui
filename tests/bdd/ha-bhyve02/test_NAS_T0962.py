@@ -83,21 +83,11 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
     driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
 
 
-@then(parsers.parse('change the Domain for "{ad_domain}", and click Save'))
-def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
-    """change the Domain for "ad_domain", and click Save."""
-    global domain
-    domain = ad_domain
-    # assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
-    # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
-    # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(ad_domain)
+@then('click Save, the progress bar should appear while settings are being applied')
+def click_save_the_progress_bar_should_appear_while_settings_are_being_applied(driver):
+    """click Save, the progress bar should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-
-
-@then('"Please wait" should appear while settings are being applied')
-def please_wait_should_appear_while_settings_are_being_applied(driver):
-    """"Please wait" should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 60, '//mat-progress-bar')
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{nameserver_1}")]')

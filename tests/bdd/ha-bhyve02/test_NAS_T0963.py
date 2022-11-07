@@ -28,7 +28,7 @@ def test_add_an_acl_item_and_verify_is_preserve(driver):
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
-    # depends(request, ['Active_Directory'], scope='session')
+    depends(request, ['Active_Directory'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
