@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject, switchMap, tap } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
@@ -16,6 +16,7 @@ export interface Temperature {
   symbolText: string;
 }
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
