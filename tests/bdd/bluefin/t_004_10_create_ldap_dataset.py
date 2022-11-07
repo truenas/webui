@@ -34,14 +34,14 @@ def test_create_ldap_dataset(driver, dataset_name, user):
     assert wait_on_element(driver, 10, '//div[@ix-auto="textarea__Name"]//div//textarea')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__Name"]//div//textarea').click()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__Name"]//div//textarea').send_keys(dataset_name)
-    #assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
+    #assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Share Type"]')
     #driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    #assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
+    #assert wait_on_element(driver, 10, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
     #driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
 
 
     # click Summit the "{dataset_name}" data should be created
-    assert wait_on_element(driver, 5, '//span[contains(.,"Save")]', 'clickable')
+    assert wait_on_element(driver, 10, '//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
@@ -58,43 +58,43 @@ def test_create_ldap_dataset(driver, dataset_name, user):
     time.sleep(0.5)
 
     # click on edit
-    assert wait_on_element(driver, 5, '//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]', 'clickable')
     driver.find_element_by_xpath('//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]').click()
 
 
     # the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button
-    assert wait_on_element(driver, 5, '//mat-card-title[contains(text(),"Unix Permissions Editor")]')
+    assert wait_on_element(driver, 10, '//mat-card-title[contains(text(),"Unix Permissions Editor")]')
 
   
-    assert wait_on_element(driver, 5, f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"User")]//ancestor::ix-combobox//div//input', 'clickable')
+    assert wait_on_element(driver, 10, f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"User")]//ancestor::ix-combobox//div//input', 'clickable')
     driver.find_element_by_xpath(f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"User")]//ancestor::ix-combobox//div//input').click()
     element = driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]')
     # Scroll to user
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//mat-option//span[contains(text(),"eturgeon")]', 'clickable')    
+    assert wait_on_element(driver, 10, '//mat-option//span[contains(text(),"eturgeon")]', 'clickable')    
     driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]').click()
 
-    assert wait_on_element(driver, 5, f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"Group")]//ancestor::ix-combobox//div//input', 'clickable')
+    assert wait_on_element(driver, 10, f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"Group")]//ancestor::ix-combobox//div//input', 'clickable')
     driver.find_element_by_xpath(f'//ix-fieldset//fieldset//ix-combobox//div//ix-label//label//span[contains(.,"Group")]//ancestor::ix-combobox//div//input').click()
     element = driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]')
     # Scroll to user
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//mat-option//span[contains(text(),"eturgeon")]', 'clickable')    
+    assert wait_on_element(driver, 10, '//mat-option//span[contains(text(),"eturgeon")]', 'clickable')    
     driver.find_element_by_xpath('//mat-option//span[contains(text(),"eturgeon")]').click()
 
-    assert wait_on_element(driver, 5, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]', 'clickable')
+    assert wait_on_element(driver, 10, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]', 'clickable')
     checkbox_checked = attribute_value_exist(driver, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply User")]').click()
  
-    assert wait_on_element(driver, 5, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]', 'clickable')
+    assert wait_on_element(driver, 10, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]', 'clickable')
     checkbox_checked = attribute_value_exist(driver, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Apply Group")]').click()
 
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')    
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')    
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
    # the storage page should open, find and click on manage datasets for tank
