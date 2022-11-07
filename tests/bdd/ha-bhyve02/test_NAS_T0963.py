@@ -54,6 +54,8 @@ def if_the_login_page_appears_enter__user_and_password(driver, user, password):
 def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     """on the Dashboard, click Dataset on the left sidebar."""
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
+    if wait_on_element(driver, 4, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Datasets"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Datasets"]').click()
