@@ -4,9 +4,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
-import { combineLatest } from 'rxjs';
+import { combineLatest, filter } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
-import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -39,11 +38,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     this.loadNetworkConfigAndSummary();
 
     this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
-      .pipe(untilDestroyed(this)).subscribe((evt: NetworkInterfacesChangedEvent) => {
-        if (evt) {
-          this.loadNetworkConfigAndSummary();
-        }
-      });
+      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
   get serviceAnnouncement(): string {
