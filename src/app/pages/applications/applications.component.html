@@ -1,8 +1,8 @@
 <div fxLayout="row">
   <mat-tab-group
+    #tabs
     animationDuration="0ms"
-    [selectedIndex]="selectedTab"
-    (selectedTabChange)="onTabSelected($event)"
+    (selectedTabChange)="onTabSelected()"
   >
     <mat-tab
       ix-auto
@@ -21,7 +21,7 @@
       [label]="'Available Applications' | translate"
     >
       <ng-template matTabContent>
-        <ix-catalog (updateTab)="updateTab($event)"></ix-catalog>
+        <ix-catalog></ix-catalog>
       </ng-template>
     </mat-tab>
     <mat-tab
