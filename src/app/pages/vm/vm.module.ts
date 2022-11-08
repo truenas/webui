@@ -20,6 +20,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
+import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
 import {
   VmService, NetworkService, SystemGeneralService,
@@ -64,6 +65,7 @@ import { routing } from './vm.routing';
     DeviceDeleteModalComponent,
     DeleteVmDialogComponent,
     StopVmDialogComponent,
+    DisplayVmDialogComponent,
     CloneVmDialogComponent,
   ],
   providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService],
