@@ -125,17 +125,18 @@
             </h1>
             <div class="title">
               <span class="semibold">{{ 'vdev' | translate }}: </span>
-              <span *ngIf="selectedVdev.type === 'DISK'">
-                {{ 'NONE' | translate }}
-              </span>
-              <span *ngIf="selectedVdev.type !== 'DISK'">
-                {{ selectedVdev.type === 'None' ? 'UNASSIGNED' : selectedVdev.type }}
+              <span>
+                {{
+                  selectedVdev.type !== 'DISK'
+                    ? selectedVdev.type === 'None' ? ('Unassigned' | translate) : selectedVdev.name
+                    : ('NONE' | translate)
+                }}
               </span>
             </div>
             <div *ngIf="selectedVdev.type !== 'None'" class="title">
               <span class="semibold">{{ 'Function' | translate }}:</span>
               <span>
-                {{ $any(selectedVdev).topology === 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase() }}
+                {{ $any(selectedVdev).topology === 'None' ? ('Unknown' | translate) : selectedVdev.topology.toUpperCase() }}
               </span>
             </div>
             <div class="title">
