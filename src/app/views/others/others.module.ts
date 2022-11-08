@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { FailoverComponent } from './failover/failover.component';
 import { othersRoutes } from './others.routing';
@@ -21,6 +22,7 @@ import { ShutdownComponent } from './shutdown/shutdown.component';
 @NgModule({
   imports: [
     CommonModule,
+    LayoutModule,
     MatListModule,
     IxIconModule,
     MatButtonModule,

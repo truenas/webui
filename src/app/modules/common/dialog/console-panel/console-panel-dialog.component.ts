@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
+import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 
 @UntilDestroy()
 @Component({
