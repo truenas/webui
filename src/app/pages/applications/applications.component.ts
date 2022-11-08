@@ -7,7 +7,6 @@ import { merge } from 'rxjs';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
-import { DockerImagesListComponent } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
@@ -26,7 +25,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
-  @ViewChild(DockerImagesListComponent, { static: false }) private dockerImagesTab: DockerImagesListComponent;
   @ViewChild('tabs') tabGroup: MatTabGroup;
 
   isChooseInit = false;
