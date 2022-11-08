@@ -162,7 +162,6 @@ export class FileTicketLicensedFormComponent implements OnInit {
             },
             complete: () => {
               this.isFormLoading = false;
-              this.slideIn.close();
               this.openSuccessDialog(job.result);
             },
           });
@@ -174,7 +173,6 @@ export class FileTicketLicensedFormComponent implements OnInit {
           });
         } else {
           this.isFormLoading = false;
-          this.slideIn.close();
           this.openSuccessDialog(job.result);
         }
       },
@@ -196,11 +194,10 @@ export class FileTicketLicensedFormComponent implements OnInit {
     this.dialog.generalDialog(dialogConfig)
       .pipe(untilDestroyed(this))
       .subscribe((shouldOpen) => {
-        if (!shouldOpen) {
-          return;
+        if (shouldOpen) {
+          this.window.open(params.url, '_blank');
         }
-
-        this.window.open(params.url, '_blank');
+        this.slideIn.close();
       });
   }
 
