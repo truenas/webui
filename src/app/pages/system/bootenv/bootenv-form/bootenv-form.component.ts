@@ -14,7 +14,6 @@ import {
   CreateBootenvParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -32,7 +31,7 @@ export class BootEnvironmentFormComponent {
   title: string;
 
   formGroup = this.formBuilder.group({
-    name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenvNameRegex)]],
+    name: ['', [Validators.required, Validators.pattern(this.bootEnvService.bootenvNameRegex)]],
   });
 
   isFormLoading = false;

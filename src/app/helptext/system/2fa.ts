@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
   two_factor: {
@@ -19,7 +18,7 @@ export const helptext = {
       placeholder: T('Interval'),
       tooltip: T('The lifespan (in seconds) of each One-Time Password. Default is 30 seconds. \
  The minimum lifetime is 5 seconds.'),
-      validation: [Validators.min(5), regexValidator(/^\d+$/)],
+      validation: [Validators.min(5), Validators.pattern(/^\d+$/)],
       hint: T('Some authentication tools default to 30 seconds and do not support custom intervals.'),
     },
     window: {
