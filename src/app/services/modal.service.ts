@@ -3,8 +3,8 @@ import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ModalConfiguration } from 'app/modules/common/modal/modal-configuration.interface';
-import { ModalComponent } from 'app/modules/common/modal/modal.component';
+import { ModalConfiguration } from 'app/modules/layout/components/modal/modal-configuration.interface';
+import { ModalComponent } from 'app/modules/layout/components/modal/modal.component';
 
 export interface ModalServiceMessage {
   action: string;

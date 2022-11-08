@@ -1,6 +1,6 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
-import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
+import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 import { WebSocketService } from 'app/services';
 
 describe('ConsoleMessagesStore', () => {

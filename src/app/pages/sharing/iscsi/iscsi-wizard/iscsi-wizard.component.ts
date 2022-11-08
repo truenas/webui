@@ -64,6 +64,11 @@ type Summary = {
   [name: string]: string;
 };
 
+const createDeviceOption = {
+  label: 'Create New',
+  value: 'NEW',
+};
+
 @UntilDestroy()
 @Component({
   template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
@@ -179,10 +184,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           name: 'disk',
           placeholder: helptextSharingIscsi.disk_placeholder,
           tooltip: helptextSharingIscsi.disk_tooltip,
-          options: [{
-            label: 'Create New',
-            value: 'NEW',
-          }],
+          options: [createDeviceOption],
           isHidden: false,
           disabled: false,
           required: true,
@@ -573,7 +575,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.getExtentDevices().pipe(choicesToOptions(), untilDestroyed(this)).subscribe({
       next: (options) => {
         this.loader.close();
-        diskField.options = options;
+        diskField.options = [...options, createDeviceOption];
       },
       error: (res) => {
         this.loader.close();

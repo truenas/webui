@@ -1,10 +1,12 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
     wait_on_element_disappear,
+    refresh_if_element_missing,
     get
 )
 from pytest_bdd import (
@@ -14,8 +16,10 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='System_Dataset', scope='session')
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
 def test_creating_new_pool_and_set_it_as_system_dataset(driver):
     """Creating new pool and set it as System Dataset."""
@@ -23,16 +27,14 @@ def test_creating_new_pool_and_set_it_as_system_dataset(driver):
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
+    depends(request, ["Setup_HA"], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
-        time.sleep(1)
-    else:
-        driver.refresh()
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -57,7 +59,7 @@ def the_login_page_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_the_system_information(driver):
     """you should see the dashboard and the System Information."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
 
 
 @then('navigate to Storage')
@@ -94,6 +96,9 @@ def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name, disk)
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys(pool_name)
     driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
+    if wait_on_element(driver, 3, '//mat-dialog-container[contains(.,"Warning: sd")]'):
+        assert wait_on_element(driver, 5, '//button[*/text()=" Close "]', 'clickable')
+        driver.find_element_by_xpath('//button[*/text()=" Close "]').click()
 
 
 @then('press right arrow under data vdev, click on the Force checkbox')
@@ -136,13 +141,13 @@ def create_pool_should_appear_while_the_pool_is_being_created(driver):
 @then('you should be returned to the list of Pools')
 def you_should_be_returned_to_the_list_of_pools(driver):
     """you should be returned to the list of Pools."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
 
 
 @then(parsers.parse('the {pool_name} pool should be on the Pools list'))
 def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
     """the "dozer" pool should be on the Pools list."""
-    assert wait_on_element(driver, 7, f'//mat-panel-title[contains(.,"{pool_name}")]')
+    assert wait_on_element(driver, 7, f'//h2[text()="{pool_name}"]')
 
 
 @then('navigate to System Setting and click Misc')
@@ -158,10 +163,7 @@ def navigate_to_system_setting_and_click_misc(driver):
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Cron Jobs")]')
-    element = driver.find_element_by_xpath('//h3[contains(.,"Cron Jobs")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//h3[text()="System Dataset Pool"]')
 
 
 @then('click on System Dataset')
@@ -196,8 +198,8 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
     assert wait_on_element_disappear(driver, 30, '//mat-progress-bar')
-    assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[text()="tank"]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[text()="dozer"]')
+    assert wait_on_element_disappear(driver, 20, '//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"tank")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"dozer")]')
 
 
 @then('navigate to the dashboard')
@@ -205,13 +207,14 @@ def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
 
 
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_disabled"]')
+    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
@@ -228,22 +231,23 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
-    assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
-    assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
+    assert wait_on_element(driver, 20, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[.//text()="FAILOVER"]', 'clickable')
-    driver.find_element_by_xpath('//button[.//text()="FAILOVER"]').click()
+    assert wait_on_element(driver, 5, '//button[span/text()=" Failover "]', 'clickable')
+    driver.find_element_by_xpath('//button[span/text()=" Failover "]').click()
+    time.sleep(10)
 
 
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
     assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
-    assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
@@ -251,11 +255,12 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
-    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 120, '//span[text()="System Information"]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert refresh_if_element_missing(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
+    assert refresh_if_element_missing(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
     time.sleep(5)
 
 

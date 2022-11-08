@@ -2464,7 +2464,6 @@
   "Create ACME Certificate": "Создать сертификат ACME",
   "Create Certificate": "Создать сертификат",
   "Create Pool": "Создать пул",
-  "Create SSH Connection": "Создать SSH соединение",
   "Create Snapshot": "Создать снимок",
   "Create a custom ACL": "Создать собственный ACL",
   "Create a recommended formation of vdevs in a pool.": "Создать рекомендуемую структуру vdev в пуле.",
