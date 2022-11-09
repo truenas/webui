@@ -38,6 +38,7 @@ import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/dele
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
 import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
@@ -101,6 +102,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     DatasetIconComponent,
     DatasetRolesCellComponent,
     DatasetEncryptionCellComponent,
+    ZvolFormComponent,
     ZvolFormOldComponent,
     SpaceManagementChartComponent,
     DatasetCapacitySettingsComponent,
