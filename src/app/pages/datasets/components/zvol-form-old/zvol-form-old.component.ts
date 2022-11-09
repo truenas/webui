@@ -410,7 +410,7 @@ export class ZvolFormOldComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     if (!this.parent) return;
-    if (!entityForm.isNew) {
+    if (!this.isNew) {
       this.encryptionFields.forEach((field) => {
         this.entityForm.setDisabled(field, true, true);
       });
