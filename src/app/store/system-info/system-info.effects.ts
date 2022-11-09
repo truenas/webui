@@ -78,6 +78,21 @@ export class SystemInfoEffects {
     }),
   ));
 
+  subscribeToHa = createEffect(() => this.actions$.pipe(
+    ofType(loadHaStatus),
+    mergeMap(() => {
+      return this.ws.subscribe('failover.disabled.reasons').pipe(
+        map((event) => {
+          const failoverDisabledReasons = event.fields?.disabled_reasons;
+          const haEnabled = failoverDisabledReasons.length === 0;
+          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
+
+          return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
+        }),
+      );
+    }),
+  ));
+
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
