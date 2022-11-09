@@ -15,7 +15,7 @@ import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/data
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
-import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -93,9 +93,9 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
-    const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
+    const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol Old' }));
     await addZvolButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormComponent);
+    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormOldComponent);
     expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
     expect(fakeModalRef.isNew).toBe(true);
   });

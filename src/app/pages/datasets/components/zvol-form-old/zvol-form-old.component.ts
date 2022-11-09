@@ -54,7 +54,7 @@ interface ZvolFormData {
 @Component({
   template: '<ix-entity-form [conf]="this"></ix-entity-form>',
 })
-export class ZvolFormComponent implements FormConfiguration {
+export class ZvolFormOldComponent implements FormConfiguration {
   pk: string;
   protected path: string;
   advancedFields = ['volblocksize'];

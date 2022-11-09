@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
-import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   isDatasetHasShares, isIocageMounted, isRootDataset, ixApplications,
@@ -89,8 +89,8 @@ export class DatasetDetailsPanelComponent implements OnInit {
     addDatasetComponent.setTitle(this.translate.instant('Add Dataset'));
   }
 
-  onAddZvol(): void {
-    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent);
+  onAddZvolOld(): void {
+    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormOldComponent);
     addZvolComponent.setParent(this.dataset.id);
     addZvolComponent.isNew = true;
   }
