@@ -34,6 +34,7 @@ export class FailoverComponent implements OnInit {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
+      // TODO: This is a hack that would need to be fixed later.
       this.window.location.reload();
     } else {
       setTimeout(() => {

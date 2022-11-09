@@ -32,6 +32,7 @@ export class SystemConfigEffects {
 
   advancedConfigUpdated$ = createEffect(() => this.actions$.pipe(
     ofType(advancedConfigUpdated),
+    // TODO: This is a hack that would need to be fixed later.
     map(() => this.window.location.reload()),
   ), { dispatch: false });
 
