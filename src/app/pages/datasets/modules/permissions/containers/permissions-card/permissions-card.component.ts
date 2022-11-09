@@ -7,6 +7,7 @@ import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService } from 'app/services';
@@ -24,6 +25,11 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   isLoading: boolean;
   stat: FileSystemStat;
   acl: Acl;
+
+  emptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: 'No Data',
+  };
 
   readonly AclType = AclType;
 
