@@ -1,22 +1,14 @@
 <h1 matDialogTitle>{{ 'Upgrade' | translate }}</h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <p *ngIf="!isJobCompleted">
+  <p>
     <strong>
       {{ 'The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
-    </strong>
-  </p>
-  <p *ngIf="isJobCompleted">
-    <strong *ngIf="failedCount">
-      {{ 'Warning: {n} of {total} applications could not be upgraded.' | translate: { n: failedCount, total: bulkItems.size } }}
-    </strong>
-    <strong *ngIf="successCount">
-      {{ '{n, plural, one {# application} other {# applications}} has been upgraded.' | translate: { n: successCount } }}
     </strong>
   </p>
 
   <mat-accordion displayMode="flat" class="bulk-list">
     <mat-expansion-panel
-      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackById; let i = index"
+      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackById"
       (afterExpand)="onExpand(bulkItem)"
     >
       <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
@@ -24,16 +16,12 @@
         <mat-panel-title>
           <ix-bulk-list-item [item]="bulkItem.value">
             {{ bulkItem.key }}
+            {{ bulkItem.value.item.human_version.split('_')[0] }}
 
             <div class="version">
-              <span>{{ bulkItem.value.item.human_version }}</span>
+              <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
               <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-              <ng-container *ngIf="optionsMap.has(bulkItem.key)">
-                <span *appLet="optionsMap.get(bulkItem.key) | async as options">{{ options[0].label }}</span>
-              </ng-container>
-              <ng-container *ngIf="!optionsMap.has(bulkItem.key)">
-                <span>{{ form.get(bulkItem.key)?.value }}</span>
-              </ng-container>
+              <span>{{ form.get(bulkItem.key)?.value }}</span>
             </div>
 
             <div class="logo">
@@ -48,14 +36,15 @@
 
       <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
         <ix-select
-          *ngIf="!wasSubmitted"
           [formControlName]="bulkItem.key"
           [label]="'Version to be upgraded to' | translate"
           [required]="true"
           [options]="optionsMap.get(bulkItem.key)"
         ></ix-select>
 
-        <ix-job-item *ngIf="selectedJob" [job]="selectedJob"></ix-job-item>
+        <ng-container *ngIf="hasErrors(bulkItem.key)">
+          <span>{{ bulkItem.value.message }}</span>
+        </ng-container>
 
         <mat-accordion class="details-list" displayMode="flat">
           <mat-expansion-panel>
@@ -100,7 +89,6 @@
 
   <div class="form-actions">
     <button
-      *ngIf="!wasSubmitted"
       mat-button
       type="submit"
       color="primary"
@@ -108,17 +96,8 @@
     >
       {{ 'Upgrade' | translate }}
     </button>
-    <button *ngIf="!wasSubmitted" mat-button type="button" matDialogClose>
+    <button mat-button type="button" matDialogClose>
       {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ngIf="wasSubmitted"
-      mat-button
-      type="button"
-      [matDialogClose]="true"
-      [disabled]="!isJobCompleted"
-    >
-      {{ 'Close' | translate }}
     </button>
   </div>
 </form>

@@ -430,10 +430,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   onBulkUpgrade(): void {
     const selectedAppsNames = this.getSelectedItems();
     const apps = selectedAppsNames.map((name) => this.chartItems.get(name));
-    const dialogRef = this.mdDialog.open(ChartBulkUpgradeComponent, {
-      disableClose: true,
-      data: apps,
-    });
+    const dialogRef = this.mdDialog.open(ChartBulkUpgradeComponent, { data: apps });
 
     dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.refreshChartReleases();
