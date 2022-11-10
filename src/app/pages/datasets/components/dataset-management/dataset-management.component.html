@@ -1,3 +1,11 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <button *ngIf="showImportData" mat-button color="primary" (click)="onImportData()">
+      {{ 'Import Data' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
 <div
   *ngIf="dataSource.data.length === 0 && !isLoading; else datasetContainer"
   class="entity-empty-wrapper"
