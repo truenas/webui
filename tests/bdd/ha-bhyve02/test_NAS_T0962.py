@@ -59,6 +59,8 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
+    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
