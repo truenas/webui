@@ -37,7 +37,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   waitParentChanges = 300;
   fontSize = 14;
   featuredFontName = 'Inconsolata';
-  defaultFontName = 'monospace';
+  defaultFontName = 'Courier';
   xterm: Terminal;
   shellConnected = false;
   connectionId: string;
