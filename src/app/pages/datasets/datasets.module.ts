@@ -35,6 +35,7 @@ import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dat
 import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
@@ -103,6 +104,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     ZvolFormComponent,
     SpaceManagementChartComponent,
     DatasetCapacitySettingsComponent,
+    ImportDataComponent,
   ],
   providers: [],
 })

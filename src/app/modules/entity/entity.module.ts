@@ -93,7 +93,7 @@ import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-ta
 import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
@@ -133,6 +133,7 @@ import { AppLoaderService } from 'app/services';
     MatProgressBarModule,
     MatCheckboxModule,
     MatButtonToggleModule,
+    PageHeaderModule,
     MatRadioModule,
     TextFieldModule,
     MatAutocompleteModule,
@@ -151,7 +152,6 @@ import { AppLoaderService } from 'app/services';
     CastModule,
     MatNativeDateModule,
     SchedulerModule,
-    LayoutModule,
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -225,4 +225,4 @@ import { AppLoaderService } from 'app/services';
     TableService,
   ],
 })
-export class EntityModule {}
+export class EntityModule { }
