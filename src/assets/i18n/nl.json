@@ -1,5 +1,6 @@
 {
   "": "",
+  "<b>Copy & Paste</b> <br/>\n    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n    <b>Kill Process</b> <br/>\n    Kill process shortcut is <i>Crtl+C</i>.\n  ": "",
   "Action Not Possible": "",
   "Add a new bucket to your Storj account.": "",
   "Add bucket": "",
@@ -121,7 +122,6 @@
   "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\">TrueNAS-licenties</a> - Meer informatie over ondersteuning op ondernemingsniveau.",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\">TrueNAS Documentation Hub</a> - Lees en draag bij aan de open-source documentatie.",
   "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the destination. If files with the same names are present on the destination, they are <i><u>overwritten</u></i>.": "<b>KOPIËREN</b>: bestanden van de bron worden <i><u>gekopieerd</u></i> naar de bestemming. Als bestanden met dezelfde namen op de bestemming aanwezig zijn, worden ze <i><u>overschreven</u></i>.",
-  "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Crtl+C</i>.": "<b>Kopiëren en plakken</b> <br/> Kopieer- en plakbewerkingen in het contextmenu zijn uitgeschakeld in de Shell. Snelkoppelingen voor kopiëren en plakken voor Mac zijn \n<i>Command+C</i> en <i>Command+V</i>. Gebruik voor de meeste besturingssystemen <i>Ctrl+Insert</i> om te kopiëren en <i>Shift+Insert</i> om te plakken.<br/><br/>\n<b>Kill Process</b> < br/>\nDe snelkoppeling naar het kill-proces is <i>Crtl+C</i>.",
   "<b>Current Version:</b> ": "<b>Huidige versie:</b> ",
   "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.": "<b>VERPLAATSEN</b>: nadat bestanden zijn <i><u>gekopieerd</u></i> van de bron naar de bestemming, worden ze <i><u>verwijderd</u></i > van de bron. Bestanden met dezelfde namen op de bestemming worden <i><u>overschreven</u></i>.",
   "<b>Not recommended.</b> Allow more than one group to have the same group ID.": "<b>Niet aanbevolen.</b> Meer dan één groep toestaan om dezelfde groeps-ID te hebben.",

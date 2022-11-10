@@ -36,7 +36,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   waitParentChanges = 300;
   fontSize = 14;
-  fontName = 'Inconsolata';
+  featuredFontName = 'Inconsolata';
   defaultFontName = 'monospace';
   xterm: Terminal;
   shellConnected = false;
@@ -56,9 +56,10 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   private attachAddon: XtermAttachAddon;
 
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
-                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
-                  <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Crtl+C</i>.`);
+    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
+    <b>Kill Process</b> <br/>
+    Kill process shortcut is <i>Crtl+C</i>.
+  `);
 
   constructor(
     private ws: WebSocketService,
@@ -139,10 +140,10 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
 
-    const font = new FontFaceObserver(this.fontName);
+    const font = new FontFaceObserver(this.featuredFontName);
 
     font.load().then(() => {
-      this.xterm.setOption('fontFamily', this.fontName);
+      this.xterm.setOption('fontFamily', this.featuredFontName);
       this.drawTerminal();
     }, (error) => {
       this.drawTerminal();

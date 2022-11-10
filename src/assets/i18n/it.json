@@ -43,7 +43,7 @@
   "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "",
   "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the destination. If files with the same names are present on the destination, they are <i><u>overwritten</u></i>.": "",
-  "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Crtl+C</i>.": "",
+  "<b>Copy & Paste</b> <br/>\n    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n    <b>Kill Process</b> <br/>\n    Kill process shortcut is <i>Crtl+C</i>.\n  ": "",
   "<b>Current Version:</b> ": "",
   "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.": "",
   "<b>Not recommended.</b> Allow more than one group to have the same group ID.": "",
