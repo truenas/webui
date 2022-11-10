@@ -8,30 +8,15 @@ import { MockPipe } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ChartBulkUpgradeComponent } from 'app/pages/applications/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-
-const mockSuccessBulkResponse = [
-  {
-    result: [{ status: 'Status: Application test-app-two has been upgraded' }],
-    error: null,
-  },
-] as CoreBulkResponse[];
-
-const mockFailedBulkResponse = [
-  {
-    result: null,
-    error: 'Something went wrong',
-  },
-] as CoreBulkResponse[];
+import { DialogService, WebSocketService } from 'app/services';
 
 const fakeAppOne = {
   name: 'test-app-one',
@@ -44,9 +29,9 @@ const fakeAppOne = {
   dataset: 'tank/ix-applications/releases/test-pihole',
   status: 'ACTIVE',
   history: {},
-  update_available: false,
+  update_available: true,
   human_version: '2022.10_1.0.7',
-  human_latest_version: '2022.10_1.0.7',
+  human_latest_version: '2022.10_1.0.8',
   pod_status: { desired: 1, available: 1 },
   used_ports: [],
   chart_metadata: {
@@ -66,9 +51,9 @@ const fakeAppTwo = {
   dataset: 'tank/ix-applications/releases/test-nextcloud',
   status: 'ACTIVE',
   history: {},
-  update_available: false,
+  update_available: true,
   human_version: '25_1.6.33',
-  human_latest_version: '25_1.6.36',
+  human_latest_version: '25_1.6.34',
   pod_status: { desired: 2, available: 2 },
   used_ports: [],
   chart_metadata: {
@@ -130,9 +115,9 @@ describe('ChartBulkUpgradeComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: [fakeAppOne, fakeAppTwo],
       },
-      mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockWebsocket([
         mockJob('core.bulk'),
         mockCall('chart.release.upgrade', fakeAppOne),
@@ -146,45 +131,22 @@ describe('ChartBulkUpgradeComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('updates selected applications when form is submitted', async () => {
-    const jobArguments: CoreBulkQuery = ['chart.release.upgrade', [
-      ['test-app-one', { item_version: '2022.10_1.0.9' }],
-      ['test-app-two', { item_version: '25_1.6.35' }],
-    ]];
-    spectator
-      .inject(MockWebsocketService)
-      .mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
-
+  it('checks dialog confirmation text', () => {
     expect(spectator.fixture.nativeElement).toHaveText(
       'The following 2 applications will be upgraded. Are you sure you want to proceed?',
     );
+  });
+
+  it('checks for the correct payload and success toast', async () => {
+    const jobArguments: CoreBulkQuery = ['chart.release.upgrade', [
+      ['test-app-one', { item_version: '1.0.8' }],
+      ['test-app-two', { item_version: '1.6.34' }],
+    ]];
 
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
     await updatedButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
-    expect(spectator.fixture.nativeElement).toHaveText('2 applications has been upgraded.');
-
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await closeButton.click();
-  });
-
-  it('checks updating failures of applications when form is submitted', async () => {
-    const jobArguments: CoreBulkQuery = ['chart.release.upgrade', [
-      ['test-app-one', { item_version: '2022.10_1.0.9' }],
-      ['test-app-two', { item_version: '25_1.6.35' }],
-    ]];
-    spectator
-      .inject(MockWebsocketService)
-      .mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
-
-    const updateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
-    await updateButton.click();
-
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
-    expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 applications could not be upgraded.');
-
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await closeButton.click();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Upgrading Apps. Please check on the progress in Task Manager.');
   });
 });
