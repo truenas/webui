@@ -1,6 +1,6 @@
 {
   "": "",
-  "<b>Copy & Paste</b> <br/>\n    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n    <b>Kill Process</b> <br/>\n    Kill process shortcut is <i>Crtl+C</i>.\n  ": "",
+  "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Crtl+C</i>.": "",
   "Action Not Possible": "",
   "Add a new bucket to your Storj account.": "",
   "Add bucket": "",

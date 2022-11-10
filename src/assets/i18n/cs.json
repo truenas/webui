@@ -28,7 +28,7 @@
   "<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS Forums</a> - Find answers from other users in the forums.": "",
   "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.": "",
-  "<b>Copy & Paste</b> <br/>\n    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n    <b>Kill Process</b> <br/>\n    Kill process shortcut is <i>Crtl+C</i>.\n  ": "",
+  "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Crtl+C</i>.": "",
   "<b>Not recommended.</b> Allow more than one group to have the same group ID.": "",
   "<b>Root logins are discouraged.</b> Allows root  logins. A password must be set for the <i>root</i> user account.": "",
   "<b>SET</b> will changes all destination datasets to <code>readonly=on</code> after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the <code>readonly</code> property during replication.": "",

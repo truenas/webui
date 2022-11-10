@@ -11,7 +11,7 @@
   "+ Add a backup credential": "",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "",
   "2FA": "",
-  "<b>Copy & Paste</b> <br/>\n    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n    <b>Kill Process</b> <br/>\n    Kill process shortcut is <i>Crtl+C</i>.\n  ": "",
+  "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Crtl+C</i>.": "",
   "<b>Not recommended.</b> Allow more than one group to have the same group ID.": "",
   "<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.": "",
   "<b>WARNING:</b> The configuration file contains sensitive data like system passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation. Additional sensitive information can be included in the configuration file.<br />": "",
