@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
+  Component, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -41,8 +41,6 @@ interface CatalogSyncJob {
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
 export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Output() updateTab = new EventEmitter();
-
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
     commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;

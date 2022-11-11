@@ -35,7 +35,6 @@ export class ChartFormComponent implements OnDestroy {
   title: string;
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
-  selectedVersionKey: string;
 
   isLoading = false;
   isNew = true;
@@ -107,11 +106,7 @@ export class ChartFormComponent implements OnDestroy {
       }
     });
 
-    if (!this.selectedVersionKey) {
-      this.selectedVersionKey = versionKeys[0];
-    }
-
-    this.form.addControl('version', new UntypedFormControl(this.selectedVersionKey, [Validators.required]));
+    this.form.addControl('version', new UntypedFormControl(versionKeys[0], [Validators.required]));
     this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
     this.form.controls['release_name'].setValidators(
       this.validatorsService.withMessage(
@@ -259,13 +254,14 @@ export class ChartFormComponent implements OnDestroy {
     });
 
     if (this.isNew) {
+      const version = data.version;
       delete data.version;
       this.dialogRef.componentInstance.setCall('chart.release.create', [{
         catalog: this.catalogApp.catalog.id,
         item: this.catalogApp.name,
         release_name: data.release_name,
         train: this.catalogApp.catalog.train,
-        version: this.selectedVersionKey,
+        version,
         values: data,
       } as ChartReleaseCreate]);
     } else {
