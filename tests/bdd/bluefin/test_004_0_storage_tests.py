@@ -125,22 +125,29 @@ def create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_pat
 @then('create second user for smb share')
 def create_second_user_for_smb_share(driver):
     """create second user for smb share"""
-#    import t_004_12_create_second_user_for_smb_share
-#    t_004_12_create_second_user_for_smb_share.test_create_second_user_for_smb_share(driver)
+    import t_004_12_create_second_user_for_smb_share
+    t_004_12_create_second_user_for_smb_share.test_create_second_user_for_smb_share(driver)
+
+
+@then('create wheel dataset')
+def create_wheel_dataset(driver):
+    """create wheel dataset"""
+    import t_004_13_create_wheel_dataset
+   t_004_1_create_wheel_dataset.test_create_wheel_dataset(driver)
 
 
 @then(parsers.parse('create ericbsd dataset with "{dataset_name}" "{user}"'))
 def create_ericbsd_dataset(driver, dataset_name, user):
     """create ericbsd dataset"""
-#    import t_004_15_create_ericbsd_dataset
-#    t_004_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user)
+    import t_004_15_create_ericbsd_dataset
+    t_004_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user)
 
 
-@then(parsers.parse('create ericbsd smb sharewith "{path}" "{description}" "{sharenaame}" "{smbname}" "{user}" "{password}" "{user2}" "{password2}"'))
-def create_ericbsd_smb_share(driver):
+@then(parsers.parse('create ericbsd smb sharewith "{eric_smb_path}" "{ericsmbdescription}" "{ericsharename}" "{ericsmbname}" "{user}" "{password}" "{user2}" "{password2}"'))
+def create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, ericsmbdescription, ericsharename, ericsmbname, user, password, user2, password2):
     """create ericbsd smb share"""
-#    import t_004_16_test_create_ericbsd_smb_share
-#    t_004_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, path, description, sharename, smbname, user, password, user2, password2)
+    import t_004_16_create_ericbsd_smb_share
+    t_004_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, ericsmbdescription, ericsharename, ericsmbname, user, password, user2, password2)
 
 
 @then(parsers.parse('create zvol for iscsi with {name} {zvol_1G_size}'))
