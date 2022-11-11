@@ -65,20 +65,6 @@ def test_create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, 
     # the ldapsmbshare should be added to the Shares list
     assert wait_on_element(driver, 10, f'//div[contains(.,"{ericsmbname}")]')
 
-    # send a file to the share with ip/"{ldapsmbshare}" and "{ldap_user}" and "{ldap_password}"
-#    run_cmd('touch testfile.txt')
-#    ldap_smb_results = run_cmd(f'smbclient //{nas_ip}/{smb_ldap_path} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
-#    assert ldap_smb_results['result'], ldap_smb_results['output']
-#    run_cmd('rm testfile.txt')
-
-
-    # verify that the file is on the NAS dataset
-#    global smb_ldap_results
-#    smb_ldap_cmd = 'ls -la /mnt/tank/my_ldap_dataset/'
-#    smb_ldap_results = ssh_cmd(smb_ldap_cmd, 'root', root_password, nas_ip)
-#    assert smb_ldap_results['result'], smb_ldap_results['output']
-#    assert 'testfile' in smb_ldap_results['output'], smb_ldap_results['output']
-
 
     # This sleep is to make sure that the NAS VM is ready for the step
     time.sleep(2)
