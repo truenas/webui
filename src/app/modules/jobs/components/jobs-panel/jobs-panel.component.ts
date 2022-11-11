@@ -72,7 +72,6 @@ export class JobsPanelComponent {
 
     dialogRef.componentInstance.jobId = job.id;
     dialogRef.componentInstance.autoCloseOnSuccess = true;
-    dialogRef.componentInstance.openJobsManagerOnClose = false;
     dialogRef.componentInstance.wsshow();
   }
 

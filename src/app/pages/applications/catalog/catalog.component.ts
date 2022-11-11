@@ -2,8 +2,8 @@ import {
   Component, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -26,7 +26,8 @@ import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/char
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
+import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 interface CatalogSyncJob {
   id: number;
@@ -43,7 +44,7 @@ interface CatalogSyncJob {
 export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
-    commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
+  commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
 
   catalogApps: CatalogApp[] = [];
   filteredCatalogNames: string[] = [];
@@ -75,11 +76,10 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     private mdDialog: MatDialog,
     private translate: TranslateService,
     private ws: WebSocketService,
-    private router: Router,
-    private modalService: ModalService,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -268,13 +268,18 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
         title: helptext.refreshing,
       },
     });
-    dialogRef.componentInstance.openJobsManagerOnClose = true;
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });
+    dialogRef
+      .beforeClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store$.dispatch(jobIndicatorPressed());
+      });
   }
 
   setupCatalogMenu(): void {
