@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ChangeDetectorRef,
 } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
@@ -28,7 +29,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
 
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
-    title: 'No Data',
+    title: T('No Data'),
   };
 
   readonly AclType = AclType;
