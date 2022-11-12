@@ -165,20 +165,20 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   private routeSub: Subscription;
 
   get currentColumns(): EntityTableColumn[] {
-    const result = this.alwaysDisplayedCols.concat(this.conf.columns) as any;
+    const result = this.alwaysDisplayedCols.concat(this.conf.columns);
 
     // Actions without expansion
-    if (this.hasActions && result[result.length - 1] !== 'action' && (!this.hasDetails() || !this.hasDetails)) {
-      result.push({ prop: 'action' });
+    if (this.hasActions && (result[result.length - 1] as unknown) !== 'action' && (!this.hasDetails() || !this.hasDetails)) {
+      result.push({ prop: 'action' } as EntityTableColumn);
     }
 
     // Expansion
     if (this.hasDetails()) {
-      result.push({ prop: 'expansion-chevrons' });
+      result.push({ prop: 'expansion-chevrons' } as EntityTableColumn);
     }
 
     if (this.conf.config.multiSelect) {
-      result.unshift({ prop: 'multiselect' });
+      result.unshift({ prop: 'multiselect' } as EntityTableColumn);
     }
 
     return result;
