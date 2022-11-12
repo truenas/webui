@@ -275,7 +275,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadCatalogs();
     });
     dialogRef
-      .beforeClosed()
+      .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.store$.dispatch(jobIndicatorPressed());
