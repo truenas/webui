@@ -282,6 +282,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-button:disabled {
+    cursor: not-allowed;
     opacity: 0.38;
   }
 
