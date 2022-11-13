@@ -40,12 +40,13 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import {
   EntityTableAction,
   EntityTableColumn, EntityTableColumnProp,
-  EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog,
+  EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog, SomeRow,
 } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, JobService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -57,12 +58,6 @@ import {
   selectPreferencesState,
   waitForPreferences,
 } from 'app/store/preferences/preferences.selectors';
-
-interface SomeRow {
-  id?: string | number;
-  multiselect_id?: string | number;
-  [key: string]: any;
-}
 
 @UntilDestroy()
 @Component({
@@ -79,9 +74,9 @@ interface SomeRow {
     ]),
   ],
 })
-export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, AfterViewInit, OnDestroy {
+export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
-  @Input() conf: EntityTableConfig;
+  @Input() conf: EntityTableConfig<Row>;
 
   @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -148,7 +143,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   dataSource: MatTableDataSource<Row>;
   rows: Row[] = [];
   currentRows: Row[] = []; // Rows applying filter
-  getFunction: Observable<any>;
+  getFunction: Observable<unknown>;
   config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
@@ -170,20 +165,20 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   private routeSub: Subscription;
 
   get currentColumns(): EntityTableColumn[] {
-    const result = this.alwaysDisplayedCols.concat(this.conf.columns) as any;
+    const result = this.alwaysDisplayedCols.concat(this.conf.columns);
 
     // Actions without expansion
-    if (this.hasActions && result[result.length - 1] !== 'action' && (!this.hasDetails() || !this.hasDetails)) {
-      result.push({ prop: 'action' });
+    if (this.hasActions && (result[result.length - 1] as unknown) !== 'action' && (!this.hasDetails() || !this.hasDetails)) {
+      result.push({ prop: 'action' } as EntityTableColumn);
     }
 
     // Expansion
     if (this.hasDetails()) {
-      result.push({ prop: 'expansion-chevrons' });
+      result.push({ prop: 'expansion-chevrons' } as EntityTableColumn);
     }
 
     if (this.conf.config.multiSelect) {
-      result.unshift({ prop: 'multiselect' });
+      result.unshift({ prop: 'multiselect' } as EntityTableColumn);
     }
 
     return result;
@@ -203,7 +198,6 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     public loader: AppLoaderService,
     protected translate: TranslateService,
     public storageService: StorageService,
-    protected job: JobService,
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
     public modalService: ModalService,
@@ -712,7 +706,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
   }
 
   generateRows(res: any): Row[] {
-    let rows: any[];
+    let rows: Row[];
     if (this.loaderOpen) {
       this.loader.close();
       this.loaderOpen = false;
@@ -720,17 +714,17 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
     if (res.data) {
       if (res.data.result) {
-        rows = new EntityUtils().flattenData(res.data.result);
+        rows = new EntityUtils().flattenData(res.data.result) as Row[];
       } else {
-        rows = new EntityUtils().flattenData(res.data);
+        rows = new EntityUtils().flattenData(res.data) as Row[];
       }
     } else {
-      rows = new EntityUtils().flattenData(res);
+      rows = new EntityUtils().flattenData(res) as Row[];
     }
 
     rows.forEach((row) => {
       Object.keys(row).forEach((attr) => {
-        row[attr] = this.rowValue(row, attr);
+        (row[attr as keyof Row] as unknown) = this.rowValue(row, attr);
       });
     });
 
@@ -740,7 +734,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
       }
     } else {
       this.currentRows.forEach((row) => {
-        const index = _.findIndex(rows, { id: row.id });
+        const index = _.findIndex(rows, { id: row.id } as _.PartialShallow<Row>);
         if (index > -1) {
           Object.keys(rows[index]).forEach((prop) => {
             row[prop as keyof Row] = rows[index][prop];
@@ -750,7 +744,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
       const newRows: Row[] = [];
       this.rows.forEach((row) => {
-        const index = _.findIndex(rows, { id: row.id });
+        const index = _.findIndex(rows, { id: row.id } as _.PartialShallow<Row>);
         if (index < 0) {
           return;
         }
@@ -789,7 +783,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
     return [];
   }
 
-  rowValue(row: any, attr: string): unknown {
+  rowValue(row: Record<string, unknown>, attr: string): unknown {
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
@@ -944,7 +938,7 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
             }),
           );
         }),
-        switchMap((jobId: number) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
+        switchMap((jobId: number) => (jobId ? this.store$.select(selectJob(jobId)) : of(false))),
       );
   }
 
@@ -1052,10 +1046,11 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
   // Stores currently selected columns in preference service
   selectColumnsToShowOrHide(): void {
-    const newColumnPreferences: TableDisplayedColumns = {
+    // TODO: Some type here is incorrect
+    const newColumnPreferences = {
       title: this.title,
-      cols: this.conf.columns as any,
-    };
+      cols: this.conf.columns,
+    } as unknown as TableDisplayedColumns;
 
     this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((state) => {
       if (!state.areLoaded) {
@@ -1240,5 +1235,9 @@ export class EntityTableComponent<Row extends SomeRow = any> implements OnInit, 
 
       this.changeDetectorRef.markForCheck();
     });
+  }
+
+  asGenericTable(entity: EntityTableComponent<Row>): EntityTableComponent<Record<string, unknown>> {
+    return entity as EntityTableComponent<Record<string, unknown>>;
   }
 }

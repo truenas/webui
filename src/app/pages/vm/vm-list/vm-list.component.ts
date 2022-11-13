@@ -1,28 +1,22 @@
 import {
-  AfterViewInit, Component, Inject, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiParams } from 'app/interfaces/api-directory.interface';
 import {
   VirtualizationDetails,
-  VirtualMachine, VirtualMachineUpdate, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
+  VirtualMachine, VirtualMachineUpdate,
 } from 'app/interfaces/virtual-machine.interface';
-import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EmptyType, EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -31,6 +25,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
+import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
@@ -115,7 +110,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
     private slideIn: IxSlideInService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -126,7 +120,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     );
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
     this.checkMemory();
     this.entityList = entityList;
 
@@ -145,7 +139,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       entityList.patchCurrentRows(
         (row: VirtualMachineRow) => row.id === event.id,
-        (changedRow) => {
+        (changedRow: VirtualMachineRow) => {
           if (!event.fields) {
             return;
           }
@@ -422,44 +416,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe({
           next: (displayDevices) => {
             this.loader.close();
-            if (displayDevices.length === 1) {
-              if (!displayDevices[0].attributes.password_configured) {
-                this.openDisplayDevice({
-                  vmId: vm.id,
-                  displayDeviceId: displayDevices[0].id,
-                });
-              } else {
-                const displayDevice = _.find(displayDevices, { id: displayDevices[0].id });
-                this.showPasswordDialog(vm, displayDevice);
-              }
-            } else {
-              const conf: DialogFormConfiguration = {
-                title: this.translate.instant('Display Device'),
-                message: this.translate.instant('Pick a display device to open'),
-                fieldConfig: [{
-                  type: 'radio',
-                  name: 'display_device',
-                  options: displayDevices.map((device) => ({ label: device.attributes.type, value: device.id })),
-                  validation: [Validators.required],
-                }],
-                saveButtonText: this.translate.instant('Open'),
-                customSubmit: (entityDialog: EntityDialogComponent) => {
-                  const displayDevice = _.find(displayDevices, {
-                    id: (entityDialog.formValue as { display_device: number }).display_device,
-                  });
-                  if (displayDevice.attributes.password_configured) {
-                    this.showPasswordDialog(vm, displayDevice);
-                  } else {
-                    this.openDisplayDevice({
-                      vmId: vm.id,
-                      displayDeviceId: displayDevice.id,
-                    });
-                  }
-                  entityDialog.dialogRef.close();
-                },
-              };
-              this.dialogService.dialogForm(conf);
-            }
+            this.dialog.open(DisplayVmDialogComponent, { data: { vm, displayDevices } });
           },
           error: (err) => {
             this.loader.close();
@@ -494,31 +451,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         });
       },
     }] as EntityTableAction[];
-  }
-
-  showPasswordDialog(vm: VirtualMachineRow, displayDevice: VmDisplayDevice): void {
-    const passwordConfiguration: DialogFormConfiguration = {
-      title: this.translate.instant('Enter password'),
-      message: this.translate.instant('Enter password to unlock this display device'),
-      fieldConfig: [{
-        type: 'input',
-        name: 'password',
-        togglePw: true,
-        inputType: 'password',
-        placeholder: this.translate.instant('Password'),
-        validation: [Validators.required],
-      }],
-      saveButtonText: this.translate.instant('Open'),
-      customSubmit: (passDialog: EntityDialogComponent) => {
-        passDialog.dialogRef.close();
-        this.openDisplayDevice({
-          vmId: vm.id,
-          displayDeviceId: displayDevice.id,
-          password: passDialog.formValue.password as string,
-        });
-      },
-    };
-    this.dialogService.dialogForm(passwordConfiguration);
   }
 
   isActionVisible(actionId: string, row: VirtualMachineRow): boolean {
@@ -558,52 +490,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
         this.updateRows([vm]);
         this.checkMemory();
-      });
-  }
-
-  private openDisplayDevice(options: {
-    vmId: number;
-    displayDeviceId: number;
-    password?: string;
-  }): void {
-    this.loader.open();
-    let displayOptions = {
-      protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
-    } as VmDisplayWebUriParamsOptions;
-
-    if (options.password) {
-      displayOptions = {
-        ...displayOptions,
-        devices_passwords: [
-          {
-            device_id: options.displayDeviceId,
-            password: options.password,
-          },
-        ],
-      };
-    }
-
-    const requestParams: VmDisplayWebUriParams = [
-      options.vmId,
-      this.window.location.host,
-      displayOptions,
-    ];
-
-    this.ws.call('vm.get_display_web_uri', requestParams)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (webUris) => {
-          this.loader.close();
-          const webUri = webUris[options.displayDeviceId];
-          if (webUri.error) {
-            return this.dialogService.warn(this.translate.instant('Error'), webUri.error);
-          }
-          this.window.open(webUri.uri, '_blank');
-        },
-        error: (err) => {
-          this.loader.close();
-          new EntityUtils().handleError(this, err);
-        },
       });
   }
 }

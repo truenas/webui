@@ -30,6 +30,9 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  DatasetUnlockFormValues,
+} from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock-form-values.interface';
 import { UnlockDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
 import { DialogService } from 'app/services';
 
@@ -342,7 +345,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(body: any): void {
+  customSubmit(body: DatasetUnlockFormValues): void {
     const datasets = [];
     let num = 1; // only unlock the first dataset (the root) if unlock_children is disabled
     if (body['unlock_children']) {

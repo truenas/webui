@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { RsyncModule } from 'app/interfaces/rsync-module.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -8,17 +9,21 @@ import {
 } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+interface RsyncModuleRow extends RsyncModule {
+  details?: { label: string; value: unknown }[];
+}
+
 @UntilDestroy()
 @Component({
   selector: 'ix-rsync-module-list',
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class RsyncModuleListComponent implements EntityTableConfig, OnInit {
+export class RsyncModuleListComponent implements EntityTableConfig<RsyncModuleRow>, OnInit {
   title = this.translate.instant('RSYNC Modules');
   queryCall = 'rsyncmod.query' as const;
   hasDetails = true;
   wsDelete = 'rsyncmod.delete' as const;
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<RsyncModuleRow>;
   protected routeDelete: string[] = ['services', 'rsync', 'rsync-module', 'delete'];
 
   columns = [
@@ -50,11 +55,11 @@ export class RsyncModuleListComponent implements EntityTableConfig, OnInit {
       .subscribe(() => this.entityList.getData());
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<RsyncModuleRow>): void {
     this.entityList = entityList;
   }
 
-  dataHandler(entityTable: EntityTableComponent): void {
+  dataHandler(entityTable: EntityTableComponent<RsyncModuleRow>): void {
     const rows = entityTable.rows;
     rows.forEach((row) => {
       row.details = [];

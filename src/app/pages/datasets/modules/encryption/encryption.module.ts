@@ -15,6 +15,7 @@ import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/co
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import {
   UnlockDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
@@ -48,6 +49,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     UnlockDialogComponent,
     DatasetUnlockComponent,
     ExportDatasetKeyDialogComponent,
+    ExportAllKeysDialogComponent,
     LockDatasetDialogComponent,
   ],
   providers: [],

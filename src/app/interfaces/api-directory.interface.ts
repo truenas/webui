@@ -264,6 +264,7 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import { ChartReleaseUpgradeParams } from './chart-release.interface';
 import { PoolRemoveParams } from './pool-remove.interface';
 
 /**
@@ -382,7 +383,7 @@ export type ApiDirectory = {
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: ChartRelease };
-  'chart.release.upgrade_summary': { params: [name: string, params?: { item_version: string }]; response: UpgradeSummary };
+  'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
   // CRON
   'cronjob.run': { params: [id: number]; response: void };
@@ -423,7 +424,7 @@ export type ApiDirectory = {
   'cloudsync.restore': { params: CloudsyncRestoreParams; response: void };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.delete': { params: [id: number]; response: boolean };
-  'cloudsync.sync_onetime': { params: [task: Partial<CloudSyncTask>, params: { dry_run?: boolean }]; response: void };
+  'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 
   // Container
   'container.config': { params: void; response: ContainerConfig };

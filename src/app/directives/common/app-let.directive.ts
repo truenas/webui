@@ -2,7 +2,7 @@ import {
   Directive, Input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 
-interface LetContext<T> {
+interface LetContext<T = unknown> {
   appLet: T;
 }
 
@@ -29,5 +29,13 @@ export class LetDirective<T> {
   @Input()
   set appLet(value: T) {
     this.context.appLet = value;
+  }
+
+  // ngTemplateContextGuard flag to help with the Language Service
+  static ngTemplateContextGuard<T>(
+    dir: LetDirective<T>,
+    ctx: unknown,
+  ): ctx is LetContext<Exclude<T, false | 0 | '' | null | undefined>> {
+    return true;
   }
 }

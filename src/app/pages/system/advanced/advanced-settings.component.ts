@@ -28,7 +28,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
-import { ReplicationFormComponent } from 'app/pages/system/advanced/replication-form/replication-form.component';
+import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
@@ -423,7 +423,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         this.slideInService.open(KernelFormComponent).setupForm(this.configData);
         break;
       case AdvancedCardId.Replication:
-        this.slideInService.open(ReplicationFormComponent);
+        this.slideInService.open(ReplicationSettingsComponent);
         break;
       case AdvancedCardId.Syslog:
         this.slideInService.open(SyslogFormComponent);

@@ -1,14 +1,10 @@
 :host {
   display: block;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--lines);
-  }
 }
 
 .job-item {
   display: block;
-  padding: 8px 12px 8px 24px;
+  padding: 8px 12px;
 
   &.abortable .job-item-body {
     max-width: calc(100% - 48px);

@@ -104,7 +104,7 @@
                   class="product-image {{ productEnclosure }}"
                   [class.truenas]="productType === ProductType.ScaleEnterprise"
                   [class.freenas]="productType !== ProductType.ScaleEnterprise"
-                  [class.ix-logo]="productImage == 'ix-original.svg'"
+                  [class.ix-logo]="productImage === 'ix-original.svg'"
                 >
                   <img
                     *ngIf="productImage; else generic"
@@ -119,12 +119,12 @@
 
                   <ng-template #generic>
                     <mat-icon
-                      *ngIf="!certified && !isHa"
+                      *ngIf="!certified && !isHaLicensed"
                       class="generic"
                       svgIcon="ix:truenas_scale_logomark"
                     ></mat-icon>
                     <mat-icon
-                      *ngIf="certified && !isHa"
+                      *ngIf="certified && !isHaLicensed"
                       class="generic"
                       svgIcon="ix:freenas_certified"
                     ></mat-icon>
@@ -132,10 +132,10 @@
                   <div *ngIf="widgetDisabled" class="generic alert">
                     <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
-                  <div *ngIf="productImage && isHa && !isPassive" class="ha-node-status">
+                  <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">
                     ({{ 'Active' | translate }})
                   </div>
-                  <div *ngIf="productImage && isHa && isPassive && haStatus === HaStatusText.HaEnabled" class="ha-node-status">
+                  <div *ngIf="productImage && isHaLicensed && isPassive && hasHa" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
                   <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise && !widgetDisabled" class="ha-node-status">
@@ -165,7 +165,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== HaStatusText.HaEnabled"
+                    [disabled]="!hasHa"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -174,7 +174,7 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
               <div
-                *ngIf="!data && isHa && isPassive && !haStatus"
+                *ngIf="!data && isHaLicensed && isPassive && !hasHa"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -184,18 +184,20 @@
               </div>
 
               <div
-                *ngIf="!data || (isHa && isPassive && haStatus && haStatus !== HaStatusText.HaEnabled)"
+                *ngIf="!data || (isHaLicensed && isPassive && !hasHa)"
                 class="data-container ha-status"
                 fxFlex
               >
-                <h3>{{ haStatus }}</h3>
+                <h3>
+                  {{ hasHa ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}
+                </h3>
               </div>
 
-              <div *ngIf="!data && !isHa" class="loader">
+              <div *ngIf="!data && !isHaLicensed" class="loader">
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div *ngIf="(data && !isPassive) || (data && isPassive && haStatus === HaStatusText.HaEnabled)" class="data-container" fxFlex>
+              <div *ngIf="(data && !isPassive) || (data && isPassive && hasHa)" class="data-container" fxFlex>
                 <div fxHide.gt-xs class="list-subheader">
                   {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
                 </div>
@@ -207,7 +209,7 @@
                   <mat-list-item>
                     <strong>{{ 'Platform' | translate }}:</strong>
                     <span>
-                      {{ data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic' }}
+                      {{ data.system_product && manufacturer === 'ixsystems' ? data.system_product : 'Generic' }}
                     </span>
                   </mat-list-item>
                   <mat-list-item>
@@ -232,7 +234,7 @@
                     {{ data.license.contract_end.$value }}
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.system_serial && manufacturer == 'ixsystems'">
+                  <mat-list-item *ngIf="data.system_serial && manufacturer === 'ixsystems'">
                     <strong>{{ 'Serial Number' | translate }}:</strong>
                     <span>{{ data.system_serial }}</span>
                   </mat-list-item>
@@ -273,7 +275,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!haStatus || haStatus !== HaStatusText.HaEnabled"
+                    [disabled]="!hasHa"
                   ></ix-simple-failover-button>
                 </div>
               </div>

@@ -112,7 +112,7 @@
         ></ix-select>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="isHa" [title]="'Failover' | translate">
+      <ix-fieldset *ngIf="isHaLicensed" [title]="'Failover' | translate">
         <ix-checkbox
           formControlName="failover_critical"
           [label]="'Critical' | translate"
@@ -156,7 +156,7 @@
                 [tooltip]="helptext.alias_address_tooltip"
               ></ix-ip-input-with-netmask>
 
-              <ng-container *ngIf="isHa">
+              <ng-container *ngIf="isHaLicensed">
                 <ix-input
                   formControlName="failover_address"
                   [label]="('IP Address' | translate) + failoverLabelSuffix"

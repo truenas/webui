@@ -14,15 +14,16 @@
       <label class="label input-select">
         {{ config.placeholder | translate }}
         <span *ngIf="config.required">*</span>
-        <ix-tooltip
-          *ngIf="config.tooltip"
-          [header]="config.placeholder"
-          [message]="config.tooltip"
-        ></ix-tooltip>
       </label>
+
+      <ix-tooltip
+        *ngIf="config.tooltip"
+        [header]="config.placeholder"
+        [message]="config.tooltip"
+      ></ix-tooltip>
     </div>
 
-    <mat-form-field *ngIf="config.inputType != 'file'">
+    <mat-form-field *ngIf="config.inputType !== 'file'">
       <div class="input-container">
         <span *ngIf="config.searchable" class="searchable">
           <mat-icon>search</mat-icon>

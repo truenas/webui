@@ -126,8 +126,8 @@ export class IpmiFormComponent implements OnInit {
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.ws.call('failover.licensed').pipe(
-        switchMap((isHa) => {
-          if (isHa) {
+        switchMap((isHaLicensed) => {
+          if (isHaLicensed) {
             return this.ws.call('failover.node');
           }
           return this.ws.call('ipmi.query', this.filterQuery);

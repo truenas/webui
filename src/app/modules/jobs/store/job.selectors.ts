@@ -1,5 +1,6 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import { JobState } from 'app/enums/job-state.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { adapter, JobsState } from 'app/modules/jobs/store/job.reducer';
 
 export const jobStateKey = 'jobs';
@@ -14,6 +15,11 @@ const { selectAll } = adapter.getSelectors();
 export const selectJobs = createSelector(
   selectJobState,
   selectAll,
+);
+
+export const selectJob = (id: number): MemoizedSelector<object, Job> => createSelector(
+  selectJobs,
+  (jobs) => jobs.find((job) => job.id === id),
 );
 
 export const selectIsJobPanelOpen = createSelector(

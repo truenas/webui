@@ -31,6 +31,7 @@ import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-k
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -121,6 +122,7 @@ import { WebSocketService } from './services/ws.service';
     EntityTableService,
     IxSlideInService,
     IxFileUploadService,
+    DisksUpdateService,
     ThemeService,
     {
       provide: ErrorHandler,

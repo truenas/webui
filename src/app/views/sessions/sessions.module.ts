@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import {
   DisconnectedMessageComponent,
 } from 'app/views/sessions/signin/disconnected-message/disconnected-message.component';
@@ -26,6 +27,7 @@ import { SigninComponent } from './signin/signin.component';
 @NgModule({
   imports: [
     CommonModule,
+    LayoutModule,
     FormsModule,
     ReactiveFormsModule,
     MatProgressBarModule,

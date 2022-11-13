@@ -20,7 +20,7 @@ interface VmUsbPassthroughAttributes {
 export interface VmDisplayAttributes {
   bind: string;
   password: string;
-  password_configured?: false;
+  password_configured?: boolean;
   port: number;
   resolution: string;
   type: VmDisplayType;
