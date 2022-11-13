@@ -83,7 +83,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (this.isReversed) {
       this.data.legend = this.data.legend.reverse();
-      this.data.data.forEach((row, i) => this.data.data[i] = row.slice().reverse());
+      (this.data.data as number[][]).forEach((row, i) => {
+        (this.data.data as number[][])[i] = row.slice().reverse();
+      });
       this.data.aggregations.min = this.data.aggregations.min.slice().reverse();
       this.data.aggregations.max = this.data.aggregations.max.slice().reverse();
       this.data.aggregations.mean = this.data.aggregations.mean.slice().reverse();
@@ -190,8 +192,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       legend.unshift('x');
       rows.push(legend);
 
-      for (let i = 0; i < rd.data.length; i++) {
-        const item = Object.assign([], rd.data[i]);
+      for (let i = 0; i < (rd.data as number[][]).length; i++) {
+        const item = Object.assign([], rd.data as number[][])[i];
         let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
         // UTC: 2020-12-17T16:33:10Z
         // Los Angeles: 2020-12-17T08:36:30-08:00
@@ -208,7 +210,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     } if (structure === 'columns') {
       const columns = [];
 
-      for (let i = 0; i < rd.data.length; i++) {
+      for (let i = 0; i < (rd.data as number[][]).length; i++) {
         const date = new Date(rd.start * 1000 + i * rd.step * 1000);
         columns.push(date);
       }

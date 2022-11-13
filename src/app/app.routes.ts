@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
+import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
 import { ApplicationsComponent } from 'app/pages/applications//applications.component';
-import { AdminLayoutComponent } from './modules/common/layouts/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from './modules/common/layouts/auth-layout/auth-layout.component';
+import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
 import { AuthService } from './services/auth/auth.service';
 
 export const rootRouterConfig: Routes = [{

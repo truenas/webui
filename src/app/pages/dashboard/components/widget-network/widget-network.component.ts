@@ -11,6 +11,7 @@ import {
 } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { ReportingParams } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -197,7 +198,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       }),
       throttleTime(500),
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: NetworkTrafficEvent) => {
       const [, nicName] = evt.name.split('_');
       if (nicName in this.nicInfoMap) {
         const sent = this.utils.convert(evt.data.sent_bytes_rate);
@@ -205,7 +206,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
         const nicInfo = this.nicInfoMap[nicName];
         if (evt.data.link_state) {
-          nicInfo.state = evt.data.link_state as LinkState;
+          nicInfo.state = evt.data.link_state;
         }
         nicInfo.in = `${received.value} ${received.units}/s`;
         nicInfo.out = `${sent.value} ${sent.units}/s`;
@@ -362,7 +363,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         untilDestroyed(this),
       ).subscribe({
         next: (response) => {
-          const labels: number[] = response.data.map((_, index) => {
+          const labels: number[] = (response.data as number[][]).map((_, index) => {
             return (response.start + index * response.step) * 1000;
           });
 
@@ -370,14 +371,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             datasets: [
               {
                 label: `incoming [${networkInterfaceName}]`,
-                data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
+                data: (response.data as number[][]).map((item, index) => ({ t: labels[index], y: item[0] })),
                 borderColor: this.themeService.currentTheme().blue,
                 backgroundColor: this.themeService.currentTheme().blue,
                 pointRadius: 0.2,
               },
               {
                 label: `outcoming [${networkInterfaceName}]`,
-                data: response.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
+                data: (response.data as number[][]).map((item, index) => ({ t: labels[index], y: -item[1] })),
                 borderColor: this.themeService.currentTheme().orange,
                 backgroundColor: this.themeService.currentTheme().orange,
                 pointRadius: 0.1,

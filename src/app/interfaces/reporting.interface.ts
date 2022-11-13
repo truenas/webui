@@ -1,4 +1,5 @@
 import { LinkState } from 'app/enums/network-interface.enum';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
@@ -131,7 +132,7 @@ export interface ReportingData {
   name: string;
   start: number;
   step: number;
-  data: number[][];
+  data: number[][] | WebsocketError;
   aggregations: {
     [key in ReportingAggregationKeys]: string[];
   };
