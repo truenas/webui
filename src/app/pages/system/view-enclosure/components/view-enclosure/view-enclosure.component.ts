@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
@@ -103,7 +103,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             console.warn('No navigation UI detected');
             return;
           }
-          const selector = '.enclosure-' + evt.data.profile.enclosureKey;
+          const selector = `.enclosure-${(evt as EnclosureCanvasEvent).data.profile.enclosureKey}`;
           const el = this.nav.nativeElement.querySelector(selector);
 
           const oldCanvas = this.nav.nativeElement.querySelector(selector + ' canvas');
@@ -111,12 +111,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             el.removeChild(oldCanvas);
           }
 
-          evt.data.canvas.setAttribute('style', 'width: 80% ;');
-          el.appendChild(evt.data.canvas);
+          (evt as EnclosureCanvasEvent).data.canvas.setAttribute('style', 'width: 80% ;');
+          el.appendChild((evt as EnclosureCanvasEvent).data.canvas);
           break;
         }
         case 'Error':
-          this.errors.push(evt.data);
+          this.errors.push(evt.data as ErrorMessage);
           console.warn({ ERROR_REPORT: this.errors });
           break;
       }

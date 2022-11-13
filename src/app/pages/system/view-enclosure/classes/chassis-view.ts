@@ -6,6 +6,7 @@ import {
 import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
+import { ChangeDriveTrayColorEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 // TODO: See if can be removed.
 // eslint-disable-next-line
@@ -86,7 +87,10 @@ export class ChassisView {
     this.events.subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'ChangeDriveTrayColor':
-          this.colorDriveTray(parseInt(evt.data.id), evt.data.color);
+          this.colorDriveTray(
+            parseInt((evt as ChangeDriveTrayColorEvent).data.id),
+            (evt as ChangeDriveTrayColorEvent).data.color,
+          );
           break;
       }
     });

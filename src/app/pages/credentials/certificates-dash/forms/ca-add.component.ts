@@ -12,6 +12,8 @@ import {
   CertificateExtension,
   CertificateProfile,
   CertificationExtensionAttribute,
+  Extension,
+  ExtensionProperty,
 } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -874,10 +876,10 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         if (data[key]) {
           if (typeProp.length === 1) {
             for (const item of data[key]) {
-              (certExtensions as any)[typeProp[0]][item] = true;
+              certExtensions[typeProp[0] as Extension][item as ExtensionProperty] = true;
             }
           } else {
-            (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
+            certExtensions[typeProp[0] as Extension][typeProp[1] as ExtensionProperty] = data[key];
           }
         }
         delete data[key];
