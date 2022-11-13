@@ -197,7 +197,7 @@
 
               <div *ngIf="(data && !isPassive) || (data && isPassive && haStatus === HaStatusText.HaEnabled)" class="data-container" fxFlex>
                 <div fxHide.gt-xs class="list-subheader">
-                  {{ (isPassive ? 'System Information (Standby)' : 'System Information') | translate }}
+                  {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
                 </div>
                 <div fxHide.xs class="list-subheader">
                   {{ 'Overview' | translate }}

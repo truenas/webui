@@ -20,12 +20,12 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
+import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
 import {
   VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { DeviceListComponent } from './devices/device-list/device-list.component';
-import { VmFormComponent } from './vm-form/vm-form.component';
 import { CloneVmDialogComponent } from './vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from './vm-list/delete-vm-dialog/delete-vm-dialog.component';
 import { StopVmDialogComponent } from './vm-list/stop-vm-dialog/stop-vm-dialog.component';
@@ -56,7 +56,6 @@ import { routing } from './vm.routing';
   ],
   declarations: [
     VmListComponent,
-    VmFormComponent,
     DeviceListComponent,
     VmWizardComponent,
     VmSerialShellComponent,
@@ -65,7 +64,14 @@ import { routing } from './vm.routing';
     DeleteVmDialogComponent,
     StopVmDialogComponent,
     CloneVmDialogComponent,
+    VmEditFormComponent,
   ],
-  providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService],
+  providers: [
+    VmService,
+    EntityFormService,
+    NetworkService,
+    SystemGeneralService,
+    MessageService,
+  ],
 })
 export class VmModule { }

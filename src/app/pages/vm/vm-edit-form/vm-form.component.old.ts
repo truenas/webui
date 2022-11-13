@@ -1,9 +1,11 @@
+/* eslint-disable */
 import { Component } from '@angular/core';
 import { ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { DeviceType } from 'app/enums/device-type.enum';
@@ -194,7 +196,7 @@ export class VmFormComponent implements FormConfiguration {
           name: 'nodeset',
           placeholder: helptext.nodeset.placeholder,
           tooltip: helptext.nodeset.tooltip,
-          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          validation: [Validators.pattern(vmNodesetPattern)],
         },
 
       ],
@@ -222,7 +224,7 @@ export class VmFormComponent implements FormConfiguration {
           type: 'checkbox',
           name: 'ensure_display_device',
           placeholder: this.translate.instant('Ensure Display Device'),
-          tooltip: this.translate.instant('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          tooltip: helptext.ensure_display_device.tooltip,
           value: true,
         },
         {
@@ -236,7 +238,7 @@ export class VmFormComponent implements FormConfiguration {
       ],
     },
   ];
-  private bootloader: FormSelectConfig;
+  // private bootloader: FormSelectConfig;
   private gpuVmPciSlots: string[];
   private wasFormInitialized = false;
 
@@ -254,169 +256,168 @@ export class VmFormComponent implements FormConfiguration {
   ) { }
 
   preInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        const opt: Partial<QueryFilter<VirtualMachine>> = params.pk ? ['id', '=', parseInt(params.pk, 10)] : [];
-        this.queryCallOption = [opt];
-      }
-    });
-    this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
-      this.maxVcpus = max;
-    });
+    // this.entityForm = entityForm;
+    // this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
+    //   if (params['pk']) {
+    //     const opt: Partial<QueryFilter<VirtualMachine>> = params.pk ? ['id', '=', parseInt(params.pk, 10)] : [];
+    //     this.queryCallOption = [opt];
+    //   }
+    // });
+    // this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
+    //   this.maxVcpus = max;
+    // });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.wasFormInitialized = true;
-    this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
-    this.vmService.getBootloaderOptions().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
-      this.bootloader.options = options;
-    });
+    // this.wasFormInitialized = true;
+    // this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
+    // this.vmService.getBootloaderOptions().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
+    //   this.bootloader.options = options;
+    // });
 
-    entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
-      const mem = _.find(this.fieldConfig, { name: 'memory' });
-      if (typeof (value) === 'number') {
-        value = value.toString();
-      }
-      const filteredValue = this.storageService.convertHumanStringToNum(value);
-      mem['hasErrors'] = false;
-      mem['errors'] = '';
-      if (Number.isNaN(filteredValue)) {
-        mem['hasErrors'] = true;
-        mem['errors'] = globalHelptext.human_readable.input_error;
-      }
-    });
+    // entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
+    //   const mem = _.find(this.fieldConfig, { name: 'memory' });
+    //   if (typeof (value) === 'number') {
+    //     value = value.toString();
+    //   }
+    //   const filteredValue = this.storageService.convertHumanStringToNum(value);
+    //   mem['hasErrors'] = false;
+    //   mem['errors'] = '';
+    //   if (Number.isNaN(filteredValue)) {
+    //     mem['hasErrors'] = true;
+    //     mem['errors'] = globalHelptext.human_readable.input_error;
+    //   }
+    // });
 
-    entityForm.formGroup.controls['vcpus'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      this.vcpus = value;
-    });
-    entityForm.formGroup.controls['cores'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      this.cores = value;
-    });
-    entityForm.formGroup.controls['threads'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-      this.threads = value;
-    });
+    // entityForm.formGroup.controls['vcpus'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+    //   this.vcpus = value;
+    // });
+    // entityForm.formGroup.controls['cores'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+    //   this.cores = value;
+    // });
+    // entityForm.formGroup.controls['threads'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+    //   this.threads = value;
+    // });
 
-    if (this.productType.includes(ProductType.Scale)) {
-      _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
-      cpuModel.isHidden = false;
+    // _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
+    // const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
+    // cpuModel.isHidden = false;
 
-      this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
-        cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
-      });
-    }
+    // this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
+    //   cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
+    // });
 
-    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
-      this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
-    });
-
-    const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
-    gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
-      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
-      for (const gpuValue of gpusValue) {
-        if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-          finalIsolatedPciIds.push(gpuValue);
-        }
-      }
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
-      if (finalIsolatedPciIds.length && gpusValue.length
-        && this.gpuVmPciSlots !== gpusValue && finalIsolatedPciIds.length >= gpusConf.options.length) {
-        const prevSelectedGpus = [];
-        for (const gpu of this.gpus) {
-          if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
-            prevSelectedGpus.push(gpu);
-          }
-        }
-        const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
-        const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
-        gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
-        if (prevSelectedGpus.length) {
-          gpusConf.warnings += this.translate.instant(
-            '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
-            { gpus: listItems },
-          );
-        }
-        gpusConf.warnings += `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
-        gpusFormControl.setErrors({ maxPCIIds: true });
-      } else {
-        gpusConf.warnings = null;
-        gpusFormControl.setErrors(null);
-      }
-    });
+    // this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+    //   this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
+    // });
+    //
+    // const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
+    // gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
+    //   const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+    //   for (const gpuValue of gpusValue) {
+    //     if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
+    //       finalIsolatedPciIds.push(gpuValue);
+    //     }
+    //   }
+    //   const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
+    //   if (finalIsolatedPciIds.length && gpusValue.length
+    //     && this.gpuVmPciSlots !== gpusValue && finalIsolatedPciIds.length >= gpusConf.options.length) {
+    //     const prevSelectedGpus = [];
+    //     for (const gpu of this.gpus) {
+    //       if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
+    //         prevSelectedGpus.push(gpu);
+    //       }
+    //     }
+    //     const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
+    //     const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
+    //     gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
+    //     if (prevSelectedGpus.length) {
+    //       gpusConf.warnings += this.translate.instant(
+    //         '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
+    //         { gpus: listItems },
+    //       );
+    //     }
+    //     gpusConf.warnings += `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
+    //     gpusFormControl.setErrors({ maxPCIIds: true });
+    //   } else {
+    //     gpusConf.warnings = null;
+    //     gpusFormControl.setErrors(null);
+    //   }
+    // });
   }
 
   memoryBlur(): void {
-    if (!this.entityForm) {
-      return;
-    }
-
-    this.entityForm.formGroup.controls['memory'].setValue(this.storageService.humanReadable);
-    const valString = (this.entityForm.formGroup.controls['memory'].value);
-    const valBytes = Math.round(this.storageService.convertHumanStringToNum(valString) / 1048576);
-    if (valBytes < 256) {
-      const mem = _.find(this.fieldConfig, { name: 'memory' });
-      mem['hasErrors'] = true;
-      mem['errors'] = helptext.memory_size_err;
-    }
+  //   if (!this.entityForm) {
+  //     return;
+  //   }
+  //
+  //   this.entityForm.formGroup.controls['memory'].setValue(this.storageService.humanReadable);
+  //   const valString = (this.entityForm.formGroup.controls['memory'].value);
+  //   const valBytes = Math.round(this.storageService.convertHumanStringToNum(valString) / 1048576);
+  //   if (valBytes < 256) {
+  //     const mem = _.find(this.fieldConfig, { name: 'memory' });
+  //     mem['hasErrors'] = true;
+  //     mem['errors'] = helptext.memory_size_err;
+  //   }
   }
 
   cpuValidator(name: string): ValidatorFn {
-    return () => {
-      if (!this.wasFormInitialized) {
-        return;
-      }
-      const cpuConfig = this.fieldConfig.find((config) => config.name === name);
-      const vcpus = this.entityForm.formGroup.controls['vcpus'].value;
-      const cores = this.entityForm.formGroup.controls['cores'].value;
-      const threads = this.entityForm.formGroup.controls['threads'].value;
-      const errors = vcpus * cores * threads > this.maxVcpus
-        ? { validCPU: true }
-        : null;
-
-      if (errors) {
-        cpuConfig.hasErrors = true;
-        cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
-      } else {
-        cpuConfig.hasErrors = false;
-        cpuConfig.warnings = '';
-      }
-      return errors;
-    };
+  //   return () => {
+  //     if (!this.wasFormInitialized) {
+  //       return;
+  //     }
+  //     const cpuConfig = this.fieldConfig.find((config) => config.name === name);
+  //     const vcpus = this.entityForm.formGroup.controls['vcpus'].value;
+  //     const cores = this.entityForm.formGroup.controls['cores'].value;
+  //     const threads = this.entityForm.formGroup.controls['threads'].value;
+  //     const errors = vcpus * cores * threads > this.maxVcpus
+  //       ? { validCPU: true }
+  //       : null;
+  //
+  //     if (errors) {
+  //       cpuConfig.hasErrors = true;
+  //       cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
+  //     } else {
+  //       cpuConfig.hasErrors = false;
+  //       cpuConfig.warnings = '';
+  //     }
+  //     return errors;
+  //   };
   }
 
   resourceTransformIncomingRestData(vmRes: VirtualMachine): VirtualMachine {
-    this.rawVmData = vmRes;
-    (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
-    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
-      this.gpus = gpus;
-      const vmPciSlots = (vmRes.devices
-        .filter((device) => device.dtype === VmDeviceType.Pci) as VmPciPassthroughDevice[])
-        .map((pciDevice) => pciDevice.attributes.pptdev);
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
-      for (const item of gpus) {
-        gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
-      }
-      const vmGpus = this.gpus.filter((gpu) => {
-        for (const gpuPciDevice of gpu.devices) {
-          if (!vmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
-            return false;
-          }
-        }
-        return true;
-      });
-      this.gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.entityForm.formGroup.controls['gpus'].setValue(this.gpuVmPciSlots);
-    });
-    return vmRes;
+    // this.rawVmData = vmRes;
+    // (vmRes as any)['memory'] = this.storageService.convertBytesToHumanReadable(vmRes['memory'] * 1048576, 0);
+    // this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
+    //   this.gpus = gpus;
+    //   // const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
+    //   // for (const item of gpus) {
+    //   //   gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
+    //   // }
+    //
+    //   // const vmPciSlots = (vmRes.devices
+    //   //   .filter((device) => device.dtype === VmDeviceType.Pci) as VmPciPassthroughDevice[])
+    //   //   .map((pciDevice) => pciDevice.attributes.pptdev);
+    //   const vmGpus = this.gpus.filter((gpu) => {
+    //     for (const gpuPciDevice of gpu.devices) {
+    //       if (!vmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
+    //         return false;
+    //       }
+    //     }
+    //     return true;
+    //   });
+    //   this.gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
+    //   this.entityForm.formGroup.controls['gpus'].setValue(this.gpuVmPciSlots);
+    // });
+    // return vmRes;
   }
 
-  beforeSubmit(data: Record<string, unknown>): Record<string, unknown> {
-    if (data['memory'] !== undefined && data['memory'] !== null) {
-      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'] as string) / 1048576);
-    }
-    return data;
-  }
+  // beforeSubmit(data: Record<string, unknown>): Record<string, unknown> {
+  //   if (data['memory'] !== undefined && data['memory'] !== null) {
+  //     data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'] as string) / 1048576);
+  //   }
+  //   return data;
+  // }
 
   customSubmit(updatedVmData: any): void {
     const pciDevicesToCreate = [];

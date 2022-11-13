@@ -1,10 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-  AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup,
+  AbstractControl,
+  AsyncValidatorFn,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  ValidationErrors,
 } from '@angular/forms';
 import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
@@ -250,5 +257,31 @@ export class EntityFormService {
     if (type === UnitType.Size) {
       return unit[0] + 'iB';
     }
+  }
+
+  /**
+   * Takes async validator and adapts it to entity form controls.
+   * Any error returned by a validator will be shown in `manualValidateError`
+   */
+  adaptAsyncValidator(validator: (control: AbstractControl) => Observable<ValidationErrors | null>): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return validator(control).pipe(
+        map((errors) => {
+          if (!errors) {
+            return null;
+          }
+
+          let errorMessage = Object.values(errors)[0];
+          if (errorMessage.message) {
+            errorMessage = errorMessage.message;
+          }
+
+          return {
+            manualValidateError: true,
+            manualValidateErrorMsg: errorMessage,
+          };
+        }),
+      );
+    };
   }
 }
