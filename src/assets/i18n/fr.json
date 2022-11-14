@@ -98,7 +98,7 @@
   "Encryption is for users storing sensitive data.  Pool-level encryption does not apply to the storage pool or disks in the pool. It applies  to the root dataset that shares the pool name and any child datasets created unless you change  the encryption at the time you create the child dataset. For more information on encryption please  refer to the <a href=\"http://TrueNAS.com/docs/\" target=\"_blank\">TrueNAS Documentation hub</a>.": "",
   "Endpoint": "",
   "Ensure Display Device": "Assurez-vous que le périphérique d'affichage",
-  "Enter <strong>{name}</strong> below to confirm.": "Entrez <strong>{nom}</strong> ci-dessous pour confirmer.",
+  "Enter <strong>{name}</strong> below to confirm.": "Entrez <strong>{name}</strong> ci-dessous pour confirmer.",
   "Enter <strong>{pool}</strong> below to confirm": "Entrez <strong>{pool}</strong> ci-dessous pour confirmer",
   "Enter <strong>{zvolName}</strong> below to confirm.": "Entrez <strong>{zvolName}</strong> ci-dessous pour confirmer.",
   "Enter a list of IP addresses to  <a href=\"https://man7.org/linux/man-pages/man8/ping.8.html\" target=\"_blank\">ping</a>.  Separate entries by pressing <code>Enter</code>. Each address is tried  until one is successful or the list is exhausted. Leave empty to use  the default gateway.": "",
