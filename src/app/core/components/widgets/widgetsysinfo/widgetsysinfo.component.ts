@@ -66,6 +66,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
+
+    this.ha_status = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
   }
 
   ngAfterViewInit() {

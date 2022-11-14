@@ -23,7 +23,7 @@ interface InfoObject {
 }
 
 interface HAStatus {
-  status: string;
+  status: 'HA Enabled' | 'HA Disabled';
   reasons?: any;
 }
 
@@ -84,6 +84,14 @@ export class SystemProfileService extends BaseService {
       .subscribe((evt: CoreEvent) => {
         if (this.features.HA) {
           // This is a TrueNAS box with HA support
+          const haStatus = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
+
+          const reasons = (haStatus === 'HA Disabled' && this.ha_status.reasons.length > 0) || haStatus === 'HA Enabled'
+            ? this.ha_status.reasons
+            : ['NO_SYSTEM_READY'];
+
+          this.updateHA(reasons);
+
           this.core.emit({
             name: 'HA_Status',
             data: this.ha_status,

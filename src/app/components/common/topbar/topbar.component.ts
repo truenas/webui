@@ -107,6 +107,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     mediaObserver.media$.subscribe((evt) => {
       this.screenSize = evt.mqAlias;
     });
+
+    this.ha_status_text = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
   }
 
   ngOnInit() {

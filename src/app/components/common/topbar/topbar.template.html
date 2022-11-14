@@ -59,7 +59,7 @@
       <!-- HA Status -->
       <span *ngIf="is_ha && ha_status_text">
       <button
-        *ngIf="ha_disabled_reasons.length === 0 && ha_status_text === 'HA Enabled'"
+        *ngIf="ha_status_text === 'HA Enabled'"
         mat-icon-button
         id="ha"
         [matTooltip]="ha_status_text | translate"
@@ -70,7 +70,7 @@
           <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
       <button
-        *ngIf="ha_disabled_reasons.length > 0 && ha_status_text === 'HA Disabled'"
+        *ngIf="ha_status_text === 'HA Disabled'"
         mat-icon-button
         id="ha"
         [matTooltip]="ha_status_text | translate"
