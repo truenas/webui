@@ -18,18 +18,10 @@ export class VmGpuService {
   ) {}
 
   /**
-   * TODO: Clean up further. Make a model class?
-   * Device
-   * - devices: PciDevice[]
-   *
-   * PciDevice
-   * - vm_pci_slot
-   *
-   * VmPciPassthroughDevice
-   * - pptdev
-   *
-   * Device ---<  PciDevice ----- VmPciPassthroughDevice
-   *     devices  vm_pci_slot    pptdev
+   * Relationship is:
+   * Device has many PciDevice via `devices`
+   * PciDevice ------- VmPciPassthroughDevice
+   *   vm_pci_slot  pptdev
    */
   updateVmGpus(vm: VirtualMachine, newGpuIds: string[]): Observable<unknown> {
     return this.gpuService.getAllGpus().pipe(
@@ -45,26 +37,10 @@ export class VmGpuService {
         const gpusToAdd = this.subtractGpus(newGpus, previousGpus);
         const gpusToRemove = this.subtractGpus(previousGpus, newGpus);
 
-        const requests: Observable<unknown>[] = [];
-        gpusToAdd.forEach((gpuToAdd) => {
-          const gpuPciDevices = gpuToAdd.devices.filter((gpuPciDevice) => {
-            return !previousSlots.includes(gpuPciDevice.vm_pci_slot);
-          });
-          const createRequests = this.createVmPciDevices(vm, gpuPciDevices);
-          requests.push(...createRequests);
-        });
-
-        gpusToRemove.forEach((gpuToRemove) => {
-          const previousVmPciSlots = gpuToRemove.devices.map((device) => device.vm_pci_slot);
-          const vmPciDevices = previousVmPciDevices.filter((device) => {
-            return previousVmPciSlots.includes(device.attributes.pptdev);
-          });
-
-          const deleteRequests = this.deleteVmPciDevices(vmPciDevices);
-          requests.push(...deleteRequests);
-        });
-
-        return forkJoin(requests);
+        return forkJoin([
+          ...this.addGpus(vm, previousSlots, gpusToAdd),
+          ...this.deleteGpus(previousVmPciDevices, gpusToRemove),
+        ]);
       }),
     );
   }
@@ -73,21 +49,44 @@ export class VmGpuService {
     return _.differenceBy(gpus, gpusToSubtract, (gpu) => gpu.addr.pci_slot);
   }
 
-  private createVmPciDevices(vm: VirtualMachine, gpuPciDevices: PciDevice[]): Observable<unknown>[] {
-    return gpuPciDevices.map((gpuPciDevice) => {
-      return this.ws.call('vm.device.create', [{
-        dtype: VmDeviceType.Pci,
-        vm: vm.id,
-        attributes: {
-          pptdev: gpuPciDevice.vm_pci_slot,
-        },
-      }]);
-    });
+  private addGpus(vm: VirtualMachine, previousSlots: string[], gpusToAdd: Device[]): Observable<unknown>[] {
+    const deicesToAdd = gpusToAdd
+      .map((gpuToAdd) => {
+        return gpuToAdd.devices.filter((gpuPciDevice) => {
+          return !previousSlots.includes(gpuPciDevice.vm_pci_slot);
+        });
+      })
+      .flat();
+
+    return deicesToAdd.map((deviceToAdd) => this.createVmPciDevice(vm, deviceToAdd));
   }
 
-  private deleteVmPciDevices(devices: VmPciPassthroughDevice[]): Observable<unknown>[] {
-    return devices.map((device) => {
-      return this.ws.call('vm.device.delete', [device.id]);
-    });
+  private createVmPciDevice(vm: VirtualMachine, device: PciDevice): Observable<unknown> {
+    return this.ws.call('vm.device.create', [{
+      dtype: VmDeviceType.Pci,
+      vm: vm.id,
+      attributes: {
+        pptdev: device.vm_pci_slot,
+      },
+    }]);
+  }
+
+  private deleteGpus(previousVmPciDevices: VmPciPassthroughDevice[], gpusToRemove: Device[]): Observable<unknown>[] {
+    const slotsToRemove = this.findSlotsToRemove(previousVmPciDevices, gpusToRemove);
+    return slotsToRemove.map((device) => this.ws.call('vm.device.delete', [device.id]));
+  }
+
+  private findSlotsToRemove(
+    previousVmPciDevices: VmPciPassthroughDevice[],
+    gpusToRemove: Device[],
+  ): VmPciPassthroughDevice[] {
+    return gpusToRemove
+      .map((gpuToRemove) => {
+        const slotsToRemove = gpuToRemove.devices.map((device) => device.vm_pci_slot);
+        return previousVmPciDevices.filter((device) => {
+          return slotsToRemove.includes(device.attributes.pptdev);
+        });
+      })
+      .flat();
   }
 }

@@ -5,13 +5,20 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { VmBootloader, VmCpuMode, VmTime } from 'app/enums/vm.enum';
+import {
+  VmBootloader, VmCpuMode, VmDeviceType, VmTime,
+} from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
+import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { WebSocketService } from 'app/services';
+import { GpuService } from 'app/services/gpu/gpu.service';
+import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('VmEditFormComponent', () => {
   let spectator: Spectator<VmEditFormComponent>;
@@ -37,6 +44,16 @@ describe('VmEditFormComponent', () => {
     nodeset: '0-1',
     hide_from_msr: false,
     ensure_display_device: true,
+    devices: [
+      {
+        dtype: VmDeviceType.Pci,
+        vm: 4,
+        id: 1,
+        attributes: {
+          pptdev: 'pci_0000_02_00_0',
+        },
+      },
+    ] as VmDevice[],
   } as VirtualMachine;
 
   const createComponent = createComponentFactory({
@@ -57,6 +74,44 @@ describe('VmEditFormComponent', () => {
         }),
         mockCall('vm.update'),
       ]),
+
+      mockProvider(GpuService, {
+        getGpuOptions: () => of([
+          { label: 'GeForce', value: '0000:02:00.0' },
+          { label: 'Intel Arc', value: '0000:03:00.0' },
+        ]),
+        getAllGpus: () => of([
+          {
+            addr: {
+              pci_slot: '0000:02:00.0',
+            },
+            description: 'Geforce',
+            devices: [
+              {
+                pci_slot: '0000:02:00.0',
+                vm_pci_slot: 'pci_0000_02_00_0',
+              },
+            ],
+          },
+          {
+            addr: {
+              pci_slot: '0000:03:00.0',
+            },
+            description: 'Intel Arc',
+            devices: [
+              {
+                pci_slot: '0000:03:00.0',
+                vm_pci_slot: 'pci_0000_03_00_0',
+              },
+            ],
+          },
+        ]),
+        addIsolatedGpuPciIds: jest.fn(() => of(undefined)),
+      }),
+      mockProvider(VmGpuService, {
+        updateVmGpus: jest.fn(() => of(undefined)),
+      }),
+      mockProvider(IxSlideInService),
     ],
     componentProviders: [
       mockProvider(CpuValidatorService, {
@@ -64,18 +119,20 @@ describe('VmEditFormComponent', () => {
           return () => of(null);
         },
       }),
+      mockProvider(IsolatedGpuValidatorService, {
+        validateGpu: () => of(null),
+      }),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
+    spectator.component.setVmForEdit(existingVm);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });
 
   it('shows values when existing VM is opened for edit', async () => {
-    spectator.component.setVmForEdit(existingVm);
-
     const formValues = await form.getValues();
     expect(formValues).toEqual({
       Name: 'My VM',
@@ -98,7 +155,7 @@ describe('VmEditFormComponent', () => {
 
       'Hide from MSR': false,
       'Ensure Display Device': true,
-      "GPU's": [],
+      "GPU's": ['GeForce'],
     });
   });
 
@@ -111,6 +168,38 @@ describe('VmEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.update', 2);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.update', [4, {
+      autostart: true,
+      bootloader: VmBootloader.Uefi,
+      cores: 2,
+      cpu_mode: VmCpuMode.Custom,
+      cpu_model: 'EPYC',
+      cpuset: '0-3,8-11',
+      description: 'New description',
+      ensure_display_device: true,
+      hide_from_msr: false,
+      hyperv_enlightenments: false,
+      memory: 257,
+      name: 'Edited',
+      nodeset: '0-1',
+      pin_vcpus: false,
+      shutdown_timeout: 90,
+      threads: 3,
+      time: VmTime.Local,
+      vcpus: 1,
+    }]);
+    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+  });
+
+  it('updates GPU devices when form is edited and saved', async () => {
+    await form.fillForm({
+      "GPU's": ['Intel Arc'],
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0']);
   });
 });

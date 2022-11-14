@@ -1,7 +1,9 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
+import { TestScheduler } from 'rxjs/testing';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -10,25 +12,28 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 
 describe('GpuService', () => {
   let spectator: SpectatorService<GpuService>;
+  let testScheduler: TestScheduler;
+
+  const gpus = [
+    {
+      addr: {
+        pci_slot: '0000:01:00.0',
+      },
+      description: 'GeForce',
+    },
+    {
+      addr: {
+        pci_slot: '0000:02:00.0',
+      },
+      description: 'Radeon',
+    },
+  ] as Device[];
   const createService = createServiceFactory({
     service: GpuService,
     providers: [
       mockWebsocket([
         mockCall('system.advanced.update_gpu_pci_ids'),
-        mockCall('device.get_info', [
-          {
-            addr: {
-              pci_slot: '0000:01:00.0',
-            },
-            description: 'GeForce',
-          },
-          {
-            addr: {
-              pci_slot: '0000:02:00.0',
-            },
-            description: 'Radeon',
-          },
-        ] as Device[]),
+        mockCall('device.get_info', gpus),
       ]),
       provideMockStore({
         selectors: [
@@ -45,6 +50,18 @@ describe('GpuService', () => {
 
   beforeEach(() => {
     spectator = createService();
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe('getAllGpus', () => {
+    it('returns a list of all gpus available in the system', async () => {
+      const gpus = await firstValueFrom(spectator.service.getAllGpus());
+
+      expect(gpus).toEqual(gpus);
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('device.get_info', [DeviceType.Gpu]);
+    });
   });
 
   describe('getGpuOptions', () => {
@@ -78,12 +95,21 @@ describe('GpuService', () => {
 
   describe('addIsolatedGpuPciIds', () => {
     it('adds new ids of new isolated gpu devices in addition to ones that were previously isolated', async () => {
-      await firstValueFrom(spectator.service.addIsolatedGpuPciIds(['0000:01:00.0', '0000:02:00.0']));
+      await firstValueFrom(spectator.service.addIsolatedGpuPciIds(['0000:01:00.0']));
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
         'system.advanced.update_gpu_pci_ids',
         [['0000:02:00.0', '0000:01:00.0']],
       );
+    });
+
+    it('does nothing when new gpu has already been isolated', () => {
+      testScheduler.run(({ expectObservable }) => {
+        const call$ = spectator.service.addIsolatedGpuPciIds(['0000:02:00.0']);
+
+        expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
+        expectObservable(call$).toBe('|');
+      });
     });
   });
 });

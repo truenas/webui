@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
@@ -15,6 +15,7 @@ import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
@@ -83,6 +84,7 @@ export class VmEditFormComponent {
     private gpuValidator: IsolatedGpuValidatorService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
+    private snackbar: SnackbarService,
   ) {}
 
   setVmForEdit(vm: VirtualMachine): void {
@@ -102,27 +104,21 @@ export class VmEditFormComponent {
     const vmPayload = {
       ...this.form.value,
       memory: Math.round(this.form.value.memory / mbs),
-    } as VirtualMachineUpdate;
-
-    let requests: Observable<unknown>[] = [
-      this.ws.call('vm.update', [this.existingVm.id, vmPayload]),
-    ];
+    };
+    delete vmPayload.gpus;
 
     const gpusIds = this.form.value.gpus as string[];
-    if (gpusIds.length) {
-      requests = [
-        ...requests,
-        this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
-        this.gpuService.addIsolatedGpuPciIds(gpusIds),
-      ];
-    }
-
-    forkJoin(requests)
+    forkJoin([
+      this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+      this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
+      this.gpuService.addIsolatedGpuPciIds(gpusIds),
+    ])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
+          this.snackbar.success(this.translate.instant('VM updated successfully.'));
           this.slideIn.close();
         },
         error: (error) => {
