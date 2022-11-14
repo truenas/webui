@@ -3488,7 +3488,6 @@
   "{this} and {that}. At least one is required": "",
   "{uptimeString} as of {dateTime}": "",
   "{used} of {total} ({used_pct})": "",
-  "{value}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "<b>UPSモード</b>が<i>スレーブ</i>に設定されている場合。UPS<i>マスター</i>システムの開いているネットワークポート番号を入力します。デフォルトのポートは<i>3493</i>です。",
   " seconds.": " 秒。",
   "% of all cores": "% (全コア中)",

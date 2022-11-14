@@ -4013,7 +4013,6 @@
   "{this} and {that}. At least one is required": "",
   "{uptimeString} as of {dateTime}": "",
   "{used} of {total} ({used_pct})": "",
-  "{value}": "",
   " day, ": " dzień",
   " days, ": " dni",
   " seconds.": " sekund",

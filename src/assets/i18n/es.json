@@ -3829,7 +3829,6 @@
   "{this} and {that}. At least one is required": "",
   "{uptimeString} as of {dateTime}": "",
   "{used} of {total} ({used_pct})": "",
-  "{value}": "",
   "% of all cores": "% de todos los núcleos",
   "(24 Hours)": "(24 horas)",
   "(Examples: 500 KiB, 500M, 2 TB)": "(Ejemplos: 500 KiB, 500M, 2TB)",

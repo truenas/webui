@@ -4097,7 +4097,6 @@
   "{this} and {that}. At least one is required": "",
   "{uptimeString} as of {dateTime}": "",
   "{used} of {total} ({used_pct})": "",
-  "{value}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Quando la <b>UPS Mode</b> è impostata su <i>slave</i>. Inserisci il numero della porta aperta del sistema UPS <i>Master</i>. La porta di default è <i>3493</i>.",
   "% of all cores": "% di tutti i core",
   "(Remove pool from database)": "(Rimuovi la pool dal database)",
