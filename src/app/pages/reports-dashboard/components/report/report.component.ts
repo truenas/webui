@@ -161,7 +161,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     this.fetchReport$.pipe(
       filter((params) => !!params),
-      throttleTime(30),
+      throttleTime(100),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((params) => {
@@ -170,7 +170,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     this.updateReport$.pipe(
       filter((changes) => Boolean(changes?.report)),
-      throttleTime(30),
+      throttleTime(100),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((changes) => {

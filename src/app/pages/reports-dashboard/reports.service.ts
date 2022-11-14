@@ -36,10 +36,6 @@ export enum ReportingDatabaseError {
   providedIn: 'root',
 })
 export class ReportsService implements OnDestroy {
-  serverTime$: Observable<number> = this.store$.pipe(
-    waitForSystemInfo,
-    map((systemInfo) => systemInfo.datetime.$date),
-  );
   serverTime: Date;
   showTimeDiffWarning = false;
   private reportingGraphs$ = new BehaviorSubject([]);
@@ -49,7 +45,11 @@ export class ReportsService implements OnDestroy {
   private hasDiskTemperature = false;
   private hasTarget = false;
 
-  constructor(private ws: WebSocketService, private core: CoreService, private store$: Store<AppState>) {
+  constructor(
+    private ws: WebSocketService,
+    private core: CoreService,
+    private store$: Store<AppState>,
+  ) {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
     this.core
@@ -104,8 +104,10 @@ export class ReportsService implements OnDestroy {
       this.hasDiskTemperature = Boolean(Object.values(values).filter(Boolean).length);
     });
 
-    this.serverTime$
+    this.store$
       .pipe(
+        waitForSystemInfo,
+        map((systemInfo) => systemInfo.datetime.$date),
         switchMap((timestamp) => {
           const now = Date.now();
           this.serverTime = new Date(timestamp);
