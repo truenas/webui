@@ -108,7 +108,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.screenSize = evt.mqAlias;
     });
 
-    this.ha_status_text = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
+    this.ha_status_text = window.sessionStorage.getItem('ha_status') === 'true'
+      ? helptext.ha_status_text_enabled
+      : helptext.ha_status_text_disabled;
   }
 
   ngOnInit() {
