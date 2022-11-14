@@ -97,7 +97,7 @@ describe('NetworkConfigurationComponent', () => {
       'Nameserver 1': '',
       'Nameserver 2': '',
       'Nameserver 3': '',
-      'IPv4 Default Gateway': '',
+      'IPv4 Default Gateway': '192.168.30.2',
       'IPv6 Default Gateway': '',
       'Inherit domain from DHCP': false,
       'Outbound Activity': 'Allow All',
