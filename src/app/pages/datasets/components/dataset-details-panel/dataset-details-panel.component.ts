@@ -40,6 +40,9 @@ export class DatasetDetailsPanelComponent implements OnInit {
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
+    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.datasetStore.datasetUpdated();
+    });
   }
 
   get datasetHasRoles(): boolean {

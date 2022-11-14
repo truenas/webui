@@ -73,8 +73,6 @@ export class ZvolFormComponent {
   parentId: string;
   isNew = true;
   isLoading = false;
-  isAdvancedMode = false;
-  isAdvancedAction = true;
   customFilter: [[QueryFilter<unknown>]?] = [];
   inheritEncryptPlaceholder: string = helptext.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
@@ -202,10 +200,6 @@ export class ZvolFormComponent {
     }
   }
 
-  onAdvancedModeToggled(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
-  }
-
   setupForm(): void {
     if (!this.isNew) {
       this.setEncryptionFieldsDisabled(true);
@@ -271,7 +265,7 @@ export class ZvolFormComponent {
                   this.form.controls.pbkdf2iters.enable();
                   this.form.controls.generate_key.enable();
                 }
-                if (this.encryptedParent && !this.isAdvancedMode) {
+                if (this.encryptedParent) {
                   this.form.controls.encryption.disable();
                 } else {
                   this.form.controls.encryption.enable();
@@ -395,8 +389,6 @@ export class ZvolFormComponent {
 
           this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe({
             next: (parentDataset) => {
-              this.isAdvancedAction = false;
-
               this.form.controls.sparse.disable();
               this.form.controls.volblocksize.disable();
 

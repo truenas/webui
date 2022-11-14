@@ -60,7 +60,7 @@
           [required]="true"
         ></ix-select>
         <ix-select
-          *ngIf="isAdvancedMode && form.controls.volblocksize.enabled"
+          *ngIf="form.controls.volblocksize.enabled"
           formControlName="volblocksize"
           [label]="helptext.zvol_volblocksize_placeholder | translate"
           [tooltip]="helptext.zvol_volblocksize_tooltip | translate"
@@ -147,10 +147,6 @@
           color="primary"
           [disabled]="form.invalid || isLoading"
         >{{ 'Save' | translate }}</button>
-
-        <button *ngIf="isAdvancedAction" mat-button type="button" (click)="onAdvancedModeToggled()">
-          {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
-        </button>
       </div>
     </form>
   </mat-card-content>

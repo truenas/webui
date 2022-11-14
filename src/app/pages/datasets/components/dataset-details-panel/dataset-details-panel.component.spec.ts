@@ -2,10 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
   DatasetCapacityManagementCardComponent,
@@ -20,6 +22,7 @@ import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryptio
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService } from 'app/services';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
@@ -65,6 +68,16 @@ describe('DatasetDetailsPanelComponent', () => {
       mockProvider(DatasetTreeStore, {
         selectedDataset$: of(datasetDetails),
         selectedParentDataset$: of(parentDatasetDetails),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              version: 'TrueNAS-SCALE-22.12-MASTER-20221111-015225',
+            } as SystemInfo,
+          },
+        ],
       }),
     ],
   });
