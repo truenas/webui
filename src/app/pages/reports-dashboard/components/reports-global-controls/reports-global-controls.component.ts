@@ -61,11 +61,11 @@ export class ReportsGlobalControlsComponent implements OnInit {
   }
 
   isActiveTab(tab: ReportTab): boolean {
-    return this.activeTab.value === tab.value;
+    return this.activeTab?.value === tab.value;
   }
 
   private setupDisksTab(): void {
-    if (this.activeTab.value !== ReportType.Disk) {
+    if (this.activeTab?.value !== ReportType.Disk) {
       return;
     }
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
