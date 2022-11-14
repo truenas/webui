@@ -278,12 +278,11 @@ export class AppSchemaService {
       let altDefault: string | boolean | number = '';
       if (schema.type === ChartSchemaType.Int) {
         altDefault = null;
-      } else
-      if (schema.type === ChartSchemaType.Boolean) {
+      } else if (schema.type === ChartSchemaType.Boolean) {
         altDefault = false;
       }
 
-      const value = schema.default !== undefined && isNew ? schema.default : altDefault;
+      const value = schema.default !== undefined ? schema.default : altDefault;
 
       const newFormControl = new CustomUntypedFormControl(value, [
         schema.required ? Validators.required : Validators.nullValidator,
