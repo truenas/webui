@@ -264,6 +264,7 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import { ChartReleaseUpgradeParams } from './chart-release.interface';
 import { PoolRemoveParams } from './pool-remove.interface';
 
 /**
@@ -382,7 +383,7 @@ export type ApiDirectory = {
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: ChartRelease };
-  'chart.release.upgrade_summary': { params: [name: string, params?: { item_version: string }]; response: UpgradeSummary };
+  'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
   // CRON
   'cronjob.run': { params: [id: number]; response: void };
