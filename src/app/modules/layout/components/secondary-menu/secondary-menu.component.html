@@ -10,7 +10,7 @@
       [ix-auto-identifier]="subItem.name"
       (click)="toggleMenu.emit()"
     >
-      <a [routerLink]="['/', menuName, subItem.state]" class="slidein-nav-link">
+      <a class="slidein-nav-link" [routerLink]="['/', menuName, subItem.state]">
         {{ subItem.name | translate }}
       </a>
     </mat-list-item>

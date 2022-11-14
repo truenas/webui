@@ -16,7 +16,6 @@ import helptext from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
@@ -63,7 +62,7 @@ export class DeviceFormComponent implements OnInit {
 
   nicForm = this.formBuilder.group({
     type: [null as VmNicType, Validators.required],
-    mac: ['', regexValidator(this.networkService.macRegex)],
+    mac: ['', Validators.pattern(this.networkService.macRegex)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });

@@ -2,23 +2,23 @@
 <mat-divider></mat-divider>
 <div mat-dialog-content class="tc-dialog-content">
   <div id="status">
-    <mat-icon *ngIf="tc.status == TrueCommandStatus.Connected" class="status-connected">
+    <mat-icon *ngIf="tc.status === TrueCommandStatus.Connected" class="status-connected">
       check_circle
     </mat-icon>
-    <mat-icon *ngIf="tc.status == TrueCommandStatus.Failed" class="status-failed">
+    <mat-icon *ngIf="tc.status === TrueCommandStatus.Failed" class="status-failed">
       cancel
     </mat-icon>
-    <mat-icon *ngIf="tc.status == TrueCommandStatus.Disabled" class="status-disabled">
+    <mat-icon *ngIf="tc.status === TrueCommandStatus.Disabled" class="status-disabled">
       pause_circle_filled
     </mat-icon>
     <span>{{ tc.status | translate }}</span>
   </div>
-  <div id="error" *ngIf="tc.status_reason">
+  <div *ngIf="tc.status_reason" id="error">
     {{ tc.status_reason | translate }}
   </div>
   <div
-    id="tc-ip"
     *ngIf="tc.status === TrueCommandStatus.Connected && tc.remote_ip_address"
+    id="tc-ip"
   >
     <mat-icon svgIcon="ix:truecommand_logo_blue" class="tc-icon"></mat-icon>
     <span>{{ tc.remote_ip_address }}</span>

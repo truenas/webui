@@ -13,9 +13,12 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  Inject,
+  TemplateRef,
 } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
 import { Subject, Subscription } from 'rxjs';
@@ -25,6 +28,7 @@ import {
   filter,
   map,
 } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -34,9 +38,14 @@ import {
 } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
+import { AppState } from 'app/store';
+import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -50,6 +59,7 @@ enum ScrollType {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
 
@@ -68,6 +78,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   subscription = new Subscription();
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
+  hasHa: boolean;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -87,6 +98,12 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   readonly hasNestedChild = (_: number, dataset: DatasetDetails): boolean => Boolean(dataset.children?.length);
   private readonly scrollSubject = new Subject<number>();
 
+  // Hidden on HA systems.
+  // Issues: fenced reservations and the potential to cause a kernel panic, as well as an alert being raised.
+  get showImportData(): boolean {
+    return this.hasHa !== undefined && !this.hasHa;
+  }
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -96,10 +113,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
+    private layoutService: LayoutService,
+    private slideIn: IxSlideInService,
+    private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         if (this.router.getCurrentNavigation().extras.state?.hideMobileDetails) {
           this.closeMobileDetails();
         }
@@ -108,6 +130,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
+    this.loadHaStatus();
     this.setupTree();
     this.listenForRouteChanges();
     this.loadSystemDatasetConfig();
@@ -256,6 +279,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         }
         this.cdr.detectChanges();
       });
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   closeMobileDetails(): void {
@@ -270,10 +294,25 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate(['/storage', 'create']);
   }
 
-  // Expose hidden details on mobile
-  openMobileDetails(): void {
+  viewDetails(dataset: DatasetDetails): void {
+    this.router.navigate(['/datasets', dataset.id]);
+
     if (this.isMobileView) {
       this.showMobileDetails = true;
+
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
+  }
+
+  loadHaStatus(): void {
+    this.store$.select(selectHaStatus).pipe(untilDestroyed(this)).subscribe((haStatus) => {
+      this.hasHa = !!(haStatus && haStatus.hasHa);
+      this.cdr.detectChanges();
+    });
+  }
+
+  onImportData(): void {
+    this.slideIn.open(ImportDataComponent);
   }
 }

@@ -1,6 +1,6 @@
 export interface FormSelectOption {
   label: string;
-  value: any;
+  value: unknown;
   hiddenFromDisplay?: boolean;
   disable?: boolean;
   disabled?: boolean; // TODO: One of these is a typo.

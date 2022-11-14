@@ -136,7 +136,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
           });
         }
       });
-      return { totalErrors: unhealthy.length/* errors.toString() */, disks: unhealthy };
+      return { totalErrors: unhealthy.length, disks: unhealthy };
     }
     return { totalErrors: 'Unknown', disks: [] };
   }

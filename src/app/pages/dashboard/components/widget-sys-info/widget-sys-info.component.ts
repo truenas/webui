@@ -35,7 +35,7 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   // HA
-  @Input() isHa = false;
+  @Input() isHaLicensed = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
@@ -61,11 +61,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   loader = false;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
-  haStatus: string;
+  hasHa: boolean;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
   uptimeString: string;
   dateTime: string;
+  widgetDisabled = false;
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
@@ -96,17 +97,25 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   ngOnInit(): void {
-    if (this.isHa && this.isPassive) {
+    if (this.isHaLicensed && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
       ).subscribe((haStatus) => {
-        if (haStatus.status === 'HA Enabled' && !this.data) {
-          this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((systemInfo: SystemInfo) => {
-            this.processSysInfo(systemInfo);
-          });
+        this.widgetDisabled = false;
+        if (haStatus.hasHa) {
+          this.ws.call('failover.call_remote', ['system.info'])
+            .pipe(untilDestroyed(this))
+            .subscribe((systemInfo: SystemInfo) => this.processSysInfo(systemInfo));
+
+          if (this.data) {
+            this.setProductImage(this.data);
+          }
+        } else if (!haStatus.hasHa) {
+          this.productImage = '';
+          this.widgetDisabled = true;
         }
-        this.haStatus = haStatus.status;
+        this.hasHa = haStatus.hasHa;
       });
     } else {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({

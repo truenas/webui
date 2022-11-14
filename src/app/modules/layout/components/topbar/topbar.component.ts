@@ -337,7 +337,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
-    if (info.status === 'HA Enabled') {
+    if (info.hasHa) {
       this.haStatusText = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();

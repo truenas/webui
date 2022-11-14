@@ -27,10 +27,9 @@
   (click)="handleClick()"
 >
   <mat-icon
-    class="truecommand-icon"
-    [class]="tcStatus.status"
     svgIcon="ix:truecommand_logo_white"
     matBadgeSize="small"
+    [ngClass]="['truecommand-icon', tcStatus.status]"
     [matBadge]="tcsStatusMatBadge"
   ></mat-icon>
 </button>

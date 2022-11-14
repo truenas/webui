@@ -28,16 +28,16 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   @ViewChild('field', { static: true }) field: MatFormField;
 
   formReady = false;
-  selected: string;
-  selectedValues: string[] = [];
+  selected: unknown;
+  selectedValues: unknown[] = [];
   selectStates: boolean[] = []; // Collection of checkmark states
   customTriggerValue: string[];
-  private _formValue: string | string[];
+  private _formValue: unknown;
   private entityUtils = new EntityUtils();
-  get formValue(): string | string[] {
+  get formValue(): unknown {
     return this._formValue;
   }
-  set formValue(value: string | string[]) {
+  set formValue(value: unknown) {
     const result = this.config.multiple ? this.selectedValues : this.selected;
     this._formValue = result;
   }
@@ -153,7 +153,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   updateValues(): void {
-    const newValues: string[] = [];
+    const newValues: unknown[] = [];
     const triggerValue: string[] = [];
     this.selectStates.forEach((item, index) => {
       if (item) {

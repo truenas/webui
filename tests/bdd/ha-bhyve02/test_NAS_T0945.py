@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn09) feature tests."""
 
+import pytest
 import time
 from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
@@ -20,6 +21,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Setup_SSH')
 @scenario('features/NAS-T945.feature', 'Verify SSH Access with Root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with Root works."""
@@ -45,15 +47,13 @@ def login_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
@@ -79,18 +79,13 @@ def go_to_system_settings_click_services(driver):
 @then('the service page should open')
 def the_service_page_should_open(driver):
     """the service page should open."""
-    assert wait_on_element(driver, 5, '//services')
+    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
+    time.sleep(1)
 
 
 @then('press on configure(pencil) SSH')
 def press_on_configure_ssh(driver):
     """press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 5, '//tr[contains(.,"S3")]//button', 'clickable')
-    element = driver.find_element_by_xpath('//tr[contains(.,"S3")]//button')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
 
@@ -126,10 +121,6 @@ def click_save(driver):
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 5, '//h1[text()="Services"]')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 5, '//tr[contains(.,"S3")]//button', 'clickable')
-    element = driver.find_element_by_xpath('//tr[contains(.,"S3")]//button')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')

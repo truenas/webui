@@ -6,14 +6,17 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
+import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -29,6 +32,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  private disksUpdateSubscriptionId: string;
 
   currentView: ViewConfig = {
     name: 'Disks',
@@ -86,6 +90,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
+    private disksUpdateService: DisksUpdateService,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -128,10 +133,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       this.events.next(evt);
     });
 
-    core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.fetchData();
-    });
-
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
       .subscribe((sysInfo) => {
         if (!this.systemProduct) {
@@ -145,15 +146,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  fetchData(): void {
-    this.loadDiskData();
-  }
-
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
+    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
     this.core.unregister({ observerClass: this });
   }
 
@@ -264,17 +262,29 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   private loadDiskData(): void {
     this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((disks) => {
-      this.system.diskData = disks;
-
-      this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
-        this.system.pools = pools;
-        this.events.next({ name: 'PoolsChanged', sender: this });
-        this.addViews();
-      });
-
+      this.handleLoadedDisks(disks);
       setTimeout(() => {
         this.spinner = false;
       }, 1500);
+    });
+    if (!this.disksUpdateSubscriptionId) {
+      const diskUpdatesTrigger$ = new Subject<ApiEvent<Disk>>();
+      diskUpdatesTrigger$.pipe(
+        switchMap(() => this.ws.call('disk.query')),
+        untilDestroyed(this),
+      ).subscribe((disks) => {
+        this.handleLoadedDisks(disks);
+      });
+      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$);
+    }
+  }
+
+  handleLoadedDisks(disks: Disk[]): void {
+    this.system.diskData = disks;
+    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+      this.system.pools = pools;
+      this.events.next({ name: 'PoolsChanged', sender: this });
+      this.addViews();
     });
   }
 }

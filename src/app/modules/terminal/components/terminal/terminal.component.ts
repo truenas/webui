@@ -37,11 +37,22 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   waitParentChanges = 300;
   fontSize = 14;
   fontName = 'Inconsolata';
+  defaultFontName = 'monospace';
   xterm: Terminal;
-  private fitAddon: FitAddon;
-
   shellConnected = false;
   connectionId: string;
+  terminalSettings = {
+    cursorBlink: false,
+    tabStopWidth: 8,
+    cols: 80,
+    rows: 20,
+    focus: true,
+    fontSize: this.fontSize,
+    fontFamily: this.defaultFontName,
+    allowTransparency: true,
+  };
+
+  private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
 
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
@@ -51,7 +62,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private ws: WebSocketService,
-    private ss: ShellService,
+    private shellService: ShellService,
     private dialog: MatDialog,
     private translate: TranslateService,
     private layoutService: LayoutService,
@@ -98,7 +109,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   initShell(): void {
     this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
-      this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+      this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
       this.initializeTerminal();
     });
   }
@@ -108,8 +119,8 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.ss.connected) {
-      this.ss.socket.close();
+    if (this.shellService.connected) {
+      this.shellService.socket.close();
     }
   }
 
@@ -123,18 +134,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initializeTerminal(): void {
-    const setting = {
-      cursorBlink: false,
-      tabStopWidth: 8,
-      cols: 80,
-      rows: 20,
-      focus: true,
-      fontSize: this.fontSize,
-      fontFamily: this.fontName,
-      allowTransparency: true,
-    };
-
-    this.xterm = new Terminal(setting);
+    this.xterm = new Terminal(this.terminalSettings);
 
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
@@ -142,11 +142,17 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     const font = new FontFaceObserver(this.fontName);
 
     font.load().then(() => {
-      this.xterm.open(this.container.nativeElement);
-      this.fitAddon.fit();
+      this.xterm.setOption('fontFamily', this.fontName);
+      this.drawTerminal();
     }, (error) => {
+      this.drawTerminal();
       console.error('Font is not available', error);
     });
+  }
+
+  drawTerminal(): void {
+    this.xterm.open(this.container.nativeElement);
+    this.fitAddon.fit();
   }
 
   updateTerminal(): void {
@@ -158,7 +164,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
       this.attachAddon.dispose();
     }
 
-    this.attachAddon = new XtermAttachAddon(this.ss.socket);
+    this.attachAddon = new XtermAttachAddon(this.shellService.socket);
     this.xterm.loadAddon(this.attachAddon);
   }
 
@@ -176,14 +182,14 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initializeWebShell(token: string): void {
-    this.ss.token = token;
+    this.shellService.token = token;
 
     if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.ss);
+      this.conf.setShellConnectionData(this.shellService);
     }
-    this.ss.connect();
+    this.shellService.connect();
 
-    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
+    this.shellService.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
       this.updateTerminal();
@@ -198,9 +204,9 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   reconnect(): void {
     if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.ss);
+      this.conf.setShellConnectionData(this.shellService);
     }
-    this.ss.connect();
+    this.shellService.connect();
   }
 
   onFontSizeChanged(newSize: number): void {

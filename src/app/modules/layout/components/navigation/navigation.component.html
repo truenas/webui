@@ -7,9 +7,9 @@
         class="sidebar-list-item"
         role="listitem"
         routerLinkActive="highlighted"
-        id="nav-{{ i }}"
         ix-auto
         ix-auto-type="option"
+        id="nav-{{ i }}"
         ix-auto-identifier="{{ item.name }}"
         [class.has-submenu]="item.type === MenuItemType.SlideOut"
         [class.highlighted]="isHighlighted === item.state"

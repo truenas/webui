@@ -55,7 +55,7 @@
       gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
       gdColumns.lt-md="auto"
     >
-      <mat-card class="card" *ngFor="let _ of counter(4)">
+      <mat-card *ngFor="let _ of counter(4)" class="card">
         <mat-card-content>
           <ngx-skeleton-loader
             *ngFor="let _ of counter(5)"

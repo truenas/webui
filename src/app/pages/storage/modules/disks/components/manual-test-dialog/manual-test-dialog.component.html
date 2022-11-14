@@ -1,8 +1,8 @@
 <h1 matDialogTitle>{{ 'Manual S.M.A.R.T. Test' | translate }}</h1>
 <form
   *ngIf="!hasStartedTests; else showResults"
-  [formGroup]="form"
   class="ix-form-container"
+  [formGroup]="form"
   (submit)="onSubmit()"
 >
   <div class="disks-list">

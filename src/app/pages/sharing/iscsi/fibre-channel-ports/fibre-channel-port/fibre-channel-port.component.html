@@ -1,16 +1,16 @@
 <div class="fc-row-detail">
   <form
-    (ngSubmit)="onSubmit()"
-    [formGroup]="formGroup"
-    class="form-wrap"
     #entityForm="ngForm"
+    class="form-wrap"
+    [formGroup]="formGroup"
+    (ngSubmit)="onSubmit()"
   >
     <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
       <div
-        class="fieldset divider-{{ fieldSet.divider }}"
         fxLayout="row wrap"
         fxLayoutAlign="start start"
         fxFlex="100%"
+        class="fieldset divider-{{ fieldSet.divider }}"
         fxFlex.gt-xs="calc({{ fieldSets[i].width }} - 16px)"
         [ngClass]="fieldSet.class"
       >
@@ -23,9 +23,9 @@
           fxFlex="100%"
           fxFlex.gt-xs="calc({{ field.width }} - 16px)"
           id="{{ fieldSet.name }}-{{ ii }}"
-          [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+          [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
         >
-          <div *ngIf="field.name == 'initiators'; else template">
+          <div *ngIf="field.name === 'initiators'; else template">
             <label *ngIf="isShow(field.name)">
               {{ field.placeholder }} ({{ config.initiators.length }})
             </label>
@@ -37,8 +37,8 @@
           </div>
           <ng-template #template>
             <div
-              id="form_field_{{ field.name }}"
               dynamicField
+              id="form_field_{{ field.name }}"
               [config]="field"
               [group]="formGroup"
               [fieldShow]="isShow(field.name) ? 'show' : 'hide'"

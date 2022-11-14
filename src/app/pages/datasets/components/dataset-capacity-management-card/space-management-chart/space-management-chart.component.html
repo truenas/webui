@@ -18,13 +18,11 @@
     </span>
   </h3>
   <div class="legend-wrapper">
-    <div class="legend-list-item" *ngIf="dataset.usedbydataset.parsed">
+    <div *ngIf="dataset.usedbydataset.parsed" class="legend-list-item">
       <span class="legend-label">
         <span
           class="legend-swatch"
-          [style.background-color]="
-            swatchColors?.usedbydataset?.backgroundColor
-          "
+          [style.background-color]="swatchColors?.usedbydataset?.backgroundColor"
         ></span>
         {{ 'Data Written' | translate }}
       </span>
@@ -37,13 +35,11 @@
         </ng-container>
       </span>
     </div>
-    <div class="legend-list-item" *ngIf="dataset.usedbysnapshots.parsed">
+    <div *ngIf="dataset.usedbysnapshots.parsed" class="legend-list-item">
       <span class="legend-label">
         <span
           class="legend-swatch"
-          [style.background-color]="
-            swatchColors?.usedbysnapshots?.backgroundColor
-          "
+          [style.background-color]="swatchColors?.usedbysnapshots?.backgroundColor"
         ></span>
         <ng-container *ngIf="!isZvol">{{
           'Snapshots' | translate
@@ -63,13 +59,11 @@
       </span>
     </div>
     <ng-container *ngIf="!isZvol">
-      <div class="legend-list-item" *ngIf="dataset.usedbychildren.parsed">
+      <div *ngIf="dataset.usedbychildren.parsed" class="legend-list-item">
         <span class="legend-label">
           <span
             class="legend-swatch"
-            [style.background-color]="
-              swatchColors?.usedbychildren?.backgroundColor
-            "
+            [style.background-color]="swatchColors?.usedbychildren?.backgroundColor"
           ></span>
           {{ 'Children' | translate }}
         </span>
