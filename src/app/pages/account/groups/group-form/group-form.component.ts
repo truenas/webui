@@ -11,7 +11,6 @@ import { map, switchMap } from 'rxjs/operators';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
@@ -35,7 +34,7 @@ export class GroupFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    gid: [null as number, [Validators.required, regexValidator(/^\d+$/)]],
+    gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo: [false],
     smb: [false],

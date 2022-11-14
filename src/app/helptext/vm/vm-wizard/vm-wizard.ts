@@ -2,7 +2,6 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export default {
   formTitle: T('Create Virtual Machine'),
@@ -171,7 +170,7 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   NIC_mac_tooltip: T('Enter the desired address into the field to\
  override the randomized MAC address.'),
   NIC_mac_value: '00:a0:98:FF:FF:FF',
-  NIC_mac_validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+  NIC_mac_validation: [Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
 
   nic_attach_placeholder: T('Attach NIC'),
   nic_attach_tooltip: T('Select the physical interface to associate with\
