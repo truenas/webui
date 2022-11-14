@@ -504,7 +504,6 @@
   "{n} from {dataset}": "",
   "{n} more": "",
   "{uptimeString} as of {dateTime}": "",
-  "{value}": "",
   " Please click the button below to add {item}.": " 请点击下面的按钮来添加 {item}。",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "当 <b>UPS 模式</b> 设置为 <i>附属</i> 时。输入 UPS <i>主</i> 系统的开放端口号。默认端口为 <i>3493</i>。",
   " bytes.": " 字节。",

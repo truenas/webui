@@ -4166,6 +4166,5 @@
   "{serviceName} service failed to stop.": "{serviceName} Служба не змогла зупинитися.",
   "{this} and {that}. At least one is required": "{this} та {that}. Принаймні один потрібен один",
   "{uptimeString} as of {dateTime}": "{uptimeString} станом на {dateTime}",
-  "{used} of {total} ({used_pct})": "{used} {total} ({user_pct})",
-  "{value}": "{value}"
+  "{used} of {total} ({used_pct})": "{used} {total} ({user_pct})"
 }

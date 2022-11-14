@@ -4166,6 +4166,5 @@
   "{serviceName} service failed to stop.": "{serviceName} service kon niet worden gestopt.",
   "{this} and {that}. At least one is required": "{this} en {that}. Minimaal één is vereist.",
   "{uptimeString} as of {dateTime}": "{uptimeString} vanaf {dateTime}",
-  "{used} of {total} ({used_pct})": "{used} van {total} ({used_pct})",
-  "{value}": "{value}"
+  "{used} of {total} ({used_pct})": "{used} van {total} ({used_pct})"
 }
