@@ -78,7 +78,7 @@
   "EC2 Instance ID": "",
   "Edit Portal": "",
   "Either SID or Domain Name + Name are required.": "",
-  "Electing {controller}.": "Élection de {contrôleur}.",
+  "Electing {controller}.": "Élection de {controller}.",
   "Elements": "",
   "Email Options": "Options E-mail",
   "Email for root user is not set. Please, configure the root user email address first.": "L'e-mail de l'utilisateur root n'est pas défini. Veuillez d'abord configurer l'adresse e-mail de l'utilisateur root.",
