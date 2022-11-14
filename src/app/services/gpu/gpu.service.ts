@@ -72,7 +72,7 @@ export class GpuService {
     return this.getIsolatedGpuPciIds().pipe(
       take(1),
       switchMap((oldIsolatedGpuIds) => {
-        const newIsolatedGpuIds = new Set<string>([
+        const newIsolatedGpuIds = new Set([
           ...oldIsolatedGpuIds,
           ...idsToIsolate,
         ]);
