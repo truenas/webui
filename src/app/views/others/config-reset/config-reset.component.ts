@@ -1,10 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { WINDOW } from 'app/helpers/window.helper';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService } from 'app/services';
@@ -24,7 +23,6 @@ export class ConfigResetComponent implements OnInit {
     protected dialogService: DialogService,
     protected dialog: MatDialog,
     private location: Location,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   isWsConnected(): void {

@@ -1,9 +1,8 @@
 import { Location } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { WINDOW } from 'app/helpers/window.helper';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
@@ -21,7 +20,6 @@ export class RebootComponent implements OnInit {
     protected dialogService: DialogService,
     protected dialog: MatDialog,
     private location: Location,
-    @Inject(WINDOW) private window: Window,
   ) {
   }
 

@@ -1,10 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -26,7 +25,6 @@ export class FailoverComponent implements OnInit {
     protected dialog: MatDialog,
     private location: Location,
     private store$: Store<AlertSlice>,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   isWsConnected(): void {
