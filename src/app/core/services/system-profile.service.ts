@@ -70,10 +70,7 @@ export class SystemProfileService extends BaseService {
         eventName: 'SysInfoRequest',
       })
       .subscribe((evt: CoreEvent) => {
-        const ready = this.dataAvailable(evt);
-        if (ready) {
-          this.respond({ name: 'SysInfoRequest', sender: this });
-        }
+        this.fetchProfile();
       });
 
     this.core
@@ -84,18 +81,8 @@ export class SystemProfileService extends BaseService {
       .subscribe((evt: CoreEvent) => {
         if (this.features.HA) {
           // This is a TrueNAS box with HA support
-          const haStatus = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
-
-          const reasons = (haStatus === 'HA Disabled' && this.ha_status.reasons.length > 0) || haStatus === 'HA Enabled'
-            ? this.ha_status.reasons
-            : ['NO_SYSTEM_READY'];
-
-          this.updateHA(reasons);
-
-          this.core.emit({
-            name: 'HA_Status',
-            data: this.ha_status,
-            sender: this,
+          this.websocket.call('failover.disabled_reasons').subscribe((res) => {
+            this.updateHA(res);
           });
         }
       });
@@ -114,33 +101,11 @@ export class SystemProfileService extends BaseService {
     this.authenticated = true;
   }
 
-  private dataAvailable(evt: CoreEvent) {
-    if (this.cache && this.authenticated) {
-      return true;
-    }
-    if (!this.cache && this.authenticated) {
-      if (this.buffer.length == 0) {
-        this.fetchProfile();
-      }
-      this.buffer.push(evt);
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
-  }
-
   fetchProfile(localOnly?: boolean) {
     this.websocket.call('system.info').subscribe((res) => {
       this.cache = res;
-      if (localOnly) {
-        this.buffer.push({ name: 'SysInfoRequest', sender: this });
-        return;
-      }
 
-      if (this.buffer.length > 0) {
-        this.clearBuffer();
-      }
+      this.respond({ name: 'SysInfoRequest', sender: this });
     });
   }
 

@@ -66,8 +66,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
-
-    this.ha_status = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
   }
 
   ngAfterViewInit() {
@@ -87,13 +85,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).subscribe((evt: CoreEvent) => {
+        this.ha_status = evt.data.status;
+
         if (evt.data.status == 'HA Enabled') {
           this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
             const evt = { name: 'SysInfoPassive', data: res };
             this.processSysInfo(evt);
           });
         }
-        this.ha_status = evt.data.status;
       });
     } else {
       this.ws.call('system.info').subscribe((res) => {
@@ -119,6 +118,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   ngOnInit() {
+    this.ha_status = window.sessionStorage.getItem('ha_status') === 'true' ? 'HA Enabled' : 'HA Disabled';
   }
 
   checkForRunningUpdate() {
