@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -72,7 +72,7 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   wsMultiDeleteParams?: (selected: Row[]) => [string, (string[][] | number[][])?];
   doAdd?: (id?: string | number, tableComponent?: EntityTableComponent<Row>) => void;
   doEdit?: (id?: string | number, tableComponent?: EntityTableComponent<Row>) => void;
-  onCheckboxChange?: (row: Row) => void;
+  onCheckboxChange?: (row: Row, checkboxLoader$?: Subject<boolean>) => void;
   onSliderChange?: (row: Row) => void;
   onButtonClick?: (row: Row) => void;
   callGetFunction?: (entity: EntityTableComponent<Row>) => void;

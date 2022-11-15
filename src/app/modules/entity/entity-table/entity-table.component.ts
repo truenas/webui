@@ -24,7 +24,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
-  Observable, of, Subscription, EMPTY, Subject,
+  Observable, of, Subscription, EMPTY, Subject, BehaviorSubject,
 } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
@@ -163,6 +163,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   excuteDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
+  checkboxLoaders: Map<string, BehaviorSubject<boolean>> = new Map();
 
   get currentColumns(): EntityTableColumn[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns);
@@ -972,6 +973,22 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     deleteMsg = this.translate.instant(deleteMsg);
 
     return deleteMsg;
+  }
+
+  checkboxChanged(element: Row): void {
+    if (!this.checkboxLoaders.get(this.getRowIdentifier(element))) {
+      this.checkboxLoaders.set(this.getRowIdentifier(element), new BehaviorSubject(false));
+    }
+    this.conf.onCheckboxChange(element, this.checkboxLoaders.get(this.getRowIdentifier(element)));
+  }
+
+  getRowIdentifier(row: Row): string {
+    return row.name || row.path || row.id;
+  }
+
+  isPaddedAway(index: number): boolean {
+    return !this.shouldApplyStickyOffset(index)
+      && !(this.isLeftStickyColumnNo(index) && this.isTableOverflow());
   }
 
   doMultiDelete(selected: Row[]): void {
