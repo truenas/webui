@@ -59,6 +59,7 @@
   "Signup": "",
   "Step Back": "",
   "Step Forward": "",
+  "System dataset updated.": "",
   "The following disk(s) is/are part of the currently exported pools (specified next to disk names). Reusing these disk will make the attached exported pools unable to import. You will lose any and all data in those pools. Please make sure that any sensitive data in said pools is backed up before reusing/repurposing these disks.": "",
   "The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?": "",
   "This disk is part of the exported pool {pool}. Adding this disk to a new or other existing pools will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.": "",

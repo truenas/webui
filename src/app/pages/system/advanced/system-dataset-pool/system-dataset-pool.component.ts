@@ -16,6 +16,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -45,6 +46,7 @@ export class SystemDatasetPoolComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +75,7 @@ export class SystemDatasetPoolComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
+        this.cdr.markForCheck();
         return this.ws.job('systemdataset.update', [values]).pipe(
           tap((job) => {
             if (job.state !== JobState.Success) {
@@ -81,6 +84,7 @@ export class SystemDatasetPoolComponent implements OnInit {
             this.isFormLoading = false;
             this.store$.dispatch(advancedConfigUpdated());
             this.cdr.markForCheck();
+            this.snackbar.success(this.translate.instant('System dataset updated.'));
             this.slideInService.close();
           }),
           catchError((error) => {
@@ -99,8 +103,13 @@ export class SystemDatasetPoolComponent implements OnInit {
    * @return boolean True when saving can continue.
    */
   private confirmSmbRestartIfNeeded(): Observable<boolean> {
+    this.isFormLoading = true;
+    this.cdr.markForCheck();
     return this.ws.call('service.query').pipe(
       switchMap((services) => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+
         const smbService = _.find(services, { service: ServiceName.Cifs });
         if (smbService.state === ServiceStatus.Running) {
           return this.dialogService.confirm({
