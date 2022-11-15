@@ -9,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -82,6 +83,9 @@ describe('DeviceFormComponent', () => {
           'piix3-uhci': 'piix3-uhci',
           'pci-ohci': 'pci-ohci',
         }),
+        mockCall('system.advanced.config', {
+          isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
+        } as AdvancedConfig),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
