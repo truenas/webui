@@ -372,7 +372,7 @@
               (mouseout)="onHover($event, false)"
             >
               <mat-checkbox
-                *ngIf="!(checkboxLoaders$[getRowIdentifier(element)] | async)"
+                *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
                 color="primary"
                 class="checkbox"
                 ix-auto
@@ -387,7 +387,7 @@
               <mat-spinner
                 mode="indeterminate"
                 [diameter]="25"
-                *ngIf="checkboxLoaders$[getRowIdentifier(element)] | async"
+                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
                 id="checkbox_spinner__{{ getRowIdentifier(element) }}"
               ></mat-spinner>
             </td>

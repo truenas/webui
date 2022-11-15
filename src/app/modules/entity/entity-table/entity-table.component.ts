@@ -163,7 +163,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   excuteDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
-  checkboxLoaders$: { [key: string]: BehaviorSubject<boolean> } = {};
+  checkboxLoaders: Map<string, BehaviorSubject<boolean>> = new Map();
 
   get currentColumns(): EntityTableColumn[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns);
@@ -976,10 +976,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   checkboxChanged(element: Row): void {
-    if (!this.checkboxLoaders$[this.getRowIdentifier(element)]) {
-      this.checkboxLoaders$[this.getRowIdentifier(element)] = new BehaviorSubject(false);
+    if (!this.checkboxLoaders.get(this.getRowIdentifier(element))) {
+      this.checkboxLoaders.set(this.getRowIdentifier(element), new BehaviorSubject(false));
     }
-    this.conf.onCheckboxChange(element, this.checkboxLoaders$[this.getRowIdentifier(element)]);
+    this.conf.onCheckboxChange(element, this.checkboxLoaders.get(this.getRowIdentifier(element)));
   }
 
   getRowIdentifier(row: Row): string {
