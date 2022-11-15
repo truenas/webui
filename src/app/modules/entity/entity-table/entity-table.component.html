@@ -303,9 +303,9 @@
                   ix-auto
                   ix-auto-type="overlay"
                   matTooltipPosition="right"
-                  id="overlay__{{ element.name }}_Running"
+                  id="overlay__{{ getRowIdentifier(element) }}_Running"
                   matTooltip="{{ element.state }}"
-                  [ix-auto-identifier]="column + element.name"
+                  [ix-auto-identifier]="column + getRowIdentifier(element)"
                   (click)="
                     $event.stopPropagation(); this.conf.onSliderChange(element)
                   "
@@ -316,8 +316,8 @@
                   ix-auto
                   ix-auto-type="slider"
                   color="primary"
-                  id="slide-toggle__{{ column }}_{{ element.name }}"
-                  ix-auto-identifier="{{ column }}__{{ element.name }}"
+                  id="slide-toggle__{{ column }}_{{ getRowIdentifier(element) }}"
+                  ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>
@@ -328,8 +328,8 @@
                   mat-stroked-button
                   ix-auto
                   ix-auto-type="slider"
-                  id="interactive-button_{{ column }}_{{ element.name }}"
-                  ix-auto-identifier="{{ column }}__{{ element.name }}"
+                  id="interactive-button_{{ column }}_{{ getRowIdentifier(element) }}"
+                  ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
                   [ngClass]="getButtonClass(element[column])"
                   (click)="
                     $event.stopPropagation(); this.conf.onButtonClick(element)
@@ -359,10 +359,7 @@
               *matHeaderCellDef
               class="toggle-column"
               mat-header-cell
-              [class.padded-away]="
-                !shouldApplyStickyOffset(i) &&
-                !(isLeftStickyColumnNo(i) && isTableOverflow())
-              "
+              [class.padded-away]="isPaddedAway(i)"
             >
               {{ currentColumns[i].name | translate }}
             </th>
@@ -370,24 +367,29 @@
               *matCellDef="let element"
               class="toggle-column"
               mat-cell
-              [class.padded-away]="
-                !shouldApplyStickyOffset(i) &&
-                !(isLeftStickyColumnNo(i) && isTableOverflow())
-              "
+              [class.padded-away]="isPaddedAway(i)"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
               <mat-checkbox
+                *ngIf="!(checkboxLoaders$[getRowIdentifier(element)] | async)"
                 color="primary"
                 class="checkbox"
                 ix-auto
                 ix-auto-type="checkbox"
-                id="checkbox__{{ element.name }}"
-                ix-auto-identifier="{{ column }}__{{ element.name }}"
+                id="checkbox__{{ getRowIdentifier(element) }}"
+                ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
                 [(ngModel)]="element[column]"
-                (change)="this.conf.onCheckboxChange(element)"
+                (change)="checkboxChanged(element)"
                 (click)="$event.stopPropagation()"
               ></mat-checkbox>
+
+              <mat-spinner
+                mode="indeterminate"
+                [diameter]="25"
+                *ngIf="checkboxLoaders$[getRowIdentifier(element)] | async"
+                id="checkbox_spinner__{{ getRowIdentifier(element) }}"
+              ></mat-spinner>
             </td>
           </ng-container>
 
