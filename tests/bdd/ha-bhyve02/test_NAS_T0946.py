@@ -134,7 +134,7 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
     assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
-    assert wait_on_element(driver, 7, '//h3[text()="Global Configuration" and @class="ix-formtitle"]')
+    assert wait_on_element(driver, 7, xpaths.globalConfiguration.title)
     time.sleep(1)
 
 
@@ -227,7 +227,7 @@ def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
 @then('the Edit Interface should appear')
 def the_edit_interface_should_appear(driver):
     """the Edit Interface should appear."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Edit Interface")]')
+    assert wait_on_element(driver, 7, '//h3[contains(text(),"Edit Interface")]')
 
 
 @then(parsers.parse('uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address "{vip}"'))

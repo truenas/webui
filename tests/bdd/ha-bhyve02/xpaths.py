@@ -1,4 +1,7 @@
 
+class globalConfiguration:
+    title = '//h3[text()="Edit Global Configuration"]'
+
 class login:
     user_input = '//input[@data-placeholder="Username"]'
     password_input = '//input[@data-placeholder="Password"]'

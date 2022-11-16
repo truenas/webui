@@ -30,7 +30,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
-    #depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
+    depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
     global host
     host = nas_url
     if nas_url not in driver.current_url:
@@ -82,7 +82,7 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}"."""
     global nameserver_1
     nameserver_1 = nameserver1
-    assert wait_on_element(driver, 7, '//h3[text()="Global Configuration" and @class="ix-formtitle"]')
+    assert wait_on_element(driver, 7, xpaths.globalConfiguration.title)
     assert wait_on_element(driver, 7, '//legend[contains(.,"DNS Servers")]')
     assert wait_on_element(driver, 5, '//ix-input[contains(.,"Nameserver 1")]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
