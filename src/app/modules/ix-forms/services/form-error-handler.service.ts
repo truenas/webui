@@ -19,7 +19,7 @@ export class FormErrorHandlerService {
     }
 
     if ('exc_info' in error && error.exc_info.type === ResponseErrorType.Validation && error.exc_info.extra) {
-      this.handleValidationError({ ...error, extra: error.exc_info.extra as string[][] }, formGroup);
+      this.handleValidationError({ ...error, extra: error.exc_info.extra as Job['extra'] }, formGroup);
       return;
     }
 

@@ -18,6 +18,11 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import {
+  CanvasExtractEvent,
+  DiskTemperaturesEvent,
+  DriveSelectedEvent,
+} from 'app/interfaces/events/disk-events.interface';
 import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
@@ -181,7 +186,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.themeUtils = new ThemeUtils();
     this.diskTemperatureService.listenForTemperatureUpdates();
 
-    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: DiskTemperaturesEvent) => {
       const chassisView = this.view === 'rear' ? this.chassis.rear : this.chassis.front;
       if (!this.chassis || !chassisView || !chassisView.driveTrayObjects) { return; }
 
@@ -228,7 +233,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.controllerEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'CanvasExtract':
-          this.createExtractedEnclosure(evt.data);
+          this.createExtractedEnclosure((evt as CanvasExtractEvent).data);
           break;
         case 'EnclosureLabelChanged':
           if (this.pendingDialog !== undefined) {
@@ -510,10 +515,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.radiate(true);
           }
 
-          const disk = this.findDiskBySlotNumber(parseInt(evt.data.id));
+          const disk = this.findDiskBySlotNumber(parseInt((evt as DriveSelectedEvent).data.id));
           if (disk === this.selectedDisk) { break; } // Don't trigger any changes if the same disk is selected
 
-          if (evt.data.enabled) {
+          if ((evt as DriveSelectedEvent).data.enabled) {
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }

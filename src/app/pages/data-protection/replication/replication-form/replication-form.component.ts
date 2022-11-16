@@ -1210,36 +1210,37 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.toggleNamingSchemaOrRegex();
   }
 
-  resourceTransformIncomingRestData(wsResponse: any): unknown {
+  resourceTransformIncomingRestData(wsResponse: ReplicationTask): Record<string, unknown> {
     this.queryRes = _.cloneDeep(wsResponse);
-    wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
-    wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
-    wsResponse['source_datasets_PULL'] = wsResponse['source_datasets'];
-    wsResponse['target_dataset_PULL'] = wsResponse['target_dataset'];
+    const formData = _.cloneDeep(wsResponse) as unknown as Record<string, unknown>;
+    formData['source_datasets_PUSH'] = wsResponse['source_datasets'];
+    formData['target_dataset_PUSH'] = wsResponse['target_dataset'];
+    formData['source_datasets_PULL'] = wsResponse['source_datasets'];
+    formData['target_dataset_PULL'] = wsResponse['target_dataset'];
 
     if (wsResponse['ssh_credentials']) {
-      wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
+      formData['ssh_credentials'] = wsResponse['ssh_credentials'].id;
     }
 
-    wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
-    wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
+    formData['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
+    formData['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
     const snapshotTasks = wsResponse['periodic_snapshot_tasks'].map((item: PeriodicSnapshotTask) => item.id);
-    wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
+    formData['periodic_snapshot_tasks'] = snapshotTasks;
 
     if (wsResponse.schedule) {
-      wsResponse['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
-      wsResponse['schedule_begin'] = wsResponse.schedule.begin;
-      wsResponse['schedule_end'] = wsResponse.schedule.end;
-      wsResponse['schedule'] = true;
+      formData['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
+      formData['schedule_begin'] = wsResponse.schedule.begin;
+      formData['schedule_end'] = wsResponse.schedule.end;
+      formData['schedule'] = true;
     }
 
     if (wsResponse.restrict_schedule) {
-      wsResponse['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
-      wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
-      wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
-      wsResponse['restrict_schedule'] = true;
+      formData['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
+      formData['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
+      formData['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
+      formData['restrict_schedule'] = true;
     }
-    wsResponse['speed_limit'] = wsResponse['speed_limit']
+    formData['speed_limit'] = wsResponse['speed_limit']
       ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
       : undefined;
     // block large_block changes if it is enabled
@@ -1250,22 +1251,21 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        propertiesExcludeList.push(`${key}=${value}`);
+        propertiesExcludeList.push(`${key}=${String(value)}`);
       }
-      wsResponse['properties_override'] = propertiesExcludeList;
+      formData['properties_override'] = propertiesExcludeList;
     }
 
-    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === truenasDbKeyLocation;
-    if (wsResponse.encryption_key_location_truenasdb) {
-      delete wsResponse.encryption_key_location;
+    formData.encryption_key_location_truenasdb = wsResponse.encryption_key_location === truenasDbKeyLocation;
+    if (formData.encryption_key_location_truenasdb) {
+      delete formData.encryption_key_location;
     }
 
-    if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
-      wsResponse.encryption_key_generate = false;
-      wsResponse.encryption_key_hex = wsResponse.encryption_key;
+    if (formData.encryption_key_format === EncryptionKeyFormat.Hex) {
+      formData.encryption_key_generate = false;
+      formData.encryption_key_hex = wsResponse.encryption_key;
     } else {
-      wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
+      formData.encryption_key_passphrase = wsResponse.encryption_key;
     }
 
     if (wsResponse.name_regex) {
@@ -1274,7 +1274,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NamingSchema);
     }
 
-    return wsResponse;
+    return formData;
   }
 
   parsePickerTime(

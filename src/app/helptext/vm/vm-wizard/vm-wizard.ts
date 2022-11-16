@@ -2,7 +2,6 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export default {
   formTitle: T('Create Virtual Machine'),
@@ -84,6 +83,10 @@ E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve me
     tooltip: T('When number of vcpus is equal to number of cpus in CPU set vcpus can be automatically pinned into CPU set. \
 Pinning is done by mapping each vcpu into single cpu number in following the order in CPU set. \
 This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.'),
+  },
+
+  ensure_display_device: {
+    tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
   },
 
   shutdown_timeout: {
@@ -171,7 +174,7 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   NIC_mac_tooltip: T('Enter the desired address into the field to\
  override the randomized MAC address.'),
   NIC_mac_value: '00:a0:98:FF:FF:FF',
-  NIC_mac_validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+  NIC_mac_validation: [Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
 
   nic_attach_placeholder: T('Attach NIC'),
   nic_attach_tooltip: T('Select the physical interface to associate with\
