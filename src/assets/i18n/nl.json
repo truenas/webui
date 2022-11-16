@@ -46,6 +46,7 @@
   "Open Display Device": "",
   "Other node is currently processing a failover event.": "",
   "Others": "",
+  "PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.": "",
   "Product ID": "",
   "REQUIRE": "",
   "Repeat first Vdev": "",
