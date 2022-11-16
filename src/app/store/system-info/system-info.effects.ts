@@ -11,7 +11,8 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   haSettingsUpdated,
   haStatusLoaded,
-  loadHaStatus, passiveNodeReplaced,
+  loadHaStatus,
+  passiveNodeReplaced,
   systemFeaturesLoaded,
   systemInfoLoaded,
 } from 'app/store/system-info/system-info.actions';
