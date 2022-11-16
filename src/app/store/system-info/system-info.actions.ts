@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -11,6 +12,11 @@ export const systemInfoLoaded = createAction(
 export const systemFeaturesLoaded = createAction(
   '[System Info API] Features Loaded',
   props<{ systemFeatures: SystemFeatures }>(),
+);
+
+export const systemInfoDatetimeUpdated = createAction(
+  '[System Info API] Info Datetime Updated',
+  props<{ datetime: ApiTimestamp }>(),
 );
 
 export const haStatusLoaded = createAction(
