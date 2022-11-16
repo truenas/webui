@@ -162,8 +162,8 @@ describe('LdapComponent', () => {
   });
 
   it('shows job dialog when form is submitted and there is a job_id in the response', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCall('ldap.update', { job_id: 2 } as LdapConfigUpdateResult);
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCall('ldap.update', { job_id: 2 } as LdapConfigUpdateResult);
     const matDialog = spectator.inject(MatDialog);
     const jobComponent = {
       jobId: null,

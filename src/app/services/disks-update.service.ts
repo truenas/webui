@@ -20,9 +20,9 @@ export class DisksUpdateService {
     private ws: WebSocketService,
   ) { }
 
-  addSubscriber(subscriber$: Subject<ApiEvent<Disk>>): string {
+  addSubscriber(newSubscriber$: Subject<ApiEvent<Disk>>): string {
     const uuid = UUID.UUID();
-    this.subscribers[uuid] = subscriber$;
+    this.subscribers[uuid] = newSubscriber$;
     if (!this.subscription) {
       this.subscription = this.ws.subscribe('disk.query');
       this.subscription.pipe(

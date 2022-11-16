@@ -198,7 +198,7 @@ describe('SmbFormComponent', () => {
 
     const labels = await purposeSelect.getOptionLabels();
     const presetKeys = Object.keys(presets);
-    const form = await loader.getHarness(IxFormHarness);
+    form = await loader.getHarness(IxFormHarness);
     const fields = await form.getControlHarnessesDict();
 
     for (let i = 0; i < labels.length; i++) {

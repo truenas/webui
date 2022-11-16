@@ -77,9 +77,9 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
   }
 
   doEdit(id: number): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
+    const target = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(TargetFormComponent, { wide: true });
-    form.setTargetForEdit(row);
+    form.setTargetForEdit(target);
   }
 
   getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {

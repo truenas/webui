@@ -73,18 +73,18 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal = this.modals.find((modal) => modal.id === id);
-    modal.open(conf);
+    const modalToOpen = this.modals.find((modal) => modal.id === id);
+    modalToOpen.open(conf);
   }
 
   private close(id: string): Promise<boolean> {
     // close modal specified by id
-    const modal = this.modals.find((modal) => modal.id === id);
+    const modalToClose = this.modals.find((modal) => modal.id === id);
     if (id === slideInModalId) {
       this.onClose$.next({ modalType: this.modalTypeOpenedInSlideIn, response: true });
     } else {
       this.onClose$.next({ response: true });
     }
-    return modal.close();
+    return modalToClose.close();
   }
 }

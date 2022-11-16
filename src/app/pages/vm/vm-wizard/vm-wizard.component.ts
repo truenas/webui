@@ -606,8 +606,8 @@ export class VmWizardComponent implements WizardConfiguration {
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
       .pipe(map(new EntityUtils().array1dToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
-        const config = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
-        config.options = options;
+        const datastoreConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
+        datastoreConfig.options = options;
       });
 
     const diskConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
@@ -757,8 +757,8 @@ export class VmWizardComponent implements WizardConfiguration {
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
             if (stat.free_bytes < volsize) {
-              const volsize = Math.floor(stat.free_bytes / (1024 ** 3));
-              this.getFormControlFromFieldName('volsize').setValue(`${volsize} GiB`);
+              const volsizeInGbs = Math.floor(stat.free_bytes / (1024 ** 3));
+              this.getFormControlFromFieldName('volsize').setValue(`${volsizeInGbs} GiB`);
             } else if (stat.free_bytes > 40 * 1073741824) {
               const vmOs = this.getFormControlFromFieldName('os').value;
               if (vmOs === 'Windows') {

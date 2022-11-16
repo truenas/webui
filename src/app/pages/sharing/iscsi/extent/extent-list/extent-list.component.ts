@@ -77,9 +77,9 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
   }
 
   doEdit(id: number): void {
-    const row = this.entityTable.rows.find((row) => row.id === id);
+    const extent = this.entityTable.rows.find((row) => row.id === id);
     const form = this.slideInService.open(ExtentFormComponent, { wide: true });
-    form.setExtentForEdit(row);
+    form.setExtentForEdit(extent);
   }
 
   getActions(): EntityTableAction[] {

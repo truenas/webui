@@ -160,8 +160,8 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('shows an error when verification fails', async () => {
-      const mockWebsocket = spectator.inject(MockWebsocketService);
-      mockWebsocket.mockCall('cloudsync.credentials.verify', {
+      const websocketMock = spectator.inject(MockWebsocketService);
+      websocketMock.mockCall('cloudsync.credentials.verify', {
         valid: false,
         excerpt: 'Missing some important field',
         error: 'Some error',
