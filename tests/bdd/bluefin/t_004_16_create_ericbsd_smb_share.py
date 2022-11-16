@@ -60,7 +60,19 @@ def test_create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, 
         assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Sharing")]')
+    assert wait_on_element(driver, 10, '//a[contains(text(),"View Details")]', 'clickable')
+    driver.find_element_by_xpath('//a[contains(text(),"View Details")]').click()
+    assert wait_on_element(driver, 10, '//tr//td//div[contains(.,"eric_share")]//ancestor::tr//td//ix-entity-table-actions//div//button//mat-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//tr//td//div[contains(.,"eric_share")]//ancestor::tr//td//ix-entity-table-actions//div//button//mat-icon[contains(.,"more_vert")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(text(),"Edit Filesystem ACL")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Edit Filesystem ACL")]').click()
 
+    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
 
     # the ldapsmbshare should be added to the Shares list
     assert wait_on_element(driver, 10, f'//div[contains(.,"{ericsmbname}")]')
@@ -101,30 +113,4 @@ def test_create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, 
     assert ericsmbresults2['result'], ericsmbresults2['output']
     assert 'testfile2' not in ericsmbresults2['output'], ericsmbresults2['output']
 
-
-
-    # click on Credentials/DirectoryServices, then LDAP Settings, then disable and click SAVE
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element(driver, 10, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
-    # Verify the box is starting to load
-    assert wait_on_element(driver, 10, '//h3[text()="LDAP"]')
-    assert wait_on_element(driver, 10, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Enable")]', 'clickable')
-    driver.find_element_by_xpath('//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Enable")]').click()
-    checkbox_checked = attribute_value_exist(driver, '//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Enable")]', 'class', 'mat-checkbox-checked')
-
-    # The checkbox should be checked
-    if checkbox_checked:
-        driver.find_element_by_xpath('//ix-fieldset//fieldset//ix-checkbox/mat-checkbox[1]/label[1]//following-sibling::span[contains(.,"Enable")]').click()
-    assert wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-
-    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//h1[text()="Directory Services"]')
-    # Make sure Active Directory and LDAP are both disabled
-    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
-    #assert wait_on_element(driver, 7, '//span[contains(text(),"Configure Active Directory")]', 'clickable')
-    #assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')
+  

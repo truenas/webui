@@ -133,7 +133,7 @@ def create_second_user_for_smb_share(driver):
 def create_wheel_dataset(driver):
     """create wheel dataset"""
     import t_004_13_create_wheel_dataset
-   t_004_1_create_wheel_dataset.test_create_wheel_dataset(driver)
+    t_004_1_create_wheel_dataset.test_create_wheel_dataset(driver)
 
 
 @then(parsers.parse('create ericbsd dataset with "{dataset_name}" "{user}"'))
@@ -150,25 +150,25 @@ def create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, erics
     t_004_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, ericsmbdescription, ericsharename, ericsmbname, user, password, user2, password2)
 
 
-@then(parsers.parse('create zvol for iscsi with {name} {zvol_1G_size}'))
-def create_zvol_for_iscsi(driver):
+@then(parsers.parse('create zvol for iscsi with "{name}" "{zvol_1G_size}"'))
+def create_zvol_for_iscsi(driver, name, zvol_1G_size):
     """create zvol for iscsi"""
-#    import t_004_17_test_create_zvol_for_iscsi
-#    t_004_17_create_zvol_for_iscsi.test_create_zvol_for_iscsi(driver, name, zvol_1G_size)
+    import t_004_17_create_zvol_for_iscsi
+    t_004_17_create_zvol_for_iscsi.test_create_zvol_for_iscsi(driver, name, zvol_1G_size)
 
 
-@then(parsers.parse('kerberos keytab with {tabfile_string}'))
-def kerberos_keytab(driver):
+@then(parsers.parse('kerberos keytab with "{tabfile_string}"'))
+def kerberos_keytab(driver, tabfile_string):
     """kerberos keytab"""
-#    import t_004_18_test_kerberos_keytab
-#    t_004_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
+    import t_004_18_kerberos_keytab
+    t_004_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
 
 
-@then(parsers.parse('recursive and transverse acls with {path}'))
-def recursive_and_transverse_acls(driver):
+@then(parsers.parse('recursive and transverse acls with "{dataset_name_1}" "{dataset_name_2}" "{dataset_name_3}" "{path}"'))
+def recursive_and_transverse_acls(driver, dataset_name_1, dataset_name_2, dataset_name_3, path):
     """recursive and transverse acls"""
-#    import t_004_19_test_recursive_and_transverse_acls
-#    t_004_19_recursive_and_transverse_acls.test_recursive_and_transverse_acls(driver, dataset_name, path)
+    import t_004_19_recursive_and_transverse_acls
+    t_004_19_recursive_and_transverse_acls.test_recursive_and_transverse_acls(driver, dataset_name_1, dataset_name_2, dataset_name_3, path)
 
 
 @then('import disk')
