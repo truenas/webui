@@ -8,6 +8,10 @@ export interface Job<R = unknown, A = unknown[]> {
   arguments: A;
   description: string;
   error: string;
+  extra?: {
+    code: string;
+    processes: string;
+  };
   exc_info: {
     type?: ResponseErrorType | null;
     extra: string | number | boolean | unknown[] | Record<string, unknown>;

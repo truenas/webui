@@ -175,11 +175,11 @@ export class ExportDisconnectModalComponent implements OnInit {
               this.restartServices = true;
               this.startExportDisconnectJob();
             });
-          } else if ((failureData as any).extra && (failureData as any).extra['code'] === 'unstoppable_processes') {
+          } else if (failureData.extra && failureData.extra['code'] === 'unstoppable_processes') {
             this.dialogRef.close(true);
             this.isFormLoading = false;
             const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-            conditionalErrMessage = msg + (failureData as any).extra['processes'];
+            conditionalErrMessage = msg + failureData.extra['processes'];
             entityJobRef.close(true);
             this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
           } else {
