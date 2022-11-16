@@ -14,9 +14,9 @@ import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import {
-  VmBootloader, VmCpuMode, VmDeviceType, VmTime,
+  VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -34,11 +34,14 @@ import {
 } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
+import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import {
   NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -51,7 +54,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 @UntilDestroy()
 @Component({
   template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
-  providers: [VmService],
+  providers: [VmService, CpuValidatorService],
 })
 export class VmWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
@@ -61,9 +64,6 @@ export class VmWizardComponent implements WizardConfiguration {
   namesInUse: string[] = [];
   statSize: Statfs;
   displayPort: number;
-  vcpus = 1;
-  cores = 1;
-  threads = 1;
   mode: VmCpuMode;
   model: string | null;
   title = helptext.formTitle;
@@ -125,10 +125,7 @@ export class VmWizardComponent implements WizardConfiguration {
           validation: [Validators.required],
           required: true,
           value: VmTime.Local,
-          options: [
-            { label: helptext.time_local_text, value: VmTime.Local },
-            { label: helptext.time_utc_text, value: VmTime.Utc },
-          ],
+          options: mapToOptions(vmTimeNames, this.translate),
         },
         {
           type: 'select',
@@ -203,7 +200,8 @@ export class VmWizardComponent implements WizardConfiguration {
           inputType: 'number',
           min: 1,
           required: true,
-          validation: [this.cpuValidator('threads'), Validators.required, Validators.min(1)],
+          validation: [Validators.required, Validators.min(1)],
+          asyncValidation: [this.entityService.adaptAsyncValidator(this.cpuValidator.createValidator())],
           tooltip: helptext.vcpus_tooltip,
         },
         {
@@ -212,7 +210,8 @@ export class VmWizardComponent implements WizardConfiguration {
           placeholder: helptext.cores.placeholder,
           inputType: 'number',
           required: true,
-          validation: [this.cpuValidator('threads'), Validators.required, Validators.min(1)],
+          validation: [Validators.required, Validators.min(1)],
+          asyncValidation: [this.entityService.adaptAsyncValidator(this.cpuValidator.createValidator())],
           tooltip: helptext.cores.tooltip,
         },
         {
@@ -222,10 +221,10 @@ export class VmWizardComponent implements WizardConfiguration {
           inputType: 'number',
           required: true,
           validation: [
-            this.cpuValidator('threads'),
             Validators.required,
             Validators.min(1),
           ],
+          asyncValidation: [this.entityService.adaptAsyncValidator(this.cpuValidator.createValidator())],
           tooltip: helptext.threads.tooltip,
         },
         {
@@ -233,7 +232,7 @@ export class VmWizardComponent implements WizardConfiguration {
           name: 'cpuset',
           placeholder: helptext.cpuset.placeholder,
           tooltip: helptext.cpuset.tooltip,
-          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          validation: [Validators.pattern(vmCpusetPattern)],
           required: false,
         },
         {
@@ -324,7 +323,7 @@ export class VmWizardComponent implements WizardConfiguration {
           name: 'nodeset',
           placeholder: helptext.nodeset.placeholder,
           tooltip: helptext.nodeset.tooltip,
-          validation: [Validators.pattern('^((\\d+)|(\\d+-\\d+))(,((\\d+)|(\\d+-\\d+)))*$')],
+          validation: [Validators.pattern(vmNodesetPattern)],
           required: false,
         },
         {
@@ -515,7 +514,7 @@ export class VmWizardComponent implements WizardConfiguration {
           type: 'checkbox',
           name: 'ensure_display_device',
           placeholder: this.translate.instant('Ensure Display Device'),
-          tooltip: this.translate.instant('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          tooltip: helptext.ensure_display_device.tooltip,
           value: true,
         },
         {
@@ -534,12 +533,10 @@ export class VmWizardComponent implements WizardConfiguration {
   private nicType: FormSelectConfig;
   private bootloader: FormSelectConfig;
 
-  private currentStep = 0;
   private maxVcpus = 16;
   private gpus: Device[];
   private isolatedGpuPciIds: string[];
   private productType = this.systemGeneralService.getProductType();
-  private wasFormInitialized = false;
 
   constructor(
     protected ws: WebSocketService,
@@ -553,6 +550,8 @@ export class VmWizardComponent implements WizardConfiguration {
     protected modalService: ModalService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
+    private cpuValidator: CpuValidatorService,
+    private entityService: EntityFormService,
   ) { }
 
   preInit(entityWizard: EntityWizardComponent): void {
@@ -562,6 +561,7 @@ export class VmWizardComponent implements WizardConfiguration {
       const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' }) as FormParagraphConfig;
       vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
     });
+
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' }) as FormSelectConfig;
@@ -576,7 +576,6 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
-    this.wasFormInitialized = true;
     this.ws.call('vm.query').pipe(untilDestroyed(this)).subscribe((vms) => {
       vms.forEach((i) => this.namesInUse.push(i.name));
     });
@@ -659,15 +658,12 @@ export class VmWizardComponent implements WizardConfiguration {
         this.summary[this.translate.instant('Name')] = name;
       });
       this.getFormControlFromFieldName('vcpus').valueChanges.pipe(untilDestroyed(this)).subscribe((vcpus) => {
-        this.vcpus = vcpus;
         this.summary[this.translate.instant('Number of CPUs')] = vcpus;
       });
       this.getFormControlFromFieldName('cores').valueChanges.pipe(untilDestroyed(this)).subscribe((cores) => {
-        this.cores = cores;
         this.summary[this.translate.instant('Number of Cores')] = cores;
       });
       this.getFormControlFromFieldName('threads').valueChanges.pipe(untilDestroyed(this)).subscribe((threads) => {
-        this.threads = threads;
         this.summary[this.translate.instant('Number of Threads')] = threads;
       });
 
@@ -909,31 +905,6 @@ export class VmWizardComponent implements WizardConfiguration {
     };
   }
 
-  cpuValidator(name: string): ValidatorFn {
-    return () => {
-      if (!this.wasFormInitialized) {
-        return;
-      }
-      const cpuConfig = this.wizardConfig[1].fieldConfig.find((config) => config.name === name);
-      const vcpus = this.getFormControlFromFieldName('vcpus').value;
-      const cores = this.getFormControlFromFieldName('cores').value;
-      const threads = this.getFormControlFromFieldName('threads').value;
-
-      const errors = vcpus * cores * threads > this.maxVcpus
-        ? { validCPU: true }
-        : null;
-
-      if (errors) {
-        cpuConfig.hasErrors = true;
-        cpuConfig.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
-      } else {
-        cpuConfig.hasErrors = false;
-        cpuConfig.warnings = '';
-      }
-      return errors;
-    };
-  }
-
   volSizeValidator(name: string): ValidatorFn {
     return (control: UntypedFormControl) => {
       const sizeConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === name);
@@ -1124,7 +1095,7 @@ export class VmWizardComponent implements WizardConfiguration {
         .pipe(untilDestroyed(this))
         .subscribe({
           next: (res) => res,
-          error: (err: Job<null, unknown[]>) => new EntityUtils().handleWsError(this.entityWizard, err),
+          error: (err: Job) => new EntityUtils().handleWsError(this.entityWizard, err),
         });
     }
     if (value.hdd_path) {

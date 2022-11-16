@@ -68,6 +68,12 @@ import { routing } from './vm.routing';
     DisplayVmDialogComponent,
     CloneVmDialogComponent,
   ],
-  providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService],
+  providers: [
+    VmService,
+    EntityFormService,
+    NetworkService,
+    SystemGeneralService,
+    MessageService,
+  ],
 })
 export class VmModule { }

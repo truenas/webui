@@ -18,7 +18,6 @@ import {
   VirtualMachine, VirtualMachineUpdate,
 } from 'app/interfaces/virtual-machine.interface';
 import { EmptyType, EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -39,7 +38,7 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
-  providers: [VmService, MessageService],
+  providers: [VmService],
 })
 export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
@@ -68,12 +67,12 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
     { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
     { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },
-    { name: this.translate.instant('Memory Size') as string, prop: 'memory', hidden: true },
+    { name: this.translate.instant('Memory Size') as string, prop: 'memoryString', hidden: true },
     { name: this.translate.instant('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
     { name: this.translate.instant('System Clock') as string, prop: 'time', hidden: true },
     { name: this.translate.instant('Display Port') as string, prop: 'port', hidden: true },
     { name: this.translate.instant('Description') as string, prop: 'description', hidden: true },
-    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdown_timeout', hidden: true },
+    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdownTimeoutString', hidden: true },
   ];
   config = {
     paging: true,
@@ -190,8 +189,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         ...vm,
         state: vm.status.state,
         com_port: `/dev/nmdm${vm.id}B`,
-        shutdown_timeout: `${vm.shutdown_timeout} seconds`,
-        memory: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
+        shutdownTimeoutString: `${vm.shutdown_timeout} seconds`,
+        memoryString: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
       if (this.checkDisplay(vm)) {

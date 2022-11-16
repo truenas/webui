@@ -199,7 +199,7 @@
 
               <div *ngIf="(data && !isPassive) || (data && isPassive && hasHa)" class="data-container" fxFlex>
                 <div fxHide.gt-xs class="list-subheader">
-                  {{ (isPassive ? 'System Information (Standby)' : 'System Information') | translate }}
+                  {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
                 </div>
                 <div fxHide.xs class="list-subheader">
                   {{ 'Overview' | translate }}
@@ -251,8 +251,16 @@
                     </span>
                   </mat-list-item>
                   <mat-list-item *ngIf="showTimeDiffWarning" class="time-warning">
-                    <mat-icon [matTooltip]="timeDiffWarning">error</mat-icon>
-                    {{ timeDiffWarning }}
+                    <mat-icon class="icon-warning" [matTooltip]="timeDiffWarning">error</mat-icon>
+                    <span>{{ timeDiffWarning }}</span>
+                    <button
+                      class="btn-sync"
+                      mat-icon-button
+                      [matTooltip]="'Synchronize Time' | translate"
+                      (click)="onSynchronizeTime()"
+                    >
+                      <ix-icon class="icon-sync">sync</ix-icon>
+                    </button>
                   </mat-list-item>
                 </mat-list>
 

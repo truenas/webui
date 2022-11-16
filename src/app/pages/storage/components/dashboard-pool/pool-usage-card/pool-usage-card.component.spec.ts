@@ -74,7 +74,6 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.capacity-caption')).toHaveText('Usable Capacity: 3.99 GiB');
     expect(spectator.query('.used-caption')).toHaveText('Used: 3.15 GiB');
     expect(spectator.query('.available-caption')).toHaveText('Available: 858.01 MiB');
-    expect(spectator.query('.snapshots-caption')).toHaveText('Used by Snapshots: 117.19 KiB');
     expect(spectator.query('.warning-container')).not.toBeVisible();
     expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
     expect(spectator.query(GaugeChartComponent).label).toBe('79%');
@@ -95,7 +94,6 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.capacity-caption')).toHaveText('Usable Capacity: 2.47 TiB');
     expect(spectator.query('.used-caption')).toHaveText('Used: 2 TiB');
     expect(spectator.query('.available-caption')).toHaveText('Available: 480.56 GiB');
-    expect(spectator.query('.snapshots-caption')).toHaveText('Used by Snapshots: 0 B');
     expect(spectator.query('.warning-container')).toBeVisible();
     expect(spectator.query('.warning-container')).toHaveText('Warning: Low Capacity');
     expect(spectator.query(GaugeChartComponent).label).toBe('81%');

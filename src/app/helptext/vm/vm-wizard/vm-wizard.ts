@@ -85,6 +85,10 @@ Pinning is done by mapping each vcpu into single cpu number in following the ord
 This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.'),
   },
 
+  ensure_display_device: {
+    tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+  },
+
   shutdown_timeout: {
     placeholder: T('Shutdown Timeout'),
     tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \
