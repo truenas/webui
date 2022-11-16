@@ -11,7 +11,7 @@ export interface Job<R = unknown, A = unknown[]> {
   extra?: {
     code: string;
     processes: string;
-  };
+  } | Job['exc_info']['extra'];
   exc_info: {
     type?: ResponseErrorType | null;
     extra: string | number | boolean | unknown[] | Record<string, unknown>;
