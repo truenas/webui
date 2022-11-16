@@ -86,6 +86,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).subscribe((evt: CoreEvent) => {
         this.ha_status = evt.data.status;
+        this.data = null;
 
         if (evt.data.status == 'HA Disabled') {
           this.product_image = '';
@@ -94,21 +95,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         if (evt.data.status == 'HA Enabled') {
           this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
             const evt = { name: 'SysInfoPassive', data: res };
-            // console.log('FILTER__ system.info --> passive', res)
             this.processSysInfo(evt);
           });
-
-          // this.ws.call('system.info').subscribe((res) => {
-          //   const evt = { name: 'SysInfo', data: res };
-          //   // console.log('FILTER__ system.info --> KARPOV', res)
-          //   this.processSysInfo(evt);
-          // });
         }
       });
     } else {
       this.ws.call('system.info').subscribe((res) => {
         const evt = { name: 'SysInfo', data: res };
-        // console.log('FILTER__ system.info --> SECOND', res)
         this.processSysInfo(evt);
       });
 
@@ -168,7 +161,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   processSysInfo(evt: CoreEvent) {
-    console.log(evt.data, 'FILTER__', evt.data);
     this.loader = false;
     this.data = evt.data;
 
