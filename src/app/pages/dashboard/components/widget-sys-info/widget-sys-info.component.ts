@@ -106,15 +106,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         untilDestroyed(this),
       ).subscribe((haStatus) => {
         if (haStatus.hasHa) {
+          this.data = null;
+
           this.ws.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
             .subscribe((systemInfo: SystemInfo) => {
               this.processSysInfo(systemInfo);
             });
-
-          if (this.data) {
-            this.setProductImage(this.data);
-          }
         } else if (!haStatus.hasHa) {
           this.productImage = '';
         }
