@@ -83,10 +83,10 @@ export class CertificateAcmeAddComponent {
 
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.call('certificate.create', [payload])
+    this.ws.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideIn.close();
