@@ -1,16 +1,18 @@
 import {
   Component,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { Observable, Subject, Subscriber } from 'rxjs';
+import {
+  Observable, of, Subject, Subscriber,
+} from 'rxjs';
 import helptext from 'app/helptext/shell/shell';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-select/pod-select-dialog.component';
+import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dialog.enum';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -33,6 +35,7 @@ export class PodShellComponent implements TerminalConfiguration {
     private dialogService: DialogService,
     private aroute: ActivatedRoute,
     private translate: TranslateService,
+    private mdDialog: MatDialog,
   ) {}
 
   preInit(): Observable<void> {
@@ -42,10 +45,10 @@ export class PodShellComponent implements TerminalConfiguration {
         this.podName = params['pname'];
         this.command = params['cname'];
 
-        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((res) => {
-          this.podDetails = res;
+        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
+          this.podDetails = { ...consoleChoices };
 
-          const podDetail = res[this.podName];
+          const podDetail = this.podDetails[this.podName];
           if (!podDetail) {
             this.dialogService.confirm({
               title: helptext.podConsole.nopod.title,
@@ -56,8 +59,6 @@ export class PodShellComponent implements TerminalConfiguration {
             });
           } else {
             this.containerName = podDetail[0];
-            this.updateChooseShellDialog();
-
             subscriber.next();
           }
         });
@@ -75,63 +76,41 @@ export class PodShellComponent implements TerminalConfiguration {
   }
 
   customReconnectAction(): void {
-    this.updateChooseShellDialog();
-    this.dialogService.dialogForm(this.choosePod, true);
+    this.mdDialog.open(PodSelectDialogComponent, {
+      width: '50vw',
+      minWidth: '650px',
+      maxWidth: '850px',
+      data: {
+        appName: this.chartReleaseName,
+        type: PodSelectDialogType.Shell,
+        title: 'Choose pod',
+        customSubmit: (podDialog: PodSelectDialogComponent) => this.onChooseShell(podDialog),
+      },
+    });
   }
 
-  updateChooseShellDialog(): void {
-    this.choosePod = {
-      title: helptext.podConsole.choosePod.title,
-      fieldConfig: [{
-        type: 'select',
-        name: 'pods',
-        placeholder: helptext.podConsole.choosePod.placeholder,
-        required: true,
-        value: this.podName,
-        options: Object.keys(this.podDetails).map((item) => ({
-          label: item,
-          value: item,
-        })),
-      }, {
-        type: 'select',
-        name: 'containers',
-        placeholder: helptext.podConsole.chooseContainer.placeholder,
-        required: true,
-        value: this.containerName,
-        options: this.podDetails[this.podName].map((item) => ({
-          label: item,
-          value: item,
-        })),
-      }, {
-        type: 'input',
-        name: 'command',
-        placeholder: helptext.podConsole.chooseCommand.placeholder,
-        value: this.command,
-      }],
-      saveButtonText: helptext.podConsole.choosePod.action,
-      customSubmit: (entityDialog) => this.onChooseShell(entityDialog),
-      afterInit: (entityDialog) => this.afterShellDialogInit(entityDialog),
-    };
-  }
-
-  onChooseShell(entityDialog: EntityDialogComponent): void {
-    this.podName = entityDialog.formGroup.controls['pods'].value;
-    this.containerName = entityDialog.formGroup.controls['containers'].value;
-    this.command = entityDialog.formGroup.controls['command'].value;
+  onChooseShell(podDialog: PodSelectDialogComponent): void {
+    this.podName = podDialog.form.controls['pods'].value;
+    this.containerName = podDialog.form.controls['containers'].value;
+    this.command = podDialog.form.controls['command'].value;
 
     this.reconnectShell$.next();
     this.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: EntityDialogComponent): void {
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const containers = this.podDetails[value];
-      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
-      containerFc.options = containers.map((item) => ({
-        label: item,
-        value: item,
-      }));
-      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
+  afterShellDialogInit(podDialog: PodSelectDialogComponent): void {
+    podDialog.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((pod) => {
+      if (pod) {
+        const containers = this.podDetails[pod];
+        podDialog.containers$ = of(containers.map((item) => ({
+          label: item,
+          value: item,
+        })));
+        podDialog.form.controls.containers.setValue(containers[0]);
+      } else {
+        podDialog.containers$ = of(null);
+        podDialog.form.controls.containers.setValue(null);
+      }
     });
   }
 }

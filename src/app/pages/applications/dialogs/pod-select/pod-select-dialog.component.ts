@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
+import { PodDialogData } from 'app/interfaces/pod-select-dialog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dialog.enum';
@@ -16,6 +17,7 @@ import { WebSocketService } from 'app/services';
   templateUrl: './pod-select-dialog.component.html',
 })
 export class PodSelectDialogComponent implements OnInit {
+  private tailLines = 500;
   selectedAppName: string;
   dialogType: PodSelectDialogType;
   podSelectDialogType = PodSelectDialogType;
@@ -25,13 +27,12 @@ export class PodSelectDialogComponent implements OnInit {
   form: FormGroup;
   pods$: Observable<Option[]>;
   containers$: Observable<Option[]>;
-
-  get hasPods(): boolean {
-    return !!this.podList.length;
-  }
+  apps$: Observable<Option[]>;
+  title: string;
+  hasPools = true;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { appName: string; type: PodSelectDialogType },
+    @Inject(MAT_DIALOG_DATA) public data: PodDialogData,
     public dialogRef: MatDialogRef<PodSelectDialogComponent>,
     public appService: ApplicationsService,
     private router: Router,
@@ -41,6 +42,7 @@ export class PodSelectDialogComponent implements OnInit {
   ) {
     this.selectedAppName = data.appName;
     this.dialogType = data.type;
+    this.title = data.title;
     switch (this.dialogType) {
       case PodSelectDialogType.Shell:
         this.form = this.formBuilder.group({
@@ -53,13 +55,25 @@ export class PodSelectDialogComponent implements OnInit {
         this.form = this.formBuilder.group({
           pods: ['', Validators.required],
           containers: ['', Validators.required],
-          tail_lines: [500, Validators.required],
+          tail_lines: [this.tailLines, Validators.required],
+        });
+        break;
+      case PodSelectDialogType.PodLogs:
+        this.form = this.formBuilder.group({
+          apps: ['', Validators.required],
+          pods: ['', Validators.required],
+          containers: ['', Validators.required],
+          tail_lines: [this.tailLines, Validators.required],
         });
     }
   }
 
   ngOnInit(): void {
-    this.loadPods();
+    if (this.data.afterDialogInit) {
+      this.data.afterDialogInit(this);
+    } else {
+      this.loadPods();
+    }
   }
 
   loadPods(): void {
@@ -81,27 +95,34 @@ export class PodSelectDialogComponent implements OnInit {
             this.containers$ = of(this.podDetails[value].map((item) => ({ label: item, value: item })));
             this.form.controls.containers.patchValue(this.podDetails[value][0]);
           });
+        } else {
+          this.hasPools = false;
         }
       },
       error: () => {
+        this.hasPools = false;
         this.loader.close();
       },
     });
   }
 
   onPodSelect(): void {
-    const pod = this.form.value.pods;
+    if (this.data.customSubmit) {
+      this.data.customSubmit(this);
+    } else {
+      const pod = this.form.value.pods;
 
-    switch (this.dialogType) {
-      case PodSelectDialogType.Shell: {
-        const command = this.form.value.command;
-        this.router.navigate(new Array('/apps/1/shell/').concat([this.selectedAppName, pod, command]));
-        break;
-      }
-      case PodSelectDialogType.Logs: {
-        const container = this.form.value.containers;
-        const tailLines = this.form.value.tail_lines.toString();
-        this.router.navigate(new Array('/apps/1/logs/').concat([this.selectedAppName, pod, container, tailLines]));
+      switch (this.dialogType) {
+        case PodSelectDialogType.Shell: {
+          const command = this.form.value.command;
+          this.router.navigate(new Array('/apps/1/shell/').concat([this.selectedAppName, pod, command]));
+          break;
+        }
+        case PodSelectDialogType.Logs: {
+          const container = this.form.value.containers;
+          const tailLines = this.form.value.tail_lines.toString();
+          this.router.navigate(new Array('/apps/1/logs/').concat([this.selectedAppName, pod, container, tailLines]));
+        }
       }
     }
     this.dialogRef.close();

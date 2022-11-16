@@ -260,8 +260,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   portalName(name = 'web_portal'): string {
-    const humanName = new EntityUtils().snakeToHuman(name);
-    return humanName;
+    return new EntityUtils().snakeToHuman(name);
   }
 
   portalLink(chart: ChartRelease, name = 'web_portal'): void {
@@ -382,8 +381,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
             const imageNames = Object.keys(imagesNotTobeDeleted);
             if (imageNames.length > 0) {
               const imageMessage = imageNames.reduce((prev: string, current: string) => {
-                const imageNameIndexed = current;
-                return prev + '<li>' + imageNameIndexed + '</li>';
+                return prev + '<li>' + current + '</li>';
               }, '<ul>') + '</ul>';
               this.dialogService.confirm({
                 title: this.translate.instant('Images not to be deleted'),
@@ -481,7 +479,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
-      data: { appName: name, type: PodSelectDialogType.Shell },
+      data: { appName: name, title: 'Choose pod', type: PodSelectDialogType.Shell },
     });
   }
 
@@ -490,7 +488,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
       width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
-      data: { appName: name, type: PodSelectDialogType.Logs },
+      data: { appName: name, title: 'Choose pod', type: PodSelectDialogType.Logs },
     });
   }
 

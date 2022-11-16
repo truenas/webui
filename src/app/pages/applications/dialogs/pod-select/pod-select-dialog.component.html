@@ -1,7 +1,14 @@
-<h1 mat-dialog-title>{{ hasPods ? 'Choose pod' : 'No Pools Found' | translate }}</h1>
+<h1 mat-dialog-title>{{ hasPools ? title : 'No Pools Found' | translate }}</h1>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onPodSelect()">
-  <div *ngIf="podList.length" mat-dialog-content>
+  <div *ngIf="hasPools" mat-dialog-content>
+    <ix-select
+      *ngIf="dialogType === podSelectDialogType.PodLogs"
+      formControlName="apps"
+      [label]="'Apps' | translate"
+      [required]="true"
+      [options]="apps$"
+    ></ix-select>
     <ix-select
       formControlName="pods"
       [label]="'Pods' | translate"
@@ -21,7 +28,7 @@
       [label]="'Commands' | translate"
     ></ix-input>
     <ix-input
-      *ngIf="dialogType === podSelectDialogType.Logs"
+      *ngIf="dialogType === podSelectDialogType.Logs || dialogType === podSelectDialogType.PodLogs"
       formControlName="tail_lines"
       type="number"
       [label]="'Tail Lines' | translate"
@@ -29,13 +36,13 @@
     ></ix-input>
   </div>
 
-  <div *ngIf="!podList.length" mat-dialog-content>
+  <div *ngIf="!hasPools" mat-dialog-content>
     {{ 'At least one pool must be available to use apps' | translate }}
   </div>
 
   <div mat-dialog-actions align="end">
     <button
-      *ngIf="podList.length"
+      *ngIf="hasPools"
       mat-button
       type="submit"
       color="primary"

@@ -2,20 +2,20 @@ import {
   AfterViewInit,
   Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-select/pod-select-dialog.component';
+import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dialog.enum';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
@@ -23,6 +23,8 @@ import { StorageService } from 'app/services/storage.service';
 interface PodLogEvent {
   data: string;
   timestamp: string;
+  msg?: string;
+  collection?: string;
 }
 
 @UntilDestroy()
@@ -52,6 +54,8 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   choosePod: DialogFormConfiguration;
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
+  podsOptions: Option[];
+  containersOptions: Option[];
 
   constructor(
     private ws: WebSocketService,
@@ -62,6 +66,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     private layoutService: LayoutService,
+    private mdDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -71,18 +76,16 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.containerName = params['cname'];
       this.tailLines = params['tail_lines'];
 
-      // Get app list
       this.appService.getChartReleaseNames().pipe(untilDestroyed(this)).subscribe((charts) => {
         charts.forEach((chart) => {
           this.apps.push(chart.name);
         });
       });
 
-      // Get pod list for the selected app
-      this.ws.call('chart.release.pod_logs_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((res) => {
-        this.podDetails = res;
+      this.ws.call('chart.release.pod_logs_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((logsChoices) => {
+        this.podDetails = { ...logsChoices };
 
-        const podDetail = res[this.podName];
+        const podDetail = this.podDetails[this.podName];
         if (!podDetail) {
           this.dialogService.confirm({
             title: helptext.podLogs.nopod.title,
@@ -113,24 +116,25 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   reconnect(): void {
     this.podLogs = [];
 
-    this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
-
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
       this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
     }
 
+    this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
       .pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
-        if (res) {
+        if (res.msg && res.collection) {
+          this.dialogService.closeAllDialogs();
+          this.dialogService.errorReport('Pod Connection', `${res.collection} ${res.msg}`);
+        } else if (res) {
           this.podLogs.push(res);
           this.scrollToBottom();
         }
       });
   }
 
-  // scroll to bottom, show last log.
   scrollToBottom(): void {
     try {
       this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
@@ -151,76 +155,56 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showChooseLogsDialog(false);
   }
 
-  updateChooseLogsDialog(isDownload = false): void {
-    let containerOptions: Option[] = [];
+  getPodOptions(podDialog: PodSelectDialogComponent): void {
+    podDialog.apps$ = of(this.apps.map((item) => ({
+      label: item,
+      value: item,
+    })));
 
-    if (this.podName && this.podDetails[this.podName]) {
-      containerOptions = this.podDetails[this.podName].map((item) => ({
+    if (this.podDetails && Object.keys(this.podDetails).length) {
+      this.podsOptions = Object.keys(this.podDetails).map((item) => ({
         label: item,
         value: item,
       }));
-    }
+      podDialog.pods$ = of(this.podsOptions);
 
-    this.choosePod = {
-      title: helptext.podLogs.title,
-      fieldConfig: [{
-        type: 'select',
-        name: 'apps',
-        placeholder: helptext.podLogs.chooseApp.placeholder,
-        required: true,
-        value: this.chartReleaseName,
-        options: this.apps.map((item) => ({
+      if (this.podName && this.podDetails[this.podName]) {
+        this.containersOptions = this.podDetails[this.podName].map((item) => ({
           label: item,
           value: item,
-        })),
-      }, {
-        type: 'select',
-        name: 'pods',
-        placeholder: helptext.podLogs.choosePod.placeholder,
-        required: true,
-        value: this.podName,
-        options: Object.keys(this.podDetails).map((item) => ({
-          label: item,
-          value: item,
-        })),
-      }, {
-        type: 'select',
-        name: 'containers',
-        placeholder: helptext.podLogs.chooseContainer.placeholder,
-        required: true,
-        value: this.containerName,
-        options: containerOptions,
-      }, {
-        type: 'input',
-        name: 'tail_lines',
-        placeholder: helptext.podLogs.tailLines.placeholder,
-        value: this.tailLines,
-        required: true,
-      }],
-      saveButtonText: isDownload ? helptext.podLogs.downloadBtn : helptext.podLogs.chooseBtn,
-      customSubmit: (entityDialog) => {
-        if (isDownload) {
-          this.download(entityDialog);
-        } else {
-          this.onChooseLogs(entityDialog);
-        }
-      },
-      afterInit: (entityDialog) => this.afterLogsDialogInit(entityDialog),
-    };
+        }));
+        podDialog.containers$ = of(this.containersOptions);
+      }
+    } else {
+      podDialog.hasPools = false;
+    }
   }
 
   showChooseLogsDialog(isDownload = false): void {
     this.tempPodDetails = this.podDetails;
-    this.updateChooseLogsDialog(isDownload);
-    this.dialogService.dialogForm(this.choosePod, true);
+    this.mdDialog.open(PodSelectDialogComponent, {
+      width: '50vw',
+      minWidth: '650px',
+      maxWidth: '850px',
+      data: {
+        type: PodSelectDialogType.PodLogs,
+        title: 'Choose log',
+        afterDialogInit: (podSelectDialog: PodSelectDialogComponent) => this.afterLogsDialogInit(podSelectDialog),
+        customSubmit: (podSelectDialog: PodSelectDialogComponent) => {
+          if (isDownload) {
+            return this.download(podSelectDialog);
+          }
+          return this.onChooseLogs(podSelectDialog);
+        },
+      },
+    });
   }
 
-  // download log
-  download(entityDialog: EntityDialogComponent): void {
-    const chartReleaseName = entityDialog.formGroup.controls['apps'].value;
-    const podName = entityDialog.formGroup.controls['pods'].value;
-    const containerName = entityDialog.formGroup.controls['containers'].value;
-    const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
+  download(podDialog: PodSelectDialogComponent): void {
+    const chartReleaseName = podDialog.form.controls.apps.value;
+    const podName = podDialog.form.controls.pods.value;
+    const containerName = podDialog.form.controls.containers.value;
+    const tailLines = podDialog.form.controls.tail_lines.value;
 
     this.dialogService.closeAllDialogs();
 
@@ -253,59 +237,63 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onChooseLogs(entityDialog: EntityDialogComponent): void {
-    this.chartReleaseName = entityDialog.formGroup.controls['apps'].value;
-    this.podName = entityDialog.formGroup.controls['pods'].value;
-    this.containerName = entityDialog.formGroup.controls['containers'].value;
-    this.tailLines = entityDialog.formGroup.controls['tail_lines'].value;
+  onChooseLogs(podDialog: PodSelectDialogComponent): void {
+    this.chartReleaseName = podDialog.form.controls.apps.value;
+    this.podName = podDialog.form.controls.pods.value;
+    this.containerName = podDialog.form.controls.containers.value;
+    this.tailLines = podDialog.form.controls.tail_lines.value;
     this.podDetails = this.tempPodDetails;
 
     this.reconnect();
     this.dialogService.closeAllDialogs();
   }
 
-  afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
-    const podFc = _.find(entityDialog.fieldConfig, { name: 'pods' }) as FormSelectConfig;
-    const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+  afterLogsDialogInit(podDialog: PodSelectDialogComponent): void {
+    this.getPodOptions(podDialog);
+    podDialog.form.controls.apps.setValue(this.chartReleaseName);
+    podDialog.form.controls.pods.setValue(this.podsOptions[0].value);
+    podDialog.form.controls.containers.setValue(this.containersOptions[0].value);
 
-    // when app selection changed
-    entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      podFc.options = [];
-      containerFc.options = [];
-
+    podDialog.form.controls.apps.valueChanges.pipe(untilDestroyed(this)).subscribe((appName) => {
       this.loader.open();
-      this.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
-        this.loader.close();
-        this.tempPodDetails = res;
-        let podName;
-        if (Object.keys(this.tempPodDetails).length > 0) {
-          podName = Object.keys(this.tempPodDetails)[0];
-        } else {
-          podName = null;
-        }
+      this.ws.call('chart.release.pod_logs_choices', [appName])
+        .pipe(untilDestroyed(this)).subscribe({
+          next: (logsChoices) => {
+            this.loader.close();
+            this.tempPodDetails = { ...logsChoices };
 
-        podFc.options = Object.keys(this.tempPodDetails).map((item) => ({
-          label: item,
-          value: item,
-        }));
-        entityDialog.formGroup.controls['pods'].setValue(podName);
-      });
+            if (this.tempPodDetails && Object.keys(this.tempPodDetails).length) {
+              const podOptions = Object.keys(this.tempPodDetails).map((item) => ({
+                label: item,
+                value: item,
+              }));
+              podDialog.pods$ = of(podOptions);
+              podDialog.form.controls.pods.setValue(podOptions[0].value);
+            } else {
+              podDialog.pods$ = of(null);
+              podDialog.form.controls.pods.setValue(null);
+            }
+          },
+          error: (error) => {
+            this.dialogService.closeAllDialogs();
+            this.loader.close();
+            new EntityUtils().handleWsError(this, error, this.dialogService);
+          },
+        });
     });
 
-    // when pod selection changed
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value) {
-        const containers = this.tempPodDetails[value];
+    podDialog.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((pod) => {
+      if (pod) {
+        const containers = this.tempPodDetails[pod];
 
-        containerFc.options = containers.map((item) => ({
+        podDialog.containers$ = of(containers.map((item) => ({
           label: item,
           value: item,
-        }));
-        if (containers && containers.length > 0) {
-          entityDialog.formGroup.controls['containers'].setValue(containers[0]);
-        } else {
-          entityDialog.formGroup.controls['containers'].setValue(null);
-        }
+        })));
+        podDialog.form.controls.containers.setValue(containers[0]);
+      } else {
+        podDialog.containers$ = of(null);
+        podDialog.form.controls.containers.setValue(null);
       }
     });
   }
