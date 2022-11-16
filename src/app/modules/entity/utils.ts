@@ -22,7 +22,18 @@ export interface FlattenedData extends Record<string, unknown> {
   _parent?: string | number;
 }
 
+/**
+ * TODO: Likely outdated.
+ */
+interface HttpError {
+  code: number;
+  error: {
+    [field: string]: string[];
+  };
+}
+
 export class EntityUtils {
+  // TODO: error is probably of type HttpError
   handleError(entity: any, error: any): void {
     if (error.code === 409) {
       this.handleObjError(entity, error);
@@ -44,7 +55,7 @@ export class EntityUtils {
     }
   }
 
-  handleObjError(entity: EntityErrorHandler, error: any): void {
+  handleObjError(entity: EntityErrorHandler, error: HttpError): void {
     let scroll = false;
     entity.error = '';
     Object.keys(error.error).forEach((i) => {

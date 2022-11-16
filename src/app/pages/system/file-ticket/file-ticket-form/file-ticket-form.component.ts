@@ -189,7 +189,6 @@ export class FileTicketFormComponent implements OnInit {
             },
             complete: () => {
               this.isFormLoading$.next(false);
-              this.slideIn.close();
               this.openSuccessDialog(job.result);
             },
           });
@@ -202,7 +201,6 @@ export class FileTicketFormComponent implements OnInit {
           });
         } else {
           this.isFormLoading$.next(false);
-          this.slideIn.close();
           this.openSuccessDialog(job.result);
         }
       },
@@ -224,11 +222,10 @@ export class FileTicketFormComponent implements OnInit {
     this.dialog.generalDialog(dialogConfig)
       .pipe(untilDestroyed(this))
       .subscribe((shouldOpen) => {
-        if (!shouldOpen) {
-          return;
+        if (shouldOpen) {
+          this.window.open(params.url, '_blank');
         }
-
-        this.window.open(params.url, '_blank');
+        this.slideIn.close();
       });
   }
 
