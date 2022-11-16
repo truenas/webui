@@ -23,13 +23,16 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { ApplicationsRoutingModule } from 'app/pages/applications/applications-routing.module';
 import { ApplicationsComponent } from 'app/pages/applications/applications.component';
 import { CatalogComponent } from 'app/pages/applications/catalog/catalog.component';
 import { ChartReleasesComponent } from 'app/pages/applications/chart-releases/chart-releases.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ChartBulkUpgradeComponent } from 'app/pages/applications/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
@@ -52,6 +55,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
 
 @NgModule({
   imports: [
+    AppLoaderModule,
     AppCommonModule,
     ApplicationsRoutingModule,
     CastModule,
@@ -61,6 +65,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     FlexLayoutModule,
     FormsModule,
     ImgFallbackModule,
+    JobsModule,
     IxFormsModule,
     IxTableModule,
     LayoutModule,
@@ -104,6 +109,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     PullImageFormComponent,
     SelectPoolDialogComponent,
     ChartRollbackModalComponent,
+    ChartBulkUpgradeComponent,
   ],
   providers: [
     DockerImagesComponentStore,

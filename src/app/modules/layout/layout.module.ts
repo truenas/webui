@@ -88,7 +88,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     ModalComponent,
     CopyrightLineComponent,
     TopbarComponent,
-    CopyrightLineComponent,
   ],
 })
 export class LayoutModule {}

@@ -12,6 +12,7 @@ import { Subject } from 'rxjs';
 import { filter, throttleTime } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -118,7 +119,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       filter((evt) => evt.name === 'NetTraffic_' + this.nicState.name),
       throttleTime(500),
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: NetworkTrafficEvent) => {
       const sent = this.utils.convert(evt.data.sent_bytes_rate);
       const received = this.utils.convert(evt.data.received_bytes_rate);
 
@@ -127,7 +128,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
         sentUnits: sent.units,
         received: received.value,
         receivedUnits: received.units,
-        linkState: evt.data.link_state as LinkState,
+        linkState: evt.data.link_state,
       };
     });
   }

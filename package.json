@@ -125,7 +125,7 @@
     "ng2-dragula": "~2.1.1",
     "ngx-color-picker": "~11.0.0",
     "ngx-filesize": "~2.0.16",
-    "ngx-img-fallback": "^1.3.4",
+    "ngx-img-fallback": "^2.0.0",
     "ngx-markdown": "~13.1.0",
     "ngx-popperjs": "^12.1.2",
     "ngx-skeleton-loader": "~5.0.0",

@@ -91,6 +91,16 @@ export type CertificationExtensionAttribute =
   | keyof ExtendedKeyUsage
   | keyof KeyUsage;
 
+/**
+ * @deprecated
+ */
+export type Extension = keyof CertificateExtensions;
+
+/**
+ * @deprecated
+ */
+export type ExtensionProperty = keyof CertificateExtensions[Extension];
+
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;
 }

@@ -20,8 +20,9 @@ import {
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { WINDOW } from 'app/helpers/window.helper';
-import { CoreEvent } from 'app/interfaces/events';
+import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -115,18 +116,18 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: ReportDataEvent) => {
       this.data = formatData(evt.data);
       this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: `LegendEvent-${this.chartId}` }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: LegendEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
       clone.series = formatLegendSeries(evt.data.series, this.data);
-      this.legendData = clone;
+      this.legendData = clone as LegendDataWithStackedTotalHtml;
     });
 
     this.store$.select(selectTheme).pipe(
@@ -385,16 +386,16 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     });
   }
 
-  handleError(evt: CoreEvent): void {
-    const err = evt.data.data;
-    if (evt.data?.data?.error === ReportingDatabaseError.FailedExport) {
+  handleError(evt: ReportDataEvent): void {
+    const err = evt.data.data as WebsocketError;
+    if ((evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (evt.data?.name === 'FetchingError' && (evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
