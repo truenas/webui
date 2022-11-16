@@ -4,7 +4,7 @@ import {
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import {
@@ -18,7 +18,9 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { NetworkService, VmService, WebSocketService } from 'app/services';
+import {
+  DialogService, NetworkService, VmService, WebSocketService,
+} from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -222,6 +224,7 @@ export class DeviceFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private slideIn: IxSlideInService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -302,6 +305,28 @@ export class DeviceFormComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
+
+    if (this.typeControl.value === VmDeviceType.Pci) {
+      forkJoin([
+        this.ws.call('vm.device.passthrough_device_choices'),
+        this.ws.call('system.advanced.config'),
+      ]).pipe(untilDestroyed(this)).subscribe(([passthroughDevices, advancedConfig]) => {
+        const dev = this.pciForm.controls.pptdev.value;
+        if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
+          this.dialogService.confirm({
+            title: this.translate.instant('Warning'),
+            message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
+          }).pipe(untilDestroyed(this)).subscribe((res) => res && this.onSend());
+        } else {
+          this.onSend();
+        }
+      });
+    } else {
+      this.onSend();
+    }
+  }
+
+  private onSend(): void {
     this.isLoading = true;
 
     const update: VmDeviceUpdate = {
