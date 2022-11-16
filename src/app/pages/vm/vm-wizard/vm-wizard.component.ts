@@ -46,6 +46,8 @@ import {
   NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { GpuService } from 'app/services/gpu/gpu.service';
+import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { ModalService } from 'app/services/modal.service';
 import { VmService } from 'app/services/vm.service';
 import { AppState } from 'app/store';
@@ -524,6 +526,7 @@ export class VmWizardComponent implements WizardConfiguration {
           multiple: true,
           options: [],
           required: false,
+          asyncValidation: [this.entityService.adaptAsyncValidator(this.gpuValidator.validateGpu)],
         },
       ],
     },
@@ -551,6 +554,8 @@ export class VmWizardComponent implements WizardConfiguration {
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private cpuValidator: CpuValidatorService,
+    private gpuService: GpuService,
+    private gpuValidator: IsolatedGpuValidatorService,
     private entityService: EntityFormService,
   ) { }
 
@@ -707,39 +712,6 @@ export class VmWizardComponent implements WizardConfiguration {
           this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existingHddPath) => {
             this.summary[this.translate.instant('Disk')] = existingHddPath;
           });
-        }
-      });
-
-      const gpusFormControl = this.getFormControlFromFieldName('gpus');
-      gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
-        const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
-        for (const gpuValue of gpusValue) {
-          if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-            finalIsolatedPciIds.push(gpuValue);
-          }
-        }
-        const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' }) as FormSelectConfig;
-        if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
-          const prevSelectedGpus = [];
-          for (const gpu of this.gpus) {
-            if (this.isolatedGpuPciIds.find((igpi) => igpi === gpu.addr.pci_slot)) {
-              prevSelectedGpus.push(gpu);
-            }
-          }
-          const gpuListItems = prevSelectedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
-          const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
-          gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
-          if (prevSelectedGpus.length) {
-            gpusConf.warnings += this.translate.instant(
-              '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
-              { gpus: listItems },
-            );
-          }
-          gpusConf.warnings += `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
-          gpusFormControl.setErrors({ maxPCIIds: true });
-        } else {
-          gpusConf.warnings = null;
-          gpusFormControl.setErrors(null);
         }
       });
 
@@ -1085,13 +1057,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
     this.loader.open();
     if (value.gpus) {
-      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
-      for (const gpuValue of value.gpus) {
-        if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-          finalIsolatedPciIds.push(gpuValue);
-        }
-      }
-      this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }])
+      this.gpuService.addIsolatedGpuPciIds(value.gpus)
         .pipe(untilDestroyed(this))
         .subscribe({
           next: (res) => res,
