@@ -179,7 +179,7 @@ export class ExportDisconnectModalComponent implements OnInit {
             this.dialogRef.close(true);
             this.isFormLoading = false;
             const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-            conditionalErrMessage = msg + failureData.extra.processes;
+            conditionalErrMessage = msg + (failureData.extra.processes as string);
             entityJobRef.close(true);
             this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
           } else {
