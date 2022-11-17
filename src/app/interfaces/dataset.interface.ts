@@ -38,6 +38,7 @@ export interface Dataset {
   usedbychildren: ZfsProperty<number>;
   usedbydataset: ZfsProperty<number>;
   usedbyrefreservation: ZfsProperty<number>;
+  usedbysnapshots: ZfsProperty<number>;
   type: DatasetType;
   managedby: ZfsProperty<string>;
   aclmode: ZfsProperty<string>;
