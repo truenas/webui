@@ -41,7 +41,7 @@ import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-w
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -78,7 +78,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   subscription = new Subscription();
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
-  hasHa: boolean;
+  isHaEnabled: boolean;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -101,7 +101,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   // Hidden on HA systems.
   // Issues: fenced reservations and the potential to cause a kernel panic, as well as an alert being raised.
   get showImportData(): boolean {
-    return this.hasHa !== undefined && !this.hasHa;
+    return this.isHaEnabled !== undefined && !this.isHaEnabled;
   }
 
   constructor(
@@ -116,6 +116,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private store$: Store<AppState>,
+    private systemService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -130,7 +131,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
-    this.loadHaStatus();
+    this.loadHaEnabled();
     this.setupTree();
     this.listenForRouteChanges();
     this.loadSystemDatasetConfig();
@@ -305,11 +306,21 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  loadHaStatus(): void {
-    this.store$.select(selectHaStatus).pipe(untilDestroyed(this)).subscribe((haStatus) => {
-      this.hasHa = !!(haStatus && haStatus.hasHa);
-      this.cdr.detectChanges();
-    });
+  loadHaEnabled(): void {
+    if (this.systemService.isEnterprise) {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        if (isHaLicensed) {
+          this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
+            this.isHaEnabled = haStatus.hasHa;
+            this.cdr.detectChanges();
+          });
+        } else {
+          this.isHaEnabled = false;
+        }
+      });
+    } else {
+      this.isHaEnabled = false;
+    }
   }
 
   onImportData(): void {
