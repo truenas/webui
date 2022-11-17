@@ -214,7 +214,7 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_disabled"]')
+    assert wait_on_element(driver, 45, '//mat-icon[@svgicon="ix:ha_disabled"]')
     assert refresh_if_element_missing(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
     assert refresh_if_element_missing(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
     # 5 second to let the system get ready for the next step.
