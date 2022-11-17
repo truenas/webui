@@ -1018,7 +1018,6 @@
   "Use this option to allow legacy SMB clients to connect to the  server. Note that SMB1 is being deprecated and it is advised  to upgrade clients to operating system versions that support  modern versions of the SMB protocol.": "",
   "Used Ports": "",
   "Used Space": "",
-  "Used by Snapshots": "",
   "User and Group Ownership": "",
   "User deleted": "",
   "Users could not be loaded": "",

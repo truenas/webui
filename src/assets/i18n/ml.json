@@ -3842,7 +3842,6 @@
   "Used": "",
   "Used Ports": "",
   "Used Space": "",
-  "Used by Snapshots": "",
   "Used by clients in PASV mode. A default of <i>0</i> means any port above 1023.": "",
   "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" target=\"_blank\">proftpd(8)</a> parameters.": "",
   "User": "",
