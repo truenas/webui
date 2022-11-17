@@ -10,8 +10,9 @@ import { Observable } from 'rxjs';
 import {
   delay, filter, map,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/applications/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';

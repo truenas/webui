@@ -8,10 +8,11 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';

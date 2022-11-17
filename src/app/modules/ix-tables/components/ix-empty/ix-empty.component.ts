@@ -3,12 +3,18 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
 @Component({
-  selector: 'ix-entity-empty',
-  templateUrl: './entity-empty.component.html',
-  styleUrls: ['./entity-empty.component.scss'],
+  selector: 'ix-empty',
+  templateUrl: './ix-empty.component.html',
+  styleUrls: ['./ix-empty.component.scss'],
 })
-export class EntityEmptyComponent {
-  @Input() conf: EmptyConfig;
+
+export class IxEmptyComponent {
+  @Input() conf: EmptyConfig = {
+    title: 'rehan',
+    message: 'rehan',
+    large: false,
+    type: EmptyType.NoPageData,
+  };
 
   doAction(): void {
     if (this.conf.button.action) {

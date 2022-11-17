@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyType } from 'app/enums/empty-type.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
 @Injectable()
 export class EmptyService {

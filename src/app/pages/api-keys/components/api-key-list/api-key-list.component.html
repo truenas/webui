@@ -23,8 +23,10 @@
     <mat-card-content>
       <table
         ix-table
+        ix-table-empty
         matSort
         matSortDisableClear="true"
+        [displayedColumns]="displayedColumns"
         [dataSource]="dataSource"
         [matSortActive]="defaultSort.active"
         [matSortDirection]="defaultSort.direction"
@@ -78,13 +80,13 @@
           mat-row
         ></tr>
 
-        <tr *matNoDataRow class="mat-row no-data-row">
+        <!-- <tr *matNoDataRow class="mat-row no-data-row">
           <td class="mat-cell" [attr.colspan]="displayedColumns.length">
             <ix-entity-empty
               [conf]="emptyOrErrorConfig$ | async"
             ></ix-entity-empty>
           </td>
-        </tr>
+        </tr> -->
       </table>
 
       <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>

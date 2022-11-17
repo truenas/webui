@@ -4,7 +4,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 
 export interface DashConfigItem {

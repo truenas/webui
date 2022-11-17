@@ -13,10 +13,11 @@ import {
   filter, map, tap, switchMap,
 } from 'rxjs/operators';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
