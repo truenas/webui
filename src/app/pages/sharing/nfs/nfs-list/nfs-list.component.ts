@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { shared, helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -86,7 +87,8 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     form.setNfsShareForEdit(row);
   }
 
-  onCheckboxChange(row: NfsShare): void {
+  onCheckboxChange(row: NfsShare, loader$: Subject<boolean>): void {
+    loader$.next(true);
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -96,6 +98,9 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
         error: (err) => {
           row.enabled = !row.enabled;
           new EntityUtils().handleWsError(this, err, this.dialog);
+        },
+        complete: () => {
+          loader$.next(false);
         },
       });
   }

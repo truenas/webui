@@ -13,11 +13,9 @@
     "target": "es2020",
     "allowSyntheticDefaultImports": true,
     "lib": [
-      "es2016",
+      "es2020",
       "dom",
-      "dom.Iterable",
-      "es2017.object",
-      "es2016.array.include"
+      "dom.Iterable"
     ]
   },
   "angularCompilerOptions": {

@@ -71,9 +71,10 @@
     {{ 'The passwords do not match.' | translate }}
   </mat-error>
 
-  <mat-error *ngIf="control.hasError('manualValidateError')">
-    {{ control.errors.manualValidateErrorMsg | translate }}
-  </mat-error>
+  <mat-error
+    *ngIf="control.hasError('manualValidateError')"
+    [innerHtml]="control.errors.manualValidateErrorMsg | translate"
+  ></mat-error>
 
   <mat-error *ngIf="control.hasError('invalidOptionSelected')">
     {{ 'Invalid option selected' | translate }}

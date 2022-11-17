@@ -1,7 +1,14 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum VmTime {
   Local = 'LOCAL',
   Utc = 'UTC',
 }
+
+export const vmTimeNames = new Map<VmTime, string>([
+  [VmTime.Local, T('Local')],
+  [VmTime.Utc, T('UTC')],
+]);
 
 export enum VmBootloader {
   Uefi = 'UEFI',
