@@ -83,6 +83,8 @@ export class SharesDashboardComponent implements AfterViewInit {
   readonly servicesToCheck = [ServiceName.Cifs, ServiceName.Iscsi, ServiceName.WebDav, ServiceName.Nfs];
   readonly ServiceStatus = ServiceStatus;
 
+  isClustered = false;
+
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -92,6 +94,24 @@ export class SharesDashboardComponent implements AfterViewInit {
     private systemGeneralService: SystemGeneralService,
   ) {
     this.getInitialServiceStatus();
+    this.loadClusteredState();
+  }
+
+  loadClusteredState(): void {
+    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
+      this.isClustered = isClustered;
+      if (this.isClustered) {
+        this.smbTableConf.addActionDisabled = true;
+        this.smbTableConf.editActionDisabled = true;
+        this.smbTableConf.deleteActionDisabled = true;
+        this.smbTableConf.tooltip = {
+          header: this.translate.instant('Windows (SMB) Shares'),
+          message: this.translate.instant('This share is configured through TrueCommand'),
+        };
+        _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_enabled }).disabled = true;
+        _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_path }).prop = 'path_local';
+      }
+    });
   }
 
   getInitialServiceStatus(): void {
@@ -388,6 +408,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                 icon: 'share',
                 name: 'share_acl',
                 matTooltip: helptextSharingSmb.action_share_acl,
+                disabled: this.isClustered,
                 onClick: (row: SmbShare) => {
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
@@ -411,6 +432,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                 icon: 'security',
                 name: 'edit_acl',
                 matTooltip: helptextSharingSmb.action_edit_acl,
+                disabled: this.isClustered,
                 onClick: (row: SmbShare) => {
                   const rowName = row.path.replace('/mnt/', '');
                   const datasetId = rowName;
