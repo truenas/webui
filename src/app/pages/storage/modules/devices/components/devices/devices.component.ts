@@ -146,8 +146,8 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       this.sortDataNodesByDiskName(dataNode.children);
     });
     this.dataSource = new IxNestedTreeDataSource(dataNodes);
-    this.dataSource.filterPredicate = (dataNodes, query = '') => {
-      return flattenTreeWithFilter(dataNodes, (dataNode) => {
+    this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
+      return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
         if (isVdevGroup(dataNode)) {
           return false;
         }
@@ -197,12 +197,12 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   // TODO: Likely belongs to DevicesStore
   private sortDataNodesByDiskName(dataNodes: DeviceNestedDataNode[]): void {
-    dataNodes.forEach((dataNodes) => {
-      if (dataNodes.children.length === 0) {
+    dataNodes.forEach((node) => {
+      if (node.children.length === 0) {
         return;
       }
 
-      dataNodes.children.sort((a: TopologyDisk, b: TopologyDisk) => {
+      node.children.sort((a: TopologyDisk, b: TopologyDisk) => {
         if (a.disk && b.disk) {
           const nameA = a.disk.toLowerCase();
           const nameB = b.disk.toLowerCase();
@@ -211,7 +211,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         }
         return undefined;
       });
-      this.sortDataNodesByDiskName(dataNodes.children);
+      this.sortDataNodesByDiskName(node.children);
     });
   }
 }

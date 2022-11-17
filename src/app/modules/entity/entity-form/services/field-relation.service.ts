@@ -41,10 +41,10 @@ export class FieldRelationService {
       } else {
         const subControlKeys = Object.keys(controlGroup.controls).filter((key) => key.startsWith(`${rel.name}_`));
         subControlKeys.forEach((key) => {
-          const control = controlGroup.get(key) as UntypedFormControl;
-          if (control
-              && !controls.some((controlElement) => controlElement === control)) {
-            controls.push(control);
+          const subControl = controlGroup.get(key) as UntypedFormControl;
+          if (subControl
+              && !controls.some((controlElement) => controlElement === subControl)) {
+            controls.push(subControl);
           }
         });
       }

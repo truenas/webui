@@ -190,8 +190,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   private createDataSource(datasets: DatasetDetails[]): void {
     this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
-    this.dataSource.filterPredicate = (datasets, query = '') => {
-      return flattenTreeWithFilter(datasets, (dataset: DatasetDetails) => {
+    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
+      return flattenTreeWithFilter(datasetsToFilter, (dataset: DatasetDetails) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };

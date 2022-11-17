@@ -247,7 +247,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('hides Aliases when either DHCP or Autoconfigure IPv6 is enabled', async () => {
-      let aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
       expect(aliasesList).toBeTruthy();
 
       await form.fillForm({
@@ -316,8 +316,8 @@ describe('InterfaceFormComponent', () => {
 
   describe('failover fields', () => {
     beforeEach(() => {
-      const mockWebsocket = spectator.inject(MockWebsocketService);
-      mockWebsocket.mockCall('failover.licensed', true);
+      const websocketMock = spectator.inject(MockWebsocketService);
+      websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });
 

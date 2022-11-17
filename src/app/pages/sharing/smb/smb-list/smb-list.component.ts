@@ -89,19 +89,19 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     });
   }
 
-  getActions(row: SmbShare): EntityTableAction[] {
-    const rowName = row.path.replace('/mnt/', '');
+  getActions(smbShare: SmbShare): EntityTableAction[] {
+    const rowName = smbShare.path.replace('/mnt/', '');
     const optionDisabled = !rowName.includes('/');
     return [
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'edit',
         name: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (row: SmbShare) => this.entityList.doEdit(row.id),
       },
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'security',
         name: 'share_acl',
         label: helptextSharingSmb.action_share_acl,
@@ -125,7 +125,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         },
       },
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'security',
         name: 'edit_acl',
         disabled: optionDisabled,
@@ -149,7 +149,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         },
       },
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'delete',
         name: 'delete',
         label: this.translate.instant('Delete'),

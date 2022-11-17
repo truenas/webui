@@ -14,7 +14,7 @@ describe('GpuService', () => {
   let spectator: SpectatorService<GpuService>;
   let testScheduler: TestScheduler;
 
-  const gpus = [
+  const allGpus = [
     {
       addr: {
         pci_slot: '0000:01:00.0',
@@ -33,7 +33,7 @@ describe('GpuService', () => {
     providers: [
       mockWebsocket([
         mockCall('system.advanced.update_gpu_pci_ids'),
-        mockCall('device.get_info', gpus),
+        mockCall('device.get_info', allGpus),
       ]),
       provideMockStore({
         selectors: [
@@ -59,7 +59,7 @@ describe('GpuService', () => {
     it('returns a list of all gpus available in the system', async () => {
       const gpus = await firstValueFrom(spectator.service.getAllGpus());
 
-      expect(gpus).toEqual(gpus);
+      expect(gpus).toEqual(allGpus);
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('device.get_info', [DeviceType.Gpu]);
     });
   });

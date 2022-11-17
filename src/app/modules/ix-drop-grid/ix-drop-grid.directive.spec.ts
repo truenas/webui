@@ -39,7 +39,7 @@ describe('IxDropGridDirective', () => {
     ],
   });
 
-  function setupMocks(spectator: SpectatorDirective<IxDropGridDirective>): void {
+  function setupMocks(): void {
     resolveAndCreateOriginal = ReflectiveInjector.resolveAndCreate;
     ReflectiveInjector.resolveAndCreate = jest.fn().mockReturnValue(fakeInjector);
 
@@ -62,7 +62,7 @@ describe('IxDropGridDirective', () => {
   describe('ngOnInit()', () => {
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
     });
 
     afterEach(() => {
@@ -83,7 +83,7 @@ describe('IxDropGridDirective', () => {
   describe('registerPlaceholder()', () => {
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
     });
     afterEach(() => {
       restoreMocks();
@@ -98,7 +98,7 @@ describe('IxDropGridDirective', () => {
   describe('registerItem()', () => {
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
     });
     afterEach(() => {
       restoreMocks();
@@ -157,7 +157,7 @@ describe('IxDropGridDirective', () => {
 
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
 
       const fakeSourceParentElement = {
         removeChild: jest.fn(),
@@ -343,7 +343,7 @@ describe('IxDropGridDirective', () => {
 
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
 
       fakeParentElement = {
         appendChild: jest.fn(),

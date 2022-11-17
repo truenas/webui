@@ -71,8 +71,8 @@ describe('DeleteUserDialogComponent', () => {
   });
 
   it('shows Delete primary group checkbox if this is the last user in the group', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCall('group.query', [
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCall('group.query', [
       {
         users: [1],
       },

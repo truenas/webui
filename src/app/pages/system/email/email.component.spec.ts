@@ -188,8 +188,8 @@ describe('EmailComponent', () => {
 
   describe('Gmail OAuth', () => {
     it('shows current Gmail config when Gmail is set', async () => {
-      const mockWebsocket = spectator.inject(MockWebsocketService);
-      mockWebsocket.mockCall('mail.config', {
+      const websocketMock = spectator.inject(MockWebsocketService);
+      websocketMock.mockCall('mail.config', {
         oauth: {
           client_id: 'client_id',
           client_secret: 'secret',

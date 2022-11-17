@@ -67,7 +67,7 @@ export class ExtendDialogComponent implements OnInit {
   }
 
   warnForExportedPools(diskName: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+    const unusedDisk = this.unusedDisks.find((disk) => disk.name === diskName);
     if (!unusedDisk?.exported_zpool) {
       return;
     }

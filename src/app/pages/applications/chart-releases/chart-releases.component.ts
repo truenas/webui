@@ -296,18 +296,18 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
           } as ChartUpgradeDialogConfig,
         });
         dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
-          const dialogRef = this.mdDialog.open(EntityJobComponent, {
+          const jobDialogRef = this.mdDialog.open(EntityJobComponent, {
             data: {
               title: helptext.charts.upgrade_dialog.job,
             },
           });
-          dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
+          jobDialogRef.componentInstance.submit();
+          jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+          jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
             this.dialogService.closeAllDialogs();
             new EntityUtils().handleWsError(this, error, this.dialogService);
           });

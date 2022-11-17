@@ -65,7 +65,6 @@ export interface Dataset {
   // Absent if extra.retrieve_children is false
   children?: Dataset[];
 
-  // TODO: Need to confirm that these properties are valid backend properties
   refquota_critical?: ZfsProperty<number>;
   refquota_warning?: ZfsProperty<number>;
   quota_critical?: ZfsProperty<number>;

@@ -48,9 +48,9 @@ export class KerberosKeytabsListComponent implements EntityTableConfig<KerberosK
   }
 
   doEdit(id: number): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
+    const kerberosKeytab = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(KerberosKeytabsFormComponent);
-    form.setKerberosKeytabsForEdit(row);
+    form.setKerberosKeytabsForEdit(kerberosKeytab);
   }
 
   getActions(): EntityTableAction<KerberosKeytab>[] {
