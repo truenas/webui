@@ -3,6 +3,9 @@ import * as d3 from 'd3';
 import { Application, Container } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { HighlightDiskEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
+import { ThemeChangedEvent } from 'app/interfaces/events/theme-changed-event.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { EnclosureDisk, VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
@@ -50,14 +53,14 @@ export class VDevLabelsSvg {
     this.events$.subscribe((evt: CoreEvent): void => {
       switch (evt.name) {
         case 'ThemeChanged': {
-          const theme = evt.data;
+          const theme = (evt as ThemeChangedEvent).data;
           this.color = theme.blue;
           this.selectedDiskColor = theme.cyan;
           this.highlightColor = theme.yellow;
           break;
         }
         case 'LabelDrives':
-          this.createVdevLabels(evt.data);
+          this.createVdevLabels((evt as LabelDrivesEvent).data);
           break;
         case 'OverlayReady':
           break;
@@ -75,8 +78,8 @@ export class VDevLabelsSvg {
           tiles = this.getParent().querySelectorAll('rect.tile');
           this.hideAllTiles(tiles as NodeListOf<HTMLElement>);
 
-          this.highlightedDiskName = evt.data.devname;
-          this.showTile(evt.data.devname);
+          this.highlightedDiskName = (evt as HighlightDiskEvent).data.devname;
+          this.showTile(this.highlightedDiskName);
           break;
         case 'UnhighlightDisk':
           break;

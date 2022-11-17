@@ -5,7 +5,7 @@ import { EMPTY, throwError } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { rootUserId } from 'app/constants/root-user-id.contant';
+import { rootUserId } from 'app/constants/root-user-id.constant';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';

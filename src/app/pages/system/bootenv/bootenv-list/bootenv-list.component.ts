@@ -44,7 +44,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;
   defaultSort: Sort = { active: 'created', direction: 'desc' };
-  filterString = '';
   isLoading$ = new BehaviorSubject(false);
   isError$ = new BehaviorSubject(false);
   emptyOrErrorConfig$: Observable<EmptyConfig> = this.isError$.pipe(
@@ -159,7 +158,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   private createDataSource(bootenvs: Bootenv[] = []): void {
     this.dataSource = new MatTableDataSource(bootenvs);
     this.dataSource.sort = this.sort;
-    this.dataSource.filter = this.filterString;
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'name':

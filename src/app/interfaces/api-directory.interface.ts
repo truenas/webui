@@ -264,6 +264,7 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import { ChartReleaseUpgradeParams } from './chart-release.interface';
 import { PoolRemoveParams } from './pool-remove.interface';
 
 /**
@@ -382,7 +383,7 @@ export type ApiDirectory = {
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: ChartRelease };
-  'chart.release.upgrade_summary': { params: [name: string, params?: { item_version: string }]; response: UpgradeSummary };
+  'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
   // CRON
   'cronjob.run': { params: [id: number]; response: void };
@@ -822,6 +823,7 @@ export type ApiDirectory = {
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
   'system.environment': { params: void; response: string };
+  'system.set_time': { params: [number]; response: void };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -928,7 +930,7 @@ export type ApiDirectory = {
   'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.usb_controller_choices': { params: void; response: Choices };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
-  'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
+  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };

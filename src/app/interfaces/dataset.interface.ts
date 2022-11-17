@@ -4,11 +4,13 @@ import {
   DatasetCaseSensitivity,
   DatasetChecksum,
   DatasetRecordSize,
-  DatasetShareType, DatasetSnapdev,
+  DatasetShareType,
+  DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
   DatasetType,
-  DatasetVolumeBlockSize, DatasetXattr,
+  DatasetVolumeBlockSize,
+  DatasetXattr,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -211,7 +213,6 @@ export interface DatasetDetails {
 
 export enum DiskSpaceKey {
   UsedByDataset = 'usedbydataset',
-  UsedBySnapshots = 'usedbysnapshots',
   UsedByChildren = 'usedbychildren',
 }
 export type DiskSpace = { [key in DiskSpaceKey]?: number };

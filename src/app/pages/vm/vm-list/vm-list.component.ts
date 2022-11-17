@@ -1,42 +1,38 @@
 import {
-  AfterViewInit, Component, Inject, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { switchMap } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiParams } from 'app/interfaces/api-directory.interface';
 import {
   VirtualizationDetails,
-  VirtualMachine, VirtualMachineUpdate, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
+  VirtualMachine, VirtualMachineUpdate,
 } from 'app/interfaces/virtual-machine.interface';
-import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EmptyType, EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
+import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -44,7 +40,7 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
-  providers: [VmService, MessageService],
+  providers: [VmService],
 })
 export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
@@ -52,8 +48,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
-  routeAdd: string[] = ['vm', 'wizard'];
-  routeEdit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = this.systemGeneralService.getProductType();
   hasVirtualizationSupport = false;
@@ -73,12 +67,12 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
     { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
     { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },
-    { name: this.translate.instant('Memory Size') as string, prop: 'memory', hidden: true },
+    { name: this.translate.instant('Memory Size') as string, prop: 'memoryString', hidden: true },
     { name: this.translate.instant('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
     { name: this.translate.instant('System Clock') as string, prop: 'time', hidden: true },
     { name: this.translate.instant('Display Port') as string, prop: 'port', hidden: true },
     { name: this.translate.instant('Description') as string, prop: 'description', hidden: true },
-    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdown_timeout', hidden: true },
+    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdownTimeoutString', hidden: true },
   ];
   config = {
     paging: true,
@@ -115,7 +109,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private translate: TranslateService,
     private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
-    @Inject(WINDOW) private window: Window,
+    private slideIn: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -196,8 +190,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         ...vm,
         state: vm.status.state,
         com_port: `/dev/nmdm${vm.id}B`,
-        shutdown_timeout: `${vm.shutdown_timeout} seconds`,
-        memory: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
+        shutdownTimeoutString: `${vm.shutdown_timeout} seconds`,
+        memoryString: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
       if (this.checkDisplay(vm)) {
@@ -363,7 +357,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', 'edit', String(vm.id)]));
+        const slideIn = this.slideIn.open(VmEditFormComponent);
+        slideIn.setVmForEdit(vm);
       },
     },
     {
@@ -421,44 +416,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe({
           next: (displayDevices) => {
             this.loader.close();
-            if (displayDevices.length === 1) {
-              if (!displayDevices[0].attributes.password_configured) {
-                this.openDisplayDevice({
-                  vmId: vm.id,
-                  displayDeviceId: displayDevices[0].id,
-                });
-              } else {
-                const displayDevice = _.find(displayDevices, { id: displayDevices[0].id });
-                this.showPasswordDialog(vm, displayDevice);
-              }
-            } else {
-              const conf: DialogFormConfiguration = {
-                title: this.translate.instant('Display Device'),
-                message: this.translate.instant('Pick a display device to open'),
-                fieldConfig: [{
-                  type: 'radio',
-                  name: 'display_device',
-                  options: displayDevices.map((device) => ({ label: device.attributes.type, value: device.id })),
-                  validation: [Validators.required],
-                }],
-                saveButtonText: this.translate.instant('Open'),
-                customSubmit: (entityDialog: EntityDialogComponent) => {
-                  const displayDevice = _.find(displayDevices, {
-                    id: (entityDialog.formValue as { display_device: number }).display_device,
-                  });
-                  if (displayDevice.attributes.password_configured) {
-                    this.showPasswordDialog(vm, displayDevice);
-                  } else {
-                    this.openDisplayDevice({
-                      vmId: vm.id,
-                      displayDeviceId: displayDevice.id,
-                    });
-                  }
-                  entityDialog.dialogRef.close();
-                },
-              };
-              this.dialogService.dialogForm(conf);
-            }
+            this.dialog.open(DisplayVmDialogComponent, { data: { vm, displayDevices } });
           },
           error: (err) => {
             this.loader.close();
@@ -493,31 +451,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         });
       },
     }] as EntityTableAction[];
-  }
-
-  showPasswordDialog(vm: VirtualMachineRow, displayDevice: VmDisplayDevice): void {
-    const passwordConfiguration: DialogFormConfiguration = {
-      title: this.translate.instant('Enter password'),
-      message: this.translate.instant('Enter password to unlock this display device'),
-      fieldConfig: [{
-        type: 'input',
-        name: 'password',
-        togglePw: true,
-        inputType: 'password',
-        placeholder: this.translate.instant('Password'),
-        validation: [Validators.required],
-      }],
-      saveButtonText: this.translate.instant('Open'),
-      customSubmit: (passDialog: EntityDialogComponent) => {
-        passDialog.dialogRef.close();
-        this.openDisplayDevice({
-          vmId: vm.id,
-          displayDeviceId: displayDevice.id,
-          password: passDialog.formValue.password as string,
-        });
-      },
-    };
-    this.dialogService.dialogForm(passwordConfiguration);
   }
 
   isActionVisible(actionId: string, row: VirtualMachineRow): boolean {
@@ -557,52 +490,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
         this.updateRows([vm]);
         this.checkMemory();
-      });
-  }
-
-  private openDisplayDevice(options: {
-    vmId: number;
-    displayDeviceId: number;
-    password?: string;
-  }): void {
-    this.loader.open();
-    let displayOptions = {
-      protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
-    } as VmDisplayWebUriParamsOptions;
-
-    if (options.password) {
-      displayOptions = {
-        ...displayOptions,
-        devices_passwords: [
-          {
-            device_id: options.displayDeviceId,
-            password: options.password,
-          },
-        ],
-      };
-    }
-
-    const requestParams: VmDisplayWebUriParams = [
-      options.vmId,
-      this.window.location.host,
-      displayOptions,
-    ];
-
-    this.ws.call('vm.get_display_web_uri', requestParams)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (webUris) => {
-          this.loader.close();
-          const webUri = webUris[options.displayDeviceId];
-          if (webUri.error) {
-            return this.dialogService.warn(this.translate.instant('Error'), webUri.error);
-          }
-          this.window.open(webUri.uri, '_blank');
-        },
-        error: (err) => {
-          this.loader.close();
-          new EntityUtils().handleError(this, err);
-        },
       });
   }
 }

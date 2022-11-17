@@ -6,7 +6,7 @@
   [color]="value ? 'accent' : 'primary'"
   (click)="initSession()"
 >
-  {{ (hasValue() ? 'Logged In To Jira' : 'Login to Jira') | translate }}
+  {{ hasValue() ? ('Logged In To Jira' | translate) : ('Login to Jira' | translate) }}
 </button>
 
 <div class="full-width container has-tooltip hidden">

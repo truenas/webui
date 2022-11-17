@@ -20,18 +20,19 @@ import {
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { WINDOW } from 'app/helpers/window.helper';
-import { CoreEvent } from 'app/interfaces/events';
+import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
-import { ReportZoomLevel, getZoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
+import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
 import {
   DateTime, LegendDataWithStackedTotalHtml, Report, FetchReportParams, TimeAxisData, TimeData,
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
-import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportingDatabaseError } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
 import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -81,7 +82,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
     { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
   ];
-  readonly zoomLevelLabels = getZoomLevelLabels(this.translate);
+  readonly zoomLevelLabels = zoomLevelLabels;
 
   get reportTitle(): string {
     const trimmed = this.report.title.replace(/[()]/g, '');
@@ -102,7 +103,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   constructor(
     public translate: TranslateService,
-    private reportsService: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService,
     private dialog: DialogService,
@@ -115,18 +115,18 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: ReportDataEvent) => {
       this.data = formatData(evt.data);
       this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: `LegendEvent-${this.chartId}` }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: LegendEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
       clone.series = formatLegendSeries(evt.data.series, this.data);
-      this.legendData = clone;
+      this.legendData = clone as LegendDataWithStackedTotalHtml;
     });
 
     this.store$.select(selectTheme).pipe(
@@ -385,16 +385,16 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     });
   }
 
-  handleError(evt: CoreEvent): void {
-    const err = evt.data.data;
-    if (evt.data?.data?.error === ReportingDatabaseError.FailedExport) {
+  handleError(evt: ReportDataEvent): void {
+    const err = evt.data.data as WebsocketError;
+    if ((evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (evt.data?.name === 'FetchingError' && (evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),

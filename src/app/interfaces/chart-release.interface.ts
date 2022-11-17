@@ -115,6 +115,13 @@ export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
   };
 }>;
 
+export type ChartReleaseUpgradeParams = [
+  name: string,
+  params?: {
+    item_version: string;
+  },
+];
+
 export interface ChartContainerImage {
   id: string;
   update_available: boolean;
