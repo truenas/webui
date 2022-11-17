@@ -181,6 +181,7 @@ export interface DatasetDetails {
   used: ZfsProperty<number>;
   usedbychildren: ZfsProperty<number>;
   usedbydataset: ZfsProperty<number>;
+  usedbysnapshots: ZfsProperty<number>;
   quota: ZfsProperty<number>;
   refquota: ZfsProperty<number>;
   refreservation: ZfsProperty<number>;
