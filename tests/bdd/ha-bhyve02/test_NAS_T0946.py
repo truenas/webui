@@ -424,7 +424,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
     assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 30, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 30, xpaths.toolbar.ha_enabled)
     time.sleep(5)
 
 
@@ -447,7 +447,7 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     driver.refresh()
     time.sleep(2)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 15, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 15, xpaths.toolbar.ha_enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
 

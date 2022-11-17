@@ -8,8 +8,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd,
-    get
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -205,7 +204,7 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
     assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
@@ -243,20 +242,18 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.systemInfoCardTitle)
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_enabled)
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
     # Verify HA enabled again
-    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 120, xpaths.toolbar.ha_enabled)
 
 
 @then('after click Dataset on the left sidebar')
 def after_click_dataset_on_the_left_sidebar(driver):
     """after click Dataset on the left sidebar."""
-    # results = get(host, '/directoryservices/cache_refresh/', ('root', root_password))
-    # assert results.status_code == 200, results.text
     assert wait_on_element(driver, 20, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Datasets"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Datasets"]').click()

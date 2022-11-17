@@ -214,9 +214,9 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 45, '//mat-icon[@svgicon="ix:ha_disabled"]')
+    assert wait_on_element(driver, 45, xpaths.toolbar.ha_disabled)
     assert refresh_if_element_missing(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
-    assert refresh_if_element_missing(driver, 120, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert refresh_if_element_missing(driver, 120, xpaths.toolbar.ha_enabled)
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -233,7 +233,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
-    assert wait_on_element(driver, 20, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert wait_on_element(driver, 20, xpaths.toolbar.ha_enabled)
     assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
@@ -261,7 +261,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert refresh_if_element_missing(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
-    assert refresh_if_element_missing(driver, 60, '//mat-icon[@svgicon="ix:ha_enabled"]')
+    assert refresh_if_element_missing(driver, 60, xpaths.toolbar.ha_enabled)
     time.sleep(5)
 
 

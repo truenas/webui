@@ -2,6 +2,7 @@
 class globalConfiguration:
     title = '//h3[text()="Edit Global Configuration"]'
 
+
 class login:
     user_input = '//input[@data-placeholder="Username"]'
     password_input = '//input[@data-placeholder="Password"]'
@@ -58,3 +59,8 @@ class popup:
 class services:
     title = '//h1[text()="Services"]'
     smbtoggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
+
+
+class toolbar:
+    ha_disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
+    ha_enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
