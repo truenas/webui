@@ -16,8 +16,6 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { DialogService } from '../../../services/dialog.service';
 import { LanguageService } from '../../../services/language.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { RestService } from '../../../services/rest.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
 import { Theme, ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -98,7 +96,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
-    private prefServices: PreferencesService,
     protected loader: AppLoaderService,
     public mediaObserver: MediaObserver,
   ) {
@@ -110,6 +107,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     mediaObserver.media$.subscribe((evt) => {
       this.screenSize = evt.mqAlias;
     });
+
+    this.ha_status_text = window.sessionStorage.getItem('ha_status') === 'true'
+      ? helptext.ha_status_text_enabled
+      : helptext.ha_status_text_disabled;
   }
 
   ngOnInit() {
