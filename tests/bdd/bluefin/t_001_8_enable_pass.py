@@ -39,6 +39,10 @@ def test_enable_pass(driver, nas_ip):
     # change should be saved, open the user page and verify the user Disable Password is false
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//h1[contains(.,"Users")]')
+    if is_element_present(driver, '//div[contains(@class,"title-container") and contains(@class,"ng-star-inserted")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"title-container") and contains(@class,"ng-star-inserted")]')
+    if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     element_text = driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//dt[contains(.,"Password Disabled:")]/../dd').text

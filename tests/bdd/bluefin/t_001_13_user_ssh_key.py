@@ -57,6 +57,10 @@ def test_user_ssh_key(driver, nas_ip):
     driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
+    if is_element_present(driver, '//div[contains(@class,"title-container") and contains(@class,"ng-star-inserted")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"title-container") and contains(@class,"ng-star-inserted")]')
+    if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
 
     # reopen the user edit page and verify sshkey was saved.
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
