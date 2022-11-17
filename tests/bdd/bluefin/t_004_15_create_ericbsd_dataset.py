@@ -71,7 +71,7 @@ def test_create_ericbsd_dataset(driver, dataset_name, user):
     assert wait_on_element(driver, 10, '//button//span[contains(text(),"Add Item")]', 'clickable')
     driver.find_element_by_xpath('//button//span[contains(text(),"Add Item")]').click() 
 
-    if not is_element_present(driver, '//h1[contains(.,"Select a preset ACL")]'):
+    if is_element_present(driver, '//h1[contains(.,"Select a preset ACL")]'):
         assert wait_on_element(driver,  15, '//span[contains(.,"Cancel")]')
         driver.find_element_by_xpath('//span[contains(.,"Cancel")]').click()
 
