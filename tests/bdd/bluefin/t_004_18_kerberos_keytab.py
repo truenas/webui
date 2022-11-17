@@ -63,9 +63,8 @@ def test_kerberos_keytab(driver, tabfile_string):
     keytab_file = sorted(glob.glob(keytab_file_path))[-1]
 
 
-//ix-file-input//div//div//label[contains(.,"Choose File")]
     assert wait_on_element(driver, 15, '//ix-file-input//div//div//label[contains(.,"Choose File")]', 'clickable')
-    driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
+    driver.find_element_by_xpath('//ix-file-input[@formcontrolname="file"]//input').send_keys(keytab_file)
     #save
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
