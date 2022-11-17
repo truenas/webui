@@ -449,7 +449,6 @@
   "Upgrading Apps. Please check on the progress in Task Manager.": "",
   "Usable Capacity": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
-  "Used by Snapshots": "",
   "User deleted": "",
   "Using pool {name}": "",
   "VLAN interface": "",

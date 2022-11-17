@@ -62,9 +62,6 @@ describe('PoolUsageCardComponent', () => {
           available: {
             parsed: 899688274,
           },
-          usedbysnapshots: {
-            parsed: 120000,
-          },
         } as Dataset,
       },
     });

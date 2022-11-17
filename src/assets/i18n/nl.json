@@ -3884,7 +3884,6 @@
   "Used": "Gebruikt",
   "Used Ports": "Gebruikte poorten",
   "Used Space": "Gebruikte ruimte",
-  "Used by Snapshots": "Gebruikt door snapshots",
   "Used by clients in PASV mode. A default of <i>0</i> means any port above 1023.": "Gebruikt door clients in PASV-modus. Een standaardwaarde van <i>0</i> betekent elke poort boven 1023.",
   "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" target=\"_blank\">proftpd(8)</a> parameters.": "Wordt gebruikt om extra <a href=\"https://linux.die.net/man/8/proftpd\" target=\"_blank\">proftpd(8)</a>-parameters toe te voegen.",
   "User": "Gebruiker",

@@ -3897,7 +3897,6 @@
   "Used": "Використано",
   "Used Ports": "Використовувані порти",
   "Used Space": "Використаний простір",
-  "Used by Snapshots": "Використовується знімками",
   "Used by clients in PASV mode. A default of <i>0</i> means any port above 1023.": "Використовується клієнтами в режимі PASV. За замовчуванням <i>0<i> означає будь -який порт вище 1023.",
   "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" target=\"_blank\">proftpd(8)</a> parameters.": "Використовується для додавання додаткових параметрів <a href=\"https://linux.die.net/man/8/proftpd\" target=\"_blank\"> proftpd (8) </a>.",
   "User": "Користувач",

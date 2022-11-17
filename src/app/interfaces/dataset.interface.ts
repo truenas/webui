@@ -4,11 +4,13 @@ import {
   DatasetCaseSensitivity,
   DatasetChecksum,
   DatasetRecordSize,
-  DatasetShareType, DatasetSnapdev,
+  DatasetShareType,
+  DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
   DatasetType,
-  DatasetVolumeBlockSize, DatasetXattr,
+  DatasetVolumeBlockSize,
+  DatasetXattr,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -36,7 +38,6 @@ export interface Dataset {
   usedbychildren: ZfsProperty<number>;
   usedbydataset: ZfsProperty<number>;
   usedbyrefreservation: ZfsProperty<number>;
-  usedbysnapshots: ZfsProperty<number>;
   type: DatasetType;
   managedby: ZfsProperty<string>;
   aclmode: ZfsProperty<string>;
@@ -179,7 +180,6 @@ export interface DatasetDetails {
   used: ZfsProperty<number>;
   usedbychildren: ZfsProperty<number>;
   usedbydataset: ZfsProperty<number>;
-  usedbysnapshots: ZfsProperty<number>;
   quota: ZfsProperty<number>;
   refquota: ZfsProperty<number>;
   refreservation: ZfsProperty<number>;
@@ -211,7 +211,6 @@ export interface DatasetDetails {
 
 export enum DiskSpaceKey {
   UsedByDataset = 'usedbydataset',
-  UsedBySnapshots = 'usedbysnapshots',
   UsedByChildren = 'usedbychildren',
 }
 export type DiskSpace = { [key in DiskSpaceKey]?: number };

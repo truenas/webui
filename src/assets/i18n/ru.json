@@ -1745,7 +1745,6 @@
   "Use this form to set up Two-Factor Authentication for this system.  Then link the system to an authenticator app (such as Google Authenticator, LastPass Authenticator, etc.)  on a mobile device.": "",
   "Use this option to allow legacy SMB clients to connect to the  server. Note that SMB1 is being deprecated and it is advised  to upgrade clients to operating system versions that support  modern versions of the SMB protocol.": "",
   "Used Ports": "",
-  "Used by Snapshots": "",
   "User Data Quota ": "",
   "User Domain": "",
   "User ID and Groups": "",
