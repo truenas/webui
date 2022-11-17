@@ -64,7 +64,7 @@ export class SystemInfoEffects {
   ));
 
   loadHaStatus = createEffect(() => this.actions$.pipe(
-    ofType(loadHaStatus, haSettingsUpdated, passiveNodeReplaced, adminUiInitialized),
+    ofType(loadHaStatus, haSettingsUpdated, passiveNodeReplaced),
     mergeMap(() => {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {

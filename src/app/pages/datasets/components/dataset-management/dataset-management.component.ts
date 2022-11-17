@@ -45,6 +45,7 @@ import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { loadHaStatus } from 'app/store/system-info/system-info.actions';
 import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
 
 enum ScrollType {
@@ -306,6 +307,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   loadHaStatus(): void {
+    this.store$.dispatch(loadHaStatus());
     this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
       this.hasHa = haStatus.hasHa;
       this.cdr.detectChanges();
