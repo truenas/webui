@@ -39,7 +39,7 @@ def test_apps_page_validation(driver):
     # used for local testing, so you dont have to unset and reset the pool every time 
     assert wait_on_element(driver, 20, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 15, '//h3[contains(.,"minio")]')
+    assert wait_on_element(driver, 30, '//h3[contains(.,"minio")]')
 
 
     # verify the setting slide out works
