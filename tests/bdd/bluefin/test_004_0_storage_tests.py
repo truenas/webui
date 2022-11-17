@@ -139,8 +139,8 @@ def create_wheel_dataset(driver):
 @then(parsers.parse('create ericbsd dataset with "{dataset_name}" "{user}"'))
 def create_ericbsd_dataset(driver, dataset_name, user):
     """create ericbsd dataset"""
-#    import t_004_15_create_ericbsd_dataset
-#    t_004_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user)
+    import t_004_15_create_ericbsd_dataset
+    t_004_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user)
 
 
 @then(parsers.parse('create ericbsd smb sharewith "{eric_smb_path}" "{ericsmbdescription}" "{ericsharename}" "{ericsmbname}" "{user}" "{password}" "{user2}" "{password2}"'))
@@ -160,8 +160,8 @@ def create_zvol_for_iscsi(driver, name, zvol_1G_size):
 @then(parsers.parse('kerberos keytab with "{tabfile_string}"'))
 def kerberos_keytab(driver, tabfile_string):
     """kerberos keytab"""
-    import t_004_18_kerberos_keytab
-    t_004_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
+#    import t_004_18_kerberos_keytab
+#    t_004_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
 
 
 @then(parsers.parse('recursive and transverse acls with "{dataset_name_1}" "{dataset_name_2}" "{dataset_name_3}" "{path}"'))
@@ -181,22 +181,22 @@ def import_disk(driver):
 @then('create encrypted pool')
 def create_encrypted_pool(driver):
     """create encrypted pool"""
-    import t_004_21_create_encrypted_pool
-    t_004_21_create_encrypted_pool.test_create_encrypted_pool(driver)
+#    import t_004_21_create_encrypted_pool
+#    t_004_21_create_encrypted_pool.test_create_encrypted_pool(driver)
 
 
 @then('change encryption key')
 def change_encryption_key(driver):
     """change encryption key"""
-    import t_004_22_change_encryption_key
-    t_004_22_change_encryption_key.test_change_encryption_key(driver)
+#    import t_004_22_change_encryption_key
+#    t_004_22_change_encryption_key.test_change_encryption_key(driver)
 
 
 @then('lock and unlock encrypted dataset')
 def lock_and_unlock_encrypted_dataset(driver):
     """lock and unlock encrypted dataset"""
-    import t_004_23_lock_and_unlock_encrypted_dataset
-    t_004_23_lock_and_unlock_encrypted_dataset.test_lock_and_unlock_encrypted_dataset(driver)
+#    import t_004_23_lock_and_unlock_encrypted_dataset
+#    t_004_23_lock_and_unlock_encrypted_dataset.test_lock_and_unlock_encrypted_dataset(driver)
 
 
 @then('verify fullaudit for smb')
