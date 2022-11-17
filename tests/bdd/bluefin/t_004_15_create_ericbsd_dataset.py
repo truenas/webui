@@ -22,10 +22,10 @@ def test_create_ericbsd_dataset(driver, dataset_name, user):
 
 
     # the storage page should open, find and click on manage datasets for tank
-    if not is_element_present(driver, '//div[((contains(@class,"selected")) and (contains(.,"tank")) and not(contains(.,"encrypted_tank")))]'):
-        assert wait_on_element(driver, 10, '//span[(contains(.,"tank")) and not(contains(.,"encrypted_tank"))]', 'clickable')
-        driver.find_element_by_xpath('//span[(contains(.,"tank")) and not(contains(.,"encrypted_tank"))]').click()
-    assert wait_on_element( driver, 10, '//div[((contains(@class,"selected")) and (contains(.,"tank")) and not(contains(.,"encrypted_tank")))]') 
+    if not is_element_present(driver, '//div[(contains(@class,"selected")) and (contains(.,"tank"))]'):
+        assert wait_on_element(driver, 10, '//ix-dataset-node//div//div//span[contains(.,"tank")]', 'clickable')
+        driver.find_element_by_xpath('//ix-dataset-node//div//div//span[contains(.,"tank")]').click()
+    assert wait_on_element( driver, 10, '//div[(contains(@class,"selected")) and (contains(.,"tank"))]') 
     assert wait_on_element(driver, 10, '//span[contains(text(),"Add Dataset")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Add Dataset")]').click()
 
