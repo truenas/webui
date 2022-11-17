@@ -129,7 +129,7 @@
                       svgIcon="ix:freenas_certified"
                     ></mat-icon>
                   </ng-template>
-                  <div *ngIf="widgetDisabled" class="generic alert">
+                  <div *ngIf="!hasHa && isPassive" class="generic alert">
                     <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
                   <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">
@@ -138,7 +138,7 @@
                   <div *ngIf="productImage && isHaLicensed && isPassive && hasHa" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise && !widgetDisabled" class="ha-node-status">
+                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise && hasHa" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
@@ -174,7 +174,7 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
               <div
-                *ngIf="!data && isHaLicensed && isPassive && !hasHa"
+                *ngIf="!data && isHaLicensed && isPassive && hasHa"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -283,7 +283,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!hasHa"
+                    [disabled]="!hasHa || !data"
                   ></ix-simple-failover-button>
                 </div>
               </div>

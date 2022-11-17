@@ -57,7 +57,7 @@ export class ChartUpgradeDialogComponent {
       });
     }
 
-    this.selectedVersionKey = Object.keys(this.versionOptions)[0];
+    this.selectedVersionKey = Array.from(this.versionOptions.keys())[0];
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
   }
 
