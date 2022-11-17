@@ -249,7 +249,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const ds = this.makeDatasets(this.cpuData.data);
       this.ctx = el.getContext('2d');
 
-      const data = {
+      const chartData = {
         labels: this.labels,
         datasets: ds,
       };
@@ -312,7 +312,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       this.chart = new Chart(this.ctx, {
         type: 'bar',
-        data,
+        data: chartData,
         options,
       });
     } else {

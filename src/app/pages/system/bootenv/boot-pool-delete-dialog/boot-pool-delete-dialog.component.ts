@@ -51,13 +51,13 @@ export class BootPoolDeleteDialogComponent {
   }
 
   onSubmit(): void {
-    const params = this.getSelectedNames(this.bootenvs);
+    const bootenvsToDelete = this.getSelectedNames(this.bootenvs);
 
     this.bootenvs.forEach((bootenv) => {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Running, item: bootenv });
     });
 
-    this.ws.job('core.bulk', ['bootenv.do_delete', params]).pipe(
+    this.ws.job('core.bulk', ['bootenv.do_delete', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], string[][]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {

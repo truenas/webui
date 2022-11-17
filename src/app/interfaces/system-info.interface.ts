@@ -35,7 +35,7 @@ export interface SystemLicense {
   features: LicenseFeature[];
   legacy_contract_hardware: unknown;
   legacy_contract_software: unknown;
-  model: string; // TODO: Enum?
+  model: string;
   system_serial: string;
   system_serial_ha: string;
 }

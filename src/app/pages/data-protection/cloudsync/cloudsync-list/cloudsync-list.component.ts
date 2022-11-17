@@ -323,8 +323,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   }
 
   doEdit(id: number): void {
-    const row: CloudSyncTaskUi = this.entityList.rows.find((row) => row.id === id);
+    const cloudSyncTask = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-    form.setTaskForEdit(row);
+    form.setTaskForEdit(cloudSyncTask);
   }
 }

@@ -143,8 +143,8 @@ describe('AlertsPanelComponent', () => {
   it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.emitSubscribeEvent({
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.emitSubscribeEvent({
       msg: ApiEventMessage.Added,
       collection: 'alert.list',
       fields: {
@@ -162,8 +162,8 @@ describe('AlertsPanelComponent', () => {
   it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.emitSubscribeEvent({
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.emitSubscribeEvent({
       msg: ApiEventMessage.Changed,
       collection: 'alert.list',
       fields: {

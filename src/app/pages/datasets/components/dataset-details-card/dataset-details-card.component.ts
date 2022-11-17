@@ -12,7 +12,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
-import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -81,7 +81,7 @@ export class DatasetDetailsCardComponent {
   }
 
   editZvol(): void {
-    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent, this.dataset.id);
+    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormOldComponent, this.dataset.id);
     addZvolComponent.setParent(this.dataset.id);
     addZvolComponent.isNew = false;
     // form doesnt work without cdr.markForCheck

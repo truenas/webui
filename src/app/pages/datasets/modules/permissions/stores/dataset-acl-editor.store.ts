@@ -105,7 +105,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((ace, index) => index !== indexToRemove),
       },
       acesWithError: newAcesWithError,
     } as DatasetAclEditorState;

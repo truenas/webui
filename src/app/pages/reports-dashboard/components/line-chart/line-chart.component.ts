@@ -68,8 +68,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   constructor(
     private core: CoreService,
     public themeService: ThemeService,
-  ) {
-  }
+  ) {}
 
   render(update?: boolean): void {
     this.renderGraph(update);
@@ -123,7 +122,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           },
         },
       },
-      legendFormatter: (data: dygraphs.LegendData) => {
+      legendFormatter: (legend: dygraphs.LegendData) => {
         const getSuffix = (converted: Conversion): string => {
           if (converted.shortName !== undefined) {
             return converted.shortName;
@@ -132,7 +131,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           return converted.suffix !== undefined ? converted.suffix : '';
         };
 
-        const clone = { ...data } as LegendDataWithStackedTotalHtml;
+        const clone = { ...legend } as LegendDataWithStackedTotalHtml;
         clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
@@ -192,8 +191,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       legend.unshift('x');
       rows.push(legend);
 
-      for (let i = 0; i < (rd.data as number[][]).length; i++) {
-        const item = Object.assign([], rd.data as number[][])[i];
+      const rowData = rd.data as number[][];
+      for (let i = 0; i < rowData.length; i++) {
+        const item = Object.assign([], rowData[i]);
         let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
         // UTC: 2020-12-17T16:33:10Z
         // Los Angeles: 2020-12-17T08:36:30-08:00
