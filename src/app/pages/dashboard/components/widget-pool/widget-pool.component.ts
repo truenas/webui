@@ -105,10 +105,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.poolState && this.poolState.topology) {
       let total = 0;
       this.poolState.topology.data.forEach((item) => {
-        if (item.type === TopologyItemType.Disk) {
-          total++;
+        if (item.children.length > 0) {
+          total += item.children.length + 1;
         } else {
-          total += item.children.length;
+          total++;
         }
       });
       return total.toString();
