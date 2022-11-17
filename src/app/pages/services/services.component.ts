@@ -136,10 +136,13 @@ export class ServicesComponent implements OnInit, AfterViewInit {
               buttonMsg: this.translate.instant('Stop'),
             });
           }),
-          filter(Boolean),
           untilDestroyed(this),
-        ).subscribe(() => {
-          this.updateService(rpc, service);
+        ).subscribe((confirmed) => {
+          if (confirmed) {
+            this.updateService(rpc, service);
+          } else {
+            this.resetServiceStateToDefault(service);
+          }
         });
       } else {
         this.dialog.confirm({
@@ -148,10 +151,13 @@ export class ServicesComponent implements OnInit, AfterViewInit {
           hideCheckBox: true,
           buttonMsg: this.translate.instant('Stop'),
         }).pipe(
-          filter(Boolean),
           untilDestroyed(this),
-        ).subscribe(() => {
-          this.updateService(rpc, service);
+        ).subscribe((confirmed) => {
+          if (confirmed) {
+            this.updateService(rpc, service);
+          } else {
+            this.resetServiceStateToDefault(service);
+          }
         });
       }
     } else {
@@ -232,5 +238,14 @@ export class ServicesComponent implements OnInit, AfterViewInit {
 
   onSearch(query: string): void {
     this.dataSource.filter = query;
+  }
+
+  resetServiceStateToDefault(service: Service): void {
+    this.serviceLoadingMap.set(service.service, true);
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.serviceLoadingMap.set(service.service, false);
+      this.cdr.markForCheck();
+    }, 0);
   }
 }
