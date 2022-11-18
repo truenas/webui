@@ -114,7 +114,7 @@
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell class="keep-td">
       <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
-      {{ (bootenv.keep ? 'Yes' : 'No') | translate }}
+      {{ bootenv.keep ? ('Yes' | translate) : ('No' | translate) }}
     </td>
   </ng-container>
 
@@ -156,7 +156,7 @@
           <ix-icon
             [name]="bootenv.keep ? 'bookmark_border' : 'bookmark'"
           ></ix-icon>
-          {{ (bootenv.keep ? 'Unkeep' : 'Keep') | translate }}
+          {{ bootenv.keep ? ('Unkeep' | translate) : ('Keep' | translate) }}
         </a>
       </mat-menu>
     </td>

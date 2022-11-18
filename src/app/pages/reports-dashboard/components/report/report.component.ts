@@ -27,12 +27,12 @@ import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.componen
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
-import { ReportZoomLevel, getZoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
+import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
 import {
   DateTime, LegendDataWithStackedTotalHtml, Report, FetchReportParams, TimeAxisData, TimeData,
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
-import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportingDatabaseError } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
 import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -82,7 +82,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
     { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
   ];
-  readonly zoomLevelLabels = getZoomLevelLabels(this.translate);
+  readonly zoomLevelLabels = zoomLevelLabels;
 
   get reportTitle(): string {
     const trimmed = this.report.title.replace(/[()]/g, '');
@@ -103,7 +103,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   constructor(
     public translate: TranslateService,
-    private reportsService: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService,
     private dialog: DialogService,

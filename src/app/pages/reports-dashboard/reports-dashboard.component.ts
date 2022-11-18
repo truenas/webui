@@ -8,11 +8,16 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
+import { filter } from 'rxjs';
+import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
+import { AppLoaderService, DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
+import { ServerTimeService } from 'app/services/server-time.service';
 import { ReportsService } from './reports.service';
 
 @UntilDestroy()
@@ -34,7 +39,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   activeReports: Report[] = [];
   visibleReports: number[] = [];
   allTabs: ReportTab[] = this.reportsService.getReportTabs();
-  hasUps = false;
 
   constructor(
     private router: Router,
@@ -42,6 +46,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     private translate: TranslateService,
     private layoutService: LayoutService,
     private reportsService: ReportsService,
+    private serverTimeService: ServerTimeService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -57,26 +64,27 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     this.scrollContainer = document.querySelector('.rightside-content-hold');
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.reportsService.getReportGraphs().pipe(untilDestroyed(this)).subscribe((reports) => {
-      this.allReports = reports.map((report) => {
-        const list = [];
-        if (report.identifiers) {
-          report.identifiers.forEach(() => list.push(true));
-        } else {
-          list.push(true);
-        }
-        return {
-          ...report,
-          isRendered: list,
-        };
+    this.reportsService.getReportGraphs()
+      .pipe(untilDestroyed(this))
+      .subscribe((reports) => {
+        this.allReports = reports.map((report) => {
+          const list = [];
+          if (report.identifiers) {
+            report.identifiers.forEach(() => list.push(true));
+          } else {
+            list.push(true);
+          }
+          return {
+            ...report,
+            isRendered: list,
+          };
+        });
+
+        this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
+        this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
+
+        this.activateTabFromUrl();
       });
-
-      this.hasUps = this.allReports.some((report) => report.title.startsWith('UPS'));
-      this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
-      this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
-
-      this.activateTabFromUrl();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -112,34 +120,52 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
+        const graphName = report.name as ReportingGraphName;
         let condition;
         switch (activeTab.value) {
           case ReportType.Cpu:
-            condition = (report.name === 'cpu' || report.name === 'load' || report.name === 'cputemp');
+            condition = [
+              ReportingGraphName.Cpu,
+              ReportingGraphName.CpuTemp,
+              ReportingGraphName.SystemLoad,
+            ].includes(graphName);
             break;
           case ReportType.Memory:
-            condition = (report.name === 'memory' || report.name === 'swap');
+            condition = [
+              ReportingGraphName.Memory,
+              ReportingGraphName.Swap,
+            ].includes(graphName);
             break;
           case ReportType.Network:
-            condition = (report.name === 'interface');
+            condition = ReportingGraphName.NetworkInterface === graphName;
             break;
           case ReportType.Nfs:
-            condition = (report.name === 'nfsstat' || report.name === 'nfsstatbytes');
+            condition = [
+              ReportingGraphName.NfsStat,
+              ReportingGraphName.NfsStatBytes,
+            ].includes(graphName);
             break;
           case ReportType.Partition:
-            condition = (report.name === 'df');
+            condition = ReportingGraphName.Partition === graphName;
             break;
           case ReportType.System:
-            condition = (report.name === 'processes' || report.name === 'uptime');
+            condition = [
+              ReportingGraphName.Processes,
+              ReportingGraphName.Uptime,
+            ].includes(graphName);
             break;
           case ReportType.Target:
-            condition = (report.name === 'ctl');
+            condition = ReportingGraphName.Target === graphName;
             break;
           case ReportType.Ups:
-            condition = report.name.startsWith('ups');
+            condition = report.name.startsWith(ReportingGraphName.Ups);
             break;
           case ReportType.Zfs:
-            condition = report.name.startsWith('arc');
+            condition = [
+              ReportingGraphName.ZfsArcSize,
+              ReportingGraphName.ZfsArcRatio,
+              ReportingGraphName.ZfsArcResult,
+            ].includes(graphName);
             break;
           default:
             condition = true;
@@ -218,5 +244,22 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
   isReportReversed(report: Report): boolean {
     return report.name === 'cpu';
+  }
+
+  onSynchronizeTime(): void {
+    this.serverTimeService.confirmSetSystemTime().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.loader.open();
+      const currentTime = Date.now();
+      this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          this.window.location.reload();
+        },
+        error: (err) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, err, this.dialogService);
+        },
+      });
+    });
   }
 }
