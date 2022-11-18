@@ -240,15 +240,15 @@ export class ZvolFormComponent {
           }
           this.setEncryptionFieldsDisabled(true);
           this.form.controls.inherit_encryption.valueChanges
-            .pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
-              this.inheritEncryption = inherit;
-              if (inherit) {
+            .pipe(untilDestroyed(this)).subscribe((inheritEncryption: boolean) => {
+              this.inheritEncryption = inheritEncryption;
+              if (inheritEncryption) {
                 this.setEncryptionFieldsDisabled(true);
                 this.setPassphraseFieldsDisabled(true);
                 this.setKeyFieldsDisabled(true);
                 this.form.controls.encryption.disable();
               }
-              if (!inherit) {
+              if (!inheritEncryption) {
                 this.form.controls.encryption_type.enable();
                 this.form.controls.algorithm.enable();
                 if (this.passphraseParent) { // keep it hidden if it passphrase
@@ -383,11 +383,11 @@ export class ZvolFormComponent {
             },
           });
         } else {
-          let parentDataset: string | string[] = pkDatasets[0].name.split('/');
-          parentDataset.pop();
-          parentDataset = parentDataset.join('/');
+          let parentDatasetId: string | string[] = pkDatasets[0].name.split('/');
+          parentDatasetId.pop();
+          parentDatasetId = parentDatasetId.join('/');
 
-          this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe({
+          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(untilDestroyed(this)).subscribe({
             next: (parentDataset) => {
               this.form.controls.sparse.disable();
               this.form.controls.volblocksize.disable();

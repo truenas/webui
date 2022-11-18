@@ -8,9 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Application, Container,
 } from 'pixi.js';
-import {
-  tween, styler, value, keyframes, ColdSubscription,
-} from 'popmotion';
+import * as popmotion from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -163,7 +161,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private defaultView = 'pools';
   private labels: VDevLabelsSvg;
   private identifyBtnRef: {
-    animation: ColdSubscription;
+    animation: popmotion.ColdSubscription;
     originalState: string;
     styler: ValueReaction;
   };
@@ -732,7 +730,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   update(className: string): void { // stage-left or stage-right or expanders
     const sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
     const html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
-    const el = styler(html, {});
+    const el = popmotion.styler(html, {});
 
     const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
     const y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
@@ -754,14 +752,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
     const html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
-    const el = styler(html, {});
+    const el = popmotion.styler(html, {});
 
     const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
     const y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
     html.style.left = x.toString() + 'px';
     html.style.top = y.toString() + 'px';
 
-    tween({
+    popmotion.tween({
       from: { scale: 0, opacity: 0 },
       to: { scale: 1, opacity: 1 },
       duration: 360,
@@ -777,7 +775,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   exit(className: string): void { // stage-left or stage-right or full-stage
     const html = this.overview.nativeElement.querySelector('.' + className + '.' + this.exitingView);
-    const el = styler(html, {});
+    const el = popmotion.styler(html, {});
     let duration = 360;
 
     // x is the position relative to it's starting point.
@@ -790,7 +788,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Move stage left
-    tween({
+    popmotion.tween({
       from: { opacity: 1, x: 0 },
       to: {
         opacity: 0,
@@ -1063,10 +1061,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       (this.identifyBtnRef.animation.stop as (styler: ValueReaction) => void)(this.identifyBtnRef.styler);
       this.identifyBtnRef = null;
     } else if (!this.identifyBtnRef && !kill) {
-      const btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});
+      const btn = popmotion.styler(this.details.nativeElement.querySelector('#identify-btn'), {});
       const startShadow = btn.get('box-shadow');
 
-      const elementBorder = value(
+      const elementBorder = popmotion.value(
         { borderColor: '', borderWidth: 0 },
         ({ borderColor, borderWidth }: { borderColor: string; borderWidth: number }) => btn.set({
           boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
@@ -1075,7 +1073,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       // Convert color to rgb value
       const cc = this.hexToRgb(this.theme.cyan);
-      const animation = keyframes({
+      const animation = popmotion.keyframes({
         values: [
           { borderWidth: 0, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]})` },
           { borderWidth: 30, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]}, 0)` },

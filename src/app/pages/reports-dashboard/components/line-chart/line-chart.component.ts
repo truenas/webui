@@ -122,7 +122,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           },
         },
       },
-      legendFormatter: (data: dygraphs.LegendData) => {
+      legendFormatter: (legend: dygraphs.LegendData) => {
         const getSuffix = (converted: Conversion): string => {
           if (converted.shortName !== undefined) {
             return converted.shortName;
@@ -131,7 +131,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           return converted.suffix !== undefined ? converted.suffix : '';
         };
 
-        const clone = { ...data } as LegendDataWithStackedTotalHtml;
+        const clone = { ...legend } as LegendDataWithStackedTotalHtml;
         clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);

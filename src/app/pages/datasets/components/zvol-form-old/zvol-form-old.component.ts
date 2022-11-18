@@ -475,17 +475,17 @@ export class ZvolFormOldComponent implements FormConfiguration {
           this.encryptionFields.forEach((field) => {
             this.entityForm.setDisabled(field, true, true);
           });
-          inheritEncryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
-            this.inheritEncryption = inherit;
-            if (inherit) {
+          inheritEncryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((inheritEncyprtion: boolean) => {
+            this.inheritEncryption = inheritEncyprtion;
+            if (inheritEncyprtion) {
               allEncryptionFields.forEach((field) => {
-                this.entityForm.setDisabled(field, inherit, inherit);
+                this.entityForm.setDisabled(field, inheritEncyprtion, inheritEncyprtion);
               });
-              _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
+              _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inheritEncyprtion;
             }
-            if (!inherit) {
-              this.entityForm.setDisabled('encryption_type', inherit, inherit);
-              this.entityForm.setDisabled('algorithm', inherit, inherit);
+            if (!inheritEncyprtion) {
+              this.entityForm.setDisabled('encryption_type', inheritEncyprtion, inheritEncyprtion);
+              this.entityForm.setDisabled('algorithm', inheritEncyprtion, inheritEncyprtion);
               if (this.passphraseParent) { // keep it hidden if it passphrase
                 _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
               }
@@ -497,7 +497,7 @@ export class ZvolFormOldComponent implements FormConfiguration {
               if (this.encryptedParent) {
                 _.find(this.fieldConfig, { name: 'encryption' }).isHidden = this.isBasicMode;
               } else {
-                _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
+                _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inheritEncyprtion;
               }
             }
           });
@@ -629,11 +629,11 @@ export class ZvolFormOldComponent implements FormConfiguration {
             error: this.handleError,
           });
         } else {
-          let parentDataset: string | string[] = pkDatasets[0].name.split('/');
-          parentDataset.pop();
-          parentDataset = parentDataset.join('/');
+          let parentDatasetPath: string | string[] = pkDatasets[0].name.split('/');
+          parentDatasetPath.pop();
+          parentDatasetPath = parentDatasetPath.join('/');
 
-          this.ws.call('pool.dataset.query', [[['id', '=', parentDataset]]]).pipe(untilDestroyed(this)).subscribe({
+          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetPath]]]).pipe(untilDestroyed(this)).subscribe({
             next: (parentDataset) => {
               this.customActions = null;
 

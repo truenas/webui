@@ -93,7 +93,7 @@ describe('IpmiFormComponent', () => {
 
     it('loads remote controller data', async () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
-      const form = await loader.getHarness(IxFormHarness);
+      form = await loader.getHarness(IxFormHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
       const formData = await form.getValues();
 
@@ -131,7 +131,7 @@ describe('IpmiFormComponent', () => {
         Password: '',
         'VLAN ID': '',
       };
-      const form = await loader.getHarness(IxFormHarness);
+      form = await loader.getHarness(IxFormHarness);
       await form.fillForm(dataForm);
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

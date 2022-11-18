@@ -131,7 +131,7 @@ module.exports = {
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
 
-        // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
+        // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
@@ -153,7 +153,6 @@ module.exports = {
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "@typescript-eslint/no-shadow": "off",
         "no-multi-str": "off",
         "no-mixed-operators": ["error", {
           groups: [

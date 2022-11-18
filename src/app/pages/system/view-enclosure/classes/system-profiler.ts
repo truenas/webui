@@ -276,17 +276,17 @@ export class SystemProfiler {
     const vdev = { ...disk.vdev };
     vdev.diskEnclosures = {};
     const keys = Object.keys(slots);
-    keys.forEach((disk) => {
-      const enclosureNumber = this.getEnclosureNumber(disk);
+    keys.forEach((diskKey) => {
+      const enclosureNumber = this.getEnclosureNumber(diskKey);
 
       // is the disk on the current enclosure?
-      const diskObj = enclosure.disks[enclosure.diskKeys[disk]];
+      const diskObj = enclosure.disks[enclosure.diskKeys[diskKey]];
       if (!diskObj) {
-        delete slots[disk];
+        delete slots[diskKey];
       } else {
-        slots[disk] = diskObj.enclosure.slot;
+        slots[diskKey] = diskObj.enclosure.slot;
       }
-      vdev.diskEnclosures[disk] = enclosureNumber;
+      vdev.diskEnclosures[diskKey] = enclosureNumber;
     });
 
     vdev.selectedDisk = diskName;

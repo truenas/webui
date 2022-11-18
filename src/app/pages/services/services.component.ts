@@ -67,10 +67,10 @@ export class ServicesComponent implements OnInit, AfterViewInit {
         const transformed = services
           .filter((service) => !this.hiddenServices.includes(service.service))
           .map((service) => {
-            const transformed = { ...service } as ServiceRow;
-            transformed.name = serviceNames.get(service.service);
-
-            return transformed;
+            return {
+              ...service,
+              name: serviceNames.get(service.service),
+            } as ServiceRow;
           });
 
         transformed.sort((a, b) => a.name.localeCompare(b.name));

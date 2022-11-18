@@ -57,16 +57,17 @@ export class SpaceManagementChartComponent implements OnChanges {
   }
 
   private updateChartData(): void {
+    // TODO: Used by Snapshots was removed.
+    // Details in comments sections: https://ixsystems.atlassian.net/browse/NAS-118891
+
     const data: DiskSpace[] = [];
     if (this.isZvol) {
       data.push(
         { usedbydataset: this.dataset.usedbydataset.parsed },
-        { usedbysnapshots: this.dataset.usedbysnapshots.parsed },
       );
     } else {
       data.push(
         { usedbydataset: this.dataset.usedbydataset.parsed },
-        { usedbysnapshots: this.dataset.usedbysnapshots.parsed },
         { usedbychildren: this.dataset.usedbychildren.parsed },
       );
     }

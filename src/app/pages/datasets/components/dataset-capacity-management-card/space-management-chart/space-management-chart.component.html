@@ -35,29 +35,6 @@
         </ng-container>
       </span>
     </div>
-    <div *ngIf="dataset.usedbysnapshots.parsed" class="legend-list-item">
-      <span class="legend-label">
-        <span
-          class="legend-swatch"
-          [style.background-color]="swatchColors?.usedbysnapshots?.backgroundColor"
-        ></span>
-        <ng-container *ngIf="!isZvol">{{
-          'Snapshots' | translate
-        }}</ng-container>
-        <ng-container *ngIf="isZvol">{{
-          'Used by Snapshots' | translate
-        }}</ng-container>
-      </span>
-      <span class="legend-value">
-        {{
-          dataset.usedbysnapshots.parsed
-            | filesize: { standard: 'iec', round: 0 }
-        }}
-        <ng-container *ngIf="dataset.usedbysnapshots.parsed">
-          ({{ dataset.usedbysnapshots.parsed / dataset.used.parsed | percent }})
-        </ng-container>
-      </span>
-    </div>
     <ng-container *ngIf="!isZvol">
       <div *ngIf="dataset.usedbychildren.parsed" class="legend-list-item">
         <span class="legend-label">

@@ -282,9 +282,9 @@ export class AppSchemaService {
         altDefault = false;
       }
 
-      const value = schema.default !== undefined ? schema.default : altDefault;
+      const defaultValue = schema.default !== undefined ? schema.default : altDefault;
 
-      const newFormControl = new CustomUntypedFormControl(value, [
+      const newFormControl = new CustomUntypedFormControl(defaultValue, [
         schema.required ? Validators.required : Validators.nullValidator,
         schema.max ? Validators.max(schema.max) : Validators.nullValidator,
         schema.min ? Validators.min(schema.min) : Validators.nullValidator,
@@ -317,36 +317,35 @@ export class AppSchemaService {
             formField.disable();
           }
         });
-        subscription.add(newFormControl.valueChanges
-          .subscribe((value) => {
-            schema.subquestions.forEach((subquestion) => {
-              const parentControl = (formGroup.controls[subquestion.variable].parent as CustomUntypedFormField);
-              if (!parentControl.hidden$) {
-                parentControl.hidden$ = new BehaviorSubject<boolean>(false);
-              }
-              parentControl.hidden$.pipe(
-                take(1),
-              ).subscribe((isParentHidden) => {
-                if (!isParentHidden) {
-                  const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-                  if (!formField.hidden$) {
-                    formField.hidden$ = new BehaviorSubject<boolean>(false);
-                  }
-                  if (value === schema.show_subquestions_if) {
-                    formField.hidden$.next(false);
-                    if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
-                      formField.disable();
-                    } else {
-                      formField.enable();
-                    }
-                  } else {
-                    formField.hidden$.next(true);
-                    formField.disable();
-                  }
+        subscription.add(newFormControl.valueChanges.subscribe((value) => {
+          schema.subquestions.forEach((subquestion) => {
+            const parentControl = (formGroup.controls[subquestion.variable].parent as CustomUntypedFormField);
+            if (!parentControl.hidden$) {
+              parentControl.hidden$ = new BehaviorSubject<boolean>(false);
+            }
+            parentControl.hidden$.pipe(
+              take(1),
+            ).subscribe((isParentHidden) => {
+              if (!isParentHidden) {
+                const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
+                if (!formField.hidden$) {
+                  formField.hidden$ = new BehaviorSubject<boolean>(false);
                 }
-              });
+                if (value === schema.show_subquestions_if) {
+                  formField.hidden$.next(false);
+                  if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
+                    formField.disable();
+                  } else {
+                    formField.enable();
+                  }
+                } else {
+                  formField.hidden$.next(true);
+                  formField.disable();
+                }
+              }
             });
-          }));
+          });
+        }));
       }
 
       formGroup.addControl(chartSchemaNode.variable, newFormControl);
@@ -385,9 +384,9 @@ export class AppSchemaService {
 
         const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
         let nextItem = config;
-        for (const path of configControlPath) {
+        for (const controlPath of configControlPath) {
           if (nextItem) {
-            nextItem = nextItem[path] as HierarchicalObjectMap<ChartFormValue>;
+            nextItem = nextItem[controlPath] as HierarchicalObjectMap<ChartFormValue>;
           }
         }
 

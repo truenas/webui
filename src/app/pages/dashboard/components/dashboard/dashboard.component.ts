@@ -403,12 +403,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'storage':
         return this.volumeData;
       default: {
-        const pool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        if (!pool) {
+        const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+        if (!dashboardPool) {
           console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
           return;
         }
-        return this.volumeData && this.volumeData[pool.name];
+        return this.volumeData && this.volumeData[dashboardPool.name];
       }
     }
   }
@@ -619,36 +619,36 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Store keys for fast lookup
       const nicKeys: { [nic: string]: number | string } = {};
-      interfaces.forEach((item, index) => {
-        nicKeys[item.name] = index.toString();
+      interfaces.forEach((networkInterface, index) => {
+        nicKeys[networkInterface.name] = index.toString();
 
         // Process Vlans (attach vlans to their parent)
-        if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
+        if (networkInterface.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
           clone[index].state.vlans = [];
         }
 
-        if (item.type === NetworkInterfaceType.Vlan && item.state.parent) {
-          const parentIndex = parseInt(nicKeys[item.state.parent] as string);
+        if (networkInterface.type === NetworkInterfaceType.Vlan && networkInterface.state.parent) {
+          const parentIndex = parseInt(nicKeys[networkInterface.state.parent] as string);
           if (!clone[parentIndex].state.vlans) {
             clone[parentIndex].state.vlans = [];
           }
 
-          clone[parentIndex].state.vlans.push(item.state);
-          removeNics[item.name] = index;
+          clone[parentIndex].state.vlans.push(networkInterface.state);
+          removeNics[networkInterface.name] = index;
         }
 
         // Process LAGGs
-        if (item.type === NetworkInterfaceType.LinkAggregation) {
-          clone[index].state.lagg_ports = item.lag_ports;
-          item.lag_ports.forEach((nic) => {
+        if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
+          clone[index].state.lagg_ports = networkInterface.lag_ports;
+          networkInterface.lag_ports.forEach((nic) => {
             // Consolidate addresses
-            clone[index].state.aliases.forEach((item) => {
-              (item as DashboardNetworkInterfaceAlias).interface = nic;
+            clone[index].state.aliases.forEach((alias) => {
+              (alias as DashboardNetworkInterfaceAlias).interface = nic;
             });
             clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic] as number].state.aliases);
 
             // Consolidate vlans
-            clone[index].state.vlans.forEach((item) => { item.interface = nic; });
+            clone[index].state.vlans.forEach((vlan) => { vlan.interface = nic; });
             clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic] as number].state.vlans);
 
             // Mark interface for removal
