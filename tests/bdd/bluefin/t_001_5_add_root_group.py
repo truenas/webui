@@ -55,6 +55,8 @@ def test_add_root_group(driver):
         assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"title-container") and contains(@class,"ng-star-inserted")]')
     if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
         assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
+    if is_element_present(driver, '//div[contains(@class,"input-container")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"input-container")]')        
 
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
