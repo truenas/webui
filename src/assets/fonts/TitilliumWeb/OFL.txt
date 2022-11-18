@@ -1,4 +1,4 @@
-Copyright 2020 The Epilogue Project Authors (https://github.com/Etcetera-Type-Co/Epilogue)
+Copyright (c) 2009-2011 by Accademia di Belle Arti di Urbino and students of MA course of Visual design. Some rights reserved.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
