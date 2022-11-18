@@ -85,7 +85,7 @@ def input_the_license_and_click_save(driver, license):
     driver.find_element_by_xpath('//textarea').send_keys(license)
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
 @then('the "Reload the page for the license to take effect" should appear')
@@ -132,8 +132,8 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 7, '//h3[text()="Global Configuration"]')
     assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.settings).click()
     assert wait_on_element(driver, 7, xpaths.globalConfiguration.title)
     time.sleep(1)
 
@@ -261,7 +261,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
@@ -272,7 +272,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
@@ -295,7 +295,7 @@ def on_the_virtual_hostname_dashboard_save_the_network_interface_changes(driver)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
 @then('navigate to Storage then click the gear icon and click Disks')

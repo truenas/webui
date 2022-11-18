@@ -115,7 +115,7 @@ def click_save(driver):
     """click Save."""
     assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 
 @then('click Start Automatically SSH checkbox and enable the SSH service')

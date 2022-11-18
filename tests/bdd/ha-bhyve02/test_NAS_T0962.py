@@ -63,7 +63,7 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
 @then('on the network page, click on setting on the Global Configuration card')
@@ -72,8 +72,8 @@ def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 7, '//h3[text()="Global Configuration"]')
     assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.settings).click()
 
 
 @then(parsers.parse('on the Network Global Configuration page, change the first nameserver to "{nameserver1}"'))
@@ -101,17 +101,17 @@ def click_save_the_progress_bar_should_appear_while_settings_are_being_applied(d
 @then('after, click on Credentials on the left sidebar, then Directory Services')
 def after_click_on_credentials_on_the_left_sidebar_then_directory_services(driver):
     """after, click on Credentials on the left sidebar, then Directory Services."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices)
+    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')
 def on_the_directory_services_page_click_setting_on_the_active_directory_card(driver):
     """on the Directory Services page, click Setting on the Active Directory card."""
-    assert wait_on_element(driver, 7, '//h1[text()="Directory Services"]')
+    assert wait_on_element(driver, 7, xpaths.directoryServices.title)
     assert wait_on_element(driver, 5, '//h3[text()="Active Directory and LDAP are disabled."]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Configure Active Directory")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Configure Active Directory")]').click()
@@ -122,7 +122,7 @@ def on_the_active_directory_page_input_the_domain_name_ad_domain(driver, ad_doma
     """on the Active Directory page, input the Domain name "ad_domain"."""
     global domain
     domain = ad_domain
-    assert wait_on_element(driver, 5, '//h3[@class="ix-formtitle" and text()="Active Directory"]')
+    assert wait_on_element(driver, 5, xpaths.activeDirectory.title)
     assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="domainname"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="domainname"]//input').clear()
     driver.find_element_by_xpath('//ix-input[@formcontrolname="domainname"]//input').send_keys(ad_domain)
@@ -150,17 +150,17 @@ def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_
 @then('check the Enable box and click SAVE')
 def check_the_enable_box_and_click_save(driver):
     """check the Enable box and click SAVE."""
-    assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="enable"]//mat-checkbox').click()
-    assert wait_on_element(driver, 7, '//button[contains(*/text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(*/text(),"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.activeDirectory.enableCheckbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.activeDirectory.enableCheckbox).click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('the Active Directory setup should successfully save without an error')
 def the_active_directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 60, '//h1[text()="Active Directory"]')
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.activeDirectory)
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
     assert wait_on_element(driver, 7, '//span[text()="HEALTHY" and @class="value"]')
 
@@ -288,7 +288,7 @@ def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, '//button[*/text()=" Save "]', 'clickable')
     driver.find_element_by_xpath('//button[*/text()=" Save "]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
 
 

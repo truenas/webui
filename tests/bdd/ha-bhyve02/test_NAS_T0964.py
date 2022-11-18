@@ -26,50 +26,50 @@ from pytest_dependency import depends
 def test_create_an_smb_share_with_the_active_directory_dataset(driver):
     """Create an SMB share with the Active Directory dataset."""
     # stop AD after the test is completed.
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//h1[text()="Directory Services"]')
+    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices)
+    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 7, xpaths.directoryServices.title)
 
-    assert wait_on_element(driver, 5, '//button[contains(.,"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
+    assert wait_on_element(driver, 5, xpaths.button.settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.settings).click()
 
-    assert wait_on_element(driver, 5, '//h3[@class="ix-formtitle" and text()="Active Directory"]')
-    assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="enable"]//mat-checkbox').click()
-    assert wait_on_element(driver, 7, '//button[contains(*/text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(*/text(),"Save")]').click()
+    assert wait_on_element(driver, 5, xpaths.activeDirectory.title)
+    assert wait_on_element(driver, 7, xpaths.activeDirectory.enableCheckbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.activeDirectory.enableCheckbox).click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 60, '//h1[text()="Active Directory"]')
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.activeDirectory)
 
     # Clean Kerberos
-    assert wait_on_element(driver, 7, '//button[contains(*/text(),"Show")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(*/text(),"Show")]').click()
+    assert wait_on_element(driver, 7, xpaths.directoryServices.showButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.showButton).click()
 
-    assert wait_on_element(driver, 5, '//h1[text()="Warning"]')
-    assert wait_on_element(driver, 7, '//button[contains(*/text(),"Continue")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(*/text(),"Continue")]').click()
+    assert wait_on_element(driver, 5, xpaths.directoryServices.warningDialog)
+    assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
 
-    assert wait_on_element(driver, 7, '//tr[contains(.,"AD02.TN.IXSYSTEMS.NET")]//button', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"AD02.TN.IXSYSTEMS.NET")]//button').click()
+    assert wait_on_element(driver, 7, xpaths.directoryServices.deleteAD02RealmButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.deleteAD02RealmButton).click()
 
-    assert wait_on_element(driver, 5, '//h1[text()="Delete"]')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@name="confirm_checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
-    assert wait_on_element(driver, 7, '//button[@id="confirm-dialog__action-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="confirm-dialog__action-button"]').click()
+    assert wait_on_element(driver, 5, xpaths.directoryServices.deleteDialog)
+    assert wait_on_element(driver, 7, xpaths.directoryServices.deleteConfirmCheckbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.deleteConfirmCheckbox).click()
+    assert wait_on_element(driver, 7, xpaths.directoryServices.deleteConfirmButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.deleteConfirmButton).click()
 
-    assert wait_on_element(driver, 7, '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button').click()
+    assert wait_on_element(driver, 7, xpaths.directoryServices.deleteADAccountButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.deleteADAccountButton).click()
 
-    assert wait_on_element(driver, 5, '//h1[text()="Delete"]')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@name="confirm_checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
-    assert wait_on_element(driver, 7, '//button[@id="confirm-dialog__action-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="confirm-dialog__action-button"]').click()
+    assert wait_on_element(driver, 5, xpaths.directoryServices.deleteDialog)
+    assert wait_on_element(driver, 7, xpaths.directoryServices.deleteConfirmCheckbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.deleteConfirmCheckbox).click()
+    assert wait_on_element(driver, 7, xpaths.directoryServices.deleteConfirmButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.directoryServices.deleteConfirmButton).click()
 
 
 @given(parsers.parse('the browser is open, navigate to "{host}"'))

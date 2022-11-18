@@ -85,7 +85,7 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Credentials item in the left side menu')
 def click_on_the_credentials_item_in_the_left_side_menu(driver):
     """Click on the Credentials item in the left side menu."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
 
 
 @then('The Credentials menu should expand to the right')
@@ -148,7 +148,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element_disappear(driver, 7, '//h3[text()="Edit User"]')
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
     assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
