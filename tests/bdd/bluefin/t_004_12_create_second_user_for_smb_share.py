@@ -49,3 +49,4 @@ def test_create_second_user_for_smb_share(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"foo")]')
+
