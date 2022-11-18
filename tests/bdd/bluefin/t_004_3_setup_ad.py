@@ -124,14 +124,14 @@ def test_setup_ad(driver, nas_ip, root_password, ad_ns, ad_domain, ad_user, ad_p
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage Dashboard")]')
 
     # This will wait for the spinner to go away and looks like this xpath work for all spinners.
-    assert wait_on_element_disappear(driver, 110, '//mat-spinner[@role="progressbar"]')
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 10, '//ix-dashboard-pool//div//div//h2[contains(.,"system")]//ancestor::ix-dashboard-pool//div//div//ix-pool-usage-card//mat-card//mat-card-header//a[contains(.,"Manage Datasets")]', 'clickable')
     driver.find_element_by_xpath('//ix-dashboard-pool//div//div//h2[contains(.,"system")]//ancestor::ix-dashboard-pool//div//div//ix-pool-usage-card//mat-card//mat-card-header//a[contains(.,"Manage Datasets")]').click()
 
-    if not is_element_present(driver, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"system")]'):
-        #assert wait_on_element(driver,  110, '//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"system")]', 'clickable')
+    if not is_element_present(driver, '//div//span[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"system")]'):
+        assert wait_on_element(driver,  10, '//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"system")]', 'clickable')
         driver.find_element_by_xpath('//ix-tree-node//ix-dataset-node//div//div//span[contains(.,"system")]').click()
-    assert wait_on_element( driver,  110, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"system")]') 
+    assert wait_on_element( driver,  10, '//ix-tree-node[contains(@class,"selected")]//ix-dataset-node//div//div//span[contains(.,"system")]') 
 
     assert wait_on_element(driver, 4, '//span[contains(text(),"Add Dataset")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Add Dataset")]').click()
