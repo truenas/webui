@@ -97,10 +97,14 @@ def test_recursive_and_transverse_acls(driver, dataset_name_1, dataset_name_2, d
     driver.find_element_by_xpath('//mat-card-header//div//h3[contains(text(),"Permissions")]//ancestor::mat-card-header//a//span[contains(.,"Edit")]').click()
 
 
-    # the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button
+    # the Edit Permissions page should open,
     #assert wait_on_element(driver, 10, '//mat-card-title[contains(text(),"Unix Permissions Editor")]')
     assert wait_on_element(driver, 10, '//h1[text()="Edit ACL"]')
     
+    if is_element_present(driver, '//h1[contains(.,"Select a preset ACL")]'):
+        assert wait_on_element(driver,  15, '//span[contains(.,"Cancel")]')
+        driver.find_element_by_xpath('//span[contains(.,"Cancel")]').click()
+
     assert wait_on_element(driver, 10, '//span[contains(text(),"Add Item")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Add Item")]').click()
     assert wait_on_element(driver, 10, '//mat-select//div//div//span[contains(.,"User")]', 'clickable')
