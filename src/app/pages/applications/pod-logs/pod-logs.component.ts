@@ -176,7 +176,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
         podDialog.containers$ = of(this.containersOptions);
       }
     } else {
-      podDialog.hasPools = false;
+      podDialog.hasPool = false;
     }
   }
 

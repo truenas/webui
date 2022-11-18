@@ -29,7 +29,7 @@ export class PodSelectDialogComponent implements OnInit {
   containers$: Observable<Option[]>;
   apps$: Observable<Option[]>;
   title: string;
-  hasPools = true;
+  hasPool = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: PodDialogData,
@@ -96,11 +96,11 @@ export class PodSelectDialogComponent implements OnInit {
             this.form.controls.containers.patchValue(this.podDetails[value][0]);
           });
         } else {
-          this.hasPools = false;
+          this.hasPool = false;
         }
       },
       error: () => {
-        this.hasPools = false;
+        this.hasPool = false;
         this.loader.close();
       },
     });

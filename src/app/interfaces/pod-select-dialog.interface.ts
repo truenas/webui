@@ -5,6 +5,6 @@ export interface PodDialogData {
   type: PodSelectDialogType;
   title: string;
   appName?: string;
-  customSubmit?: (podSelectDialog: PodSelectDialogComponent) => void;
+  customSubmit?: (dialog: PodSelectDialogComponent) => void;
   afterDialogInit?: (dialog: PodSelectDialogComponent) => (dialog: PodSelectDialogComponent) => void;
 }
