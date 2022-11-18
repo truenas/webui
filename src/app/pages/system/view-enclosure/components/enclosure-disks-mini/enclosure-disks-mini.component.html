@@ -142,7 +142,7 @@
                 <span>
                   {{
                     selectedVdev.type !== 'DISK'
-                      ? selectedVdev.type === 'None' ? ('Unassigned' | translate) : (selectedVdev.name | titlecase)
+                      ? selectedVdev.type === 'None' ? ('Unassigned' | translate) : (selectedVdev.name | uppercase)
                       : ('NONE' | translate)
                   }}
                 </span>

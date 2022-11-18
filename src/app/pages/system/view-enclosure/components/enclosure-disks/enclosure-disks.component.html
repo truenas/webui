@@ -128,7 +128,7 @@
               <span>
                 {{
                   selectedVdev.type !== 'DISK'
-                    ? selectedVdev.type === 'None' ? ('Unassigned' | translate) : (selectedVdev.name | titlecase)
+                    ? selectedVdev.type === 'None' ? ('Unassigned' | translate) : (selectedVdev.name | uppercase)
                     : ('NONE' | translate)
                 }}
               </span>
@@ -136,7 +136,7 @@
             <div *ngIf="selectedVdev.type !== 'None'" class="title">
               <span class="semibold">{{ 'Function' | translate }}:</span>
               <span>
-                {{ $any(selectedVdev).topology === 'None' ? ('Unknown' | translate) : selectedVdev.topology.toUpperCase() }}
+                {{ $any(selectedVdev).topology === 'None' ? ('Unknown' | translate) : (selectedVdev.topology | uppercase) }}
               </span>
             </div>
             <div class="title">
