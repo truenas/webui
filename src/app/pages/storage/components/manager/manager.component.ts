@@ -98,8 +98,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
 
   protected needsDisk = true;
-  protected needsDiskMessage = helptext.manager_needsDiskMessage;
-  protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
   size: string;
   protected extendedAvailable: number;
   sizeMessage: string = helptext.manager_sizeMessage;

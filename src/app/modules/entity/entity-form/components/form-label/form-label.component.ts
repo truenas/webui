@@ -10,7 +10,7 @@ import { Field } from 'app/modules/entity/entity-form/models/field.interface';
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormLabelComponent implements Field {
-  config: FormLabelConfig<unknown>;
+  config: FormLabelConfig;
   group: UntypedFormGroup;
   fieldShow: string;
 }

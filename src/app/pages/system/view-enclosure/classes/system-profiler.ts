@@ -132,8 +132,7 @@ export class SystemProfiler {
     // Clean the slate before we start
     this.profile.forEach((enc) => enc.disks = []);
 
-    const data = disks; // DEBUG
-    data.forEach((item: EnclosureDisk) => {
+    disks.forEach((item: EnclosureDisk) => {
       if (!item.enclosure) { return; } // Ignore boot disks
 
       const enclosure = this.profile[item.enclosure.number];

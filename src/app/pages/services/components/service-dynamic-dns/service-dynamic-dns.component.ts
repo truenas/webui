@@ -10,7 +10,6 @@ import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -36,7 +35,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
     custom_ddns_server: [''],
     custom_ddns_path: [''],
     domain: [[] as string[], [Validators.required]],
-    period: [null as number, numberValidator()],
+    period: [null as number],
     username: ['', [Validators.required]],
     password: [''],
   });

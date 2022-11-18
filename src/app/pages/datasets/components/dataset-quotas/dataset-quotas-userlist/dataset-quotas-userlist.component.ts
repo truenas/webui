@@ -230,7 +230,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.loader.close();
         this.handleError(error);
         return EMPTY;
@@ -272,7 +272,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.loader.close();
         this.handleError(error);
         return EMPTY;
