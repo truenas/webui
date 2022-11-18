@@ -25,6 +25,7 @@ from pytest_dependency import depends
 @scenario('features/NAS-T964.feature', 'Create an SMB share with the Active Directory dataset')
 def test_create_an_smb_share_with_the_active_directory_dataset(driver):
     """Create an SMB share with the Active Directory dataset."""
+    # stop AD after the test is completed.
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]')
@@ -44,6 +45,7 @@ def test_create_an_smb_share_with_the_active_directory_dataset(driver):
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 60, '//h1[text()="Active Directory"]')
 
+    # Clean Kerberos
     assert wait_on_element(driver, 7, '//button[contains(*/text(),"Show")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(*/text(),"Show")]').click()
 
