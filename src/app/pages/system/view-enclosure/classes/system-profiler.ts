@@ -28,11 +28,11 @@ export interface EnclosureMetadata {
 export interface VDevMetadata {
   pool: string;
   type: string;
-  disks?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
-  diskEnclosures?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
-
+  name: string;
+  disks?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
+  diskEnclosures?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
   topology?: PoolTopologyCategory;
   selectedDisk?: string;
   slots?: { [devName: string]: number };
@@ -188,6 +188,7 @@ export class SystemProfiler {
     pool.topology[role].forEach((vdev, vIndex) => {
       const metadata: VDevMetadata = {
         pool: pool.name,
+        name: vdev.name,
         type: vdev.type,
         topology: role,
         poolIndex: pIndex,
@@ -268,6 +269,7 @@ export class SystemProfiler {
         type: 'None',
         poolIndex: -1,
         vdevIndex: -1,
+        name: '',
       };
     }
 

@@ -117,7 +117,7 @@
                           {{ 'Pool Status' | translate }}:
                         </span>
                         <span class="storage-value">
-                          {{ poolInfoMap[pool.name]?.status?.value }}
+                          {{ poolInfoMap[pool.name]?.status?.value | titlecase | translate | uppercase }}
                         </span>
                       </li>
                       <li fxLayout="row">

@@ -35,10 +35,6 @@ describe('UnusedResourcesComponent', () => {
     });
   });
 
-  it('shows a title', () => {
-    expect(spectator.query('.title')).toHaveText('Unused Resources');
-  });
-
   it('shows an \'Unassigned Disks\' card when exists unused disks', () => {
     expect(spectator.query('ix-unused-disk-card')).toBeVisible();
   });
