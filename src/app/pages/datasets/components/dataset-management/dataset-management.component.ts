@@ -245,7 +245,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     );
   }
 
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+  handleError = (error: WebsocketError | Job): void => {
     this.dialogService.errorReportMiddleware(error);
   };
 
