@@ -968,7 +968,7 @@ export type ApiDirectory = {
   'user.shell_choices': { params: [userId?: number]; response: Choices };
   'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
   'user.get_next_uid': { params: void; response: number };
-  'user.has_root_password': { params: void; response: boolean };
+  'user.has_local_administrator_set_up': { params: void; response: boolean };
 
   // UPS
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };
