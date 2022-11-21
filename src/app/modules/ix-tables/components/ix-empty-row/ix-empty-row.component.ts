@@ -1,7 +1,8 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
+  AfterViewInit, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
@@ -11,26 +12,22 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
   styleUrls: ['./ix-empty-row.component.scss'],
 })
 export class IxEmptyRowComponent implements AfterViewInit {
-  @Input() displayedColumns: string[];
-  @Input() emptyConfig: EmptyConfig;
-
   @ViewChild('templatePortalContent') templatePortalContent: TemplateRef<unknown>;
   templatePortal: TemplatePortal<any>;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
-    private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngAfterViewInit(): void {
     this.templatePortal = new TemplatePortal(this.templatePortalContent, this.viewContainerRef);
-    this.cdr.markForCheck();
   }
 
   @Input() conf: EmptyConfig = {
-    title: 'rehan',
-    message: 'rehan',
-    large: false,
+    title: this.translate.instant('No records'),
+    message: this.translate.instant('No records to show. Create new records to show here.'),
+    large: true,
     type: EmptyType.NoPageData,
   };
 
