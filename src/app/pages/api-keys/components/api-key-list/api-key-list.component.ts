@@ -36,12 +36,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     large: false,
     title: this.translate.instant('Loading...'),
   };
-  emptyConfig: EmptyConfig = {
-    title: 'Rehan 3',
-    message: 'Rehan 3',
-    type: EmptyType.NoPageData,
-    large: true,
-  };
+
   isLoading$ = this.store.isLoading$;
   emptyOrErrorConfig$: Observable<EmptyConfig> = this.store.isError$.pipe(
     switchMap((hasError) => {
