@@ -19,11 +19,11 @@ import {
   VirtualizationDetails,
   VirtualMachine, VirtualMachineUpdate,
 } from 'app/interfaces/virtual-machine.interface';
-import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
@@ -33,6 +33,7 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
 } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -40,7 +41,7 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
-  providers: [VmService, MessageService],
+  providers: [VmService],
 })
 export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
@@ -48,8 +49,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
-  routeAdd: string[] = ['vm', 'wizard'];
-  routeEdit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = this.systemGeneralService.getProductType();
   hasVirtualizationSupport = false;
@@ -69,12 +68,12 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
     { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
     { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },
-    { name: this.translate.instant('Memory Size') as string, prop: 'memory', hidden: true },
+    { name: this.translate.instant('Memory Size') as string, prop: 'memoryString', hidden: true },
     { name: this.translate.instant('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
     { name: this.translate.instant('System Clock') as string, prop: 'time', hidden: true },
     { name: this.translate.instant('Display Port') as string, prop: 'port', hidden: true },
     { name: this.translate.instant('Description') as string, prop: 'description', hidden: true },
-    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdown_timeout', hidden: true },
+    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdownTimeoutString', hidden: true },
   ];
   config = {
     paging: true,
@@ -111,6 +110,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private translate: TranslateService,
     private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
+    private slideIn: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -191,8 +191,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         ...vm,
         state: vm.status.state,
         com_port: `/dev/nmdm${vm.id}B`,
-        shutdown_timeout: `${vm.shutdown_timeout} seconds`,
-        memory: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
+        shutdownTimeoutString: `${vm.shutdown_timeout} seconds`,
+        memoryString: this.storageService.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
       if (this.checkDisplay(vm)) {
@@ -358,7 +358,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'edit',
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', 'edit', String(vm.id)]));
+        const slideIn = this.slideIn.open(VmEditFormComponent);
+        slideIn.setVmForEdit(vm);
       },
     },
     {

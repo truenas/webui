@@ -72,8 +72,8 @@ describe('CreateSnapshotDialogComponent', () => {
   });
 
   it('checks if there are VMs in a dataset and allows to enable VM sync when they are', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCallOnce('vmware.dataset_has_vms', true);
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCallOnce('vmware.dataset_has_vms', true);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

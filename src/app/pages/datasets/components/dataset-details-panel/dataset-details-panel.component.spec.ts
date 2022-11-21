@@ -2,10 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
   DatasetCapacityManagementCardComponent,
@@ -15,11 +17,12 @@ import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/data
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
-import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService } from 'app/services';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
@@ -66,6 +69,16 @@ describe('DatasetDetailsPanelComponent', () => {
         selectedDataset$: of(datasetDetails),
         selectedParentDataset$: of(parentDatasetDetails),
       }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              version: 'TrueNAS-SCALE-22.12-MASTER-20221111-015225',
+            } as SystemInfo,
+          },
+        ],
+      }),
     ],
   });
 
@@ -95,7 +108,7 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormComponent);
+    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormOldComponent);
     expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
     expect(fakeModalRef.isNew).toBe(true);
   });

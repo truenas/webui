@@ -1,7 +1,6 @@
 import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -38,7 +37,6 @@ export class WidgetControllerComponent extends WidgetComponent {
 
   constructor(
     public translate: TranslateService,
-    public mediaObserver: MediaObserver,
   ) {
     super(translate);
   }

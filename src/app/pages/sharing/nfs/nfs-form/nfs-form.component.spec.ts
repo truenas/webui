@@ -100,8 +100,8 @@ describe('NfsFormComponent', () => {
   });
 
   it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCallOnce('nfs.config', {
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCallOnce('nfs.config', {
       v4: true,
     } as NfsConfig);
     spectator.component.ngOnInit();

@@ -253,23 +253,23 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       } else if (this.conf.queryCall) {
         if (this.pk) {
           let pk = this.pk;
-          let filter = [];
+          let filterParam = [];
           if (this.conf.pk) {
-            filter.push(this.conf.pk);
+            filterParam.push(this.conf.pk);
             pk = this.conf.pk;
           }
           if (this.conf.queryCallOption) {
-            filter.push(this.conf.queryCallOption);
+            filterParam.push(this.conf.queryCallOption);
           }
           if (this.conf.customFilter) {
-            filter = this.conf.customFilter;
+            filterParam = this.conf.customFilter;
           }
           if (this.conf.queryKey) {
-            filter = [[[this.conf.queryKey, '=', parseInt(pk as string, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
+            filterParam = [[[this.conf.queryKey, '=', parseInt(pk as string, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
           }
           this.getFunction = this.ws.call(
             this.conf.queryCall,
-            filter as ApiParams<keyof ApiDirectory>,
+            filterParam as ApiParams<keyof ApiDirectory>,
           ) as Observable<Record<string, unknown>>;
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []) as Observable<Record<string, unknown>>;

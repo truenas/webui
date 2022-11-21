@@ -156,13 +156,13 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         icon: 'delete_sweep',
         name: 'wipe',
         label: this.translate.instant('Wipe'),
-        onClick: (disk): void => {
+        onClick: (diskToWipe): void => {
           const unusedDisk: Partial<UnusedDisk> = this.unusedDisks.find(
-            (unusedDisk) => unusedDisk.devname === disk.devname,
+            (disk) => disk.devname === diskToWipe.devname,
           );
           this.matDialog.open(DiskWipeDialogComponent, {
             data: {
-              diskName: disk.name,
+              diskName: diskToWipe.name,
               exportedPool: unusedDisk?.exported_zpool,
             },
           });
@@ -212,12 +212,12 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     }));
   }
 
-  getPoolColumn(disk: Disk): string {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.devname === disk.devname);
+  getPoolColumn(diskToCheck: Disk): string {
+    const unusedDisk = this.unusedDisks.find((disk) => disk.devname === diskToCheck.devname);
     if (unusedDisk?.exported_zpool) {
       return unusedDisk.exported_zpool + ' (' + this.translate.instant('Exported') + ')';
     }
-    return disk.pool || this.translate.instant('N/A');
+    return diskToCheck.pool || this.translate.instant('N/A');
   }
 
   manualTest(selected: Disk | Disk[]): void {

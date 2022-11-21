@@ -147,11 +147,11 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   getGroupQuotas(): void {
-    const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
+    const filterParam = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.Group, filter],
+      [this.datasetId, DatasetQuotaType.Group, filterParam],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;

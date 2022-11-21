@@ -40,6 +40,9 @@ import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-po
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
 import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
+import {
+  RepeatVdevDialogComponent,
+} from 'app/pages/storage/components/manager/repeat-vdev-dialog/repeat-vdev-dialog.component';
 import { VdevComponent } from 'app/pages/storage/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
 import {
@@ -112,6 +115,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     ExportDisconnectModalComponent,
     DiskHealthCardComponent,
     AutotrimDialogComponent,
+    RepeatVdevDialogComponent,
   ],
   providers: [
     FormatDateTimePipe,

@@ -9,7 +9,6 @@ import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ss
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -25,7 +24,7 @@ export class ServiceSshComponent implements OnInit {
   isBasicMode = true;
 
   form = this.fb.group({
-    tcpport: [null as number, numberValidator()],
+    tcpport: [null as number],
     rootlogin: [false],
     passwordauth: [false],
     kerberosauth: [false],

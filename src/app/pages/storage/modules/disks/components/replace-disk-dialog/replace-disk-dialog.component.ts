@@ -77,7 +77,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
   }
 
   warnAboutExportedPool(diskIdentifier: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.identifier === diskIdentifier);
+    const unusedDisk = this.unusedDisks.find((disk) => disk.identifier === diskIdentifier);
     if (!unusedDisk?.exported_zpool) {
       return;
     }

@@ -19,6 +19,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
@@ -103,17 +104,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   get totalDisks(): string {
     if (this.poolState && this.poolState.topology) {
-      let total = 0;
-      this.poolState.topology.data.forEach((item) => {
-        if (item.type === TopologyItemType.Disk) {
-          total++;
-        } else {
-          total += item.children.length;
-        }
-      });
-      return total.toString();
+      return countDisksTotal(this.poolState.topology);
     }
-    return '';
+    return this.translate.instant('Unknown');
   }
 
   get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
