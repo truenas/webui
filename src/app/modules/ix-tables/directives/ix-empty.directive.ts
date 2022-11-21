@@ -18,7 +18,6 @@ export class IxEmptyDirective implements AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
-    // console.log('here');
     const componentRef = this.viewContainerRef.createComponent<IxEmptyComponent>(IxEmptyComponent);
     componentRef.instance.conf = this.emptyConfig;
     componentRef.changeDetectorRef.markForCheck();
