@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Directive, OnInit, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +15,7 @@ export class IfNightlyDirective implements OnInit {
   constructor(
     private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
+    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
   ) { }
 
@@ -23,13 +25,16 @@ export class IfNightlyDirective implements OnInit {
       untilDestroyed(this),
     )
       .subscribe((systemInfo) => {
-        this.isNightly = systemInfo.version.includes('MASTER');
+        this.viewContainer.clear();
+        this.cdr.markForCheck();
 
+        this.isNightly = systemInfo.version.includes('MASTER');
         if (!this.isNightly) {
           return;
         }
 
         this.viewContainer.createEmbeddedView(this.templateRef);
+        this.cdr.markForCheck();
       });
   }
 }
