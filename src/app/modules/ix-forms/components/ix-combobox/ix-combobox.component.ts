@@ -33,17 +33,18 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() hint: string;
   @Input() required: boolean;
   @Input() tooltip: string;
-  options: Option[] = [];
+  @Input() allowCustomValues = false;
+  @Input() provider: IxComboboxProvider;
+
   @ViewChild('ixInput') inputElementRef: ElementRef;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
+
+  options: Option[] = [];
   placeholder = this.translate.instant('Search');
   getDisplayWith = this.displayWith.bind(this);
   hasErrorInOptions = false;
-
   loading = false;
-
-  @Input() provider: IxComboboxProvider;
 
   private filterChanged$ = new Subject<string>();
   formControl = new UntypedFormControl(this);
@@ -130,7 +131,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
             this.filterChanged$.next('');
           }
         }
+      } else if (this.allowCustomValues && !selectedOptionFromLabel) {
+        this.onChange(filterValue);
       }
+
       this.cdr.markForCheck();
     });
   }
