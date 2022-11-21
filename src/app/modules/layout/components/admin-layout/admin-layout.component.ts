@@ -30,6 +30,7 @@ import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -139,6 +140,17 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     });
 
     this.store$.dispatch(adminUiInitialized());
+  }
+
+  breakme(): void {
+    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe((sysInfo) => {
+      this.store$.dispatch(systemInfoLoaded({
+        systemInfo: {
+          ...sysInfo,
+          version: sysInfo.version.includes('MASTER') ? 'SCALE-SOMETHING' : 'SCALE-SOMETHING-MASTER',
+        },
+      }));
+    });
   }
 
   ngAfterViewInit(): void {
