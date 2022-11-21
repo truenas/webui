@@ -527,6 +527,7 @@ export type ApiDirectory = {
   'mail.config': { params: void; response: MailConfig };
   'mail.update': { params: [MailConfigUpdate]; response: MailConfig };
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
+  'mail.local_administrator_email': { params: void, response: string | null }
 
   // idmap
   'idmap.backend_options': { params: void; response: IdmapBackendOptions };
