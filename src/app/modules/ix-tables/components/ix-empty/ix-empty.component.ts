@@ -22,6 +22,10 @@ export class IxEmptyComponent {
     }
   }
 
+  // ngOnInit() {
+  //   console.log("inside ix empty component");
+  // }
+
   isLoading(): boolean {
     return this.conf.type === EmptyType.Loading;
   }

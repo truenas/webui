@@ -1,10 +1,11 @@
 import {
-  AfterViewInit, Directive, ElementRef, Input, Renderer2, ViewContainerRef,
+  AfterViewInit, ChangeDetectorRef, Directive, Input, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component';
 
 @UntilDestroy()
 @Directive({
@@ -21,19 +22,14 @@ export class IxTableEmptyDirective implements AfterViewInit {
 
   constructor(
     private translate: TranslateService,
-    private elementRef: ElementRef,
-    private renderer2: Renderer2,
     private viewContainerRef: ViewContainerRef,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngAfterViewInit(): void {
-    const innerHtml = this.elementRef.nativeElement.innerHTML;
-    const emptyRow = `
-      <tr *matNoDataRow class="mat-row no-data-row">
-        <td class="mat-cell center" colspan="${this.displayedColumns.length}">
-          <p>This is empty</p>
-        </td>
-      </tr>`;
-    this.renderer2.setProperty(this.elementRef.nativeElement, 'innerHTML', innerHtml + emptyRow);
+    const componentRef = this.viewContainerRef.createComponent(IxEmptyRowComponent);
+    componentRef.instance.displayedColumns = this.displayedColumns;
+    componentRef.instance.emptyConfig = this.emptyConfig;
+    this.cdr.markForCheck();
   }
 }
