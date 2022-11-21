@@ -12,6 +12,13 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
   styleUrls: ['./ix-empty-row.component.scss'],
 })
 export class IxEmptyRowComponent implements AfterViewInit {
+  @Input() conf: EmptyConfig = {
+    title: this.translate.instant('No records'),
+    message: this.translate.instant('No records to show. Create new records to show here.'),
+    large: true,
+    type: EmptyType.NoPageData,
+  };
+
   @ViewChild('templatePortalContent') templatePortalContent: TemplateRef<unknown>;
   templatePortal: TemplatePortal<any>;
 
@@ -23,13 +30,6 @@ export class IxEmptyRowComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.templatePortal = new TemplatePortal(this.templatePortalContent, this.viewContainerRef);
   }
-
-  @Input() conf: EmptyConfig = {
-    title: this.translate.instant('No records'),
-    message: this.translate.instant('No records to show. Create new records to show here.'),
-    large: true,
-    type: EmptyType.NoPageData,
-  };
 
   doAction(): void {
     if (this.conf.button.action) {
