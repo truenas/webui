@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ComponentRef, Directive, Input, OnChanges, SimpleChanges, ViewContainerRef,
+  AfterViewInit, ComponentRef, Directive, Input, OnChanges, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -10,22 +10,40 @@ import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-r
   selector: '[ix-table-empty]',
 })
 export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
+  @Input('ix-table-empty') showEmptyRow: boolean;
   @Input() emptyConfig: EmptyConfig;
-  componentRef: ComponentRef<IxEmptyRowComponent>;
+  componentRef: ComponentRef<IxEmptyRowComponent> = null;
   constructor(
     private viewContainerRef: ViewContainerRef,
   ) { }
 
   ngAfterViewInit(): void {
-    this.componentRef = this.viewContainerRef.createComponent(IxEmptyRowComponent);
-    if (this.emptyConfig) {
-      this.componentRef.setInput('conf', this.emptyConfig);
+    this.toggleEmptyComponent();
+  }
+
+  ngOnChanges(): void {
+    this.toggleEmptyComponent();
+  }
+
+  toggleEmptyComponent(): void {
+    if (this.showEmptyRow) {
+      this.updateComponentConfig();
+    } else {
+      this.destroyRowComponent();
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.emptyConfig.currentValue) {
-      this.componentRef?.setInput('conf', changes.emptyConfig.currentValue);
+  destroyRowComponent(): void {
+    this.componentRef?.destroy();
+    this.componentRef = null;
+  }
+
+  updateComponentConfig(): void {
+    if (!this.componentRef) {
+      this.componentRef = this.viewContainerRef.createComponent(IxEmptyRowComponent);
+    }
+    if (this.emptyConfig) {
+      this.componentRef?.setInput('conf', this.emptyConfig);
     }
   }
 }

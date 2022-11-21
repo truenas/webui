@@ -17,9 +17,9 @@
   <mat-card-content>
     <table
       ix-table
-      ix-table-empty
       matSort
       matSortDisableClear="true"
+      [ix-table-empty]="!dataSource.data.length"
       [emptyConfig]="(isLoading$ | async) ? loadingConfig : (emptyOrErrorConfig$ | async)"
       [dataSource]="dataSource"
       [matSortActive]="defaultSort.active"
