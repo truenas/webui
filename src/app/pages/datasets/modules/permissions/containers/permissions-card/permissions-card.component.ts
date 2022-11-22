@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ChangeDetectorRef,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -38,14 +39,15 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     private store: PermissionsCardStore,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private router: Router,
   ) {}
 
-  get editPermissionsUrl(): string[] {
+  redirectToEditPermissions(): void {
     if (this.acl.trivial) {
-      return ['/datasets', this.dataset.id, 'permissions', 'edit'];
+      this.router.navigate(['/datasets', this.dataset.id, 'permissions', 'edit']);
+    } else {
+      this.router.navigate(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/' + this.dataset.id } });
     }
-
-    return ['/datasets', this.dataset.id, 'permissions', 'acl'];
   }
 
   get canEditPermissions(): boolean {

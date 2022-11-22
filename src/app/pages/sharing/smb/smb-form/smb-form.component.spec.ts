@@ -54,6 +54,7 @@ describe('SmbFormComponent', () => {
     enabled: true,
     cluster_volname: '',
     locked: false,
+    path_local: '/mnt/pool123/ds222',
   };
 
   const formLabels: { [key: string]: string } = {
@@ -428,7 +429,7 @@ describe('SmbFormComponent', () => {
     const datasetId = sharePath.replace('/mnt/', '');
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/'].concat(
-      ['datasets', datasetId, 'permissions', 'acl'],
+      ['datasets', 'acl', datasetId],
     ), { queryParams: { homeShare } });
   });
 });

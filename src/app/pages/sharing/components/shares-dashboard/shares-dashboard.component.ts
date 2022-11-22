@@ -411,14 +411,16 @@ export class SharesDashboardComponent implements AfterViewInit {
                 name: 'edit_acl',
                 matTooltip: helptextSharingSmb.action_edit_acl,
                 onClick: (row: SmbShare) => {
-                  const rowName = row.path.replace('/mnt/', '');
-                  const datasetId = rowName;
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
                       if (isLocked) {
                         this.lockedPathDialog(row.path);
                       } else {
-                        this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
+                        this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                          queryParams: {
+                            path: row.path_local,
+                          },
+                        });
                       }
                     },
                   );

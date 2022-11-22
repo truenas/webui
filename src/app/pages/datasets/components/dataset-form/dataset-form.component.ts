@@ -1677,7 +1677,11 @@ export class DatasetFormComponent implements FormConfiguration {
                 if (confirmed) {
                   this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
                     next: () => {
-                      this.router.navigate(['/', 'datasets', restPostResp.name, 'permissions', 'acl']);
+                      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                        queryParams: {
+                          path: '/mnt/' + restPostResp.id,
+                        },
+                      });
                     },
                     error: this.handleError,
                   });

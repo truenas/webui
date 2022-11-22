@@ -393,7 +393,7 @@ export class SmbFormComponent implements OnInit {
     request$.pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (smbShareResponse: SmbShare) => {
         this.getCifsService().pipe(
           switchMap((cifsService) => {
             if (cifsService.state === ServiceStatus.Stopped) {
@@ -408,12 +408,10 @@ export class SmbFormComponent implements OnInit {
             this.isLoading = false;
             this.cdr.markForCheck();
             if (redirect) {
-              const sharePath = this.form.get('path').value;
               const homeShare = this.form.get('home').value;
-              const datasetId = sharePath.replace('/mnt/', '');
               this.router.navigate(
-                ['/', 'datasets', datasetId, 'permissions', 'acl'],
-                { queryParams: { homeShare } },
+                ['/', 'datasets', 'acl', 'edit'],
+                { queryParams: { homeShare, path: smbShareResponse.path_local } },
               );
             }
             this.slideInService.close();
