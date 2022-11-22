@@ -6,7 +6,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  Observable, combineLatest, of,
+  Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
@@ -44,10 +44,12 @@ export class SnapshotAddFormComponent implements OnInit {
     )]],
     naming_schema: [''],
     recursive: [false],
+    vmware_sync: [false],
   });
 
   datasetOptions$: Observable<Option[]>;
   namingSchemaOptions$: Observable<Option[]>;
+  hasVmsInDataset = false;
 
   readonly helptext = helptext;
 
@@ -74,6 +76,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading = false;
         this.form.get('name').markAsTouched();
+        this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -82,6 +85,11 @@ export class SnapshotAddFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+
+    merge(
+      this.form.controls.recursive.valueChanges,
+      this.form.controls.dataset.valueChanges,
+    ).pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
   }
 
   setDataset(datasetId: string): void {
@@ -98,6 +106,10 @@ export class SnapshotAddFormComponent implements OnInit {
       params.naming_schema = values.naming_schema;
     } else {
       params.name = values.name;
+    }
+
+    if (this.hasVmsInDataset) {
+      params.vmware_sync = values.vmware_sync;
     }
 
     this.isFormLoading = true;
@@ -136,5 +148,23 @@ export class SnapshotAddFormComponent implements OnInit {
     return this.ws.call('replication.list_naming_schemas').pipe(
       map(new EntityUtils().array1dToLabelValuePair),
     );
+  }
+
+  private checkForVmsInDataset(): void {
+    this.isFormLoading = true;
+    this.ws.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (hasVmsInDataset) => {
+          this.hasVmsInDataset = hasVmsInDataset;
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 }
