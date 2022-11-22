@@ -6,7 +6,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  Observable, combineLatest, of,
+  Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
@@ -86,8 +86,10 @@ export class SnapshotAddFormComponent implements OnInit {
       },
     });
 
-    this.form.controls.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
-    this.form.controls.dataset.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
+    merge(
+      this.form.controls.recursive.valueChanges,
+      this.form.controls.dataset.valueChanges,
+    ).pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
   }
 
   setDataset(datasetId: string): void {
