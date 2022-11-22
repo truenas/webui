@@ -45,5 +45,6 @@ export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
     if (this.emptyConfig) {
       this.componentRef?.setInput('conf', this.emptyConfig);
     }
+    this.componentRef.changeDetectorRef.detectChanges();
   }
 }
