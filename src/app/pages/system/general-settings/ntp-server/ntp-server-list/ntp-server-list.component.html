@@ -8,7 +8,13 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    <table ix-table class="mat-elevation-z0" [dataSource]="dataSource">
+    <table
+      ix-table
+      class="mat-elevation-z0"
+      [ix-table-empty]="!dataSource.filteredData.length"
+      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType, 'NTP Servers')"
+      [dataSource]="dataSource"
+    >
       <ng-container matColumnDef="address">
         <th *matHeaderCellDef mat-header-cell>{{ 'Address' | translate }}</th>
         <td
@@ -85,14 +91,6 @@
         class="clickable-row"
         (click)="doEdit(server)"
       ></tr>
-
-      <tr *matNoDataRow class="mat-row no-data-row">
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <ix-entity-empty
-            [conf]="emptyService.defaultEmptyConfig(emptyType, 'NTP Servers')"
-          ></ix-entity-empty>
-        </td>
-      </tr>
     </table>
   </mat-card-content>
 </mat-card>
