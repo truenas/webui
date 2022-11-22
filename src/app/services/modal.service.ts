@@ -24,7 +24,6 @@ export class ModalService {
   private modalTypeOpenedInSlideIn: Type<unknown> = null;
   readonly refreshTable$ = new Subject<void>();
   readonly onClose$ = new Subject<{ modalType?: Type<unknown>; response: unknown }>();
-  refreshForm$ = new Subject<void>();
   getRow$ = new Subject();
   message$ = new Subject<ModalServiceMessage>();
 

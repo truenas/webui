@@ -1,22 +1,22 @@
 #!/usr/bin/env node
 
-var program = require('commander');
+const program = require('commander');
+const fs = require('fs');
 
 program
   .option('-i, --ip <ip_address>', 'IP address of your server')
   .parse(process.argv);
 
-var proxy_config_json = './proxy.config.json';
-var environment_ts = './src/environments/environment.ts';
-var hostname = (program.ip || '').match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
+const proxyConfigJson = './proxy.config.json';
+const environmentTs = './src/environments/environment.ts';
+const hostname = (program.ip || '').match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
 
 if (!hostname || !hostname[1]) {
   program.outputHelp();
   process.exit(2);
 }
 
-var copySkel = function(file) {
-  var fs = require('fs')
+const copySkel = function(file) {
   fs.readFile(file + '.skel', 'utf8', function (err,data) {
     if (err) {
       return console.log(err);
@@ -34,5 +34,5 @@ var copySkel = function(file) {
   });
 }
 
-copySkel(proxy_config_json);
-copySkel(environment_ts);
+copySkel(proxyConfigJson);
+copySkel(environmentTs);

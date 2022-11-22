@@ -3,7 +3,6 @@ import {
   UntypedFormArray, UntypedFormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
@@ -50,8 +49,6 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { ModalService } from 'app/services/modal.service';
 import { VmService } from 'app/services/vm.service';
-import { AppState } from 'app/store';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -538,7 +535,6 @@ export class VmWizardComponent implements WizardConfiguration {
 
   private maxVcpus = 16;
   private gpus: Device[];
-  private isolatedGpuPciIds: string[];
   private productType = this.systemGeneralService.getProductType();
 
   constructor(
@@ -551,7 +547,6 @@ export class VmWizardComponent implements WizardConfiguration {
     private storageService: StorageService,
     private translate: TranslateService,
     protected modalService: ModalService,
-    private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private cpuValidator: CpuValidatorService,
     private gpuService: GpuService,
@@ -573,10 +568,6 @@ export class VmWizardComponent implements WizardConfiguration {
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
-    });
-
-    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
-      this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
     });
   }
 
@@ -976,7 +967,7 @@ export class VmWizardComponent implements WizardConfiguration {
     vmPayload['bootloader'] = value.bootloader;
     vmPayload['shutdown_timeout'] = value.shutdown_timeout;
     vmPayload['autostart'] = value.autostart;
-    if (value.iso_path && value.iso_path !== undefined) {
+    if (value.iso_path) {
       vmPayload['devices'] = [
         {
           dtype: VmDeviceType.Nic,
@@ -1179,7 +1170,7 @@ export class VmWizardComponent implements WizardConfiguration {
           error.trace.formatted,
         );
       },
-      error: (err: Job<null, unknown[]> | WebsocketError) => {
+      error: (err: Job | WebsocketError) => {
         this.loader.close();
         this.dialogService.errorReport(
           this.translate.instant('Error creating VM.'),

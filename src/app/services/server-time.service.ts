@@ -26,8 +26,4 @@ export class ServerTimeService {
   setSystemTime(currentTime: number): Observable<unknown> {
     return this.ws.call('system.set_time', [Math.ceil(currentTime / 1000)]);
   }
-
-  setCurrentSystemTime(): Observable<unknown> {
-    return this.setSystemTime(Date.now());
-  }
 }

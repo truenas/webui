@@ -55,7 +55,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
-  imagePath = 'assets/images/';
   ready = false;
   productImage = '';
   productModel = '';
