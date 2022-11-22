@@ -35,18 +35,14 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty
-  *ngIf="isLoading$ | async; else loaded"
-  [conf]="loadingConfig"
-></ix-entity-empty>
-
-<ng-template #loaded>
   <div class="jobs-container">
     <table
       ix-table
       matSort
       matSortActive="id"
       matSortDirection="desc"
+      [ix-table-empty]="!dataSource.filteredData.length"
+      [emptyConfig]="(isLoading$ | async) ? loadingConfig : emptyConfig"
       [dataSource]="dataSource"
       [multiTemplateDataRows]="true"
       [trackBy]="trackByJobId"
@@ -226,16 +222,10 @@
         (toggle)="onToggle($event)"
       ></tr>
 
-      <tr *matNoDataRow class="mat-row no-data-row">
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
-        </td>
-      </tr>
     </table>
   </div>
 
   <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
-</ng-template>
 
 <ng-template #expandedRowTemplate let-job let-colspan="colspan">
   <ix-job-logs-row [colspan]="colspan" [job]="job"></ix-job-logs-row>
