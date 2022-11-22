@@ -86,13 +86,13 @@ describe('TopologyCardComponent', () => {
     expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2.00GiB');
+    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2 GiB');
     expect(captions[1]).toHaveText('Metadata');
     expect(values[1]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[2]).toHaveText('Log VDEVs');
-    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 5.00MiB');
+    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 5 MiB');
     expect(captions[3]).toHaveText('Cache VDEVs');
-    expect(values[3]).toHaveText('2 x 6.00MiB');
+    expect(values[3]).toHaveText('2 x 6 MiB');
     expect(captions[4]).toHaveText('Spare VDEVs');
     expect(values[4]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[5]).toHaveText('Dedup VDEVs');

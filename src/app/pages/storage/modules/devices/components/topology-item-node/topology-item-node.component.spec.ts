@@ -47,11 +47,11 @@ describe('TopologyItemNodeComponent', () => {
 
   it('shows "Status"', () => {
     expect(spectator.query('.cell-status span')).toHaveText(topologyDisk.status);
-    expect(spectator.component.statusColor).toBe('var(--alt-bg2)');
+    expect(spectator.component.statusColor).toBe('var(--orange)');
   });
 
   it('shows "Capacity"', () => {
-    expect(spectator.query('.cell-capacity')).toHaveText('16.00MiB');
+    expect(spectator.query('.cell-capacity')).toHaveText('16MiB');
   });
 
   it('shows "Errors"', () => {
