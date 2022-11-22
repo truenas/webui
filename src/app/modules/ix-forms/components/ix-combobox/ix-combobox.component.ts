@@ -33,7 +33,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() hint: string;
   @Input() required: boolean;
   @Input() tooltip: string;
-  @Input() allowCustomValues = false;
+  @Input() allowCustomValue = false;
   @Input() provider: IxComboboxProvider;
 
   @ViewChild('ixInput') inputElementRef: ElementRef;
@@ -41,7 +41,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
 
   options: Option[] = [];
-  placeholder = this.translate.instant('Search');
   getDisplayWith = this.displayWith.bind(this);
   hasErrorInOptions = false;
   loading = false;
@@ -125,14 +124,11 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
            * if we haven't found the correct option in the list of options fetched so far. The assumption
            * is that the correct option exists in one of the following pages of list of options
            */
-          this.options.push({ label: this.value as string, value: this.value });
-          this.selectedOption = { ...this.options.find((option: Option) => option.value === this.value) };
-          if (this.selectedOption) {
+          this.selectedOption = { label: this.value as string, value: this.value };
+          if (this.selectedOption.value) {
             this.filterChanged$.next('');
           }
         }
-      } else if (this.allowCustomValues && !selectedOptionFromLabel) {
-        this.onChange(filterValue);
       }
 
       this.cdr.markForCheck();
@@ -197,6 +193,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     }
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
+
+    if (this.allowCustomValue && !this.options.some((option: Option) => option.value === changedValue)) {
+      this.onChange(changedValue);
+    }
   }
 
   resetInput(): void {

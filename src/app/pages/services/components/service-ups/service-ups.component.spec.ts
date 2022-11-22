@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
+import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -141,5 +142,18 @@ describe('ServiceUpsComponent', () => {
       shutdowncmd: '',
       shutdowntimer: 30,
     } as UpsConfigUpdate]);
+  });
+
+  it('allow custom values to be set as form value for combobox', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+
+    const portSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Port or Hostname' }));
+    await portSelect.writeCustomValue('this is my custom value');
+
+    const formValue = await form.getValues();
+    const portSelectValue = await portSelect.getValue();
+
+    expect(formValue['Port or Hostname']).toBe('this is my custom value');
+    expect(portSelectValue).toBe('this is my custom value');
   });
 });

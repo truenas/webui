@@ -68,8 +68,15 @@ describe('IxComboboxComponent', () => {
     it('shows value when type it in', () => {
       spectator.typeInElement('new value', 'input');
       spectator.detectComponentChanges();
+      spectator.detectComponentChanges();
 
       expect(spectator.query('input')).toHaveValue('new value');
+    });
+
+    it('form control value is set to custom value if [allowCustomValue] enabled', () => {
+      spectator.setInput('allowCustomValue', true);
+      spectator.typeInElement('custom value 1', 'input');
+      expect(formControl.value).toBe('custom value 1');
     });
 
     it('shows values autocomplete when type start', async () => {
