@@ -42,6 +42,7 @@ const mockUser = {
     id: 101,
   },
   groups: [101],
+  immutable: true,
 } as User;
 
 describe('UserFormComponent', () => {
