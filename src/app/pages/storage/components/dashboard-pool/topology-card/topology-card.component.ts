@@ -4,10 +4,10 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 interface TopologyState {
   health: TopologyHealthLevel;
@@ -38,7 +38,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[];
   readonly topologyHealthLevel = TopologyHealthLevel;
-  private utils: WidgetUtils;
 
   topologyState: TopologyState = {
     health: TopologyHealthLevel.Safe,
@@ -57,9 +56,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   constructor(
     public router: Router,
     public translate: TranslateService,
-  ) {
-    this.utils = new WidgetUtils();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.checkVolumeHealth(this.poolState);
@@ -126,8 +123,11 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       } else {
         outputString = `${devs.length} x `;
         outputString += wide ? `${type} | ${wide} wide | ` : '';
-        outputString += this.utils.convert(size).value;
-        outputString += this.utils.convert(size).units;
+        if (size) {
+          outputString += filesize(size, { standard: 'iec' });
+        } else {
+          outputString += '?';
+        }
       }
     }
     return outputString;
