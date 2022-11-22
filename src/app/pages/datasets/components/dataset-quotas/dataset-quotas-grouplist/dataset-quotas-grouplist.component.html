@@ -33,12 +33,6 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty
-  *ngIf="isLoading; else loaded"
-  [conf]="loadingConfig"
-></ix-entity-empty>
-
-<ng-template #loaded>
   <mat-card>
     <mat-card-content>
       <table
@@ -46,6 +40,8 @@
         matSort
         matSortDisableClear="true"
         [dataSource]="dataSource"
+        [ix-table-empty]="!dataSource.filteredData.length"
+        [emptyConfig]="isLoading ? loadingConfig : emptyOrErrorConfig"
         [matSortActive]="defaultSort.active"
         [matSortDirection]="defaultSort.direction"
         [multiTemplateDataRows]="true"
@@ -143,15 +139,8 @@
           mat-row
           (click)="doEdit(row)"
         ></tr>
-
-        <tr *matNoDataRow class="mat-row no-data-row">
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <ix-entity-empty [conf]="emptyOrErrorConfig"></ix-entity-empty>
-          </td>
-        </tr>
       </table>
 
       <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
     </mat-card-content>
   </mat-card>
-</ng-template>
