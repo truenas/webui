@@ -114,8 +114,8 @@ export class EmailComponent implements OnInit {
       if (!email) {
         this.dialogService.info(
           this.translate.instant('Email'),
-          this.translate.instant('No e-mail address is for root user or any other local administrator. ' +
-                                 'Please, configure such an email address first.'),
+          this.translate.instant('No e-mail address is for root user or any other local administrator. '
+                               + 'Please, configure such an email address first.'),
         );
         // TODO: Consider taking user to the user edit page
         return;
