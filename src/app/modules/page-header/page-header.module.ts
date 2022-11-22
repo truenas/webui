@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FlexModule } from '@angular/flex-layout';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { BreadcrumbComponent } from 'app/modules/layout/components/breadcrumb/breadcrumb.component';
 import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-header/page-title-header.component';
 
 @NgModule({
@@ -11,11 +13,14 @@ import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-hea
     FlexModule,
     RouterModule,
     TranslateModule,
+    CommonDirectivesModule,
   ],
   declarations: [
+    BreadcrumbComponent,
     PageTitleHeaderComponent,
   ],
   exports: [
+    BreadcrumbComponent,
     PageTitleHeaderComponent,
   ],
 })
