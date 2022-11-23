@@ -107,24 +107,7 @@ export class PodSelectDialogComponent implements OnInit {
   }
 
   onPodSelect(): void {
-    if (this.data.customSubmit) {
-      this.data.customSubmit(this);
-    } else {
-      const pod = this.form.value.pods;
-
-      switch (this.dialogType) {
-        case PodSelectDialogType.Shell: {
-          const command = this.form.value.command;
-          this.router.navigate(new Array('/apps/1/shell/').concat([this.selectedAppName, pod, command]));
-          break;
-        }
-        case PodSelectDialogType.Logs: {
-          const container = this.form.value.containers;
-          const tailLines = this.form.value.tail_lines.toString();
-          this.router.navigate(new Array('/apps/1/logs/').concat([this.selectedAppName, pod, container, tailLines]));
-        }
-      }
-    }
+    this.data.customSubmit(this.form.value, this.selectedAppName);
     this.dialogRef.close();
   }
 }
