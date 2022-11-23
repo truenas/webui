@@ -79,7 +79,7 @@ describe('IxComboboxComponent', () => {
       expect(formControl.value).toBe('/my-custom-1');
     });
 
-    it('form control value is set to null if [allowCustomValue] disabled', () => {
+    it('if [allowCustomValue] is disabled and user types custom value.', () => {
       spectator.setInput('allowCustomValue', false);
       spectator.typeInElement('/my-custom-2', 'input');
       expect(formControl.value).toBeNull();

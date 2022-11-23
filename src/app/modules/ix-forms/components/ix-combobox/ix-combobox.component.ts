@@ -47,7 +47,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   hasErrorInOptions = false;
   loading = false;
 
-  private filterChanged$ = new Subject<{ value: string; isCalledOnInit?: boolean }>();
+  private filterChanged$ = new Subject<string>();
 
   value: string | number = '';
   isDisabled = false;
@@ -71,7 +71,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
-      this.filterChanged$.next({ value: '' });
+      this.filterChanged$.next('');
     }
 
     this.cdr.markForCheck();
@@ -82,18 +82,18 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       untilDestroyed(this),
-    ).subscribe(({ value: changedValue, isCalledOnInit }) => {
+    ).subscribe((changedValue) => {
       if (this.filterValue === changedValue) {
         return;
       }
       this.filterValue = changedValue;
-      this.filterOptions(changedValue, isCalledOnInit);
+      this.filterOptions(changedValue);
     });
 
-    this.filterChanged$.next({ value: '', isCalledOnInit: true });
+    this.filterChanged$.next('');
   }
 
-  filterOptions(filterValue: string, isCalledOnInit: boolean): void {
+  filterOptions(filterValue: string): void {
     this.loading = true;
     this.cdr.markForCheck();
     this.provider?.fetch(filterValue).pipe(
@@ -118,7 +118,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         if (setOption) {
           this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
-            this.filterChanged$.next({ value: '' });
+            this.filterChanged$.next('');
           }
         } else {
           /**
@@ -126,13 +126,13 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
            * if we haven't found the correct option in the list of options fetched so far. The assumption
            * is that the correct option exists in one of the following pages of list of options
            */
-          if (!isCalledOnInit) {
+          if (!this.allowCustomValue) {
             this.options.push({ label: this.value as string, value: this.value });
           }
 
           this.selectedOption = { label: this.value as string, value: this.value };
           if (this.selectedOption.value) {
-            this.filterChanged$.next({ value: '' });
+            this.filterChanged$.next('');
           }
         }
       }
@@ -198,7 +198,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       this.resetInput();
     }
     this.textContent = changedValue;
-    this.filterChanged$.next({ value: changedValue });
+    this.filterChanged$.next(changedValue);
 
     if (this.allowCustomValue && !this.options.some((option: Option) => option.value === changedValue)) {
       this.onChange(changedValue);
@@ -206,7 +206,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   resetInput(): void {
-    this.filterChanged$.next({ value: '' });
+    this.filterChanged$.next('');
     if (this.inputElementRef && this.inputElementRef.nativeElement) {
       this.inputElementRef.nativeElement.value = '';
     }
@@ -226,7 +226,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   optionSelected(option: Option): void {
     this.selectedOption = { ...option };
-    this.filterChanged$.next({ value: '' });
+    this.filterChanged$.next('');
     this.value = this.selectedOption.value;
     this.onChange(this.selectedOption.value);
   }
