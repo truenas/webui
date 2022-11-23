@@ -6,10 +6,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ControlValueAccessor, UntypedFormControl, NgControl } from '@angular/forms';
+import {
+  ControlValueAccessor, NgControl,
+} from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
   fromEvent,
@@ -47,7 +48,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   loading = false;
 
   private filterChanged$ = new Subject<{ value: string; isCalledOnInit?: boolean }>();
-  formControl = new UntypedFormControl(this);
+
   value: string | number = '';
   isDisabled = false;
   filterValue: string;
@@ -58,7 +59,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   onTouch: () => void = (): void => {};
 
   constructor(
-    private translate: TranslateService,
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
   ) {
