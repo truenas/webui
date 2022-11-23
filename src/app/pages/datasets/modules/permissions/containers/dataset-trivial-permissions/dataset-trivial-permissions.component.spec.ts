@@ -181,6 +181,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
     const setAclButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set ACL' }));
     await setAclButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'acl', 'pool/trivial']);
+    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/pool/trivial' } });
   });
 });
