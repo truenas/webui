@@ -49,14 +49,14 @@ export class TopologyItemNodeComponent {
     return '';
   }
 
-  get statusColor(): string {
+  get statusClass(): string {
     switch (this.topologyItem.status as (PoolStatus | TopologyItemStatus)) {
       case PoolStatus.Faulted:
-        return 'var(--red)';
+        return 'fn-theme-red';
       case PoolStatus.Degraded:
       case PoolStatus.Offline:
       case TopologyItemStatus.Offline:
-        return 'var(--orange)';
+        return 'fn-theme-yellow';
       default:
         return '';
     }
