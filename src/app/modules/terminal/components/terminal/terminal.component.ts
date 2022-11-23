@@ -142,7 +142,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     const font = new FontFaceObserver(this.fontName);
 
     font.load().then(() => {
-      this.xterm.setOption('fontFamily', this.fontName);
+      this.xterm.options.fontFamily = this.fontName;
       this.drawTerminal();
     }, (error) => {
       this.drawTerminal();
@@ -169,7 +169,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resizeTerm(): boolean {
-    this.xterm.setOption('fontSize', this.fontSize);
+    this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
     if (size) {
