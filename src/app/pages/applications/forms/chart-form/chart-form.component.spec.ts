@@ -352,7 +352,7 @@ describe('ChartFormComponent', () => {
     const values = spectator.component.form.value;
 
     expect(values).toEqual({
-      release_name: '',
+      release_name: 'ipfs',
       service: {
         apiPort: 9501,
         gatewayPort: 9880,
@@ -377,7 +377,7 @@ describe('ChartFormComponent', () => {
     const values = spectator.component.form.value;
 
     expect(values).toEqual({
-      release_name: '',
+      release_name: 'ipfs',
       service: {
         apiPort: 9501,
         gatewayPort: 9880,
