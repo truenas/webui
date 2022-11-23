@@ -102,7 +102,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       this.isClustered = isClustered;
       if (this.isClustered) {
         this.smbTableConf.addActionDisabled = true;
-        this.smbTableConf.editActionDisabled = true;
         this.smbTableConf.deleteActionDisabled = true;
         this.smbTableConf.tooltip = {
           header: this.translate.instant('Windows (SMB) Shares'),
@@ -380,8 +379,15 @@ export class SharesDashboardComponent implements AfterViewInit {
             this.slideInService.open(SmbFormComponent);
           },
           edit: (row: SmbShare) => {
-            const form = this.slideInService.open(SmbFormComponent);
-            form.setSmbShareForEdit(row);
+            if (this.isClustered) {
+              this.dialog.info(
+                this.translate.instant('Windows (SMB) Shares'),
+                this.translate.instant('This share is configured through TrueCommand'),
+              );
+            } else {
+              const form = this.slideInService.open(SmbFormComponent);
+              form.setSmbShareForEdit(row);
+            }
           },
           afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;
