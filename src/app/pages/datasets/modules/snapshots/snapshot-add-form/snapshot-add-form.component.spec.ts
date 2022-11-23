@@ -38,6 +38,7 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('pool.dataset.query', mockDatasets),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
         mockCall('pool.dataset.details'),
+        mockCall('vmware.dataset_has_vms', true),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
@@ -65,6 +66,12 @@ describe('SnapshotAddFormComponent', () => {
       Name: 'test-snapshot-name',
     });
 
+    expect(ws.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
+
+    await form.fillForm({
+      'VMWare Sync': true,
+    });
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
@@ -73,6 +80,7 @@ describe('SnapshotAddFormComponent', () => {
         dataset: 'APPS',
         name: 'test-snapshot-name',
         recursive: false,
+        vmware_sync: true,
       },
     ]);
   });
@@ -82,8 +90,11 @@ describe('SnapshotAddFormComponent', () => {
     await form.fillForm({
       Dataset: 'APPS',
       Name: null,
+      Recursive: true,
       'Naming Schema': '%Y %H %d %M %m',
     });
+
+    expect(ws.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -92,7 +103,8 @@ describe('SnapshotAddFormComponent', () => {
       {
         dataset: 'APPS',
         naming_schema: '%Y %H %d %M %m',
-        recursive: false,
+        recursive: true,
+        vmware_sync: false,
       },
     ]);
   });
@@ -109,5 +121,20 @@ describe('SnapshotAddFormComponent', () => {
     await saveButton.click();
 
     expect(ws.call).not.toHaveBeenCalledWith('zfs.snapshot.create');
+  });
+
+  it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
+    jest.clearAllMocks();
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ Dataset: 'POOL' });
+    await form.fillForm({ Recursive: true });
+    await form.fillForm({ Dataset: 'APPS' });
+    await form.fillForm({ Recursive: false });
+
+    expect(ws.call).toHaveBeenNthCalledWith(1, 'vmware.dataset_has_vms', ['POOL', false]);
+    expect(ws.call).toHaveBeenNthCalledWith(2, 'vmware.dataset_has_vms', ['POOL', true]);
+    expect(ws.call).toHaveBeenNthCalledWith(3, 'vmware.dataset_has_vms', ['APPS', true]);
+    expect(ws.call).toHaveBeenNthCalledWith(4, 'vmware.dataset_has_vms', ['APPS', false]);
   });
 });

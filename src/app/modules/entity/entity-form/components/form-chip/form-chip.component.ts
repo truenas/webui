@@ -2,7 +2,7 @@ import { ENTER } from '@angular/cdk/keycodes';
 import {
   Component, OnInit, ElementRef, ViewChild,
 } from '@angular/core';
-import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup, FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,7 +21,7 @@ export class FormChipComponent implements Field, OnInit {
   group: UntypedFormGroup;
   fieldShow: string;
   chipLists: string[];
-  chipCtrl = new UntypedFormControl();
+  chipCtrl = new FormControl('');
 
   @ViewChild('chipInput') chipInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoComplete') matAutocomplete: MatAutocomplete;
