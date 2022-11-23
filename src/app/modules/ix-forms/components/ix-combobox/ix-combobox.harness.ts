@@ -46,8 +46,7 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
 
   async writeCustomValue(text: string): Promise<void> {
     const input = await this.getMatInputHarness();
-    await input.setValue(text);
-    return (await input.host()).dispatchEvent('change');
+    return input.setValue(text);
   }
 
   async isDisabled(): Promise<boolean> {

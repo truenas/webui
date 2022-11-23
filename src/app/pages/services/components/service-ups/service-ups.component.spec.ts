@@ -144,16 +144,21 @@ describe('ServiceUpsComponent', () => {
     } as UpsConfigUpdate]);
   });
 
-  it('allow custom values to be set as form value for combobox', async () => {
+  it('allow custom values to be saved as form value for combobox', async () => {
     const form = await loader.getHarness(IxFormHarness);
 
     const portSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Port or Hostname' }));
-    await portSelect.writeCustomValue('this is my custom value');
 
-    const formValue = await form.getValues();
+    await portSelect.writeCustomValue('/my-custom-port');
+
     const portSelectValue = await portSelect.getValue();
 
-    expect(formValue['Port or Hostname']).toBe('this is my custom value');
-    expect(portSelectValue).toBe('this is my custom value');
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    const formValue = await form.getValues();
+
+    expect(formValue['Port or Hostname']).toBe('/my-custom-port');
+    expect(portSelectValue).toBe('/my-custom-port');
   });
 });

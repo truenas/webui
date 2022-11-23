@@ -75,13 +75,13 @@ describe('IxComboboxComponent', () => {
 
     it('form control value is set to custom value if [allowCustomValue] enabled', () => {
       spectator.setInput('allowCustomValue', true);
-      spectator.typeInElement('custom value 1', 'input');
-      expect(formControl.value).toBe('custom value 1');
+      spectator.typeInElement('/my-custom-1', 'input');
+      expect(formControl.value).toBe('/my-custom-1');
     });
 
     it('form control value is set to null if [allowCustomValue] disabled', () => {
       spectator.setInput('allowCustomValue', false);
-      spectator.typeInElement('custom value 2', 'input');
+      spectator.typeInElement('/my-custom-2', 'input');
       expect(formControl.value).toBeNull();
     });
 
