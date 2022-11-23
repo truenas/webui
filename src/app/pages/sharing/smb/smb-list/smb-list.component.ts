@@ -45,7 +45,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
 
   columns = [
     { name: helptextSharingSmb.column_name, prop: 'name', always_display: true },
-    { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+    { name: helptextSharingSmb.column_path, prop: 'path_local', showLockedStatus: true },
     { name: helptextSharingSmb.column_comment, prop: 'comment' },
     { name: helptextSharingSmb.column_enabled, prop: 'enabled', checkbox: true },
   ];
@@ -82,7 +82,6 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         this.addBtnDisabled = true;
         this.noAdd = true;
         _.find(this.entityList.allColumns, { name: helptextSharingSmb.column_enabled }).disabled = true;
-        _.find(this.entityList.allColumns, { name: helptextSharingSmb.column_path }).prop = 'path_local';
       }
     });
   }

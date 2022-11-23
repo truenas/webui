@@ -108,7 +108,6 @@ export class SharesDashboardComponent implements AfterViewInit {
           message: this.translate.instant('This share is configured through TrueCommand'),
         };
         _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_enabled }).disabled = true;
-        _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_path }).prop = 'path_local';
       }
     });
   }
@@ -364,7 +363,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           parent: this,
           columns: [
             { name: helptextSharingSmb.column_name, prop: 'name' },
-            { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+            { name: helptextSharingSmb.column_path, prop: 'path_local', showLockedStatus: true },
             { name: helptextSharingSmb.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptextSharingSmb.column_enabled,
