@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -41,6 +41,16 @@ describe('DatasetTrivialPermissionsComponent', () => {
         } as Dataset]),
         mockJob('pool.dataset.permission'),
       ]),
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          params: {
+            queryParams: {
+              path: '/mnt/pool/dataset',
+            },
+          },
+        },
+      },
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({
           mode: 16877,
