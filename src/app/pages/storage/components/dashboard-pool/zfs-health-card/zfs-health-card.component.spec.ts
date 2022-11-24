@@ -2,14 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconHarness } from '@angular/material/icon/testing';
 import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
@@ -17,6 +18,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
+import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
@@ -65,7 +67,11 @@ describe('ZfsHealthCardComponent', () => {
     ],
     providers: [
       mockProvider(PoolsDashboardStore),
-      mockProvider(MatDialog),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of()),
+        })),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -85,6 +91,7 @@ describe('ZfsHealthCardComponent', () => {
     ],
     declarations: [
       FakeFormatDateTimePipe,
+      MockComponent(PoolCardIconComponent),
     ],
   });
 
@@ -97,9 +104,9 @@ describe('ZfsHealthCardComponent', () => {
   });
 
   describe('health indication', () => {
-    it('shows an icon for pool status', async () => {
-      const icon = await loader.getHarness(MatIconHarness.with({ ancestor: '.mat-card-title' }));
-      expect(await icon.getName()).toBe('check_circle');
+    it('shows an icon for pool status', () => {
+      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
+      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
     });
 
     it('shows pool status string', () => {
