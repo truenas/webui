@@ -217,27 +217,23 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
             this.chartItems.clear();
             this.showLoadStatus(EmptyType.Errors);
           } else {
-            try {
-              this.appService.getChartReleases().pipe(
-                catchError(() => of(this.showLoadStatus(EmptyType.Errors))),
-                untilDestroyed(this),
-              ).subscribe((charts) => {
-                if (!charts) {
-                  return this.showLoadStatus(EmptyType.Errors);
-                }
+            this.appService.getChartReleases().pipe(
+              catchError(() => of(this.showLoadStatus(EmptyType.Errors))),
+              untilDestroyed(this),
+            ).subscribe((charts) => {
+              if (!charts) {
+                return this.showLoadStatus(EmptyType.Errors);
+              }
 
-                this.chartItems.clear();
+              this.chartItems.clear();
 
-                charts.forEach((chart) => {
-                  chart.selected = false;
-                  this.chartItems.set(chart.name, chart);
-                });
-
-                this.filterChartItems();
+              charts.forEach((chart) => {
+                chart.selected = false;
+                this.chartItems.set(chart.name, chart);
               });
-            } catch {
-              this.showLoadStatus(EmptyType.Errors);
-            }
+
+              this.filterChartItems();
+            });
           }
         });
       }
