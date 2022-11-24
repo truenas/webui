@@ -52,8 +52,10 @@ export default {
  <b>https://<i>10.231.3.76</i></b>'),
 
   password_placeholder: T('Password'),
-  password_tooltip: T('User account password for logging into the \
- remote system.'),
+  password_tooltip: T('User account password for logging in to the remote system.'),
+
+  admin_username_tooltip: T('Admin username for logging in to the remote system.'),
+
   otp_placeholder: T('One-Time Password (if necessary)'),
   otp_tooltip: T('One-Time Password if two factor authentication is enabled.'),
 };

@@ -158,6 +158,7 @@ describe('SshConnectionFormComponent', () => {
 
       'TrueNAS URL': 'https://truenas.com',
       Username: 'john',
+      'Admin username': 'admin',
       Password: '12345678',
       'One-Time Password (if necessary)': '1234',
       'Private Key': 'key2',
@@ -181,6 +182,7 @@ describe('SshConnectionFormComponent', () => {
         otp_token: '1234',
         url: 'https://truenas.com',
         username: 'john',
+        admin_username: 'admin',
       },
     }]);
   });
@@ -234,6 +236,7 @@ describe('SshConnectionFormComponent', () => {
         password: '123456',
         url: 'https://truenas.com',
         username: 'root',
+        admin_username: 'root',
       },
     }]);
   });
