@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { filter } from 'rxjs/operators';
-import { Terminal } from 'xterm';
+import { ITerminalInitOnlyOptions, ITerminalOptions, Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
@@ -41,12 +41,12 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   xterm: Terminal;
   shellConnected = false;
   connectionId: string;
-  terminalSettings = {
+  terminalSettings: ITerminalOptions & ITerminalInitOnlyOptions = {
     cursorBlink: false,
     tabStopWidth: 8,
     cols: 80,
     rows: 20,
-    focus: true,
+    logLevel: 'debug',
     fontSize: this.fontSize,
     fontFamily: this.defaultFontName,
     allowTransparency: true,

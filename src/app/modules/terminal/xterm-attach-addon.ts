@@ -26,26 +26,15 @@ export class XtermAttachAddon implements ITerminalAddon {
     this.disposables.push(
       addSocketListener(this.socket, 'message', (event) => {
         const data: ArrayBuffer | string = event.data;
-        try {
-          const isString = typeof data === 'string';
-          console.log(
-            'Incoming message',
-            isString ? 'string' : data[Symbol.toStringTag],
-          );
-
-          if (isString) {
-            console.log(data);
-          } else {
-            const decoder = new TextDecoder('utf-8');
-            console.log('as UTF-8', decoder.decode(data));
-
-            const intArray = new Uint8Array(data);
-            console.log('as byte array', intArray);
-          }
-        } catch (error: unknown) {
-          console.error(error);
+        let transformedData: string;
+        if (typeof data === 'string') {
+          transformedData = data;
+        } else {
+          const decoder = new TextDecoder('utf-8');
+          transformedData = decoder.decode(data);
         }
-        terminal.write(typeof data === 'string' ? data : new Uint8Array(data));
+
+        terminal.write(transformedData);
       }),
     );
 
