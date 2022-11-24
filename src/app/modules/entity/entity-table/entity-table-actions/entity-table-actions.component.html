@@ -118,7 +118,7 @@
         mat-icon-button
         ix-auto-type="action"
         id="action_button_{{ action?.name }}__{{ action.id }}"
-        ix-auto-identifier="{{ action.id }}_{{ action.name.toUpperCase() }}"
+        ix-auto-identifier="{{ action.id }}_{{ action.name | uppercase }}"
         [disabled]="action.disabled"
         [ix-auto]=""
         [matTooltip]="action.label | translate"

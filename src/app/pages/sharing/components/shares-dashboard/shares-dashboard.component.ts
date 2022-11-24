@@ -32,7 +32,7 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   DialogService,
-  IscsiService, SystemGeneralService,
+  IscsiService,
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
@@ -91,7 +91,6 @@ export class SharesDashboardComponent implements AfterViewInit {
     private router: Router,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private systemGeneralService: SystemGeneralService,
   ) {
     this.getInitialServiceStatus();
     this.loadClusteredState();

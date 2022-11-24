@@ -715,9 +715,9 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: unknown): unknown {
     if (fieldConfig.type === 'select') {
-      const option = fieldConfig.options.find((option) => option.value === value);
-      if (option) {
-        value = option.label;
+      const selectedOption = fieldConfig.options.find((option) => option.value === value);
+      if (selectedOption) {
+        value = selectedOption.label;
       }
     }
 
@@ -727,11 +727,10 @@ export class CertificateAddComponent implements WizardConfiguration {
   addToSummary(fieldName: string): void {
     const fieldConfig = this.getTarget(fieldName);
     if (!fieldConfig.isHidden) {
-      const fieldName = fieldConfig.name;
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }

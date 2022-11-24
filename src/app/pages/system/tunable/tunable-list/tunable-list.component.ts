@@ -80,7 +80,7 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
     this.slideInService.open(TunableFormComponent);
   }
 
-  getActions(row: Tunable): EntityTableAction<Tunable>[] {
+  getActions(tunable: Tunable): EntityTableAction<Tunable>[] {
     return [
       {
         icon: 'edit',
@@ -98,7 +98,7 @@ export class TunableListComponent implements EntityTableConfig<Tunable> {
         actionName: 'delete',
         label: this.translate.instant('Delete'),
         onClick: () => {
-          this.entityList.doDelete(row);
+          this.entityList.doDelete(tunable);
         },
       },
     ] as EntityTableAction<Tunable>[];

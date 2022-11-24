@@ -104,22 +104,22 @@ def create_smb_share_on_tank(driver, nas_ip, root_password, tanksmbpath, tanksmb
 @then(parsers.parse('setup ldap with "{hostname}" "{base_DN}" "{bind_DN}" "{bind_password}" "{command}" "{user}"'))
 def setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user):
     """setup ldap"""
-    import t_004_9_setup_ldap
-    t_004_9_setup_ldap.test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user)
+#    import t_004_9_setup_ldap
+#    t_004_9_setup_ldap.test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, bind_password, command, user)
 
 
 @then(parsers.parse('create ldap dataset with "{dataset_name}" "{user}"'))
 def create_ldap_dataset(driver, dataset_name, user):
     """create ldap dataset"""
-    import t_004_10_create_ldap_dataset
-    t_004_10_create_ldap_dataset.test_create_ldap_dataset(driver, dataset_name, user)
+#    import t_004_10_create_ldap_dataset
+#    t_004_10_create_ldap_dataset.test_create_ldap_dataset(driver, dataset_name, user)
 
 
 @then(parsers.parse('create smb share on ldap datasetwith "{smb_ldap_path}" "{ldapsmbsharename}" "{ldapsmbsharedescription}" "{ldapsmbshare}" "{ldap_user}" "{ldap_password}"'))
 def create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password):
     """create smb share on ldap dataset"""
-    import t_004_11_create_smb_share_on_ldap_dataset
-    t_004_11_create_smb_share_on_ldap_dataset.test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password)
+#    import t_004_11_create_smb_share_on_ldap_dataset
+#    t_004_11_create_smb_share_on_ldap_dataset.test_create_smb_share_on_ldap_dataset(driver, nas_ip, root_password, smb_ldap_path, ldapsmbsharename, ldapsmbsharedescription, ldapsmbshare, ldap_user, ldap_password)
 
 
 @then('create second user for smb share')
@@ -129,6 +129,13 @@ def create_second_user_for_smb_share(driver):
 #    t_004_12_create_second_user_for_smb_share.test_create_second_user_for_smb_share(driver)
 
 
+@then('create wheel dataset')
+def create_wheel_dataset(driver):
+    """create wheel dataset"""
+#    import t_004_13_create_wheel_dataset
+#    t_004_1_create_wheel_dataset.test_create_wheel_dataset(driver)
+
+
 @then(parsers.parse('create ericbsd dataset with "{dataset_name}" "{user}"'))
 def create_ericbsd_dataset(driver, dataset_name, user):
     """create ericbsd dataset"""
@@ -136,32 +143,32 @@ def create_ericbsd_dataset(driver, dataset_name, user):
 #    t_004_15_create_ericbsd_dataset.test_create_ericbsd_dataset(driver, dataset_name, user)
 
 
-@then(parsers.parse('create ericbsd smb sharewith "{path}" "{description}" "{sharenaame}" "{smbname}" "{user}" "{password}" "{user2}" "{password2}"'))
-def create_ericbsd_smb_share(driver):
+@then(parsers.parse('create ericbsd smb sharewith "{eric_smb_path}" "{ericsmbdescription}" "{ericsharename}" "{ericsmbname}" "{user}" "{password}" "{user2}" "{password2}"'))
+def create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, ericsmbdescription, ericsharename, ericsmbname, user, password, user2, password2):
     """create ericbsd smb share"""
-#    import t_004_16_test_create_ericbsd_smb_share
-#    t_004_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, path, description, sharename, smbname, user, password, user2, password2)
+#    import t_004_16_create_ericbsd_smb_share
+#    t_004_16_create_ericbsd_smb_share.test_create_ericbsd_smb_share(driver, nas_ip, root_password, eric_smb_path, ericsmbdescription, ericsharename, ericsmbname, user, password, user2, password2)
 
 
-@then(parsers.parse('create zvol for iscsi with {name} {zvol_1G_size}'))
-def create_zvol_for_iscsi(driver):
+@then(parsers.parse('create zvol for iscsi with "{name}" "{zvol_1G_size}"'))
+def create_zvol_for_iscsi(driver, name, zvol_1G_size):
     """create zvol for iscsi"""
-#    import t_004_17_test_create_zvol_for_iscsi
-#    t_004_17_create_zvol_for_iscsi.test_create_zvol_for_iscsi(driver, name, zvol_1G_size)
+    import t_004_17_create_zvol_for_iscsi
+    t_004_17_create_zvol_for_iscsi.test_create_zvol_for_iscsi(driver, name, zvol_1G_size)
 
 
-@then(parsers.parse('kerberos keytab with {tabfile_string}'))
-def kerberos_keytab(driver):
+@then(parsers.parse('kerberos keytab with "{tabfile_string}"'))
+def kerberos_keytab(driver, tabfile_string):
     """kerberos keytab"""
-#    import t_004_18_test_kerberos_keytab
-#    t_004_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
+    import t_004_18_kerberos_keytab
+    t_004_18_kerberos_keytab.test_kerberos_keytab(driver, tabfile_string)
 
 
-@then(parsers.parse('recursive and transverse acls with {path}'))
-def recursive_and_transverse_acls(driver):
+@then(parsers.parse('recursive and transverse acls with "{dataset_name_1}" "{dataset_name_2}" "{dataset_name_3}" "{path}"'))
+def recursive_and_transverse_acls(driver, dataset_name_1, dataset_name_2, dataset_name_3, path):
     """recursive and transverse acls"""
-#    import t_004_19_test_recursive_and_transverse_acls
-#    t_004_19_recursive_and_transverse_acls.test_recursive_and_transverse_acls(driver, dataset_name, path)
+    import t_004_19_recursive_and_transverse_acls
+    t_004_19_recursive_and_transverse_acls.test_recursive_and_transverse_acls(driver, dataset_name_1, dataset_name_2, dataset_name_3, path)
 
 
 @then('import disk')

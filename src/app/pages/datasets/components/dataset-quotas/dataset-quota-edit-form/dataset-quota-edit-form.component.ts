@@ -119,7 +119,7 @@ export class DatasetQuotaEditFormComponent {
         });
         this.cdr.markForCheck();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

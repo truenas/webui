@@ -4,8 +4,8 @@ import { map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { MapOption, Option } from 'app/interfaces/option.interface';
 
-export function mapToOptions(map: Map<string, string>, translate: TranslateService): Option[] {
-  return Array.from(map.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
+export function mapToOptions(optionMap: Map<string, string>, translate: TranslateService): Option[] {
+  return Array.from(optionMap.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
 }
 
 /**

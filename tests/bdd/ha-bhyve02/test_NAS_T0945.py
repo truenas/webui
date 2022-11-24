@@ -3,6 +3,7 @@
 
 import pytest
 import time
+import xpaths
 from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
     is_element_present,
@@ -39,21 +40,21 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('login appear enter "{user}" and "{password}"'))
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
 
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
-    assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
+    assert wait_on_element(driver, 5, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
         try:
             assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
@@ -70,16 +71,16 @@ def you_should_see_the_dashboard(driver):
 @then('go to System Settings, click Services')
 def go_to_system_settings_click_services(driver):
     """go to System Settings, click Services."""
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
 
 
 @then('the service page should open')
 def the_service_page_should_open(driver):
     """the service page should open."""
-    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
+    assert wait_on_element(driver, 5, xpaths.services.title)
     time.sleep(1)
 
 
@@ -114,13 +115,13 @@ def click_save(driver):
     """click Save."""
     assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 
 @then('click Start Automatically SSH checkbox and enable the SSH service')
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
-    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
+    assert wait_on_element(driver, 5, xpaths.services.title)
     time.sleep(1)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')

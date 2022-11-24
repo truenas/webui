@@ -65,8 +65,8 @@ describe('DirectoryServicesIndicatorComponent', () => {
     const icon = spectator.query('button');
     expect(icon).toExist();
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.subscribe.mockImplementation(() => of({
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.subscribe.mockImplementation(() => of({
       fields: {
         activedirectory: DirectoryServiceState.Disabled,
         ldap: DirectoryServiceState.Disabled,

@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnDestroy, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -54,7 +55,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
-  imagePath = 'assets/images/';
   ready = false;
   productImage = '';
   productModel = '';
@@ -70,7 +70,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   screenType = ScreenType.Desktop;
   uptimeString: string;
   dateTime: string;
-  widgetDisabled = false;
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
@@ -90,6 +89,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     private serverTimeService: ServerTimeService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
+    @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
     this.configurable = false;
@@ -101,6 +101,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
+
+    this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
   }
 
   ngOnInit(): void {
@@ -109,18 +111,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
       ).subscribe((haStatus) => {
-        this.widgetDisabled = false;
         if (haStatus.hasHa) {
+          this.data = null;
+
           this.ws.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
-            .subscribe((systemInfo: SystemInfo) => this.processSysInfo(systemInfo));
-
-          if (this.data) {
-            this.setProductImage(this.data);
-          }
+            .subscribe((systemInfo: SystemInfo) => {
+              this.processSysInfo(systemInfo);
+            });
         } else if (!haStatus.hasHa) {
           this.productImage = '';
-          this.widgetDisabled = true;
         }
         this.hasHa = haStatus.hasHa;
       });

@@ -42,6 +42,7 @@ const mockUser = {
     id: 101,
   },
   groups: [101],
+  immutable: false,
 } as User;
 
 describe('UserFormComponent', () => {
@@ -271,7 +272,7 @@ describe('UserFormComponent', () => {
     });
 
     it('check form inputs when user is builtin', async () => {
-      spectator.component.setupForm({ ...mockUser, builtin: true });
+      spectator.component.setupForm({ ...mockUser, builtin: true, immutable: true });
 
       const form = await loader.getHarness(IxFormHarness);
       const disabled = await form.getDisabledState();

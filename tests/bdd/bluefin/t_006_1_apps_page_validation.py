@@ -39,7 +39,7 @@ def test_apps_page_validation(driver):
     # used for local testing, so you dont have to unset and reset the pool every time 
     assert wait_on_element(driver, 20, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 15, '//h3[contains(.,"minio")]')
+    assert wait_on_element(driver, 30, '//h3[contains(.,"minio")]')
 
 
     # verify the setting slide out works
@@ -50,7 +50,8 @@ def test_apps_page_validation(driver):
     assert wait_on_element(driver, 15, '//h3[contains(.,"Kubernetes Settings")]')
     assert wait_on_element(driver, 20, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
     driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()
-
+    if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
 
     # open the Installed Applications page
     assert wait_on_element(driver, 20, '//div[contains(text(),"Installed Applications")]', 'clickable')
@@ -70,7 +71,8 @@ def test_apps_page_validation(driver):
     assert wait_on_element(driver, 15, '//h3[contains(.,"Kubernetes Settings")]')
     assert wait_on_element(driver, 20, '//mat-icon[@id="ix-close-icon"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
-
+    if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
 
     # open the Manage Docker Images Page
     assert wait_on_element(driver, 20, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
@@ -92,7 +94,8 @@ def test_apps_page_validation(driver):
     assert wait_on_element(driver, 15, '//h3[contains(.,"Kubernetes Settings")]')
     assert wait_on_element(driver, 20, '//mat-icon[@id="ix-close-icon"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
-
+    if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
 
     # open the Manage Catalogs Page
     assert wait_on_element(driver, 20, '//div[contains(text(),"Manage Catalogs")]', 'clickable')

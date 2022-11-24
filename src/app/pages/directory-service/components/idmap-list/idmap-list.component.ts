@@ -135,9 +135,9 @@ export class IdmapListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
-      onClick: (row: IdmapRow) => {
+      onClick: (rowToEdit: IdmapRow) => {
         const form = this.slideIn.open(IdmapFormComponent);
-        form.setIdmapForEdit(row);
+        form.setIdmapForEdit(rowToEdit);
       },
     });
     if (!requiredIdmapDomains.includes(row.name as IdmapName)) {
@@ -146,8 +146,8 @@ export class IdmapListComponent implements EntityTableConfig {
         label: this.translate.instant('Delete'),
         name: 'delete',
         icon: 'delete',
-        onClick: (row: IdmapRow) => {
-          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe({
+        onClick: (rowToDelete: IdmapRow) => {
+          this.entityList.doDeleteJob(rowToDelete).pipe(untilDestroyed(this)).subscribe({
             error: (err: WebsocketError) => {
               new EntityUtils().handleWsError(this.entityList, err);
             },

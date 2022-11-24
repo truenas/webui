@@ -138,8 +138,8 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    jest.spyOn(mockWebsocket, 'call').mockImplementationOnce(() => throwError(() => ({
+    const websocketMock = spectator.inject(MockWebsocketService);
+    jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => ({
       reason: 'Device busy',
     })));
 

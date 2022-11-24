@@ -20,7 +20,6 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -49,8 +48,8 @@ export class GuiFormComponent {
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
-    ui_port: [null as number, [numberValidator(), Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number, [numberValidator(), Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     crash_reporting: [false, [Validators.required]],

@@ -47,7 +47,7 @@ def test_setup_ldap(driver, nas_ip, root_password, hostname, base_DN, bind_DN, b
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     #assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     # Make sure Active Directory and LDAP are both disabled
-    assert wait_on_element(driver, 20, '//h3[text()="Active Directory and LDAP are disabled."]')
+    assert wait_on_element(driver, 40, '//h3[text()="Active Directory and LDAP are disabled."]')
     assert wait_on_element(driver, 15, '//span[contains(text(),"Configure LDAP")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Configure LDAP")]').click()
     # Verify the LDAP box is starting to load

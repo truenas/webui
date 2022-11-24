@@ -11,7 +11,8 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   haSettingsUpdated,
   haStatusLoaded,
-  loadHaStatus, passiveNodeReplaced,
+  loadHaStatus,
+  passiveNodeReplaced,
   systemFeaturesLoaded,
   systemInfoLoaded,
 } from 'app/store/system-info/system-info.actions';
@@ -64,7 +65,7 @@ export class SystemInfoEffects {
   ));
 
   loadHaStatus = createEffect(() => this.actions$.pipe(
-    ofType(loadHaStatus, haSettingsUpdated, passiveNodeReplaced),
+    ofType(loadHaStatus, haSettingsUpdated, passiveNodeReplaced, adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {

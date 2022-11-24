@@ -105,6 +105,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       this.screenSize = evt.mqAlias;
     });
+
+    this.haStatusText = this.window.sessionStorage.getItem('ha_status') === 'true'
+      ? helptext.ha_status_text_enabled
+      : helptext.ha_status_text_disabled;
   }
 
   ngOnInit(): void {

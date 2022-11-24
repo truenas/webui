@@ -61,9 +61,9 @@ export class ThemeService {
   }
 
   findTheme(name: string, reset?: boolean): Theme {
-    const theme = this.allThemes.find((theme) => theme.name === name);
-    if (theme) {
-      return theme;
+    const existingTheme = this.allThemes.find((theme) => theme.name === name);
+    if (existingTheme) {
+      return existingTheme;
     }
 
     // Optionally reset if not found

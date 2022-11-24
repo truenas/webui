@@ -4,6 +4,7 @@ pytest
 pytest-bdd
 pytest-dependency
 pytest-timeout
+pytest-timestamper
 pytz
 requests
 selenium==4.2.0
