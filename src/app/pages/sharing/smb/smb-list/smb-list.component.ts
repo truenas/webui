@@ -146,7 +146,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         id: row.name,
         icon: 'security',
         name: 'edit_acl',
-        disabled: optionDisabled || this.isClustered,
+        disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {

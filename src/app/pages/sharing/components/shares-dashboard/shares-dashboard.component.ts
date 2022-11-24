@@ -437,7 +437,6 @@ export class SharesDashboardComponent implements AfterViewInit {
                 icon: 'security',
                 name: 'edit_acl',
                 matTooltip: helptextSharingSmb.action_edit_acl,
-                disabled: this.isClustered,
                 onClick: (row: SmbShare) => {
                   const rowName = row.path.replace('/mnt/', '');
                   const datasetId = rowName;
