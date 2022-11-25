@@ -433,6 +433,9 @@ export type ApiDirectory = {
   'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
+  // Cluster
+  'cluster.utils.is_clustered': { params: void; response: boolean };
+
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
   'dyndns.update': { params: [DynamicDnsUpdate]; response: DynamicDnsConfig };
