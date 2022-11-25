@@ -79,8 +79,8 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     );
   }
 
-  warnForExportedPools(disk: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === disk);
+  warnForExportedPools(diskName: string): void {
+    const unusedDisk = this.unusedDisks.find((disk) => disk.name === diskName);
     if (!unusedDisk?.exported_zpool) {
       return;
     }

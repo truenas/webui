@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
@@ -26,6 +27,9 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   routeAdd: string[] = ['sharing', 'smb', 'add'];
   routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
   protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
+  isClustered = false;
+  addBtnDisabled = false;
+  noAdd = false;
   private entityList: EntityTableComponent<SmbShare>;
   emptyTableConfigMessages = {
     first_use: {
@@ -41,7 +45,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
 
   columns = [
     { name: helptextSharingSmb.column_name, prop: 'name', always_display: true },
-    { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+    { name: helptextSharingSmb.column_path, prop: 'path_local', showLockedStatus: true },
     { name: helptextSharingSmb.column_comment, prop: 'comment' },
     { name: helptextSharingSmb.column_enabled, prop: 'enabled', checkbox: true },
   ];
@@ -70,6 +74,18 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     private translate: TranslateService,
   ) {}
 
+  preInit(entityList: EntityTableComponent<SmbShare>): void {
+    this.entityList = entityList;
+    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
+      this.isClustered = isClustered;
+      if (this.isClustered) {
+        this.addBtnDisabled = true;
+        this.noAdd = true;
+        _.find(this.entityList.allColumns, { name: helptextSharingSmb.column_enabled }).disabled = true;
+      }
+    });
+  }
+
   afterInit(entityList: EntityTableComponent<SmbShare>): void {
     this.entityList = entityList;
   }
@@ -89,21 +105,23 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     });
   }
 
-  getActions(row: SmbShare): EntityTableAction[] {
-    const rowName = row.path.replace('/mnt/', '');
+  getActions(smbShare: SmbShare): EntityTableAction[] {
+    const rowName = smbShare.path.replace('/mnt/', '');
     const optionDisabled = !rowName.includes('/');
     return [
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'edit',
         name: 'edit',
+        disabled: this.isClustered,
         label: this.translate.instant('Edit'),
         onClick: (row: SmbShare) => this.entityList.doEdit(row.id),
       },
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'security',
         name: 'share_acl',
+        disabled: this.isClustered,
         label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
@@ -125,7 +143,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         },
       },
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'security',
         name: 'edit_acl',
         disabled: optionDisabled,
@@ -149,9 +167,10 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         },
       },
       {
-        id: row.name,
+        id: smbShare.name,
         icon: 'delete',
         name: 'delete',
+        disabled: this.isClustered,
         label: this.translate.instant('Delete'),
         onClick: (row: SmbShare) => this.entityList.doDelete(row),
       },

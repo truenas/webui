@@ -260,8 +260,7 @@ export class EntityUtils {
     if (data === undefined || data === null || data === '') {
       result = data;
     } else if (Array.isArray(data)) {
-      const arrayValues = data.map((item) => this.changeNullString2Null(item));
-      result = arrayValues;
+      result = data.map((item) => this.changeNullString2Null(item));
     } else if (typeof data === 'object') {
       result = {};
       Object.keys(data).forEach((key) => {

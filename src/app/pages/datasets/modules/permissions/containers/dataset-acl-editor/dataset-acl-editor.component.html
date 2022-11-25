@@ -84,7 +84,7 @@
                   *ngIf="acl.trivial; else stripButton"
                   mat-button
                   class="action"
-                  [routerLink]="['/datasets/permissions/edit', datasetPath]"
+                  [routerLink]="['/datasets', datasetPath, 'permissions', 'edit']"
                 >
                   {{ 'Permissions Editor' | translate }}
                 </a>

@@ -145,11 +145,11 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   getUserQuotas(): void {
-    const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
+    const filterParam = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.User, filter],
+      [this.datasetId, DatasetQuotaType.User, filterParam],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;
@@ -230,7 +230,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.loader.close();
         this.handleError(error);
         return EMPTY;
@@ -272,7 +272,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.loader.close();
         this.handleError(error);
         return EMPTY;

@@ -2,6 +2,7 @@
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
 import pytest
+import xpaths
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from function import (
@@ -31,32 +32,32 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     depends(request, ['Active_Directory'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
 
 
 @when(parsers.parse('if the login page appears, enter "{user}" and "{password}"'))
 def if_the_login_page_appears_enter__user_and_password(driver, user, password):
     """if the login page appears, enter "{user}" and "{password}."""
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @then('on the Dashboard, click Dataset on the left sidebar')
 def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     """on the Dashboard, click Dataset on the left sidebar."""
-    assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.title)
     if wait_on_element(driver, 4, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    assert wait_on_element(driver, 10, '//span[text()="System Information"]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Datasets"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Datasets"]').click()
 

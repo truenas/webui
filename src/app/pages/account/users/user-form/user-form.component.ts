@@ -268,7 +268,7 @@ export class UserFormComponent {
     this.form.get('uid').disable();
     this.form.get('group_create').disable();
 
-    if (user.builtin) {
+    if (user.immutable) {
       this.form.get('group').disable();
       this.form.get('home_mode').disable();
       this.form.get('home').disable();

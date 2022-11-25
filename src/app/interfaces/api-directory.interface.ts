@@ -238,7 +238,7 @@ import {
   TrueCommandConnectionState, TrueCommandUpdateResponse,
   UpdateTrueCommand,
 } from 'app/interfaces/true-command-config.interface';
-import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
@@ -433,6 +433,9 @@ export type ApiDirectory = {
   'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
+  // Cluster
+  'cluster.utils.is_clustered': { params: void; response: boolean };
+
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
   'dyndns.update': { params: [DynamicDnsUpdate]; response: DynamicDnsConfig };
@@ -527,6 +530,7 @@ export type ApiDirectory = {
   'mail.config': { params: void; response: MailConfig };
   'mail.update': { params: [MailConfigUpdate]; response: MailConfig };
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
+  'mail.local_administrator_email': { params: void; response: string | null };
 
   // idmap
   'idmap.backend_options': { params: void; response: IdmapBackendOptions };
@@ -823,6 +827,7 @@ export type ApiDirectory = {
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
   'system.environment': { params: void; response: string };
+  'system.set_time': { params: [number]; response: void };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -888,7 +893,7 @@ export type ApiDirectory = {
   'tunable.tunable_type_choices': { params: void; response: Choices };
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
   'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
-  'tunable.create': { params: [TunableUpdate]; response: Tunable };
+  'tunable.create': { params: [TunableCreate]; response: Tunable };
   'tunable.delete': { params: [id: number]; response: true };
 
   // TFTP
@@ -929,7 +934,7 @@ export type ApiDirectory = {
   'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.usb_controller_choices': { params: void; response: Choices };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
-  'vm.device.delete': { params: [number, VmDeviceDelete]; response: boolean };
+  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
@@ -967,7 +972,7 @@ export type ApiDirectory = {
   'user.shell_choices': { params: [userId?: number]; response: Choices };
   'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
   'user.get_next_uid': { params: void; response: number };
-  'user.has_root_password': { params: void; response: boolean };
+  'user.has_local_administrator_set_up': { params: void; response: boolean };
 
   // UPS
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };

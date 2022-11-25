@@ -51,3 +51,10 @@
 .title a:focus-visible {
   background: var(--hover-bg);
 }
+
+::ng-deep .tooltip .material-icons {
+  align-items: center;
+  display: flex;
+  font-size: 24px !important;
+  margin-right: 6px;
+}

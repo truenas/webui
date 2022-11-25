@@ -986,6 +986,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return row.name || row.path || row.id;
   }
 
+  getDisabled(column: string): boolean {
+    return _.find(this.allColumns, { prop: column }).disabled;
+  }
+
   isPaddedAway(index: number): boolean {
     return !this.shouldApplyStickyOffset(index)
       && !(this.isLeftStickyColumnNo(index) && this.isTableOverflow());
@@ -1069,12 +1073,12 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       cols: this.conf.columns,
     } as unknown as TableDisplayedColumns;
 
-    this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((state) => {
-      if (!state.areLoaded) {
+    this.store$.pipe(select(selectPreferencesState), take(1), untilDestroyed(this)).subscribe((preferencesState) => {
+      if (!preferencesState.areLoaded) {
         return;
       }
 
-      const existingPreferredColumns = state.preferences.tableDisplayedColumns || [];
+      const existingPreferredColumns = preferencesState.preferences.tableDisplayedColumns || [];
       const preferredColumns = existingPreferredColumns.filter((column) => {
         return column.title !== this.title;
       });
@@ -1124,9 +1128,9 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     // Bring warnings to user's attention even if state is finished or successful.
     if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
 
-    const state: JobState = row.state;
+    const jobState = row.state;
 
-    switch (state) {
+    switch (jobState) {
       case JobState.Pending:
       case JobState.Running:
       case JobState.Aborted:

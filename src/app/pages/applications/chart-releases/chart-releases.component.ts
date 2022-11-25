@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { of, Subscription } from 'rxjs';
+import { catchError, filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -48,12 +48,12 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   @Output() updateTab: EventEmitter<ApplicationUserEvent> = new EventEmitter();
+  @Output() switchTab = new EventEmitter<string>();
 
   filteredChartItems: ChartRelease[] = [];
   filterString = '';
 
   chartItems = new Map<string, ChartRelease>();
-  @Output() switchTab = new EventEmitter<string>();
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
@@ -219,7 +219,14 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
             this.chartItems.clear();
             this.showLoadStatus(EmptyType.Errors);
           } else {
-            this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
+            this.appService.getChartReleases().pipe(
+              catchError(() => of(this.showLoadStatus(EmptyType.Errors))),
+              untilDestroyed(this),
+            ).subscribe((charts) => {
+              if (!charts) {
+                return this.showLoadStatus(EmptyType.Errors);
+              }
+
               this.chartItems.clear();
 
               charts.forEach((chart) => {
@@ -297,18 +304,18 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
           } as ChartUpgradeDialogConfig,
         });
         dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
-          const dialogRef = this.mdDialog.open(EntityJobComponent, {
+          const jobDialogRef = this.mdDialog.open(EntityJobComponent, {
             data: {
               title: helptext.charts.upgrade_dialog.job,
             },
           });
-          dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
+          jobDialogRef.componentInstance.submit();
+          jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+          jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
             this.dialogService.closeAllDialogs();
             new EntityUtils().handleWsError(this, error, this.dialogService);
           });
@@ -499,7 +506,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
         appName: name,
         title: 'Choose pod',
         type: PodSelectDialogType.Shell,
-        customSubmit: (values: PodDialogFormValue, name: string) => this.shellDialogSubmit(values, name),
+        customSubmit: (values: PodDialogFormValue, appName: string) => this.shellDialogSubmit(values, appName),
       },
     });
   }
@@ -513,8 +520,8 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
         appName: name,
         title: 'Choose pod',
         type: PodSelectDialogType.Logs,
-        customSubmit: (formValueDialog: PodDialogFormValue, name: string) => {
-          this.logDialogSubmit(formValueDialog, name);
+        customSubmit: (formValueDialog: PodDialogFormValue, appName: string) => {
+          this.logDialogSubmit(formValueDialog, appName);
         },
       },
     });

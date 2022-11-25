@@ -58,7 +58,7 @@
               <span class="label">{{ 'Netwait:' | translate }}</span>
               <span class="value">
                 {{
-                  (config.netwait_enabled ? 'Enabled' : 'Disabled') | translate
+                  config.netwait_enabled ? ('Enabled' | translate) : ('Disabled' | translate)
                 }}
               </span>
             </li>

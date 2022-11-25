@@ -140,6 +140,7 @@ export interface EntityTableColumn {
   checkbox?: boolean;
   toggle?: boolean;
   button?: boolean;
+  disabled?: boolean;
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
   emptyText?: string;

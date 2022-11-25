@@ -106,7 +106,7 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
-    const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol Old' }));
+    const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
     expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormOldComponent);
     expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');

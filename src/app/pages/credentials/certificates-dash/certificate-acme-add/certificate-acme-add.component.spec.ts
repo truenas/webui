@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -42,7 +43,7 @@ describe('CertificateAcmeAddComponent', () => {
             name: 'route53',
           },
         ] as DnsAuthenticator[]),
-        mockCall('certificate.create'),
+        mockJob('certificate.create', fakeSuccessfulJob()),
         mockCall('certificate.get_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
       mockProvider(SnackbarService),
@@ -79,7 +80,7 @@ describe('CertificateAcmeAddComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('certificate.create', [{
+    expect(spectator.inject(WebSocketService).job).toHaveBeenLastCalledWith('certificate.create', [{
       acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory',
       create_type: CertificateCreateType.CreateAcme,
       csr_id: 2,

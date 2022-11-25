@@ -206,7 +206,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((config) => config.name === 'refquota');
+              const refquotaConfig = this.fieldConfig.find((config) => config.name === 'refquota');
 
               const size = this.convertHumanStringToNum(control.value, 'refquota');
               const errors = control.value && Number.isNaN(size)
@@ -214,19 +214,19 @@ export class DatasetFormComponent implements FormConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                refquotaConfig.hasErrors = true;
+                refquotaConfig.errors = globalHelptext.human_readable.input_error;
               } else {
                 const sizeError = control.value && (size !== 0) && (size < this.minrefquota)
                   ? { invalid_size: true }
                   : null;
 
                 if (sizeError) {
-                  config.hasErrors = true;
-                  config.errors = helptext.dataset_form_quota_too_small;
+                  refquotaConfig.hasErrors = true;
+                  refquotaConfig.errors = helptext.dataset_form_quota_too_small;
                 } else {
-                  config.hasErrors = false;
-                  config.errors = '';
+                  refquotaConfig.hasErrors = false;
+                  refquotaConfig.errors = '';
                 }
               }
 
@@ -296,18 +296,18 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((config) => config.name === 'refreservation');
+              const refreservationConfig = this.fieldConfig.find((config) => config.name === 'refreservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                refreservationConfig.hasErrors = true;
+                refreservationConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                refreservationConfig.hasErrors = false;
+                refreservationConfig.errors = '';
               }
 
               return errors;
@@ -333,7 +333,7 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((config) => config.name === 'quota');
+              const quotaConfig = this.fieldConfig.find((config) => config.name === 'quota');
 
               const size = this.convertHumanStringToNum(control.value, 'quota');
               const errors = control.value && Number.isNaN(size)
@@ -341,19 +341,19 @@ export class DatasetFormComponent implements FormConfiguration {
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                quotaConfig.hasErrors = true;
+                quotaConfig.errors = globalHelptext.human_readable.input_error;
               } else {
                 const sizeError = control.value && (size !== 0) && (size < this.minquota)
                   ? { invalid_size: true }
                   : null;
 
                 if (sizeError) {
-                  config.hasErrors = true;
-                  config.errors = helptext.dataset_form_quota_too_small;
+                  quotaConfig.hasErrors = true;
+                  quotaConfig.errors = helptext.dataset_form_quota_too_small;
                 } else {
-                  config.hasErrors = false;
-                  config.errors = '';
+                  quotaConfig.hasErrors = false;
+                  quotaConfig.errors = '';
                 }
               }
 
@@ -415,18 +415,18 @@ export class DatasetFormComponent implements FormConfiguration {
           parent: this,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find((config) => config.name === 'reservation');
+              const reservationConfig = this.fieldConfig.find((config) => config.name === 'reservation');
 
               const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
                 ? { invalid_byte_string: true }
                 : null;
 
               if (errors) {
-                config.hasErrors = true;
-                config.errors = globalHelptext.human_readable.input_error;
+                reservationConfig.hasErrors = true;
+                reservationConfig.errors = globalHelptext.human_readable.input_error;
               } else {
-                config.hasErrors = false;
-                config.errors = '';
+                reservationConfig.hasErrors = false;
+                reservationConfig.errors = '';
               }
 
               return errors;
@@ -1173,15 +1173,17 @@ export class DatasetFormComponent implements FormConfiguration {
             this.encryptionFields.forEach((field) => {
               this.entityForm.setDisabled(field, true, true);
             });
-            inheritEncryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
-              this.isEncryptionInherited = inherit;
-              if (inherit) {
+            inheritEncryptionControl.valueChanges.pipe(untilDestroyed(this)).subscribe((inheritEncryption: boolean) => {
+              this.isEncryptionInherited = inheritEncryption;
+              if (inheritEncryption) {
                 allEncryptionFields.forEach((field) => {
                   this.entityForm.setDisabled(field, true, true);
                 });
                 this.entityForm.setDisabled('encryption', true, true);
+                encryptionControl.setValue(false);
               }
-              if (!inherit) {
+              if (!inheritEncryption) {
+                encryptionControl.setValue(true);
                 this.entityForm.setDisabled('encryption_type', false, false);
                 this.entityForm.setDisabled('algorithm', false, false);
                 if (this.parentHasPassphrase) { // keep it hidden if it passphrase

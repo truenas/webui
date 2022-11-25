@@ -79,8 +79,8 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
   }
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiPortalRow>): void {
-    const row = entityList.rows.find((row) => row.id === id);
-    const listen = row.listen.map((item: string) => {
+    const portal = entityList.rows.find((row) => row.id === id);
+    const listen = portal.listen.map((item: string) => {
       const lastIndex = item.lastIndexOf(':');
       return {
         ip: item.substring(0, lastIndex),
@@ -90,7 +90,7 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
 
     const form = this.slideInService.open(PortalFormComponent);
     form.setupForm({
-      ...row,
+      ...portal,
       listen,
     });
   }

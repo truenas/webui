@@ -57,10 +57,10 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
     this.slideInService.open(VmwareSnapshotFormComponent);
   }
 
-  getActions(row: VmwareSnapshot): EntityTableAction[] {
+  getActions(vmwareSnapshot: VmwareSnapshot): EntityTableAction[] {
     return [
       {
-        id: row.hostname,
+        id: vmwareSnapshot.hostname,
         icon: 'delete',
         name: 'delete',
         label: this.translate.instant('Delete'),
@@ -69,7 +69,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         },
       },
       {
-        id: row.hostname,
+        id: vmwareSnapshot.hostname,
         icon: 'edit',
         name: 'edit',
         label: this.translate.instant('Edit'),

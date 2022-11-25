@@ -100,9 +100,7 @@ describe('TunableFormComponent', () => {
         {
           comment: 'Existing variable',
           enabled: true,
-          type: TunableType.Sysctl,
           value: 'New value',
-          var: 'var.exist',
         },
       ]);
     });
