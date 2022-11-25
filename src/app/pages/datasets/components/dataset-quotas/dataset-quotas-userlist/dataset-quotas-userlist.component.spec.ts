@@ -27,7 +27,6 @@ const fakeUserQuotas: DatasetQuota[] = [{
   name: 'daemon',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_bytes: 0,
@@ -37,7 +36,6 @@ const fakeUserQuotas: DatasetQuota[] = [{
   name: 'bin',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_bytes: 0,
@@ -103,8 +101,8 @@ describe('DatasetQuotasUserlistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', 'N/A', '0', 'N/A', 'delete'],
+      ['bin', '2', '500 KiB', '0', '0%', 'N/A', '0', 'N/A', 'delete'],
     ];
 
     expect(cells).toEqual(expectedRows);

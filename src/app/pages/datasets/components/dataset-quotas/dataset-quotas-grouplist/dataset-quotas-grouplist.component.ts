@@ -117,7 +117,12 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       case 'used_percent':
         return `${Math.round(row[field] * 100) / 100}%`;
       case 'obj_used_percent':
-        return `${Math.round(row[field] * 100) / 100}%`;
+        if (row.obj_quota) {
+          return `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%`;
+        }
+        return this.translate.instant('N/A');
+      case 'obj_quota':
+        return row.obj_quota ? row.obj_quota : this.translate.instant('N/A');
       case 'used_bytes':
         if (row[field] !== 0) {
           return this.storageService.convertBytesToHumanReadable(row[field], 2);
