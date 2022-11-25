@@ -1,7 +1,6 @@
 import { OnInit, Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -27,7 +26,6 @@ export class PodSelectDialogComponent implements OnInit {
   form: FormGroup;
   pods$: Observable<Option[]>;
   containers$: Observable<Option[]>;
-  apps$: Observable<Option[]>;
   title: string;
   hasPool = true;
 
@@ -35,7 +33,6 @@ export class PodSelectDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: PodDialogData,
     public dialogRef: MatDialogRef<PodSelectDialogComponent>,
     public appService: ApplicationsService,
-    private router: Router,
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -58,22 +55,11 @@ export class PodSelectDialogComponent implements OnInit {
           tail_lines: [this.tailLines, Validators.required],
         });
         break;
-      case PodSelectDialogType.PodLogs:
-        this.form = this.formBuilder.group({
-          apps: ['', Validators.required],
-          pods: ['', Validators.required],
-          containers: ['', Validators.required],
-          tail_lines: [this.tailLines, Validators.required],
-        });
     }
   }
 
   ngOnInit(): void {
-    if (this.data.afterDialogInit) {
-      this.data.afterDialogInit(this);
-    } else {
-      this.loadPods();
-    }
+    this.loadPods();
   }
 
   loadPods(): void {

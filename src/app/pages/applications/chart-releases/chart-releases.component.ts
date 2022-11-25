@@ -513,17 +513,19 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
         appName: name,
         title: 'Choose pod',
         type: PodSelectDialogType.Logs,
-        customSubmit: (values: PodDialogFormValue, name: string) => this.logDialogSubmit(values, name),
+        customSubmit: (formValueDialog: PodDialogFormValue, name: string) => {
+          this.logDialogSubmit(formValueDialog, name);
+        },
       },
     });
   }
 
-  shellDialogSubmit(values: PodDialogFormValue, appName: string): void {
-    this.router.navigate(new Array('/apps/1/shell/').concat([appName, values.pods, values.command]));
+  shellDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
+    this.router.navigate(new Array('/apps/1/shell/').concat([appName, formValue.pods, formValue.command]));
   }
 
-  logDialogSubmit(values: PodDialogFormValue, appName: string): void {
-    this.router.navigate(new Array('/apps/1/logs/').concat([appName, values.pods, values.containers, values.tail_lines.toString()]));
+  logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
+    this.router.navigate(new Array('/apps/1/logs/').concat([appName, formValue.pods, formValue.containers, formValue.tail_lines.toString()]));
   }
 
   showChartEvents(name: string): void {

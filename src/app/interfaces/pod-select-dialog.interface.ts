@@ -4,9 +4,8 @@ import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dia
 export interface PodDialogData {
   type: PodSelectDialogType;
   title: string;
-  appName?: string;
-  customSubmit: (dialog: PodSelectDialogComponent, appName: string) => void;
-  afterDialogInit?: (dialog: PodSelectDialogComponent) => (dialog: PodSelectDialogComponent) => void;
+  appName: string;
+  customSubmit: (formValue: PodDialogFormValue, appName: string) => void;
 }
 
 export type PodDialogFormValue = PodSelectDialogComponent['form']['value'];
