@@ -209,14 +209,12 @@ export class ReplicationListComponent implements EntityTableConfig {
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
@@ -224,7 +222,6 @@ export class ReplicationListComponent implements EntityTableConfig {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });

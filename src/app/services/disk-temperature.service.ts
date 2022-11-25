@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject, switchMap, tap } from 'rxjs';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
 import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';

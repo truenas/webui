@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -47,7 +47,7 @@ export class UserEffects {
     ofType(usersLoaded),
     switchMap(() => {
       return this.ws.sub('user.query').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
         map((event) => userRemoved({ id: event.id })),
       );
     }),

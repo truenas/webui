@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services';
 interface Slide {
   name: string;
   index?: string;
-  dataSource?: any;
+  dataSource?: TopologyItem;
   template: TemplateRef<void>;
   topology?: PoolTopologyCategory;
 }
@@ -271,7 +271,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     vdev?: TopologyItem,
   ): void {
     if (name !== 'overview' && !verified) { return; }
-    const dataSource = vdev || { children: this.poolState.topology[topology] };
+    const dataSource = vdev || { children: this.poolState.topology[topology] } as TopologyItem;
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
     if (direction === 'forward') {
       // Setup next path segment
@@ -354,5 +354,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   convertPercentToNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
+  }
+
+  asDisk(item: TopologyItem): TopologyDisk {
+    return item as TopologyDisk;
   }
 }

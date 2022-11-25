@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -145,7 +145,7 @@ describe('AlertsPanelComponent', () => {
 
     const websocketMock = spectator.inject(MockWebsocketService);
     websocketMock.emitSubscribeEvent({
-      msg: ApiEventMessage.Added,
+      msg: IncomingApiMessageType.Added,
       collection: 'alert.list',
       fields: {
         id: 'new',
@@ -164,7 +164,7 @@ describe('AlertsPanelComponent', () => {
 
     const websocketMock = spectator.inject(MockWebsocketService);
     websocketMock.emitSubscribeEvent({
-      msg: ApiEventMessage.Changed,
+      msg: IncomingApiMessageType.Changed,
       collection: 'alert.list',
       fields: {
         id: '1',
