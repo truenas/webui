@@ -96,6 +96,11 @@ export class ServiceFtpComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadConfig();
+    this.form.controls.tls.valueChanges.pipe(untilDestroyed(this)).subscribe((tlsEnabled) => {
+      if (!tlsEnabled) {
+        this.form.controls.ssltls_certificate.patchValue(null);
+      }
+    });
   }
 
   onSubmit(): void {
