@@ -106,7 +106,7 @@ describe('PodSelectDialogComponent', () => {
         tail_lines: 500,
         containers: 'container21',
         pods: 'pod2',
-      });
+      }, 'app_name');
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     });
 

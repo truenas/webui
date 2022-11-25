@@ -66,8 +66,8 @@ export class PodSelectLogsDialogComponent implements OnInit {
 
     this.loadPodLogs(this.selectedApp);
 
-    this.form.controls.apps.valueChanges.pipe(untilDestroyed(this)).subscribe((app) => {
-      this.loadPodLogs(app);
+    this.form.controls.apps.valueChanges.pipe(untilDestroyed(this)).subscribe((appValue) => {
+      this.loadPodLogs(appValue);
     });
 
     this.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((pod) => {
