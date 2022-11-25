@@ -54,7 +54,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
     return mountpoints$.pipe(
       tap((mountpoint) => {
-        this.patchState({
+        this.setState({
+          ...initialState,
           mountpoint,
           isLoading: true,
         });
