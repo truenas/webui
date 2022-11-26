@@ -1332,7 +1332,6 @@
   "Ensure Display Device": "确保显示设备",
   "Ensure valid entries exist in  <b>Directory Services > Kerberos Realms</b> and  <b>Directory Services > Kerberos Keytabs</b> and the system  can communicate with the Kerberos Domain Controller before  enabling this option.": "确保在<b>目录服务>Kerberos领域</b>和<b>目录服务>Kerberos密钥表</b>中存在有效的条目，并且在启用此选项之前，系统可以与Kerberos域控制器进行通信。",
   "Enter": "输入",
-  "Enter <strong>{name}</strong> below to confirm.": "在下方输入 <strong>{name}</strong> 进行确认。",
   "Enter <strong>{pool}</strong> below to confirm": "在下方输入 <strong>{pool}</strong> 进行确认",
   "Enter <strong>{zvolName}</strong> below to confirm.": "输入存储池名 <strong>{zvolName}</strong> 以确认。",
   "Enter a Name (optional)": "输入名称（可选）",

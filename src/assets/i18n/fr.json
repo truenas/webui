@@ -1722,7 +1722,6 @@
   "Ensure Display Device": "Assurez-vous que le périphérique d'affichage",
   "Ensure valid entries exist in  <b>Directory Services > Kerberos Realms</b> and  <b>Directory Services > Kerberos Keytabs</b> and the system  can communicate with the Kerberos Domain Controller before  enabling this option.": "Assurez-vous que des entrées valides existent dans les <b>Services d'annuaire >Kerberos Realms</b> et les <b>Services d'annuaire > Kerberos Keytabs</b> et que le système peut communiquer avec le contrôleur de domaine Kerberos avant d'activer cette option.",
   "Enter": "Entrer",
-  "Enter <strong>{name}</strong> below to confirm.": "Entrez <strong>{name}</strong> ci-dessous pour confirmer.",
   "Enter <strong>{pool}</strong> below to confirm": "Entrez <strong>{pool}</strong> ci-dessous pour confirmer",
   "Enter <strong>{zvolName}</strong> below to confirm.": "Entrez <strong>{zvolName}</strong> ci-dessous pour confirmer.",
   "Enter a Name (optional)": "Entrez un nom (facultatif)",

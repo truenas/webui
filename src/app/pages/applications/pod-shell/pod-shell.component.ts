@@ -11,7 +11,6 @@ import {
 import helptext from 'app/helptext/shell/shell';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-select/pod-select-dialog.component';
 import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dialog.enum';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
@@ -28,8 +27,6 @@ export class PodShellComponent implements TerminalConfiguration {
   protected command: string;
   protected containerName: string;
   protected podDetails: Record<string, string[]>;
-
-  choosePod: DialogFormConfiguration;
 
   constructor(
     private ws: WebSocketService,
