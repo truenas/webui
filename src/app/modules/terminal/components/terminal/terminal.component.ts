@@ -14,6 +14,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
+import { Utf8ToUtf32 } from 'app/modules/terminal/components/terminal/decoder';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -46,7 +47,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     tabStopWidth: 8,
     cols: 80,
     rows: 20,
-    logLevel: 'debug',
     fontSize: this.fontSize,
     fontFamily: this.defaultFontName,
     allowTransparency: true,
@@ -122,6 +122,37 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.shellService.connected) {
       this.shellService.socket.close();
     }
+  }
+
+  private sendBinary(data: string): void {
+    const buffer = new Uint8Array(data.length);
+    for (let i = 0; i < data.length; ++i) {
+      buffer[i] = data.charCodeAt(i) & 255;
+    }
+
+    this.shellService.socket.send(buffer);
+  }
+
+  onTest0(): void {
+    this.sendBinary('clear\necho "If you can read this, then test 0 worked"\n');
+  }
+
+  onTest1(): void {
+    this.xterm.writeln('If you can read this, then test 1 worked');
+  }
+
+  onTest2(): void {
+    // eslint-disable-next-line max-len
+    this.xterm.writeln(new Uint8Array([73, 102, 32, 121, 111, 117, 32, 99, 97, 110, 32, 114, 101, 97, 100, 32, 116, 104, 105, 115, 44, 32, 116, 104, 101, 110, 32, 116, 101, 115, 116, 32, 50, 32, 119, 111, 114, 107, 101, 100]));
+  }
+
+  onTest3(): void {
+    const linux = new Uint8Array([76, 105, 110, 117, 120]);
+    const decoder = new Utf8ToUtf32();
+    const result = new Uint32Array({ length: linux.length * 4 });
+    const n = decoder.decode(linux, result);
+    // eslint-disable-next-line no-console
+    console.log('Test 3 (see console)', n, result);
   }
 
   onResize(): void {

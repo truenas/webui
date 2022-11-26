@@ -10,6 +10,26 @@
       ></ix-toolbar-slider>
 
       <button
+        mat-button
+        (click)="onTest0()"
+      >Test 0</button>
+
+      <button
+        mat-button
+        (click)="onTest1()"
+      >Test 1</button>
+
+      <button
+        mat-button
+        (click)="onTest2()"
+      >Test 2</button>
+
+      <button
+        mat-button
+        (click)="onTest3()"
+      >Test 3</button>
+
+      <button
         *ngIf="conf.customReconnectAction"
         mat-button
         (click)="conf.customReconnectAction()"

@@ -30,6 +30,11 @@
               "src/assets/fonts/Roboto",
               "src/assets/customicons"
             ],
+            "sourceMap": {
+              "scripts": true,
+              "styles": true,
+              "vendor": true
+            },
             "stylePreprocessorOptions": {
               "includePaths": [
                 "src/assets/styles/scss-imports"
@@ -50,7 +55,6 @@
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
-            "sourceMap": true,
             "optimization": false,
             "namedChunks": true
           },
