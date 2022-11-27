@@ -499,7 +499,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
 
   openShell(name: string): void {
     this.mdDialog.open(PodSelectDialogComponent, {
-      width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
       data: {
@@ -513,7 +512,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
 
   openLogs(name: string): void {
     this.mdDialog.open(PodSelectDialogComponent, {
-      width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
       data: {
@@ -528,11 +526,12 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   shellDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    this.router.navigate(new Array('/apps/1/shell/').concat([appName, formValue.pods, formValue.command]));
+    this.router.navigate(['/apps/1/shell/', appName, formValue.pods, formValue.command]);
   }
 
   logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    this.router.navigate(new Array('/apps/1/logs/').concat([appName, formValue.pods, formValue.containers, formValue.tail_lines.toString()]));
+    const tailLines = formValue.tail_lines.toString();
+    this.router.navigate(['/apps/1/logs/', appName, formValue.pods, formValue.containers, tailLines]);
   }
 
   showChartEvents(name: string): void {

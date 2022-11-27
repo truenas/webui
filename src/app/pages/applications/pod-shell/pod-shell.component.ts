@@ -75,7 +75,6 @@ export class PodShellComponent implements TerminalConfiguration {
 
   customReconnectAction(): void {
     this.mdDialog.open(PodSelectDialogComponent, {
-      width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
       data: {

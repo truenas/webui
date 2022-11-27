@@ -16,7 +16,7 @@ describe('PodSelectDialogComponent', () => {
   let spectator: Spectator<PodSelectDialogComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let mockCustomSubmit: jest.Mock<any, any>;
+  let mockCustomSubmit: jest.Mock;
   const createComponent = createComponentFactory({
     component: PodSelectDialogComponent,
     imports: [

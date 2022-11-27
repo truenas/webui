@@ -16,7 +16,7 @@ import {
 } from 'app/pages/applications/dialogs/pod-select-logs/pod-select-logs-dialog.component';
 
 describe('PodSelectLogsDialogComponent', () => {
-  let mockCustomSubmit: jest.Mock<any, any>;
+  let mockCustomSubmit: jest.Mock;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let spectator: Spectator<PodSelectLogsDialogComponent>;
@@ -87,7 +87,7 @@ describe('PodSelectLogsDialogComponent', () => {
     });
   });
 
-  it('function customSubmit should be calls when Choose is pressed', async () => {
+  it('customSubmit function should be called when Choose is pressed', async () => {
     await form.fillForm({ Pods: 'pod2' });
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();

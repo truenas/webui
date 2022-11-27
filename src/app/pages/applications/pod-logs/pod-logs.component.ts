@@ -124,7 +124,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showChooseLogsDialog(isDownload: boolean): void {
     this.mdDialog.open(PodSelectLogsDialogComponent, {
-      width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
       data: {

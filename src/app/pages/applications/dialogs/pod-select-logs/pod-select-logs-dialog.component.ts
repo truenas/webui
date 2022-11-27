@@ -1,4 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -13,6 +15,7 @@ export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
 @UntilDestroy()
 @Component({
   templateUrl: './pod-select-logs-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PodSelectLogsDialogComponent implements OnInit {
   title: string;
@@ -43,6 +46,7 @@ export class PodSelectLogsDialogComponent implements OnInit {
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private appService: ApplicationsService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.title = data.title;
     this.selectedApp = data.appName;
@@ -61,7 +65,7 @@ export class PodSelectLogsDialogComponent implements OnInit {
   fillForm(): void {
     const appOptions = this.apps.map((app) => ({ label: app, value: app }));
     this.apps$ = of(appOptions);
-    const app = appOptions.find((el) => el.value === this.selectedApp);
+    const app = appOptions.find((option) => option.value === this.selectedApp);
     this.form.controls.apps.setValue(app.value);
 
     this.loadPodLogs(this.selectedApp);
@@ -83,6 +87,7 @@ export class PodSelectLogsDialogComponent implements OnInit {
         this.containers$ = of(null);
         this.form.controls.containers.setValue(null);
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -103,10 +108,12 @@ export class PodSelectLogsDialogComponent implements OnInit {
             this.hasPool = false;
           }
           this.loader.close();
+          this.cdr.markForCheck();
         },
         error: () => {
           this.hasPool = false;
           this.loader.close();
+          this.cdr.markForCheck();
         },
       });
   }
