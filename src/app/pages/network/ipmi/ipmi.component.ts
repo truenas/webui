@@ -254,6 +254,7 @@ export class IPMIComponent {
   }
 
   customSubmit(payload) {
+    payload.vlan = payload.vlan ? parseInt(payload.vlan) : null;
     let call = this.ws.call('ipmi.update', [this.selectedValue, payload]);
     if (this.remoteController) {
       call = this.ws.call('failover.call_remote', ['ipmi.update', [this.selectedValue, payload]]);
