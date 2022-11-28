@@ -2,7 +2,6 @@ import { Direction, Directionality } from '@angular/cdk/bidi';
 import { DataSource } from '@angular/cdk/collections';
 import { CdkTree, TreeControl } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
@@ -13,28 +12,13 @@ import {
   OnInit,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation,
 } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 
-@Component({
-  selector: 'ix-tree',
-  exportAs: 'ixTree',
-  template: '<ng-container ixTreeNodeOutlet></ng-container>',
-  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
-  host: {
-    class: 'ix-tree',
-    role: 'tree',
-  },
-  styleUrls: ['./ix-tree.component.scss'],
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
-  // See note on CdkTree for explanation on why this uses the default change detection strategy.
-  changeDetection: ChangeDetectionStrategy.Default,
-  providers: [{ provide: CdkTree, useExisting: IxTreeComponent }],
-})
-export class IxTreeComponent<T> extends CdkTree<T> implements OnInit, OnDestroy {
+@Component({ template: '' })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class IxTree<T> extends CdkTree<T> implements OnInit, OnDestroy {
   dir: Direction = 'ltr';
   _dataSourceChanged = new Subject<void>();
   // Outlets within the tree's template where the dataNodes will be inserted.

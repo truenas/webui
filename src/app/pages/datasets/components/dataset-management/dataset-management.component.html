@@ -65,7 +65,6 @@
             [ixDataSource]="flatDataSource"
             [ixTreeControl]="flatTreeControl"
             [ixItemSize]="48"
-            [trackBy]="trackById"
           >
             <ix-tree-node
               *ixTreeNodeDef="let dataset; dataSource: flatDataSource"
@@ -75,10 +74,12 @@
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
             >
-              <ix-dataset-node
+
+              <span ixTreeNodePadding>{{ dataset.id }}</span>
+              <!-- <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
-              ></ix-dataset-node>
+              ></ix-dataset-node> -->
               <ix-icon
                 name="mdi-chevron-right"
                 class="mobile-actions"
@@ -104,10 +105,11 @@
                   [name]="flatTreeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
                 ></ix-icon>
               </button>
-              <ix-dataset-node
+              <span ixTreeNodePadding>{{ dataset.id }}</span>
+              <!-- <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
-              ></ix-dataset-node>
+              ></ix-dataset-node> -->
               <ix-icon
                 name="mdi-chevron-right"
                 class="mobile-actions"

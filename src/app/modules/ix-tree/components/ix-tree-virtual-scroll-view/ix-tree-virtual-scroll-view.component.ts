@@ -13,7 +13,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { IxTreeComponent } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
+import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
 
@@ -28,17 +28,17 @@ export const defaultSize = 48;
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: IxTreeComponent, useExisting: IxTreeVirtualScrollViewComponent },
+    { provide: IxTree, useExisting: IxTreeVirtualScrollViewComponent },
     { provide: CdkTree, useExisting: IxTreeVirtualScrollViewComponent },
   ],
 })
-export class IxTreeVirtualScrollViewComponent<T> extends IxTreeComponent<T> implements OnChanges {
+export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements OnChanges {
   @ViewChild(IxTreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: IxTreeNodeOutletDirective<T>;
   @ViewChild(CdkVirtualScrollViewport, { static: true }) readonly virtualScrollViewport!: CdkVirtualScrollViewport;
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
   @Input() ixItemSize = defaultSize;
-  @Input() ixMinBufferPx = defaultSize * 5;
-  @Input() ixMaxBufferPx = defaultSize * 10;
+  @Input() ixMinBufferPx = defaultSize * 4;
+  @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
   nodes: IxTreeVirtualNodeData<T>[] = [];
   innerTrackBy: TrackByFunction<IxTreeVirtualNodeData<T>> = (index: number) => index;

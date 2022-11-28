@@ -40,7 +40,7 @@
           <div>{{ 'Capacity' | translate }}</div>
           <div>{{ 'Errors' | translate }}</div>
         </div>
-        <ix-tree
+        <ix-tree-view
           class="disk-tree"
           [ixDataSource]="dataSource"
           [ixTreeControl]="treeControl"
@@ -136,7 +136,7 @@
               ixTreeNodeOutlet
             ></ng-container>
           </ix-nested-tree-node>
-        </ix-tree>
+        </ix-tree-view>
       </div>
     </div>
   </div>

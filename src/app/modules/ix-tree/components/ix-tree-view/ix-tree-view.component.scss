@@ -1,4 +1,4 @@
-.ix-tree {
+ix-tree-view {
   background: var(--bg2);
   color: var(--fg2);
   display: flex;
@@ -8,7 +8,7 @@
   min-width: fit-content;
 }
 
-.ix-tree-node,
-.ix-nested-tree-node {
+ix-tree-node,
+ix-nested-tree-node {
   color: var(--fg2);
 }
