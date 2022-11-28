@@ -19,6 +19,14 @@
   <meta name="msapplication-config" content="assets/favicons/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
   <style>
+    :root {
+      --bg1: #1e1e1e;
+    }
+
+    html {
+      background: var(--bg1);
+    }
+
     @keyframes loading {
       50% {
         opacity: 0;
@@ -26,7 +34,7 @@
     }
   </style>
 </head>
-<body class="ix-dark" style="--bg1: #1e1e1e; background-color: var(--bg1)">
+<body class="ix-dark">
   <ix-root>
     <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
       <img

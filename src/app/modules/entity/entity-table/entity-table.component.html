@@ -379,6 +379,7 @@
                 ix-auto-type="checkbox"
                 id="checkbox__{{ getRowIdentifier(element) }}"
                 ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
+                [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
                 (change)="checkboxChanged(element)"
                 (click)="$event.stopPropagation()"
@@ -394,7 +395,7 @@
           </ng-container>
 
           <ng-container
-            *ngIf="['path', 'paths'].includes(column) && isInteractive(column)"
+            *ngIf="['path', 'paths', 'path_local'].includes(column) && isInteractive(column)"
             matColumnDef="{{ column }}"
           >
             <th *matHeaderCellDef mat-header-cell>

@@ -6,7 +6,7 @@ import { forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -44,12 +44,12 @@ export class AlertEffects {
     ofType(adminUiInitialized),
     switchMap(() => {
       return this.ws.subscribe('alert.list').pipe(
-        filter((event) => !(event.msg === ApiEventMessage.Changed && event.cleared)),
+        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
         map((event) => {
           switch (event.msg) {
-            case ApiEventMessage.Added:
+            case IncomingApiMessageType.Added:
               return alertAdded({ alert: event.fields });
-            case ApiEventMessage.Changed:
+            case IncomingApiMessageType.Changed:
               return alertChanged({ alert: event.fields });
           }
         }),
@@ -61,7 +61,7 @@ export class AlertEffects {
     ofType(adminUiInitialized),
     switchMap(() => {
       return this.ws.sub('alert.list').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
         map((event) => alertRemoved({ id: event.id })),
       );
     }),

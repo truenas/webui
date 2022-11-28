@@ -238,7 +238,7 @@ import {
   TrueCommandConnectionState, TrueCommandUpdateResponse,
   UpdateTrueCommand,
 } from 'app/interfaces/true-command-config.interface';
-import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
@@ -432,6 +432,9 @@ export type ApiDirectory = {
   'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
+
+  // Cluster
+  'cluster.utils.is_clustered': { params: void; response: boolean };
 
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
@@ -890,7 +893,7 @@ export type ApiDirectory = {
   'tunable.tunable_type_choices': { params: void; response: Choices };
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
   'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
-  'tunable.create': { params: [TunableUpdate]; response: Tunable };
+  'tunable.create': { params: [TunableCreate]; response: Tunable };
   'tunable.delete': { params: [id: number]; response: true };
 
   // TFTP
