@@ -970,8 +970,8 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.csrList.forEach((item) => {
         if (item.id === data.csrlist) {
           data.privatekey = item.privatekey;
-          data.passphrase = (item as any).passphrase;
-          data.passphrase2 = (item as any).passphrase2;
+          data.passphrase = item.passphrase;
+          data.passphrase2 = item.passphrase2;
         }
       });
     }

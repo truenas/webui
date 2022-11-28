@@ -3,7 +3,7 @@ import {
   Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit, Inject,
 } from '@angular/core';
 import {
-  UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormControl, AbstractControl,
+  UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, FormControl,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -127,7 +127,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loginToken();
     }
 
-    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((hasRootPassword) => {
+    this.ws.call('user.has_local_administrator_set_up').pipe(untilDestroyed(this)).subscribe((hasRootPassword) => {
       this.hasRootPassword = hasRootPassword;
     });
 
@@ -141,9 +141,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.setPasswordFormGroup = this.fb.group({
-      password: new UntypedFormControl('', [Validators.required]),
-      password2: new UntypedFormControl('', [Validators.required, matchOtherValidator('password')]),
-      instanceId: new UntypedFormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
+      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+      instanceId: new FormControl('', [Validators.required]),
     });
 
     this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactorAuth) => {

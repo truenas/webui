@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, Validators,
+} from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -72,7 +74,7 @@ export class ChartFormComponent implements OnDestroy {
     this.config = chart.config;
     this.config.release_name = chart.id;
 
-    this.form.addControl('release_name', new UntypedFormControl(this.title, [Validators.required]));
+    this.form.addControl('release_name', new FormControl(this.title, [Validators.required]));
 
     this.dynamicSection.push({
       name: 'Application name',
@@ -106,8 +108,8 @@ export class ChartFormComponent implements OnDestroy {
       }
     });
 
-    this.form.addControl('version', new UntypedFormControl(versionKeys[0], [Validators.required]));
-    this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
+    this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
+    this.form.addControl('release_name', new FormControl('', [Validators.required]));
     this.form.controls['release_name'].setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
@@ -137,6 +139,7 @@ export class ChartFormComponent implements OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
+    this.form.patchValue({ release_name: this.catalogApp.name });
   }
 
   buildDynamicForm(schema: ChartSchema['schema']): void {

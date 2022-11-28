@@ -95,7 +95,7 @@ export class ImportPoolComponent implements OnInit {
       next: () => {
         dialogRef.close(true);
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
         this.modalService.refreshTable();
       },
       error: (error) => {

@@ -1180,8 +1180,10 @@ export class DatasetFormComponent implements FormConfiguration {
                   this.entityForm.setDisabled(field, true, true);
                 });
                 this.entityForm.setDisabled('encryption', true, true);
+                encryptionControl.setValue(false);
               }
               if (!inheritEncryption) {
+                encryptionControl.setValue(true);
                 this.entityForm.setDisabled('encryption_type', false, false);
                 this.entityForm.setDisabled('algorithm', false, false);
                 if (this.parentHasPassphrase) { // keep it hidden if it passphrase

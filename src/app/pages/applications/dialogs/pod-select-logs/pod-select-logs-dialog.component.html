@@ -3,6 +3,12 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onPodSelect()">
   <div *ngIf="hasPool" mat-dialog-content>
     <ix-select
+      formControlName="apps"
+      [label]="'Apps' | translate"
+      [required]="true"
+      [options]="apps$"
+    ></ix-select>
+    <ix-select
       formControlName="pods"
       [label]="'Pods' | translate"
       [required]="true"
@@ -15,12 +21,6 @@
       [options]="containers$"
     ></ix-select>
     <ix-input
-      *ngIf="dialogType === podSelectDialogType.Shell"
-      formControlName="command"
-      [label]="'Commands' | translate"
-    ></ix-input>
-    <ix-input
-      *ngIf="dialogType === podSelectDialogType.Logs"
       formControlName="tail_lines"
       type="number"
       [label]="'Tail Lines' | translate"

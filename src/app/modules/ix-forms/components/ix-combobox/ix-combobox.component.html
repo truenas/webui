@@ -11,7 +11,7 @@
       #ixInput
       matInput
       [value]="selectedOption?.label || textContent"
-      [placeholder]="placeholder"
+      [placeholder]="allowCustomValue ? ('Search or enter value' | translate) : ('Search' | translate)"
       [disabled]="isDisabled"
       [matAutocomplete]="auto"
       (input)="onChanged(ixInput.value)"
