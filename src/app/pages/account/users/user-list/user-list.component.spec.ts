@@ -126,17 +126,18 @@ describe('UserListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
+  it('should have empty message when loaded and datasource is empty', () => {
     store$.overrideSelector(selectUsers, []);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
 
-    expect(text).toEqual([['No Users']]);
+    const emptyTitle = spectator.query('.empty-title');
+
+    expect(emptyTitle.textContent).toBe('No Users');
   });
 
-  it('should have error message when can not retrieve response', async () => {
+  it('should have error message when can not retrieve response', () => {
     store$.overrideSelector(selectUserState, {
       error: 'Users could not be loaded',
     } as UsersState);
@@ -145,10 +146,11 @@ describe('UserListComponent', () => {
       expect(snapshots).toEqual([]);
     });
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
 
-    expect(text).toEqual([['Can not retrieve response']]);
+    const emptyTitle = spectator.query('.empty-title');
+
+    expect(emptyTitle.textContent).toBe('Can not retrieve response');
   });
 
   it('should expand only one row on click', async () => {

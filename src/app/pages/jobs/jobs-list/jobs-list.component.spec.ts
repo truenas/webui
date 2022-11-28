@@ -113,14 +113,13 @@ describe('JobsListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
+  it('should have empty message when loaded and datasource is empty', () => {
     store$.overrideSelector(selectJobs, []);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No tasks']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No tasks');
   });
 
   it('should expand only one row on click', async () => {

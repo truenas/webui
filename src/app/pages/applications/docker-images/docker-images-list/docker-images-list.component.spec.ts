@@ -87,21 +87,20 @@ describe('DockerImagesListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should show empty message when loaded and datasource is empty', async () => {
+  it('should show empty message when loaded and datasource is empty', () => {
     store.setState({ isLoading: false, entities: [], error: null } as DockerImagesState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No Docker Images are available']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No Docker Images are available');
   });
 
-  it('should show error message when can not retrieve response', async () => {
+  it('should show error message when can not retrieve response', () => {
     store.setState({ error: 'Something went wrong', isLoading: false, entities: [] } as DockerImagesState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
 
-    expect(text).toEqual([['Docker Images could not be loaded']]);
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('Docker Images could not be loaded');
   });
 });

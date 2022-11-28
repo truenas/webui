@@ -89,24 +89,22 @@ describe('BootEnvironmentListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should show empty message when loaded and datasource is empty', async () => {
+  it('should show empty message when loaded and datasource is empty', () => {
     spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No Boot Environments are available']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No Boot Environments are available');
   });
 
-  it('should show error message when can not retrieve response', async () => {
+  it('should show error message when can not retrieve response', () => {
     spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
     spectator.component.isError$.next(true);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Boot Environments could not be loaded']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('Boot Environments could not be loaded');
   });
 });

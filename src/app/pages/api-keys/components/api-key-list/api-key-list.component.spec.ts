@@ -81,22 +81,20 @@ describe('ApiKeyListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
+  it('should have empty message when loaded and datasource is empty', () => {
     store.setState({ isLoading: false, entities: [], error: null } as ApiKeysState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No API Keys']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No API Keys');
   });
 
-  it('should have error message when can not retrieve response', async () => {
+  it('should have error message when can not retrieve response', () => {
     store.setState({ error: 'Can not retrieve response', isLoading: false, entities: [] } as ApiKeysState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Can not retrieve response']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('Can not retrieve response');
   });
 
   it('should open edit dialog form when Edit item is pressed', async () => {

@@ -96,17 +96,17 @@ describe('GroupListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
+  it('should have empty message when loaded and datasource is empty', () => {
     store$.overrideSelector(selectGroups, []);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
 
-    expect(text).toEqual([['No Groups']]);
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No Groups');
   });
 
-  it('should have error message when can not retrieve response', async () => {
+  it('should have error message when can not retrieve response', () => {
     store$.overrideSelector(selectGroupState, {
       error: 'Groups could not be loaded',
     } as GroupsState);
@@ -115,10 +115,10 @@ describe('GroupListComponent', () => {
       expect(snapshots).toEqual([]);
     });
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
 
-    expect(text).toEqual([['Can not retrieve response']]);
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('Can not retrieve response');
   });
 
   it('should expand only one row on click', async () => {

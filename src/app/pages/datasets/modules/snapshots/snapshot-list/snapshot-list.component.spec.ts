@@ -101,7 +101,7 @@ describe('SnapshotListComponent', () => {
     jest.restoreAllMocks();
   });
 
-  it('should have error message when can not retrieve response', async () => {
+  it('should have error message when can not retrieve response', () => {
     store$.overrideSelector(selectSnapshotState, {
       error: 'Snapshots could not be loaded',
     } as SnapshotsState);
@@ -110,17 +110,15 @@ describe('SnapshotListComponent', () => {
       expect(snapshots).toEqual([]);
     });
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Snapshots could not be loaded']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('Snapshots could not be loaded');
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No snapshots are available.']]);
+  it('should have empty message when loaded and datasource is empty', () => {
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No snapshots are available.');
   });
 
   it('should show table rows', async () => {

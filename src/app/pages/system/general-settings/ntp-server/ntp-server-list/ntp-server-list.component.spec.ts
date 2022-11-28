@@ -112,28 +112,26 @@ describe('NtpServerListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should show empty message when loaded and datasource is empty', async () => {
+  it('should show empty message when loaded and datasource is empty', () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = false;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
-    const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No NTP Servers have been added yet']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('No NTP Servers have been added yet');
   });
 
-  it('should show error message when can not retrieve response', async () => {
+  it('should show error message when can not retrieve response', () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = true;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
-    const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Can not retrieve response']]);
+    spectator.detectChanges();
+    const emptyTitle = spectator.query('.empty-title');
+    expect(emptyTitle.textContent).toBe('Can not retrieve response');
   });
 
   it('should open add ntp server form', async () => {
