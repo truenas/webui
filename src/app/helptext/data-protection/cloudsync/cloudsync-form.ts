@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
@@ -10,27 +9,22 @@ export default {
 
   description_placeholder: T('Description'),
   description_tooltip: T('Enter a description of the Cloud Sync Task.'),
-  description_validation: [Validators.required],
 
   direction_placeholder: T('Direction'),
   direction_tooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i> \
  receives data from cloud storage. Changing the direction resets the \
  <i>Transfer Mode</i> to COPY.'),
-  direction_validation: [Validators.required],
 
   credentials_placeholder: T('Credential'),
   credentials_tooltip: T('Select the cloud storage provider credentials from the\
  list of available Cloud Credentials.'),
   credentials_add_option: T('+ Add a backup credential'),
-  credentials_validation: [Validators.required],
 
   bucket_placeholder: T('Bucket'),
   bucket_tooltip: T('Select the pre-defined S3 bucket to use.'),
-  bucket_validation: [Validators.required],
 
   bucket_input_placeholder: T('Bucket'),
   bucket_input_tooltip: T('Enter the pre-defined S3 bucket to use.'),
-  bucket_input_validation: [Validators.required],
 
   folder_placeholder: T('Folder'),
   folder_tooltip: T('Enter or select the cloud storage location to use for this task.'),
@@ -64,11 +58,8 @@ export default {
  for Push syncs, or the destination to be written for\
  Pull syncs. Be cautious about the destination of Pull\
  jobs to avoid overwriting existing files.'),
-  path_validation: [Validators.required],
 
   transfer_mode_placeholder: T('Transfer Mode'),
-
-  transfer_mode_validation: [Validators.required],
 
   transfer_mode_warning_sync: T('<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match those on the\
  source. If a file does not exist on the source, it is also <i><u>deleted</u></i>\

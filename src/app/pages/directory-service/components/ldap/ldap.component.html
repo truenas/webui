@@ -11,47 +11,47 @@
           <ix-chips
             formControlName="hostname"
             [label]="'Hostname' | translate"
-            [tooltip]="helptext.ldap_hostname_tooltip"
+            [tooltip]="helptext.ldap_hostname_tooltip | translate"
             [required]="isEnabled$ | async"
           ></ix-chips>
 
           <ix-input
             formControlName="basedn"
             [label]="'Base DN' | translate"
-            [tooltip]="helptext.ldap_basedn_tooltip"
+            [tooltip]="helptext.ldap_basedn_tooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="binddn"
             [label]="'Bind DN' | translate"
-            [tooltip]="helptext.ldap_binddn_tooltip"
+            [tooltip]="helptext.ldap_binddn_tooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="bindpw"
             type="password"
             [label]="'Bind Password' | translate"
-            [tooltip]="helptext.ldap_bindpw_tooltip"
+            [tooltip]="helptext.ldap_bindpw_tooltip | translate"
           ></ix-input>
 
           <ix-checkbox
             formControlName="enable"
             [label]="'Enable' | translate"
-            [tooltip]="helptext.ldap_enable_tooltip"
+            [tooltip]="helptext.ldap_enable_tooltip | translate"
           ></ix-checkbox>
 
           <ng-container *ngIf="isAdvancedMode">
             <ix-checkbox
               formControlName="anonbind"
               [label]="'Allow Anonymous Binding' | translate"
-              [tooltip]="helptext.ldap_anonbind_tooltip"
+              [tooltip]="helptext.ldap_anonbind_tooltip | translate"
             ></ix-checkbox>
 
             <ix-select
               formControlName="ssl"
               [required]="true"
               [label]="'Encryption Mode' | translate"
-              [tooltip]="helptext.ldap_ssl_tooltip"
+              [tooltip]="helptext.ldap_ssl_tooltip | translate"
               [options]="sslOptions$"
             ></ix-select>
 
@@ -64,20 +64,20 @@
               <ix-select
                 formControlName="certificate"
                 [label]="'Certificate' | translate"
-                [tooltip]="helptext.ldap_certificate_tooltip"
+                [tooltip]="helptext.ldap_certificate_tooltip | translate"
                 [options]="certificates$"
               ></ix-select>
             </div>
             <ix-checkbox
               formControlName="validate_certificates"
               [label]="'Validate Certificates' | translate"
-              [tooltip]="helptext.ldap_validate_certificates_tooltip"
+              [tooltip]="helptext.ldap_validate_certificates_tooltip | translate"
             ></ix-checkbox>
 
             <ix-checkbox
               formControlName="disable_freenas_cache"
               [label]="'Disable LDAP User/Group Cache' | translate"
-              [tooltip]="helptext.ldap_disable_fn_cache_tooltip"
+              [tooltip]="helptext.ldap_disable_fn_cache_tooltip | translate"
             ></ix-checkbox>
           </ng-container>
         </ix-fieldset>
@@ -85,14 +85,14 @@
           <ix-select
             formControlName="kerberos_realm"
             [label]="'Kerberos Realm' | translate"
-            [tooltip]="helptext.ldap_kerberos_realm_tooltip"
+            [tooltip]="helptext.ldap_kerberos_realm_tooltip | translate"
             [options]="kerberosRealms$"
           ></ix-select>
 
           <ix-select
             formControlName="kerberos_principal"
             [label]="'Kerberos Principal' | translate"
-            [tooltip]="helptext.ldap_kerberos_principal_tooltip"
+            [tooltip]="helptext.ldap_kerberos_principal_tooltip | translate"
             [options]="kerberosPrincipals$"
           ></ix-select>
 
@@ -100,32 +100,32 @@
             formControlName="timeout"
             type="number"
             [label]="'LDAP Timeout' | translate"
-            [tooltip]="helptext.ldap_timeout_tooltip"
+            [tooltip]="helptext.ldap_timeout_tooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="dns_timeout"
             type="number"
             [label]="'DNS Timeout' | translate"
-            [tooltip]="helptext.ldap_dns_timeout_tooltip"
+            [tooltip]="helptext.ldap_dns_timeout_tooltip | translate"
           ></ix-input>
 
           <ix-checkbox
             formControlName="has_samba_schema"
             [label]="'Samba Schema (DEPRECATED - see help text)' | translate"
-            [tooltip]="helptext.ldap_has_samba_schema_tooltip"
+            [tooltip]="helptext.ldap_has_samba_schema_tooltip | translate"
           ></ix-checkbox>
 
           <ix-textarea
             formControlName="auxiliary_parameters"
             [label]="'Auxiliary Parameters' | translate"
-            [tooltip]="helptext.ldap_auxiliary_parameters_tooltip"
+            [tooltip]="helptext.ldap_auxiliary_parameters_tooltip | translate"
           ></ix-textarea>
 
           <ix-select
             formControlName="schema"
             [label]="'Schema' | translate"
-            [tooltip]="helptext.ldap_schema_tooltip"
+            [tooltip]="helptext.ldap_schema_tooltip | translate"
             [options]="schemaOptions$"
           ></ix-select>
         </ix-fieldset>

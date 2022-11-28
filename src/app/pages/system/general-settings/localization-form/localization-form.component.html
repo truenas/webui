@@ -8,33 +8,33 @@
       <ix-fieldset [title]="fieldsetTitle">
         <ix-combobox
           [formControlName]="language.fcName"
-          [label]="language.label"
-          [tooltip]="language.tooltip"
+          [label]="language.label | translate"
+          [tooltip]="language.tooltip | translate"
           [provider]="language.provider"
           [required]="true"
         ></ix-combobox>
         <ix-select
-          [label]="kbdMap.label"
-          [tooltip]="kbdMap.tooltip"
+          [label]="kbdMap.label | translate"
+          [tooltip]="kbdMap.tooltip | translate"
           [options]="kbdMap.options"
           [formControlName]="kbdMap.fcName"
         ></ix-select>
         <ix-combobox
           [formControlName]="timezone.fcName"
-          [label]="timezone.label"
-          [tooltip]="timezone.tooltip"
+          [label]="timezone.label | translate"
+          [tooltip]="timezone.tooltip | translate"
           [provider]="timezone.provider"
           [required]="true"
         ></ix-combobox>
         <ix-select
-          [label]="dateFormat.label"
-          [tooltip]="dateFormat.tooltip"
+          [label]="dateFormat.label | translate"
+          [tooltip]="dateFormat.tooltip | translate"
           [options]="dateFormat.options"
           [formControlName]="dateFormat.fcName"
         ></ix-select>
         <ix-select
-          [label]="timeFormat.label"
-          [tooltip]="timeFormat.tooltip"
+          [label]="timeFormat.label | translate"
+          [tooltip]="timeFormat.tooltip | translate"
           [options]="timeFormat.options"
           [formControlName]="timeFormat.fcName"
         ></ix-select>
