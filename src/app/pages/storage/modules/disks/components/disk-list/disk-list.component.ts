@@ -9,7 +9,7 @@ import {
   forkJoin, lastValueFrom, of, Subject,
 } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';

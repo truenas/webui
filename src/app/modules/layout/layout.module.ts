@@ -21,7 +21,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/layout/components/auth-layout/auth-layout.component';
-import { BreadcrumbComponent } from 'app/modules/layout/components/breadcrumb/breadcrumb.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
@@ -66,7 +65,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
   ],
   declarations: [
     ChangePasswordDialogComponent,
-    BreadcrumbComponent,
     NavigationComponent,
     SecondaryMenuComponent,
     PowerMenuComponent,

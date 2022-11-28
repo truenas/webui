@@ -128,7 +128,7 @@ export class DatasetAclEditorComponent implements OnInit {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((wasStripped) => {
-        if (wasStripped) {
+        if (!wasStripped) {
           return;
         }
 

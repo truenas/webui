@@ -39,7 +39,10 @@ export class BreadcrumbComponent implements OnInit {
     breadcrumbs = _.uniqBy(breadcrumbs, 'title');
     breadcrumbs = _.uniqBy(breadcrumbs, 'url');
 
-    breadcrumbs = breadcrumbs.filter((routePart) => routePart.breadcrumb);
+    breadcrumbs = breadcrumbs.filter((routePart) => {
+      routePart.ngUrl = routePart.ngUrl.filter((item) => item !== '');
+      return routePart.breadcrumb;
+    });
 
     return breadcrumbs;
   }
