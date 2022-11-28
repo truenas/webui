@@ -158,8 +158,8 @@ describe('SshConnectionFormComponent', () => {
 
       'TrueNAS URL': 'https://truenas.com',
       Username: 'john',
-      'Admin username': 'admin',
-      Password: '12345678',
+      'Admin Username': 'admin',
+      'Admin Password': '12345678',
       'One-Time Password (if necessary)': '1234',
       'Private Key': 'key2',
 
@@ -215,7 +215,7 @@ describe('SshConnectionFormComponent', () => {
     await form.fillForm({
       Name: 'Test',
       'TrueNAS URL': 'https://truenas.com',
-      Password: '123456',
+      'Admin Password': '123456',
       'Private Key': 'Generate New',
     });
 
