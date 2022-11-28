@@ -5,7 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
+import { PreloadAllModules, RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
@@ -74,7 +74,10 @@ import { WebSocketService } from './services/ws.service';
       },
       useDefaultLang: false,
     }),
-    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+    RouterModule.forRoot(rootRouterConfig, {
+      useHash: false,
+      preloadingStrategy: PreloadAllModules,
+    }),
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
     CoreComponents,
