@@ -39,7 +39,7 @@
       ix-table
       matSort
       matSortDisableClear="true"
-      [ix-table-empty]="!dataSource.filteredData.length"
+      ix-table-empty
       [emptyConfig]="isLoading ? loadingConfig : emptyOrErrorConfig"
       [dataSource]="dataSource"
       [matSortActive]="defaultSort.active"

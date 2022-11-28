@@ -11,7 +11,7 @@
     <table
       ix-table
       class="mat-elevation-z0"
-      [ix-table-empty]="!dataSource.filteredData.length"
+      ix-table-empty
       [emptyConfig]="emptyService.defaultEmptyConfig(emptyType, 'NTP Servers')"
       [dataSource]="dataSource"
     >
