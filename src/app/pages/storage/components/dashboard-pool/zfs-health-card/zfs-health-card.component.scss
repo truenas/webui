@@ -18,24 +18,6 @@
   }
 }
 
-.pool-icon {
-  &.icon-online {
-    color: var(--green);
-  }
-
-  &.icon-warning {
-    color: var(--orange);
-  }
-
-  &.icon-faulted {
-    color: var(--blue);
-  }
-
-  &.icon-error {
-    color: var(--red);
-  }
-}
-
 .scan-in-progress {
   @include fade-in();
   margin-top: 25px;

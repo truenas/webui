@@ -20,6 +20,12 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'acl/edit',
+        component: DatasetAclEditorComponent,
+        data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
+        pathMatch: 'full',
+      },
+      {
         path: ':datasetId',
         children: [
           {
@@ -32,11 +38,6 @@ export const routes: Routes = [
             path: 'permissions/edit',
             component: DatasetTrivialPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' },
-          },
-          {
-            path: 'permissions/acl',
-            component: DatasetAclEditorComponent,
-            data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
           },
           {
             path: 'unlock',
@@ -65,6 +66,7 @@ export const routes: Routes = [
         component: DatasetQuotasGrouplistComponent,
         data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
       },
+
     ],
   },
 ];

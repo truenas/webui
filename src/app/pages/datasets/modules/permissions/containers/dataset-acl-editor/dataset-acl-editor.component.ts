@@ -31,7 +31,6 @@ import { DialogService, UserService } from 'app/services';
 })
 export class DatasetAclEditorComponent implements OnInit {
   datasetPath: string;
-  fullDatasetPath: string;
   isLoading: boolean;
   acl: Acl;
   selectedAceIndex: number;
@@ -70,12 +69,11 @@ export class DatasetAclEditorComponent implements OnInit {
     private matDialog: MatDialog,
     private userService: UserService,
     private formBuilder: FormBuilder,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.datasetPath = this.route.snapshot.params['datasetId'];
-    this.fullDatasetPath = `/mnt/${this.datasetPath}`;
-    this.store.loadAcl(this.fullDatasetPath);
+    this.datasetPath = this.route.snapshot.queryParamMap.get('path');
+    this.store.loadAcl(this.datasetPath);
 
     this.store.state$
       .pipe(untilDestroyed(this))
@@ -122,7 +120,7 @@ export class DatasetAclEditorComponent implements OnInit {
   onStripAclPressed(): void {
     this.matDialog.open(StripAclModalComponent, {
       data: {
-        path: this.fullDatasetPath,
+        path: this.datasetPath,
       } as StripAclModalData,
     })
       .afterClosed()
@@ -151,7 +149,7 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: false,
-        datasetPath: this.fullDatasetPath,
+        datasetPath: this.datasetPath,
       } as SelectPresetModalConfig,
     });
   }
@@ -177,8 +175,12 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: true,
-        datasetPath: this.fullDatasetPath,
+        datasetPath: this.datasetPath,
       } as SelectPresetModalConfig,
     });
+  }
+
+  getDatasetPath(): string {
+    return this.datasetPath.replace(/(^\/mnt\/)/gi, '');
   }
 }

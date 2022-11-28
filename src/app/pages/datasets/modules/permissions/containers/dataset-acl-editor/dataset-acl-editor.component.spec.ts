@@ -107,8 +107,8 @@ describe('DatasetAclEditorComponent', () => {
         groupQueryDsCache: () => of(),
       }),
     ],
-    params: {
-      datasetId: 'pool/dataset',
+    queryParams: {
+      path: '/mnt/pool/dataset',
     },
   });
 
