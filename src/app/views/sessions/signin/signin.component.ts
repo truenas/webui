@@ -55,7 +55,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     otp: '',
   };
   setPasswordFormGroup: UntypedFormGroup;
-  hasRootPassword = false;
+  hasRootPassword = true;
   hasInstanceId = false;
   failoverStatus: FailoverStatus;
   failoverStatuses = {
