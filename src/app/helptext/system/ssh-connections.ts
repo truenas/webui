@@ -22,7 +22,7 @@ export default {
  connection.'),
 
   username_placeholder: T('Username'),
-  username_tooltip: T('Username for logging in to the remote system.'),
+  username_tooltip: T('Username on the remote system which will be used to login <b>via SSH</b>.'),
 
   private_key_placeholder: T('Private Key'),
   private_key_tooltip: T('Choose a saved SSH Keypair or select \
@@ -54,7 +54,7 @@ export default {
   password_placeholder: T('Password'),
   password_tooltip: T('User account password for logging in to the remote system.'),
 
-  admin_username_tooltip: T('Admin username for logging in to the remote system.'),
+  admin_username_tooltip: T('Username on the remote system to log in <b>via Web UI</b> to setup connection.'),
 
   otp_placeholder: T('One-Time Password (if necessary)'),
   otp_tooltip: T('One-Time Password if two factor authentication is enabled.'),
