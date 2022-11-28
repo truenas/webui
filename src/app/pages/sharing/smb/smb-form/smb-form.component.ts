@@ -542,7 +542,7 @@ export class SMBFormComponent {
     /*  If name is empty, auto-populate after path selection */
     entityForm.formGroup.controls['path'].valueChanges.subscribe((path) => {
       const nameControl = entityForm.formGroup.controls['name'];
-      if (path && !nameControl.value) {
+      if (path && !nameControl.dirty) {
         const v = path.split('/').pop();
         nameControl.setValue(v);
       }
