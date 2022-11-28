@@ -2,37 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Topology' | translate }}
-
-      <ng-container [ngSwitch]="topologyState.health">
-        <mat-icon
-          *ngSwitchCase="topologyHealthLevel.Safe"
-          class="pool-icon icon-online"
-          [matTooltip]="'Everything is fine' | translate"
-        >
-          check_circle
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="topologyHealthLevel.Warn"
-          class="pool-icon icon-warning"
-          [matTooltip]="'Warning' | translate"
-        >
-          error
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="topologyHealthLevel.Error"
-          class="pool-icon icon-error"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-        <mat-icon
-          *ngSwitchDefault
-          class="pool-icon icon-error"
-          [matTooltip]="'Cancel' | translate"
-        >
-          cancel
-        </mat-icon>
-      </ng-container>
+      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
     <button
