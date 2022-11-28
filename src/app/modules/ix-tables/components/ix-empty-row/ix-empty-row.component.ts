@@ -14,7 +14,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 export class IxEmptyRowComponent implements AfterViewInit {
   @Input() conf: EmptyConfig = {
     title: this.translate.instant('No records'),
-    message: this.translate.instant('No records to show. Create new records to show here.'),
+    message: this.translate.instant('No records to show. Create new records to view here.'),
     large: true,
     type: EmptyType.NoPageData,
   };
