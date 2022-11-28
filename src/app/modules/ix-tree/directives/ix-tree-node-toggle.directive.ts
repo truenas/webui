@@ -9,6 +9,8 @@ import { Directive } from '@angular/core';
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'ix-tree-node-toggle',
+    '[class.isExpanded]': 'isExpanded',
+    '[class.isCollapsed]': '!isExpanded',
   },
 })
 export class IxTreeNodeToggleDirective<T, K = T> extends CdkTreeNodeToggle<T, K> {
@@ -30,5 +32,9 @@ export class IxTreeNodeToggleDirective<T, K = T> extends CdkTreeNodeToggle<T, K>
     }
 
     event.stopPropagation();
+  }
+
+  get isExpanded(): boolean {
+    return this._treeNode.isExpanded;
   }
 }

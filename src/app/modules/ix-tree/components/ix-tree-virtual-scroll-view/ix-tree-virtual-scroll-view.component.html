@@ -1,0 +1,12 @@
+<div class="ix-tree-list">
+  <cdk-virtual-scroll-viewport
+    [itemSize]="ixItemSize"
+    [minBufferPx]="ixMinBufferPx"
+    [maxBufferPx]="ixMaxBufferPx"
+  >
+    <ng-container *cdkVirtualFor="let item of nodes; let i = index; trackBy: innerTrackBy">
+      <ng-template ixTreeVirtualScrollNodeOutlet [data]="item"></ng-template>
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+</div>
+<ng-container ixTreeNodeOutlet></ng-container>

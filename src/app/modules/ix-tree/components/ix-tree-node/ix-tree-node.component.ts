@@ -1,11 +1,12 @@
-import { CdkTree, CdkTreeNode } from '@angular/cdk/tree';
+import { DataSource } from '@angular/cdk/collections';
+import { CdkTreeNode } from '@angular/cdk/tree';
 import {
   Attribute, Component, ElementRef, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import {
   mixinTabIndex, mixinDisabled, CanDisable, HasTabIndex,
 } from '@angular/material/core';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { IxTreeComponent } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 
 const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
 
@@ -24,11 +25,11 @@ const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
 })
 export class IxTreeNodeComponent<T, K = T> extends ixTreeNodeBase<T, K>
   implements CanDisable, HasTabIndex, OnInit, OnDestroy {
-  @Input() ixTreeNodeDefDataSource: IxNestedTreeDataSource<T>;
+  @Input() ixTreeNodeDefDataSource: DataSource<T>;
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    tree: CdkTree<T, K>,
+    tree: IxTreeComponent<T>,
     @Attribute('tabindex') tabIndex: string,
   ) {
     super(elementRef, tree);

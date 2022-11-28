@@ -3,7 +3,7 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { NestedTreeControl } from '@angular/cdk/tree';
+import { NestedTreeControl, FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -16,7 +16,9 @@ import {
   Inject,
   TemplateRef,
 } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import {
+  ActivatedRoute, NavigationStart, Router,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,16 +38,25 @@ import {
   EmptyConfig,
   EmptyType,
 } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { IxFlatTreeDataSource } from 'app/modules/ix-tree/ix-flat-tree-datasource';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
+import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
+
+export interface FlatNode {
+  id: string;
+  name: string;
+  level: number;
+  expandable: boolean;
+}
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -104,6 +115,27 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     return this.isHaEnabled !== undefined && !this.isHaEnabled;
   }
 
+  // Flat Tree with Virtual Scroll
+  readonly trackById = (_: number, dataNode: FlatNode): string => dataNode.id;
+  readonly hasChild = (_: number, dataNode: FlatNode): boolean => dataNode.expandable;
+  private transformer = (dataset: DatasetDetails, level: number): FlatNode => ({
+    expandable: Boolean(dataset?.children.length),
+    name: getDatasetLabel(dataset),
+    id: dataset.id,
+    level,
+  });
+  flatTreeControl = new FlatTreeControl<FlatNode>(
+    (dataNode) => dataNode.level,
+    (dataNode) => dataNode.expandable,
+  );
+  treeFlattener = new IxTreeFlattener(
+    this.transformer,
+    (dataNode) => dataNode.level,
+    (dataNode) => dataNode.expandable,
+    (dataNode) => dataNode.children,
+  );
+  flatDataSource = new IxFlatTreeDataSource(this.flatTreeControl, this.treeFlattener);
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -132,9 +164,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
     this.loadHaEnabled();
+    this.loadSystemDatasetConfig();
     this.setupTree();
     this.listenForRouteChanges();
-    this.loadSystemDatasetConfig();
     this.listenForLoading();
     this.listenForDatasetScrolling();
   }
@@ -144,6 +176,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       next: (datasets) => {
         this.sortDatasetsByName(datasets);
         this.createDataSource(datasets);
+        this.createFlatDataSource(datasets);
         this.treeControl.dataNodes = datasets;
         this.cdr.markForCheck();
 
@@ -155,7 +188,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         if (routeDatasetId) {
           this.datasetStore.selectDatasetById(routeDatasetId);
         } else {
-          const firstNode = this.treeControl.dataNodes[0];
+          const firstNode = this.flatTreeControl.dataNodes[0];
           this.router.navigate(['/datasets', firstNode.id]);
         }
       },
@@ -193,6 +226,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
       return flattenTreeWithFilter(datasetsToFilter, (dataset: DatasetDetails) => {
+        return dataset.name.toLowerCase().includes(query.toLowerCase());
+      });
+    };
+  }
+
+  private createFlatDataSource(datasets: DatasetDetails[]): void {
+    this.flatDataSource.setData(datasets);
+    this.flatDataSource.filterPredicate = (datasetsToFilter, query = '') => {
+      return datasetsToFilter.filter((dataset) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
@@ -249,8 +291,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.dialogService.errorReportMiddleware(error);
   };
 
-  isSystemDataset(dataset: DatasetDetails): boolean {
-    return isRootDataset(dataset) && this.systemDataset === dataset.name;
+  isSystemDataset(dataset: FlatNode): boolean {
+    return dataset.level === 0 && this.systemDataset === dataset.name;
   }
 
   updateScroll(type: ScrollType): void {
@@ -265,6 +307,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   onSearch(query: string): void {
     this.dataSource.filter(query);
+    this.flatDataSource.filter(query);
   }
 
   ngAfterViewInit(): void {
@@ -295,7 +338,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate(['/storage', 'create']);
   }
 
-  viewDetails(dataset: DatasetDetails): void {
+  viewDetails(dataset: FlatNode): void {
     this.router.navigate(['/datasets', dataset.id]);
 
     if (this.isMobileView) {
@@ -325,5 +368,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   onImportData(): void {
     this.slideIn.open(ImportDataComponent);
+  }
+
+  getDatasetDetails(dataNode: FlatNode): DatasetDetails {
+    return this.flatDataSource.getData().find((item) => item.id === dataNode.id) || null;
   }
 }
