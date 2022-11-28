@@ -56,7 +56,7 @@ export class IxTreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
 
   private updateExistingContext(ctx: unknown): void {
     for (const propName of Object.keys(ctx)) {
-      (this._viewRef.context as any)[propName] = (this.data.context as unknown as any)[propName];
+      (this._viewRef.context as any)[propName] = (this.data.context as any)[propName];
     }
   }
 }

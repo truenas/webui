@@ -116,7 +116,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   // Flat Tree with Virtual Scroll
-  readonly trackById = (_: number, dataNode: FlatNode): string => dataNode.id;
   readonly hasChild = (_: number, dataNode: FlatNode): boolean => dataNode.expandable;
   private transformer = (dataset: DatasetDetails, level: number): FlatNode => ({
     expandable: Boolean(dataset?.children.length),
@@ -238,6 +237,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
+    this.flatTreeControl.expandAll();
   }
 
   private listenForRouteChanges(): void {
@@ -321,7 +321,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           this.closeMobileDetails();
           this.isMobileView = false;
         }
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       });
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
@@ -355,7 +355,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         if (isHaLicensed) {
           this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
             this.isHaEnabled = haStatus.hasHa;
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
           });
         } else {
           this.isHaEnabled = false;
@@ -371,6 +371,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getDatasetDetails(dataNode: FlatNode): DatasetDetails {
-    return this.flatDataSource.getData().find((item) => item.id === dataNode.id) || null;
+    return this.dataSource.data.find((item) => item.id === dataNode.id) || null;
   }
 }

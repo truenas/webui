@@ -6,13 +6,13 @@ import {
 import {
   mixinTabIndex, mixinDisabled, CanDisable, HasTabIndex,
 } from '@angular/material/core';
-import { IxTreeComponent } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
+import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 
 const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
 
 @Component({
   selector: 'ix-tree-node',
-  templateUrl: './ix-tree-node.component.html',
+  template: '<ng-content></ng-content>',
   styleUrls: ['./ix-tree-node.component.scss'],
   exportAs: 'ixTreeNode',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
@@ -29,7 +29,7 @@ export class IxTreeNodeComponent<T, K = T> extends ixTreeNodeBase<T, K>
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    tree: IxTreeComponent<T>,
+    tree: IxTree<T>,
     @Attribute('tabindex') tabIndex: string,
   ) {
     super(elementRef, tree);
