@@ -1,0 +1,14 @@
+ix-tree-virtual-scroll-view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 420px;
+
+  .ix-tree-list {
+    flex: 1;
+  }
+
+  cdk-virtual-scroll-viewport {
+    height: 100%;
+  }
+}
