@@ -491,10 +491,10 @@
               <mat-list-item
                 role="listitem"
                 [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource); getDiskDetails('name', path[currentSlideIndex].dataSource.disk)"
+                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource); getDiskDetails('name', asDisk(path[currentSlideIndex].dataSource).disk)"
               >
                 <strong>
-                  {{ trimMultipath(path[2].dataSource.disk).fullName }}
+                  {{ trimMultipath(asDisk(path[2].dataSource).disk).fullName }}
                   :
                 </strong>
                 {{ path[2].dataSource.status | translate }}
@@ -521,7 +521,7 @@
             <mat-list>
               <mat-list-item role="listitem">
                 <strong> {{ 'Name' | translate }}:</strong>
-                {{ path[currentSlideIndex].dataSource.disk }}
+                {{ asDisk(path[currentSlideIndex].dataSource).disk }}
               </mat-list-item>
 
               <mat-list-item role="listitem">

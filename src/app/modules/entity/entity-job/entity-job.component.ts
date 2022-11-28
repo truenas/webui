@@ -149,7 +149,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + this.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
           }
         },
