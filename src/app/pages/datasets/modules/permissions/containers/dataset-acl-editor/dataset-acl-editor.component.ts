@@ -179,4 +179,8 @@ export class DatasetAclEditorComponent implements OnInit {
       } as SelectPresetModalConfig,
     });
   }
+
+  getDatasetPath(): string {
+    return this.datasetPath.replace(/(^\/mnt\/)/gi, '');
+  }
 }
