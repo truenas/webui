@@ -150,13 +150,16 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         matTooltip: vol_helptext.acl_edit_msg,
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
-          const datasetId = rowName;
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({
             next: (isLocked) => {
               if (isLocked) {
                 this.lockedPathDialog(row.path);
               } else {
-                this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
+                this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                  queryParams: {
+                    path: row.path_local,
+                  },
+                });
               }
             },
             error: (err) => {

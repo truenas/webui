@@ -98,7 +98,11 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   onSetAclPressed(): void {
-    this.router.navigate(['/datasets', this.datasetId, 'permissions', 'acl']);
+    this.router.navigate(['/datasets', 'acl', 'edit'], {
+      queryParams: {
+        path: '/mnt/' + this.datasetId,
+      },
+    });
   }
 
   onSubmit(): void {
