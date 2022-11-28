@@ -28,7 +28,7 @@
           <mat-spinner
             *ngIf="serviceLoadingMap.get(service.service); else slider"
             matTooltipPosition="right"
-            [diameter]="40"
+            [diameter]="30"
             [matTooltip]="
               (service.state === ServiceStatus.Running
                 ? 'Stopping'

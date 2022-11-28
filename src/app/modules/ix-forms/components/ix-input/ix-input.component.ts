@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor,
-  UntypedFormControl,
   NgControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -41,8 +40,6 @@ export class IxInputComponent implements ControlValueAccessor {
    * and input 'type' is a number, the input will stay empty on the form */
   @Input() format: (value: string | number) => string;
   @Input() parse: (value: string | number) => string | number;
-
-  formControl = new UntypedFormControl(this).value as UntypedFormControl;
 
   private _value: string | number = '';
   formatted: string | number = '';

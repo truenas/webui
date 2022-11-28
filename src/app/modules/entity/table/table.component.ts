@@ -16,6 +16,7 @@ export interface AppTableAction<Row = unknown> {
   icon: string;
   matTooltip?: string;
   onChanging?: boolean;
+  disabled?: boolean;
   onClick: (row: Row) => void;
 }
 
@@ -33,6 +34,7 @@ export interface AppTableColumn {
   prop2?: string;
   checkbox?: boolean;
   slideToggle?: boolean;
+  disabled?: boolean;
   onChange?(data: unknown): void;
   width?: string;
   state?: {
@@ -89,6 +91,9 @@ export interface AppTableConfig<P = unknown> {
   tableFooterActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];
   confirmDeleteDialog?: AppTableConfirmDeleteDialog;
+  addActionDisabled?: boolean;
+  editActionDisabled?: boolean;
+  deleteActionDisabled?: boolean;
 
   add?(): void; // add action function
   afterGetData?(data: unknown): void;
@@ -266,7 +271,7 @@ implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   editRow(row: Row): void {
-    if (this._tableConf.edit) {
+    if (this._tableConf.edit && !this._tableConf.editActionDisabled) {
       this._tableConf.edit(row);
     }
   }

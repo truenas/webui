@@ -2,11 +2,12 @@ import {
   Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { of, Subscription } from 'rxjs';
+import { catchError, filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -16,6 +17,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -32,8 +34,7 @@ import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-sel
 import { PodSelectDialogType } from 'app/pages/applications/enums/pod-select-dialog.enum';
 import { ChartFormComponent } from 'app/pages/applications/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
-import { RedirectService } from 'app/services';
-import { DialogService, WebSocketService } from 'app/services/index';
+import { RedirectService, DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
@@ -48,12 +49,12 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   @Output() updateTab: EventEmitter<ApplicationUserEvent> = new EventEmitter();
+  @Output() switchTab = new EventEmitter<string>();
 
   filteredChartItems: ChartRelease[] = [];
   filterString = '';
 
   chartItems = new Map<string, ChartRelease>();
-  @Output() switchTab = new EventEmitter<string>();
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
@@ -84,6 +85,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     private redirect: RedirectService,
     private layoutService: LayoutService,
     private snackbar: SnackbarService,
+    private router: Router,
   ) { }
 
   get isSomethingSelected(): boolean {
@@ -218,7 +220,14 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
             this.chartItems.clear();
             this.showLoadStatus(EmptyType.Errors);
           } else {
-            this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
+            this.appService.getChartReleases().pipe(
+              catchError(() => of(this.showLoadStatus(EmptyType.Errors))),
+              untilDestroyed(this),
+            ).subscribe((charts) => {
+              if (!charts) {
+                return this.showLoadStatus(EmptyType.Errors);
+              }
+
               this.chartItems.clear();
 
               charts.forEach((chart) => {
@@ -272,8 +281,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   portalName(name = 'web_portal'): string {
-    const humanName = new EntityUtils().snakeToHuman(name);
-    return humanName;
+    return new EntityUtils().snakeToHuman(name);
   }
 
   portalLink(chart: ChartRelease, name = 'web_portal'): void {
@@ -391,8 +399,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
             const imageNames = Object.keys(imagesNotTobeDeleted);
             if (imageNames.length > 0) {
               const imageMessage = imageNames.reduce((prev: string, current: string) => {
-                const imageNameIndexed = current;
-                return prev + '<li>' + imageNameIndexed + '</li>';
+                return prev + '<li>' + current + '</li>';
               }, '<ul>') + '</ul>';
               this.dialogService.confirm({
                 title: this.translate.instant('Images not to be deleted'),
@@ -493,20 +500,39 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
 
   openShell(name: string): void {
     this.mdDialog.open(PodSelectDialogComponent, {
-      width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
-      data: { appName: name, type: PodSelectDialogType.Shell },
+      data: {
+        appName: name,
+        title: 'Choose pod',
+        type: PodSelectDialogType.Shell,
+        customSubmit: (values: PodDialogFormValue, appName: string) => this.shellDialogSubmit(values, appName),
+      },
     });
   }
 
   openLogs(name: string): void {
     this.mdDialog.open(PodSelectDialogComponent, {
-      width: '50vw',
       minWidth: '650px',
       maxWidth: '850px',
-      data: { appName: name, type: PodSelectDialogType.Logs },
+      data: {
+        appName: name,
+        title: 'Choose pod',
+        type: PodSelectDialogType.Logs,
+        customSubmit: (formValueDialog: PodDialogFormValue, appName: string) => {
+          this.logDialogSubmit(formValueDialog, appName);
+        },
+      },
     });
+  }
+
+  shellDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
+    this.router.navigate(['/apps/1/shell/', appName, formValue.pods, formValue.command]);
+  }
+
+  logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
+    const tailLines = formValue.tail_lines.toString();
+    this.router.navigate(['/apps/1/logs/', appName, formValue.pods, formValue.containers, tailLines]);
   }
 
   showChartEvents(name: string): void {

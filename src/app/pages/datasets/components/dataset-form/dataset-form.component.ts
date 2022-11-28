@@ -1180,8 +1180,10 @@ export class DatasetFormComponent implements FormConfiguration {
                   this.entityForm.setDisabled(field, true, true);
                 });
                 this.entityForm.setDisabled('encryption', true, true);
+                encryptionControl.setValue(false);
               }
               if (!inheritEncryption) {
+                encryptionControl.setValue(true);
                 this.entityForm.setDisabled('encryption_type', false, false);
                 this.entityForm.setDisabled('algorithm', false, false);
                 if (this.parentHasPassphrase) { // keep it hidden if it passphrase
@@ -1677,7 +1679,11 @@ export class DatasetFormComponent implements FormConfiguration {
                 if (confirmed) {
                   this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe({
                     next: () => {
-                      this.router.navigate(['/', 'datasets', restPostResp.name, 'permissions', 'acl']);
+                      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                        queryParams: {
+                          path: '/mnt/' + restPostResp.id,
+                        },
+                      });
                     },
                     error: this.handleError,
                   });

@@ -45,7 +45,6 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { DynamicFieldDirective } from 'app/modules/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from 'app/modules/entity/entity-form/components/form-array/form-array.component';
@@ -84,7 +83,6 @@ import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/ent
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { WizardSummaryComponent } from 'app/modules/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
@@ -160,7 +158,6 @@ import { AppLoaderService } from 'app/services';
     EntityRowDetailsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
-    EntityTemplateDirective,
     DynamicFieldDirective,
     EntityFormComponent,
     FormButtonComponent,
@@ -191,7 +188,6 @@ import { AppLoaderService } from 'app/services';
     EntityJobComponent,
     EntityWizardComponent,
     FormParagraphComponent,
-    EntityDialogComponent,
     ToolbarMultimenuComponent,
     ToolbarSliderComponent,
     FormStatusComponent,
@@ -202,7 +198,6 @@ import { AppLoaderService } from 'app/services';
     WizardSummaryComponent,
   ],
   exports: [
-    EntityTemplateDirective,
     EntityFormComponent,
     EntityTableComponent,
     EntityRowDetailsComponent,
@@ -210,7 +205,6 @@ import { AppLoaderService } from 'app/services';
     EntityTableActionsComponent,
     DynamicFieldDirective,
     EntityWizardComponent,
-    EntityDialogComponent,
     ToolbarSliderComponent,
     ToolbarMultimenuComponent,
     TableComponent,

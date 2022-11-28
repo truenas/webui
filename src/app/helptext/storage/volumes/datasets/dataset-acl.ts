@@ -132,7 +132,7 @@ are submitted only when this box is set.'),
   },
 
   save_dialog: {
-    title: T('Updating Dataset ACL'),
+    title: T('Updating ACL'),
     message: T('This process continues in the background after closing this dialog.'),
     abort_message: T('Clicking Continue allows TrueNAS to finish the update in the background while \
  Abort stops the process and reverts the dataset ACL to the previously active ACL.'),
