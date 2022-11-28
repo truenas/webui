@@ -52,6 +52,7 @@ export class SshConnectionFormComponent {
     )],
 
     username: ['root', Validators.required],
+    admin_username: ['root'],
     password: ['', this.validatorsService.validateOnCondition(
       (control) => control.parent && !this.isManualSetup,
       Validators.required,
@@ -229,6 +230,7 @@ export class SshConnectionFormComponent {
     } else {
       params.semi_automatic_setup = {
         url: values.url,
+        admin_username: values.admin_username,
         password: values.password,
         username: values.username,
         otp_token: values.otp_token,
