@@ -38,7 +38,7 @@ export class RoutePartsService {
       const routeUrl: string = child.snapshot.url.map((segment) => segment.path).join('/');
       if (routeUrl) {
         url += `/${routeUrl}`;
-        ngUrl.push(routeUrl);
+        ngUrl.push(url);
       }
 
       const { title, breadcrumb, disabled } = child.snapshot.data;

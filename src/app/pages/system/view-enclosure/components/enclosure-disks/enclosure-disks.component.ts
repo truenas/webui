@@ -26,7 +26,6 @@ import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.inter
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
@@ -85,7 +84,6 @@ export interface DiskFailure {
 })
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
   showCaption = true;
-  protected pendingDialog: EntityDialogComponent;
   protected aborted = false;
 
   mqAlias: string;
@@ -232,12 +230,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       switch (evt.name) {
         case 'CanvasExtract':
           this.createExtractedEnclosure((evt as CanvasExtractEvent).data);
-          break;
-        case 'EnclosureLabelChanged':
-          if (this.pendingDialog !== undefined) {
-            this.pendingDialog.loader.close();
-            this.pendingDialog.dialogRef.close();
-          }
           break;
         case 'PoolsChanged':
           this.setDisksEnabledState();

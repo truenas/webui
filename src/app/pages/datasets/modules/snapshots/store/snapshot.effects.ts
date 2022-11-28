@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
@@ -48,12 +48,12 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
-        filter((event) => !(event.msg === ApiEventMessage.Changed && event.cleared)),
+        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
         map((event) => {
           switch (event.msg) {
-            case ApiEventMessage.Added:
+            case IncomingApiMessageType.Added:
               return snapshotAdded({ snapshot: event.fields });
-            case ApiEventMessage.Changed:
+            case IncomingApiMessageType.Changed:
               return snapshotChanged({ snapshot: event.fields });
           }
         }),
@@ -65,7 +65,7 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.ws.sub('zfs.snapshot.query').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
+        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
         map((event) => snapshotRemoved({ id: event.id })),
       );
     }),

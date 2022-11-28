@@ -4,7 +4,7 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -64,7 +64,7 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
 
   readonly subscribeToUpdates = this.effect(() => {
     return this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.fields.method === 'container.image.pull' && event.fields.state === JobState.Success && !(event.msg === ApiEventMessage.Changed && event.cleared)),
+      filter((event) => event.fields.method === 'container.image.pull' && event.fields.state === JobState.Success && !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
       switchMap(() => this.ws.call('container.image.query')),
       map((entities) => this.patchState({ entities })),
     );
@@ -72,7 +72,7 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
 
   readonly subscribeToRemoval = this.effect(() => {
     return this.ws.sub('container.image.query').pipe(
-      filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
+      filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
       map((event) => this.entityDeleted(event.id)),
     );
   });

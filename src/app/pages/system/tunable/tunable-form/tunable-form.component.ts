@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
-import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { Tunable } from 'app/interfaces/tunable.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -51,28 +51,14 @@ export class TunableFormComponent {
 
   setTunableForEdit(tunable: Tunable): void {
     this.editingTunable = tunable;
-    if (!this.isNew) {
-      this.form.patchValue(this.editingTunable);
-    }
+    this.form.patchValue(this.editingTunable);
+    this.form.controls.var.disable();
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-      type: TunableType.Sysctl,
-    } as TunableUpdate;
-
     this.isFormLoading = true;
-    let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.ws.call('tunable.create', [values]);
-    } else {
-      request$ = this.ws.call('tunable.update', [
-        this.editingTunable.id,
-        values,
-      ]);
-    }
 
+    const request$ = this.isNew ? this.createTunable() : this.updateTunable();
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
@@ -85,5 +71,24 @@ export class TunableFormComponent {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private createTunable(): Observable<Tunable> {
+    return this.ws.call('tunable.create', [{
+      ...this.form.getRawValue(),
+      type: TunableType.Sysctl,
+    }]);
+  }
+
+  private updateTunable(): Observable<Tunable> {
+    const values = this.form.value;
+    return this.ws.call('tunable.update', [
+      this.editingTunable.id,
+      {
+        comment: values.comment,
+        enabled: values.enabled,
+        value: values.value,
+      },
+    ]);
   }
 }

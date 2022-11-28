@@ -1,9 +1,12 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 
 describe('TopologyCardComponent', () => {
@@ -14,6 +17,9 @@ describe('TopologyCardComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+    ],
+    declarations: [
+      MockComponent(PoolCardIconComponent),
     ],
   });
 
@@ -100,18 +106,23 @@ describe('TopologyCardComponent', () => {
   });
 
   it('rendering status icon', () => {
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
 
     spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool is not healthy');
 
     spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains OFFLINE Data VDEVs');
 
     spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains REMOVED Data VDEVs');
 
     spectator.setInput('poolState', { healthy: true, status: 'FAULTED' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains FAULTED Data VDEVs');
   });
 });

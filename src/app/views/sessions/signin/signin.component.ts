@@ -127,7 +127,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loginToken();
     }
 
-    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((hasRootPassword) => {
+    this.ws.call('user.has_local_administrator_set_up').pipe(untilDestroyed(this)).subscribe((hasRootPassword) => {
       this.hasRootPassword = hasRootPassword;
     });
 

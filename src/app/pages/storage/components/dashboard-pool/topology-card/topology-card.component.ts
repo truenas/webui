@@ -5,24 +5,18 @@ import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 interface TopologyState {
-  health: TopologyHealthLevel;
   data: string;
   metadata: string;
   log: string;
   cache: string;
   spare: string;
   dedup: string;
-}
-
-export enum TopologyHealthLevel {
-  Warn = 'warn',
-  Error = 'error',
-  Safe = 'safe',
 }
 
 const notAssignedDev = 'VDEVs not assigned';
@@ -37,10 +31,8 @@ const mixedDev = 'Mixed Capacity VDEVs';
 export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[];
-  readonly topologyHealthLevel = TopologyHealthLevel;
 
   topologyState: TopologyState = {
-    health: TopologyHealthLevel.Safe,
     data: notAssignedDev,
     metadata: notAssignedDev,
     log: notAssignedDev,
@@ -53,31 +45,37 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     return mixedDev;
   }
 
+  get iconType(): PoolCardIconType {
+    if (this.isStatusError(this.poolState)) {
+      return PoolCardIconType.Error;
+    }
+    if (this.isStatusWarning(this.poolState) || !this.poolState.healthy) {
+      return PoolCardIconType.Warn;
+    }
+    return PoolCardIconType.Safe;
+  }
+
+  get iconTooltip(): string {
+    if (this.isStatusError(this.poolState) || this.isStatusWarning(this.poolState)) {
+      return this.translate.instant('Pool contains {status} Data VDEVs', { status: this.poolState.status });
+    }
+    if (!this.poolState.healthy) {
+      return this.translate.instant('Pool is not healthy');
+    }
+    return this.translate.instant('Everything is fine');
+  }
+
   constructor(
     public router: Router,
     public translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
-    this.checkVolumeHealth(this.poolState);
     this.parseTopology(this.poolState.topology);
   }
 
   ngOnChanges(): void {
-    this.ngOnInit();
-  }
-
-  private checkVolumeHealth(poolState: Pool): void {
-    const isError = this.isStatusError(poolState);
-    const isWarning = this.isStatusWarning(poolState);
-
-    if (isError) {
-      this.topologyState.health = TopologyHealthLevel.Error;
-    } else if (isWarning || !poolState.healthy) {
-      this.topologyState.health = TopologyHealthLevel.Warn;
-    } else {
-      this.topologyState.health = TopologyHealthLevel.Safe;
-    }
+    this.parseTopology(this.poolState.topology);
   }
 
   parseTopology(topology: PoolTopology): void {

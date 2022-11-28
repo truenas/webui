@@ -27,6 +27,7 @@ export interface SmbShare {
   streams: boolean;
   timemachine: boolean;
   vuid: string;
+  path_local: string;
 }
 
 export enum SmbPresetType {
