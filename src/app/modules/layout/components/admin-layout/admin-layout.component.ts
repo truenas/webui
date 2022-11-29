@@ -145,14 +145,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$
       .pipe(untilDestroyed(this))
       .subscribe((headerContent) => {
-        const updateHeaderPortalOutlet = (): void => {
-          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-          this.cdr.detectChanges();
-        };
-
         try {
           if (headerContent) {
-            updateHeaderPortalOutlet();
+            this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+            this.cdr.detectChanges();
           } else {
             this.headerPortalOutlet = null;
           }
