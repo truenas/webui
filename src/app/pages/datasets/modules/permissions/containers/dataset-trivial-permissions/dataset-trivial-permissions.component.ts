@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -75,6 +77,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private userService: UserService,
     private matDialog: MatDialog,
     private validatorService: IxValidatorsService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   get canSetAcl(): boolean {
@@ -132,6 +135,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
   private loadPermissionsInformation(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     forkJoin([
       this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
       this.storageService.filesystemStat(this.datasetPath),
@@ -140,6 +144,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       .subscribe({
         next: ([datasets, stat]) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.aclType = datasets[0].acltype.value as AclType;
           this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
@@ -150,6 +155,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialog.errorReportMiddleware(error);
         },
       });
