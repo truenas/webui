@@ -226,8 +226,11 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      this.formGroup.controls[name][method]();
+      if (disable) {
+        this.formGroup.controls[name].disable();
+      } else {
+        this.formGroup.controls[name].enable();
+      }
     }
   }
 }
