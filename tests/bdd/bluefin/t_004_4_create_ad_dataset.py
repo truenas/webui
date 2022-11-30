@@ -100,16 +100,16 @@ def test_create_ad_dataset(driver, dataset_name, group_name):
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 15, '//h1[contains(text(),"Updating Dataset ACL")]')
+    assert wait_on_element_disappear(driver, 110, '//mat-spinner[@role="progressbar"]')
 
     assert wait_on_element(driver, 7, '//ix-dataset-node[contains(.,"tank")]/div', 'clickable')
     driver.find_element_by_xpath('//ix-dataset-node[contains(.,"tank")]/div').click()
-
     assert wait_on_element(driver, 7, '//span[text()="tank" and contains(@class,"own-name")]')
+
+    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
 
     assert wait_on_element(driver, 7, f'//ix-tree-node[contains(.,"{dataset_name}")]', 'clickable')
     driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
     assert wait_on_element(driver, 7, f'//span[text()="{dataset_name}" and contains(@class,"own-name")]')
 
-    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
     assert wait_on_element(driver, 10, f'//div[text()="Group - {group_name}"]')
