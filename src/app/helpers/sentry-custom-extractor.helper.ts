@@ -1,5 +1,19 @@
+import ErrorStackParser from 'error-stack-parser';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+
+const errorReport = (err: WebsocketError | Job): string | void => {
+  if ('trace' in err && err.trace?.formatted) {
+    return `${err.trace.class} / ${err.reason}`;
+  }
+
+  if ('state' in err && err.error && err.exception) {
+    return `${err.state} / ${err.error}`;
+  }
+};
+
 export const sentryCustomExtractor = (
-  errorCandidate: unknown,
+  errorCandidate: WebsocketError | Job | Error | any,
   defaultExtractor: (error: unknown) => unknown,
 ): unknown => {
   const defaultExtractorResults = defaultExtractor(errorCandidate);
@@ -8,14 +22,16 @@ export const sentryCustomExtractor = (
     return defaultExtractorResults;
   }
 
-  const error = errorCandidate as Error;
+  const errorReportValue = errorReport(errorCandidate as WebsocketError);
 
-  if (error.message) {
-    return error.message;
+  if (errorReportValue) {
+    return errorReportValue;
   }
 
-  if (error.name) {
-    return error.name;
+  const parsedErrorValue = ErrorStackParser.parse(errorCandidate);
+
+  if (parsedErrorValue) {
+    return parsedErrorValue;
   }
 
   // Nothing was extracted, fallback to default error message.
