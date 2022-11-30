@@ -80,29 +80,7 @@ def test_create_ad_dataset(driver, dataset_name, group_name):
     driver.find_element_by_xpath(f'//mat-option[contains(.,"{group_name}")]').click()
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(.,"Apply Group")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(.,"Apply Group")]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 15, '//h1[contains(text(),"Updating Dataset ACL")]')
-    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
-
-    assert wait_on_element(driver, 7, '//ix-dataset-node[contains(.,"tank")]/div', 'clickable')
-    driver.find_element_by_xpath('//ix-dataset-node[contains(.,"tank")]/div').click()
-
-    assert wait_on_element(driver, 7, '//span[text()="tank" and contains(@class,"own-name")]')
-
-    # click on the "{dataset_name}" 3 dots button, select Edit Permissions
-    assert wait_on_element(driver, 7, f'//ix-tree-node[contains(.,"{dataset_name}")]', 'clickable')
-    driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
-    assert wait_on_element(driver, 7, f'//span[text()="{dataset_name}" and contains(@class,"own-name")]')
-
-    # Scroll to permissions
-    element = driver.find_element_by_xpath('//h3[contains(text(),"Permissions")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-
-    # click on edit
-    assert wait_on_element(driver, 5, '//mat-card-header[contains(.,"Permissions")]//a[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card-header[contains(.,"Permissions")]//a[contains(.,"Edit")]').click()
+    time.sleep(1)
 
     assert wait_on_element(driver, 7, '//span[contains(text(),"Who")]//ancestor::ix-select//div//mat-select')
     driver.find_element_by_xpath('//span[contains(text(),"Who")]//ancestor::ix-select//div//mat-select').click()
