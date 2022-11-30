@@ -987,7 +987,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getDisabled(column: string): boolean {
-    return _.find(this.allColumns, { prop: column }).disabled;
+    return Boolean(_.find(this.allColumns, { prop: column })?.disabled);
   }
 
   isPaddedAway(index: number): boolean {
