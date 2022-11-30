@@ -11,3 +11,14 @@
 .spinner {
   margin-left: 8px;
 }
+
+input {
+  height: 34px !important;
+  top: -8px !important;
+}
+
+.search-icon-wrapper,
+.reset-icon-wrapper {
+  position: relative;
+  top: -6px;
+}
