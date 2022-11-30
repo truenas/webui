@@ -34,6 +34,7 @@
   "The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?": "",
   "This share is configured through TrueCommand": "",
   "Updating ACL": "",
+  "Upload SSH Key": "",
   "User account password for logging in to the remote system.": "",
   "Username on the remote system to log in <b>via Web UI</b> to setup connection.": "",
   "Username on the remote system which will be used to login <b>via SSH</b>.": "",
