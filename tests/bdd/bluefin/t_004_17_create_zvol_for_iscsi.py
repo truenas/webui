@@ -29,7 +29,6 @@ def test_create_zvol_for_iscsi(driver, name, zvol_1G_size):
     assert wait_on_element(driver, 10, '//input[@ix-auto="input__Zvol name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').send_keys(name)
     assert wait_on_element(driver, 10, '//input[@ix-auto="input__Size for this zvol"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_1G_size)
     assert wait_on_element(driver, 10, '//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Save")]').click()
