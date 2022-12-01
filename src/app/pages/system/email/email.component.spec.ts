@@ -215,7 +215,7 @@ describe('EmailComponent', () => {
 
       const window = spectator.inject<Window>(WINDOW);
       expect(window.open).toHaveBeenCalledWith(
-        'https://truenas.org/oauth/gmail?origin=http%3A%2F%2Ftruenas.com%2Fsystem%2Femail',
+        'https://truenas.com/oauth/gmail?origin=http%3A%2F%2Ftruenas.com%2Fsystem%2Femail',
         '_blank',
         'width=640,height=480',
       );
