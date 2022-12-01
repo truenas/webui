@@ -56,7 +56,7 @@
             <ix-input
               formControlName="remotemodule"
               [label]="'Remote Module Name' | translate"
-              [tooltip]="helptext.rsync_remotemodule_tooltip"
+              [tooltip]="helptext.rsync_remotemodule_tooltip | translate"
               [required]="true"
             ></ix-input>
           </ng-container>
@@ -83,7 +83,7 @@
                 type="number"
                 [label]="'Remote SSH Port' | translate"
                 [required]="true"
-                [tooltip]="helptext.rsync_remoteport_tooltip"
+                [tooltip]="helptext.rsync_remoteport_tooltip | translate"
               ></ix-input>
             </ng-container>
 
@@ -105,7 +105,7 @@
             <ix-checkbox
               formControlName="validate_rpath"
               [label]="'Validate Remote Path' | translate"
-              [tooltip]="helptext.rsync_validate_rpath_tooltip"
+              [tooltip]="helptext.rsync_validate_rpath_tooltip | translate"
             ></ix-checkbox>
           </ng-template>
         </ix-fieldset>
@@ -127,7 +127,7 @@
           <ix-checkbox
             formControlName="enabled"
             [label]="'Enabled' | translate"
-            [tooltip]="helptext.rsync_enabled_tooltip"
+            [tooltip]="helptext.rsync_enabled_tooltip | translate"
           ></ix-checkbox>
         </ix-fieldset>
 
@@ -135,55 +135,55 @@
           <ix-checkbox
             formControlName="times"
             [label]="'Times' | translate"
-            [tooltip]="helptext.rsync_times_tooltip"
+            [tooltip]="helptext.rsync_times_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="compress"
             [label]="'Compress' | translate"
-            [tooltip]="helptext.rsync_compress_tooltip"
+            [tooltip]="helptext.rsync_compress_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="archive"
             [label]="'Archive' | translate"
-            [tooltip]="helptext.rsync_archive_tooltip"
+            [tooltip]="helptext.rsync_archive_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="delete"
             [label]="'Delete' | translate"
-            [tooltip]="helptext.rsync_delete_tooltip"
+            [tooltip]="helptext.rsync_delete_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="quiet"
             [label]="'Quiet' | translate"
-            [tooltip]="helptext.rsync_quiet_tooltip"
+            [tooltip]="helptext.rsync_quiet_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="preserveperm"
             [label]="'Preserve Permissions' | translate"
-            [tooltip]="helptext.rsync_preserveperm_tooltip"
+            [tooltip]="helptext.rsync_preserveperm_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="preserveattr"
             [label]="'Preserve Extended Attributes' | translate"
-            [tooltip]="helptext.rsync_preserveattr_tooltip"
+            [tooltip]="helptext.rsync_preserveattr_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="delayupdates"
             [label]="'Delay Updates' | translate"
-            [tooltip]="helptext.rsync_delayupdates_tooltip"
+            [tooltip]="helptext.rsync_delayupdates_tooltip | translate"
           ></ix-checkbox>
 
           <ix-chips
             formControlName="extra"
             [label]="'Auxiliary Parameters' | translate"
-            [tooltip]="helptext.rsync_extra_tooltip"
+            [tooltip]="helptext.rsync_extra_tooltip | translate"
           ></ix-chips>
         </ix-fieldset>
       </div>

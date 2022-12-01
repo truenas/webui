@@ -52,5 +52,4 @@ export default {
     { label: 'Info', value: 6 },
     { label: 'Debug', value: 7 },
   ],
-
 };
