@@ -17,9 +17,9 @@ import {
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
@@ -39,41 +39,32 @@ export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
+  readonly EmptyType = EmptyType;
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   filterString = '';
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'uid', direction: 'asc' };
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Users'),
-    large: true,
-  };
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  errorConfig: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
+
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+  emptyOrErrorType$: Observable<EmptyType> = combineLatest([
     this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectUserState).pipe(map((state) => state.error)),
   ]).pipe(
     switchMap(([, isError]) => {
       if (isError) {
-        return of(this.errorConfig);
+        return of(EmptyType.Errors);
       }
 
-      return of(this.emptyConfig);
+      return of(EmptyType.NoPageData);
     }),
   );
   hideBuiltinUsers = true;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     private translate: TranslateService,
@@ -81,6 +72,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
@@ -101,6 +93,23 @@ export class UserListComponent implements OnInit, AfterViewInit {
       this.hideBuiltinUsers = preferences.hideBuiltinUsers;
       this.cdr.markForCheck();
     });
+  }
+
+  get emptyType$(): Observable<EmptyType> {
+    return combineLatest([
+      this.isLoading$,
+      this.emptyOrErrorType$,
+    ]).pipe(
+      switchMap(([isLoading, emptyState]) => {
+        if (isLoading) {
+          return of(EmptyType.Loading);
+        }
+        if (emptyState !== EmptyType.Errors && this.dataSource.data.length !== this.dataSource.filteredData.length) {
+          return of(EmptyType.NoSearchResults);
+        }
+        return of(emptyState);
+      }),
+    );
   }
 
   getUsers(): void {
