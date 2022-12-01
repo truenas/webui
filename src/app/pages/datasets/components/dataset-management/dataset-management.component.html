@@ -69,26 +69,27 @@
             <ix-tree-node
               *ixTreeNodeDef="let dataset; dataSource: flatDataSource"
               routerLinkActive="selected"
+              ixTreeNodePadding
+              [ixTreeNodePaddingIndent]="40"
               [ixTreeNodeDefDataSource]="flatDataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
             >
-
-              <span ixTreeNodePadding>{{ dataset.id }}</span>
+              <button mat-icon-button disabled></button>
+              <span>{{ dataset.id }}</span>
               <!-- <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
               ></ix-dataset-node> -->
-              <ix-icon
-                name="mdi-chevron-right"
-                class="mobile-actions"
-              ></ix-icon>
+              <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
 
             <ix-tree-node
               *ixTreeNodeDef="let dataset; dataSource: flatDataSource; when: hasChild"
               routerLinkActive="selected"
+              ixTreeNodePadding
+              [ixTreeNodePaddingIndent]="40"
               [ixTreeNodeDefDataSource]="flatDataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
@@ -105,15 +106,12 @@
                   [name]="flatTreeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
                 ></ix-icon>
               </button>
-              <span ixTreeNodePadding>{{ dataset.id }}</span>
+              <span>{{ dataset.id }}</span>
               <!-- <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
               ></ix-dataset-node> -->
-              <ix-icon
-                name="mdi-chevron-right"
-                class="mobile-actions"
-              ></ix-icon>
+              <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
           </ix-tree-virtual-scroll-view>
         </div>

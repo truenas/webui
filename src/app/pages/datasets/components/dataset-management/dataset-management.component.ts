@@ -133,7 +133,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     (dataNode) => dataNode.expandable,
     (dataNode) => dataNode.children,
   );
-  flatDataSource = new IxFlatTreeDataSource(this.flatTreeControl, this.treeFlattener);
+  flatDataSource: IxFlatTreeDataSource<DatasetDetails, FlatNode>;
 
   constructor(
     private ws: WebSocketService,
@@ -231,7 +231,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createFlatDataSource(datasets: DatasetDetails[]): void {
-    this.flatDataSource.setData(datasets);
+    this.flatDataSource = new IxFlatTreeDataSource(this.flatTreeControl, this.treeFlattener, datasets);
     this.flatDataSource.filterPredicate = (datasetsToFilter, query = '') => {
       return datasetsToFilter.filter((dataset) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
