@@ -10,6 +10,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -25,6 +26,9 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { loadHaStatus } from 'app/store/ha-info/ha-info.actions';
+import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -86,12 +90,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: UntypedFormBuilder,
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
-    const haStatus = this.window.sessionStorage.getItem('ha_status');
-    if (haStatus && haStatus === 'true') {
-      this.haStatus = true;
-    }
     this.sysGeneralService.getProductType$.pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -102,9 +103,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.haInterval) {
           clearInterval(this.haInterval);
         }
-        this.getHaStatus();
+        this.getFailoverStatus();
         this.haInterval = setInterval(() => {
-          this.getHaStatus();
+          this.getFailoverStatus();
         }, 6000);
       } else if (this.canLogin()) {
         this.loginToken();
@@ -211,7 +212,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return [ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType);
   }
 
-  getHaStatus(): void {
+  getFailoverStatus(): void {
     if (this.productSupportsHa && !this.checkingStatus) {
       this.checkingStatus = true;
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe({
@@ -227,41 +228,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
                 console.error(err);
               },
             });
-            this.ws.call('failover.disabled.reasons').pipe(untilDestroyed(this)).subscribe({
-              next: (reasons) => {
-                this.checkingStatus = false;
-                this.haDisabledReasons = reasons;
-                this.showReasons = false;
-                if (reasons.length === 0) {
-                  this.haStatusText = this.translate.instant('HA is enabled.');
-                  this.haStatus = true;
-                } else if (reasons.length === 1) {
-                  if (reasons[0] === FailoverDisabledReason.NoSystemReady) {
-                    this.haStatusText = this.translate.instant('HA is reconnecting.');
-                  } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
-                    this.haStatusText = this.translate.instant('HA is administratively disabled.');
-                  } else {
-                    this.haStatusText = this.reasonText[this.disabledReason(reasons[0])];
-                  }
-                  this.haStatus = false;
-                } else {
-                  this.haStatusText = this.translate.instant('HA is in a faulted state');
-                  this.showReasons = true;
-                  this.haStatus = false;
-                }
-                this.window.sessionStorage.setItem('ha_status', this.haStatus.toString());
-                if (this.canLogin()) {
-                  this.loginToken();
-                }
-              },
-              error: (err) => {
-                this.checkingStatus = false;
-                console.error(err);
-              },
-              complete: () => {
-                this.checkingStatus = false;
-              },
-            });
+
+            this.store$.dispatch(loadHaStatus());
+
+            this.listenForHaStatus();
           } else if (this.canLogin()) {
             this.loginToken();
           }
@@ -272,6 +242,34 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         },
       });
     }
+  }
+
+  listenForHaStatus(): void {
+    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ reasons }) => {
+      this.checkingStatus = false;
+      this.haDisabledReasons = reasons;
+      this.showReasons = false;
+      if (reasons.length === 0) {
+        this.haStatusText = this.translate.instant('HA is enabled.');
+        this.haStatus = true;
+      } else if (reasons.length === 1) {
+        if (reasons[0] === FailoverDisabledReason.NoSystemReady) {
+          this.haStatusText = this.translate.instant('HA is reconnecting.');
+        } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
+          this.haStatusText = this.translate.instant('HA is administratively disabled.');
+        } else {
+          this.haStatusText = this.reasonText[this.disabledReason(reasons[0])];
+        }
+        this.haStatus = false;
+      } else {
+        this.haStatusText = this.translate.instant('HA is in a faulted state');
+        this.showReasons = true;
+        this.haStatus = false;
+      }
+      if (this.canLogin()) {
+        this.loginToken();
+      }
+    });
   }
 
   get password(): AbstractControl {

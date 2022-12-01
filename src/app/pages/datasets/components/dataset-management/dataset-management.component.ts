@@ -45,7 +45,7 @@ import { DialogService, SystemGeneralService, WebSocketService } from 'app/servi
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
-import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -308,15 +308,16 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   loadHaEnabled(): void {
     if (this.systemService.isEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         if (isHaLicensed) {
           this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
             this.isHaEnabled = haStatus.hasHa;
-            this.cdr.detectChanges();
           });
         } else {
           this.isHaEnabled = false;
         }
+
+        this.cdr.detectChanges();
       });
     } else {
       this.isHaEnabled = false;

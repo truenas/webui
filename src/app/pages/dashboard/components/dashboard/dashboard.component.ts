@@ -29,6 +29,7 @@ import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
@@ -141,10 +142,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkScreenSize();
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
-      if (hasFailover) {
-        this.isHaLicensed = true;
-      }
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.isHaLicensed = isHaLicensed;
     });
     this.sysinfoReady = true;
   }
@@ -191,7 +190,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.screenType = currentScreenType;
 
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
+    if (wrapper?.style) {
+      wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
+    }
     this.optimizeWidgetContainer();
   }
 
