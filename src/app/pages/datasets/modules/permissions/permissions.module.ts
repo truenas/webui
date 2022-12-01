@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -71,6 +72,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     MatDialogModule,
     NgxSkeletonLoaderModule,
     CoreComponents,
+    MatProgressBarModule,
   ],
   declarations: [
     AclEditorListComponent,
