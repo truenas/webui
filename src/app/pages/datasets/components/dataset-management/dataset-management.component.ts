@@ -233,7 +233,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private createFlatDataSource(datasets: DatasetDetails[]): void {
     this.flatDataSource = new IxFlatTreeDataSource(this.flatTreeControl, this.treeFlattener, datasets);
     this.flatDataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      return datasetsToFilter.filter((dataset) => {
+      return flattenTreeWithFilter(datasetsToFilter, (dataset) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
