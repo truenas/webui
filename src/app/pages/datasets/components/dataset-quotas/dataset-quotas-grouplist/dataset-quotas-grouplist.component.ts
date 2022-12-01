@@ -7,8 +7,8 @@ import {
   TemplateRef,
   OnDestroy, Inject,
 } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatSort, Sort } from '@angular/material/sort';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
