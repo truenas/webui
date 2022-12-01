@@ -14,13 +14,13 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 export class IxEmptyRowComponent implements AfterViewInit {
   @Input() conf: EmptyConfig = {
     title: this.translate.instant('No records'),
-    message: this.translate.instant('No records to show. Create new records to view here.'),
+    message: this.translate.instant('There are no records to show.'),
     large: true,
     type: EmptyType.NoPageData,
   };
 
   @ViewChild('templatePortalContent') templatePortalContent: TemplateRef<unknown>;
-  templatePortal: TemplatePortal<any>;
+  templatePortal: TemplatePortal;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
