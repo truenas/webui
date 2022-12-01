@@ -44,20 +44,27 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   defaultSort: Sort = { active: 'gid', direction: 'asc' };
   expandedRow: Group;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+  hideBuiltinGroups = true;
+
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
-  emptyOrErrorType$: Observable<EmptyType> = combineLatest([
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
     this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectGroupState).pipe(map((state) => state.error)),
   ]).pipe(
-    switchMap(([, isError]) => {
+    switchMap(([isLoading, isNoData, isError]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
+      }
       if (isError) {
         return of(EmptyType.Errors);
       }
-
-      return of(EmptyType.NoPageData);
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
-  hideBuiltinGroups = true;
 
   get emptyConfigService(): EmptyService {
     return this.emptyService;
@@ -105,23 +112,6 @@ export class GroupListComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  get emptyType$(): Observable<EmptyType> {
-    return combineLatest([
-      this.isLoading$,
-      this.emptyOrErrorType$,
-    ]).pipe(
-      switchMap(([isLoading, emptyState]) => {
-        if (isLoading) {
-          return of(EmptyType.Loading);
-        }
-        if (emptyState !== EmptyType.Errors && this.dataSource.data.length !== this.dataSource.filteredData.length) {
-          return of(EmptyType.NoSearchResults);
-        }
-        return of(emptyState);
-      }),
-    );
   }
 
   createDataSource(groups: Group[] = []): void {
