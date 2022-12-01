@@ -126,7 +126,7 @@ export class EmailComponent implements OnInit {
 
   onLoginToGmailPressed(): void {
     this.window.open(
-      'https://truenas.org/oauth/gmail?origin=' + encodeURIComponent(this.window.location.toString()),
+      'https://truenas.com/oauth/gmail?origin=' + encodeURIComponent(this.window.location.toString()),
       '_blank',
       'width=640,height=480',
     );
