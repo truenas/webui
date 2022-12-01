@@ -74,7 +74,7 @@ describe('DatasetDetailsPanelComponent', () => {
           {
             selector: selectSystemInfo,
             value: {
-              version: 'TrueNAS-SCALE-22.12-MASTER-20221111-015225',
+              version: 'TrueNAS-SCALE-22.12',
             } as SystemInfo,
           },
         ],
