@@ -24,7 +24,7 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button mat-button *appIfNightly (click)="onAddZvol()">
+      <button *appIfNightly  mat-button(click)="onAddZvol()">
         {{ 'Add Zvol (New)' | translate }}
       </button>
       <button mat-button (click)="onAddZvolOld()">

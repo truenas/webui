@@ -200,7 +200,7 @@
           ix-auto-type="tab"
           ix-auto-identifier="Logs"
         >{{ 'Logs' | translate }}</th>
-        <td mat-cell *matCellDef="let job; dataSource: dataSource">
+        <td *matCellDef="let job; dataSource: dataSource" mat-cell>
           <button
             *ngIf="job.logs_path && job.logs_excerpt"
             mat-button
