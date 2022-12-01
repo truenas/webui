@@ -9,6 +9,7 @@
   </mat-card-header>
 
   <mat-card-content>
+    <mat-progress-bar *ngIf="isLoading" class="loading-indicator" mode="indeterminate"></mat-progress-bar>
     <form [formGroup]="form" (submit)="onSubmit()">
       <div class="owner-and-access">
         <ix-fieldset class="owner-fields" [title]="'Owner' | translate">
