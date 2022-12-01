@@ -23,6 +23,12 @@ export class EmptyService {
     title: this.translate.instant('Can not retrieve response'),
   };
 
+  private readonly emptySearchResultsConfig: EmptyConfig = {
+    title: this.translate.instant('No such items'),
+    type: EmptyType.NoSearchResults,
+    large: true,
+  };
+
   constructor(private translate: TranslateService) { }
 
   defaultEmptyConfig(type: EmptyType, title: string): EmptyConfig {
@@ -31,9 +37,16 @@ export class EmptyService {
         return this.loadingConfig;
       case EmptyType.Errors:
         return this.errorConfig;
+      case EmptyType.NoSearchResults:
+        return {
+          ...this.emptySearchResultsConfig,
+          title: this.translate.instant('No matching {title} found', { title }),
+        };
       default:
-        this.emptyConfig.title = this.translate.instant('No {title} have been added yet', { title });
-        return this.emptyConfig;
+        return {
+          ...this.emptyConfig,
+          title: this.translate.instant('No {title} have been added yet', { title }),
+        };
     }
   }
 }
