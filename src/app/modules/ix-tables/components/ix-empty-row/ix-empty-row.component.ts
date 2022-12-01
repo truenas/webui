@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
+  AfterViewInit, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -25,10 +25,12 @@ export class IxEmptyRowComponent implements AfterViewInit {
   constructor(
     private viewContainerRef: ViewContainerRef,
     private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit(): void {
     this.templatePortal = new TemplatePortal(this.templatePortalContent, this.viewContainerRef);
+    this.cdr.markForCheck();
   }
 
   doAction(): void {
