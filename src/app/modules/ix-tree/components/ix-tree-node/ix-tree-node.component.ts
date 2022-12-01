@@ -1,7 +1,7 @@
 import { DataSource } from '@angular/cdk/collections';
 import { CdkTreeNode } from '@angular/cdk/tree';
 import {
-  Attribute, Component, ElementRef, Input, OnDestroy, OnInit,
+  Attribute, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import {
   mixinTabIndex, mixinDisabled, CanDisable, HasTabIndex,
@@ -13,6 +13,7 @@ const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
 @Component({
   selector: 'ix-tree-node',
   template: '<ng-content></ng-content>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./ix-tree-node.component.scss'],
   exportAs: 'ixTreeNode',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
