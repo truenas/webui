@@ -44,6 +44,7 @@ export class IxFlatTreeDataSource<T, F, K = F> extends DataSource<F> {
       this.treeControl.expansionModel.changed,
       this._data,
       this._flattenedData,
+      this._filteredData,
     ]).pipe(
       map(() => {
         this._expandedData.next(this.treeFlattener.expandFlattenedNodes(this._flattenedData.value, this.treeControl));

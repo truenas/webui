@@ -65,6 +65,8 @@
             [ixDataSource]="flatDataSource"
             [ixTreeControl]="flatTreeControl"
             [ixItemSize]="48"
+            [ixMinBufferPx]="48 * 10"
+            [ixMaxBufferPx]="48 * 20"
           >
             <ix-tree-node
               *ixTreeNodeDef="let dataset; dataSource: flatDataSource"

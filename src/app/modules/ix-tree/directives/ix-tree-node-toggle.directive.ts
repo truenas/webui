@@ -1,5 +1,6 @@
-import { CdkTree, CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
+import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
 import { Directive } from '@angular/core';
+import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 
 @Directive({
   selector: '[ixTreeNodeToggle]',
@@ -13,8 +14,11 @@ import { Directive } from '@angular/core';
     '[class.isCollapsed]': '!isExpanded',
   },
 })
-export class IxTreeNodeToggleDirective<T, K = T> extends CdkTreeNodeToggle<T, K> {
-  constructor(protected _tree: CdkTree<T, K>, protected _treeNode: CdkTreeNode<T, K>) {
+export class IxTreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
+  constructor(
+    protected _tree: IxTree<T>,
+    protected _treeNode: CdkTreeNode<T>,
+  ) {
     super(_tree, _treeNode);
   }
 

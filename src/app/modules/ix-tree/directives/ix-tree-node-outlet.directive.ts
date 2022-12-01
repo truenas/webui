@@ -9,12 +9,7 @@ import {
  */
 @Directive({
   selector: '[ixTreeNodeOutlet]',
-  providers: [
-    {
-      provide: CdkTreeNodeOutlet,
-      useExisting: IxTreeNodeOutletDirective,
-    },
-  ],
+  providers: [{ provide: CdkTreeNodeOutlet, useExisting: IxTreeNodeOutletDirective }],
 })
 export class IxTreeNodeOutletDirective<T> implements CdkTreeNodeOutlet {
   constructor(
