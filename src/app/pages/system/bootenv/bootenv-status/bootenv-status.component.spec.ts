@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockPipe } from 'ng-mocks';
