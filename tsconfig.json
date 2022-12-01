@@ -20,7 +20,6 @@
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
-    "enableIvy": true,
     "allowEmptyCodegenFiles": true,
     "strictInjectionParameters": true,
     "strictTemplates": true,

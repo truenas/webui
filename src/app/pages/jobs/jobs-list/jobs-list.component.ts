@@ -10,8 +10,8 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatSort } from '@angular/material/sort';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -60,7 +60,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     large: false,
     title: this.translate.instant('Loading...'),
   };
-  selector$ = new BehaviorSubject(selectJobs);
+  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs | typeof selectFailedJobs>(selectJobs);
 
   readonly JobState = JobState;
   readonly JobTab = JobTab;

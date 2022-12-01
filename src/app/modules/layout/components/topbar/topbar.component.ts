@@ -102,8 +102,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.updateNotificationSent = true;
     });
 
-    this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.screenSize = evt.mqAlias;
+    this.mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      this.screenSize = changes[0].mqAlias;
     });
 
     this.haStatusText = this.window.sessionStorage.getItem('ha_status') === 'true'

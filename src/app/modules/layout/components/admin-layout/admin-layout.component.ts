@@ -8,7 +8,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
@@ -88,10 +88,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     });
 
     // Watches screen size and open/close sidenav
-    this.media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
+    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
-      core.emit({ name: 'MediaChange', data: change, sender: this });
+      core.emit({ name: 'MediaChange', data: changes, sender: this });
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
