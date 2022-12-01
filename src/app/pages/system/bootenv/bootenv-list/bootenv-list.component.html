@@ -49,7 +49,7 @@
   ix-table
   matSort
   matSortDisableClear="true"
-  ix-table-empty
+  [ix-table-empty]="!(isLoading$ | async) && !dataSource.filteredData.length"
   [emptyConfig]="emptyOrErrorConfig$ | async"
   [dataSource]="dataSource"
   [matSortActive]="defaultSort.active"

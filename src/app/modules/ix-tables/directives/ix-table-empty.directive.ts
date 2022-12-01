@@ -1,7 +1,6 @@
 import {
   AfterViewInit, ComponentRef, Directive, Input, OnChanges, ViewContainerRef,
 } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component';
@@ -11,8 +10,8 @@ import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-r
   selector: '[ix-table-empty]',
 })
 export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
+  @Input('ix-table-empty') showEmptyRow: boolean;
   @Input() emptyConfig: EmptyConfig;
-  @Input() dataSource: MatTableDataSource<unknown>;
   componentRef: ComponentRef<IxEmptyRowComponent> = null;
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -27,7 +26,7 @@ export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
   }
 
   toggleEmptyComponent(): void {
-    if (!this.dataSource.filteredData.length) {
+    if (this.showEmptyRow) {
       this.updateComponentConfig();
     } else {
       this.destroyRowComponent();

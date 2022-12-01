@@ -41,7 +41,7 @@
       matSort
       matSortActive="id"
       matSortDirection="desc"
-      ix-table-empty
+      [ix-table-empty]="!dataSource.filteredData.length"
       [emptyConfig]="(isLoading$ | async) ? loadingConfig : emptyConfig"
       [dataSource]="dataSource"
       [multiTemplateDataRows]="true"
