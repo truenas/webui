@@ -58,11 +58,19 @@
             [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
           ></ix-acl-editor-list>
 
+          <div style="margin: 10px 0 16px 17px;">
+            <button mat-button class="action" (click)="onAddItemPressed()">
+              <mat-icon>add</mat-icon>
+              {{ 'Add Item' | translate }}
+            </button>
+          </div>
+
           <div class="controls-container">
             <div class="controls">
               <div class="checkboxes" [formGroup]="saveParameters">
                 <ix-checkbox
                   formControlName="recursive"
+                  style="margin-bottom: 5px; margin-top: 1px;"
                   [label]="helptext.dataset_acl_recursive_placeholder | translate"
                   [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
                 ></ix-checkbox>
@@ -76,10 +84,18 @@
               </div>
 
               <div class="control-buttons">
-                <button mat-button class="action" (click)="onAddItemPressed()">
-                  {{ 'Add Item' | translate }}
+                <button
+                  mat-button
+                  color="primary"
+                  class="action"
+                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
+                  (click)="onSavePressed()"
+                >
+                  {{ 'Save Access Control List' | translate }}
                 </button>
+              </div>
 
+              <div class="control-buttons">
                 <a
                   *ngIf="acl.trivial; else stripButton"
                   mat-button
@@ -100,25 +116,21 @@
                 </ng-template>
               </div>
 
+              <h4 style="font-size: 14px; margin-bottom: 5px; margin-top: 16px;">Presets</h4>
               <div class="control-buttons">
                 <button
                   mat-button
                   class="action"
                   (click)="onUsePresetPressed()"
                 >
-                  {{ 'Use ACL Preset' | translate }}
+                  {{ 'Use Preset' | translate }}
                 </button>
-              </div>
-
-              <div class="control-buttons">
                 <button
                   mat-button
-                  color="primary"
                   class="action"
-                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
-                  (click)="onSavePressed()"
+                  (click)="onSavePreset()"
                 >
-                  {{ 'Save Access Control List' | translate }}
+                  {{ 'Save As Preset' | translate }}
                 </button>
               </div>
             </div>

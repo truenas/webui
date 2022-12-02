@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  min-width: 400px;
+}
+
+.buttons {
+  justify-content: flex-end;
+  margin-bottom: -10px;
+}
+
+.presets {
+  border-bottom: 1px solid var(--lines);
+  padding-bottom: 12px;
+  padding-top: 5px;
+}
+
+.preset {
+  align-items: center;
+  display: flex;
+  padding: 5px 0;
+
+  &.preset-disabled {
+    opacity: 0.5;
+  }
+
+  .preset-name {
+    margin-right: auto;
+  }
+
+  .preset-type {
+    background: var(--alt-bg2);
+    border-radius: 4px;
+    font-weight: bold;
+    margin: 0 3px;
+    padding: 0 6px;
+  }
+
+  .preset-remove {
+    height: 20px;
+    // TODO:
+    margin-bottom: -1px;
+
+    .mat-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+  }
+}

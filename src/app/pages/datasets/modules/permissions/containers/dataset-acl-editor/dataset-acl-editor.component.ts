@@ -12,6 +12,9 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import {
+  SaveAsPresetModalComponent,
+} from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
+import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
 import {
@@ -145,6 +148,10 @@ export class DatasetAclEditorComponent implements OnInit {
       applyOwner: this.ownerFormGroup.get('applyOwner').value,
       applyGroup: this.ownerFormGroup.get('applyGroup').value,
     });
+  }
+
+  onSavePreset(): void {
+    this.matDialog.open(SaveAsPresetModalComponent);
   }
 
   onUsePresetPressed(): void {

@@ -1,0 +1,64 @@
+<h1 mat-dialog-title>Save As Preset</h1>
+<div mat-dialog-content>
+  <p>Save current ACL entries as a preset for future use.</p>
+
+  <h4 style="font-size: 12px; margin-top: 20px;">Existing presets:</h4>
+  <div class="presets">
+    <div class="preset">
+      <div class="preset-name">My preset</div>
+
+      <div class="preset-type">POSIX</div>
+
+      <span class="preset-remove">
+        <mat-icon>cancel</mat-icon>
+      </span>
+    </div>
+    <div class="preset">
+      <div class="preset-name">My other preset</div>
+
+      <div class="preset-type">POSIX</div>
+
+      <span class="preset-remove">
+        <mat-icon>cancel</mat-icon>
+      </span>
+    </div>
+    <div class="preset preset-disabled">
+      <div class="preset-name">My NFS presest</div>
+
+      <div class="preset-type">NFS</div>
+
+      <span class="preset-remove">
+        <mat-icon>cancel</mat-icon>
+      </span>
+    </div>
+    <div class="preset preset-disabled">
+      <div class="preset-name">My NFS presest</div>
+
+      <div class="preset-type">NFS</div>
+
+      <span class="preset-remove">
+        <mat-icon>cancel</mat-icon>
+      </span>
+    </div>
+  </div>
+
+  <div style="margin-top: 16px;">
+    <h4 style="font-size: 12px;">Save ACL as preset:</h4>
+    <ix-input
+      label="Preset Name"
+      style="margin-top: 0"
+      [formControl]="presetName"
+    ></ix-input>
+  </div>
+</div>
+
+<div mat-dialog-actions class="buttons">
+  <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="primary"
+    matDialogClose
+  >
+    {{ 'Save' | translate }}
+  </button>
+</div>
