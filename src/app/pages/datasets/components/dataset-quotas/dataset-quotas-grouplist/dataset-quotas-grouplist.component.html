@@ -41,7 +41,7 @@
         matSortDisableClear="true"
         [dataSource]="dataSource"
         [ix-table-empty]="!dataSource.filteredData.length"
-        [emptyConfig]="isLoading ? loadingConfig : emptyOrErrorConfig"
+        [emptyConfig]="emptyConfigService.defaultEmptyConfig(isLoading ? EmptyType.Loading : emptyType, ('Group Quotas' | translate))"
         [matSortActive]="defaultSort.active"
         [matSortDirection]="defaultSort.direction"
         [multiTemplateDataRows]="true"
