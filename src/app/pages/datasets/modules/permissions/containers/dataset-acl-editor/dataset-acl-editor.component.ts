@@ -20,6 +20,7 @@ import {
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
+import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
@@ -151,7 +152,12 @@ export class DatasetAclEditorComponent implements OnInit {
   }
 
   onSavePreset(): void {
-    this.matDialog.open(SaveAsPresetModalComponent);
+    this.matDialog.open(SaveAsPresetModalComponent, {
+      data: {
+        aclType: this.acl.acltype,
+        datasetPath: this.fullDatasetPath,
+      } as SaveAsPresetModalConfig,
+    });
   }
 
   onUsePresetPressed(): void {

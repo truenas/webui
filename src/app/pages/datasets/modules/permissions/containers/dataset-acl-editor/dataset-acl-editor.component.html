@@ -58,7 +58,7 @@
             [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
           ></ix-acl-editor-list>
 
-          <div style="margin: 10px 0 16px 17px;">
+          <div class="add-item">
             <button mat-button class="action" (click)="onAddItemPressed()">
               <mat-icon>add</mat-icon>
               {{ 'Add Item' | translate }}
@@ -70,7 +70,7 @@
               <div class="checkboxes" [formGroup]="saveParameters">
                 <ix-checkbox
                   formControlName="recursive"
-                  style="margin-bottom: 5px; margin-top: 1px;"
+                  class="recursive-checkbox"
                   [label]="helptext.dataset_acl_recursive_placeholder | translate"
                   [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
                 ></ix-checkbox>
@@ -116,7 +116,7 @@
                 </ng-template>
               </div>
 
-              <h4 style="font-size: 14px; margin-bottom: 5px; margin-top: 16px;">Presets</h4>
+              <h4 class="presets-label">Presets</h4>
               <div class="control-buttons">
                 <button
                   mat-button

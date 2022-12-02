@@ -8,8 +8,26 @@
   margin-bottom: -10px;
 }
 
+.exist-content {
+  margin-top: 20px;
+}
+
+.save-content {
+  margin-top: 16px;
+
+  ix-input {
+    margin-top: 0;
+  }
+}
+
+.label {
+  font-size: 12px;
+}
+
 .presets {
   border-bottom: 1px solid var(--lines);
+  max-height: 350px;
+  overflow: auto;
   padding-bottom: 12px;
   padding-top: 5px;
 }
