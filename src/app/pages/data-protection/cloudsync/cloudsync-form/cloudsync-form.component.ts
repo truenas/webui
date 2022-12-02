@@ -64,6 +64,7 @@ export class CloudsyncFormComponent {
     credentials: [null as number, Validators.required],
     bucket: [''],
     bucket_input: ['', Validators.required],
+    acknowledge_abuse: [false],
     folder_destination: [[] as string[]],
     folder_source: [[] as string[]],
     bucket_policy_only: [false],
@@ -548,6 +549,9 @@ export class CloudsyncFormComponent {
     if (task.attributes.chunk_size) {
       this.form.controls.chunk_size.setValue(task.attributes.chunk_size as number);
     }
+    if (task.attributes.acknowledge_abuse) {
+      this.form.controls.acknowledge_abuse.setValue(task.attributes.acknowledge_abuse as boolean);
+    }
     if (task.attributes.storage_class) {
       this.form.controls.storage_class.setValue(task.attributes.storage_class as string);
     }
@@ -594,9 +598,15 @@ export class CloudsyncFormComponent {
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };
 
-    const attributesToFill = ['bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption', 'storage_class', 'fast_list', 'chunk_size'] as const;
+    const attributesToFill = [
+      'bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption',
+      'storage_class', 'fast_list', 'chunk_size', 'acknowledge_abuse',
+    ] as const;
 
-    (['path_source', 'path_destination', 'folder_source', 'folder_destination', 'cloudsync_picker', ...attributesToFill] as const).forEach((key) => {
+    ([
+      'path_source', 'path_destination', 'folder_source',
+      'folder_destination', 'cloudsync_picker', ...attributesToFill,
+    ] as const).forEach((key) => {
       delete (value as unknown as FormValue)[key];
     });
 

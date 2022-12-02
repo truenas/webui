@@ -120,6 +120,11 @@
 
         <ix-fieldset class="fieldset" [title]="helptext.fieldset_advanced_options | translate">
           <ix-checkbox
+            formControlName="acknowledge_abuse"
+            [label]="helptext.acknowledge_abuse_placeholder | translate"
+            [tooltip]="helptext.acknowledge_abuse_tooltip | translate"
+          ></ix-checkbox>
+          <ix-checkbox
             *ngIf="form.controls.snapshot.enabled"
             formControlName="snapshot"
             [label]="helptext.snapshot_placeholder | translate"
@@ -169,13 +174,6 @@
             [tooltip]="helptext.storage_class_tooltip | translate"
             [options]="storageClassOptions$"
           ></ix-select>
-          <ix-input
-            *ngIf="form.controls.chunk_size.enabled"
-            formControlName="chunk_size"
-            type="number"
-            [label]="helptext.b2_chunk_size_placeholder | translate"
-            [tooltip]="helptext.b2_chunk_size_tooltip | translate"
-          ></ix-input>
           <ix-checkbox
             *ngIf="form.controls.fast_list.enabled"
             formControlName="fast_list"
