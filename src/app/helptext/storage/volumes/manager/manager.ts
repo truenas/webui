@@ -1,10 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  manager_needsDiskMessage: T('Add one or more disks to be used for data.'),
-
-  manager_extendedNeedsDiskMessage: T('Add one or more disks to extend the pool.'),
-
   manager_sizeMessage: T('Estimated total raw data capacity'),
 
   manager_extendedSizeMessage: T('Estimated data capacity available after extension.'),

@@ -417,7 +417,7 @@ export class SmbFormComponent implements OnInit {
             this.slideInService.close();
           },
           error: (err) => {
-            if (err.reason.includes('[ENOENT]')) {
+            if (err.reason.includes('[ENOENT]') || err.reason.includes('[EXDEV]')) {
               this.dialog.closeAllDialogs();
             } else {
               this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
