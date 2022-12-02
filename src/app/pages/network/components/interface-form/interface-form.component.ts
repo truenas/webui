@@ -43,7 +43,6 @@ import {
 import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
 @UntilDestroy()
@@ -276,7 +275,7 @@ export class InterfaceFormComponent implements OnInit {
     }
 
     forkJoin([
-      this.store$.select(selectIsHaLicensed),
+      this.ws.call('failover.licensed'),
       this.ws.call('failover.node'),
     ])
       .pipe(untilDestroyed(this))
