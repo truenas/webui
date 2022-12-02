@@ -38,7 +38,6 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  readonly EmptyType = EmptyType;
   displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo', 'smb', 'actions'];
   dataSource: MatTableDataSource<Group> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'gid', direction: 'asc' };
@@ -46,6 +45,7 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   hideBuiltinGroups = true;
 
+  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,

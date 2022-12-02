@@ -11,7 +11,6 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of,
 } from 'rxjs';
@@ -39,7 +38,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  readonly EmptyType = EmptyType;
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   filterString = '';
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
@@ -47,19 +45,28 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   expandedRow: User;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+
+  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  emptyOrErrorType$: Observable<EmptyType> = combineLatest([
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
     this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectUserState).pipe(map((state) => state.error)),
   ]).pipe(
-    switchMap(([, isError]) => {
+    switchMap(([isLoading, isNoData, isError]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
+      }
       if (isError) {
         return of(EmptyType.Errors);
       }
-
-      return of(EmptyType.NoPageData);
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
+
   hideBuiltinUsers = true;
 
   get emptyConfigService(): EmptyService {
@@ -67,7 +74,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private translate: TranslateService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -93,23 +99,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
       this.hideBuiltinUsers = preferences.hideBuiltinUsers;
       this.cdr.markForCheck();
     });
-  }
-
-  get emptyType$(): Observable<EmptyType> {
-    return combineLatest([
-      this.isLoading$,
-      this.emptyOrErrorType$,
-    ]).pipe(
-      switchMap(([isLoading, emptyState]) => {
-        if (isLoading) {
-          return of(EmptyType.Loading);
-        }
-        if (emptyState !== EmptyType.Errors && this.dataSource.data.length !== this.dataSource.filteredData.length) {
-          return of(EmptyType.NoSearchResults);
-        }
-        return of(emptyState);
-      }),
-    );
   }
 
   getUsers(): void {
