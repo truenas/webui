@@ -6,15 +6,15 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import {
-  delay, filter, map,
+  delay, filter, map, switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/applications/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/applications/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
 import { DockerImagesComponentStore } from 'app/pages/applications/docker-images/docker-images.store';
@@ -31,38 +31,46 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class DockerImagesListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   dataSource: MatTableDataSource<ContainerImage> = new MatTableDataSource([]);
+
   displayedColumns = ['select', 'id', 'repo_tags', 'created', 'size', 'update', 'actions'];
+
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ContainerImage>;
+
   defaultSort: Sort = { active: 'created', direction: 'desc' };
   filterString = '';
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  isLoading$ = this.store.isLoading$;
-  emptyOrErrorConfig$: Observable<EmptyConfig> = this.store.isError$.pipe(
-    map((hasError) => {
-      if (hasError) {
-        return {
-          type: EmptyType.Errors,
-          large: true,
-          title: this.translate.instant('Docker Images could not be loaded'),
-        };
-      }
 
-      return {
-        type: EmptyType.NoPageData,
-        title: this.translate.instant('No Docker Images are available'),
-        large: true,
-      };
+  readonly EmptyType = EmptyType;
+  isLoading$ = this.store.isLoading$;
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
+    this.store.isError$,
+    this.store.entities$.pipe(
+      map((images) => images.length === 0),
+    ),
+  ]).pipe(
+    switchMap(([isLoading, isError, isNoData]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
+      }
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
 
   get selectionHasUpdates(): boolean {
     return this.checkboxColumn.selection.selected.some((image) => image.update_available);
+  }
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
   }
 
   constructor(
@@ -72,6 +80,7 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private store: DockerImagesComponentStore,
+    private emptyService: EmptyService,
     private layoutService: LayoutService,
   ) {
   }
