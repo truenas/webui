@@ -16,7 +16,7 @@ import {
 @Injectable()
 export class HaInfoEffects {
   loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
-    ofType(loadFailoverLicensedStatus, haSettingsUpdated, passiveNodeReplaced, adminUiInitialized),
+    ofType(loadFailoverLicensedStatus),
     mergeMap(() => {
       return this.ws.call('failover.licensed').pipe(
         map((isHaLicensed) => {

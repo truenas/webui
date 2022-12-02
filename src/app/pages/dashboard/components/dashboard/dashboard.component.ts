@@ -190,10 +190,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.screenType = currentScreenType;
 
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    if (wrapper?.style) {
+    if (wrapper) {
       wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
+      this.optimizeWidgetContainer();
     }
-    this.optimizeWidgetContainer();
   }
 
   optimizeWidgetContainer(): void {

@@ -28,6 +28,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { loadFailoverLicensedStatus } from 'app/store/ha-info/ha-info.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -112,6 +113,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     this.themes = this.themeService.allThemes;
     this.currentTheme = this.themeService.currentTheme().name;
     const navigationHold = document.getElementById('scroll-area');
+
+    this.store$.dispatch(loadFailoverLicensedStatus());
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
     if (this.window.navigator.platform.toLowerCase() === 'win32') {

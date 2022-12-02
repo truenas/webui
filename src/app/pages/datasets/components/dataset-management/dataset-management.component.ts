@@ -316,7 +316,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         } else {
           this.isHaEnabled = false;
         }
-
         this.cdr.detectChanges();
       });
     } else {
