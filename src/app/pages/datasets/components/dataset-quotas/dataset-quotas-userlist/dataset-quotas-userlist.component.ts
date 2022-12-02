@@ -22,10 +22,10 @@ import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
@@ -50,28 +50,18 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   displayedColumns: string[] = ['name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions'];
   defaultSort: Sort = { active: 'id', direction: 'asc' };
 
+  readonly EmptyType = EmptyType;
+  emptyType: EmptyType = EmptyType.NoPageData;
   isLoading = false;
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No User Quotas'),
-    large: true,
-  };
-  errorConfig: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
-  emptyOrErrorConfig: EmptyConfig = this.emptyConfig;
 
   useFullFilter = true;
   protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected invalidFilter: QueryParams<DatasetQuota> = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     protected ws: WebSocketService,
@@ -84,6 +74,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
@@ -158,7 +149,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.checkInvalidQuotas();
       },
       error: (error) => {
-        this.emptyOrErrorConfig = this.errorConfig;
+        this.emptyType = EmptyType.Errors;
         this.handleError(error);
       },
     });
@@ -170,7 +161,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
 
   createDataSource(quotas: DatasetQuota[] = []): void {
     if (!quotas.length) {
-      this.emptyOrErrorConfig = this.emptyConfig;
+      this.emptyType = EmptyType.NoPageData;
+    } else {
+      this.emptyType = EmptyType.NoSearchResults;
     }
     this.dataSource = new MatTableDataSource(quotas);
     this.dataSource.sort = this.sort;
