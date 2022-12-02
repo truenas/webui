@@ -20,7 +20,7 @@
       matSort
       matSortDisableClear="true"
       [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="(isLoading$ | async) ? loadingConfig : (emptyOrErrorConfig$ | async)"
+      [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async), ('Api Keys' | translate))"
       [dataSource]="dataSource"
       [matSortActive]="defaultSort.active"
       [matSortDirection]="defaultSort.direction"
