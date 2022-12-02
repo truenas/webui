@@ -49,7 +49,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   isTwoFactor = false;
   private didSetFocus = false;
 
-  signinData = {
+  signInData = {
     username: '',
     password: '',
     otp: '',
@@ -141,6 +141,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.setPasswordFormGroup = this.fb.group({
+      userName: new FormControl('admin', [Validators.required]),
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
       instanceId: new FormControl('', [Validators.required]),
@@ -274,6 +275,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  get userName(): AbstractControl {
+    return this.setPasswordFormGroup.get('userName');
+  }
   get password(): AbstractControl {
     return this.setPasswordFormGroup.get('password');
   }
@@ -288,25 +292,25 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.ws.connected;
   }
 
-  signin(): void {
+  signIn(): void {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
     const request$ = this.isTwoFactor
-      ? this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
-      : this.ws.login(this.signinData.username, this.signinData.password);
+      ? this.ws.login(this.signInData.username, this.signInData.password, this.signInData.otp)
+      : this.ws.login(this.signInData.username, this.signInData.password);
 
     request$.pipe(untilDestroyed(this)).subscribe((result) => this.loginCallback(result));
   }
 
-  setpassword(): void {
+  setPassword(): void {
     const request$ = this.hasInstanceId
-      ? this.ws.call('user.set_root_password', [this.password.value, { instance_id: this.instanceId.value }])
-      : this.ws.call('user.set_root_password', [this.password.value]);
+      ? this.ws.call('user.setup_local_administrator', [this.userName.value, this.password.value, { instance_id: this.instanceId.value }])
+      : this.ws.call('user.setup_local_administrator', [this.userName.value, this.password.value]);
 
     request$.pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.ws.login('root', this.password.value)
+        this.ws.login(this.userName.value, this.password.value)
           .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
       },
     );
@@ -352,8 +356,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.submitButton.disabled = false;
     this.failed = true;
     this.progressBar.mode = 'determinate';
-    this.signinData.password = '';
-    this.signinData.otp = '';
+    this.signInData.password = '';
+    this.signInData.otp = '';
     let message = '';
     if (this.ws.token === null) {
       if (this.isTwoFactor) {
