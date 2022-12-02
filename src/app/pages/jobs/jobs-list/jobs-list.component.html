@@ -42,7 +42,7 @@
       matSortActive="id"
       matSortDirection="desc"
       [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="(isLoading$ | async) ? loadingConfig : emptyConfig"
+      [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async), getTabTitle())"
       [dataSource]="dataSource"
       [multiTemplateDataRows]="true"
       [trackBy]="trackByJobId"
