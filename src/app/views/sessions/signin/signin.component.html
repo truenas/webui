@@ -238,7 +238,7 @@
               </div>
             </div>
 
-            <span *ngIf="productSupportsHa && failoverStatus !== FailoverStatus.Single">
+            <span *ngIf="productSupportsHa && failoverStatus && failoverStatus !== FailoverStatus.Single">
               <div class="ha-status">
                 <div class="ha-status-txt">
                   <p>{{ haStatusText }}</p>
