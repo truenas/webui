@@ -3,7 +3,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class EmptyService {
   private readonly loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
