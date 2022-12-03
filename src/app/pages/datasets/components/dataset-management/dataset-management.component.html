@@ -79,11 +79,10 @@
               (keydown.enter)="viewDetails(dataset)"
             >
               <button mat-icon-button disabled></button>
-              <span>{{ dataset.id }}</span>
-              <!-- <ix-dataset-node
+              <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
-              ></ix-dataset-node> -->
+              ></ix-dataset-node>
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
 
@@ -108,11 +107,10 @@
                   [name]="flatTreeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
                 ></ix-icon>
               </button>
-              <span>{{ dataset.id }}</span>
-              <!-- <ix-dataset-node
+              <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
-              ></ix-dataset-node> -->
+              ></ix-dataset-node>
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
           </ix-tree-virtual-scroll-view>
