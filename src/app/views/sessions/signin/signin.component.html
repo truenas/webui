@@ -3,7 +3,7 @@
     <mat-progress-bar
       value="0"
       class="session-progress"
-      [mode]="connected() ? 'determinate' : 'indeterminate'"
+      [mode]="hasLoadingIndicator ? 'indeterminate' : 'determinate'"
     ></mat-progress-bar>
     <mat-card>
       <mat-card-content>
