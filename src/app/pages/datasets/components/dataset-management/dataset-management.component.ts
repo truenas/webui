@@ -41,6 +41,7 @@ import {
 import { IxFlatTreeDataSource } from 'app/modules/ix-tree/ix-flat-tree-datasource';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
+import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -371,6 +372,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getDatasetDetails(dataNode: FlatNode): DatasetDetails {
-    return this.dataSource.data.find((item) => item.id === dataNode.id) || null;
+    return findInTree(this.flatDataSource.data, (dataset) => dataset.id === dataNode.id);
   }
 }
