@@ -7,7 +7,7 @@
 </ng-template>
 
 <div
-  *ngIf="!isLoading && flatDataSource?.getData().length === 0; else datasetContainer"
+  *ngIf="!isLoading && flatDataSource?.data.length === 0; else datasetContainer"
   class="entity-empty-wrapper"
   fxFlex="100%"
   fxLayout="row"
@@ -28,7 +28,7 @@
 
       <div class="dataset-tree-search">
         <ix-search-input
-          [disabled]="!flatDataSource?.getData()?.length"
+          [disabled]="!flatDataSource?.data.length"
           (search)="onSearch($event)"
         ></ix-search-input>
       </div>

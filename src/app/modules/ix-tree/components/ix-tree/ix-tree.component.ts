@@ -27,12 +27,10 @@ export class IxTree<T> extends CdkTree<T> implements OnInit, OnDestroy {
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ixTreeControl') override treeControl!: TreeControl<T, any>;
-
   @Input('ixDataSource')
   override get dataSource(): DataSource<T> | Observable<T[]> | T[] {
     return super.dataSource;
   }
-  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   override set dataSource(dataSource$: DataSource<T> | Observable<T[]> | T[]) {
     super.dataSource = dataSource$;
   }
