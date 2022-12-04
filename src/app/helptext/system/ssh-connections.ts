@@ -1,11 +1,9 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  name_placeholder: T('Name'),
   name_tooltip: T('Name of this SSH connection. SSH connection names \
  must be unique.'),
 
-  setup_method_placeholder: T('Setup Method'),
   setup_method_tooltip: T('How to configure the connection:<br><br> \
  <i>Manual</i> requires configuring authentication on the remote system. \
  This can include copying SSH keys and modifying the <i>root</i> user \
@@ -14,17 +12,13 @@ export default {
  with a remote TrueNAS system. This method uses the URL and login \
  credentials of the remote system to connect and exchange SSH keys.'),
 
-  host_placeholder: T('Host'),
   host_tooltip: T('Hostname or IP address of the remote system.'),
 
-  port_placeholder: T('Port'),
   port_tooltip: T('Port number on the remote system to use for the SSH \
  connection.'),
 
-  username_placeholder: T('Username'),
   username_tooltip: T('Username on the remote system which will be used to login <b>via SSH</b>.'),
 
-  private_key_placeholder: T('Private Key'),
   private_key_tooltip: T('Choose a saved SSH Keypair or select \
  <i>Generate New</i> to create a new keypair and use it for this \
  connection.'),
@@ -46,16 +40,13 @@ export default {
   connect_timeout_tooltip: T('Time (in seconds) before the system \
  stops attempting to establish a connection with the remote system.'),
 
-  url_placeholder: T('TrueNAS URL'),
   url_tooltip: T('Hostname or IP address of the remote system. A \
  valid URL scheme is required. Example: \
  <b>https://<i>10.231.3.76</i></b>'),
 
-  password_placeholder: T('Password'),
   password_tooltip: T('User account password for logging in to the remote system.'),
 
   admin_username_tooltip: T('Username on the remote system to log in <b>via Web UI</b> to setup connection.'),
 
-  otp_placeholder: T('One-Time Password (if necessary)'),
   otp_tooltip: T('One-Time Password if two factor authentication is enabled.'),
 };

@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
+import filesize from 'filesize';
 import { Subject } from 'rxjs';
 import {
   filter, map, take, throttleTime,
@@ -199,15 +200,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       ).subscribe((evt: NetworkTrafficEvent) => {
         const nicName = nic.name;
         if (nicName in this.nicInfoMap) {
-          const sent = this.utils.convert(evt.data.sent_bytes_rate);
-          const received = this.utils.convert(evt.data.received_bytes_rate);
-
           const nicInfo = this.nicInfoMap[nicName];
           if (evt.data.link_state) {
             nicInfo.state = evt.data.link_state;
           }
-          nicInfo.in = `${received.value} ${received.units}/s`;
-          nicInfo.out = `${sent.value} ${sent.units}/s`;
+          nicInfo.in = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.out = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
 
           if (
             evt.data.sent_bytes !== undefined

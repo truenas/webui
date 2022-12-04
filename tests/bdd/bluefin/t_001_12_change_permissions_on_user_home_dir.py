@@ -90,3 +90,4 @@ def test_change_permissions_on_user_home_dir(driver):
     driver.find_element_by_xpath('//button//span[contains(.,"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    time.sleep(1)
