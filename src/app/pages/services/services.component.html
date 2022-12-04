@@ -11,8 +11,8 @@
   <mat-card-content>
     <table
       ix-table
-      [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="loadingConf"
+      [ix-table-empty]="shouldShowEmpty"
+      [emptyConfig]="emptyConfigService.defaultEmptyConfig(loading ? EmptyType.Loading : EmptyType.NoSearchResults, ( 'Services' | translate ))"
       [dataSource]="dataSource"
     >
       <ng-container matColumnDef="name">
