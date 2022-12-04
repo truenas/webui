@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -10,6 +10,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
   selector: 'ix-empty-row',
   templateUrl: './ix-empty-row.component.html',
   styleUrls: ['./ix-empty-row.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxEmptyRowComponent implements AfterViewInit {
   @Input() conf: EmptyConfig = {
