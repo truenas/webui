@@ -9,7 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, BehaviorSubject, combineLatest, of,
+  Observable, BehaviorSubject, combineLatest, of, Subject,
 } from 'rxjs';
 import {
   filter, map, tap, switchMap,
@@ -48,13 +48,13 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;
   defaultSort: Sort = { active: 'created', direction: 'desc' };
 
-  readonly apiCall$ = this.ws.call('bootenv.query');
   isLoading$ = new BehaviorSubject(false);
   isError$ = new BehaviorSubject(false);
+  fetchedData$ = new Subject<Bootenv[]>();
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.isError$,
-    this.apiCall$.pipe(map((bootenvs) => bootenvs.length === 0)),
+    this.fetchedData$.pipe(map((bootenvs) => bootenvs.length === 0)),
   ]).pipe(
     switchMap(([isLoading, isError, isNoData]) => {
       if (isLoading) {
@@ -193,7 +193,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.isError$.next(false);
     this.cdr.markForCheck();
 
-    this.apiCall$.pipe(
+    this.ws.call('bootenv.query').pipe(
+      tap((bootenvs) => this.fetchedData$.next(bootenvs)),
       untilDestroyed(this),
     ).subscribe({
       next: (bootenvs) => {

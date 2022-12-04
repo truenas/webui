@@ -6,6 +6,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
@@ -126,18 +127,18 @@ describe('UserListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', () => {
+  it('should have empty message when loaded and datasource is empty', async () => {
     store$.overrideSelector(selectUsers, []);
     store$.refreshState();
 
     spectator.detectChanges();
 
-    const emptyTitle = spectator.query('.empty-title');
-
-    expect(emptyTitle.textContent).toBe('No Users');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No Users have been added yet');
   });
 
-  it('should have error message when can not retrieve response', () => {
+  it('should have error message when can not retrieve response', async () => {
     store$.overrideSelector(selectUserState, {
       error: 'Users could not be loaded',
     } as UsersState);
@@ -148,9 +149,9 @@ describe('UserListComponent', () => {
 
     spectator.detectChanges();
 
-    const emptyTitle = spectator.query('.empty-title');
-
-    expect(emptyTitle.textContent).toBe('Can not retrieve response');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should expand only one row on click', async () => {

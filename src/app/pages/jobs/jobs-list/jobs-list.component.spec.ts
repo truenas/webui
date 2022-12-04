@@ -10,6 +10,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
@@ -113,13 +114,14 @@ describe('JobsListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', () => {
+  it('should have empty message when loaded and datasource is empty', async () => {
     store$.overrideSelector(selectJobs, []);
     store$.refreshState();
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No tasks');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No Tasks have been added yet');
   });
 
   it('should expand only one row on click', async () => {

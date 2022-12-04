@@ -9,6 +9,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
@@ -81,20 +82,22 @@ describe('ApiKeyListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', () => {
+  it('should have empty message when loaded and datasource is empty', async () => {
     store.setState({ isLoading: false, entities: [], error: null } as ApiKeysState);
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No API Keys');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No Api Keys have been added yet');
   });
 
-  it('should have error message when can not retrieve response', () => {
+  it('should have error message when can not retrieve response', async () => {
     store.setState({ error: 'Can not retrieve response', isLoading: false, entities: [] } as ApiKeysState);
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('Can not retrieve response');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should open edit dialog form when Edit item is pressed', async () => {

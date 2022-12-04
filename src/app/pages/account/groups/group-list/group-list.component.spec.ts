@@ -6,6 +6,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
@@ -96,17 +97,18 @@ describe('GroupListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', () => {
+  it('should have empty message when loaded and datasource is empty', async () => {
     store$.overrideSelector(selectGroups, []);
     store$.refreshState();
 
     spectator.detectChanges();
 
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No Groups');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No Groups have been added yet');
   });
 
-  it('should have error message when can not retrieve response', () => {
+  it('should have error message when can not retrieve response', async () => {
     store$.overrideSelector(selectGroupState, {
       error: 'Groups could not be loaded',
     } as GroupsState);
@@ -117,8 +119,9 @@ describe('GroupListComponent', () => {
 
     spectator.detectChanges();
 
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('Can not retrieve response');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should expand only one row on click', async () => {

@@ -10,6 +10,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { snapshotsInitialState, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
@@ -101,7 +102,7 @@ describe('SnapshotListComponent', () => {
     jest.restoreAllMocks();
   });
 
-  it('should have error message when can not retrieve response', () => {
+  it('should have error message when can not retrieve response', async () => {
     store$.overrideSelector(selectSnapshotState, {
       error: 'Snapshots could not be loaded',
     } as SnapshotsState);
@@ -111,14 +112,16 @@ describe('SnapshotListComponent', () => {
     });
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('Snapshots could not be loaded');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
-  it('should have empty message when loaded and datasource is empty', () => {
+  it('should have empty message when loaded and datasource is empty', async () => {
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No snapshots are available.');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No Snapshots have been added yet');
   });
 
   it('should show table rows', async () => {

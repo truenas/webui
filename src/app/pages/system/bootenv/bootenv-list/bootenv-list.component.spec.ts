@@ -7,6 +7,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -89,22 +90,24 @@ describe('BootEnvironmentListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should show empty message when loaded and datasource is empty', () => {
+  it('should show empty message when loaded and datasource is empty', async () => {
     spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No Boot Environments are available');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No Boot Environments have been added yet');
   });
 
-  it('should show error message when can not retrieve response', () => {
+  it('should show error message when can not retrieve response', async () => {
     spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
     spectator.component.isError$.next(true);
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('Boot Environments could not be loaded');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 });

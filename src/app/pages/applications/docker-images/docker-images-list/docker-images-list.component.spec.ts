@@ -6,6 +6,7 @@ import { of, Subject } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import {
@@ -87,20 +88,24 @@ describe('DockerImagesListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should show empty message when loaded and datasource is empty', () => {
+  it('should show empty message when loaded and datasource is empty', async () => {
     store.setState({ isLoading: false, entities: [], error: null } as DockerImagesState);
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No Docker Images are available');
+    const emtpyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emtpyRow.getTitleText();
+
+    expect(emptyTitle).toBe('No Docker Images have been added yet');
   });
 
-  it('should show error message when can not retrieve response', () => {
+  it('should show error message when can not retrieve response', async () => {
     store.setState({ error: 'Something went wrong', isLoading: false, entities: [] } as DockerImagesState);
 
     spectator.detectChanges();
 
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('Docker Images could not be loaded');
+    const emtpyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emtpyRow.getTitleText();
+
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 });
