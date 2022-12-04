@@ -8,7 +8,9 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import {
+  Observable, BehaviorSubject, combineLatest, of,
+} from 'rxjs';
 import {
   filter, map, tap, switchMap,
 } from 'rxjs/operators';
@@ -16,11 +18,11 @@ import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
@@ -45,28 +47,35 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;
   defaultSort: Sort = { active: 'created', direction: 'desc' };
+
+  readonly apiCall$ = this.ws.call('bootenv.query');
   isLoading$ = new BehaviorSubject(false);
   isError$ = new BehaviorSubject(false);
-  emptyOrErrorConfig$: Observable<EmptyConfig> = this.isError$.pipe(
-    map((hasError) => {
-      if (hasError) {
-        return {
-          type: EmptyType.Errors,
-          large: true,
-          title: this.translate.instant('Boot Environments could not be loaded'),
-        };
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
+    this.isError$,
+    this.apiCall$.pipe(map((bootenvs) => bootenvs.length === 0)),
+  ]).pipe(
+    switchMap(([isLoading, isError, isNoData]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
       }
-
-      return {
-        type: EmptyType.NoPageData,
-        title: this.translate.instant('No Boot Environments are available'),
-        large: true,
-      };
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
 
   get selectionHasItems(): boolean {
     return this.checkboxColumn.selection.selected.some((bootenv) => ['', '-'].includes(bootenv.active));
+  }
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
   }
 
   constructor(
@@ -80,8 +89,8 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private snackbar: SnackbarService,
-  ) {
-  }
+    private emptyService: EmptyService,
+  ) { }
 
   ngOnInit(): void {
     this.getBootEnvironments();
@@ -184,7 +193,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.isError$.next(false);
     this.cdr.markForCheck();
 
-    this.ws.call('bootenv.query').pipe(
+    this.apiCall$.pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (bootenvs) => {

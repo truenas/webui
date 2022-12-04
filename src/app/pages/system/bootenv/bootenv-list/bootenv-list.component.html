@@ -49,8 +49,8 @@
   ix-table
   matSort
   matSortDisableClear="true"
-  [ix-table-empty]="!(isLoading$ | async) && !dataSource.filteredData.length"
-  [emptyConfig]="emptyOrErrorConfig$ | async"
+  [ix-table-empty]="!dataSource.filteredData.length"
+  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async), ('Boot Environments' | translate))"
   [dataSource]="dataSource"
   [matSortActive]="defaultSort.active"
   [matSortDirection]="defaultSort.direction"
