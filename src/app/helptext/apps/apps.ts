@@ -59,9 +59,14 @@ export default {
       formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
       modalWarning: T('You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.'),
     },
-    validateHostPathWarning: {
-      title: T('Warning'),
-      modalWarning: T('Disabling validation of host path can result in a data loss.'),
+    validateHostPath: {
+      title: T('Validate Host Path'),
+      warning: T(`Disabling host path validation may result in undefined behavior from TrueNAS system
+      services that access host paths mounted within kubernetes.<br>
+      Undefined behavior may include loss of access to data through inadvertent permissions changes,
+      loss of data due to lack of validation of application compatibility, and application stability issues.<br><br>
+      As such, this configuration is unsupported and bug reports in which this configuration plays a role
+      may be closed as a user configuration issue without further investigation.`),
     },
     enable_container_image_update: {
       placeholder: T('Enable Container Image Updates'),
