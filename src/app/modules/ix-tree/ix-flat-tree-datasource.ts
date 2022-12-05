@@ -1,8 +1,8 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { MatTreeFlatDataSource } from '@angular/material/tree';
 import {
-  BehaviorSubject, Subject, Observable, debounceTime, distinctUntilChanged, takeUntil, filter, map,
+  BehaviorSubject, Subject, Observable, debounceTime,
+  distinctUntilChanged, takeUntil, filter, map, mergeWith,
 } from 'rxjs';
 import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 
@@ -18,7 +18,6 @@ export class IxFlatTreeDataSource<T, F> extends DataSource<F> {
   private readonly _filteredData = new BehaviorSubject<T[]>([]);
   private readonly filterChanged$ = new BehaviorSubject<string>('');
   private readonly disconnect$ = new Subject<void>();
-  private readonly shadowDataSource = new MatTreeFlatDataSource<T, F>(this.treeControl, this.treeFlattener);
 
   constructor(
     private treeControl: FlatTreeControl<F>,
@@ -29,7 +28,6 @@ export class IxFlatTreeDataSource<T, F> extends DataSource<F> {
     if (initialData) {
       this.data = this.initialData;
     }
-    this.shadowDataSource.data = this.data;
     this.detectFilterChanges();
   }
 
@@ -42,7 +40,8 @@ export class IxFlatTreeDataSource<T, F> extends DataSource<F> {
   }
 
   connect(collectionViewer: CollectionViewer): Observable<F[]> {
-    return this.shadowDataSource.connect(collectionViewer).pipe(
+    return collectionViewer.viewChange.pipe(
+      mergeWith(this._flattenedData, this._filteredData, this.treeControl.expansionModel.changed),
       map(() => {
         this._expandedData.next(this.treeFlattener.expandFlattenedNodes(this._flattenedData.value, this.treeControl));
         return this._expandedData.value;

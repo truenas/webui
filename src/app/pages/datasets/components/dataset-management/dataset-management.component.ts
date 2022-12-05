@@ -3,7 +3,7 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { NestedTreeControl, FlatTreeControl } from '@angular/cdk/tree';
+import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -39,7 +39,6 @@ import {
   EmptyType,
 } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxFlatTreeDataSource } from 'app/modules/ix-tree/ix-flat-tree-datasource';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
@@ -77,12 +76,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  dataSource: IxNestedTreeDataSource<DatasetDetails>;
-  treeControl = new NestedTreeControl<DatasetDetails, string>(
-    (dataset) => dataset.children,
-    { trackBy: (dataset) => dataset.id },
-  );
-
   showMobileDetails = false;
   isMobileView = false;
   systemDataset: string;
@@ -107,7 +100,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     },
   };
 
-  readonly hasNestedChild = (_: number, dataset: DatasetDetails): boolean => Boolean(dataset.children?.length);
   private readonly scrollSubject = new Subject<number>();
 
   // Hidden on HA systems.
@@ -124,7 +116,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     id: dataset.id,
     level,
   });
-  flatTreeControl = new FlatTreeControl<FlatNode>(
+  treeControl = new FlatTreeControl<FlatNode>(
     (dataNode) => dataNode.level,
     (dataNode) => dataNode.expandable,
   );
@@ -134,7 +126,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     (dataNode) => dataNode.expandable,
     (dataNode) => dataNode.children,
   );
-  flatDataSource: IxFlatTreeDataSource<DatasetDetails, FlatNode>;
+  dataSource: IxFlatTreeDataSource<DatasetDetails, FlatNode>;
 
   constructor(
     private ws: WebSocketService,
@@ -176,21 +168,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       next: (datasets) => {
         this.sortDatasetsByName(datasets);
         this.createDataSource(datasets);
-        this.createFlatDataSource(datasets);
-        this.treeControl.dataNodes = datasets;
         this.cdr.markForCheck();
-
-        if (!datasets.length) {
-          return;
-        }
-
-        const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
-        if (routeDatasetId) {
-          this.datasetStore.selectDatasetById(routeDatasetId);
-        } else {
-          const firstNode = this.flatTreeControl.dataNodes[0];
-          this.router.navigate(['/datasets', firstNode.id]);
-        }
       },
       error: this.handleError,
     });
@@ -199,7 +177,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe({
         next: (selectedBranch: DatasetDetails[]) => {
-          selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
+          selectedBranch.forEach((dataset) => this.treeControl.expand(this.getNode(dataset)));
         },
         error: this.handleError,
       });
@@ -223,22 +201,23 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
+    this.dataSource = new IxFlatTreeDataSource(this.treeControl, this.treeFlattener, datasets);
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      return flattenTreeWithFilter(datasetsToFilter, (dataset: DatasetDetails) => {
-        return dataset.name.toLowerCase().includes(query.toLowerCase());
-      });
-    };
-  }
-
-  private createFlatDataSource(datasets: DatasetDetails[]): void {
-    this.flatDataSource = new IxFlatTreeDataSource(this.flatTreeControl, this.treeFlattener, datasets);
-    this.flatDataSource.filterPredicate = (datasetsToFilter, query = '') => {
       return flattenTreeWithFilter(datasetsToFilter, (dataset) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
-    this.flatTreeControl.expandAll();
+    this.expandDatasetBranch();
+  }
+
+  private expandDatasetBranch(): void {
+    const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
+    if (routeDatasetId) {
+      this.datasetStore.selectDatasetById(routeDatasetId);
+    } else {
+      const firstNode = this.treeControl.dataNodes[0];
+      this.router.navigate(['/datasets', firstNode.id]);
+    }
   }
 
   private listenForRouteChanges(): void {
@@ -308,7 +287,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   onSearch(query: string): void {
     this.dataSource.filter(query);
-    this.flatDataSource.filter(query);
   }
 
   ngAfterViewInit(): void {
@@ -371,7 +349,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.slideIn.open(ImportDataComponent);
   }
 
+  getNode(dataset: DatasetDetails): FlatNode {
+    return this.treeControl.dataNodes.find((node) => node.id === dataset.id);
+  }
+
   getDatasetDetails(dataNode: FlatNode): DatasetDetails {
-    return findInTree(this.flatDataSource.data, (dataset) => dataset.id === dataNode.id);
+    return findInTree(this.dataSource.data, (dataset) => dataset.id === dataNode.id);
   }
 }
