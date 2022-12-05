@@ -1,6 +1,6 @@
 import { CdkTree } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, Component, ViewChild, ViewEncapsulation,
+  ChangeDetectionStrategy, Component, HostBinding, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
@@ -19,5 +19,6 @@ import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tre
   ],
 })
 export class IxTreeViewComponent<T> extends IxTree<T> {
+  @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
   @ViewChild(IxTreeNodeOutletDirective, { static: true }) nodeOutlet!: IxTreeNodeOutletDirective<T>;
 }
