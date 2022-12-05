@@ -11,10 +11,6 @@ export const failoverLicensedStatusLoaded = createAction(
   props<{ isHaLicensed: boolean }>(),
 );
 
-export const loadHaStatus = createAction(
-  '[HA Info API] Load HA Status',
-);
-
 export const haSettingsUpdated = createAction(
   '[HA Info API] HA Settings Updated',
 );

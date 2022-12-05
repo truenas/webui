@@ -8,7 +8,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { loadHaStatus } from 'app/store/ha-info/ha-info.actions';
 import { systemFeaturesLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -49,10 +48,7 @@ export class SystemInfoEffects {
       // HIGH AVAILABILITY SUPPORT
       if ((profile.license && profile.license.system_serial_ha) || profile.system_product === 'BHYVE') {
         features.HA = true;
-        return of(
-          systemFeaturesLoaded({ systemFeatures: features }),
-          loadHaStatus(),
-        );
+        return of(systemFeaturesLoaded({ systemFeatures: features }));
       }
       return of(systemFeaturesLoaded({ systemFeatures: features }));
     }),

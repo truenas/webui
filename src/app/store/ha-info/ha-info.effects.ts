@@ -5,12 +5,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
-import {
-  failoverLicensedStatusLoaded,
-  haSettingsUpdated,
-  haStatusLoaded,
-  loadHaStatus,
-} from './ha-info.actions';
+import { failoverLicensedStatusLoaded, haSettingsUpdated, haStatusLoaded } from './ha-info.actions';
 
 @Injectable()
 export class HaInfoEffects {
@@ -26,7 +21,7 @@ export class HaInfoEffects {
   ));
 
   loadHaStatus = createEffect(() => this.actions$.pipe(
-    ofType(loadHaStatus, haSettingsUpdated, passiveNodeReplaced, adminUiInitialized),
+    ofType(haSettingsUpdated, passiveNodeReplaced, adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {
@@ -40,7 +35,7 @@ export class HaInfoEffects {
   ));
 
   subscribeToHa = createEffect(() => this.actions$.pipe(
-    ofType(loadHaStatus),
+    ofType(adminUiInitialized),
     mergeMap(() => {
       return this.ws.subscribe('failover.disabled.reasons').pipe(
         map((event) => {
