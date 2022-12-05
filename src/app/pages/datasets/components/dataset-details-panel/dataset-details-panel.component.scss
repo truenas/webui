@@ -9,9 +9,14 @@
   flex-direction: row;
   flex-wrap: nowrap;
   gap: $title-gap;
-  max-width: 70%;
+  max-width: 100%;
   place-items: flex-start;
-  width: 80%;
+
+  &.no-buttons {
+    .full-path {
+      max-width: 80%;
+    }
+  }
 
   @media (max-width: $breakpoint-tablet) {
     align-items: flex-start;
@@ -54,7 +59,6 @@
 
   .prefix {
     display: flex;
-    max-width: 30%;
     opacity: 0.85;
 
     @media (max-width: $breakpoint-hidden) {
@@ -64,7 +68,7 @@
 
   .full-path {
     display: flex;
-    max-width: inherit;
+    max-width: 15vw;
 
     @media  (max-width: $breakpoint-tablet) {
       display: flex;
@@ -101,6 +105,7 @@
   align-items: center;
   display: flex;
   margin: 0 0.333333rem 16px;
+  overflow: auto;
   padding: 12px 0;
   place-content: space-between;
 
