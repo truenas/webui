@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -33,6 +34,7 @@ import { SigninComponent } from './signin/signin.component';
     MatProgressBarModule,
     MatButtonModule,
     MatInputModule,
+    MatRadioModule,
     MatCardModule,
     MatCheckboxModule,
     MatSnackBarModule,

@@ -106,7 +106,4 @@ export default {
     startDescription: T('Wiping disk...'),
     infoContent: T('Disk Wiped successfully'),
   },
-
-  dialog_title: T('Settings saved'),
-  dialog_msg_save_success: T('Successfully saved Disk settings.'),
 };
