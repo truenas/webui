@@ -8,7 +8,9 @@ import { UUID } from 'angular2-uuid';
 import {
   combineLatest, forkJoin, Observable, of,
 } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  delay, map, switchMap, tap,
+} from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -18,7 +20,7 @@ import { DialogService, WebSocketService } from 'app/services';
 
 interface SigninState {
   isLoading: boolean;
-  hasRootPassword: boolean;
+  wasAdminSet: boolean;
   failover: {
     status: FailoverStatus;
     ips?: string[];
@@ -28,14 +30,14 @@ interface SigninState {
 
 const initialState: SigninState = {
   isLoading: false,
-  hasRootPassword: true,
+  wasAdminSet: true,
   failover: null,
 };
 
 @UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
-  hasRootPassword$ = this.select((state) => state.hasRootPassword);
+  wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
   canLogin$ = combineLatest([
@@ -71,7 +73,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     tap(() => this.setLoadingState(true)),
     switchMap(() => {
       return forkJoin([
-        this.checkIfRootPasswordSet(),
+        this.checkIfAdminPasswordSet(),
         this.loadFailoverStatus(),
       ])
         .pipe(
@@ -187,16 +189,17 @@ export class SigninStore extends ComponentStore<SigninState> {
     return '/dashboard';
   }
 
-  private checkIfRootPasswordSet(): Observable<boolean> {
-    return this.ws.call('user.has_root_password').pipe(
+  private checkIfAdminPasswordSet(): Observable<boolean> {
+    return this.ws.call('user.has_local_administrator_set_up').pipe(
       tap(
-        (hasRootPassword) => this.patchState({ hasRootPassword }),
+        (wasAdminSet) => this.patchState({ wasAdminSet }),
       ),
     );
   }
 
   private loadFailoverStatus(): Observable<unknown> {
     return this.ws.call('failover.status').pipe(
+      delay(3000),
       switchMap((status) => {
         this.setFailoverStatus(status);
 

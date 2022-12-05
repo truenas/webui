@@ -14,12 +14,12 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { SetAdminPasswordFormComponent } from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/views/sessions/signin/true-command-status/true-command-status.component';
 import { sessionsRoutes } from './sessions.routing';
 import { DisconnectedMessageComponent } from './signin/disconnected-message/disconnected-message.component';
 import { FailoverStatusComponent } from './signin/failover-status/failover-status.component';
-import { SetRootPasswordFormComponent } from './signin/set-root-password-form/set-root-password-form.component';
 import { SigninFormComponent } from './signin/signin-form/signin-form.component';
 import { SigninComponent } from './signin/signin.component';
 
@@ -45,7 +45,7 @@ import { SigninComponent } from './signin/signin.component';
   declarations: [
     SigninComponent,
     SigninFormComponent,
-    SetRootPasswordFormComponent,
+    SetAdminPasswordFormComponent,
     TrueCommandStatusComponent,
     FailoverStatusComponent,
     DisconnectedMessageComponent,

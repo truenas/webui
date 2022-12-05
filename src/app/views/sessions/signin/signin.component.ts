@@ -14,7 +14,7 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninComponent implements OnInit {
-  readonly hasRootPassword$ = this.signinStore.hasRootPassword$;
+  readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;

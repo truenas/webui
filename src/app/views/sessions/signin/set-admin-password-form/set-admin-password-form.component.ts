@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
@@ -12,17 +13,20 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { WebSocketService } from 'app/services';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
+const adminUsername = 'admin';
+
 @UntilDestroy()
 @Component({
-  selector: 'ix-set-root-password-form',
-  templateUrl: './set-root-password-form.component.html',
-  styleUrls: ['./set-root-password-form.component.scss'],
+  selector: 'ix-set-admin-password-form',
+  templateUrl: './set-admin-password-form.component.html',
+  styleUrls: ['./set-admin-password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SetRootPasswordFormComponent implements OnInit {
+export class SetAdminPasswordFormComponent implements OnInit {
   isLoading$ = this.signinStore.isLoading$;
 
   form = this.formBuilder.group({
+    username: [adminUsername, Validators.required],
     password: ['', Validators.required],
     password2: ['', [
       Validators.required,
@@ -35,6 +39,11 @@ export class SetRootPasswordFormComponent implements OnInit {
   });
 
   hasInstanceId = false;
+
+  readonly usernameOptions$ = of([
+    { label: this.translate.instant('Administrative user'), value: adminUsername },
+    { label: this.translate.instant('Root user (not recommended)'), value: 'root' },
+  ]);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -51,15 +60,15 @@ export class SetRootPasswordFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const formValues = this.form.value;
+    const { username, password, instanceId } = this.form.value;
     this.signinStore.setLoadingState(true);
 
     const request$ = this.hasInstanceId
-      ? this.ws.call('user.set_root_password', [formValues.password, { instance_id: formValues.instanceId }])
-      : this.ws.call('user.set_root_password', [formValues.password]);
+      ? this.ws.call('user.setup_local_administrator', [username, password, { instance_id: instanceId }])
+      : this.ws.call('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
-      switchMap(() => this.ws.login('root', formValues.password)),
+      switchMap(() => this.ws.login(username, password)),
       untilDestroyed(this),
     ).subscribe({
       next: (wasLoggedIn) => {

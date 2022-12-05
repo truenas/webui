@@ -4,9 +4,9 @@
 <div class="page-wrap height-100 login-form">
   <div class="session-form-hold">
     <mat-progress-bar
-      [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
       value="0"
       class="session-progress"
+      [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
     ></mat-progress-bar>
     <mat-card>
       <mat-card-content>
@@ -23,9 +23,9 @@
 
           <div class="card-bottom">
             <div *ngIf="canLogin$ | async" class="form-container">
-              <ix-signin-form *ngIf="hasRootPassword$ | async; else noRootPassword"></ix-signin-form>
-              <ng-template #noRootPassword>
-                <ix-set-root-password-form></ix-set-root-password-form>
+              <ix-signin-form *ngIf="wasAdminSet$ | async; else noAdminSet"></ix-signin-form>
+              <ng-template #noAdminSet>
+                <ix-set-admin-password-form></ix-set-admin-password-form>
               </ng-template>
             </div>
 

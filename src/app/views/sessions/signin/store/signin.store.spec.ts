@@ -23,7 +23,7 @@ describe('SigninStore', () => {
     providers: [
       mockWebsocket([
         mockCall('auth.generate_token', 'AUTH_TOKEN'),
-        mockCall('user.has_root_password', true),
+        mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
@@ -35,6 +35,9 @@ describe('SigninStore', () => {
         useValue: {
           sessionStorage: {
             getItem: jest.fn(),
+          },
+          location: {
+            protocol: 'https:',
           },
         },
       },
@@ -61,7 +64,7 @@ describe('SigninStore', () => {
     };
     const initialState = {
       failover: initialFailover,
-      hasRootPassword: true,
+      wasAdminSet: true,
       isLoading: false,
     };
     beforeEach(() => {
@@ -69,7 +72,7 @@ describe('SigninStore', () => {
     });
 
     it('hasRootPassword$', async () => {
-      expect(await firstValueFrom(spectator.service.hasRootPassword$)).toBe(true);
+      expect(await firstValueFrom(spectator.service.wasAdminSet$)).toBe(true);
     });
 
     it('failover$', async () => {
@@ -98,11 +101,11 @@ describe('SigninStore', () => {
     it('checks if root password is set and loads failover status', async () => {
       spectator.service.init();
 
-      expect(websocket.call).toHaveBeenCalledWith('user.has_root_password');
+      expect(websocket.call).toHaveBeenCalledWith('user.has_local_administrator_set_up');
       expect(websocket.call).toHaveBeenCalledWith('failover.status');
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
-        hasRootPassword: true,
+        wasAdminSet: true,
         isLoading: false,
         failover: {
           status: FailoverStatus.Single,
@@ -118,7 +121,7 @@ describe('SigninStore', () => {
       expect(websocket.call).toHaveBeenCalledWith('failover.get_ips');
       expect(websocket.call).toHaveBeenCalledWith('failover.disabled.reasons');
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
-        hasRootPassword: true,
+        wasAdminSet: true,
         isLoading: false,
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
@@ -163,7 +166,7 @@ describe('SigninStore', () => {
 
         expectObservable(spectator.service.state$).toBe('a', {
           a: {
-            hasRootPassword: true,
+            wasAdminSet: true,
             isLoading: false,
             failover: {
               disabledReasons: [FailoverDisabledReason.NoLicense],
@@ -189,7 +192,7 @@ describe('SigninStore', () => {
 
         expectObservable(spectator.service.state$).toBe('a', {
           a: {
-            hasRootPassword: true,
+            wasAdminSet: true,
             isLoading: false,
             failover: {
               disabledReasons: [FailoverDisabledReason.DisagreeVip],
@@ -200,8 +203,5 @@ describe('SigninStore', () => {
         });
       });
     });
-  });
-
-  describe('getRedirectUrl', () => {
   });
 });

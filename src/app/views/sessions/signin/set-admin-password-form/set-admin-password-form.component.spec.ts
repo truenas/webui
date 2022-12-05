@@ -7,20 +7,21 @@ import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
+import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
 import {
-  SetRootPasswordFormComponent,
-} from 'app/views/sessions/signin/set-root-password-form/set-root-password-form.component';
+  SetAdminPasswordFormComponent,
+} from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
-describe('SetRootPasswordFormComponent', () => {
-  let spectator: Spectator<SetRootPasswordFormComponent>;
+describe('SetAdminPasswordFormComponent', () => {
+  let spectator: Spectator<SetAdminPasswordFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: SetRootPasswordFormComponent,
+    component: SetAdminPasswordFormComponent,
     imports: [
       FormsModule,
       ReactiveFormsModule,
@@ -28,7 +29,7 @@ describe('SetRootPasswordFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('user.set_root_password'),
+        mockCall('user.setup_local_administrator'),
         mockCall('system.environment', SystemEnvironment.Default),
       ]),
       mockProvider(SigninStore, {
@@ -49,6 +50,9 @@ describe('SetRootPasswordFormComponent', () => {
   });
 
   it('sets new root password when form is submitted', async () => {
+    const usernameRadio = await loader.getHarness(IxRadioGroupHarness);
+    await usernameRadio.setValue('Root user (not recommended)');
+
     await form.fillForm({
       Password: '12345678',
       'Reenter Password': '12345678',
@@ -58,8 +62,26 @@ describe('SetRootPasswordFormComponent', () => {
     await submitButton.click();
 
     const websocket = spectator.inject(WebSocketService);
-    expect(websocket.call).toHaveBeenCalledWith('user.set_root_password', ['12345678']);
+    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['root', '12345678']);
     expect(websocket.login).toHaveBeenCalledWith('root', '12345678');
+
+    const signinStore = spectator.inject(SigninStore);
+    expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
+    expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
+  });
+
+  it('sets new admin password when form is submitted', async () => {
+    await form.fillForm({
+      Password: '12345678',
+      'Reenter Password': '12345678',
+    });
+
+    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
+    await submitButton.click();
+
+    const websocket = spectator.inject(WebSocketService);
+    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['admin', '12345678']);
+    expect(websocket.login).toHaveBeenCalledWith('admin', '12345678');
 
     const signinStore = spectator.inject(SigninStore);
     expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
@@ -81,6 +103,7 @@ describe('SetRootPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.set_root_password', ['12345678', { instance_id: 'i-12345678' }]);
+    expect(spectator.inject(WebSocketService).call)
+      .toHaveBeenCalledWith('user.setup_local_administrator', ['admin', '12345678', { instance_id: 'i-12345678' }]);
   });
 });

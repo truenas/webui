@@ -4,15 +4,15 @@ import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { CopyrightLineComponent } from 'app/modules/common/copyright-line/copyright-line.component';
+import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
 import { WebSocketService } from 'app/services';
 import {
   DisconnectedMessageComponent,
 } from 'app/views/sessions/signin/disconnected-message/disconnected-message.component';
 import { FailoverStatusComponent } from 'app/views/sessions/signin/failover-status/failover-status.component';
 import {
-  SetRootPasswordFormComponent,
-} from 'app/views/sessions/signin/set-root-password-form/set-root-password-form.component';
+  SetAdminPasswordFormComponent,
+} from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninFormComponent } from 'app/views/sessions/signin/signin-form/signin-form.component';
 import { SigninComponent } from 'app/views/sessions/signin/signin.component';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
@@ -22,7 +22,7 @@ import {
 
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
-  const hasRootPassword$ = new BehaviorSubject<boolean>(undefined);
+  const wasAdminSet$ = new BehaviorSubject<boolean>(undefined);
   const failover$ = new BehaviorSubject<{
     status: FailoverStatus;
     ips?: string[];
@@ -41,7 +41,7 @@ describe('SigninComponent', () => {
       MockComponents(
         SigninFormComponent,
         DisconnectedMessageComponent,
-        SetRootPasswordFormComponent,
+        SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         FailoverStatusComponent,
         CopyrightLineComponent,
@@ -52,7 +52,7 @@ describe('SigninComponent', () => {
         isConnected$,
       }),
       mockProvider(SigninStore, {
-        hasRootPassword$,
+        wasAdminSet$,
         failover$,
         hasFailover$,
         canLogin$,
@@ -64,7 +64,7 @@ describe('SigninComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    hasRootPassword$.next(true);
+    wasAdminSet$.next(true);
     failover$.next(null);
     hasFailover$.next(false);
     canLogin$.next(true);
@@ -86,10 +86,10 @@ describe('SigninComponent', () => {
 
   describe('connected', () => {
     it('shows SetRootPasswordFormComponent when root password is not set', () => {
-      hasRootPassword$.next(false);
+      wasAdminSet$.next(false);
       spectator.detectChanges();
 
-      expect(spectator.query(SetRootPasswordFormComponent)).toExist();
+      expect(spectator.query(SetAdminPasswordFormComponent)).toExist();
     });
 
     it('initializes SigninStore when component is initialized', () => {
