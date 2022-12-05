@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { Store, StoreModule } from '@ngrx/store';
+import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -28,7 +28,7 @@ import { NetworkService, SystemGeneralService, WebSocketService } from 'app/serv
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
-import { haInfoStateKey, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
@@ -336,10 +336,6 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('checks whether failover is licensed for', () => {
-      spectator.inject(Store).select(selectIsHaLicensed).subscribe((isHaLicensed) => {
-        expect(isHaLicensed).toBe(true);
-      });
-
       expect(ws.call).toHaveBeenCalledWith('failover.node');
     });
 

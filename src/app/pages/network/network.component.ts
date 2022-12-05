@@ -45,8 +45,7 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { loadHaStatus } from 'app/store/ha-info/ha-info.actions';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
@@ -247,12 +246,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       });
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        if (isHaLicensed) {
-          this.store$.dispatch(loadHaStatus());
-          this.listenForHaStatus();
-        }
-      });
+      this.listenForHaStatus();
     }
 
     this.openInterfaceForEditFromRoute();
@@ -263,10 +257,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   private listenForHaStatus(): void {
-    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ reasons }) => {
-      if (reasons.length === 0) {
-        this.isHaEnabled = true;
-      }
+    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ hasHa }) => {
+      this.isHaEnabled = hasHa;
     });
   }
 

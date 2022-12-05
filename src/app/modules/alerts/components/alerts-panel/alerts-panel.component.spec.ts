@@ -15,9 +15,8 @@ import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/st
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { loadFailoverLicensedStatus } from 'app/store/ha-info/ha-info.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
-import { haInfoStateKey, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 const unreadAlerts = [
   {
@@ -81,7 +80,6 @@ describe('AlertsPanelComponent', () => {
         mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
-        mockCall('failover.licensed', true),
       ]),
       mockProvider(SystemGeneralService, {
         get isEnterprise(): boolean {
@@ -105,12 +103,6 @@ describe('AlertsPanelComponent', () => {
   });
 
   it('selects HA status from store and passes it to the ix-alert', () => {
-    spectator.inject(Store).dispatch(loadFailoverLicensedStatus());
-
-    spectator.inject(Store).select(selectIsHaLicensed).subscribe((isHaLicensed) => {
-      expect(isHaLicensed).toBe(true);
-    });
-
     expect(alertPanel.unreadAlertComponents[0].isHaLicensed).toBe(true);
     expect(alertPanel.dismissedAlertComponents[0].isHaLicensed).toBe(true);
   });

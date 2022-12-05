@@ -9,14 +9,13 @@ import {
   failoverLicensedStatusLoaded,
   haSettingsUpdated,
   haStatusLoaded,
-  loadFailoverLicensedStatus,
   loadHaStatus,
 } from './ha-info.actions';
 
 @Injectable()
 export class HaInfoEffects {
   loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
-    ofType(loadFailoverLicensedStatus),
+    ofType(adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('failover.licensed').pipe(
         map((isHaLicensed) => {

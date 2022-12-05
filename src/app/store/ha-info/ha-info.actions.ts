@@ -15,10 +15,6 @@ export const loadHaStatus = createAction(
   '[HA Info API] Load HA Status',
 );
 
-export const loadFailoverLicensedStatus = createAction(
-  '[HA Info API] Load Failover Licensed Status',
-);
-
 export const haSettingsUpdated = createAction(
   '[HA Info API] HA Settings Updated',
 );
