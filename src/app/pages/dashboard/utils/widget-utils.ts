@@ -6,6 +6,10 @@ interface Converted {
 }
 
 export class WidgetUtils {
+  /**
+   * Only useful when you need number and unit separately.
+   * Use`filesize { standard: 'iec' }` package or `filesize` pipe for most use cases.
+   */
   convert(value: number): Converted {
     let result: number;
     let units: string;

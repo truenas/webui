@@ -130,8 +130,6 @@ export default {
  system. Enter a number and choose a measure of time from the drop-down.'),
 
   // dialog
-  cipher_placeholder: T('Cipher'),
-
   clearSnapshotDialog_title: T('Destination Snapshots Are Not Related to Replicated Snapshots'),
   clearSnapshotDialog_content: T('Destination dataset does not contain any snapshots that can be used as a basis for the incremental\
  changes in the snapshots being sent. The snapshots in the destination dataset will be deleted and the\
