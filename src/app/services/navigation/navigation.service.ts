@@ -10,6 +10,7 @@ import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -144,7 +145,7 @@ export class NavigationService {
   }
 
   private checkForFailoverSupport(): void {
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       this.hasFailover$.next(hasFailover);
     });
   }

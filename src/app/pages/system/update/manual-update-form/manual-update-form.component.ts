@@ -23,6 +23,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -106,7 +107,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   checkHaLicenseAndUpdateStatus(): void {
     if (this.systemService.isEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         this.checkForUpdateRunning();
         this.cdr.markForCheck();
