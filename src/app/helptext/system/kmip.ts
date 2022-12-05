@@ -1,10 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemKmip = {
-  fieldset_server: T('KMIP Server'),
-  fieldset_certificate: T('Certificate'),
-  fieldset_management: T('Management'),
-
   server: {
     tooltip: T('Host name or IP address of the central key server.'),
   },

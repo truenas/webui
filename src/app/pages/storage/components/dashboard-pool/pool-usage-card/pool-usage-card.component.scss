@@ -14,24 +14,6 @@
   }
 }
 
-.pool-icon {
-  &.icon-online {
-    color: var(--green);
-  }
-
-  &.icon-warning {
-    color: var(--orange);
-  }
-
-  &.icon-faulted {
-    color: var(--blue);
-  }
-
-  &.icon-error {
-    color: var(--red);
-  }
-}
-
 .capacity-caption {
   border-bottom: 2px solid var(--contrast-lighter);
   font-size: 130%;

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 @UntilDestroy()
 @Component({
@@ -18,13 +18,9 @@ export class TopologyItemNodeComponent {
   @Input() topologyItem: TopologyItem;
   @Input() disk: Disk;
 
-  private utils: WidgetUtils;
-
   constructor(
     protected translate: TranslateService,
-  ) {
-    this.utils = new WidgetUtils();
-  }
+  ) {}
 
   get name(): string {
     if ((this.topologyItem as TopologyDisk).disk) {
@@ -41,8 +37,7 @@ export class TopologyItemNodeComponent {
   }
 
   get capacity(): string {
-    return this.disk && this.disk?.size ? this.utils.convert(this.disk.size).value
-      + this.utils.convert(this.disk.size).units : '';
+    return this.disk?.size ? filesize(this.disk.size, { standard: 'iec' }) : '';
   }
 
   get errors(): string {
@@ -54,12 +49,14 @@ export class TopologyItemNodeComponent {
     return '';
   }
 
-  get statusColor(): string {
+  get statusClass(): string {
     switch (this.topologyItem.status as (PoolStatus | TopologyItemStatus)) {
       case PoolStatus.Faulted:
-        return 'var(--red)';
+        return 'fn-theme-red';
+      case PoolStatus.Degraded:
       case PoolStatus.Offline:
-        return 'var(--alt-bg2)';
+      case TopologyItemStatus.Offline:
+        return 'fn-theme-yellow';
       default:
         return '';
     }

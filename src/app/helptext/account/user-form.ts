@@ -1,7 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  user_form_title_class: 'name-and-contact',
   user_form_full_name_tooltip: T('Spaces are allowed.'),
   user_form_username_tooltip: T('Usernames can be up to 16 characters long.\
  When using NIS or other legacy software with limited username lengths,\

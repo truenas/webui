@@ -27,6 +27,7 @@ import {
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -187,7 +188,7 @@ export class UpdateComponent implements OnInit {
 
     if (this.productType === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
-        this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isLicensed) => {
+        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isLicensed) => {
           if (isLicensed) {
             this.updateMethod = 'failover.upgrade';
             this.isHa = true;

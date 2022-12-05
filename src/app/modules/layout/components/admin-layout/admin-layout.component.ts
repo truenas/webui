@@ -146,8 +146,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((headerContent) => {
         try {
-          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-          this.cdr.detectChanges();
+          if (headerContent) {
+            this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+            this.cdr.detectChanges();
+          } else {
+            this.headerPortalOutlet = null;
+          }
         } catch (error: unknown) {
           // Prevents an error on one header from breaking headers on all pages.
           console.error('Error when rendering page header template', error);

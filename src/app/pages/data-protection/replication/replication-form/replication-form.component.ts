@@ -863,8 +863,6 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'lifetime_unit',
-          placeholder: helptext.lifetime_unit_placeholder,
-          tooltip: helptext.lifetime_unit_tooltip,
           options: mapToOptions(lifetimeUnitNames, this.translate),
           value: LifetimeUnit.Week,
           relation: [

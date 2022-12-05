@@ -113,8 +113,8 @@ describe('DatasetAclEditorComponent', () => {
         })),
       }),
     ],
-    params: {
-      datasetId: 'pool/dataset',
+    queryParams: {
+      path: '/mnt/pool/dataset',
     },
   });
 
