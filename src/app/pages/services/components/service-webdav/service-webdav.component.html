@@ -6,26 +6,26 @@
 
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="helptext.fieldset_title">
+      <ix-fieldset [title]="helptext.fieldset_title | translate">
         <ix-select
           [formControlName]="protocol.fcName"
-          [label]="protocol.label"
-          [tooltip]="protocol.tooltip"
+          [label]="protocol.label | translate"
+          [tooltip]="protocol.tooltip | translate"
           [options]="protocol.options"
         ></ix-select>
 
         <ix-input
           *ngIf="!tcpport.hidden"
           [formControlName]="tcpport.fcName"
-          [label]="tcpport.label"
-          [tooltip]="tcpport.tooltip"
+          [label]="tcpport.label | translate"
+          [tooltip]="tcpport.tooltip | translate"
         ></ix-input>
 
         <ix-input
           *ngIf="!tcpportssl.hidden"
           [formControlName]="tcpportssl.fcName"
-          [label]="tcpportssl.label"
-          [tooltip]="tcpportssl.tooltip"
+          [label]="tcpportssl.label | translate"
+          [tooltip]="tcpportssl.tooltip | translate"
         ></ix-input>
 
         <div *ngIf="!certssl.hidden" class="linked-select">
@@ -36,16 +36,16 @@
           </div>
           <ix-select
             [formControlName]="certssl.fcName"
-            [label]="certssl.label"
-            [tooltip]="certssl.tooltip"
+            [label]="certssl.label | translate"
+            [tooltip]="certssl.tooltip | translate"
             [options]="certssl.options"
           ></ix-select>
         </div>
 
         <ix-select
           [formControlName]="htauth.fcName"
-          [label]="htauth.label"
-          [tooltip]="htauth.tooltip"
+          [label]="htauth.label | translate"
+          [tooltip]="htauth.tooltip | translate"
           [options]="htauth.options"
         ></ix-select>
 
@@ -53,15 +53,15 @@
           *ngIf="pwdRequired"
           type="password"
           [formControlName]="password.fcName"
-          [label]="password.label"
-          [tooltip]="password.tooltip"
+          [label]="password.label | translate"
+          [tooltip]="password.tooltip | translate"
         ></ix-input>
 
         <ix-input
           *ngIf="pwdRequired"
           type="password"
           [formControlName]="password2.fcName"
-          [label]="password2.label"
+          [label]="password2.label | translate"
         ></ix-input>
       </ix-fieldset>
 

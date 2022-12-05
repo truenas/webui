@@ -3,10 +3,7 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
 export const helptextSystemAdvanced = {
   fieldset_console: T('Console'),
-  fieldset_storage: T('Storage'),
-  fieldset_ui: T('GUI'),
   fieldset_sed: T('Self-Encrypting Drive'),
-  fieldset_kernel: T('Kernel'),
   fieldset_replication: T('Replication'),
   fieldset_syslog: T('Syslog'),
   fieldset_sysctl: T('Sysctl'),
@@ -19,8 +16,6 @@ export const helptextSystemAdvanced = {
 
   system_dataset_placeholder: T('Use System Dataset'),
   system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
-
-  variable: T('Variable'),
 
   consolemenu_placeholder: T('Show Text Console without Password Prompt'),
   consolemenu_tooltip: T('Unset to add a login prompt to the system before\
