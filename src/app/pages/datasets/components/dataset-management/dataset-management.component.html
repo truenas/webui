@@ -7,7 +7,7 @@
 </ng-template>
 
 <div
-  *ngIf="!isLoading && flatDataSource?.data.length === 0; else datasetContainer"
+  *ngIf="!isLoading && dataSource?.data.length === 0; else datasetContainer"
   class="entity-empty-wrapper"
   fxFlex="100%"
   fxLayout="row"
@@ -28,7 +28,7 @@
 
       <div class="dataset-tree-search">
         <ix-search-input
-          [disabled]="!flatDataSource?.data.length"
+          [disabled]="!dataSource?.data.length"
           (search)="onSearch($event)"
         ></ix-search-input>
       </div>
@@ -62,23 +62,24 @@
         <div class="dataset-tree-inner" (resized)="onIxTreeWidthChange($event)">
           <ix-tree-virtual-scroll-view
             class="dataset-tree"
-            [ixDataSource]="flatDataSource"
-            [ixTreeControl]="flatTreeControl"
+            [ixDataSource]="dataSource"
+            [ixTreeControl]="treeControl"
             [ixItemSize]="48"
             [ixMinBufferPx]="48 * 10"
             [ixMaxBufferPx]="48 * 20"
           >
             <ix-tree-node
-              *ixTreeNodeDef="let dataset; dataSource: flatDataSource"
+              *ixTreeNodeDef="let dataset; dataSource: dataSource"
               routerLinkActive="selected"
               ixTreeNodePadding
               [ixTreeNodePaddingIndent]="40"
-              [ixTreeNodeDefDataSource]="flatDataSource"
+              [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
             >
               <button mat-icon-button disabled></button>
+              <!-- TODO: Inject ix-dataset-node using CdkPortal -->
               <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
@@ -87,11 +88,11 @@
             </ix-tree-node>
 
             <ix-tree-node
-              *ixTreeNodeDef="let dataset; dataSource: flatDataSource; when: hasChild"
+              *ixTreeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
               routerLinkActive="selected"
               ixTreeNodePadding
               [ixTreeNodePaddingIndent]="40"
-              [ixTreeNodeDefDataSource]="flatDataSource"
+              [ixTreeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
@@ -104,9 +105,10 @@
               >
                 <ix-icon
                   class="mat-icon-rtl-mirror"
-                  [name]="flatTreeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
+                  [name]="treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
                 ></ix-icon>
               </button>
+              <!-- TODO: Inject ix-dataset-node using CdkPortal -->
               <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
