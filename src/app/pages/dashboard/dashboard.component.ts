@@ -210,7 +210,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone[index].state.vlans = [];
         }
 
-        if (item.type == 'VLAN') {
+        if (item.type == 'VLAN' && item.state.parent) {
           const parentIndex = parseInt(nicKeys[item.state.parent]);
           if (!clone[parentIndex].state.vlans) {
             clone[parentIndex].state.vlans = [];
