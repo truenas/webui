@@ -1,6 +1,6 @@
 import { CdkTree } from '@angular/cdk/tree';
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, ViewChild, ViewEncapsulation,
+  ChangeDetectionStrategy, Component, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
@@ -18,13 +18,6 @@ import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tre
     { provide: IxTree, useExisting: IxTreeViewComponent },
   ],
 })
-export class IxTreeViewComponent<T> extends IxTree<T> implements AfterViewInit {
+export class IxTreeViewComponent<T> extends IxTree<T> {
   @ViewChild(IxTreeNodeOutletDirective, { static: true }) nodeOutlet!: IxTreeNodeOutletDirective<T>;
-  _afterViewInit = false;
-  ngAfterViewInit(): void {
-    Promise.resolve().then(() => {
-      this._afterViewInit = true;
-      this.changeDetectorRef.markForCheck();
-    });
-  }
 }

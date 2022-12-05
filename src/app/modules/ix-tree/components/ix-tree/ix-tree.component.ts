@@ -16,9 +16,12 @@ import {
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 
+// TODO: Find a better way rather than `any`.
+type TreeControlAny = any;
+
 @Component({ template: '' })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class IxTree<T> extends CdkTree<T> implements OnInit, OnDestroy {
+export class IxTree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
   dir: Direction = 'ltr';
   _dataSourceChanged = new Subject<void>();
   // Outlets within the tree's template where the dataNodes will be inserted.
@@ -26,7 +29,7 @@ export class IxTree<T> extends CdkTree<T> implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('ixTreeControl') override treeControl!: TreeControl<T, any>;
+  @Input('ixTreeControl') override treeControl!: TreeControl<T, TreeControlAny>;
   @Input('ixDataSource')
   override get dataSource(): DataSource<T> | Observable<T[]> | T[] {
     return super.dataSource;
