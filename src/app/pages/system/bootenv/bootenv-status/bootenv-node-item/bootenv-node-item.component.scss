@@ -95,7 +95,7 @@ $columns: 7;
   }
 }
 
-::ng-deep {
+::ng-deep :host {
   @for $i from 1 through 10 {
     ix-tree-node[aria-level="#{$i}"],
     ix-nested-tree-node[aria-level="#{$i}"] {
