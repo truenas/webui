@@ -408,13 +408,24 @@ export class SmbFormComponent implements OnInit {
             this.isLoading = false;
             this.cdr.markForCheck();
             if (redirect) {
-              const homeShare = this.form.get('home').value;
-              this.router.navigate(
-                ['/', 'datasets', 'acl', 'edit'],
-                { queryParams: { homeShare, path: smbShareResponse.path_local } },
-              );
+              this.dialog.confirm({
+                title: this.translate.instant('Configure ACL'),
+                message: this.translate.instant('Do you want to сonfigure the ACL?'),
+                buttonMsg: this.translate.instant('Configure'),
+                hideCheckBox: true,
+              }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
+                if (isConfigure) {
+                  const homeShare = this.form.get('home').value;
+                  this.router.navigate(
+                    ['/', 'datasets', 'acl', 'edit'],
+                    { queryParams: { homeShare, path: smbShareResponse.path_local } },
+                  );
+                }
+                this.slideInService.close();
+              });
+            } else {
+              this.slideInService.close();
             }
-            this.slideInService.close();
           },
           error: (err) => {
             if (err.reason.includes('[ENOENT]') || err.reason.includes('[EXDEV]')) {

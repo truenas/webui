@@ -657,6 +657,7 @@
   "Do <b>NOT</b> change this setting when using Windows as the initiator. Only needs to be changed in large environments where the number of systems using a specific RPM is needed for accurate reporting statistics.": "",
   "Do not save": "",
   "Do not set this if the Serial Port is disabled.": "",
+  "Do you want to сonfigure the ACL?": "",
   "Docker Host": "",
   "Docker Images could not be loaded": "",
   "Docker Registry Authentication": "",
