@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnDestroy, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
@@ -14,15 +14,22 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import {
+  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
+import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +42,7 @@ import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   // HA
-  @Input() isHa = false;
+  @Input() isHaLicensed = false;
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
@@ -49,7 +56,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
-  imagePath = 'assets/images/';
   ready = false;
   productImage = '';
   productModel = '';
@@ -58,10 +64,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   updateAvailable = false;
   manufacturer = '';
   buildDate: string;
-  loader = false;
   productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
-  haStatus: string;
+  hasHa: boolean;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
   uptimeString: string;
@@ -82,6 +87,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private productImgServ: ProductImageService,
+    private serverTimeService: ServerTimeService,
+    public loader: AppLoaderService,
+    public dialogService: DialogService,
+    @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
     this.configurable = false;
@@ -93,20 +102,28 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
+
+    this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
   }
 
   ngOnInit(): void {
-    if (this.isHa && this.isPassive) {
+    if (this.isHaLicensed && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
         untilDestroyed(this),
       ).subscribe((haStatus) => {
-        if (haStatus.status === 'HA Enabled' && !this.data) {
-          this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((systemInfo: SystemInfo) => {
-            this.processSysInfo(systemInfo);
-          });
+        if (haStatus.hasHa) {
+          this.data = null;
+
+          this.ws.call('failover.call_remote', ['system.info'])
+            .pipe(untilDestroyed(this))
+            .subscribe((systemInfo: SystemInfo) => {
+              this.processSysInfo(systemInfo);
+            });
+        } else if (!haStatus.hasHa) {
+          this.productImage = '';
         }
-        this.haStatus = haStatus.status;
+        this.hasHa = haStatus.hasHa;
       });
     } else {
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
@@ -122,8 +139,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       });
     }
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
-        if (hasFailover) {
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        if (isHaLicensed) {
           this.updateMethod = 'failover.upgrade';
         }
         this.checkForRunningUpdate();
@@ -184,14 +201,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     this.nasDateTime = new Date(datetime);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
 
-    this.timeDiffInSeconds = differenceInSeconds(datetime, now);
-    this.timeDiffInSeconds = this.timeDiffInSeconds < 0 ? (this.timeDiffInSeconds * -1) : this.timeDiffInSeconds;
+    this.timeDiffInSeconds = Math.abs(differenceInSeconds(datetime, now));
+    this.timeDiffInDays = Math.abs(differenceInDays(datetime, now));
 
-    this.timeDiffInDays = differenceInDays(datetime, now);
-    this.timeDiffInDays = this.timeDiffInDays < 0 ? (this.timeDiffInDays * -1) : this.timeDiffInDays;
-
-    if (this.timeDiffInSeconds > 300) {
+    if (this.timeDiffInSeconds > 300 || this.timeDiffInDays > 0) {
       this.showTimeDiffWarning = true;
+    } else {
+      this.showTimeDiffWarning = false;
     }
 
     if (this.timeInterval) {
@@ -289,6 +305,27 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       return;
     }
     this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
+  }
+
+  onSynchronizeTime(): void {
+    this.serverTimeService.confirmSetSystemTime().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.loader.open();
+      const currentTime = Date.now();
+      this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          sessionStorage.setItem('systemInfoLoaded', currentTime.toString());
+          this.store$.dispatch(
+            systemInfoDatetimeUpdated({ datetime: { $date: currentTime } }),
+          );
+          this.processSysInfo({ ...this.data, datetime: { $date: currentTime } });
+        },
+        error: (err) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, err, this.dialogService);
+        },
+      });
+    });
   }
 
   goToEnclosure(): void {

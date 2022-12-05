@@ -17,6 +17,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
@@ -50,6 +51,7 @@ export class EntityWizardComponent implements OnInit {
     protected aroute: ActivatedRoute,
     private dialog: DialogService,
     protected translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -188,7 +190,7 @@ export class EntityWizardComponent implements OnInit {
           } else if (this.conf.routeSuccess) {
             this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
           } else {
-            this.dialog.info(this.translate.instant('Settings saved'), '');
+            this.snackbar.success(this.translate.instant('Settings saved.'));
           }
         },
         error: (res) => {

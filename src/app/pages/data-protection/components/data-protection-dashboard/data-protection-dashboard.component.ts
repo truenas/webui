@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { EMPTY, merge } from 'rxjs';
+import {
+  filter, switchMap, tap, catchError,
+} from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
@@ -19,10 +21,13 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   CloudsyncRestoreDialogComponent,
@@ -43,7 +48,6 @@ import {
   WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { JobService } from 'app/services/job.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -74,15 +78,12 @@ SmartTestTaskUi
 @UntilDestroy()
 @Component({
   templateUrl: './data-protection-dashboard.component.html',
-  providers: [
-    TaskService,
-    JobService,
-  ],
+  providers: [TaskService],
 })
 export class DataProtectionDashboardComponent implements OnInit {
   dataCards: TaskCard[] = [];
   disks: Disk[] = [];
-  jobStates: { [jobId: string]: string } = {};
+  jobStates = new Map<number, string>();
 
   constructor(
     private ws: WebSocketService,
@@ -90,21 +91,19 @@ export class DataProtectionDashboardComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private router: Router,
     private taskService: TaskService,
     private storage: StorageService,
     private translate: TranslateService,
-    private job: JobService,
     private store$: Store<AppState>,
+    private snackbar: SnackbarService,
   ) {
     this.storage
       .listDisks()
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((disks) => {
-        if (disks) {
-          this.disks = disks;
-        }
+        this.disks = disks;
       });
   }
 
@@ -236,19 +235,17 @@ export class DataProtectionDashboardComponent implements OnInit {
             const slideIn = this.slideInService.open(SnapshotTaskComponent, { wide: true });
             slideIn.setTaskForEdit(row);
           },
-          tableActions: [
+          tableFooterActions: [
             {
               label: this.translate.instant('VMware Snapshot Integration'),
               onClick: () => {
-                this.router.navigate(['/data-protection/vmware-snapshots']);
+                this.router.navigate(['/data-protection', 'vmware-snapshots']);
               },
             },
-          ],
-          tableFooterActions: [
             {
               label: this.translate.instant('Snapshots'),
               onClick: () => {
-                this.router.navigate(['/datasets/snapshots']);
+                this.router.navigate(['/datasets', 'snapshots']);
               },
             },
           ],
@@ -482,15 +479,16 @@ export class DataProtectionDashboardComponent implements OnInit {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).pipe(
+        this.store$.select(selectJob(task.job.id)).pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
-          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+          if (this.jobStates.get(job.id) !== job.state) {
             this.refreshTable(TaskCardId.CloudSync);
           }
-          this.jobStates[job.id] = job.state;
+          this.jobStates.set(job.id, job.state);
         });
       }
 
@@ -507,26 +505,30 @@ export class DataProtectionDashboardComponent implements OnInit {
   }
 
   replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
-    return data.map((task) => {
+    const tasks: ReplicationTaskUi[] = [];
+    data.forEach((task) => {
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
         : this.translate.instant(helptext.no_snapshot_sent_yet);
 
       if (task.job !== null) {
         task.state.state = task.job.state;
-        this.job.getJobStatus(task.job.id).pipe(
+        this.store$.select(selectJob(task.job.id)).pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.state.state = job.state;
           task.job = job;
-          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+          if (this.jobStates.get(job.id) !== job.state) {
             this.refreshTable(TaskCardId.Replication);
           }
-          this.jobStates[job.id] = job.state;
+          this.jobStates.set(job.id, job.state);
+          console.info('replication', job.id, job.state, job);
         });
       }
-      return task;
+      tasks.push(task);
     });
+    return tasks;
   }
 
   smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
@@ -584,15 +586,16 @@ export class DataProtectionDashboardComponent implements OnInit {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).pipe(
+        this.store$.select(selectJob(task.job.id)).pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
-          if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
+          if (this.jobStates.get(job.id) !== job.state) {
             this.refreshTable(TaskCardId.Rsync);
           }
-          this.jobStates[job.id] = job.state;
+          this.jobStates.set(job.id, job.state);
         });
       }
 
@@ -607,42 +610,33 @@ export class DataProtectionDashboardComponent implements OnInit {
         name: 'run',
         matTooltip: this.translate.instant('Run Now'),
         onClick: (row) => {
-          this.dialog
-            .confirm({
-              title: this.translate.instant('Run Now'),
-              message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
-              hideCheckBox: true,
-            })
-            .pipe(filter(Boolean), untilDestroyed(this))
-            .subscribe(() => {
-              row.state = { state: JobState.Running };
-              this.ws
-                .call('replication.run', [row.id])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task started'),
-                      this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
-                      true,
-                    );
-                    this.job
-                      .getJobStatus(jobId)
-                      .pipe(untilDestroyed(this))
-                      .subscribe((job: Job) => {
-                        row.state = { state: job.state };
-                        row.job = job;
-                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
-                          this.refreshTable(TaskCardId.Replication);
-                        }
-                        this.jobStates[job.id] = job.state;
-                      });
-                  },
-                  error: (err) => {
-                    new EntityUtils().handleWsError(this, err);
-                  },
-                });
-            });
+          this.dialog.confirm({
+            title: this.translate.instant('Run Now'),
+            message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
+            hideCheckBox: true,
+          }).pipe(
+            filter(Boolean),
+            tap(() => row.state.state = JobState.Running),
+            switchMap(() => this.ws.call('replication.run', [row.id])),
+            tap(() => {
+              this.snackbar.success(
+                this.translate.instant('Replication «{name}» has started.', { name: row.name }),
+              );
+            }),
+            switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
+            catchError((error) => {
+              this.dialog.errorReportMiddleware(error);
+              return EMPTY;
+            }),
+            untilDestroyed(this),
+          ).subscribe((job: Job) => {
+            row.state.state = job.state;
+            row.job = { ...job };
+            if (this.jobStates.get(job.id) !== job.state) {
+              this.refreshTable(TaskCardId.Replication);
+            }
+            this.jobStates.set(job.id, job.state);
+          });
         },
       },
       {
@@ -650,7 +644,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row) => {
-          const dialog = this.mdDialog.open(ReplicationRestoreDialogComponent, {
+          const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
             data: row.id,
           });
           dialog
@@ -669,42 +663,31 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
-          this.dialog
-            .confirm({
-              title: this.translate.instant('Run Now'),
-              message: this.translate.instant('Run this cloud sync now?'),
-              hideCheckBox: true,
-            })
-            .pipe(filter(Boolean), untilDestroyed(this))
-            .subscribe(() => {
-              row.state = { state: JobState.Running };
-              this.ws
-                .call('cloudsync.sync', [row.id])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task Started'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      true,
-                    );
-                    this.job
-                      .getJobStatus(jobId)
-                      .pipe(untilDestroyed(this))
-                      .subscribe((job: Job) => {
-                        row.state = { state: job.state };
-                        row.job = job;
-                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
-                          this.refreshTable(TaskCardId.CloudSync);
-                        }
-                        this.jobStates[job.id] = job.state;
-                      });
-                  },
-                  error: (err) => {
-                    new EntityUtils().handleWsError(this, err);
-                  },
-                });
-            });
+          this.dialog.confirm({
+            title: this.translate.instant('Run Now'),
+            message: this.translate.instant('Run this cloud sync now?'),
+            hideCheckBox: true,
+          }).pipe(
+            filter(Boolean),
+            tap(() => row.state = { state: JobState.Running }),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
+            tap(() => this.snackbar.success(
+              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+            )),
+            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
+            catchError((error) => {
+              this.dialog.errorReportMiddleware(error);
+              return EMPTY;
+            }),
+            untilDestroyed(this),
+          ).subscribe((job: Job) => {
+            row.state = { state: job.state };
+            row.job = job;
+            if (this.jobStates.get(job.id) !== job.state) {
+              this.refreshTable(TaskCardId.CloudSync);
+            }
+            this.jobStates.set(job.id, job.state);
+          });
         },
       },
       {
@@ -718,23 +701,22 @@ export class DataProtectionDashboardComponent implements OnInit {
               message: this.translate.instant('Stop this cloud sync?'),
               hideCheckBox: true,
             })
-            .pipe(filter(Boolean), untilDestroyed(this))
-            .subscribe(() => {
-              this.ws
-                .call('cloudsync.abort', [row.id])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: () => {
-                    this.dialog.info(
-                      this.translate.instant('Task Stopped'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
-                      true,
-                    );
-                  },
-                  error: (err) => {
-                    new EntityUtils().handleWsError(this, err);
-                  },
-                });
+            .pipe(
+              filter(Boolean),
+              switchMap(() => this.ws.call('cloudsync.abort', [row.id])),
+              untilDestroyed(this),
+            )
+            .subscribe({
+              next: () => {
+                this.dialog.info(
+                  this.translate.instant('Task Stopped'),
+                  this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
+                  true,
+                );
+              },
+              error: (err) => {
+                new EntityUtils().handleWsError(this, err);
+              },
             });
         },
       },
@@ -743,41 +725,30 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: helptext_cloudsync.action_button_dry_run,
         name: 'dry_run',
         onClick: (row) => {
-          this.dialog
-            .confirm({
-              title: helptext_cloudsync.dry_run_title,
-              message: helptext_cloudsync.dry_run_dialog,
-              hideCheckBox: true,
-            })
-            .pipe(filter(Boolean), untilDestroyed(this))
-            .subscribe(() => {
-              this.ws
-                .call('cloudsync.sync', [row.id, { dry_run: true }])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task Started'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
-                      true,
-                    );
-                    this.job
-                      .getJobStatus(jobId)
-                      .pipe(untilDestroyed(this))
-                      .subscribe((job: Job) => {
-                        row.state = { state: job.state };
-                        row.job = job;
-                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
-                          this.refreshTable(TaskCardId.CloudSync);
-                        }
-                        this.jobStates[job.id] = job.state;
-                      });
-                  },
-                  error: (err) => {
-                    new EntityUtils().handleWsError(this, err);
-                  },
-                });
-            });
+          this.dialog.confirm({
+            title: helptext_cloudsync.dry_run_title,
+            message: helptext_cloudsync.dry_run_dialog,
+            hideCheckBox: true,
+          }).pipe(
+            filter(Boolean),
+            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            tap(() => this.snackbar.success(
+              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+            )),
+            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
+            catchError((error) => {
+              this.dialog.errorReportMiddleware(error);
+              return EMPTY;
+            }),
+            untilDestroyed(this),
+          ).subscribe((job: Job) => {
+            row.state = { state: job.state };
+            row.job = job;
+            if (this.jobStates.get(job.id) !== job.state) {
+              this.refreshTable(TaskCardId.CloudSync);
+            }
+            this.jobStates.set(job.id, job.state);
+          });
         },
       },
       {
@@ -785,7 +756,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Restore'),
         name: 'restore',
         onClick: (row) => {
-          const dialog = this.mdDialog.open(CloudsyncRestoreDialogComponent, {
+          const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
             data: row.id,
           });
           dialog
@@ -804,42 +775,33 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
-          this.dialog
-            .confirm({
-              title: this.translate.instant('Run Now'),
-              message: this.translate.instant('Run this rsync now?'),
-              hideCheckBox: true,
-            })
-            .pipe(filter(Boolean), untilDestroyed(this))
-            .subscribe(() => {
-              row.state = { state: JobState.Running };
-              this.ws
-                .call('rsynctask.run', [row.id])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: (jobId: number) => {
-                    this.dialog.info(
-                      this.translate.instant('Task Started'),
-                      this.translate.instant('Rsync task <i>{ taskName }</i> started.', { taskName: `${row.remotehost} – ${row.remotemodule}` }),
-                      true,
-                    );
-                    this.job
-                      .getJobStatus(jobId)
-                      .pipe(untilDestroyed(this))
-                      .subscribe((job: Job) => {
-                        row.state = { state: job.state };
-                        row.job = job;
-                        if (!!this.jobStates[job.id] && this.jobStates[job.id] !== job.state) {
-                          this.refreshTable(TaskCardId.Rsync);
-                        }
-                        this.jobStates[job.id] = job.state;
-                      });
-                  },
-                  error: (err) => {
-                    new EntityUtils().handleWsError(this, err);
-                  },
-                });
-            });
+          this.dialog.confirm({
+            title: this.translate.instant('Run Now'),
+            message: this.translate.instant('Run this rsync now?'),
+            hideCheckBox: true,
+          }).pipe(
+            filter(Boolean),
+            tap(() => row.state = { state: JobState.Running }),
+            switchMap(() => this.ws.call('rsynctask.run', [row.id])),
+            tap(() => this.snackbar.success(
+              this.translate.instant('Rsync task «{name}» has started.', {
+                name: `${row.remotehost} – ${row.remotemodule}`,
+              }),
+            )),
+            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
+            catchError((error) => {
+              this.dialog.errorReportMiddleware(error);
+              return EMPTY;
+            }),
+            untilDestroyed(this),
+          ).subscribe((job: Job) => {
+            row.state = { state: job.state };
+            row.job = job;
+            if (this.jobStates.get(job.id) !== job.state) {
+              this.refreshTable(TaskCardId.Rsync);
+            }
+            this.jobStates.set(job.id, job.state);
+          });
         },
       },
     ];
@@ -856,7 +818,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   }
 
   runningStateButton(jobId: number): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.task_is_running },
     });
     dialogRef.componentInstance.jobId = jobId;
@@ -875,7 +837,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   stateButton(row: TaskTableRow): void {
     if (row.job) {
       if (row.job.state === JobState.Running) {
-        const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
         dialogRef.componentInstance.jobId = row.job.id;
         dialogRef.componentInstance.job = row.job;
         let subId: string = null;
@@ -887,14 +849,12 @@ export class DataProtectionDashboardComponent implements OnInit {
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
@@ -902,7 +862,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
@@ -913,7 +872,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         });
         this.dialog.errorReport(this.translate.instant('Warning'), `<pre>${list}</pre>`);
       } else {
-        this.job.showLogs(row.job);
+        this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
       this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);

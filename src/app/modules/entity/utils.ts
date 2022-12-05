@@ -9,10 +9,10 @@ import { DialogService } from 'app/services';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ItemBeforeFlattening = object & {
+export type ItemBeforeFlattening = {
   id: string | number;
   children?: ItemBeforeFlattening[];
+  [key: string]: unknown;
 };
 
 type DataBeforeFlattening = ItemBeforeFlattening | ItemBeforeFlattening[];
@@ -22,7 +22,18 @@ export interface FlattenedData extends Record<string, unknown> {
   _parent?: string | number;
 }
 
+/**
+ * TODO: Likely outdated.
+ */
+interface HttpError {
+  code: number;
+  error: {
+    [field: string]: string[];
+  };
+}
+
 export class EntityUtils {
+  // TODO: error is probably of type HttpError
   handleError(entity: any, error: any): void {
     if (error.code === 409) {
       this.handleObjError(entity, error);
@@ -44,7 +55,7 @@ export class EntityUtils {
     }
   }
 
-  handleObjError(entity: EntityErrorHandler, error: any): void {
+  handleObjError(entity: EntityErrorHandler, error: HttpError): void {
     let scroll = false;
     entity.error = '';
     Object.keys(error.error).forEach((i) => {
@@ -249,8 +260,7 @@ export class EntityUtils {
     if (data === undefined || data === null || data === '') {
       result = data;
     } else if (Array.isArray(data)) {
-      const arrayValues = data.map((item) => this.changeNullString2Null(item));
-      result = arrayValues;
+      result = data.map((item) => this.changeNullString2Null(item));
     } else if (typeof data === 'object') {
       result = {};
       Object.keys(data).forEach((key) => {

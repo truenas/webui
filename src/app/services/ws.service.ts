@@ -6,15 +6,15 @@ import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
-  Observable, Observer, Subject, Subscriber,
+  Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
 import { filter, share, switchMap } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
 
@@ -47,7 +47,7 @@ export class WebSocketService {
   private protocol: string;
   private remote: string;
 
-  private subscriptions = new Map<string, Observer<unknown>[]>();
+  private subscriptions = new Map<string, Subscriber<unknown>[]>();
 
   constructor(
     protected router: Router,
@@ -83,7 +83,7 @@ export class WebSocketService {
   }
 
   onopen(): void {
-    this.send({ msg: ApiEventMessage.Connect, version: '1', support: ['1'] });
+    this.send({ msg: OutgoingApiMessageType.Connect, version: '1', support: ['1'] });
   }
 
   onconnect(): void {
@@ -105,13 +105,13 @@ export class WebSocketService {
 
   ping(): void {
     if (this.connected) {
-      this.socket.send(JSON.stringify({ msg: ApiEventMessage.Ping, id: UUID.UUID() }));
+      this.socket.send(JSON.stringify({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() }));
       setTimeout(() => this.ping(), 20000);
     }
   }
 
   onmessage(msg: { data: string }): void {
-    let data: any;
+    let data: IncomingWebsocketMessage;
     try {
       data = JSON.parse(msg.data);
     } catch (error: unknown) {
@@ -119,11 +119,11 @@ export class WebSocketService {
       return;
     }
 
-    if (data.error && data.error === 13 /** Not Authenticated */) {
+    if ('error' in data && data.error.error === 13 /** Not Authenticated */) {
       return this.socket.close(); // will trigger onClose which handles redirection
     }
 
-    if (data.msg === ApiEventMessage.Result) {
+    if (data.msg === IncomingApiMessageType.Result) {
       const call = this.pendingCalls.get(data.id);
 
       this.pendingCalls.delete(data.id);
@@ -135,32 +135,31 @@ export class WebSocketService {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg === ApiEventMessage.Connected) {
+    } else if (data.msg === IncomingApiMessageType.Connected) {
       this.isConnected$.next(true);
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg === ApiEventMessage.Changed || data.msg === ApiEventMessage.Added) {
+    } else if (data.msg === IncomingApiMessageType.Changed || data.msg === IncomingApiMessageType.Added) {
       this.subscriptions.forEach((observers, name) => {
-        if (name === '*' || name === data.collection) {
-          observers.forEach((item) => { item.next(data); });
+        if (name === '*' || name === (data as ApiEvent).collection) {
+          observers.forEach((item) => item.next(data));
         }
       });
-    } else
-    // do nothing for pong or sub, otherwise console warn
-    if (!Object.values(ApiEventMessage).includes(data.msg)) {
+    } else if (!Object.values(IncomingApiMessageType).includes(data.msg)) {
+      // do nothing for pong or sub, otherwise console warn
       console.warn('Unknown message: ', data);
     }
 
-    const collectionName = data.collection?.replace('.', '_');
+    const collectionName = (data as ApiEvent).collection?.replace('.', '_');
     if (collectionName && this.pendingSubs[collectionName]?.observers) {
       Object.values(this.pendingSubs[collectionName].observers).forEach((subObserver) => {
-        if (data.error) {
+        if ('error' in data && data.error) {
           console.error('Error: ', data.error);
           subObserver.error(data.error);
         }
-        if (subObserver && data.fields) {
+        if (subObserver && 'fields' in data && data.fields) {
           subObserver.next(data.fields);
-        } else if (subObserver && !data.fields) {
+        } else if (subObserver && !(data as ApiEvent).fields) {
           subObserver.next(data);
         }
       });
@@ -185,7 +184,7 @@ export class WebSocketService {
     });
   }
 
-  unsubscribe(observer: any): void {
+  unsubscribe(observer: Subscription): void {
     // FIXME: just does not have a good performance :)
     this.subscriptions.forEach((observers) => {
       observers.forEach((item) => {
@@ -199,7 +198,7 @@ export class WebSocketService {
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     const payload = {
-      id: uuid, msg: ApiEventMessage.Method, method, params,
+      id: uuid, msg: IncomingApiMessageType.Method, method, params,
     };
 
     // Create the observable
@@ -231,14 +230,14 @@ export class WebSocketService {
     }
 
     const uuid = subscriptionId || UUID.UUID();
-    const payload = { id: uuid, name: api, msg: ApiEventMessage.Sub };
+    const payload = { id: uuid, name: api, msg: OutgoingApiMessageType.Sub };
     return new Observable((observer: Subscriber<T>) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
       // cleanup routine
       observer.complete = () => {
-        this.send({ id: uuid, msg: ApiEventMessage.UnSub });
+        this.send({ id: uuid, msg: OutgoingApiMessageType.UnSub });
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
@@ -255,7 +254,7 @@ export class WebSocketService {
   unsub(api: string, subscriptionId: string): void {
     const nom = api.replace('.', '_');
     if (this.pendingSubs[nom]?.observers?.[subscriptionId]) {
-      this.send({ id: subscriptionId, msg: ApiEventMessage.UnSub });
+      this.send({ id: subscriptionId, msg: OutgoingApiMessageType.UnSub });
       this.pendingSubs[nom].observers[subscriptionId].unsubscribe();
       delete this.pendingSubs[nom].observers[subscriptionId];
       if (!this.pendingSubs[nom].observers) {
@@ -278,9 +277,8 @@ export class WebSocketService {
   }
 
   login(username: string, password: string, otpToken?: string): Observable<boolean> {
-    const params: LoginParams = otpToken
-      ? [username, password, otpToken]
-      : [username, password];
+    const params: LoginParams = otpToken ? [username, password, otpToken] : [username, password];
+
     return new Observable((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
@@ -300,7 +298,7 @@ export class WebSocketService {
       this.send({
         id: UUID.UUID(),
         name: '*',
-        msg: ApiEventMessage.Sub,
+        msg: OutgoingApiMessageType.Sub,
       });
     } else {
       this.loggedIn = false;

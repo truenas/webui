@@ -54,6 +54,7 @@ describe('SmbFormComponent', () => {
     enabled: true,
     cluster_volname: '',
     locked: false,
+    path_local: '/mnt/pool123/ds222',
   };
 
   const formLabels: { [key: string]: string } = {
@@ -119,8 +120,8 @@ describe('SmbFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('sharing.smb.create'),
-        mockCall('sharing.smb.update'),
+        mockCall('sharing.smb.create', { ...existingShare }),
+        mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.query', [
           { ...existingShare },
         ]),
@@ -187,7 +188,7 @@ describe('SmbFormComponent', () => {
   it('should have error for duplicate share name', async () => {
     const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
     await nameControl.setValue('ds222');
-    expect(await nameControl.getErrorText()).toEqual('The name "ds222" is already in use.');
+    expect(await nameControl.getErrorText()).toBe('The name "ds222" is already in use.');
   });
 
   it('when a preset is selected, the relevant fields should be impacted', async () => {
@@ -198,7 +199,7 @@ describe('SmbFormComponent', () => {
 
     const labels = await purposeSelect.getOptionLabels();
     const presetKeys = Object.keys(presets);
-    const form = await loader.getHarness(IxFormHarness);
+    form = await loader.getHarness(IxFormHarness);
     const fields = await form.getControlHarnessesDict();
 
     for (let i = 0; i < labels.length; i++) {
@@ -286,7 +287,7 @@ describe('SmbFormComponent', () => {
     const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
     await pathControl.setValue('/mnt/pool2/ds22');
 
-    expect(await nameControl.getValue()).toEqual('ds22');
+    expect(await nameControl.getValue()).toBe('ds22');
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(3, {
       title: helptextSharingSmb.stripACLDialog.title,
@@ -425,10 +426,10 @@ describe('SmbFormComponent', () => {
       IxCheckboxHarness.with({ label: formLabels.home }),
     )).getValue();
 
-    const datasetId = sharePath.replace('/mnt/', '');
-
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/'].concat(
-      ['datasets', datasetId, 'permissions', 'acl'],
-    ), { queryParams: { homeShare } });
+    expect(spectator.inject(Router).navigate)
+      .toHaveBeenCalledWith(
+        ['/', 'datasets', 'acl', 'edit'],
+        { queryParams: { homeShare, path: sharePath } },
+      );
   });
 });

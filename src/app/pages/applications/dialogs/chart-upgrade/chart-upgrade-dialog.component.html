@@ -12,10 +12,10 @@
     </div>
   </div>
   <div
+    *ngIf="selectedVersion?.item_update_available; else noItemUpdate"
     class="resource"
     fxLayout="row"
     fxLayoutAlign="start center"
-    *ngIf="selectedVersion.item_update_available; else noItemUpdate"
   >
     <span>{{ 'Version to be upgraded to' | translate }}:</span>
     <mat-form-field class="form-element">
@@ -47,9 +47,9 @@
       <div class="expansion-content">
         <div *ngIf="hasUpdateImages(); else no_image">
           <div
-            *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: originalOrder; let i = index"
+            *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: containerImagesOrder; let i = index"
             class="detail-row"
-            [ngClass]="{ 'row-dark': i % 2 == 0 }"
+            [ngClass]="{ 'row-dark': i % 2 === 0 }"
           >
             <div fxLayout="row" fxLayoutAlign="start center">
               <span fxFlex="10" class="text-center">{{ i + 1 }}</span>
@@ -69,7 +69,7 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngIf="selectedVersion.item_update_available">
+    <mat-expansion-panel *ngIf="selectedVersion?.item_update_available">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ 'Changelog' | translate }}
@@ -103,7 +103,8 @@
   </button>
   <button
     mat-button
-    class="mat-button mat-secondary"
+    class="mat-button"
+    color="primary"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="UPGRADE"

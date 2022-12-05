@@ -6,6 +6,7 @@ import pexpect
 import re
 import requests
 import time
+import xpaths
 from selenium.common.exceptions import (
     NoSuchElementException,
     TimeoutException
@@ -62,6 +63,26 @@ def wait_on_element_disappear(driver, wait, xpath):
             return True
         # this just to slow down the loop
         time.sleep(0.1)
+    else:
+        return False
+
+
+def refresh_if_element_missing(driver, wait, xpath):
+    timeout = time.time() + wait
+    while time.time() <= timeout:
+        time.sleep(5)
+        # if wait_on_element(driver, 3, xpaths.login.user_input):
+        #     """login appear enter "root" and "password"."""
+        #     assert wait_on_element(driver, 7, xpaths.login.user_input)
+        #     driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        #     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        #     driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        #     driver.find_element_by_xpath(xpaths.login.password_input).send_keys('testing')
+        #     assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
+        #     driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        if wait_on_element(driver, 3, xpath):
+            return True
+        driver.refresh()
     else:
         return False
 

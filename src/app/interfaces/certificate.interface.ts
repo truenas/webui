@@ -44,6 +44,8 @@ export interface Certificate {
   organization: string;
   organizational_unit: string;
   parsed: boolean;
+  passphrase: string;
+  passphrase2: string;
   privatekey: string;
   privatekey_path: string;
   revoked: boolean;
@@ -90,6 +92,16 @@ export type CertificationExtensionAttribute =
   | keyof AuthorityKeyIdentifier
   | keyof ExtendedKeyUsage
   | keyof KeyUsage;
+
+/**
+ * @deprecated
+ */
+export type Extension = keyof CertificateExtensions;
+
+/**
+ * @deprecated
+ */
+export type ExtensionProperty = keyof CertificateExtensions[Extension];
 
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;

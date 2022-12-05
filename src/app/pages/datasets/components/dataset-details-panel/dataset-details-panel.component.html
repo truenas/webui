@@ -1,11 +1,13 @@
 <div class="header">
   <h3 class="title">
     <div class="mobile-prefix">
-      <a class="mobile-back-button">
-        <ix-icon
-          name="mdi-chevron-left"
-          (click)="onCloseMobileDetails()"
-        ></ix-icon>
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
       </a>
       {{ 'Details for' | translate }}
     </div>
@@ -22,7 +24,10 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button mat-button (click)="onAddZvol()">
+      <button mat-button *appIfNightly (click)="onAddZvol()">
+        {{ 'Add Zvol (New)' | translate }}
+      </button>
+      <button mat-button (click)="onAddZvolOld()">
         {{ 'Add Zvol' | translate }}
       </button>
       <button mat-button color="primary" (click)="onAddDataset()">

@@ -3,8 +3,8 @@ import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ModalConfiguration } from 'app/modules/common/modal/modal-configuration.interface';
-import { ModalComponent } from 'app/modules/common/modal/modal.component';
+import { ModalConfiguration } from 'app/modules/layout/components/modal/modal-configuration.interface';
+import { ModalComponent } from 'app/modules/layout/components/modal/modal.component';
 
 export interface ModalServiceMessage {
   action: string;
@@ -14,6 +14,9 @@ export interface ModalServiceMessage {
 
 export const slideInModalId = 'slide-in-form';
 
+/**
+ * @deprecated Use MatDialog for dialogs and IxSlideInService for slide-ins
+ */
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private modals: ModalComponent[] = [];
@@ -21,7 +24,6 @@ export class ModalService {
   private modalTypeOpenedInSlideIn: Type<unknown> = null;
   readonly refreshTable$ = new Subject<void>();
   readonly onClose$ = new Subject<{ modalType?: Type<unknown>; response: unknown }>();
-  refreshForm$ = new Subject<void>();
   getRow$ = new Subject();
   message$ = new Subject<ModalServiceMessage>();
 
@@ -37,21 +39,15 @@ export class ModalService {
     this.refreshTable$.next();
   }
 
-  refreshForm(): void {
-    this.refreshForm$.next();
-  }
-
   message(message: ModalServiceMessage): void {
     this.message$.next(message);
   }
 
   add(modal: ModalComponent): void {
-    // add modal to array of active modals
     this.modals.push(modal);
   }
 
   remove(id: string): void {
-    // remove modal from array of active modals
     this.modals = this.modals.filter((modal) => modal.id !== id);
   }
 
@@ -76,18 +72,18 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal = this.modals.find((modal) => modal.id === id);
-    modal.open(conf);
+    const modalToOpen = this.modals.find((modal) => modal.id === id);
+    modalToOpen.open(conf);
   }
 
   private close(id: string): Promise<boolean> {
     // close modal specified by id
-    const modal = this.modals.find((modal) => modal.id === id);
+    const modalToClose = this.modals.find((modal) => modal.id === id);
     if (id === slideInModalId) {
       this.onClose$.next({ modalType: this.modalTypeOpenedInSlideIn, response: true });
     } else {
       this.onClose$.next({ response: true });
     }
-    return modal.close();
+    return modalToClose.close();
   }
 }

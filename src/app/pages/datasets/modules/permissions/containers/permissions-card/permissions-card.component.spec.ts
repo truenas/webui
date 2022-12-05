@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { Router } from '@angular/router';
 import {
   byTitle, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -53,6 +54,7 @@ describe('PermissionsCardComponent', () => {
     providers: [
       PermissionsCardStore,
       mockProvider(DialogService),
+      mockProvider(Router),
       mockWebsocket([
         mockCall('filesystem.stat', stat),
         mockCall('filesystem.getacl', {
@@ -79,8 +81,8 @@ describe('PermissionsCardComponent', () => {
   it('shows dataset ownership information', () => {
     const [ownerItem, groupItem] = spectator.queryAll('.details-item');
 
-    expect(ownerItem.textContent.replace(/\s/g, '')).toEqual('Owner:john');
-    expect(groupItem.textContent.replace(/\s/g, '')).toEqual('Group:johns');
+    expect(ownerItem.textContent.replace(/\s/g, '')).toBe('Owner:john');
+    expect(groupItem.textContent.replace(/\s/g, '')).toBe('Group:johns');
   });
 
   it('shows trivial permissions when acl is trivial', () => {
@@ -129,10 +131,9 @@ describe('PermissionsCardComponent', () => {
 
   it('shows a button to edit permissions when dataset is not root', async () => {
     const editLink = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    const editLinkElement = await editLink.host();
+    await editLink.click();
 
-    expect(await editLinkElement.getAttribute('href'))
-      .toEqual('/datasets/' + encodeURIComponent('testpool/dataset') + '/permissions/edit');
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
   });
 
   it('does not show edit icon when dataset is root', () => {

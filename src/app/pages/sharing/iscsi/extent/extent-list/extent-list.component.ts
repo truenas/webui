@@ -18,9 +18,9 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
     <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
 })
-export class ExtentListComponent implements EntityTableConfig {
+export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
   tableTitle = this.translate.instant('Extents');
-  protected entityTable: EntityTableComponent;
+  protected entityTable: EntityTableComponent<IscsiExtent>;
   queryCall = 'iscsi.extent.query' as const;
   routeAdd: string[] = ['sharing', 'iscsi', 'extent', 'add'];
   routeAddTooltip = this.translate.instant('Add Extent');
@@ -65,7 +65,7 @@ export class ExtentListComponent implements EntityTableConfig {
     private dialog: MatDialog,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<IscsiExtent>): void {
     this.entityTable = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
@@ -76,10 +76,10 @@ export class ExtentListComponent implements EntityTableConfig {
     this.slideInService.open(ExtentFormComponent, { wide: true });
   }
 
-  doEdit(id: string): void {
-    const row = this.entityTable.rows.find((row) => row.id === id);
+  doEdit(id: number): void {
+    const extent = this.entityTable.rows.find((row) => row.id === id);
     const form = this.slideInService.open(ExtentFormComponent, { wide: true });
-    form.setExtentForEdit(row);
+    form.setExtentForEdit(extent);
   }
 
   getActions(): EntityTableAction[] {

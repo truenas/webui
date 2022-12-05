@@ -20,12 +20,14 @@ import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -99,6 +101,7 @@ export class UpdateComponent implements OnInit {
     protected storage: StorageService,
     private store$: Store<AppState>,
     private fb: FormBuilder,
+    private snackbar: SnackbarService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -185,7 +188,7 @@ export class UpdateComponent implements OnInit {
 
     if (this.productType === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
-        this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isLicensed) => {
+        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isLicensed) => {
           if (isLicensed) {
             this.updateMethod = 'failover.upgrade';
             this.isHa = true;
@@ -540,7 +543,7 @@ export class UpdateComponent implements OnInit {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             dialogRef.close(false);
-            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '');
+            this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
             this.pendingupdates();
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

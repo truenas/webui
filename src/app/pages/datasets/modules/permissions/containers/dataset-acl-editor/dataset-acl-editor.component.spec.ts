@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  createRoutingFactory, mockProvider, SpectatorRouting, byText,
+  createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -47,7 +47,6 @@ describe('DatasetAclEditorComponent', () => {
   let websocket: MockWebsocketService;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
-  let rootLoader: HarnessLoader;
   const acl = {
     acltype: AclType.Nfs4,
     trivial: false,
@@ -108,8 +107,8 @@ describe('DatasetAclEditorComponent', () => {
         groupQueryDsCache: () => of(),
       }),
     ],
-    params: {
-      datasetId: 'pool/dataset',
+    queryParams: {
+      path: '/mnt/pool/dataset',
     },
   });
 
@@ -118,7 +117,6 @@ describe('DatasetAclEditorComponent', () => {
     websocket = spectator.inject(MockWebsocketService);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
   });
 
   describe('preset modal', () => {
@@ -213,26 +211,6 @@ describe('DatasetAclEditorComponent', () => {
         owner: 'john',
         ownerGroup: 'johns',
       });
-    });
-
-    // TODO: Doesn't work because of entryComponents. Try again after upgrading Angular.
-    xit('shows a warning when `recursive` checkbox is pressed', async () => {
-      spectator.click(byText('Apply permissions recursively'));
-
-      expect(spectator.query('.mat-dialog-container', { root: true })).toExist();
-
-      spectator.click(spectator.query(
-        byText('Confirm'),
-        { root: true },
-      ));
-
-      const continueButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
-      await continueButton.click();
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
-      await saveButton.click();
-
-      expect(store.saveAcl).toHaveBeenCalledWith(234);
     });
   });
 });

@@ -1,8 +1,8 @@
 <mat-card class="card card-square">
   <mat-spinner
     *ngIf="isLoading; else loaded"
-    [diameter]="40"
     class="spinner"
+    [diameter]="40"
   ></mat-spinner>
 
   <ng-template #loaded>
@@ -12,8 +12,8 @@
       </mat-card-title>
 
       <div class="dataset-path">
-        <label class="header-label">{{ 'Dataset' | translate }}:</label>
-        <div>{{ fullDatasetPath }}</div>
+        <label class="header-label">{{ 'Path' | translate }}:</label>
+        <div>{{ datasetPath }}</div>
       </div>
 
       <div class="ownership-row" [formGroup]="ownerFormGroup">
@@ -84,7 +84,7 @@
                   *ngIf="acl.trivial; else stripButton"
                   mat-button
                   class="action"
-                  [routerLink]="['/datasets/permissions/edit', datasetPath]"
+                  [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
                 >
                   {{ 'Permissions Editor' | translate }}
                 </a>

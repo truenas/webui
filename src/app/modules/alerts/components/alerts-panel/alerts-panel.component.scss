@@ -22,6 +22,10 @@
   flex-direction: row;
   padding: 4px 0 4px 20px;
   place-content: center space-between;
+
+  .controls {
+    opacity: 0.55;
+  }
 }
 
 .button-row {

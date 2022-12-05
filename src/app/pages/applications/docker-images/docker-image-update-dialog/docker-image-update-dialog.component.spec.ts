@@ -15,7 +15,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DockerImageUpdateDialogComponent } from 'app/pages/applications/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
-import { fakeDockerImagesDataSource } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component.spec';
+import { fakeDockerImagesDataSource } from 'app/pages/applications/docker-images/test/fake-docker-images';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 const mockSuccessBulkResponse = [{

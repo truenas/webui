@@ -100,8 +100,8 @@ describe('NfsFormComponent', () => {
   });
 
   it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCallOnce('nfs.config', {
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCallOnce('nfs.config', {
       v4: true,
     } as NfsConfig);
     spectator.component.ngOnInit();
@@ -174,8 +174,8 @@ describe('NfsFormComponent', () => {
       'Maproot Group': 'operator',
       'Maproot User': 'news',
     });
-    expect(networks.length).toBe(1);
-    expect(hosts.length).toBe(2);
+    expect(networks).toHaveLength(1);
+    expect(hosts).toHaveLength(2);
     expect(await networks[0].getValue()).toBe('192.168.1.78/21');
     expect(await hosts[0].getValue()).toBe('127.0.0.1');
     expect(await hosts[1].getValue()).toBe('192.168.1.23');

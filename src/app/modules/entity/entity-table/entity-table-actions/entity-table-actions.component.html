@@ -5,9 +5,9 @@
   <ng-container *ngIf="actions && isSingleAction && singleAction">
     <button
       *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
-      id="action_{{ singleAction.name }}__{{ singleAction.id }}"
       mat-button
       ix-auto-type="button"
+      id="action_{{ singleAction.name }}__{{ singleAction.id }}"
       ix-auto-identifier="{{ row.name }}_{{ singleAction.id }}_{{ singleAction.name }}"
       [disabled]="singleAction.disabled"
       [ix-auto]=""
@@ -64,10 +64,10 @@
         >
           <button
             *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-            id="action_button_{{ action?.name }}__{{ action.id }}"
             ix-auto-type="action"
-            ix-auto-identifier="{{ action.id }}_{{ action.label }}"
             mat-menu-item
+            id="action_button_{{ action?.name }}__{{ action.id }}"
+            ix-auto-identifier="{{ action.id }}_{{ action.label }}"
             [disabled]="action.disabled"
             [ix-auto]=""
             (click)="action.onClick(this.row)"
@@ -95,9 +95,9 @@
           >
             <button
               *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-              id="action_button_{{ action?.name }}__{{ action.id }}"
               mat-menu-item
               ix-auto-type="action"
+              id="action_button_{{ action?.name }}__{{ action.id }}"
               ix-auto-identifier="{{ action.id }}_{{ action.label }}"
               [disabled]="action.disabled"
               [ix-auto]=""
@@ -116,9 +116,9 @@
       <button
         *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
         mat-icon-button
-        id="action_button_{{ action?.name }}__{{ action.id }}"
         ix-auto-type="action"
-        ix-auto-identifier="{{ action.id }}_{{ action.name.toUpperCase() }}"
+        id="action_button_{{ action?.name }}__{{ action.id }}"
+        ix-auto-identifier="{{ action.id }}_{{ action.name | uppercase }}"
         [disabled]="action.disabled"
         [ix-auto]=""
         [matTooltip]="action.label | translate"

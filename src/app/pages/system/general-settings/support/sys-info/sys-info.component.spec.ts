@@ -33,7 +33,7 @@ describe('SysInfoComponent', () => {
     });
   });
 
-  it('it shows a block with system info', () => {
+  it('shows a block with system info', () => {
     const sysInfoValues = spectator.queryAll('.sys-info-wrapper .value');
     const sysInfoLabels = spectator.queryAll('.sys-info-wrapper .label');
     const infoRows = sysInfoValues.reduce((acc, item, i) => {
@@ -51,7 +51,7 @@ describe('SysInfoComponent', () => {
     });
   });
 
-  it('it shows a block with license info', () => {
+  it('shows a block with license info', () => {
     spectator.setInput({
       licenseInfo: licenseInfo as LicenseInfoInSupport,
       hasLicense: true,

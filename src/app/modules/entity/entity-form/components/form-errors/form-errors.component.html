@@ -1,4 +1,4 @@
-<div class="form-error" *ngIf="control.dirty || control.touched">
+<div *ngIf="control.dirty || control.touched" class="form-error">
   <mat-error *ngIf="control.hasError('required') && !config.hideErrMsg">
     {{ '{field} is required.' | translate: { field: config.placeholder } }}
   </mat-error>
@@ -71,9 +71,10 @@
     {{ 'The passwords do not match.' | translate }}
   </mat-error>
 
-  <mat-error *ngIf="control.hasError('manualValidateError')">
-    {{ control.errors.manualValidateErrorMsg | translate }}
-  </mat-error>
+  <mat-error
+    *ngIf="control.hasError('manualValidateError')"
+    [innerHtml]="control.errors.manualValidateErrorMsg | translate"
+  ></mat-error>
 
   <mat-error *ngIf="control.hasError('invalidOptionSelected')">
     {{ 'Invalid option selected' | translate }}

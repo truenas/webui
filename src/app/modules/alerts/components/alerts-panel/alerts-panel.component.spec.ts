@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -15,6 +15,8 @@ import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/st
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
+import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 const unreadAlerts = [
   {
@@ -52,12 +54,20 @@ describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
   let websocket: WebSocketService;
   let alertPanel: AlertsPanelPageObject;
+
   const createComponent = createComponentFactory({
     component: AlertsPanelComponent,
     imports: [
-      StoreModule.forRoot({ [alertStateKey]: alertReducer }, {
+      StoreModule.forRoot({ [alertStateKey]: alertReducer, [haInfoStateKey]: haInfoReducer }, {
         initialState: {
           [alertStateKey]: adapter.setAll([...unreadAlerts, ...dismissedAlerts], alertsInitialState),
+          [haInfoStateKey]: {
+            haStatus: {
+              hasHa: true,
+              reasons: [],
+            },
+            isHaLicensed: true,
+          },
         },
       }),
       EffectsModule.forRoot([AlertEffects]),
@@ -70,7 +80,6 @@ describe('AlertsPanelComponent', () => {
         mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
-        mockCall('failover.licensed', true),
       ]),
       mockProvider(SystemGeneralService, {
         get isEnterprise(): boolean {
@@ -93,17 +102,15 @@ describe('AlertsPanelComponent', () => {
     expect(websocket.call).toHaveBeenCalledWith('alert.list');
   });
 
-  it('checks for HA status and passes it to the ix-alert', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.licensed');
-
-    expect(alertPanel.unreadAlertComponents[0].isHa).toEqual(true);
-    expect(alertPanel.dismissedAlertComponents[0].isHa).toEqual(true);
+  it('selects HA status from store and passes it to the ix-alert', () => {
+    expect(alertPanel.unreadAlertComponents[0].isHaLicensed).toBe(true);
+    expect(alertPanel.dismissedAlertComponents[0].isHaLicensed).toBe(true);
   });
 
   it('shows a list of unread alerts', () => {
     const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
-    expect(unreadAlertComponents.length).toEqual(2);
+    expect(unreadAlertComponents).toHaveLength(2);
     expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[1]);
     expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[0]);
   });
@@ -111,7 +118,7 @@ describe('AlertsPanelComponent', () => {
   it('shows a list of dismissed alerts', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
-    expect(dismissedAlertComponents.length).toEqual(2);
+    expect(dismissedAlertComponents).toHaveLength(2);
     expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[1]);
     expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[0]);
   });
@@ -143,9 +150,9 @@ describe('AlertsPanelComponent', () => {
   it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.emitSubscribeEvent({
-      msg: ApiEventMessage.Added,
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.emitSubscribeEvent({
+      msg: IncomingApiMessageType.Added,
       collection: 'alert.list',
       fields: {
         id: 'new',
@@ -162,9 +169,9 @@ describe('AlertsPanelComponent', () => {
   it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.emitSubscribeEvent({
-      msg: ApiEventMessage.Changed,
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.emitSubscribeEvent({
+      msg: IncomingApiMessageType.Changed,
       collection: 'alert.list',
       fields: {
         id: '1',

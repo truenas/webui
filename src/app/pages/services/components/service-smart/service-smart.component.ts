@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
-import { numberValidator } from 'app/modules/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -24,11 +23,11 @@ export class ServiceSmartComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
-    interval: [0, [numberValidator(), Validators.required]],
+    interval: [0, [Validators.required]],
     powermode: [null as SmartPowerMode, Validators.required],
-    difference: [0, [numberValidator(), Validators.required]],
-    informational: [0, [numberValidator(), Validators.required]],
-    critical: [0, [numberValidator(), Validators.required]],
+    difference: [0, [Validators.required]],
+    informational: [0, [Validators.required]],
+    critical: [0, [Validators.required]],
   });
 
   readonly tooltips = {

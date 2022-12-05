@@ -13,7 +13,7 @@ import { TaskService } from 'app/services';
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() config: Record<string, unknown>;
-  @Input() parent: EntityTableComponent;
+  @Input() parent: EntityTableComponent<Record<string, unknown>>;
 
   columns: EntityTableColumn[] = [];
   actions: EntityTableAction[] = [];
@@ -33,16 +33,17 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   getColumnValue(column: EntityTableColumn, isCronTime = false): unknown {
-    const val = _.get(this.config, column.prop.split('.'));
-    if (_.isEmpty(val)) {
+    const columnValue = _.get(this.config, column.prop.split('.'));
+
+    if (!columnValue) {
       return column.emptyText || 'N/A';
     }
 
     if (isCronTime) {
-      return this.tryGetTaskCronDescription(val);
+      return this.tryGetTaskCronDescription(columnValue);
     }
 
-    return val;
+    return columnValue;
   }
 
   buildColumns(): void {

@@ -4,9 +4,7 @@ import {
 import {
   OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
 } from '@angular/core';
-import {
-  MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
@@ -15,7 +13,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config.interface';
-import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -24,7 +21,7 @@ import { WebSocketService } from 'app/services';
   styleUrls: ['./entity-job.component.scss'],
 })
 export class EntityJobComponent implements OnInit, AfterViewChecked {
-  job: Job<unknown> = {} as Job<unknown>;
+  job: Job = {} as Job;
   progressTotalPercent = 0;
   description: string;
   method: ApiMethod;
@@ -41,7 +38,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   altMessage: string;
   showRealtimeLogs = false;
   autoCloseOnSuccess = false;
-  openJobsManagerOnClose = false;
   readonly JobState = JobState;
 
   private realtimeLogsSubscribed = false;
@@ -53,12 +49,12 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   @Output() aborted = new EventEmitter<Job>();
   @Output() failure = new EventEmitter<Job>();
   @Output() prefailure = new EventEmitter<HttpErrorResponse>();
+
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
     private ws: WebSocketService,
     @Inject(MAT_DIALOG_DATA) public data: EntityJobConfig,
     protected http: HttpClient,
-    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -93,22 +89,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
 
       this.description = '<b>Error:</b> ' + error;
     });
-
-    if (this.openJobsManagerOnClose) {
-      this.dialogRef.beforeClosed()
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          this.matDialog.open(JobsPanelComponent, {
-            width: '400px',
-            hasBackdrop: true,
-            panelClass: 'topbar-panel',
-            position: {
-              top: '48px',
-              right: '16px',
-            },
-          });
-        });
-    }
   }
 
   ngAfterViewChecked(): void {
@@ -169,7 +149,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + this.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
           }
         },

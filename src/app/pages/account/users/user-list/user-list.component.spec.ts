@@ -15,7 +15,7 @@ import { DialogService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 
-export const fakeUserDataSource: User[] = [{
+const fakeUserDataSource: User[] = [{
   id: 1,
   uid: 0,
   username: 'root',
@@ -159,6 +159,6 @@ describe('UserListComponent', () => {
     await firstExpandButton.click();
     await secondExpandButton.click();
 
-    expect(spectator.queryAll('.expanded').length).toEqual(1);
+    expect(spectator.queryAll('.expanded')).toHaveLength(1);
   });
 });

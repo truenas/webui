@@ -40,8 +40,8 @@ describe('ChangePasswordDialogComponent', () => {
   });
 
   it('checks current user password and shows an error if it is not correct', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCallOnce('auth.check_user', false);
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCallOnce('auth.check_user', false);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

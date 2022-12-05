@@ -8,9 +8,11 @@ export interface Job<R = unknown, A = unknown[]> {
   arguments: A;
   description: string;
   error: string;
+  extra?: Record<string, unknown>;
   exc_info: {
-    type: ResponseErrorType | null;
-    extra: Record<string, unknown>;
+    type?: ResponseErrorType | null;
+    extra: string | number | boolean | unknown[] | Record<string, unknown>;
+    repr?: string;
   };
   exception: string;
   id: number;

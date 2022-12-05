@@ -12,18 +12,18 @@
     <table ix-table [dataSource]="dataSource">
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
+        <td *matCellDef="let service; dataSource: dataSource" mat-cell>
           {{ service.name }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="state">
         <th *matHeaderCellDef mat-header-cell>{{ 'Running' | translate }}</th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
+        <td *matCellDef="let service; dataSource: dataSource" mat-cell>
           <mat-spinner
             *ngIf="serviceLoadingMap.get(service.service); else slider"
             matTooltipPosition="right"
-            [diameter]="40"
+            [diameter]="30"
             [matTooltip]="
               (service.state === ServiceStatus.Running
                 ? 'Stopping'
@@ -50,7 +50,7 @@
         <th *matHeaderCellDef mat-header-cell>
           {{ 'Start Automatically' | translate }}
         </th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
+        <td *matCellDef="let service; dataSource: dataSource" mat-cell>
           <mat-checkbox
             color="primary"
             [(ngModel)]="service.enable"
@@ -61,7 +61,7 @@
 
       <ng-container matColumnDef="actions">
         <th *matHeaderCellDef mat-header-cell></th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
+        <td *matCellDef="let service; dataSource: dataSource" mat-cell>
           <button
             mat-icon-button
             type="button"
@@ -74,17 +74,17 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
       <tr
-        mat-row
         *matRowDef="
           let element;
           columns: displayedColumns;
           dataSource: dataSource
         "
+        mat-row
       ></tr>
 
-      <tr class="mat-row no-data-row" *matNoDataRow>
+      <tr *matNoDataRow class="mat-row no-data-row">
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
           <ix-entity-empty [conf]="loadingConf"></ix-entity-empty>
         </td>

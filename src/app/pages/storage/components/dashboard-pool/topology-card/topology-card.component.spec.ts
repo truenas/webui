@@ -1,9 +1,12 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 
 describe('TopologyCardComponent', () => {
@@ -14,6 +17,9 @@ describe('TopologyCardComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+    ],
+    declarations: [
+      MockComponent(PoolCardIconComponent),
     ],
   });
 
@@ -81,18 +87,18 @@ describe('TopologyCardComponent', () => {
   it('rendering VDEVs rows', () => {
     const captions = spectator.queryAll('.vdev-line b');
     const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon').length).toEqual(2);
-    expect(captions.length).toEqual(6);
-    expect(values.length).toEqual(6);
+    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(2);
+    expect(captions).toHaveLength(6);
+    expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2.00GiB');
+    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2 GiB');
     expect(captions[1]).toHaveText('Metadata');
     expect(values[1]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[2]).toHaveText('Log VDEVs');
-    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 5.00MiB');
+    expect(values[2]).toHaveText('1 x MIRROR | 2 wide | 5 MiB');
     expect(captions[3]).toHaveText('Cache VDEVs');
-    expect(values[3]).toHaveText('2 x 6.00MiB');
+    expect(values[3]).toHaveText('2 x 6 MiB');
     expect(captions[4]).toHaveText('Spare VDEVs');
     expect(values[4]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[5]).toHaveText('Dedup VDEVs');
@@ -100,18 +106,23 @@ describe('TopologyCardComponent', () => {
   });
 
   it('rendering status icon', () => {
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
 
     spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool is not healthy');
 
     spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains OFFLINE Data VDEVs');
 
     spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains REMOVED Data VDEVs');
 
     spectator.setInput('poolState', { healthy: true, status: 'FAULTED' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains FAULTED Data VDEVs');
   });
 });

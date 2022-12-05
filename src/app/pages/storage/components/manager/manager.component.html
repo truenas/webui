@@ -29,7 +29,7 @@
                   [formControl]="nameControl"
                   (input)="checkPoolName()"
                 />
-                <p class="error" *ngIf="nameControl.errors?.maxlength">{{ 'Max length allowed for pool name is 50' | translate }}</p>
+                <p *ngIf="nameControl.errors?.maxlength" class="error">{{ 'Max length allowed for pool name is 50' | translate }}</p>
               </div>
             </div>
 
@@ -80,8 +80,8 @@
           </div>
 
           <div
-            fxFlex="100%"
             *ngIf="poolError"
+            fxFlex="100%"
             class="size-message red"
             [innerHTML]="poolError"
           ></div>
@@ -454,8 +454,8 @@
         <div class="disks">
           <h4 id="avail-disks-title">{{ 'Available Disks' | translate }}</h4>
           <ngx-datatable
-            id="pool-manager__disks-table"
             #table
+            id="pool-manager__disks-table"
             class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
             [rows]="disks"
             [headerHeight]="50"
@@ -469,7 +469,7 @@
             (sort)="reorderEvent($event)"
             (select)="onSelect($event)"
           >
-            <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
+            <ngx-datatable-row-detail #myDetailRow [rowHeight]="100">
               <ng-template
                 let-row="row"
                 let-expanded="expanded"
@@ -524,23 +524,23 @@
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column
-              [width]="165"
               name="{{'Disk' | translate}}"
+              [width]="165"
             >
               <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
                 {{ row.devname }}
-                <ix-warning class="inline-warn" *ngIf="row.exported_zpool" [message]="'('+row.exported_zpool+')'"></ix-warning>
+                <ix-warning *ngIf="row.exported_zpool" class="inline-warn" [message]="'('+row.exported_zpool+')'"></ix-warning>
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column
-              name="{{ 'Type' | translate }}"
               prop="type"
+              name="{{ 'Type' | translate }}"
               [width]="100"
             ></ngx-datatable-column>
 
             <ngx-datatable-column
-              name="{{ 'Capacity' | translate }}"
               prop="capacity"
+              name="{{ 'Capacity' | translate }}"
               [width]="120"
             ></ngx-datatable-column>
 
@@ -647,10 +647,10 @@
           </div>
         </div>
         <div class="pool">
-          <div>
+          <div class="data-vdev">
             <div class="data-div">
               <div class="data-title">
-                <h4 class="vdev-h4">{{ 'Data VDevs' | translate }}</h4>
+                <h3 class="vdev-h4">{{ 'Data VDevs' | translate }}</h3>
               </div>
               <div class="duplicate-button">
                 <button
@@ -658,63 +658,88 @@
                   mat-button
                   class="btn btn-accent mat-accent"
                   [disabled]="!canDuplicate"
-                  (click)="duplicate()"
+                  (click)="showRepeatDialog()"
                 >
-                  {{ 'Repeat' | translate }}
+                  {{ 'Repeat first Vdev' | translate }}
                 </button>
               </div>
             </div>
             <ix-vdev
-              *ngFor="let vdev of vdevs.data; let i = index"
+              *ngFor="let vdev of shownDataVdevs; let i = index; trackBy: vdevsTracker"
+              class="vdev"
               [group]="'data'"
               [manager]="this"
-              [index]="i"
+              [uuid]="vdev.uuid"
               [initialValues]="vdev"
+              [title]="getDataVdevTitle(i)"
+              (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
+            <mat-paginator
+              #paginator
+              showFirstLastButtons
+              aria-label="Select page"
+              [length]="vdevs.data.length"
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 25, 50]"
+              (page)="onPageChange($event)"
+            >
+            </mat-paginator>
+            <mat-divider></mat-divider>
+
           </div>
           <div *ngIf="vdevs.cache.length > 0">
             <h4 class="vdev-h4">{{ 'Cache VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.cache; let i = index"
+              class="vdev"
               [group]="'cache'"
               [manager]="this"
-              [index]="i"
+              [uuid]="vdev.uuid"
+              (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
           </div>
           <div *ngIf="vdevs.log.length > 0">
             <h4 class="vdev-h4">{{ 'Log VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.log; let i = index"
+              class="vdev"
               [group]="'log'"
               [manager]="this"
-              [index]="i"
+              [uuid]="vdev.uuid"
+              (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
           </div>
           <div *ngIf="vdevs.spares.length > 0">
             <h4 class="vdev-h4">{{ 'Spare VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.spares; let i = index"
+              class="vdev"
               [group]="'spares'"
               [manager]="this"
-              [index]="i"
+              [uuid]="vdev.uuid"
+              (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
           </div>
           <div *ngIf="vdevs.special.length > 0">
             <h4 class="vdev-h4">{{ 'Metadata VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.special; let i = index"
+              class="vdev"
               [group]="'special'"
               [manager]="this"
-              [index]="i"
+              [uuid]="vdev.uuid"
+              (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
           </div>
           <div *ngIf="vdevs.dedup.length > 0">
             <h4 class="vdev-h4">{{ 'Dedup VDev' | translate }}</h4>
             <ix-vdev
               *ngFor="let vdev of vdevs.dedup; let i = index"
+              class="vdev"
               [group]="'dedup'"
               [manager]="this"
-              [index]="i"
+              [uuid]="vdev.uuid"
+              (vdevChanged)="onVdevChanged($event)"
             ></ix-vdev>
           </div>
         </div>
@@ -748,7 +773,7 @@
 
       <div *ngIf="error" class="size-message red" [innerHTML]="error"></div>
 
-      <div class="forceCreateCheckbox" *ngIf="hasSavableErrors">
+      <div *ngIf="hasSavableErrors" class="forceCreateCheckbox">
         <mat-checkbox
           color="primary"
           id="pool-manager__force-submit-checkbox"

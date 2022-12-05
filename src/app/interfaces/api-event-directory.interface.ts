@@ -7,6 +7,7 @@ import { DirectoryServicesState } from 'app/interfaces/directory-services-state.
 import { Job } from 'app/interfaces/job.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -18,7 +19,7 @@ export type ApiEventDirectory = {
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
   'failover.status': { response: FailoverStatus };
-  'failover.disabled.reasons': { response: FailoverDisabledReason[] };
+  'failover.disabled.reasons': { response: { disabled_reasons: FailoverDisabledReason[] } };
   'service.query': { response: Service };
   'truecommand.config': { response: TrueCommandConfig };
   'vm.query': { response: VirtualMachine };
@@ -26,4 +27,5 @@ export type ApiEventDirectory = {
   'zfs.pool.scan': { response: PoolScan };
   'user.query': { response: User };
   'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
+  'disk.query': { response: Disk };
 };

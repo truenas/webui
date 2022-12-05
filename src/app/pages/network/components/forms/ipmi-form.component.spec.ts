@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { StoreModule } from '@ngrx/store';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
@@ -18,6 +19,8 @@ import {
   DialogService, RedirectService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
+import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
@@ -30,6 +33,17 @@ describe('IpmiFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
+        initialState: {
+          [haInfoStateKey]: {
+            haStatus: {
+              hasHa: true,
+              reasons: [],
+            },
+            isHaLicensed: true,
+          },
+        },
+      }),
     ],
     providers: [
       mockProvider(SystemGeneralService, {
@@ -91,9 +105,9 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it('it loads remote controller data', async () => {
+    it('loads remote controller data', async () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
-      const form = await loader.getHarness(IxFormHarness);
+      form = await loader.getHarness(IxFormHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
       const formData = await form.getValues();
 
@@ -108,7 +122,7 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it('it disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
+    it('disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
       const checkboxDhcp = await loader.getHarness(IxCheckboxHarness.with({ label: 'DHCP' }));
       await checkboxDhcp.setValue(true);
       const ipaddress = await loader.getHarness(IxInputHarness.with({ label: 'IPv4 Address' }));
@@ -131,7 +145,7 @@ describe('IpmiFormComponent', () => {
         Password: '',
         'VLAN ID': '',
       };
-      const form = await loader.getHarness(IxFormHarness);
+      form = await loader.getHarness(IxFormHarness);
       await form.fillForm(dataForm);
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

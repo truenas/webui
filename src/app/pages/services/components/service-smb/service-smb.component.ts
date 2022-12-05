@@ -5,6 +5,7 @@ import { AbstractControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -19,6 +20,8 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
 import { UserService } from 'app/services/user.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { AppState } from 'app/store/index';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -111,6 +114,7 @@ export class ServiceSmbComponent implements OnInit {
     private userService: UserService,
     private validatorsService: IxValidatorsService,
     private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {
     this.form.get('netbiosname_b').disable();
   }
@@ -120,9 +124,9 @@ export class ServiceSmbComponent implements OnInit {
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.subscriptions.push(
         this.form.get('netbiosname_b').disabledWhile(
-          this.ws.call('failover.licensed').pipe(
-            tap((isHa) => this.hasSecondController = isHa),
-            map((isHa) => !isHa),
+          this.store$.select(selectIsHaLicensed).pipe(
+            tap((isHaLicensed) => this.hasSecondController = isHaLicensed),
+            map((isHaLicensed) => !isHaLicensed),
           ),
         ),
       );

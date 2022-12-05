@@ -4,17 +4,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
-import { CompressionType } from 'app/enums/compression-type.enum';
-import { Direction } from 'app/enums/direction.enum';
-import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
+import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
+import { Direction, directionNames } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
-import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
-import { LoggingLevel } from 'app/enums/logging-level.enum';
-import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
-import { RetentionPolicy } from 'app/enums/retention-policy.enum';
-import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
+import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
+import { LoggingLevel, loggingLevelNames } from 'app/enums/logging-level.enum';
+import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
+import { ReadOnlyMode, readonlyModeNames } from 'app/enums/readonly-mode.enum';
+import { RetentionPolicy, retentionPolicyNames } from 'app/enums/retention-policy.enum';
+import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -61,20 +63,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   protected queryRes: ReplicationTask;
   title: string;
   pk: number;
-  protected retentionPolicyChoice = [
-    {
-      label: this.translate.instant('Same as Source'),
-      value: RetentionPolicy.Source,
-    },
-    {
-      label: this.translate.instant('Custom'),
-      value: RetentionPolicy.Custom,
-    },
-    {
-      label: this.translate.instant('None'),
-      value: RetentionPolicy.None,
-    },
-  ];
+  protected retentionPolicyChoice = mapToOptions(retentionPolicyNames, this.translate);
   customActions = [{
     id: 'wizard_add',
     name: this.translate.instant('Switch to Wizard'),
@@ -105,16 +94,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'direction',
           placeholder: helptext.direction_placeholder,
           tooltip: helptext.direction_tooltip,
-          options: [
-            {
-              label: this.translate.instant('PUSH'),
-              value: Direction.Push,
-            },
-            {
-              label: this.translate.instant('PULL'),
-              value: Direction.Pull,
-            },
-          ],
+          options: mapToOptions(directionNames, this.translate),
           value: Direction.Push,
           relation: [
             {
@@ -162,28 +142,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'logging_level',
           placeholder: helptext.logging_level_placeholder,
           tooltip: helptext.logging_level_tooltip,
-          options: [
-            {
-              label: this.translate.instant('DEFAULT'),
-              value: LoggingLevel.Default,
-            },
-            {
-              label: this.translate.instant('DEBUG'),
-              value: LoggingLevel.Debug,
-            },
-            {
-              label: this.translate.instant('INFO'),
-              value: LoggingLevel.Info,
-            },
-            {
-              label: this.translate.instant('WARNING'),
-              value: LoggingLevel.Warning,
-            },
-            {
-              label: this.translate.instant('ERROR'),
-              value: LoggingLevel.Error,
-            },
-          ],
+          options: mapToOptions(loggingLevelNames, this.translate),
           value: LoggingLevel.Default,
         },
         {
@@ -232,16 +191,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'netcat_active_side',
           placeholder: helptext.netcat_active_side_placeholder,
           tooltip: helptext.netcat_active_side_tooltip,
-          options: [
-            {
-              label: this.translate.instant('LOCAL'),
-              value: NetcatMode.Local,
-            },
-            {
-              label: this.translate.instant('REMOTE'),
-              value: NetcatMode.Remote,
-            },
-          ],
+          options: mapToOptions(netcatModeNames, this.translate),
           value: NetcatMode.Local,
           relation: [
             {
@@ -330,24 +280,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'compression',
           placeholder: helptext.compression_placeholder,
           tooltip: helptext.compression_tooltip,
-          options: [
-            {
-              label: this.translate.instant('Disabled'),
-              value: CompressionType.Disabled, // should set it to be null before submit
-            },
-            {
-              label: this.translate.instant('lz4 (fastest)'),
-              value: CompressionType.Lz4,
-            },
-            {
-              label: this.translate.instant('pigz (all rounder)'),
-              value: CompressionType.Pigz,
-            },
-            {
-              label: this.translate.instant('plzip (best compression)'),
-              value: CompressionType.PlZip,
-            },
-          ],
+          options: mapToOptions(compressionTypeNames, this.translate),
           value: CompressionType.Disabled,
           relation: [
             {
@@ -657,10 +590,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           type: 'radio',
           name: 'schema_or_regex',
           placeholder: helptext.name_schema_or_regex_placeholder_push,
-          options: [
-            { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
-            { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
-          ],
+          options: mapToOptions(snapshotNamingOptionNames, this.translate),
           value: SnapshotNamingOption.NamingSchema,
         },
         {
@@ -757,20 +687,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'readonly',
           placeholder: helptext.readonly_placeholder,
           tooltip: helptext.readonly_tooltip,
-          options: [
-            {
-              label: 'SET',
-              value: ReadOnlyMode.Set,
-            },
-            {
-              label: 'REQUIRE',
-              value: ReadOnlyMode.Require,
-            },
-            {
-              label: 'IGNORE',
-              value: ReadOnlyMode.Ignore,
-            },
-          ],
+          options: mapToOptions(readonlyModeNames, this.translate),
         },
         {
           type: 'checkbox',
@@ -784,16 +701,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           name: 'encryption_key_format',
           placeholder: helptext.encryption_key_format_placeholder,
           tooltip: repwizardhelptext.encryption_key_format_tooltip,
-          options: [
-            {
-              label: this.translate.instant('HEX'),
-              value: EncryptionKeyFormat.Hex,
-            },
-            {
-              label: this.translate.instant('PASSPHRASE'),
-              value: EncryptionKeyFormat.Passphrase,
-            },
-          ],
+          options: mapToOptions(encryptionKeyFormatNames, this.translate),
           relation: [
             {
               action: RelationAction.Show,
@@ -955,30 +863,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'lifetime_unit',
-          placeholder: helptext.lifetime_unit_placeholder,
-          tooltip: helptext.lifetime_unit_tooltip,
-          options: [
-            {
-              label: this.translate.instant('Hour(s)'),
-              value: LifetimeUnit.Hour,
-            },
-            {
-              label: this.translate.instant('Day(s)'),
-              value: LifetimeUnit.Day,
-            },
-            {
-              label: this.translate.instant('Week(s)'),
-              value: LifetimeUnit.Week,
-            },
-            {
-              label: this.translate.instant('Month(s)'),
-              value: LifetimeUnit.Month,
-            },
-            {
-              label: this.translate.instant('Year(s)'),
-              value: LifetimeUnit.Year,
-            },
-          ],
+          options: mapToOptions(lifetimeUnitNames, this.translate),
           value: LifetimeUnit.Week,
           relation: [
             {
@@ -1323,36 +1208,37 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.toggleNamingSchemaOrRegex();
   }
 
-  resourceTransformIncomingRestData(wsResponse: any): any {
+  resourceTransformIncomingRestData(wsResponse: ReplicationTask): Record<string, unknown> {
     this.queryRes = _.cloneDeep(wsResponse);
-    wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
-    wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
-    wsResponse['source_datasets_PULL'] = wsResponse['source_datasets'];
-    wsResponse['target_dataset_PULL'] = wsResponse['target_dataset'];
+    const formData = _.cloneDeep(wsResponse) as unknown as Record<string, unknown>;
+    formData['source_datasets_PUSH'] = wsResponse['source_datasets'];
+    formData['target_dataset_PUSH'] = wsResponse['target_dataset'];
+    formData['source_datasets_PULL'] = wsResponse['source_datasets'];
+    formData['target_dataset_PULL'] = wsResponse['target_dataset'];
 
     if (wsResponse['ssh_credentials']) {
-      wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
+      formData['ssh_credentials'] = wsResponse['ssh_credentials'].id;
     }
 
-    wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
-    wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
+    formData['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
+    formData['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
     const snapshotTasks = wsResponse['periodic_snapshot_tasks'].map((item: PeriodicSnapshotTask) => item.id);
-    wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
+    formData['periodic_snapshot_tasks'] = snapshotTasks;
 
     if (wsResponse.schedule) {
-      wsResponse['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
-      wsResponse['schedule_begin'] = wsResponse.schedule.begin;
-      wsResponse['schedule_end'] = wsResponse.schedule.end;
-      wsResponse['schedule'] = true;
+      formData['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
+      formData['schedule_begin'] = wsResponse.schedule.begin;
+      formData['schedule_end'] = wsResponse.schedule.end;
+      formData['schedule'] = true;
     }
 
     if (wsResponse.restrict_schedule) {
-      wsResponse['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
-      wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
-      wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
-      wsResponse['restrict_schedule'] = true;
+      formData['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
+      formData['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
+      formData['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
+      formData['restrict_schedule'] = true;
     }
-    wsResponse['speed_limit'] = wsResponse['speed_limit']
+    formData['speed_limit'] = wsResponse['speed_limit']
       ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
       : undefined;
     // block large_block changes if it is enabled
@@ -1363,22 +1249,21 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        propertiesExcludeList.push(`${key}=${value}`);
+        propertiesExcludeList.push(`${key}=${String(value)}`);
       }
-      wsResponse['properties_override'] = propertiesExcludeList;
+      formData['properties_override'] = propertiesExcludeList;
     }
 
-    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS';
-    if (wsResponse.encryption_key_location_truenasdb) {
-      delete wsResponse.encryption_key_location;
+    formData.encryption_key_location_truenasdb = wsResponse.encryption_key_location === truenasDbKeyLocation;
+    if (formData.encryption_key_location_truenasdb) {
+      delete formData.encryption_key_location;
     }
 
-    if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
-      wsResponse.encryption_key_generate = false;
-      wsResponse.encryption_key_hex = wsResponse.encryption_key;
+    if (formData.encryption_key_format === EncryptionKeyFormat.Hex) {
+      formData.encryption_key_generate = false;
+      formData.encryption_key_hex = wsResponse.encryption_key;
     } else {
-      wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
+      formData.encryption_key_passphrase = wsResponse.encryption_key;
     }
 
     if (wsResponse.name_regex) {
@@ -1387,7 +1272,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NamingSchema);
     }
 
-    return wsResponse;
+    return formData;
   }
 
   parsePickerTime(
@@ -1495,7 +1380,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
 
     if (data['encryption_key_location_truenasdb']) {
-      data['encryption_key_location'] = '$TrueNAS';
+      data['encryption_key_location'] = truenasDbKeyLocation;
     }
     delete data['encryption_key_location_truenasdb'];
 

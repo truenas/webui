@@ -9,4 +9,5 @@ export interface Tunable {
   var: string;
 }
 
-export type TunableUpdate = Omit<Tunable, 'id'>;
+export type TunableCreate = Omit<Tunable, 'id'>;
+export type TunableUpdate = Pick<Tunable, 'value' | 'comment' | 'enabled'>;

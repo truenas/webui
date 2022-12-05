@@ -32,7 +32,8 @@ module.exports = {
         "rxjs-angular",
         "unicorn",
         "angular-file-naming",
-        "@shopify"
+        "@shopify",
+        "unused-imports",
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -84,7 +85,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "no-trailing-spaces": ["error"],
         "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
         '@typescript-eslint/naming-convention': [
           'error',
@@ -131,7 +131,7 @@ module.exports = {
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
 
-        // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
+        // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
@@ -153,7 +153,6 @@ module.exports = {
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "@typescript-eslint/no-shadow": "off",
         "no-multi-str": "off",
         "no-mixed-operators": ["error", {
           groups: [
@@ -288,13 +287,32 @@ module.exports = {
       }
     },
     {
+      "files": ["**/*.spec.ts"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "rules": {
+        "jest/no-large-snapshots": ["error"],
+        "jest/prefer-equality-matcher": ["error"],
+        "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }],
+        "jest/expect-expect": [
+          "error",
+          {
+            "assertFunctionNames": ["expect", "expectObservable"],
+          }
+        ]
+      }
+    },
+    {
       "files": ["*.html"],
-      "parser": "@angular-eslint/template-parser",
-      "plugins": [
-        "@angular-eslint/template",
-        "unused-imports",
-      ],
-      "rules": {}
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {
+        "@angular-eslint/template/attributes-order": ["error"],
+        "@angular-eslint/template/no-duplicate-attributes": ['error'],
+
+        // TODO: To be enabled later
+        '@angular-eslint/template/use-track-by-function': ['off'],
+        '@angular-eslint/template/no-negated-async': ['off'],
+      }
     }
   ]
 }

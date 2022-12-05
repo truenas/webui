@@ -39,7 +39,8 @@ import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -111,9 +112,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
 
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isFailoverLicensed) => {
-        this.isFailoverLicensed = isFailoverLicensed;
-        this.getHaStatus();
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isFailoverLicensed = isHaLicensed;
+
+        if (isHaLicensed) {
+          this.getHaStatus();
+        }
       });
     }
 
@@ -337,7 +341,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
-    if (info.status === 'HA Enabled') {
+    if (info.hasHa) {
       this.haStatusText = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();

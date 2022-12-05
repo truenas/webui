@@ -3,11 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -22,7 +24,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -61,8 +63,12 @@ describe('DeviceFormComponent', () => {
           } as VmUsbPassthroughDeviceChoice,
         }),
         mockCall('vm.device.passthrough_device_choices', {
-          pci_0000_00_1c_0: {} as VmPassthroughDeviceChoice,
-          pci_0000_00_1c_5: {} as VmPassthroughDeviceChoice,
+          pci_0000_00_1c_0: {
+            reset_mechanism_defined: true,
+          } as VmPassthroughDeviceChoice,
+          pci_0000_00_1c_5: {
+            reset_mechanism_defined: false,
+          } as VmPassthroughDeviceChoice,
         }),
         mockCall('vm.random_mac', '00:a0:98:30:09:90'),
         mockCall('vm.device.nic_attach_choices', {
@@ -73,7 +79,17 @@ describe('DeviceFormComponent', () => {
           '/dev/zvol/bassein/zvol1': 'bassein/zvol1',
           '/dev/zvol/bassein/zvol+with+spaces': 'bassein/zvol with spaces',
         }),
+        mockCall('vm.device.usb_controller_choices', {
+          'piix3-uhci': 'piix3-uhci',
+          'pci-ohci': 'pci-ohci',
+        }),
+        mockCall('system.advanced.config', {
+          isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
+        } as AdvancedConfig),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
     ],
@@ -426,6 +442,8 @@ describe('DeviceFormComponent', () => {
       });
       await saveButton.click();
 
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
         attributes: {
           pptdev: 'pci_0000_00_1c_0',
@@ -452,6 +470,13 @@ describe('DeviceFormComponent', () => {
         'PCI Passthrough Device': 'pci_0000_00_1c_5',
       });
       await saveButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Warning',
+          message: 'PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.',
+        }),
+      );
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [4, {
         attributes: {
@@ -557,6 +582,7 @@ describe('DeviceFormComponent', () => {
       id: 1,
       dtype: VmDeviceType.Usb,
       attributes: {
+        controller_type: 'pci-ohci',
         device: 'usb_device_2',
       },
       order: 7,
@@ -568,12 +594,14 @@ describe('DeviceFormComponent', () => {
         Type: 'USB Passthrough Device',
       });
       await form.fillForm({
+        'Controller Type': 'pci-ohci',
         Device: 'usb_device_2 prod_2 (vendor_2)',
       });
       await saveButton.click();
 
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
         attributes: {
+          controller_type: 'pci-ohci',
           device: 'usb_device_2',
         },
         dtype: VmDeviceType.Usb,
@@ -586,21 +614,54 @@ describe('DeviceFormComponent', () => {
       spectator.component.setDeviceForEdit(existingUsb);
       const values = await form.getValues();
       expect(values).toEqual({
+        'Controller Type': 'pci-ohci',
         Device: 'usb_device_2 prod_2 (vendor_2)',
         'Device Order': '7',
       });
     });
 
-    it('updates an existing USB Passthrough device', async () => {
+    it('updates an existing USB Passthrough when device is selected', async () => {
       spectator.component.setDeviceForEdit(existingUsb);
       await form.fillForm({
+        'Controller Type': 'piix3-uhci',
         Device: 'usb_device_1 prod_1 (vendor_1)',
       });
 
       await saveButton.click();
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [1, {
         attributes: {
+          controller_type: 'piix3-uhci',
           device: 'usb_device_1',
+        },
+        dtype: VmDeviceType.Usb,
+        order: 7,
+        vm: 45,
+      }]);
+    });
+
+    it('updates an existing USB Passthrough when custom is selected', async () => {
+      spectator.component.setDeviceForEdit(existingUsb);
+      await form.fillForm({
+        'Controller Type': 'piix3-uhci',
+        Device: 'Specify custom',
+      });
+
+      await form.fillForm({
+        'Vendor ID': 'vendor_1',
+        'Product ID': 'product_1',
+      });
+
+      spectator.detectChanges();
+
+      await saveButton.click();
+      expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [1, {
+        attributes: {
+          controller_type: 'piix3-uhci',
+          device: null,
+          usb: {
+            vendor_id: 'vendor_1',
+            product_id: 'product_1',
+          },
         },
         dtype: VmDeviceType.Usb,
         order: 7,

@@ -16,8 +16,8 @@
                 <mat-form-field floatPlaceholder="never" id="timeout-field">
                   <input
                     matInput
-                    [(ngModel)]="checkinTimeout"
                     [pattern]="checkinTimeoutPattern"
+                    [(ngModel)]="checkinTimeout"
                   />
                 </mat-form-field>
                 {{ helptext.checkin_text_2 | translate }}
@@ -87,7 +87,7 @@
             ).
           </div>
         </mat-card>
-        <ix-conf-table [conf]="interfaceTableConf" fxFlex></ix-conf-table>
+        <ix-conf-table fxFlex [conf]="interfaceTableConf"></ix-conf-table>
         <ix-network-configuration-card
           class="dashboard-card"
         ></ix-network-configuration-card>
@@ -96,8 +96,8 @@
 
     <div class="left-column" fxFlex="100" fxFlex.lg="35">
       <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        <ix-conf-table [conf]="staticRoutesTableConf" fxFlex></ix-conf-table>
-        <ix-conf-table [conf]="openvpnTableConf" fxFlex></ix-conf-table>
+        <ix-conf-table fxFlex [conf]="staticRoutesTableConf"></ix-conf-table>
+        <ix-conf-table fxFlex [conf]="openvpnTableConf"></ix-conf-table>
         <ix-conf-table
           *ngIf="ipmiEnabled"
           fxFlex

@@ -13,9 +13,12 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  Inject,
+  TemplateRef,
 } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
 import { Subject, Subscription } from 'rxjs';
@@ -25,6 +28,7 @@ import {
   filter,
   map,
 } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -34,9 +38,14 @@ import {
 } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
+import { AppState } from 'app/store';
+import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -50,8 +59,11 @@ enum ScrollType {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
+
+  hasHa$ = this.store$.select(selectHaStatus).pipe(filter(Boolean), map((state) => state.hasHa));
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
@@ -96,10 +108,16 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     protected translate: TranslateService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
+    private layoutService: LayoutService,
+    private slideIn: IxSlideInService,
+    private store$: Store<AppState>,
+    private systemService: SystemGeneralService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
+        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         if (this.router.getCurrentNavigation().extras.state?.hideMobileDetails) {
           this.closeMobileDetails();
         }
@@ -167,8 +185,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   private createDataSource(datasets: DatasetDetails[]): void {
     this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
-    this.dataSource.filterPredicate = (datasets, query = '') => {
-      return flattenTreeWithFilter(datasets, (dataset: DatasetDetails) => {
+    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
+      return flattenTreeWithFilter(datasetsToFilter, (dataset: DatasetDetails) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
@@ -221,7 +239,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     );
   }
 
-  handleError = (error: WebsocketError | Job<null, unknown[]>): void => {
+  handleError = (error: WebsocketError | Job): void => {
     this.dialogService.errorReportMiddleware(error);
   };
 
@@ -256,6 +274,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         }
         this.cdr.detectChanges();
       });
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   closeMobileDetails(): void {
@@ -270,10 +289,18 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate(['/storage', 'create']);
   }
 
-  // Expose hidden details on mobile
-  openMobileDetails(): void {
+  viewDetails(dataset: DatasetDetails): void {
+    this.router.navigate(['/datasets', dataset.id]);
+
     if (this.isMobileView) {
       this.showMobileDetails = true;
+
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
+  }
+
+  onImportData(): void {
+    this.slideIn.open(ImportDataComponent);
   }
 }

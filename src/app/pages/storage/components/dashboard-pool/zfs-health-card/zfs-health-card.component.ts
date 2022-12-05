@@ -10,6 +10,7 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
@@ -42,7 +43,6 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
   hasScrubTask$: Observable<LoadingState<boolean>>;
 
   readonly poolStatusLabels = getPoolStatusLabels(this.translate);
-  readonly PoolStatus = PoolStatus;
 
   constructor(
     private ws: WebSocketService,
@@ -88,6 +88,32 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
           ? T('Canceled Scrub on {date}')
           : T('Canceled Resilver on {date}');
     }
+  }
+
+  get iconType(): PoolCardIconType {
+    if (!this.pool.healthy) {
+      return PoolCardIconType.Error;
+    }
+    if (this.pool.status === PoolStatus.Degraded) {
+      return PoolCardIconType.Warn;
+    }
+    if (this.pool.status === PoolStatus.Faulted) {
+      return PoolCardIconType.Faulted;
+    }
+    return PoolCardIconType.Safe;
+  }
+
+  get iconTooltip(): string {
+    if (!this.pool.healthy) {
+      return this.translate.instant('Pool is not healthy');
+    }
+    if (this.pool.status === PoolStatus.Degraded) {
+      return this.translate.instant('Pool status is {status}', { status: this.pool.status });
+    }
+    if (this.pool.status === PoolStatus.Faulted) {
+      return this.translate.instant('Pool status is {status}', { status: this.pool.status });
+    }
+    return this.translate.instant('Everything is fine');
   }
 
   ngOnChanges(): void {
@@ -176,9 +202,9 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
     if (!this.pool.topology) {
       return;
     }
-    this.totalZfsErrors = Object.values(this.pool.topology).reduce((errors: number, vdevs: TopologyItem[]) => {
-      return errors + vdevs.reduce((errors, vdev) => {
-        return errors
+    this.totalZfsErrors = Object.values(this.pool.topology).reduce((totalErrors: number, vdevs: TopologyItem[]) => {
+      return totalErrors + vdevs.reduce((vdevCategoryErrors, vdev) => {
+        return vdevCategoryErrors
           + (vdev.stats?.read_errors || 0)
           + (vdev.stats?.write_errors || 0)
           + (vdev.stats?.checksum_errors || 0);

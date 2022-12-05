@@ -2,37 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
-
-      <ng-container [ngSwitch]="true">
-        <mat-icon
-          *ngSwitchCase="pool.healthy"
-          class="pool-icon icon-online"
-          [matTooltip]="'Everything is fine' | translate"
-        >
-          check_circle
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="pool.status === PoolStatus.Degraded"
-          class="pool-icon icon-warning"
-          [matTooltip]="'Degraded' | translate"
-        >
-          warning
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="pool.status === PoolStatus.Faulted"
-          class="pool-icon icon-faulted"
-          [matTooltip]="'Faulted' | translate"
-        >
-          help
-        </mat-icon>
-        <mat-icon
-          *ngSwitchDefault
-          class="pool-icon icon-error"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-      </ng-container>
+      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
     <button
@@ -110,8 +80,8 @@
           {{ timeLeftString }}
         </div>
         <mat-progress-bar
-          [value]="scan.percentage"
           class="progress"
+          [value]="scan.percentage"
         ></mat-progress-bar>
       </div>
 

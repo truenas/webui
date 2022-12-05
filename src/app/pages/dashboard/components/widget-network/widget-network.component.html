@@ -29,7 +29,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }}</span>
             </div>
           </h3>
@@ -97,7 +97,7 @@
                               check_circle
                             </mat-icon>
                           </span>
-                          <span class="icon down" *ngIf="getLinkState(nic) !== LinkState.Up">
+                          <span *ngIf="getLinkState(nic) !== LinkState.Up" class="icon down">
                             <mat-icon [matTooltip]="getLinkStateLabel(nic)">
                               cancel
                             </mat-icon>
@@ -133,7 +133,7 @@
                             {{ 'No Traffic' | translate }}
                           </span>
                         </li>
-                        <li fxLayout="row" fxLayoutAlign="start center" *ngIf="availableNics.length > 1">
+                        <li *ngIf="availableNics.length > 1" fxLayout="row" fxLayoutAlign="start center">
                           <span class="icon address">
                             <mat-icon [matTooltip]="getIpAddressTooltip(nic)">
                               settings_ethernet

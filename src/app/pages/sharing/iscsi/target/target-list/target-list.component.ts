@@ -19,7 +19,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   `,
   providers: [IscsiService],
 })
-export class TargetListComponent implements EntityTableConfig, OnInit {
+export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnInit {
   @Input() fcEnabled: boolean;
 
   title = this.translate.instant('Targets');
@@ -49,7 +49,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     },
   };
 
-  protected entityList: EntityTableComponent;
+  protected entityList: EntityTableComponent<IscsiTarget>;
   constructor(
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
@@ -65,7 +65,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     }
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<IscsiTarget>): void {
     this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
@@ -76,10 +76,10 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     this.slideInService.open(TargetFormComponent, { wide: true });
   }
 
-  doEdit(id: string): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
+  doEdit(id: number): void {
+    const target = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(TargetFormComponent, { wide: true });
-    form.setTargetForEdit(row);
+    form.setTargetForEdit(target);
   }
 
   getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {

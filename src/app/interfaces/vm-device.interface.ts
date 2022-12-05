@@ -9,13 +9,18 @@ interface VmPciPassthroughAttributes {
 }
 
 interface VmUsbPassthroughAttributes {
-  device: string;
+  controller_type: string;
+  device: string | null;
+  usb?: {
+    product_id?: string;
+    vendor_id?: string;
+  };
 }
 
 export interface VmDisplayAttributes {
   bind: string;
   password: string;
-  password_configured?: false;
+  password_configured?: boolean;
   port: number;
   resolution: string;
   type: VmDisplayType;

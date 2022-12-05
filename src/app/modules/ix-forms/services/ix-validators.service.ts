@@ -11,6 +11,14 @@ import isCidr from 'is-cidr';
 export class IxValidatorsService {
   constructor(protected translate: TranslateService) {}
 
+  makeErrorMessage(key: string, message: string): ValidationErrors {
+    return {
+      [key]: {
+        message,
+      },
+    };
+  }
+
   withMessage(validatorFn: ValidatorFn, errorMessage: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = validatorFn(control);
@@ -19,11 +27,7 @@ export class IxValidatorsService {
       }
 
       const errorKey = Object.keys(errors)[0];
-      return {
-        [errorKey]: {
-          message: errorMessage,
-        },
-      };
+      return this.makeErrorMessage(errorKey, errorMessage);
     };
   }
 

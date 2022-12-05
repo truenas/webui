@@ -1,12 +1,12 @@
 <h1 mat-dialog-title>{{ help.downloadkey_dialog_title | translate }}!</h1>
 <div
-  mat-dialog-content
   *ngIf="!new"
+  mat-dialog-content
   [innerHtml]="help.downloadkey_dialog_legacy_message | translate"
 ></div>
 <div
-  mat-dialog-content
   *ngIf="new"
+  mat-dialog-content
   [innerHtml]="help.downloadkey_dialog_zfs_message | translate"
 ></div>
 <div mat-dialog-actions>

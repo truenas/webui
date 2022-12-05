@@ -41,6 +41,7 @@ describe('EmailComponent', () => {
         ],
       }),
       mockWebsocket([
+        mockCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
         mockCall('mail.config', {
           id: 1,
           fromemail: 'from@ixsystems.com',
@@ -97,17 +98,15 @@ describe('EmailComponent', () => {
   });
 
   it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-    spectator.inject(MockWebsocketService).mockCall('user.query', [
-      { email: '' },
-    ] as User[]);
+    spectator.inject(MockWebsocketService).mockCall('mail.local_administrator_email', null);
 
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
     await button.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.query', [[['username', '=', 'root']]]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('mail.local_administrator_email');
     expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
       'Email',
-      'Email for root user is not set. Please, configure the root user email address first.',
+      'No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.',
     );
   });
 
@@ -188,8 +187,8 @@ describe('EmailComponent', () => {
 
   describe('Gmail OAuth', () => {
     it('shows current Gmail config when Gmail is set', async () => {
-      const mockWebsocket = spectator.inject(MockWebsocketService);
-      mockWebsocket.mockCall('mail.config', {
+      const websocketMock = spectator.inject(MockWebsocketService);
+      websocketMock.mockCall('mail.config', {
         oauth: {
           client_id: 'client_id',
           client_secret: 'secret',
@@ -216,7 +215,7 @@ describe('EmailComponent', () => {
 
       const window = spectator.inject<Window>(WINDOW);
       expect(window.open).toHaveBeenCalledWith(
-        'https://freenas.org/oauth/gmail?origin=http%3A%2F%2Ftruenas.com%2Fsystem%2Femail',
+        'https://truenas.com/oauth/gmail?origin=http%3A%2F%2Ftruenas.com%2Fsystem%2Femail',
         '_blank',
         'width=640,height=480',
       );

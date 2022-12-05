@@ -141,7 +141,7 @@ describe('IxExplorerComponent', () => {
       tree.deselect.emit({ node: { id: '/mnt/new' } });
 
       expect(mockTreeMock.setState).toHaveBeenLastCalledWith({ selectedLeafNodeIds: {} });
-      expect(formControl.value).toBe(undefined);
+      expect(formControl.value).toBeUndefined();
     });
   });
 

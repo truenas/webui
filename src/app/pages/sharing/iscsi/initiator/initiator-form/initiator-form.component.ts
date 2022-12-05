@@ -16,6 +16,9 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import {
+  DynamicListComponent,
+} from 'app/pages/sharing/iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
 import { WebSocketService, DialogService, NetworkService } from 'app/services';
 
 @UntilDestroy()
@@ -44,7 +47,7 @@ export class InitiatorFormComponent implements OnInit {
       name: 'initiators',
       placeholder: helptextSharingIscsi.initiator_form_placeholder_initiators,
       tooltip: helptextSharingIscsi.initiator_form_tooltip_initiators,
-      customEventMethod: (parent) => {
+      customEventMethod: (parent: DynamicListComponent) => {
         for (const selected of parent.source.selectedOptions.selected) {
           parent.listControl.value.add(selected.value.initiator);
         }
@@ -223,8 +226,11 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      this.formGroup.controls[name][method]();
+      if (disable) {
+        this.formGroup.controls[name].disable();
+      } else {
+        this.formGroup.controls[name].enable();
+      }
     }
   }
 }

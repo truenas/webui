@@ -12,6 +12,8 @@ import {
   CertificateExtension,
   CertificateProfile,
   CertificationExtensionAttribute,
+  Extension,
+  ExtensionProperty,
 } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -628,9 +630,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: unknown): unknown {
     if (fieldConfig.type === 'select') {
-      const option = fieldConfig.options.find((option) => option.value === value);
-      if (option) {
-        value = option.label;
+      const selectedOption = fieldConfig.options.find((option) => option.value === value);
+      if (selectedOption) {
+        value = selectedOption.label;
       }
     }
 
@@ -640,11 +642,10 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   addToSummary(fieldName: string): void {
     const fieldConfig = this.getTarget(fieldName);
     if (!fieldConfig.isHidden) {
-      const fieldName = fieldConfig.name;
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
@@ -874,10 +875,10 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         if (data[key]) {
           if (typeProp.length === 1) {
             for (const item of data[key]) {
-              (certExtensions as any)[typeProp[0]][item] = true;
+              certExtensions[typeProp[0] as Extension][item as ExtensionProperty] = true;
             }
           } else {
-            (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
+            certExtensions[typeProp[0] as Extension][typeProp[1] as ExtensionProperty] = data[key];
           }
         }
         delete data[key];

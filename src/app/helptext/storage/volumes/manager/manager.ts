@@ -1,10 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  manager_needsDiskMessage: T('Add one or more disks to be used for data.'),
-
-  manager_extendedNeedsDiskMessage: T('Add one or more disks to extend the pool.'),
-
   manager_sizeMessage: T('Estimated total raw data capacity'),
 
   manager_extendedSizeMessage: T('Estimated data capacity available after extension.'),
@@ -45,11 +41,7 @@ export default {
   the encryption at the time you create the child dataset. For more information on encryption please\
   refer to the <a href="http://TrueNAS.com/docs/" target="_blank">TrueNAS Documentation hub</a>.'),
 
-  manager_duplicate_title: T('Repeat Data VDev'),
   manager_duplicate_vdevs_tooltip: T('Create more data vdevs like the first.'),
-
-  manager_duplicate_vdevs_placeholder: T('Additional Data VDevs to Create'),
-  manager_duplicate_button: T('Repeat Vdev'),
 
   force_title: T('Warning'),
   force_warning: T('The current pool layout is not recommended.\

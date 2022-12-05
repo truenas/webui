@@ -49,6 +49,10 @@
     </ng-container>
   </mat-card-content>
   <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
+    <button *ngIf="canExportKey && isRoot" mat-stroked-button (click)="onExportAllKeys()">
+      {{ 'Export All Keys' | translate }}
+    </button>
+
     <button *ngIf="canExportKey" mat-stroked-button (click)="onExportKey()">
       {{ 'Export Key' | translate }}
     </button>

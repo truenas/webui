@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -38,7 +40,8 @@ export class CatalogAddFormComponent {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-    private dialogService: DialogService,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   onSubmit(): void {
@@ -51,9 +54,8 @@ export class CatalogAddFormComponent {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.info(
-            helptext.catalogForm.dialog.title,
-            helptext.catalogForm.dialog.message,
+          this.snackbar.success(
+            this.translate.instant('Adding large catalogs can take minutes. Please check on the progress in Task Manager.'),
           );
           this.slideInService.close();
         },
