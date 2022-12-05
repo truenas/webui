@@ -101,8 +101,8 @@ describe('DatasetQuotasGrouplistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', 'N/A', '0', 'N/A', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', 'N/A', '0', 'N/A', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
+      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
     ];
 
     expect(cells).toEqual(expectedRows);
