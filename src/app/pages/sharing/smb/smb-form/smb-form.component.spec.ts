@@ -54,6 +54,7 @@ describe('SmbFormComponent', () => {
     enabled: true,
     cluster_volname: '',
     locked: false,
+    path_local: '/mnt/pool123/ds222',
   };
 
   const formLabels: { [key: string]: string } = {
@@ -119,8 +120,8 @@ describe('SmbFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('sharing.smb.create'),
-        mockCall('sharing.smb.update'),
+        mockCall('sharing.smb.create', { ...existingShare }),
+        mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.query', [
           { ...existingShare },
         ]),
@@ -425,10 +426,10 @@ describe('SmbFormComponent', () => {
       IxCheckboxHarness.with({ label: formLabels.home }),
     )).getValue();
 
-    const datasetId = sharePath.replace('/mnt/', '');
-
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/'].concat(
-      ['datasets', datasetId, 'permissions', 'acl'],
-    ), { queryParams: { homeShare } });
+    expect(spectator.inject(Router).navigate)
+      .toHaveBeenCalledWith(
+        ['/', 'datasets', 'acl', 'edit'],
+        { queryParams: { homeShare, path: sharePath } },
+      );
   });
 });

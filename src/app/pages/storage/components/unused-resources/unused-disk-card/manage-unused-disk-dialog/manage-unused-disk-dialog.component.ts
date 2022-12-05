@@ -6,10 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
 @UntilDestroy()
@@ -19,8 +19,6 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageUnusedDiskDialogComponent implements OnInit {
-  private utils: WidgetUtils;
-
   readonly toPoolOptions$ = of([
     {
       label: this.translate.instant('New Pool'),
@@ -59,14 +57,12 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<ManageUnusedDiskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public resource: ManageUnusedDiskDialogResource,
-  ) {
-    this.utils = new WidgetUtils();
-  }
+  ) {}
 
   get groupedDisks(): { formattedDisk: string; exportedPool: string }[] {
     const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
       return {
-        detailedDisk: `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
+        detailedDisk: `${filesize(disk.size, { standard: 'iec' })} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
         exportedPool: disk.exported_zpool,
       };
     });

@@ -117,7 +117,7 @@
                     ix-auto-type="slide-toggle"
                     color="primary"
                     ix-auto-identifier="{{ element[column.prop] }}-slide-toggle"
-                    [disabled]="!column.onChange"
+                    [disabled]="!column.onChange || column.disabled"
                     [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
                     (click)="$event.stopPropagation()"
@@ -219,6 +219,7 @@
                   <ng-template #actionButtons>
                     <button
                       mat-icon-button
+                      [disabled]="rowAction.disabled"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
                       <mat-icon
@@ -234,6 +235,7 @@
               <button
                 *ngIf="_tableConf.deleteCall"
                 mat-icon-button
+                [disabled]="_tableConf.deleteActionDisabled"
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
                 <mat-icon

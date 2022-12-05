@@ -377,20 +377,6 @@ certificate still approved.'),
   },
 
   list: {
-    tooltip_add: T('Create Certificate'),
-
-    column_name: T('Name'),
-    column_issuer: T('Issuer'),
-    column_distinguished_name: T('Distinguished Name'),
-    column_from: T('From'),
-    column_until: T('Until'),
-
-    action_view: T('View'),
-    action_export_certificate: T('Export Certificate'),
-    action_export_private_key: T('Export Private Key'),
-
-    action_create_acme_certificate: T('Create ACME Certificate'),
-
     download_error_dialog: {
       title: T('Error'),
       cert_message: T('Error exporting the certificate'),
@@ -401,72 +387,29 @@ certificate still approved.'),
   },
 
   acme: {
-    fieldset_acme: T('ACME Certificate'),
     identifier: {
-      placeholder: T('Identifier'),
       tooltip: T('Internal identifier of the certificate. Only\
  alphanumeric characters, dash (<b>-</b>), and underline (<b>_</b>) are\
  allowed.'),
     },
     tos: {
-      placeholder: T('Terms of Service'),
       tooltip: T('Please accept the terms of service for the given ACME\
  Server.'),
     },
     renew_day: {
-      placeholder: T('Renew Certificate Days'),
       tooltip: T('Number of days to renew certificate before expiring.'),
-      validation: [Validators.required, Validators.min(0)],
     },
     dir_uri: {
-      placeholder: T('ACME Server Directory URI'),
       tooltip: T('URI of the ACME Server Directory. Choose a\
  preconfigured URI or enter a custom URI.'),
     },
     authenticator: {
-      placeholder: T('Authenticator'),
       tooltip: T('Authenticator to validate the Domain. Choose a\
  previously configured ACME DNS authenticator.'),
     },
-    job_dialog_title: T('Creating...'),
     error_dialog: {
       title: T('Error'),
     },
 
-  },
-
-  viewButton: {
-    certificate: T('View/Download Certificate'),
-    csr: T('View/Download CSR'),
-    key: T('View/Download Key'),
-  },
-
-  viewDialog: {
-    download: T('Download'),
-    close: T('Close'),
-    copy: T('Copy'),
-  },
-
-  edit_view: {
-    country: T('Country: '),
-    state: T('State: '),
-    city: T('City: '),
-    organization: T('Organization: '),
-    organizational_unit: T('Organizational Unit: '),
-    email: T('Email: '),
-    common: T('Common: '),
-    san: T('SAN: '),
-    DN: T('Distinguished Name: '),
-    type: T('Type: '),
-    path: T('Path: '),
-    digest_algorithm: T('Digest Algorithm: '),
-    key_length: T('Key Length: '),
-    key_type: T('Key Type: '),
-    unitl: T('Until: '),
-    issuer: T('Issuer: '),
-    revoked: T('Revoked: '),
-    signed_by: T('Signed By: '),
-    signed_certificates: T('Signed Certificates: '),
-    lifetime: T('Lifetime: '),
   },
 };

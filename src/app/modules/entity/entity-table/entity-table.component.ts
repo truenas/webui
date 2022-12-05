@@ -986,6 +986,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return row.name || row.path || row.id;
   }
 
+  getDisabled(column: string): boolean {
+    return Boolean(_.find(this.allColumns, { prop: column })?.disabled);
+  }
+
   isPaddedAway(index: number): boolean {
     return !this.shouldApplyStickyOffset(index)
       && !(this.isLeftStickyColumnNo(index) && this.isTableOverflow());

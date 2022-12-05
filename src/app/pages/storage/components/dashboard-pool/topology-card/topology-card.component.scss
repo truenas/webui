@@ -21,24 +21,6 @@
   }
 }
 
-.pool-icon {
-  &.icon-online {
-    color: var(--green);
-  }
-
-  &.icon-warning {
-    color: var(--orange);
-  }
-
-  &.icon-faulted {
-    color: var(--blue);
-  }
-
-  &.icon-error {
-    color: var(--red);
-  }
-}
-
 .warning {
   display: flex;
   padding: 0 6px;

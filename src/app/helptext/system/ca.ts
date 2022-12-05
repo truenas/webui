@@ -346,57 +346,26 @@ certificate still approved.'),
     },
   },
 
-  edit: {
-    title: T('Edit CA'),
-    fieldset_certificate: T('Certificate Authority'),
-    name: {
-      placeholder: T('Identifier'),
-      tooltip: T(
-        'Enter an alphanumeric name for the certificate.\
- Underscore (_), and dash (-) characters are allowed.',
-      ),
-      validation: [Validators.required],
-    },
-
-    certificate: {
-      placeholder: T('Certificate'),
-    },
-
-    privatekey: {
-      placeholder: T('Private Key'),
-    },
-  },
-
   list: {
     action_sign: T('Sign CSR'),
   },
 
   sign: {
-    ca_id: {
-      placeholder: T('CA ID'),
-    },
-
     csr_cert_id: {
-      placeholder: T('CSRs'),
       tooltip: T(
         'Select the Certificate Signing Request to sign the\
  Certificate Authority with.',
       ),
-      validation: [Validators.required],
     },
 
     name: {
-      placeholder: T('Identifier'),
       tooltip: T(
         'Internal identifier of the certificate. Only\
  alphanumeric, "_" and "-" are allowed.',
       ),
-      validation: [Validators.required],
     },
     sign: T('Sign'),
   },
-  error: T('Error'),
-  private_key: T('Private Key'),
 
   delete_error: {
     title: T('Error'),

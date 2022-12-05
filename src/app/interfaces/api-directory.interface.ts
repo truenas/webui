@@ -433,6 +433,9 @@ export type ApiDirectory = {
   'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
+  // Cluster
+  'cluster.utils.is_clustered': { params: void; response: boolean };
+
   // DynDNS
   'dyndns.provider_choices': { params: void; response: Choices };
   'dyndns.update': { params: [DynamicDnsUpdate]; response: DynamicDnsConfig };
@@ -963,7 +966,7 @@ export type ApiDirectory = {
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
   'user.create': { params: [UserUpdate]; response: number };
   'user.query': { params: QueryParams<User>; response: User[] };
-  'user.set_root_password': { params: [password: string, ec2?: { instance_id: string }]; response: void };
+  'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
   'user.shell_choices': { params: [userId?: number]; response: Choices };

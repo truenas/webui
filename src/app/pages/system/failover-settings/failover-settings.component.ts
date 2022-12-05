@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
-import { haSettingsUpdated } from 'app/store/system-info/system-info.actions';
+import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
