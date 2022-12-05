@@ -1,22 +1,11 @@
-ix-tree-node,
-ix-nested-tree-node {
-  color: var(--fg2);
-}
-
-
 ix-tree-virtual-scroll-view {
   background: var(--bg2);
   color: var(--fg2);
   display: flex;
   flex: 1;
   flex-direction: column;
-  font-family: var(--font-family-body);
   min-height: 420px;
   min-width: fit-content;
-
-  .ix-tree-list {
-    flex: 1;
-  }
 
   cdk-virtual-scroll-viewport {
     height: 100%;

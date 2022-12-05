@@ -65,8 +65,8 @@
             [ixDataSource]="dataSource"
             [ixTreeControl]="treeControl"
             [ixItemSize]="48"
-            [ixMinBufferPx]="48 * 10"
-            [ixMaxBufferPx]="48 * 20"
+            [ixMinBufferPx]="48 * 20"
+            [ixMaxBufferPx]="48 * 40"
           >
             <ix-tree-node
               *ixTreeNodeDef="let dataset; dataSource: dataSource"
@@ -79,7 +79,7 @@
               (keydown.enter)="viewDetails(dataset)"
             >
               <button mat-icon-button disabled></button>
-              <!-- TODO: Inject ix-dataset-node using CdkPortal -->
+              <!-- TODO: Inject ix-dataset-node using CdkPortal for better performance -->
               <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
@@ -108,7 +108,7 @@
                   [name]="treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
                 ></ix-icon>
               </button>
-              <!-- TODO: Inject ix-dataset-node using CdkPortal -->
+              <!-- TODO: Inject ix-dataset-node using CdkPortal for better performance -->
               <ix-dataset-node
                 [dataset]="getDatasetDetails(dataset)"
                 [isSystemDataset]="isSystemDataset(dataset)"
