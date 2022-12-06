@@ -1,0 +1,12 @@
+
+<ng-container [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+  <ix-checkbox
+    formControlName="encryption"
+    [label]="'Encryption' | translate"
+  ></ix-checkbox>
+</ng-container>

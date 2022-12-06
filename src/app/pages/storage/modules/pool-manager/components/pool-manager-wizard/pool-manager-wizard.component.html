@@ -1,0 +1,28 @@
+<mat-card>
+  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+    <mat-vertical-stepper #stepper>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
+        <ix-general-wizard-step [form]="form.controls.general"></ix-general-wizard-step>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Log' | translate }}</ng-template>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Cache' | translate }}</ng-template>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
+      </mat-step>
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
+</mat-card>
