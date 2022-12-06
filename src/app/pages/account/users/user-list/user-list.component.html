@@ -21,7 +21,7 @@
       matSort
       matSortDisableClear="true"
       [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async), ('Users' | translate))"
+      [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
       [matSortActive]="defaultSort.active"
       [dataSource]="dataSource"
       [matSortDirection]="defaultSort.direction"

@@ -145,18 +145,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getTabTitle(): string {
-    switch (this.selectedIndex) {
-      case JobTab.Failed:
-        return this.translate.instant('Failed Tasks');
-      case JobTab.Running:
-        return this.translate.instant('Active Tasks');
-      case JobTab.All:
-      default:
-        return this.translate.instant('Tasks');
-    }
-  }
-
   onTabChange(tab: JobTab): void {
     this.selectedIndex = tab;
     switch (this.selectedIndex) {

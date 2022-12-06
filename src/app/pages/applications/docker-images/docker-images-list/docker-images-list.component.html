@@ -34,7 +34,7 @@
     matSort
     matSortDisableClear="true"
     [ix-table-empty]="!dataSource.filteredData.length"
-    [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async), ('Docker Images' | translate))"
+    [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
     [dataSource]="dataSource"
     [matSortActive]="defaultSort.active"
     [matSortDirection]="defaultSort.direction"

@@ -12,7 +12,7 @@
       ix-table
       class="mat-elevation-z0"
       [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType, 'NTP Servers')"
+      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType)"
       [dataSource]="dataSource"
     >
       <ng-container matColumnDef="address">

@@ -40,7 +40,7 @@
       matSort
       matSortDisableClear="true"
       [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="emptyConfigService.defaultEmptyConfig(isLoading ? EmptyType.Loading : emptyType, ('User Quotas' | translate))"
+      [emptyConfig]="emptyConfigService.defaultEmptyConfig(isLoading ? EmptyType.Loading : emptyType)"
       [dataSource]="dataSource"
       [matSortActive]="defaultSort.active"
       [matSortDirection]="defaultSort.direction"
