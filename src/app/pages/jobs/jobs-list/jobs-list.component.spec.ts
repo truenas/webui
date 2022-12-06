@@ -121,7 +121,7 @@ describe('JobsListComponent', () => {
     spectator.detectChanges();
     const emptyRow = await loader.getHarness(IxEmptyRowHarness);
     const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No Tasks have been added yet');
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should expand only one row on click', async () => {

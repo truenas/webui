@@ -6,6 +6,7 @@ import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
@@ -112,26 +113,28 @@ describe('NtpServerListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should show empty message when loaded and datasource is empty', () => {
+  it('should show empty message when loaded and datasource is empty', async () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = false;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('No NTP Servers have been added yet');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
-  it('should show error message when can not retrieve response', () => {
+  it('should show error message when can not retrieve response', async () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = true;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
     spectator.detectChanges();
-    const emptyTitle = spectator.query('.empty-title');
-    expect(emptyTitle.textContent).toBe('Can not retrieve response');
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should open add ntp server form', async () => {

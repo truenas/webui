@@ -95,7 +95,7 @@ describe('DockerImagesListComponent', () => {
     const emtpyRow = await loader.getHarness(IxEmptyRowHarness);
     const emptyTitle = await emtpyRow.getTitleText();
 
-    expect(emptyTitle).toBe('No Docker Images have been added yet');
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should show error message when can not retrieve response', async () => {

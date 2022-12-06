@@ -105,7 +105,7 @@ describe('GroupListComponent', () => {
 
     const emptyRow = await loader.getHarness(IxEmptyRowHarness);
     const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No Groups have been added yet');
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should have error message when can not retrieve response', async () => {

@@ -97,7 +97,7 @@ describe('BootEnvironmentListComponent', () => {
     spectator.detectChanges();
     const emptyRow = await loader.getHarness(IxEmptyRowHarness);
     const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No Boot Environments have been added yet');
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should show error message when can not retrieve response', async () => {
