@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -20,10 +21,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import {
-  DialogService, RedirectService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { RedirectService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { AppState } from 'app/store/index';
 
 @UntilDestroy()
 @Component({
@@ -85,10 +86,10 @@ export class IpmiFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private validatorsService: IxValidatorsService,
     private slideInService: IxSlideInService,
-    private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {
   }
 
@@ -125,7 +126,7 @@ export class IpmiFormComponent implements OnInit {
     this.isLoading = true;
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws.call('failover.licensed').pipe(
+      this.store$.select(selectIsHaLicensed).pipe(
         switchMap((isHaLicensed) => {
           if (isHaLicensed) {
             return this.ws.call('failover.node');
