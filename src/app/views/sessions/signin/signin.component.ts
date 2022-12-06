@@ -288,6 +288,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.setPasswordFormGroup.get('instanceId');
   }
 
+  get hasLoadingIndicator(): boolean {
+    return !this.connected() || !this.isHaInfoReady;
+  }
+
   connected(): boolean {
     return this.ws.connected;
   }
