@@ -153,7 +153,7 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SaveAsPresetModalComponent, {
       data: {
         aclType: this.acl.acltype,
-        datasetPath: this.fullDatasetPath,
+        datasetPath: this.datasetPath,
       } as SaveAsPresetModalConfig,
     });
   }
