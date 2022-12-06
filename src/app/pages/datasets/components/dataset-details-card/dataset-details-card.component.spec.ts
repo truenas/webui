@@ -2,11 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -14,7 +16,7 @@ import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/datas
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ModalService } from 'app/services';
+import { ModalService, WebSocketService } from 'app/services';
 
 const dataset = {
   id: 'pool/child',
@@ -27,6 +29,7 @@ const dataset = {
   deduplication: { value: 'OFF' },
   casesensitive: false,
   comments: { value: 'Test comment', source: ZfsPropertySource.Local },
+  origin: null,
 } as DatasetDetails;
 
 describe('DatasetDetailsCardComponent', () => {
@@ -50,6 +53,7 @@ describe('DatasetDetailsCardComponent', () => {
     providers: [
       mockProvider(DatasetTreeStore, {
         datasetUpdated: jest.fn(),
+        selectedParentDataset$: of({ id: 'pool' }),
       }),
       mockProvider(ModalService, {
         openInSlideIn: jest.fn(() => fakeModalRef),
@@ -60,6 +64,10 @@ describe('DatasetDetailsCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockWebsocket([
+        mockCall('pool.dataset.promote'),
+      ]),
+      mockProvider(Router),
     ],
   });
 
@@ -121,5 +129,26 @@ describe('DatasetDetailsCardComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteDatasetDialogComponent, { data: dataset });
+  });
+
+  describe('promoting dataset', () => {
+    it('does not show a Promote Dataset button when dataset cannot be promoted', async () => {
+      const promoteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Promote' }));
+      expect(promoteButton).toBeNull();
+    });
+
+    it('promotes dataset when dataset can be promoted and Promote Dataset button is pressed', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        origin: {
+          parsed: 'pool/origin',
+        },
+      } as DatasetDetails);
+
+      const promoteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Promote' }));
+      await promoteButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
+    });
   });
 });
