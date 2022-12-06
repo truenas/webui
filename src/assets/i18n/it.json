@@ -847,6 +847,7 @@
   "Distinguished Name": "",
   "Do <b>NOT</b> change this setting when using Windows as the initiator. Only needs to be changed in large environments where the number of systems using a specific RPM is needed for accurate reporting statistics.": "",
   "Do not save": "",
+  "Do you want to сonfigure the ACL?": "",
   "Docker Host": "",
   "Docker Registry Authentication": "",
   "Does your business need <a href=\"https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome\" target=\"_blank\">Enterprise level</a> support and services? Contact <a href=\"https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome\"target=\"_blank\">iXsystems</a> for more information.": "",
