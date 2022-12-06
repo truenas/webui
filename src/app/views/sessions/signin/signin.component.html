@@ -3,7 +3,7 @@
     <mat-progress-bar
       value="0"
       class="session-progress"
-      [mode]="connected() ? 'determinate' : 'indeterminate'"
+      [mode]="hasLoadingIndicator ? 'indeterminate' : 'determinate'"
     ></mat-progress-bar>
     <mat-card>
       <mat-card-content>
@@ -218,7 +218,7 @@
               </div>
             </div>
 
-            <span *ngIf="productSupportsHa && failoverStatus !== FailoverStatus.Single">
+            <span *ngIf="productSupportsHa && failoverStatus && failoverStatus !== FailoverStatus.Single">
               <div class="ha-status">
                 <div class="ha-status-txt">
                   <p>{{ haStatusText }}</p>
