@@ -136,6 +136,10 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
           this.noAvailableCatalog = false;
           catalogNames.add(catalog.label);
           catalog.preferred_trains.forEach((train) => {
+            if (!catalog.trains[train]) {
+              return;
+            }
+
             Object.values(catalog.trains[train]).forEach((item) => {
               const catalogItem = { ...item } as CatalogApp;
               catalogItem.catalog = {
