@@ -1,5 +1,4 @@
 @import 'cssvars';
-// TODO: Fix paddings on controls
 
 .session-form-hold {
   margin: 0 auto;
@@ -109,13 +108,3 @@
   margin-top: 25px;
 }
 
-// TODO: Nuke
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px var(--bg1) inset !important;
-  caret-color: white;
-  -webkit-text-fill-color: white !important;
-  transition: background-color 5000s ease-in-out 0s;
-}

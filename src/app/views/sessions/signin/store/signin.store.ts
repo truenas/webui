@@ -257,7 +257,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       });
   }
 
-  // TODO: Add test
   /**
    * If websocket connection is lost because of failover event, we need to resubscribe to updates.
    */

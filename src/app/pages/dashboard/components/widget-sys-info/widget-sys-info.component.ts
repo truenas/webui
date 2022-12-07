@@ -314,7 +314,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.loader.close();
-          sessionStorage.setItem('systemInfoLoaded', currentTime.toString());
           this.store$.dispatch(
             systemInfoDatetimeUpdated({ datetime: { $date: currentTime } }),
           );

@@ -11,6 +11,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SystemGeneralService } from 'app/services';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SigninStore', () => {
@@ -23,6 +24,7 @@ describe('SigninStore', () => {
     providers: [
       mockWebsocket([
         mockCall('auth.generate_token', 'AUTH_TOKEN'),
+        mockCall('auth.login_with_token', true),
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
@@ -30,6 +32,9 @@ describe('SigninStore', () => {
       ]),
       mockProvider(Router),
       mockProvider(SnackbarService),
+      mockProvider(SystemGeneralService, {
+        loadProductType: () => of(undefined),
+      }),
       {
         provide: WINDOW,
         useValue: {
@@ -185,7 +190,11 @@ describe('SigninStore', () => {
             return of();
           }
 
-          return cold('a', { a: [FailoverDisabledReason.DisagreeVip] });
+          return cold('a', {
+            a: {
+              disabled_reasons: [FailoverDisabledReason.DisagreeVip],
+            },
+          });
         });
 
         spectator.service.init();

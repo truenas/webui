@@ -35,8 +35,8 @@ describe('SigninFormComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    const mockWebsocket = spectator.inject(WebSocketService);
-    jest.spyOn(mockWebsocket, 'login').mockReturnValue(of(true));
+    const websocketMock = spectator.inject(WebSocketService);
+    jest.spyOn(websocketMock, 'login').mockReturnValue(of(true));
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
@@ -58,8 +58,8 @@ describe('SigninFormComponent', () => {
   });
 
   it('logs user in with OTP code when two factor auth is set up', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCall('auth.two_factor_auth', true);
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCall('auth.two_factor_auth', true);
     spectator.component.ngOnInit();
 
     await form.fillForm({

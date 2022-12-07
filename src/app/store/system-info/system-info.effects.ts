@@ -29,8 +29,6 @@ export class SystemInfoEffects {
   loadSystemFeatures = createEffect(() => this.actions$.pipe(
     ofType(systemInfoLoaded),
     switchMap(({ systemInfo }) => {
-      // TODO: Remove sessionStorage.
-      this.window.sessionStorage.setItem('systemInfoLoaded', Date.now().toString());
       const features: SystemFeatures = {
         HA: false,
         enclosure: false,
