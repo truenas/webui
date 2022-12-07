@@ -19,138 +19,127 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty
-  *ngIf="isLoading$ | async; else loaded"
-  [conf]="loadingConfig"
-></ix-entity-empty>
-
-<ng-template #loaded>
-  <div
-    *ngIf="checkboxColumn?.selection.selected.length"
-    class="batch-actions-toolbar"
-  >
-    <div class="title">
-      <strong>{{ 'Batch Operations' | translate }}</strong>
-    </div>
-
-    <div class="actions">
-      <button
-        mat-button
-        matTooltipPosition="below"
-        [matTooltip]="'Delete selections' | translate"
-        (click)="doBatchDelete(checkboxColumn?.selection.selected)"
-      >
-        <mat-icon>delete</mat-icon>
-        {{ 'Delete' | translate }}
-      </button>
-    </div>
+<div
+  *ngIf="checkboxColumn?.selection.selected.length"
+  class="batch-actions-toolbar"
+>
+  <div class="title">
+    <strong>{{ 'Batch Operations' | translate }}</strong>
   </div>
 
-  <table
-    ix-table
-    matSort
-    matSortDisableClear="true"
-    [dataSource]="dataSource"
-    [matSortActive]="defaultSort.active"
-    [matSortDirection]="defaultSort.direction"
-    [fixedLayout]="true"
-  >
-    <ix-checkbox-column></ix-checkbox-column>
+  <div class="actions">
+    <button
+      mat-button
+      matTooltipPosition="below"
+      [matTooltip]="'Delete selections' | translate"
+      (click)="doBatchDelete(checkboxColumn?.selection.selected)"
+    >
+      <mat-icon>delete</mat-icon>
+      {{ 'Delete' | translate }}
+    </button>
+  </div>
+</div>
 
-    <ng-container matColumnDef="dataset">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Dataset' | translate }}
-      </th>
-      <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-        {{ snapshot.dataset }}
-      </td>
-    </ng-container>
+<table
+  ix-table
+  matSort
+  matSortDisableClear="true"
+  [ix-table-empty]="!dataSource.filteredData.length"
+  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
+  [dataSource]="dataSource"
+  [matSortActive]="defaultSort.active"
+  [matSortDirection]="defaultSort.direction"
+  [fixedLayout]="true"
+>
+  <ix-checkbox-column></ix-checkbox-column>
 
-    <ng-container matColumnDef="snapshot_name">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Snapshot' | translate }}
-      </th>
-      <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-        {{ snapshot.snapshot_name }}
-      </td>
-    </ng-container>
+  <ng-container matColumnDef="dataset">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Dataset' | translate }}
+    </th>
+    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
+      {{ snapshot.dataset }}
+    </td>
+  </ng-container>
 
-    <ng-container matColumnDef="used">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Used' | translate }}
-      </th>
-      <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-        <ng-container
-          *ngIf="snapshot?.properties?.used?.parsed; else notAvailable"
-        >
-          {{ +snapshot.properties.used.parsed | filesize: { standard: 'iec' } }}
-        </ng-container>
-      </td>
-    </ng-container>
+  <ng-container matColumnDef="snapshot_name">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Snapshot' | translate }}
+    </th>
+    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
+      {{ snapshot.snapshot_name }}
+    </td>
+  </ng-container>
 
-    <ng-container matColumnDef="created">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Date created' | translate }}
-      </th>
-      <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-        <ng-container
-          *ngIf="
-            snapshot?.properties?.creation?.parsed?.$date;
-            else notAvailable
-          "
-        >
-          {{ snapshot.properties.creation.parsed.$date | formatDateTime }}
-        </ng-container>
-      </td>
-    </ng-container>
+  <ng-container matColumnDef="used">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Used' | translate }}
+    </th>
+    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
+      <ng-container
+        *ngIf="snapshot?.properties?.used?.parsed; else notAvailable"
+      >
+        {{ +snapshot.properties.used.parsed | filesize: { standard: 'iec' } }}
+      </ng-container>
+    </td>
+  </ng-container>
 
-    <ng-container matColumnDef="referenced">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Referenced' | translate }}
-      </th>
-      <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-        <ng-container
-          *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
-        >
-          {{
-            +snapshot.properties.referenced.parsed
-              | filesize: { standard: 'iec' }
-          }}
-        </ng-container>
-      </td>
-    </ng-container>
+  <ng-container matColumnDef="created">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Date created' | translate }}
+    </th>
+    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
+      <ng-container
+        *ngIf="
+          snapshot?.properties?.creation?.parsed?.$date;
+          else notAvailable
+        "
+      >
+        {{ snapshot.properties.creation.parsed.$date | formatDateTime }}
+      </ng-container>
+    </td>
+  </ng-container>
 
-    <ix-expand-toggle-column
-      [expandedRow]="expandedRow"
-      (toggle)="onToggle($event)"
-    ></ix-expand-toggle-column>
+  <ng-container matColumnDef="referenced">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Referenced' | translate }}
+    </th>
+    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
+      <ng-container
+        *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
+      >
+        {{
+          +snapshot.properties.referenced.parsed
+            | filesize: { standard: 'iec' }
+        }}
+      </ng-container>
+    </td>
+  </ng-container>
 
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <tr
-      *matRowDef="
-        let snapshot;
-        columns: displayedColumns;
-        dataSource: dataSource
-      "
-      mat-row
-      [ixDetailRow]="snapshot"
-      [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
-      [ixDetailRowTemplate]="expandedRowTemplate"
-      (toggle)="onToggle($event)"
-    ></tr>
+  <ix-expand-toggle-column
+    [expandedRow]="expandedRow"
+    (toggle)="onToggle($event)"
+  ></ix-expand-toggle-column>
 
-    <tr *matNoDataRow class="mat-row mat-no-data-row">
-      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-        <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
-      </td>
-    </tr>
-  </table>
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+  <tr
+    *matRowDef="
+      let snapshot;
+      columns: displayedColumns;
+      dataSource: dataSource
+    "
+    mat-row
+    [ixDetailRow]="snapshot"
+    [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
+    [ixDetailRowTemplate]="expandedRowTemplate"
+    (toggle)="onToggle($event)"
+  ></tr>
+</table>
 
-  <ix-table-paginator
-    [dataSource]="dataSource"
-    [pageSize]="10"
-  ></ix-table-paginator>
-</ng-template>
+<ix-table-paginator
+  [dataSource]="dataSource"
+  [pageSize]="10"
+></ix-table-paginator>
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}

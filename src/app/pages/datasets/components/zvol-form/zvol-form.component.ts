@@ -585,7 +585,7 @@ export class ZvolFormComponent {
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
       },
       error: (error) => {
         this.isLoading = false;
@@ -648,7 +648,7 @@ export class ZvolFormComponent {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: () => {
               this.isLoading = false;
-              this.slideInService.close();
+              this.slideInService.close(null, true);
             },
             error: (error) => {
               this.isLoading = false;
@@ -659,7 +659,7 @@ export class ZvolFormComponent {
         } else {
           this.isLoading = false;
           this.dialogService.errorReport(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
-          this.slideInService.close();
+          this.slideInService.close(null, false);
         }
       },
       error: (error): void => {
