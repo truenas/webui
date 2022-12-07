@@ -4,6 +4,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -40,9 +41,14 @@ export class DatasetDetailsPanelComponent implements OnInit {
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.datasetStore.datasetUpdated();
-    });
+    this.slideIn.onClose$
+      .pipe(
+        filter((value) => value.response === true),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.datasetStore.datasetUpdated();
+      });
   }
 
   get datasetHasRoles(): boolean {

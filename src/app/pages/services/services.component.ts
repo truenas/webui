@@ -8,10 +8,11 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -32,15 +33,15 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
   loading = true;
-  loadingConf: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
+  readonly EmptyType = EmptyType;
   serviceLoadingMap = new Map<ServiceName, boolean>();
   readonly serviceNames = serviceNames;
   readonly ServiceStatus = ServiceStatus;
   private readonly hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -50,11 +51,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
+    private emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
     this.getData();
     this.getUpdates();
+  }
+
+  get shouldShowEmpty(): boolean {
+    return !this.dataSource.filteredData.length;
   }
 
   ngAfterViewInit(): void {
@@ -238,6 +244,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
 
   onSearch(query: string): void {
     this.dataSource.filter = query;
+    this.cdr.markForCheck();
   }
 
   resetServiceStateToDefault(service: Service): void {

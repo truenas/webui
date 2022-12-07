@@ -9,7 +9,6 @@ import helptext from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -84,7 +83,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': true,
       'Enable GPU support': true,
       'Enable Integrated Loadbalancer': true,
-      'Validate host path': true,
+      'Enable Host Path Safety Checks': true,
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
@@ -150,25 +149,13 @@ describe('KubernetesSettingsComponent', () => {
     }]);
   });
 
-  it('shows warning and saves config when validate host path is not choose', async () => {
+  it('shows warning when Enable Host Path Safety Checks is disabled', async () => {
     const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'Validate host path': false });
+    await form.fillForm({ 'Enable Host Path Safety Checks': false });
 
-    expect(spectator.query(IxWarningComponent).message).toEqual(helptext.kubForm.validateHostPathWarning.modalWarning);
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(ws.job).toHaveBeenCalledWith('kubernetes.update', [{
-      node_ip: '10.123.45.67',
-      route_v4_interface: 'enp0s7',
-      route_v4_gateway: '10.123.45.1',
-      configure_gpus: true,
-      cluster_cidr: '172.16.0.0/16',
-      service_cidr: '172.17.0.0/16',
-      cluster_dns_ip: '172.17.0.1',
-      servicelb: true,
-      validate_host_path: false,
-    }]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: helptext.kubForm.validateHostPath.title,
+      message: helptext.kubForm.validateHostPath.warning,
+    });
   });
 });
