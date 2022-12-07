@@ -4,7 +4,7 @@ ix-tree-virtual-scroll-view {
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-height: 420px;
+  min-height: 100vh;
   min-width: fit-content;
 
   cdk-virtual-scroll-viewport {
