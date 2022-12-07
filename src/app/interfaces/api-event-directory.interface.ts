@@ -19,7 +19,7 @@ export type ApiEventDirectory = {
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
   'failover.status': { response: FailoverStatus };
-  'failover.disabled.reasons': { response: { disabled_reasons: FailoverDisabledReason[] } };
+  'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
   'service.query': { response: Service };
   'truecommand.config': { response: TrueCommandConfig };
   'vm.query': { response: VirtualMachine };
@@ -29,3 +29,7 @@ export type ApiEventDirectory = {
   'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
   'disk.query': { response: Disk };
 };
+
+export interface FailoverDisabledReasonEvent {
+  disabled_reasons: FailoverDisabledReason[];
+}

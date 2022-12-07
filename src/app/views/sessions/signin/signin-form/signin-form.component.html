@@ -1,7 +1,9 @@
 <form [formGroup]="form" (submit)="onSubmit()">
   <ix-input
+    ixAutofocus
     formControlName="username"
     prefixIcon="person"
+    autocomplete="username"
     [label]="'Username' | translate"
     [required]="true"
   ></ix-input>
@@ -10,6 +12,7 @@
     formControlName="password"
     type="password"
     prefixIcon="lock"
+    autocomplete="current-password"
     [label]="'Password' | translate"
     [required]="true"
   ></ix-input>
@@ -18,6 +21,7 @@
     *ngIf="hasTwoFactor"
     formControlName="otp"
     prefixIcon="phonelink"
+    autocomplete="one-time-code"
     [label]="'Two-Factor Authentication Code' | translate"
     [required]="true"
   ></ix-input>

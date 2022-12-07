@@ -10,6 +10,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -41,6 +42,7 @@ import { SigninComponent } from './signin/signin.component';
     IxFormsModule,
     MatInputModule,
     AppCommonModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     SigninComponent,

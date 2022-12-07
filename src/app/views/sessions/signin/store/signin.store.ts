@@ -9,14 +9,15 @@ import {
   combineLatest, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  delay, map, switchMap, tap,
+  filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { FailoverDisabledReasonEvent } from 'app/interfaces/api-event-directory.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 
 interface SigninState {
   isLoading: boolean;
@@ -47,7 +48,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
   );
   hasFailover$ = this.select((state) => {
-    // TODO: Cache failover status in localstorage.
     // Do not simplify to optional chaining.
     return state.failover && state.failover.status !== FailoverStatus.Single;
   });
@@ -60,6 +60,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private ws: WebSocketService,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
     @Inject(WINDOW) private window: Window,
@@ -78,12 +79,14 @@ export class SigninStore extends ComponentStore<SigninState> {
       ])
         .pipe(
           switchMap(() => {
+            this.updateFailoverStatusOnDisconnect();
+
             // TODO: ws.token implicitly stores token in localStorage.
             if (!this.ws.token) {
               return of(null);
             }
 
-            return this.loginWithToken();
+            return this.reLoginWithToken();
           }),
           tapResponse(
             () => this.setLoadingState(false),
@@ -101,7 +104,13 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
-    switchMap(() => this.generateToken()),
+    switchMap(() => {
+      return forkJoin([
+        this.authenticateWithToken(),
+        // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
+        this.systemGeneralService.loadProductType(),
+      ]);
+    }),
     tapResponse(
       () => {
         if (this.statusSubscriptionId) {
@@ -148,8 +157,8 @@ export class SigninStore extends ComponentStore<SigninState> {
     },
   }));
 
-  private loginWithToken(): Observable<unknown> {
-    return this.ws.loginToken(this.ws.token).pipe(
+  private reLoginWithToken(): Observable<unknown> {
+    return this.ws.loginWithToken(this.ws.token).pipe(
       tap(
         (wasLoggedIn) => {
           if (!wasLoggedIn) {
@@ -165,16 +174,23 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   }
 
-  private generateToken(): Observable<string> {
+  private authenticateWithToken(): Observable<unknown> {
     return this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(
       tap(
         (token) => {
           if (!token) {
-            this.showSnackbar(this.translate.instant('Error generating token, please try again.'));
-            return;
+            throw new Error(this.translate.instant('Error generating token, please try again.'));
           }
 
           this.ws.token = token;
+        },
+      ),
+      switchMap(() => this.ws.call('auth.login_with_token', [this.ws.token])),
+      tap(
+        (wasLoggedIn) => {
+          if (!wasLoggedIn) {
+            throw new Error(this.translate.instant('Error authenticating with token, please try again.'));
+          }
         },
       ),
     );
@@ -199,7 +215,6 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private loadFailoverStatus(): Observable<unknown> {
     return this.ws.call('failover.status').pipe(
-      delay(3000),
       switchMap((status) => {
         this.setFailoverStatus(status);
 
@@ -229,17 +244,30 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private subscribeToFailoverUpdates(): void {
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-118104
     this.statusSubscriptionId = UUID.UUID();
     this.ws.sub<FailoverStatus>('failover.status', this.statusSubscriptionId)
       .pipe(untilDestroyed(this))
       .subscribe((status) => this.setFailoverStatus(status));
 
     this.disabledReasonsSubscriptionId = UUID.UUID();
-    this.ws.sub<FailoverDisabledReason[]>('failover.disabled.reasons', this.disabledReasonsSubscriptionId)
+    this.ws.sub<FailoverDisabledReasonEvent>('failover.disabled.reasons', this.disabledReasonsSubscriptionId)
       .pipe(untilDestroyed(this))
-      .subscribe((disabledReasons) => {
-        this.setFailoverDisabledReasons(disabledReasons);
+      .subscribe((event) => {
+        this.setFailoverDisabledReasons(event.disabled_reasons);
       });
+  }
+
+  // TODO: Add test
+  /**
+   * If websocket connection is lost because of failover event, we need to resubscribe to updates.
+   */
+  private updateFailoverStatusOnDisconnect(): void {
+    this.ws.onClose$
+      .pipe(
+        switchMap(() => this.ws.isConnected$.pipe(filter(Boolean))),
+        switchMap(() => this.loadFailoverStatus()),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 }

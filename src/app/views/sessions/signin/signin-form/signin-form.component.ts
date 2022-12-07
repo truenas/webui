@@ -8,7 +8,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { WebSocketService } from 'app/services';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
-// TODO: Check if password managers work.
 @UntilDestroy()
 @Component({
   selector: 'ix-signin-form',
@@ -39,16 +38,6 @@ export class SigninFormComponent implements OnInit {
   ngOnInit(): void {
     this.checkForTwoFactor();
   }
-
-  // TODO: Autofocus
-  // TODO: Check the need for firefox fix from Alex
-
-  // this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
-  //   if (!this.didSetFocus) {
-  //     this.didSetFocus = true;
-  //     this.usernameInput.nativeElement.focus();
-  //   }
-  // });
 
   onSubmit(): void {
     this.signinStore.setLoadingState(true);

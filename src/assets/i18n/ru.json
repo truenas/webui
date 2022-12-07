@@ -516,6 +516,7 @@
   "Enter the version to roll back to.": "",
   "Enter vm name to continue.": "",
   "Enter {value} below to confirm.": "",
+  "Error authenticating with token, please try again.": "",
   "Error creating CA.": "",
   "Error deleting dataset {datasetName}.": "",
   "Error detected reading App": "",

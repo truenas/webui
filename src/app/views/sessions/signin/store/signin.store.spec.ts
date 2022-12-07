@@ -53,7 +53,7 @@ describe('SigninStore', () => {
       writable: true,
     });
     websocket.isConnected$ = new BehaviorSubject(true);
-    jest.spyOn(websocket, 'loginToken').mockReturnValue(of(true));
+    jest.spyOn(websocket, 'loginWithToken').mockReturnValue(of(true));
   });
 
   describe('selectors', () => {
@@ -135,7 +135,7 @@ describe('SigninStore', () => {
       websocket.token = 'EXISTING_TOKEN';
       spectator.service.init();
 
-      expect(websocket.loginToken).toHaveBeenCalledWith('EXISTING_TOKEN');
+      expect(websocket.loginWithToken).toHaveBeenCalledWith('EXISTING_TOKEN');
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
   });

@@ -21,7 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  onCloseSubject$ = new Subject<boolean>();
+  onClose$ = new Subject<boolean>();
 
   socket: WebSocket;
   isConnected$ = new BehaviorSubject(false);
@@ -96,7 +96,7 @@ export class WebSocketService {
 
   onclose(): void {
     this.isConnected$.next(false);
-    this.onCloseSubject$.next(true);
+    this.onClose$.next(true);
     setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
       this.router.navigate(['/sessions/signin']);
@@ -313,10 +313,10 @@ export class WebSocketService {
     observer.complete();
   }
 
-  loginToken(token: string): Observable<boolean> {
+  loginWithToken(token: string): Observable<boolean> {
     return new Observable((observer: Subscriber<boolean>) => {
       if (token) {
-        this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
+        this.call('auth.login_with_token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);
         });
       }
