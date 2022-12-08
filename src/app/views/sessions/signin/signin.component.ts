@@ -5,9 +5,9 @@ import {
 import {
   UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, FormControl,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
+import { MatLegacyProgressBar as MatProgressBar } from '@angular/material/legacy-progress-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';

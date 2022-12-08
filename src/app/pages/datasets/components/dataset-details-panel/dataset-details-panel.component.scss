@@ -1,5 +1,5 @@
-@import '~assets/styles/mixins/cards';
-@import '~assets/styles/scss-imports/splitview';
+@import 'mixins/cards';
+@import 'scss-imports/splitview';
 
 .title {
   $title-gap: 8px;

@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
@@ -74,7 +74,7 @@ describe('DatasetDetailsPanelComponent', () => {
           {
             selector: selectSystemInfo,
             value: {
-              version: 'TrueNAS-SCALE-22.12-MASTER-20221111-015225',
+              version: 'TrueNAS-SCALE-22.12',
             } as SystemInfo,
           },
         ],

@@ -1,7 +1,11 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel, TestKey,
 } from '@angular/cdk/testing';
-import { MatChipHarness, MatChipInputHarness, MatChipListHarness } from '@angular/material/chips/testing';
+import {
+  MatLegacyChipHarness as MatChipHarness,
+  MatLegacyChipInputHarness as MatChipInputHarness,
+  MatLegacyChipListHarness as MatChipListHarness,
+} from '@angular/material/legacy-chips/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';

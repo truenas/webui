@@ -16,7 +16,7 @@ import {
 import {
   ChangeDetectionStrategy, Component, ViewEncapsulation,
 } from '@angular/core';
-import { MatTable } from '@angular/material/table';
+import { MatLegacyTable as MatTable } from '@angular/material/legacy-table';
 
 /**
  * Wrapper for the CdkTable with own design styles.

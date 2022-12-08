@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatInputHarness } from '@angular/material/input/testing';
+import { MatLegacyInputHarness as MatInputHarness } from '@angular/material/legacy-input/testing';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SearchInputComponent } from './search-input.component';
