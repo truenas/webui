@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { format, formatDistanceToNowStrict } from 'date-fns';
 import { uniqBy } from 'lodash';
 import { lastValueFrom } from 'rxjs';
 import {
@@ -17,6 +17,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -58,6 +59,14 @@ enum AdvancedCardId {
   SystemDatasetPool = 'systemdatasetpool',
   Gpus = 'gpus',
   Sed = 'sed',
+  Sessions = 'sessions',
+}
+
+interface AuthSessionRow {
+  id: string;
+  current: boolean;
+  username: string;
+  created_at: string;
 }
 
 @UntilDestroy()
@@ -196,6 +205,67 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       const dialog = this.slideInService.open(TunableFormComponent);
       dialog.setTunableForEdit(tunable);
     },
+  };
+
+  sessionsTableConf: AppTableConfig = {
+    title: helptextSystemAdvanced.fieldset_sessions,
+    queryCall: 'auth.sessions',
+    parent: this,
+    emptyEntityLarge: false,
+    columns: [
+      { name: this.translate.instant('Username'), prop: 'username' },
+      { name: this.translate.instant('Start session time'), prop: 'created_at' },
+    ],
+    dataSourceHelper: this.sessionsSourceHelper.bind(this),
+    getActions: (): AppTableAction<AuthSessionRow>[] => {
+      return [
+        {
+          name: 'terminate',
+          icon: 'exit_to_app',
+          matTooltip: this.translate.instant('Terminate session'),
+          onClick: (row: AuthSessionRow): void => {
+            if (!row.current) {
+              this.dialog
+                .confirm({
+                  title: this.translate.instant('Terminate session'),
+                  message: this.translate.instant('Are you sure you want to terminate the session?'),
+                })
+                .pipe(
+                  filter(Boolean),
+                  untilDestroyed(this),
+                ).subscribe({
+                  next: () => this.terminateSession(row.id),
+                  error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+                });
+            } else {
+              this.dialog.info(
+                this.translate.instant('Terminate session'),
+                this.translate.instant('This session is current and cannot be terminated'),
+              );
+            }
+          },
+        },
+      ];
+    },
+    tableActions: [
+      {
+        label: this.translate.instant('Terminate Other Sessions'),
+        onClick: () => {
+          this.dialog
+            .confirm({
+              title: this.translate.instant('Terminate session'),
+              message: this.translate.instant('Are you sure you want to terminate all other sessions?'),
+            })
+            .pipe(
+              filter(Boolean),
+              untilDestroyed(this),
+            ).subscribe({
+              next: () => this.terminateOtherSessions(),
+              error: (err: WebsocketError) => new EntityUtils().handleError(this, err),
+            });
+        },
+      },
+    ],
   };
 
   constructor(
@@ -362,6 +432,11 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
             },
           ],
         },
+        {
+          id: AdvancedCardId.Sessions,
+          title: helptextSystemAdvanced.fieldset_sessions,
+          tableConf: this.sessionsTableConf,
+        },
       ];
 
       this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
@@ -445,6 +520,14 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  terminateSession(sessionId: string): void {
+    this.ws.call('auth.terminate_session', [sessionId]).pipe(untilDestroyed(this)).subscribe(() => this.refreshTables());
+  }
+
+  terminateOtherSessions(): void {
+    this.ws.call('auth.terminate_other_sessions').pipe(untilDestroyed(this)).subscribe(() => this.refreshTables());
+  }
+
   refreshTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf?.tableComponent) {
@@ -468,7 +551,22 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  sessionsSourceHelper(data: AuthSession[]): AuthSessionRow[] {
+    return data.map((session) => {
+      return {
+        id: session.id,
+        current: session.current,
+        username: this.getUsername(session),
+        created_at: format(session.created_at.$date, 'Pp'),
+      };
+    });
+  }
+
   private addDataCard(card: DataCard<AdvancedCardId>): void {
     this.dataCards = uniqBy([...this.dataCards, card], (cardElement) => cardElement.id);
+  }
+
+  private getUsername(credentialsData: AuthSessionCredentialsData): string {
+    return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
   }
 }
