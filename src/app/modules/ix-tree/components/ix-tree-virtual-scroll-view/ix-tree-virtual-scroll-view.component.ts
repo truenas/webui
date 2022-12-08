@@ -43,6 +43,10 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   nodes: IxTreeVirtualNodeData<T>[] = [];
   innerTrackBy: TrackByFunction<IxTreeVirtualNodeData<T>> = (index: number) => index;
 
+  get isScrollTopButtonVisible(): boolean {
+    return this.virtualScrollViewport.measureScrollOffset('top') > this.ixItemSize;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.trackBy) {
       if (typeof changes.trackBy.currentValue === 'function') {
@@ -51,6 +55,10 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
         this.innerTrackBy = (index: number) => index;
       }
     }
+  }
+
+  scrollToTop(): void {
+    this.virtualScrollViewport.scrollToIndex(0);
   }
 
   override renderNodeChanges(data: T[] | readonly T[]): void {

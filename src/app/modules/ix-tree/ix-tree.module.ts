@@ -3,7 +3,10 @@ import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTreeNodeComponent } from 'app/modules/ix-tree/components/ix-tree-node/ix-tree-node.component';
 import { IxTreeViewComponent } from 'app/modules/ix-tree/components/ix-tree-view/ix-tree-view.component';
 import { IxTreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/ix-tree-virtual-scroll-view/ix-tree-virtual-scroll-view.component';
@@ -16,10 +19,13 @@ import { IxTreeNodeToggleDirective } from './directives/ix-tree-node-toggle.dire
 
 @NgModule({
   imports: [
-    CommonModule,
     CdkTreeModule,
-    MatTreeModule,
+    CommonModule,
+    IxIconModule,
     MatButtonModule,
+    MatTreeModule,
+    MatTooltipModule,
+    TranslateModule,
     ScrollingModule,
   ],
   declarations: [

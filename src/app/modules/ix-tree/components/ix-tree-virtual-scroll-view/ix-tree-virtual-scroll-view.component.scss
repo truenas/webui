@@ -6,8 +6,20 @@ ix-tree-virtual-scroll-view {
   flex-direction: column;
   min-height: 100vh;
   min-width: fit-content;
+  position: relative;
 
   cdk-virtual-scroll-viewport {
     height: 100%;
+  }
+
+  .scrollTop {
+    bottom: 20px;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+
+    &.mat-icon-button {
+      background-color: var(--alt-bg1);
+    }
   }
 }

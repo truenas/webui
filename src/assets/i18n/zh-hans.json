@@ -34,6 +34,7 @@
   "Pool is using more than {maxPct}% of available space": "",
   "Pool status is {status}": "",
   "Root user (not recommended)": "",
+  "Scroll to top": "",
   "Search or enter value": "",
   "Set up TrueNAS authentication method:": "",
   "Snapdev": "",

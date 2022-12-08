@@ -3,6 +3,7 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
+import { ComponentPortal } from '@angular/cdk/portal';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
@@ -40,6 +41,7 @@ import { IxFlatTreeDataSource } from 'app/modules/ix-tree/ix-flat-tree-datasourc
 import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
@@ -83,6 +85,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   subscription = new Subscription();
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
+  ixDatasetNode = new ComponentPortal<DatasetNodeComponent>(DatasetNodeComponent);
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -268,9 +271,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   updateScroll(type: ScrollType): void {
-    this.scrollSubject.next(
-      type === ScrollType.IxTree ? this.ixTree.nativeElement.scrollLeft : this.ixTreeHeader.nativeElement.scrollLeft,
-    );
+    switch (type) {
+      case ScrollType.IxTree:
+        this.scrollSubject.next(this.ixTree.nativeElement.scrollLeft);
+        break;
+      case ScrollType.IxTreeHeader:
+        this.scrollSubject.next(this.ixTreeHeader.nativeElement.scrollLeft);
+        break;
+      default:
+        console.warn('Unhandled scroll type.');
+        break;
+    }
   }
 
   onIxTreeWidthChange(event: ResizedEvent): void {
