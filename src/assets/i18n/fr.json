@@ -8,7 +8,6 @@
   "Active Directory": "",
   "Active {controller}.": "",
   "Add User Quotas": "",
-  "Add Zvol (New)": "",
   "Add any more <a href=\"https://man7.org/linux/man-pages/man5/sshd_config.5.html\" target=\"_blank\">sshd_config(5)</a> options not covered in this screen. Enter one option per line. These options are case-sensitive. Misspellings can prevent the SSH service from starting.": "",
   "Admin Password": "",
   "Admin Username": "",
