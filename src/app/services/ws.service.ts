@@ -274,9 +274,8 @@ export class WebSocketService {
   }
 
   login(username: string, password: string, otpToken?: string): Observable<boolean> {
-    const params: LoginParams = otpToken
-      ? [username, password, otpToken]
-      : [username, password];
+    const params: LoginParams = otpToken ? [username, password, otpToken] : [username, password];
+
     return new Observable((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
