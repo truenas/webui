@@ -386,9 +386,9 @@
               ></mat-checkbox>
 
               <mat-spinner
+                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
                 mode="indeterminate"
                 [diameter]="25"
-                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
                 id="checkbox_spinner__{{ getRowIdentifier(element) }}"
               ></mat-spinner>
             </td>

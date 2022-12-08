@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';

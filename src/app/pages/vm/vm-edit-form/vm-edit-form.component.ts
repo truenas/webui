@@ -107,7 +107,7 @@ export class VmEditFormComponent {
     };
     delete vmPayload.gpus;
 
-    const gpusIds = this.form.value.gpus as string[];
+    const gpusIds = this.form.value.gpus;
     forkJoin([
       this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
       this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),

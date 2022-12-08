@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
