@@ -11,7 +11,7 @@
       matInput
       ix-auto
       ix-auto-type="datepicker"
-      ix-auto-identifier="{{ config.placeholder }}"
+      [ix-auto-identifier]="config.placeholder"
       [matDatepicker]="picker"
       [placeholder]="config.placeholder | translate"
       [value]="config.value"

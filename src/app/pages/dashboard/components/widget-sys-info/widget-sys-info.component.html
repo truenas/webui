@@ -81,14 +81,14 @@
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <mat-icon
                     svgIcon="ix:truenas_scale_logo_full"
-                    id="{{ productModel }}"
+                    [id]="productModel"
                   ></mat-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
                   <mat-icon
                     svgIcon="ix:truenas_scale_logotype"
-                    id="{{ productModel }}"
+                    [id]="productModel"
                   ></mat-icon>
                 </ng-template>
               </div>

@@ -3,7 +3,7 @@
   class="dynamic-field form-input colorpicker"
   ix-auto
   ix-auto-type="colorpicker"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [id]="config.name"
   [ngClass]="fieldShow"
