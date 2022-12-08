@@ -1,5 +1,5 @@
 <p class="failover-status-message">{{ statusMessage }}</p>
-<div class="failover-reasons" *ngIf="areReasonsShown">
+<div *ngIf="areReasonsShown" class="failover-reasons">
   <p *ngFor="let reason of disabledReasons">
     {{ reasonText[reason] | translate}}
   </p>

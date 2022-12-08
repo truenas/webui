@@ -31,8 +31,8 @@
 
             <ng-container *ngIf="failover$ | async as failover">
               <ix-failover-status
-                class="failover-status"
                 *ngIf="hasFailover$ | async"
+                class="failover-status"
                 [status]="failover.status"
                 [failoverIps]="failover.ips"
                 [disabledReasons]="failover.disabledReasons"
