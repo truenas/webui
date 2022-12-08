@@ -7,6 +7,7 @@ import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-c
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -34,6 +35,7 @@ import { SigninComponent } from './signin/signin.component';
     MatProgressBarModule,
     MatRadioModule,
     MatButtonModule,
+    MatSnackBarModule,
     IxIconModule,
     FlexLayoutModule,
     TranslateModule,
