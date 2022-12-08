@@ -183,7 +183,9 @@ describe('IxSelectComponent', () => {
       await select.open();
       await select.clickOptions({ text: 'GBR' });
       await select.clickOptions({ text: 'GRL' });
+      const currentValue = await select.getValueText();
 
+      expect(currentValue).toBe('GBR, GRL');
       expect(control.value).toEqual(['Great Britain', 'Greenland']);
     });
   });
