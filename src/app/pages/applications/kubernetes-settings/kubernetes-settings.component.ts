@@ -58,11 +58,6 @@ export class KubernetesSettingsComponent implements OnInit {
 
   private oldConfig: KubernetesConfig;
 
-  get validateHostPathWarning(): string {
-    return !this.form.controls.validate_host_path.value
-      ? helptext.kubForm.validateHostPathWarning.modalWarning : '';
-  }
-
   constructor(
     protected ws: WebSocketService,
     private loader: AppLoaderService,
@@ -75,27 +70,7 @@ export class KubernetesSettingsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
-    forkJoin([
-      this.ws.call('kubernetes.config'),
-      this.appService.getContainerConfig(),
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([kubernetesConfig, containerConfig]) => {
-        this.form.patchValue({
-          ...kubernetesConfig,
-          enable_container_image_update: containerConfig.enable_image_updates,
-        });
-
-        this.oldConfig = kubernetesConfig;
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
-      },
-    });
+    this.loadSettings();
   }
 
   onSubmit(): void {
@@ -125,6 +100,50 @@ export class KubernetesSettingsComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  private loadSettings(): void {
+    this.isFormLoading = true;
+    forkJoin([
+      this.ws.call('kubernetes.config'),
+      this.appService.getContainerConfig(),
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([kubernetesConfig, containerConfig]) => {
+        this.form.patchValue({
+          ...kubernetesConfig,
+          enable_container_image_update: containerConfig.enable_image_updates,
+        });
+
+        this.oldConfig = kubernetesConfig;
+        this.setHostPathCheckWarning();
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+      },
+    });
+  }
+
+  private setHostPathCheckWarning(): void {
+    this.form.get('validate_host_path').valueChanges.pipe(
+      filter((value) => !value),
+      switchMap(() => {
+        return this.dialogService.confirm({
+          title: helptext.kubForm.validateHostPath.title,
+          message: helptext.kubForm.validateHostPath.warning,
+        });
+      }),
+      untilDestroyed(this),
+    ).subscribe((confirmed) => {
+      if (confirmed) {
+        return;
+      }
+
+      this.form.patchValue({ validate_host_path: true });
+    });
   }
 
   private wereReInitFieldsChanged(newValues: Partial<KubernetesConfigUpdate>): boolean {

@@ -6,6 +6,7 @@ import { of, Subject } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import {
@@ -90,18 +91,21 @@ describe('DockerImagesListComponent', () => {
   it('should show empty message when loaded and datasource is empty', async () => {
     store.setState({ isLoading: false, entities: [], error: null } as DockerImagesState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
+    const emtpyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emtpyRow.getTitleText();
 
-    expect(text).toEqual([['No Docker Images are available']]);
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should show error message when can not retrieve response', async () => {
     store.setState({ error: 'Something went wrong', isLoading: false, entities: [] } as DockerImagesState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
+    spectator.detectChanges();
 
-    expect(text).toEqual([['Docker Images could not be loaded']]);
+    const emtpyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emtpyRow.getTitleText();
+
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 });

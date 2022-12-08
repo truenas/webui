@@ -247,7 +247,7 @@ export class SmbFormComponent implements OnInit {
       return;
     }
     const nameControl = this.form.get('name');
-    if (pathControl.value && !nameControl.value) {
+    if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
     }

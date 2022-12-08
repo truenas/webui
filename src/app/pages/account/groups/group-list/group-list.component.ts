@@ -13,12 +13,12 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { groupPageEntered } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
@@ -41,44 +41,41 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo', 'smb', 'actions'];
   dataSource: MatTableDataSource<Group> = new MatTableDataSource([]);
   defaultSort: Sort = { active: 'gid', direction: 'asc' };
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Groups'),
-    large: true,
-  };
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  errorConfig: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
   expandedRow: Group;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+  hideBuiltinGroups = true;
+
+  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
     this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectGroupState).pipe(map((state) => state.error)),
   ]).pipe(
-    switchMap(([, isError]) => {
-      if (isError) {
-        return of(this.errorConfig);
+    switchMap(([isLoading, isNoData, isError]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
       }
-
-      return of(this.emptyConfig);
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
-  hideBuiltinGroups = true;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
-    private translate: TranslateService,
     private slideIn: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {

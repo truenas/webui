@@ -30,14 +30,12 @@ import {
   filter,
   map,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import {
-  EmptyConfig,
-  EmptyType,
-} from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxFlatTreeDataSource } from 'app/modules/ix-tree/ix-flat-tree-datasource';
 import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
