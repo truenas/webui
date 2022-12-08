@@ -1,12 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  activedirectory_custactions_clearcache_dialog_title: T('Active Directory'),
   activedirectory_custactions_clearcache_dialog_message: T('The cache is being rebuilt.'),
 
   ad_leave_domain_dialog: {
     error: T('Error'),
-    success: T('Success'),
     success_msg: T('You have left the domain.'),
   },
 

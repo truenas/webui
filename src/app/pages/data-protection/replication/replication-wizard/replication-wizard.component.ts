@@ -9,7 +9,6 @@ import * as _ from 'lodash';
 import { lastValueFrom } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
-import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -23,7 +22,6 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
-import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import {
@@ -650,147 +648,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   ];
   private sshCredentials: { label: string; value: number }[];
 
-  protected dialogFieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'name',
-      placeholder: sshConnectionsHelptex.name_placeholder,
-      tooltip: sshConnectionsHelptex.name_tooltip,
-      required: true,
-      validation: [Validators.required],
-    },
-    {
-      type: 'select',
-      name: 'setup_method',
-      placeholder: sshConnectionsHelptex.setup_method_placeholder,
-      tooltip: sshConnectionsHelptex.setup_method_tooltip,
-      options: [
-        {
-          label: this.translate.instant('Manual'),
-          value: 'manual',
-        }, {
-          label: this.translate.instant('Semi-automatic (TrueNAS only)'),
-          value: 'semiautomatic',
-        },
-      ],
-      value: 'semiautomatic',
-      isHidden: false,
-    },
-    {
-      type: 'input',
-      name: 'host',
-      placeholder: sshConnectionsHelptex.host_placeholder,
-      tooltip: sshConnectionsHelptex.host_tooltip,
-      required: true,
-      validation: [Validators.required],
-      relation: [{
-        action: RelationAction.Show,
-        when: [{
-          name: 'setup_method',
-          value: 'manual',
-        }],
-      }],
-    }, {
-      type: 'input',
-      inputType: 'number',
-      name: 'port',
-      placeholder: sshConnectionsHelptex.port_placeholder,
-      tooltip: sshConnectionsHelptex.port_tooltip,
-      value: 22,
-      relation: [{
-        action: RelationAction.Show,
-        when: [{
-          name: 'setup_method',
-          value: 'manual',
-        }],
-      }],
-    }, {
-      type: 'input',
-      name: 'url',
-      placeholder: sshConnectionsHelptex.url_placeholder,
-      tooltip: sshConnectionsHelptex.url_tooltip,
-      required: true,
-      validation: [Validators.required],
-      relation: [{
-        action: RelationAction.Show,
-        when: [{
-          name: 'setup_method',
-          value: 'semiautomatic',
-        }],
-      }],
-    }, {
-      type: 'input',
-      name: 'username',
-      placeholder: sshConnectionsHelptex.username_placeholder,
-      tooltip: sshConnectionsHelptex.username_tooltip,
-      value: 'root',
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      inputType: 'password',
-      name: 'password',
-      placeholder: sshConnectionsHelptex.password_placeholder,
-      tooltip: sshConnectionsHelptex.password_tooltip,
-      togglePw: true,
-      required: true,
-      validation: [Validators.required],
-      relation: [{
-        action: RelationAction.Show,
-        when: [{
-          name: 'setup_method',
-          value: 'semiautomatic',
-        }],
-      }],
-    }, {
-      type: 'input',
-      name: 'otp_token',
-      placeholder: sshConnectionsHelptex.otp_placeholder,
-      tooltip: sshConnectionsHelptex.otp_tooltip,
-      relation: [{
-        action: RelationAction.Show,
-        when: [{
-          name: 'setup_method',
-          value: 'semiautomatic',
-        }],
-      }],
-    }, {
-      type: 'select',
-      name: 'private_key',
-      placeholder: sshConnectionsHelptex.private_key_placeholder,
-      tooltip: sshConnectionsHelptex.private_key_tooltip,
-      options: [
-        {
-          label: this.translate.instant('Generate New'),
-          value: 'NEW',
-        },
-      ],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'remote_host_key',
-      isHidden: true,
-    }, {
-      type: 'select',
-      name: 'cipher',
-      placeholder: helptext.cipher_placeholder,
-      tooltip: '',
-      options: [
-        {
-          label: this.translate.instant('Standard (Secure)'),
-          value: CipherType.Standard,
-        }, {
-          label: this.translate.instant('Fast (Less secure)'),
-          value: CipherType.Fast,
-        }, {
-          label: this.translate.instant('Disabled (Not encrypted)'),
-          value: CipherType.Disabled,
-        },
-      ],
-      value: CipherType.Standard,
-    },
-  ];
   protected selectedReplicationTask: ReplicationTask;
   protected semiSshFieldGroup = [
     'url',
@@ -881,15 +738,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
       },
     );
-
-    const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
-    this.keychainCredentialService.getSshKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
-      const keypairOptions = keyPairs.map((keypair) => ({
-        label: keypair.name,
-        value: String(keypair.id),
-      }));
-      privateKeyField.options = privateKeyField.options.concat(keypairOptions);
-    });
 
     const sshCredentialsSourceField = _.find(this.sourceFieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
     const sshCredentialsTargetField = _.find(this.targetFieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;

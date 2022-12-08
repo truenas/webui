@@ -15,15 +15,18 @@ import { MatSort } from '@angular/material/sort';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, EMPTY } from 'rxjs';
+import {
+  BehaviorSubject, combineLatest, EMPTY, Observable, of,
+} from 'rxjs';
 import {
   catchError,
   filter, map, switchMap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
@@ -50,21 +53,37 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs', 'actions'];
   expandedRow: Job;
   selectedIndex: JobTab = 0;
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No tasks'),
-  };
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
+
   selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs | typeof selectFailedJobs>(selectJobs);
 
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
+    this.error$.pipe(map((error) => !!error)),
+    this.selector$.pipe(
+      switchMap((selector) => this.store$.select(selector)),
+      map((jobs) => jobs.length === 0),
+    ),
+  ]).pipe(
+    switchMap(([isLoading, isError, isNoData]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
+      }
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
+    }),
+  );
   readonly JobState = JobState;
   readonly JobTab = JobTab;
   readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -74,6 +93,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     private store$: Store<JobSlice>,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
+    private emptyService: EmptyService,
   ) {}
 
   onAborted(job: Job): void {
@@ -130,18 +150,15 @@ export class JobsListComponent implements OnInit, AfterViewInit {
       case JobTab.Failed:
         this.selector$.next(selectFailedJobs);
         this.expandedRow = null;
-        this.emptyConfig.title = this.translate.instant('There are no failed tasks.');
         break;
       case JobTab.Running:
         this.selector$.next(selectRunningJobs);
         this.expandedRow = null;
-        this.emptyConfig.title = this.translate.instant('There are no active tasks.');
         break;
       case JobTab.All:
       default:
         this.selector$.next(selectJobs);
         this.expandedRow = null;
-        this.emptyConfig.title = this.translate.instant('There are no tasks.');
         break;
     }
   }

@@ -7,6 +7,7 @@ import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-c
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { RouterModule } from '@angular/router';
@@ -33,6 +34,7 @@ import { SigninComponent } from './signin/signin.component';
     MatProgressBarModule,
     MatButtonModule,
     MatInputModule,
+    MatRadioModule,
     MatCardModule,
     MatCheckboxModule,
     MatSnackBarModule,

@@ -29,13 +29,14 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableAction,
@@ -987,7 +988,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getDisabled(column: string): boolean {
-    return _.find(this.allColumns, { prop: column })?.disabled;
+    return Boolean(_.find(this.allColumns, { prop: column })?.disabled);
   }
 
   isPaddedAway(index: number): boolean {

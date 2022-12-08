@@ -4,6 +4,7 @@ import {
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -44,6 +45,8 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
+import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
@@ -203,6 +206,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -242,27 +246,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
       });
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws
-        .call('failover.licensed')
-        .pipe(untilDestroyed(this))
-        .subscribe((isHaLicensed) => {
-          if (isHaLicensed) {
-            this.ws
-              .call('failover.disabled.reasons')
-              .pipe(untilDestroyed(this))
-              .subscribe((reasons) => {
-                if (reasons.length === 0) {
-                  this.isHaEnabled = true;
-                }
-              });
-          }
-        });
+      this.listenForHaStatus();
     }
 
     this.openInterfaceForEditFromRoute();
 
     this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
+    });
+  }
+
+  private listenForHaStatus(): void {
+    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ hasHa }) => {
+      this.isHaEnabled = hasHa;
     });
   }
 

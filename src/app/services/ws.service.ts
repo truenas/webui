@@ -265,18 +265,22 @@ export class WebSocketService {
       this.call(method, params).pipe(
         switchMap((jobId) => this.subscribe('core.get_jobs').pipe(filter((event) => event.id === jobId))),
         untilDestroyed(this),
-      ).subscribe((event) => {
-        observer.next(event.fields);
-        if (event.fields.state === JobState.Success) observer.complete();
-        if (event.fields.state === JobState.Failed) observer.error(event.fields);
+      ).subscribe({
+        next: (event) => {
+          observer.next(event.fields);
+          if (event.fields.state === JobState.Success) observer.complete();
+          if (event.fields.state === JobState.Failed) observer.error(event.fields);
+        },
+        error: (error) => {
+          observer.error(error);
+        },
       });
     });
   }
 
   login(username: string, password: string, otpToken?: string): Observable<boolean> {
-    const params: LoginParams = otpToken
-      ? [username, password, otpToken]
-      : [username, password];
+    const params: LoginParams = otpToken ? [username, password, otpToken] : [username, password];
+
     return new Observable((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);

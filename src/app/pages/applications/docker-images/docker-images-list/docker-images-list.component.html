@@ -8,12 +8,6 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty
-  *ngIf="isLoading$ | async; else loaded"
-  [conf]="loadingConfig"
-></ix-entity-empty>
-
-<ng-template #loaded>
   <div *ngIf="checkboxColumn?.selection.selected.length" class="bulk-actions-toolbar">
     <div class="title">
       <strong>{{ 'Bulk Operations' | translate }}</strong>
@@ -39,6 +33,8 @@
     ix-table
     matSort
     matSortDisableClear="true"
+    [ix-table-empty]="!dataSource.filteredData.length"
+    [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
     [dataSource]="dataSource"
     [matSortActive]="defaultSort.active"
     [matSortDirection]="defaultSort.direction"
@@ -132,15 +128,9 @@
       mat-row
     ></tr>
 
-    <tr *matNoDataRow class="mat-row no-data-row">
-      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-        <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
-      </td>
-    </tr>
   </table>
 
   <ix-table-paginator
     [dataSource]="dataSource"
     [pageSize]="10"
   ></ix-table-paginator>
-</ng-template>

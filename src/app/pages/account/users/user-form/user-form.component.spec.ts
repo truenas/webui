@@ -206,6 +206,7 @@ describe('UserFormComponent', () => {
         'Primary Group': 'test-group',
         'Samba Authentication': true,
         'Authorized Keys': '',
+        'Upload SSH Key': [],
         UID: '1004',
         Email: '',
         'New Password': '',

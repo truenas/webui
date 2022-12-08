@@ -28,14 +28,12 @@ import {
   filter,
   map,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import {
-  EmptyConfig,
-  EmptyType,
-} from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
@@ -45,7 +43,7 @@ import { DialogService, SystemGeneralService, WebSocketService } from 'app/servi
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
-import { selectHaStatus } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 
 enum ScrollType {
   IxTree = 'ixTree',
@@ -63,6 +61,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef;
 
+  hasHa$ = this.store$.select(selectHaStatus).pipe(filter(Boolean), map((state) => state.hasHa));
+
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   dataSource: IxNestedTreeDataSource<DatasetDetails>;
@@ -78,7 +78,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   subscription = new Subscription();
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
-  isHaEnabled: boolean;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -97,12 +96,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   readonly hasNestedChild = (_: number, dataset: DatasetDetails): boolean => Boolean(dataset.children?.length);
   private readonly scrollSubject = new Subject<number>();
-
-  // Hidden on HA systems.
-  // Issues: fenced reservations and the potential to cause a kernel panic, as well as an alert being raised.
-  get showImportData(): boolean {
-    return this.isHaEnabled !== undefined && !this.isHaEnabled;
-  }
 
   constructor(
     private ws: WebSocketService,
@@ -131,7 +124,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
-    this.loadHaEnabled();
     this.setupTree();
     this.listenForRouteChanges();
     this.loadSystemDatasetConfig();
@@ -303,23 +295,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
       // focus on details container
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
-  }
-
-  loadHaEnabled(): void {
-    if (this.systemService.isEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        if (isHaLicensed) {
-          this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe((haStatus) => {
-            this.isHaEnabled = haStatus.hasHa;
-            this.cdr.detectChanges();
-          });
-        } else {
-          this.isHaEnabled = false;
-        }
-      });
-    } else {
-      this.isHaEnabled = false;
     }
   }
 
