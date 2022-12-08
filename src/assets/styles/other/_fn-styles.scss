@@ -380,6 +380,15 @@ body .mat-select-trigger {
   font-size: 0.875rem !important;
 }
 
+.mat-option {
+  height: inherit !important;
+  white-space: pre-line !important;
+}
+
+.mat-option-text {
+  word-break: break-all;
+}
+
 .datatable-header-cell-wrapper {
   padding: 0.5rem;
 }
