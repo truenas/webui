@@ -335,11 +335,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     const isError = this.isStatusError(poolState);
     const isWarning = this.isStatusWarning(poolState);
 
-    if (isError || isWarning || !poolState.healthy) {
-      if (this.poolHealth.isHealthy) {
-        this.poolHealth.isHealthy = false;
-        this.poolHealth.level = PoolHealthLevel.Warn;
-      }
+    if ((isError || isWarning || !poolState.healthy) && this.poolHealth.isHealthy) {
+      this.poolHealth.isHealthy = false;
+      this.poolHealth.level = PoolHealthLevel.Warn;
     }
 
     if (isError) {

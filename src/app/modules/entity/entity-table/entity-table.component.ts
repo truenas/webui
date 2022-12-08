@@ -530,16 +530,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getData(): void {
-    const sort: string[] = [];
-
-    this.config.sorting.columns.forEach((col) => {
-      if (col.sort === 'asc') {
-        sort.push(col.name);
-      } else if (col.sort === 'desc') {
-        sort.push('-' + col.name);
-      }
-    });
-
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
         if (this.conf.queryCallOption) {
@@ -1227,7 +1217,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0) {
+      if (preferredCols.length === 0) {
         return;
       }
 

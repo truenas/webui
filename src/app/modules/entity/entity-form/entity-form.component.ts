@@ -285,10 +285,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   fg.patchValue(this.data[key]);
                 } else {
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
-                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple) {
-                    if (this.data[key]) {
-                      this.data[key] = _.split(this.data[key] as string, ',');
-                    }
+                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple && this.data[key]) {
+                    this.data[key] = _.split(this.data[key] as string, ',');
                   }
                   if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     fg.setValue(this.data[key]);

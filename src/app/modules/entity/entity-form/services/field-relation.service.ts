@@ -326,7 +326,8 @@ export class FieldRelationService {
   getDataType(data: unknown): string {
     if (Array.isArray(data)) {
       return 'array';
-    } if (data !== null && typeof data === 'object') {
+    }
+    if (data !== null && typeof data === 'object') {
       return 'object';
     }
     return 'basic';
@@ -340,26 +341,7 @@ export class FieldRelationService {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
       case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
         break;
       case 'basic':
       default:
@@ -382,26 +364,7 @@ export class FieldRelationService {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
       case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
         break;
       case 'basic':
       default:
@@ -424,26 +387,7 @@ export class FieldRelationService {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
       case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
         break;
       case 'basic':
       default:
@@ -466,26 +410,7 @@ export class FieldRelationService {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
       case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
         break;
       case 'basic':
       default:

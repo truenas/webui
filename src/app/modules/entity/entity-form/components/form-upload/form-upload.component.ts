@@ -69,12 +69,10 @@ export class FormUploadComponent {
           if (event.type === HttpEventType.UploadProgress) {
             const percentDone = Math.round(100 * event.loaded / event.total);
             this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
-          } else if (event instanceof HttpResponse) {
-            if (event.statusText === 'OK') {
-              this.newMessage(location + '/' + fileBrowser.files[0].name);
-              this.loader.close();
-              this.snackbar.success(this.translate.instant('File upload complete'));
-            }
+          } else if (event instanceof HttpResponse && event.statusText === 'OK') {
+            this.newMessage(location + '/' + fileBrowser.files[0].name);
+            this.loader.close();
+            this.snackbar.success(this.translate.instant('File upload complete'));
           }
         },
         error: (error) => {

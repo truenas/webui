@@ -125,10 +125,8 @@ export class ExtentFormComponent implements OnInit {
       values.path = values.disk;
     }
 
-    if (values.type === IscsiExtentType.File) {
-      if (+values.filesize !== 0) {
-        values.filesize = +values.filesize + (values.blocksize - +values.filesize % values.blocksize);
-      }
+    if (values.type === IscsiExtentType.File && +values.filesize !== 0) {
+      values.filesize = +values.filesize + (values.blocksize - +values.filesize % values.blocksize);
     }
 
     this.isLoading = true;

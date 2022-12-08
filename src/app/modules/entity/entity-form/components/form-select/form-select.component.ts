@@ -85,25 +85,23 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         this.control.setValue(NULL_VALUE);
       }
 
-      if (evt) {
-        if (this.config.multiple && Array.isArray(evt)) {
-          this.selectedValues = evt.map((item) => {
-            // When set the value to null, Change it to 'null_value' string
-            if (item === null) {
-              item = NULL_VALUE;
-            }
-            return item;
-          });
-          const newStates = this.config.options.map((item) => this.selectedValues.includes(item.value));
-          const triggerValue: string[] = [];
-          this.config.options.forEach((option) => {
-            if (this.selectedValues.includes(option.value)) {
-              triggerValue.push(option.label);
-            }
-          });
-          this.selectStates = newStates;
-          this.customTriggerValue = triggerValue;
-        }
+      if (evt && this.config.multiple && Array.isArray(evt)) {
+        this.selectedValues = evt.map((item) => {
+          // When set the value to null, Change it to 'null_value' string
+          if (item === null) {
+            item = NULL_VALUE;
+          }
+          return item;
+        });
+        const newStates = this.config.options.map((item) => this.selectedValues.includes(item.value));
+        const triggerValue: string[] = [];
+        this.config.options.forEach((option) => {
+          if (this.selectedValues.includes(option.value)) {
+            triggerValue.push(option.label);
+          }
+        });
+        this.selectStates = newStates;
+        this.customTriggerValue = triggerValue;
       }
     });
   }

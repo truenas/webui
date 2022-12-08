@@ -7529,6 +7529,11 @@ eslint-plugin-rxjs@^5.0.2:
     tsutils "^3.0.0"
     tsutils-etc "^1.4.1"
 
+eslint-plugin-sonarjs@~0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sonarjs/-/eslint-plugin-sonarjs-0.17.0.tgz#e026065809e35d286f576ddea094727eeb9cdadd"
+  integrity sha512-jtGtxI49UbJJeJj7CVRLI3+LLH+y+hkR3GOOwM7vBbci9DEFIRGCWvEd2BJScrzltZ6D6iubukTAfc9cyG7sdw==
+
 eslint-plugin-sort-class-members@^1.14.0:
   version "1.14.1"
   resolved "https://registry.npmjs.org/eslint-plugin-sort-class-members/-/eslint-plugin-sort-class-members-1.14.1.tgz"

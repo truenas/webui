@@ -719,12 +719,7 @@ export class VmWizardComponent implements WizardConfiguration {
               const volsizeInGbs = Math.floor(stat.free_bytes / (1024 ** 3));
               this.getFormControlFromFieldName('volsize').setValue(`${volsizeInGbs} GiB`);
             } else if (stat.free_bytes > 40 * 1073741824) {
-              const vmOs = this.getFormControlFromFieldName('os').value;
-              if (vmOs === 'Windows') {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
-              } else {
-                this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
-              }
+              this.getFormControlFromFieldName('volsize').setValue(this.storageService.convertBytesToHumanReadable(volsize, 0));
             } else if (stat.free_bytes > 10 * 1073741824) {
               this.getFormControlFromFieldName('volsize').setValue((this.storageService.convertBytesToHumanReadable(volsize, 0)));
             }
@@ -952,7 +947,6 @@ export class VmWizardComponent implements WizardConfiguration {
       vmPayload['cpu_model'] = (value.cpu_model === '' || value.cpu_mode !== VmCpuMode.Custom) ? null : value.cpu_model;
     }
 
-    vmPayload['memory'] = value.memory;
     vmPayload['name'] = value.name;
     vmPayload['description'] = value.description;
     vmPayload['time'] = value.time;

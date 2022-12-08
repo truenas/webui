@@ -40,8 +40,7 @@ export class DashboardFormComponent {
   extractName(widget: DashConfigItem): string {
     const name = widget.name;
     if (widget.identifier) {
-      const identifier = widget.identifier.split(',')[1];
-      return identifier;
+      return widget.identifier.split(',')[1];
     }
     return name;
   }

@@ -89,8 +89,7 @@ export class ThemeUtils {
   rgbToHex(value: string): string {
     const [red, green, blue] = this.rgbToArray(value);
 
-    const hex = '#' + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1);
-    return hex;
+    return '#' + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1);
   }
 
   rgbToArray(value: string): number[] {
@@ -110,8 +109,7 @@ export class ThemeUtils {
 
   colorFromMeta(meta: string): string {
     const trimFront = meta.replace('var(--', '');
-    const trimmed = trimFront.replace(')', '');
-    return trimmed;
+    return trimFront.replace(')', '');
   }
 
   forceRgb(value: string): number[] {

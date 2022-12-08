@@ -1243,6 +1243,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
+      // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
         if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local))
                 && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {

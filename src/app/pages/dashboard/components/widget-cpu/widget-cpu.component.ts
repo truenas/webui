@@ -381,8 +381,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const rgb = valueType === 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
-    const rgba = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
-
-    return rgba;
+    return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
   }
 }
