@@ -4,6 +4,7 @@ import {
   BreakpointObserver,
 } from '@angular/cdk/layout';
 import { ComponentPortal } from '@angular/cdk/portal';
+import { DEFAULT_SCROLL_TIME, DEFAULT_RESIZE_TIME } from '@angular/cdk/scrolling';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
@@ -85,6 +86,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   subscription = new Subscription();
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
+  treeWidthChange$ = new Subject<ResizedEvent>();
   ixDatasetNode = new ComponentPortal<DatasetNodeComponent>(DatasetNodeComponent);
 
   entityEmptyConf: EmptyConfig = {
@@ -156,6 +158,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.listenForRouteChanges();
     this.listenForLoading();
     this.listenForDatasetScrolling();
+    this.listenForTreeResizing();
   }
 
   private setupTree(): void {
@@ -252,11 +255,23 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
-        .pipe(debounceTime(0), distinctUntilChanged(), untilDestroyed(this))
+        .pipe(debounceTime(DEFAULT_SCROLL_TIME), distinctUntilChanged(), untilDestroyed(this))
         .subscribe({
           next: (scrollLeft: number) => {
             this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
             this.ixTree.nativeElement.scrollLeft = scrollLeft;
+          },
+        }),
+    );
+  }
+
+  private listenForTreeResizing(): void {
+    this.subscription.add(
+      this.treeWidthChange$
+        .pipe(debounceTime(DEFAULT_RESIZE_TIME), distinctUntilChanged(), untilDestroyed(this))
+        .subscribe({
+          next: (event: ResizedEvent) => {
+            this.ixTreeHeaderWidth = Math.round(event.newRect.width);
           },
         }),
     );
@@ -285,7 +300,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   onIxTreeWidthChange(event: ResizedEvent): void {
-    this.ixTreeHeaderWidth = Math.round(event.newRect.width);
+    this.treeWidthChange$.next(event);
   }
 
   onSearch(query: string): void {

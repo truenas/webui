@@ -58,7 +58,8 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   }
 
   scrollToTop(): void {
-    this.virtualScrollViewport.scrollToIndex(0);
+    this.virtualScrollViewport.scrollToIndex(0, 'smooth');
+    this.changeDetectorRef.markForCheck();
   }
 
   override renderNodeChanges(data: T[] | readonly T[]): void {
