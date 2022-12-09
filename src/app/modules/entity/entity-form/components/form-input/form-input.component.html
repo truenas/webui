@@ -26,7 +26,7 @@
   <div
     *ngIf="config.inputType !== 'file'; else elseBlock"
     class="full-width"
-    [ngClass]="{ has_toggle_pw: config.togglePw }"
+    [class.has_toggle_pw]="config.togglePw"
   >
     <mat-spinner
       *ngIf="config.isLoading"

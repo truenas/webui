@@ -1,8 +1,7 @@
 <div
   *ngIf="!config['isHidden']"
-  class="dynamic-field form-checkbox form-element {{ config.inlineLabel ? 'inline-label' : 'not' }}"
+  [class]="['dynamic-field', 'form-checkbox', 'form-element', fieldShow, (config.inlineLabel ? 'inline-label' : 'not')]"
   [formGroup]="group"
-  [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
   [class.expanded-height]="config.expandedHeight"
   [attr.id]="config.name"

@@ -37,7 +37,7 @@
       ix-auto
       ix-auto-type="list-item"
       class="form-list-item"
-      ix-auto-identifier="{{ i }}"
+      [ix-auto-identifier]="i.toString()"
       [fxLayout]="config.width === '100%' ? 'row wrap' : ''"
     >
       <ng-container *ngFor="let field of config.listFields[i]; let ii = index">
