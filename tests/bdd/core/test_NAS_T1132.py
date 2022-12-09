@@ -17,8 +17,8 @@ from pytest_bdd import (
     parsers
 )
 
-# import pytest
-# pytestmark = [pytest.mark.debug_test]
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1132.feature', 'Verify Box Cloud Sync task works')
@@ -243,7 +243,7 @@ def select_the_path_folder_and_click_save(driver, path):
     time.sleep(2)
 
 
-@then('open a new tab navigate to <box_url>')
+@then(parsers.parse('open a new tab navigate to "{box_url}"'))
 def open_a_new_tab_navigate_to_box_url_and_input_account_id(driver, box_url):
     """open a new tab navigate to <box_url> and input <account_id>."""
     driver.execute_script("window.open();")
@@ -252,7 +252,7 @@ def open_a_new_tab_navigate_to_box_url_and_input_account_id(driver, box_url):
     assert wait_on_element(driver, 5, '//h1[text()="Sign In to Your Account"]')
 
 
-@then('input <user_name> and <password>, click Sign in')
+@then(parsers.parse('input "{user_name}" and "{password}", click Sign in'))
 def input_user_name_and_password_click_sign_in(driver, user_name, password):
     """input <user_name> and <password>, click Sign in."""
     assert wait_on_element(driver, 5, '//input[@id="login-email"]', 'inputable')

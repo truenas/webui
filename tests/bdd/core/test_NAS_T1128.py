@@ -15,8 +15,8 @@ from pytest_bdd import (
     parsers
 )
 
-# import pytest
-# pytestmark = [pytest.mark.debug_test]
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1128.feature', 'Verify Box credentials can be added')
@@ -87,7 +87,7 @@ def click_on_login_to_provider_authorization_box_will_appear(driver):
     assert wait_on_element(driver, 10, '//h1[text()="Authorization"]')
 
 
-@then('click Proceed, then enter the login <user_name> and <password>')
+@then(parsers.parse('click Proceed, then enter the login "{user_name}" and "{password}"'))
 def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name, password):
     """click Proceed, then enter the login <user_name> and <password>."""
     assert wait_on_element(driver, 10, '//a[text()="Proceed"]', 'clickable')
