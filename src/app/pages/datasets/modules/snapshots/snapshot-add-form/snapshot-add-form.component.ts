@@ -4,6 +4,7 @@ import {
 import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import { format } from 'date-fns-tz';
 import {
   Observable, combineLatest, of, merge,
@@ -146,7 +147,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private getNamingSchemaOptions(): Observable<Option[]> {
     return this.ws.call('replication.list_naming_schemas').pipe(
-      map(new EntityUtils().array1dToLabelValuePair),
+      singleArrayToOptions(),
     );
   }
 

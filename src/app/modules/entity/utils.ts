@@ -194,10 +194,6 @@ export class EntityUtils {
     return ndata;
   }
 
-  array1dToLabelValuePair(arr: (string | number)[]): Option[] {
-    return arr.map((value) => ({ label: value.toString(), value }));
-  }
-
   /**
    * make cron time dow consistence
    */

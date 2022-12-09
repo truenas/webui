@@ -15,7 +15,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
-import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, mapToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -576,69 +576,32 @@ export class VmWizardComponent implements WizardConfiguration {
       vms.forEach((i) => this.namesInUse.push(i.name));
     });
 
-    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && Object.keys(res).length > 0) {
-        const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }) as FormSelectConfig;
-        Object.keys(res).forEach((address) => {
-          bind.options.push({ label: address, value: address });
-        });
-        this.getFormControlFromFieldName('bind').setValue(res['0.0.0.0']);
-      }
+    this.loadBindChoices();
+    this.loadFilesystemChoices();
+    const osSectionFields = this.wizardConfig[0].fieldConfig;
+    const disksSectionFields = this.wizardConfig[2].fieldConfig;
+
+    _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
+    _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
+    const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
+    cpuModel.isHidden = false;
+
+    this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
+      cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
     });
-
-    if (this.productType === ProductType.Scale || this.productType === ProductType.ScaleEnterprise) {
-      _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
-      _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
-      cpuModel.isHidden = false;
-
-      this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
-        cpuModel.options = Object.entries(models).map(([name, model]) => ({ label: name, value: model }));
-      });
-    }
-
-    this.ws
-      .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
-      .pipe(map(new EntityUtils().array1dToLabelValuePair))
-      .pipe(untilDestroyed(this)).subscribe((options) => {
-        const datastoreConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
-        datastoreConfig.options = options;
-      });
 
     const diskConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
     this.ws.call('vm.device.disk_choices').pipe(choicesToOptions(), untilDestroyed(this)).subscribe((zvols) => {
       diskConfig.options = zvols;
     });
 
-    this.getFormControlFromFieldName('bootloader').valueChanges.pipe(untilDestroyed(this)).subscribe((bootloader) => {
-      if (!this.productType.includes(ProductType.Scale) && bootloader !== VmBootloader.Uefi) {
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'enable_display' })['isHidden'] = true;
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = true;
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'display_type' }).isHidden = true;
-      } else {
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'enable_display' })['isHidden'] = false;
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = false;
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'display_type' }).isHidden = false;
-        if (!this.productType.includes(ProductType.Scale)) {
-          _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = false;
-        }
-      }
-    });
-
     this.getFormControlFromFieldName('enable_display').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!this.productType.includes(ProductType.Scale)) {
-        _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' }).isHidden = !res;
-      }
-      _.find(this.wizardConfig[0].fieldConfig, { name: 'display_type' }).isHidden = !res;
-      _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = !res;
+      _.find(osSectionFields, { name: 'display_type' }).isHidden = !res;
+      _.find(osSectionFields, { name: 'bind' }).isHidden = !res;
       if (res) {
         this.ws.call('vm.port_wizard').pipe(untilDestroyed(this)).subscribe(({ port }) => {
           this.displayPort = port;
         });
-        if (!this.productType.includes(ProductType.Scale)) {
-          this.getFormControlFromFieldName('wait').enable();
-        }
         this.getFormControlFromFieldName('bind').enable();
         this.getFormControlFromFieldName('display_type').enable();
       } else {
@@ -708,8 +671,8 @@ export class VmWizardComponent implements WizardConfiguration {
 
       this.getFormControlFromFieldName('datastore').valueChanges.pipe(untilDestroyed(this)).subscribe((datastore) => {
         if (datastore !== undefined && datastore !== '' && datastore !== mntPath) {
-          _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = false;
-          _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = null;
+          _.find(disksSectionFields, { name: 'datastore' }).hasErrors = false;
+          _.find(disksSectionFields, { name: 'datastore' }).errors = null;
           const volsize = this.storageService.convertHumanStringToNum(this.getFormControlFromFieldName('volsize').value as string);
           this.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).pipe(untilDestroyed(this)).subscribe((stat) => {
             this.statSize = stat;
@@ -727,13 +690,13 @@ export class VmWizardComponent implements WizardConfiguration {
         } else {
           if (datastore === mntPath) {
             this.getFormControlFromFieldName('datastore').setValue(null);
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
+            _.find(disksSectionFields, { name: 'datastore' }).hasErrors = true;
+            _.find(disksSectionFields, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
           }
           if (datastore === '') {
             this.getFormControlFromFieldName('datastore').setValue(null);
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Please select a valid path');
+            _.find(disksSectionFields, { name: 'datastore' }).hasErrors = true;
+            _.find(disksSectionFields, { name: 'datastore' }).errors = this.translate.instant('Please select a valid path');
           }
         }
       });
@@ -771,25 +734,20 @@ export class VmWizardComponent implements WizardConfiguration {
     });
     this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).isHidden = false;
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).isHidden = false;
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).isHidden = true;
+        _.find(disksSectionFields, { name: 'volsize' }).isHidden = false;
+        _.find(disksSectionFields, { name: 'datastore' }).isHidden = false;
+        _.find(disksSectionFields, { name: 'hdd_path' }).isHidden = true;
         entityWizard.setDisabled('datastore', false, '2');
       } else {
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).isHidden = true;
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).isHidden = true;
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).isHidden = false;
+        _.find(disksSectionFields, { name: 'volsize' }).isHidden = true;
+        _.find(disksSectionFields, { name: 'datastore' }).isHidden = true;
+        _.find(disksSectionFields, { name: 'hdd_path' }).isHidden = false;
         entityWizard.setDisabled('datastore', true, '2');
       }
     });
-    this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })['isHidden'] = false;
-        _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = false;
-      } else {
-        _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })['isHidden'] = true;
-        _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = true;
-      }
+    this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.pipe(untilDestroyed(this)).subscribe((willUpload) => {
+      _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })['isHidden'] = !willUpload;
+      _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = !willUpload;
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
@@ -814,7 +772,7 @@ export class VmWizardComponent implements WizardConfiguration {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
-    this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
+    this.bootloader = _.find(osSectionFields, { name: 'bootloader' }) as FormSelectConfig;
 
     this.vmService.getBootloaderOptions().pipe(choicesToOptions(), untilDestroyed(this)).subscribe((options) => {
       this.bootloader.options = options;
@@ -837,10 +795,32 @@ export class VmWizardComponent implements WizardConfiguration {
       const volsizePlaceholder = this.translate.instant(helptext.volsize_placeholder);
       const volsizeTooltip = this.translate.instant(helptext.volsize_tooltip);
       const volsizeTooltipB = this.translate.instant(helptext.volsize_tooltip_B);
-      const volsizeField = _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' });
+      const volsizeField = _.find(disksSectionFields, { name: 'volsize' });
       volsizeField.placeholder = `${volsizePlaceholder} ${globalLabel}`;
       volsizeField.tooltip = `${volsizeTooltip} ${globalLabel} ${volsizeTooltipB}`;
     }, 2000);
+  }
+
+  loadBindChoices(): void {
+    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
+      if (res && Object.keys(res).length > 0) {
+        const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }) as FormSelectConfig;
+        Object.keys(res).forEach((address) => {
+          bind.options.push({ label: address, value: address });
+        });
+        this.getFormControlFromFieldName('bind').setValue(res['0.0.0.0']);
+      }
+    });
+  }
+
+  loadFilesystemChoices(): void {
+    this.ws
+      .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
+      .pipe(singleArrayToOptions())
+      .pipe(untilDestroyed(this)).subscribe((options) => {
+      const datastoreConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
+      datastoreConfig.options = options;
+    });
   }
 
   memoryValidator(name: string): ValidatorFn {

@@ -175,6 +175,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.conf.fieldConfig = this.fieldConfig;
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   async ngOnInit(): Promise<void> {
     if (this.conf.saveButtonEnabled === undefined) {
       this.conf.saveButtonEnabled = true;
