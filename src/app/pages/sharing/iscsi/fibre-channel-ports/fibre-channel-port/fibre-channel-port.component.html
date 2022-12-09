@@ -10,8 +10,8 @@
         fxLayout="row wrap"
         fxLayoutAlign="start start"
         fxFlex="100%"
-        [class]="'fieldset divider-' + fieldSet.divider"
         fxFlex.gt-xs="calc({{ fieldSets[i].width }} - 16px)"
+        [class]="'fieldset divider-' + fieldSet.divider"
         [ngClass]="fieldSet.class"
       >
         <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
