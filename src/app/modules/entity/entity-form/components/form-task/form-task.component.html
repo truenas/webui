@@ -3,7 +3,7 @@
   class="form-task"
   ix-auto
   ix-auto-type="task"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [attr.id]="config.name"
@@ -17,7 +17,7 @@
         ix-auto
         ix-auto-type="tab"
         [label]="field.tabName | translate"
-        ix-auto-identifier="{{ field.tabName }}"
+        [ix-auto-identifier]="field.tabName"
       >
         <ng-container
           dynamicField

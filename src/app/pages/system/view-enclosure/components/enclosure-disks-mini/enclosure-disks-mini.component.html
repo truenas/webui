@@ -4,7 +4,7 @@
   ngClass.sm="sm"
   ngClass.xs="xs"
   class="view-card {{ chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl' : 'mini' }}"
-  id="{{ currentTab.alias }}"
+  [id]="currentTab.alias"
   [ngClass]="{
     'multiple-enclosures': system && system.profile && system.profile.length > 1
   }"

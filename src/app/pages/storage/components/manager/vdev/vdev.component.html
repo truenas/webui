@@ -150,7 +150,7 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          name="{{'Disk' | translate}}"
+          [name]="'Disk' | translate"
           [width]="165"
         >
           <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
@@ -160,12 +160,12 @@
         </ngx-datatable-column>
         <ngx-datatable-column
           prop="type"
-          name="{{ 'Type' | translate }}"
+          [name]="'Type' | translate"
           [width]="100"
         ></ngx-datatable-column>
         <ngx-datatable-column
           prop="capacity"
-          name="{{ 'Capacity' | translate }}"
+          [name]="'Capacity' | translate"
           [width]="120"
         ></ngx-datatable-column>
         <ngx-datatable-column

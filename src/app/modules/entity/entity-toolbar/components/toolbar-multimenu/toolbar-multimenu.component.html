@@ -53,7 +53,7 @@
             <mat-icon
               *ngIf="option.labelIconType && option.labelIconType === 'community'"
               fontSet="mdi-set"
-              fontIcon="mdi-{{ option.labelIcon }}"
+              [fontIcon]="'mdi-' + option.labelIcon"
             ></mat-icon>
             <mat-icon
               *ngIf="option.labelIconType && option.labelIconType === 'custom'"
