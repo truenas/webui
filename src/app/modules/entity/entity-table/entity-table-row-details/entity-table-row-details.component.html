@@ -10,7 +10,7 @@
         <mat-icon
           class="widget-icon"
           fontSet="mdi-set"
-          fontIcon="mdi-{{ column.widget.icon }}"
+          [fontIcon]="'mdi-' + column.widget.icon"
           [matMenuTriggerFor]="widget"
         ></mat-icon>
         <mat-menu #widget="matMenu">

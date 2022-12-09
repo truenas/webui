@@ -5,7 +5,7 @@
   fxLayoutAlign="start center"
   ix-auto
   ix-auto-type="array"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-pwtoggle]="config.togglePw"
@@ -37,7 +37,7 @@
         matInput
         ix-auto
         ix-auto-type="input"
-        ix-auto-identifier="{{ config.placeholder }}"
+        [ix-auto-identifier]="config.placeholder"
         [placeholder]="config.placeholder | translate"
         [ngModelOptions]="{ standalone: true }"
         [readonly]="config.readonly"
@@ -63,7 +63,7 @@
             *ngFor="let option of netmaskOptions"
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{ option.label }}"
+            [ix-auto-identifier]="option.label"
             [value]="option.value"
           >
             {{ option.label | translate }}
@@ -78,7 +78,7 @@
           disabled
           ix-auto
           ix-auto-type="select"
-          ix-auto-identifier="{{ config.placeholder }}"
+          [ix-auto-identifier]="config.placeholder"
           [value]="config.netmaskPreset"
         >
           <mat-option [value]="config.netmaskPreset">
