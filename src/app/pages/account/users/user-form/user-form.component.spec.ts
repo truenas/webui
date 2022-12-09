@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -206,6 +206,7 @@ describe('UserFormComponent', () => {
         'Primary Group': 'test-group',
         'Samba Authentication': true,
         'Authorized Keys': '',
+        'Upload SSH Key': [],
         UID: '1004',
         Email: '',
         'New Password': '',

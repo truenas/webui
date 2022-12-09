@@ -43,16 +43,6 @@ export class KubernetesSettingsComponent implements OnInit {
     cluster_dns_ip: ['', Validators.required],
   });
 
-  readonly tooltips = {
-    node_ip: helptext.kubForm.node_ip.tooltip,
-    route_v4_interface: helptext.kubForm.route_v4_interface.tooltip,
-    route_v4_gateway: helptext.kubForm.route_v4_gateway.tooltip,
-    enable_container_image_update: helptext.kubForm.enable_container_image_update.tooltip,
-    cluster_cidr: helptext.kubForm.cluster_cidr.tooltip,
-    service_cidr: helptext.kubForm.service_cidr.tooltip,
-    cluster_dns_ip: helptext.kubForm.cluster_dns_ip.tooltip,
-  };
-
   readonly reInitHelpText = helptext.kubForm.reInit.formWarning;
 
   readonly nodeIpOptions$ = this.appService.getBindIpChoices().pipe(choicesToOptions());

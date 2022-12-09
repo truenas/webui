@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
@@ -118,10 +119,10 @@ describe('NtpServerListComponent', () => {
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
-    const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No NTP Servers have been added yet']]);
+    spectator.detectChanges();
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should show error message when can not retrieve response', async () => {
@@ -130,10 +131,10 @@ describe('NtpServerListComponent', () => {
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
 
-    const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Can not retrieve response']]);
+    spectator.detectChanges();
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should open add ntp server form', async () => {

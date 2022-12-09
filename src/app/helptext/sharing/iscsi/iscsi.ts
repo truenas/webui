@@ -14,7 +14,6 @@ export const helptextSharingIscsi = {
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
  target="_blank">RFC3721</a>.',
   ),
-  target_form_validators_name: [Validators.required],
 
   target_form_placeholder_alias: T('Target Alias'),
   target_form_tooltip_alias: T('Optional user-friendly name.'),
@@ -37,7 +36,6 @@ export const helptextSharingIscsi = {
   target_form_tooltip_portal: T(
     'Leave empty or select number of existing portal to use.',
   ),
-  target_form_validators_portal: [Validators.required],
 
   target_form_placeholder_initiator: T('Initiator Group ID'),
   target_form_tooltip_initiator: T(
@@ -96,8 +94,6 @@ export const helptextSharingIscsi = {
     'TCP port used to access the iSCSI target.\
  Default is <i>3260</i>.',
   ),
-
-  portal_form_placeholder_delete: T('Delete'),
 
   initiator_form_tooltip_connected_initiators: T(
     'Initiators currently connected to the system. Shown in IQN\
@@ -167,7 +163,6 @@ export const helptextSharingIscsi = {
     'Only appears if <i>Device</i> is selected. Select the\
  unused zvol or zvol snapshot.',
   ),
-  extent_validators_disk: [Validators.required],
 
   extent_placeholder_serial: T('Serial'),
   extent_tooltip_serial: T(
@@ -179,7 +174,6 @@ export const helptextSharingIscsi = {
   extent_tooltip_path: T('Browse to an existing file. Create a new file by browsing to a\
  dataset and appending /<i>\'{\'filename.ext\'}\'</i> to the path. Extents cannot be\
  created inside a jail root directory.'),
-  extent_validators_path: [Validators.required],
 
   extent_placeholder_filesize: T('Filesize'),
   extent_tooltip_filesize: T('Entering <i>0</i> uses the actual file size and requires that the\

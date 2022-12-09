@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -26,6 +27,8 @@ import { InterfaceFormComponent } from 'app/pages/network/components/interface-f
 import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
+import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
@@ -53,6 +56,17 @@ describe('InterfaceFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+      StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
+        initialState: {
+          [haInfoStateKey]: {
+            haStatus: {
+              hasHa: true,
+              reasons: [],
+            },
+            isHaLicensed: true,
+          },
+        },
+      }),
     ],
     declarations: [
       DefaultGatewayDialogComponent,
@@ -322,7 +336,6 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('checks whether failover is licensed for', () => {
-      expect(ws.call).toHaveBeenCalledWith('failover.licensed');
       expect(ws.call).toHaveBeenCalledWith('failover.node');
     });
 

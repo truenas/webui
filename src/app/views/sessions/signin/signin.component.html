@@ -27,7 +27,7 @@
               <form
                 #signinForm="ngForm"
                 [hidden]="!hasRootPassword"
-                (ngSubmit)="signin()"
+                (ngSubmit)="signIn()"
               >
                 <div class="form-element username">
                   <div class="label-container">
@@ -54,7 +54,7 @@
                       autocorrect="off"
                       autocomplete="off"
                       [placeholder]="'Username' | translate"
-                      [(ngModel)]="signinData.username"
+                      [(ngModel)]="signInData.username"
                     />
                     <mat-error *ngIf="username.errors && (username.dirty || username.touched) && username.errors.required">
                       <span *ngIf="!failed">
@@ -85,7 +85,7 @@
                       matInput
                       value=""
                       [placeholder]="'Password' | translate"
-                      [(ngModel)]="signinData.password"
+                      [(ngModel)]="signInData.password"
                     />
                     <mat-error *ngIf="password.errors && (password.dirty || password.touched) && password.errors.required">
                       <span *ngIf="!failed">
@@ -110,7 +110,7 @@
                       required
                       autocomplete="off"
                       [placeholder]="'Two-Factor Authentication Code' | translate"
-                      [(ngModel)]="signinData.otp"
+                      [(ngModel)]="signInData.otp"
                     />
                     <mat-error>
                       <span *ngIf="!failed">
@@ -133,12 +133,30 @@
                   {{ 'Log in' | translate }}
                 </button>
               </form>
+
               <div [hidden]="hasRootPassword">
                 <form
                   #setPasswordForm="ngForm"
                   [formGroup]="setPasswordFormGroup"
-                  (ngSubmit)="setpassword()"
+                  (ngSubmit)="setPassword()"
                 >
+                  <div>
+                    <span>
+                      {{ 'Set up TrueNAS authentication method:' | translate }}
+                    </span>
+                  </div>
+
+                  <div class="form-element">
+                    <mat-radio-group formControlName="userName">
+                      <mat-radio-button value="admin">
+                        {{ 'Administrative user' | translate }}
+                      </mat-radio-button>
+                      <mat-radio-button value="root">
+                        {{ 'Root user (not recommended)' | translate }}
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+
                   <div>
                     <span>
                       {{ 'Set new root account password:' | translate }}
@@ -166,6 +184,7 @@
                       </mat-error>
                     </mat-form-field>
                   </div>
+
                   <div class="form-element">
                     <div class="label-container">
                       <label class="label input-text">
@@ -188,6 +207,7 @@
                       </mat-error>
                     </mat-form-field>
                   </div>
+
                   <div class="form-element" [hidden]="!hasInstanceId">
                     <div class="label-container">
                       <label class="label input-text">

@@ -2,7 +2,7 @@ import {
   Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -39,7 +39,8 @@ import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -102,22 +103,21 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.updateNotificationSent = true;
     });
 
-    this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.screenSize = evt.mqAlias;
+    this.mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      this.screenSize = changes[0].mqAlias;
     });
-
-    this.haStatusText = this.window.sessionStorage.getItem('ha_status') === 'true'
-      ? helptext.ha_status_text_enabled
-      : helptext.ha_status_text_disabled;
   }
 
   ngOnInit(): void {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
 
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isFailoverLicensed) => {
-        this.isFailoverLicensed = isFailoverLicensed;
-        this.getHaStatus();
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isFailoverLicensed = isHaLicensed;
+
+        if (isHaLicensed) {
+          this.getHaStatus();
+        }
       });
     }
 

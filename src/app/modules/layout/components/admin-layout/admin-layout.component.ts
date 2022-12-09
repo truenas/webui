@@ -8,8 +8,8 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { MatDialog } from '@angular/material/dialog';
+import { MediaObserver } from '@angular/flex-layout';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -88,10 +88,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     });
 
     // Watches screen size and open/close sidenav
-    this.media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
+    this.media.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
-      core.emit({ name: 'MediaChange', data: change, sender: this });
+      core.emit({ name: 'MediaChange', data: changes, sender: this });
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
@@ -146,8 +146,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((headerContent) => {
         try {
-          this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-          this.cdr.detectChanges();
+          if (headerContent) {
+            this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+            this.cdr.detectChanges();
+          } else {
+            this.headerPortalOutlet = null;
+          }
         } catch (error: unknown) {
           // Prevents an error on one header from breaking headers on all pages.
           console.error('Error when rendering page header template', error);

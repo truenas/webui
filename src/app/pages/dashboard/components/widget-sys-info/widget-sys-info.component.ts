@@ -27,8 +27,9 @@ import { ProductImageService } from 'app/services/product-image.service';
 import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -97,8 +98,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.isUpdateRunning = res === 'true';
     });
 
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
 
@@ -138,8 +139,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       });
     }
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
-        if (hasFailover) {
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        if (isHaLicensed) {
           this.updateMethod = 'failover.upgrade';
         }
         this.checkForRunningUpdate();
