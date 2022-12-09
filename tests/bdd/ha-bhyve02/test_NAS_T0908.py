@@ -2,7 +2,11 @@
 """High Availability (tn-bhyve02) feature tests."""
 
 import xpaths
-from function import wait_on_element, wait_on_element_disappear
+from function import (
+    wait_on_element,
+    wait_on_element_disappear,
+    is_element_present
+)
 import time
 from pytest_bdd import (
     given,
@@ -21,20 +25,22 @@ def test_add_user(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
-    driver.get(f"http://{nas_url}")
-    time.sleep(3)
+    if nas_url not in driver.current_url:
+        driver.get(f"http://{nas_url}")
+        time.sleep(1)
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    assert wait_on_element(driver, 5, xpaths.login.user_input)
-    driver.find_element_by_xpath(xpaths.login.user_input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-    driver.find_element_by_xpath(xpaths.login.password_input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-    assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        assert wait_on_element(driver, 5, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
 
 @then('You should see the dashboard and "System Information"')

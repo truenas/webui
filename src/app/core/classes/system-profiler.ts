@@ -188,13 +188,13 @@ export class SystemProfiler {
       const stats = {}; // Store stats from pool.query disk info
 
       if (vdev.children.length == 0 && vdev.device) {
-        const spl = vdev.device.split('p');
+        const spl = vdev.device.split(/p(\d+)/g);
         const name = spl[0];
         v.disks[name] = -1; // no children so we use this as placeholder
       } else if (vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
           if (disk.device && disk.status != 'REMOVED') {
-            const spl = disk.disk.split('p'); // was disk.device
+            const spl = disk.disk.split(/p(\d+)/g); // was disk.device
             const name = spl[0];
             v.disks[name] = dIndex;
             stats[name] = disk.stats;

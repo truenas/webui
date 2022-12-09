@@ -253,7 +253,7 @@ def navigate_to_dashboard(driver):
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
+    assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
     assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
     assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
@@ -267,7 +267,7 @@ def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
     assert wait_on_element(driver, 120, xpaths.login.user_input)
     # wait for HA is enabled to avoid UI refreshing
-    assert wait_on_element(driver, 300, xpaths.login.ha_status('HA is enabled'))
+    assert wait_on_element_disappear(driver, 300, xpaths.login.ha_status('HA is enabled'))
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
@@ -285,7 +285,7 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
-    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
+    assert refresh_if_element_missing(driver, 25, xpaths.topToolbar.ha_enable)
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))

@@ -13,6 +13,7 @@ class button:
 
 class checkbox:
     confirm = '//mat-checkbox[contains(.,"Confirm")]'
+    enable = '//mat-checkbox[@ix-auto="checkbox__Enable"]'
 
 
 class dashboard:
@@ -40,6 +41,7 @@ class sideMenu:
     dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
     directory_services = '//mat-list-item[@ix-auto="option__Directory Services"]'
     directory_services_ldap = '//mat-list-item[@ix-auto="option__LDAP"]'
+    directory_services_nis = '//mat-list-item[@ix-auto="option__NIS"]'
 
 
 class topToolbar:

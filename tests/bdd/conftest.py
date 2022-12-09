@@ -19,6 +19,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+xpaths = __import__('ha-bhyve02.xpaths').xpaths
 
 # random hostname
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
@@ -75,10 +76,6 @@ def browser():
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.download.alwaysOpenPanel", False)
-    # profile.set_preference("browser.cache.disk.enable", False)
-    # profile.set_preference("browser.cache.memory.enable", False)
-    # profile.set_preference("browser.cache.offline.enable", False)
-    # profile.set_preference("network.http.use-cache", False)
     # browser.link.open_newwindow is frozen 2 the only way to change it is like bellow
     profile.DEFAULT_PREFERENCES["frozen"]["browser.link.open_newwindow"] = 3
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
@@ -169,6 +166,8 @@ def pytest_runtest_makereport(item):
             disable_active_directory()
         elif 'T1013' in screenshot_name or 'T0940' in screenshot_name:
             disable_ldap()
+        elif 'T1117' in screenshot_name:
+            disable_nis()
 
 
 def save_screenshot(name):
@@ -262,7 +261,7 @@ def disable_active_directory():
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
     wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
-    assert wait_on_element(5, '//li[span/a/text()="LDAP"]')
+    assert wait_on_element(5, '//li[span/a/text()="Active Directory"]')
     assert wait_on_element(5, '//h4[contains(text(),"Domain Credentials")]')
     wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')
@@ -291,4 +290,20 @@ def disable_ldap():
     wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
+
+
+def disable_nis():
+    """click on Directory Services and select NIS, then disable NIS."""
+    assert wait_on_element(5, xpaths.sideMenu.directory_services, 'clickable')
+    web_driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(7, xpaths.sideMenu.directory_services_nis)
+    web_driver.find_element_by_xpath(xpaths.sideMenu.directory_services_nis).click()
+    assert wait_on_element(5, '//li[span/a/text()="NIS"]')
+    assert wait_on_element(5, '//h4[contains(.,"Network Information Service (NIS)")]')
+    assert wait_on_element(5, xpaths.checkbox.enable, 'clickable')
+    web_driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    assert wait_on_element(5, xpaths.button.save, 'clickable')
+    web_driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(30, xpaths.popupTitle.please_wait)
     assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
