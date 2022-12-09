@@ -1,12 +1,12 @@
 import { HarnessPredicate } from '@angular/cdk/testing';
 import {
-  MatFooterRowHarness,
-  MatHeaderRowHarness,
-  MatRowHarness,
-  MatRowHarnessColumnsText,
-  MatTableHarness,
-  TableHarnessFilters,
-} from '@angular/material/table/testing';
+  MatLegacyFooterRowHarness as MatFooterRowHarness,
+  MatLegacyHeaderRowHarness as MatHeaderRowHarness,
+  MatLegacyRowHarness as MatRowHarness,
+  MatLegacyRowHarnessColumnsText as MatRowHarnessColumnsText,
+  MatLegacyTableHarness as MatTableHarness,
+  LegacyTableHarnessFilters as TableHarnessFilters,
+} from '@angular/material/legacy-table/testing';
 /**
  * This class provides sugar syntax to make it easier to work with tables.
  */

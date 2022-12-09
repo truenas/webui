@@ -1,5 +1,5 @@
 
-@import 'cssvars';
+@import 'scss-imports/cssvars';
 
 @mixin blink {
   animation: blinker 0.75s linear infinite;

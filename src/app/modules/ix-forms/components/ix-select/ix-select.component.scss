@@ -24,8 +24,15 @@
   padding: 6px 8px;
   position: relative;
 
-  ::ng-deep .mat-select-trigger {
-    font-size: 12px !important;
+  ::ng-deep {
+    .mat-select-trigger {
+      font-size: 12px !important;
+    }
+
+    .mat-select-min-line {
+      display: block;
+      width: 0;
+    }
   }
 
   &:focus-within {
