@@ -117,11 +117,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   ngOnInit(): void {
     merge(this.modalService.onClose$, this.slideIn.onClose$)
-      .pipe(untilDestroyed(this)).subscribe(
-        () => {
-          this.entityList.getData();
-        },
-      );
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.entityList.getData());
   }
 
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
