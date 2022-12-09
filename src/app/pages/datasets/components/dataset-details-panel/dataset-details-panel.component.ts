@@ -8,7 +8,6 @@ import { filter } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
-import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
@@ -99,12 +98,6 @@ export class DatasetDetailsPanelComponent implements OnInit {
     addDatasetComponent.setParent(this.dataset.id);
     addDatasetComponent.setVolId(this.dataset.pool);
     addDatasetComponent.setTitle(this.translate.instant('Add Dataset'));
-  }
-
-  onAddZvolOld(): void {
-    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormOldComponent);
-    addZvolComponent.setParent(this.dataset.id);
-    addZvolComponent.isNew = true;
   }
 
   onAddZvol(): void {

@@ -20,7 +20,7 @@
         <mat-step
           *ngIf="!step.skip"
           #matStepInstance
-          formGroupName="{{ i }}"
+          [formGroupName]="i"
           [stepControl]="formArray?.get([i])"
         >
           <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
@@ -47,7 +47,7 @@
                   *ngFor="let field of fieldSet.config; let k = index"
                   fxFlex="100%"
                   fxFlex.gt-xs="calc({{ field.width ? field.width : '100%'}} - 16px)"
-                  id="{{ k }}"
+                  [id]="k"
                   [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
                 >
                   <div
@@ -118,8 +118,8 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="custom_button_{{ i }}"
-              ix-auto-identifier="{{ customNextText | uppercase }}"
+              [id]="'custom_button_' + i"
+              [ix-auto-identifier]="customNextText | uppercase"
               (click)="handleNext(matStepInstance)"
             >
               {{ customNextText | translate }}
@@ -133,8 +133,8 @@
                 type="button"
                 ix-auto
                 ix-auto-type="button"
-                id="cust_button_{{ custBtn.name }}"
-                ix-auto-identifier="{{ custBtn.name | uppercase }}"
+                [id]="'cust_button_' + custBtn.name"
+                [ix-auto-identifier]="custBtn.name | uppercase"
                 (click)="custBtn['function']()"
               >
                 {{ custBtn.name | translate }}
@@ -176,7 +176,7 @@
                 color="primary"
                 ix-auto
                 ix-auto-type="button"
-                ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+                [ix-auto-identifier]="saveSubmitText | uppercase"
                 [disabled]="!entityForm.form.valid"
                 (click)="onSubmit()"
               >
@@ -236,7 +236,7 @@
             color="primary"
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+            [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid"
             (click)="onSubmit()"
           >

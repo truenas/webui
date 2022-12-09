@@ -26,7 +26,7 @@
       class="form-chip"
       ix-auto
       ix-auto-type="input"
-      ix-auto-identifier="{{ config.placeholder }}"
+      [ix-auto-identifier]="config.placeholder"
       [required]="config.required"
       [formControl]="group.controls[config.name] | cast"
     >
@@ -68,7 +68,7 @@
             *ngFor="let option of config.searchOptions"
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{ option.label }}"
+            [ix-auto-identifier]="option.label"
             [value]="option.value"
           >
             <span>{{ option.label | translate }}</span>

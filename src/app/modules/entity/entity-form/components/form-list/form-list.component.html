@@ -4,7 +4,7 @@
   class="dynamic-field form-list"
   ix-auto
   ix-auto-type="list"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="{ box: config.box, 'sub-box': !config.box }"
   [attr.id]="config.name"
@@ -25,7 +25,7 @@
       type="button"
       ix-auto
       ix-auto-type="button"
-      ix-auto-identifier="add-box_{{ config.name }}"
+      [ix-auto-identifier]="'add-box_' + config.name"
       (click)="add()"
     >
       {{ 'Add' | translate }}
@@ -68,7 +68,7 @@
             class="top-right"
             ix-auto
             ix-auto-type="icon-button"
-            ix-auto-identifier="delete-box_{{ config.name + i }}"
+            [ix-auto-identifier]="'delete-box_' + (config.name + i)"
             (click)="delete(i)"
           >
             <mat-icon>clear</mat-icon>

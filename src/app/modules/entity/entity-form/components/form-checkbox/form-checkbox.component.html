@@ -17,7 +17,7 @@
     ix-auto
     ix-auto-type="checkbox"
     class="{ 'full-width': !config.inlineLabel, 'half-width': config.inlineLabel }"
-    ix-auto-identifier="{{ config.placeholder }}"
+    [ix-auto-identifier]="config.placeholder"
     [formControlName]="config.name"
     [required]="config.required"
     (click)="config.readonly && preventClick($event)"

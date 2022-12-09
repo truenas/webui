@@ -45,12 +45,12 @@ export class StopVmDialogComponent {
     jobDialogRef.componentInstance.submit();
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close(false);
-      this.dialogRef.close(true);
       this.dialogService.info(
         this.translate.instant('Finished'),
         this.translate.instant(helptext.stop_dialog.successMessage, { vmName: this.vm.name }),
         true,
       );
     });
+    this.dialogRef.close(true);
   }
 }

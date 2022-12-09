@@ -59,7 +59,7 @@
             >
               <div
                 dynamicField
-                id="form_field_{{ field.name }}"
+                [id]="'form_field_' + field.name"
                 [config]="field"
                 [group]="formGroup"
                 [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
@@ -76,7 +76,7 @@
             mat-button
             ix-auto-type="button"
             color="primary"
-            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+            [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
             [ix-auto]=""
           >
@@ -102,8 +102,8 @@
               mat-button
               class="mat-basic"
               ix-auto-type="button"
-              id="cust_button_{{ custBtn.name }}"
-              ix-auto-identifier="{{ custBtn.name | uppercase }}"
+              [id]="'cust_button_' + custBtn.name"
+              [ix-auto-identifier]="custBtn.name | uppercase"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
               [type]="custBtn.buttonType ? custBtn.buttonType : 'button'"
