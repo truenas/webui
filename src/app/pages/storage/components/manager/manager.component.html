@@ -516,7 +516,7 @@
                     *ngIf="disks[rowIndex]"
                     color="primary"
                     [id]="'pool-manager__disks-' + disks[rowIndex].devname"
-                    name="disk_{{ rowIndex }}_checkbox"
+                    [name]="'disk_' + rowIndex + '_checkbox'"
                     [checked]="isSelected"
                     (change)="onCheckboxChangeFn($event)"
                   ></mat-checkbox>

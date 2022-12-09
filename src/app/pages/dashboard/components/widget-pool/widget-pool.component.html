@@ -8,7 +8,7 @@
     >
       <mat-card-content #carouselparent>
         <mat-toolbar-row
-          class="view-{{ path.length > 0 ? currentSlideName : 'Pool' }}"
+          [class]="'view-' + (path.length > 0 ? currentSlideName : 'Pool')"
           [class.drag-handle]="showReorderHandle"
         >
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -100,7 +100,7 @@
           <div
             *ngFor="let slide of path"
             fxFlex="100"
-            class="slide overview {{ slide.name }}"
+            [class]="['slide', 'overview', slide.name]"
           >
             <ng-container *ngTemplateOutlet="slide.template"></ng-container>
           </div>
@@ -153,10 +153,10 @@
                           <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon">
                             <ix-icon name="lock"></ix-icon>
                           </span>
-                          <span *ngSwitchCase="PoolStatus.Online" class="{{ poolHealth.level }} icon">
+                          <span *ngSwitchCase="PoolStatus.Online" [class]="[poolHealth.level, 'icon']">
                             <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
                           </span>
-                          <span *ngSwitchCase="PoolStatus.Healthy" class="{{ poolHealth.level }} icon">
+                          <span *ngSwitchCase="PoolStatus.Healthy" [class]="[poolHealth.level, 'icon']">
                             <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
                           </span>
                           <span *ngSwitchDefault class="error icon">
@@ -187,7 +187,7 @@
                           <span class="value-used">
                             {{ volumeData.used_pct }}
                           </span>
-                          <span class="icon {{ convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning' }}">
+                          <span [class]="['icon', convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning']">
                             <ix-icon name="error"></ix-icon>
                           </span>
                         </div>
@@ -382,13 +382,13 @@
                 <!-- STATUS ICONS -->
                 <span
                   *ngIf="vdev.status === TopologyItemStatus.Online"
-                  class="{{ poolHealth.level }} healthy"
+                  [class]="[poolHealth.level, 'healthy']"
                 >
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
                 <span
                   *ngIf="vdev.status !== TopologyItemStatus.Online"
-                  class="{{ poolHealth.level }} healthy"
+                  [class]="[poolHealth.level, 'healthy']"
                 >
                   <ix-icon name="error"></ix-icon>
                 </span>
@@ -468,10 +468,10 @@
                 {{ disk.status | translate }}
 
                 <!-- STATUS ICONS -->
-                <span *ngIf="disk.status === TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
+                <span *ngIf="disk.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
-                <span *ngIf="disk.status !== TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
+                <span *ngIf="disk.status !== TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="error"></ix-icon>
                 </span>
 
@@ -498,7 +498,7 @@
                   :
                 </strong>
                 {{ path[2].dataSource.status | translate }}
-                <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
+                <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
                 <mat-icon

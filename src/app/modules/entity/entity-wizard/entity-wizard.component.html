@@ -34,12 +34,12 @@
                 fxFlex.gt-xs="calc({{ fieldSet.width ? fieldSet.width : '100%' }} - 16px)"
                 [ngClass]="[
                   fieldSet.class ? fieldSet.class : '',
-                  isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
+                  isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
                 ]"
               >
                 <mat-divider *ngIf="fieldSet.divider && i > 0"></mat-divider>
 
-                <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">
+                <h4 *ngIf="fieldSet.label && isFieldsetAvailable(fieldSet)" class="fieldset-label">
                   {{ fieldSet.name | translate }}
                 </h4>
 
@@ -52,7 +52,7 @@
                 >
                   <div
                     dynamicField
-                    id="dynamicField_{{ field.name }}"
+                    [id]="'dynamicField_' + field.name"
                     [config]="field"
                     [group]="formArray?.get([i]) | cast"
                     [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
@@ -74,8 +74,8 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="cancel_button_{{ i }}"
-              ix-auto-identifier="CANCEL_{{ step.label }}"
+              [id]="'cancel_button_' + i"
+              [ix-auto-identifier]="'CANCEL_' + step.label"
               (click)="goBack()"
             >
               {{ 'Cancel' | translate }}
@@ -89,8 +89,8 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="goback_button_{{ i }}"
-              ix-auto-identifier="BACK_{{ step.label }}"
+              [id]="'goback_button_' + i"
+              [ix-auto-identifier]="'BACK_' + step.label"
             >
               {{ 'Back' | translate }}
             </button>
@@ -103,8 +103,8 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="goforward_button_{{ i }}"
-              ix-auto-identifier="NEXT_{{ step.label }}"
+              [id]="'goforward_button_' + i"
+              [ix-auto-identifier]="'NEXT_' + step.label"
               [disabled]="showSpinner"
               (click)="handleNext(matStepInstance)"
             >
