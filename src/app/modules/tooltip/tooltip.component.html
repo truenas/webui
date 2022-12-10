@@ -16,7 +16,7 @@
           fontIcon="mdi-close"
           ix-auto
           ix-auto-type="tooltip-close"
-          ix-auto-identifier="{{ header }}"
+          [ix-auto-identifier]="header"
           (click)="popperTooltip.hide()"
         ></mat-icon>
       </div>
@@ -25,7 +25,7 @@
       class="tooltip-message"
       ix-auto
       ix-auto-type="tooltip-message"
-      ix-auto-identifier="{{ header }}"
+      [ix-auto-identifier]="header"
       [innerHTML]="message | translate"
     ></div>
   </popper-content>
@@ -37,7 +37,7 @@
     popperAppendTo="body"
     ix-auto
     ix-auto-type="tooltip-icon"
-    ix-auto-identifier="{{ header }}"
+    [ix-auto-identifier]="header"
     [popperTrigger]="'click' | cast"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"

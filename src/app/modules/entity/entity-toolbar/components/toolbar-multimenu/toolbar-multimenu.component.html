@@ -45,7 +45,7 @@
             <mat-icon *ngIf="!selectStates[i]">remove</mat-icon>
           </span>
           <span>{{ option.label | translate }}</span>
-          <span *ngIf="option.labelIcon" class="icon-suffix {{ option.labelIconType }}">
+          <span *ngIf="option.labelIcon" [class]="['icon-suffix', option.labelIconType]">
             &nbsp;
             <mat-icon *ngIf="!option.labelIconType || option.labelIconType === 'default'">
               {{ option.labelIcon }}
@@ -53,7 +53,7 @@
             <mat-icon
               *ngIf="option.labelIconType && option.labelIconType === 'community'"
               fontSet="mdi-set"
-              fontIcon="mdi-{{ option.labelIcon }}"
+              [fontIcon]="'mdi-' + option.labelIcon"
             ></mat-icon>
             <mat-icon
               *ngIf="option.labelIconType && option.labelIconType === 'custom'"

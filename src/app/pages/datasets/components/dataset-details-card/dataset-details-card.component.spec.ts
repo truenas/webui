@@ -15,8 +15,10 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const dataset = {
   id: 'pool/child',
@@ -40,7 +42,9 @@ describe('DatasetDetailsCardComponent', () => {
     setVolId: jest.fn(),
     setTitle: jest.fn(),
   };
-
+  const fakeSlideInRef = {
+    zvolFormInit: jest.fn(),
+  };
   const createComponent = createComponentFactory({
     component: DatasetDetailsCardComponent,
     declarations: [
@@ -57,6 +61,10 @@ describe('DatasetDetailsCardComponent', () => {
       }),
       mockProvider(ModalService, {
         openInSlideIn: jest.fn(() => fakeModalRef),
+        onClose$: of(),
+      }),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => fakeSlideInRef),
         onClose$: of(),
       }),
       mockProvider(MatDialog, {
@@ -122,6 +130,23 @@ describe('DatasetDetailsCardComponent', () => {
     expect(fakeModalRef.setPk).toHaveBeenCalledWith('pool/child');
     expect(fakeModalRef.setVolId).toHaveBeenCalledWith('pool');
     expect(fakeModalRef.setTitle).toHaveBeenCalledWith('Edit Dataset');
+  });
+
+  it('opens edit zvol form when Edit Zvol button is clicked', async () => {
+    const zvolSpectator = createComponent({
+      props: {
+        dataset: {
+          ...dataset,
+          type: DatasetType.Volume,
+        },
+      },
+    });
+    const zvolLoader = TestbedHarnessEnvironment.loader(zvolSpectator.fixture);
+
+    const editZvolButton = await zvolLoader.getHarness(MatButtonHarness.with({ text: 'Edit Zvol' }));
+    await editZvolButton.click();
+    expect(zvolSpectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ZvolFormComponent);
+    expect(fakeSlideInRef.zvolFormInit).toHaveBeenCalledWith(false, 'pool/child');
   });
 
   it('opens delete dataset dialog when Delete button is clicked', async () => {

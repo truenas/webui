@@ -25,8 +25,8 @@
 
   <mat-card
     *ngFor="let card of dataCards; index as i"
-    class="data-card{{ i + 1 }}"
-    gdArea="data-card{{ i + 1 }}"
+    [class]="'data-card' + (i + 1)"
+    [gdArea]="'data-card' + (i + 1)"
   >
     <mat-toolbar-row>
       <h3>{{ card.title | translate }}</h3>

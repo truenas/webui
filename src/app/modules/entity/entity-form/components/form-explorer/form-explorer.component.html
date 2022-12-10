@@ -3,7 +3,7 @@
   class="dynamic-field form-explorer form-element"
   ix-auto
   ix-auto-type="explorer"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -44,7 +44,7 @@
               type="text"
               ix-auto
               ix-auto-type="input"
-              ix-auto-identifier="{{ config.name }}"
+              [ix-auto-identifier]="config.name"
               [placeholder]="config.placeholder | translate"
               [formControlName]="config.name"
               [required]="config.required"
@@ -86,13 +86,13 @@
         <ng-template #fileIcon>
           <mat-icon>insert_drive_file</mat-icon>
         </ng-template>
-        <span title="{{ node.data.name }}">
+        <span [title]="node.data.name">
           {{ node.data.subTitle }}
           <span
             *ngIf="node.data['acl']"
             class="dataset-subtitle"
             matTooltipPosition="right"
-            matTooltip="{{ 'An ACL is present in this path' | translate }}"
+            [matTooltip]="'An ACL is present in this path' | translate"
           >
             ACL
           </span>
