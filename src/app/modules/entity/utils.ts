@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Job } from 'app/interfaces/job.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityErrorHandler } from 'app/modules/entity/entity-form/interfaces/entity-error-handler.interface';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -98,13 +97,13 @@ export class EntityUtils {
     } else if (entity) {
       dialog = entity.dialog;
     }
-    if ('exc_info' in res && res.exc_info && res.exc_info.extra) {
+    if ('exc_info' in res && res.exc_info?.extra) {
       (res as any).extra = res.exc_info.extra;
     }
 
     if ('extra' in res && res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
-      if ((res.extra as any).excerpt) {
+      if ((res as Job).extra.excerpt) {
         this.errorReport(res, dialog);
       } else if (Array.isArray(res.extra)) {
         res.extra.forEach((extraItem) => {

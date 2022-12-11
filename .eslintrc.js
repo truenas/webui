@@ -183,10 +183,9 @@ module.exports = {
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/no-duplicate-string": ["off"],
         "sonarjs/prefer-single-boolean-return": ["off"],
-        "sonarjs/no-nested-switch": ["off"],
 
         // Other overwrites
-        "sonarjs/cognitive-complexity": ["error", 75],
+        "sonarjs/cognitive-complexity": ["error", 70],
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
           ...airbnbSharedRules['@typescript-eslint/indent'][2],

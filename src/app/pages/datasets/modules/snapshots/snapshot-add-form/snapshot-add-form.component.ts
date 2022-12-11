@@ -4,18 +4,17 @@ import {
 import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
 import { format } from 'date-fns-tz';
 import {
   Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/entity/entity-form/validators/required-empty-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';

@@ -818,9 +818,9 @@ export class VmWizardComponent implements WizardConfiguration {
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
       .pipe(singleArrayToOptions())
       .pipe(untilDestroyed(this)).subscribe((options) => {
-      const datastoreConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
-      datastoreConfig.options = options;
-    });
+        const datastoreConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
+        datastoreConfig.options = options;
+      });
   }
 
   memoryValidator(name: string): ValidatorFn {
