@@ -17,8 +17,8 @@ from pytest_bdd import (
     parsers
 )
 
-# import pytest
-# pytestmark = [pytest.mark.debug_test]
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1136.feature', 'Verify Dropbox Cloud Sync task works')
@@ -246,16 +246,16 @@ def select_the_path_folder_and_click_save(driver, path):
     time.sleep(2)
 
 
-@then('open a new tab navigate to <box_url>')
-def open_a_new_tab_navigate_to_dropbox_url_and_input_account_id(driver, box_url):
-    """open a new tab navigate to <box_url> and input <account_id>."""
+@then(parsers.parse('open a new tab navigate to "{dropbox_url}"'))
+def open_a_new_tab_navigate_to_dropbox_url_and_input_account_id(driver, dropbox_url):
+    """open a new tab navigate to <dropbox_url> and input <account_id>."""
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
-    driver.get(box_url)
+    driver.get(dropbox_url)
     time.sleep(2)
 
 
-@then('input <user_name> and <password>, click Sign in')
+@then(parsers.parse('input "{user_name}" and "{password}", click Sign in'))
 def input_user_name_and_password_click_sign_in(driver, user_name, password):
     """input <user_name> and <password>, click Sign in."""
     if wait_on_element(driver, 3, '//img[@class="dropbox-logo__type"]'):

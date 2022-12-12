@@ -87,7 +87,7 @@ def click_on_login_to_provider_authorization_box_will_appear(driver):
     assert wait_on_element(driver, 10, '//h1[text()="Authorization"]')
 
 
-@then('click Proceed, then enter the <user_name> click Next and enter the <password>')
+@then(parsers.parse('click Proceed, then enter the "{user_name}" click Next and enter the "{password}"'))
 def click_proceed_then_enter_the_user_name_click_next_and_ever_the_password(driver, user_name, password):
     """click Proceed, then enter the <user_name> click Next and ever the <password>."""
     assert wait_on_element(driver, 10, '//a[text()="Proceed"]', 'clickable')

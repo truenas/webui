@@ -244,7 +244,7 @@ def select_the_path_folder_and_click_save(driver, path):
     time.sleep(2)
 
 
-@then('open a new tab navigate to <driver_url>')
+@then(parsers.parse('open a new tab navigate to "{driver_url}"'))
 def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, driver_url):
     """open a new tab navigate to <driver_url> and input <account_id>."""
     driver.execute_script("window.open();")
@@ -256,7 +256,7 @@ def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, dri
     driver.find_element_by_xpath('//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]').click()
 
 
-@then('enter the <user_name> click Next and enter the <password> click Next')
+@then(parsers.parse('enter the "{user_name}" click Next and enter the "{password}" click Next'))
 def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
     """enter the <user_name> click Next and enter the <password> click Next."""
     driver.switch_to.window(driver.window_handles[2])
