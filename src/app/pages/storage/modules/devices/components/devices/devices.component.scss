@@ -1,6 +1,6 @@
-@import '~assets/styles/mixins/grid';
-@import '~assets/styles/scss-imports/splitview';
-@import '~app/modules/page-header/breadcrumb/breadcrumb.component';
+@import 'mixins/grid';
+@import 'scss-imports/splitview';
+@import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);

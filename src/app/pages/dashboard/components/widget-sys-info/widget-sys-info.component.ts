@@ -98,8 +98,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.isUpdateRunning = res === 'true';
     });
 
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
 

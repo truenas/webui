@@ -3,7 +3,7 @@
   ix-auto
   ix-auto-type="combobox"
   class="dynamic-field form-select form-element form-combobox"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -61,8 +61,8 @@
           *ngFor="let option of config.searchOptions"
           ix-auto
           ix-auto-type="option"
-          ix-auto-identifier="{{ option.label }}"
-          class="{{ option.sticky ? 'sticky-' + option.sticky : '' }}"
+          [ix-auto-identifier]="option.label"
+          [class]="option.sticky ? 'sticky-' + option.sticky : ''"
           [value]="option.value"
           [class.text-wrap]="config.enableTextWrapForOptions"
         >
@@ -73,8 +73,8 @@
     <span
       ix-auto
       ix-auto-type="button"
-      id="{{ config.name }}-select"
-      ix-auto-identifier="{{ config.name }}"
+      [id]="config.name + '-select'"
+      [ix-auto-identifier]="config.name"
       [matMenuTriggerFor]="options"
       (menuOpened)="onOpenMenu()"
     >
@@ -86,8 +86,8 @@
           mat-menu-item
           ix-auto
           ix-auto-type="option"
-          class="{{ option.sticky ? 'sticky-' + option.sticky : '' }}"
-          ix-auto-identifier="{{ option.label }}"
+          [class]="option.sticky ? 'sticky-' + option.sticky : ''"
+          [ix-auto-identifier]="option.label"
           [class.text-wrap]="config.enableTextWrapForOptions"
           (click)="onChangeOption(option.value)"
         >

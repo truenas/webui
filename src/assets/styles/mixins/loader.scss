@@ -1,4 +1,4 @@
-@import '~assets/styles/scss-imports/splitview';
+@import 'scss-imports/splitview';
 
 @mixin background-logo-loader($zoom: 1) {
   &::after {

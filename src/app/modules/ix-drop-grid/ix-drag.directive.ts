@@ -30,8 +30,8 @@ import {
 @Directive({
   selector: '[ixDrag]',
   providers: [
-    { provide: ixDragParentToken, useExisting: IxDragDirective },
-    { provide: CDK_DRAG_PARENT, useExisting: IxDragDirective },
+    { provide: ixDragParentToken, useValue: IxDragDirective },
+    { provide: CDK_DRAG_PARENT, useValue: IxDragDirective },
   ],
 })
 export class IxDragDirective extends CdkDrag {

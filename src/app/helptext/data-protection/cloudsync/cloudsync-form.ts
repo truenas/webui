@@ -49,6 +49,9 @@ export default {
  largest file being transferred must fit into no more than 10,000 \
  chunks.'),
 
+  acknowledge_abuse_placeholder: T('Allow files which return cannotDownloadAbusiveFile to be downloaded.'),
+  acknowledge_abuse_tooltip: T('If downloading a file returns the error "This file has been identified as malware or spam and cannot be downloaded" with the error code "cannotDownloadAbusiveFile" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.'),
+
   fast_list_placeholder: T('Use --fast-list'),
   fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
  This can also speed up or slow down the transfer.'),

@@ -1,10 +1,11 @@
 import {
   AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -55,6 +56,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
   canAdd = false;
+  expandedElement?: VirtualMachineRow | null = null;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -114,11 +116,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   ) {}
 
   ngOnInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.entityList.getData();
-      },
-    );
+    merge(this.modalService.onClose$, this.slideIn.onClose$)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.entityList.getData());
   }
 
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
