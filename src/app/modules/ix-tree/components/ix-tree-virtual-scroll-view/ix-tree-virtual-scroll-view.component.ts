@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
-import { auditTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
@@ -46,7 +46,7 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   @Input() ixMinBufferPx = defaultSize * 4;
   @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
-  nodes: IxTreeVirtualNodeData<T>[] = [];
+  nodes$ = new BehaviorSubject<IxTreeVirtualNodeData<T>[]>([]);
   innerTrackBy: TrackByFunction<IxTreeVirtualNodeData<T>> = (index: number) => index;
   private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
 
@@ -60,11 +60,11 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   ) {
     super(differs, changeDetectorRef);
     this.renderNodeChanges$.pipe(
-      auditTime(DEFAULT_SCROLL_TIME),
-      distinctUntilChanged(),
+      debounceTime(DEFAULT_SCROLL_TIME),
+      map((data) => [...data].map((node, index) => this.createNode(node, index))),
       untilDestroyed(this),
-    ).subscribe((data) => {
-      this.nodes = [...data].map((node, index) => this.createNode(node, index));
+    ).subscribe((nodes) => {
+      this.nodes$.next(nodes);
       this._dataSourceChanged.next();
       this.changeDetectorRef.markForCheck();
     });

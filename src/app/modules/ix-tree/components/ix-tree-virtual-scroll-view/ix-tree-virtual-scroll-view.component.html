@@ -3,7 +3,7 @@
   [minBufferPx]="ixMinBufferPx"
   [maxBufferPx]="ixMaxBufferPx"
 >
-  <ng-container *cdkVirtualFor="let item of nodes; let i = index; trackBy: innerTrackBy">
+  <ng-container *cdkVirtualFor="let item of nodes$ | async; let i = index; trackBy: innerTrackBy">
     <ng-template ixTreeVirtualScrollNodeOutlet [data]="item"></ng-template>
   </ng-container>
 </cdk-virtual-scroll-viewport>
