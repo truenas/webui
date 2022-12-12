@@ -148,6 +148,15 @@ export class WebSocketService {
     }
 
     const collectionName = (data as ApiEvent).collection?.replace('.', '_');
+    if (collectionName && this.newSubscribers[collectionName]) {
+      const subscribers = Object.values(this.newSubscribers[collectionName]?.subscribers);
+      for (const subscriber$ of subscribers) {
+        if ('error' in data && data.error) {
+          subscriber$.error(data.error);
+        }
+        subscriber$.next(data as ApiEvent);
+      }
+    }
     if (collectionName && this.pendingSubs[collectionName]?.observers) {
       Object.values(this.pendingSubs[collectionName].observers).forEach((subObserver) => {
         if ('error' in data && data.error) {
@@ -258,6 +267,38 @@ export class WebSocketService {
         delete this.pendingSubs[nom];
       }
     }
+  }
+
+  newSubscribers: {
+    [endpoint: string]: {
+      subscriptionId: string;
+      subscribers: { [key: string]: Subject<ApiEvent<unknown>> };
+    };
+  } = {};
+
+  newSub(endpoint: string, subscriber$: Subject<ApiEvent<unknown>>): void {
+    const observable$ = subscriber$.asObservable();
+    const subscriberId = UUID.UUID();
+    endpoint = endpoint.replace('.', '_'); // Avoid weird behavior
+    if (!this.newSubscribers[endpoint]) {
+      this.newSubscribers[endpoint] = { subscriptionId: UUID.UUID(), subscribers: {} };
+      const payload = {
+        id: this.newSubscribers[endpoint].subscriptionId,
+        name: endpoint,
+        msg: OutgoingApiMessageType.Sub,
+      };
+      this.send(payload);
+    }
+
+    this.newSubscribers[endpoint].subscribers[subscriberId] = subscriber$;
+    observable$.subscribe({
+      complete: () => {
+        delete this.newSubscribers[endpoint].subscribers[subscriberId];
+        if (!Object.values(this.newSubscribers[endpoint].subscribers).length) {
+          this.send({ id: this.newSubscribers[endpoint].subscriptionId, msg: OutgoingApiMessageType.UnSub });
+        }
+      },
+    });
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
