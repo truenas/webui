@@ -17,6 +17,7 @@ import {
   ElementRef,
   Inject,
   TemplateRef,
+  Injector,
 } from '@angular/core';
 import {
   ActivatedRoute, NavigationStart, Router,
@@ -43,10 +44,11 @@ import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
+import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.token';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -87,7 +89,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
   treeWidthChange$ = new Subject<ResizedEvent>();
-  ixDatasetNode = new ComponentPortal<DatasetNodeComponent>(DatasetNodeComponent);
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -138,7 +139,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private store$: Store<AppState>,
-    private systemService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -348,6 +348,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   onImportData(): void {
     this.slideIn.open(ImportDataComponent);
+  }
+
+  getDatasetNodePortal(dataset: FlatNode): ComponentPortal<DatasetNodeComponent> {
+    const portalInjector = Injector.create({
+      providers: [
+        { provide: datasetToken, useValue: this.getDatasetDetails(dataset) },
+        { provide: isSystemDatasetToken, useValue: this.systemDataset === dataset.name },
+      ],
+    });
+
+    return new ComponentPortal(DatasetNodeComponent, null, portalInjector);
   }
 
   getNode(dataset: DatasetDetails): FlatNode {

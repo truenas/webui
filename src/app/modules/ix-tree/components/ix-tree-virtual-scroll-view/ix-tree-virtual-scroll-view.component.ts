@@ -1,24 +1,30 @@
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport, DEFAULT_SCROLL_TIME } from '@angular/cdk/scrolling';
 import {
   CdkTree, CdkTreeNodeOutletContext,
 } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   HostBinding,
   Input,
+  IterableDiffers,
   OnChanges,
   SimpleChanges,
   TrackByFunction,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { BehaviorSubject } from 'rxjs';
+import { auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
 
 export const defaultSize = 48;
 
+@UntilDestroy()
 @Component({
   selector: 'ix-tree-virtual-scroll-view',
   exportAs: 'ixTreeVirtualScrollView',
@@ -42,9 +48,26 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   @Input() override trackBy!: TrackByFunction<T>;
   nodes: IxTreeVirtualNodeData<T>[] = [];
   innerTrackBy: TrackByFunction<IxTreeVirtualNodeData<T>> = (index: number) => index;
+  private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
 
   get isScrollTopButtonVisible(): boolean {
     return this.virtualScrollViewport.measureScrollOffset('top') > this.ixItemSize;
+  }
+
+  constructor(
+    protected differs: IterableDiffers,
+    protected changeDetectorRef: ChangeDetectorRef,
+  ) {
+    super(differs, changeDetectorRef);
+    this.renderNodeChanges$.pipe(
+      auditTime(DEFAULT_SCROLL_TIME),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((data) => {
+      this.nodes = [...data].map((node, index) => this.createNode(node, index));
+      this._dataSourceChanged.next();
+      this.changeDetectorRef.markForCheck();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -63,9 +86,7 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   }
 
   override renderNodeChanges(data: T[] | readonly T[]): void {
-    this.nodes = new Array(...data).map((node, index) => this.createNode(node, index));
-    this._dataSourceChanged.next();
-    this.changeDetectorRef.markForCheck();
+    this.renderNodeChanges$.next(data);
   }
 
   private createNode(nodeData: T, index: number): IxTreeVirtualNodeData<T> {

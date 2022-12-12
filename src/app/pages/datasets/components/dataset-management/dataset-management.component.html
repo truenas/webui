@@ -79,11 +79,7 @@
               (keydown.enter)="viewDetails(dataset)"
             >
               <button mat-icon-button disabled></button>
-              <!-- TODO: Inject ix-dataset-node using CdkPortal for better performance -->
-              <ix-dataset-node
-                [dataset]="getDatasetDetails(dataset)"
-                [isSystemDataset]="isSystemDataset(dataset)"
-              ></ix-dataset-node>
+              <ng-template [cdkPortalOutlet]="getDatasetNodePortal(dataset)"></ng-template>
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
 
@@ -108,11 +104,7 @@
                   [name]="treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
                 ></ix-icon>
               </button>
-              <!-- TODO: Inject ix-dataset-node using CdkPortal for better performance -->
-              <ix-dataset-node
-                [dataset]="getDatasetDetails(dataset)"
-                [isSystemDataset]="isSystemDataset(dataset)"
-              ></ix-dataset-node>
+              <ng-template [cdkPortalOutlet]="getDatasetNodePortal(dataset)"></ng-template>
               <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
             </ix-tree-node>
           </ix-tree-virtual-scroll-view>
