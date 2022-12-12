@@ -51,6 +51,7 @@ import {
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
+import { SaveAsPresetModalComponent } from './components/save-as-preset-modal/save-as-preset-modal.component';
 import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-modal.component';
 
 @NgModule({
@@ -88,6 +89,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     DatasetTrivialPermissionsComponent,
     PermissionsCardComponent,
     StripAclModalComponent,
+    SaveAsPresetModalComponent,
   ],
   exports: [
     PermissionsCardComponent,

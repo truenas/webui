@@ -64,6 +64,10 @@
   }
 }
 
+.add-item {
+  margin: 10px 0 16px 17px;
+}
+
 .controls-container {
   border-top: 1px solid var(--lines);
   display: flex;
@@ -76,6 +80,17 @@
   margin: 21px 20px 0;
   min-width: 240px;
   padding-bottom: 40px;
+
+  .recursive-checkbox {
+    margin-bottom: 5px;
+    margin-top: 1px;
+  }
+
+  .presets-label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-top: 16px;
+  }
 }
 
 .control-buttons {
