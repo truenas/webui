@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -91,11 +91,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   ) {}
 
   get isUserTag(): boolean {
-    return this.form.value.tag === NfsAclTag.User;
+    return this.ace.tag === NfsAclTag.User;
   }
 
   get isGroupTag(): boolean {
-    return this.form.value.tag === NfsAclTag.UserGroup;
+    return this.ace.tag === NfsAclTag.UserGroup;
   }
 
   get arePermissionsBasic(): boolean {
@@ -142,14 +142,8 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       type: formValues.type,
     } as NfsAclItem;
 
-    switch (formValues.tag) {
-      case NfsAclTag.User:
-        ace.who = formValues.user;
-        break;
-      case NfsAclTag.UserGroup:
-        ace.who = formValues.group;
-        break;
-    }
+    if (this.isUserTag) { ace.who = formValues.user; }
+    if (this.isGroupTag) { ace.who = formValues.group; }
 
     if (formValues.permissionType === NfsFormPermsType.Basic) {
       if (!formValues.basicPermission) {
@@ -175,11 +169,20 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private updateFormValues(): void {
+    const userField = this.form.get('user');
+    const groupField = this.form.get('group');
+
+    userField.clearValidators();
+    groupField.clearValidators();
+
+    if (this.isUserTag) { userField.addValidators(Validators.required); }
+    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+
     const formValues = {
       tag: this.ace.tag,
       type: this.ace.type,
-      user: this.ace.tag === NfsAclTag.User ? this.ace.who : '',
-      group: this.ace.tag === NfsAclTag.UserGroup ? this.ace.who : '',
+      user: this.isUserTag ? this.ace.who : null,
+      group: this.isGroupTag ? this.ace.who : null,
     } as EditNfsAceComponent['form']['value'];
 
     if (areNfsPermissionsBasic(this.ace.perms)) {
@@ -204,11 +207,9 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
         .map(([flag]) => flag as NfsAdvancedFlag);
     }
 
-    this.form.reset(formValues, { emitEvent: false });
+    this.form.patchValue(formValues, { emitEvent: false });
     this.form.markAllAsTouched();
 
-    setTimeout(() => {
-      this.onFormStatusUpdated();
-    });
+    this.onFormStatusUpdated();
   }
 }
