@@ -4,24 +4,74 @@
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'General Info' | translate }}</ng-template>
         <ix-general-wizard-step [form]="form.controls.general"></ix-general-wizard-step>
+        <div class="step-buttons">
+          <button mat-button matStepperNext color="primary" type="button">
+            {{ 'Next' | translate }}
+          </button>
+        </div>
       </mat-step>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Data' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button  mat-button  matStepperPrevious  color="accent" type="button">
+            {{ 'Back' | translate }}
+          </button>
+          <button mat-button matStepperNext color="primary" type="button">
+            {{ 'Next' | translate }}
+          </button>
+        </div>
       </mat-step>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Log' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button  mat-button  matStepperPrevious  color="accent" type="button">
+            {{ 'Back' | translate }}
+          </button>
+          <button mat-button matStepperNext color="primary" type="button">
+            {{ 'Next' | translate }}
+          </button>
+        </div>
       </mat-step>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Spare' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button  mat-button  matStepperPrevious  color="accent" type="button">
+            {{ 'Back' | translate }}
+          </button>
+          <button mat-button matStepperNext color="primary" type="button">
+            {{ 'Next' | translate }}
+          </button>
+        </div>
       </mat-step>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Cache' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button  mat-button  matStepperPrevious  color="accent" type="button">
+            {{ 'Back' | translate }}
+          </button>
+          <button mat-button matStepperNext color="primary" type="button">
+            {{ 'Next' | translate }}
+          </button>
+        </div>
       </mat-step>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button  mat-button  matStepperPrevious  color="accent" type="button">
+            {{ 'Back' | translate }}
+          </button>
+          <button mat-button matStepperNext color="primary" type="button">
+            {{ 'Next' | translate }}
+          </button>
+        </div>
       </mat-step>
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
+        <div class="step-buttons">
+          <button  mat-button  matStepperPrevious  color="accent" type="button">
+            {{ 'Back' | translate }}
+          </button>
+        </div>
       </mat-step>
     </mat-vertical-stepper>
   </form>
