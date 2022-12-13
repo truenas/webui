@@ -73,17 +73,17 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   get iconType(): PoolCardIconType {
-    if (this.diskState.alerts || this.diskState.smartTests) {
+    if (this.diskState.alerts) {
       return PoolCardIconType.Warn;
     }
     return PoolCardIconType.Safe;
   }
 
+  // TODO: Altered not to include smart tests. See git history https://ixsystems.atlassian.net/browse/NAS-119323
   get iconTooltip(): string {
-    if (this.diskState.alerts || this.diskState.smartTests) {
-      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed SMART tests', {
+    if (this.diskState.alerts) {
+      return this.translate.instant('Pool Disks have {alerts} alerts', {
         alerts: this.diskState.alerts,
-        smartTests: this.diskState.smartTests,
       });
     }
     return this.translate.instant('Everything is fine');

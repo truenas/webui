@@ -55,7 +55,8 @@
       </a>
     </div>
 
-    <div class="details-item">
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-119323 -->
+    <div *ngIf="false" class="details-item">
       <div class="label">{{ 'Failed S.M.A.R.T. Tests' | translate }}:</div>
       <div class="value">
         {{ diskState.smartTests | number }}
