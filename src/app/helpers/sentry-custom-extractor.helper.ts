@@ -28,11 +28,13 @@ export const sentryCustomExtractor = (
     return errorReportValue;
   }
 
-  const parsedErrorValue = ErrorStackParser.parse(errorCandidate);
+  try {
+    const parsedErrorValue = ErrorStackParser.parse(errorCandidate);
 
-  if (parsedErrorValue) {
-    return parsedErrorValue;
-  }
+    if (parsedErrorValue) {
+      return parsedErrorValue;
+    }
+  } catch {}
 
   // Nothing was extracted, fallback to default error message.
   return 'iXsystems [sentry] default handled error';
