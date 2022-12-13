@@ -15,15 +15,15 @@ export class PropertiesOverrideValidatorService {
     this.translate.instant('Invalid format. Expected format: <property>=<value>'),
   );
 
-  validatePropertyOverride(control: AbstractControl): boolean {
+  private validatePropertyOverride(control: AbstractControl): boolean {
     const overrides = control.value as string[];
     if (!overrides?.length) {
       return false;
     }
 
-    return overrides.some((override) => {
-      const [property, value] = override.split('=');
-      return !property || !value;
+    return overrides.every((override) => {
+      const parts = override.split('=');
+      return parts[0] && parts[1] && parts.length === 2;
     });
   }
 }
