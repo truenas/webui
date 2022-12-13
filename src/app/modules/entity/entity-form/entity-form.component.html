@@ -40,12 +40,12 @@
             fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
             [ngClass]="[
               fieldSet.class ? fieldSet.class : '',
-              isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
+              isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
             ]"
           >
             <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
             <h4
-              *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)"
+              *ngIf="fieldSet.label && isFieldsetAvailable(fieldSet)"
               class="fieldset-label"
             >
               {{ fieldSet.name | translate }}
@@ -54,7 +54,7 @@
               *ngFor="let field of fieldSet.config; let ii = index"
               fxFlex="100%"
               fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
-              id="{{ fieldSet.name }}-{{ ii }}"
+              [id]="fieldSet.name + '-' + ii"
               [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
             >
               <div

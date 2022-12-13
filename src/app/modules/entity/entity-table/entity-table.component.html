@@ -303,12 +303,10 @@
                   ix-auto
                   ix-auto-type="overlay"
                   matTooltipPosition="right"
-                  id="overlay__{{ getRowIdentifier(element) }}_Running"
+                  [id]="'overlay__' + getRowIdentifier(element) + '_Running'"
                   [matTooltip]="element.state"
                   [ix-auto-identifier]="column + getRowIdentifier(element)"
-                  (click)="
-                    $event.stopPropagation(); this.conf.onSliderChange(element)
-                  "
+                  (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 ></div>
 
                 <mat-slide-toggle
@@ -316,8 +314,8 @@
                   ix-auto
                   ix-auto-type="slider"
                   color="primary"
-                  id="slide-toggle__{{ column }}_{{ getRowIdentifier(element) }}"
-                  ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
+                  [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
+                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>
@@ -328,8 +326,8 @@
                   mat-stroked-button
                   ix-auto
                   ix-auto-type="slider"
-                  id="interactive-button_{{ column }}_{{ getRowIdentifier(element) }}"
-                  ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
+                  [id]="'interactive-button_' + column + '_' + getRowIdentifier(element)"
+                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [ngClass]="getButtonClass(element[column])"
                   (click)="
                     $event.stopPropagation(); this.conf.onButtonClick(element)
@@ -377,8 +375,8 @@
                 class="checkbox"
                 ix-auto
                 ix-auto-type="checkbox"
-                id="checkbox__{{ getRowIdentifier(element) }}"
-                ix-auto-identifier="{{ column }}__{{ getRowIdentifier(element) }}"
+                [id]="'checkbox__' + getRowIdentifier(element)"
+                [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                 [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
                 (change)="checkboxChanged(element)"
@@ -389,7 +387,7 @@
                 *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
                 mode="indeterminate"
                 [diameter]="25"
-                id="checkbox_spinner__{{ getRowIdentifier(element) }}"
+                [id]="'checkbox_spinner__' + getRowIdentifier(element)"
               ></mat-spinner>
             </td>
           </ng-container>

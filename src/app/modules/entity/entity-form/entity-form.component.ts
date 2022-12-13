@@ -520,7 +520,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  isFieldsetAvailabel(fieldset: FieldSet): boolean {
+  isFieldsetAvailable(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       return fieldset.config.some((config) => !config.isHidden);
     }

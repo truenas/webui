@@ -200,6 +200,7 @@ export interface DatasetDetails {
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
   atime: boolean;
   casesensitive: boolean;
+  origin: ZfsProperty<string>;
   sync: ZfsProperty<string>;
   compression: ZfsProperty<string>;
   deduplication: ZfsProperty<string>;

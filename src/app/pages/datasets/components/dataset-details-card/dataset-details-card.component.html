@@ -77,6 +77,13 @@
       </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
+      <button
+        *ngIf="canBePromoted"
+        mat-stroked-button
+        (click)="promoteDataset()"
+      >
+        {{ 'Promote' | translate }}
+      </button>
       <button mat-stroked-button (click)="deleteDataset()">
         {{ 'Delete' | translate }}
       </button>

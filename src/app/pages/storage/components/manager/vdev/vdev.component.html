@@ -122,7 +122,7 @@
             <div class="headerCheckBox">
               <mat-checkbox
                 color="primary"
-                id="vdev__disk-table-checkall-{{ group }}-{{ uuid }}"
+                [id]="'vdev__disk-table-checkall-' + group + '-' + uuid"
                 [checked]="allRowsSelected"
                 (change)="selectFn(!allRowsSelected)"
               ></mat-checkbox>

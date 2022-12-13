@@ -199,7 +199,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  isFieldsetAvailabel(fieldset: FieldSet): boolean {
+  isFieldsetAvailable(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       return fieldset.config.some((config) => !config.isHidden);
     }
