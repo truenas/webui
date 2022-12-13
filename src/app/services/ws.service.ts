@@ -276,7 +276,14 @@ export class WebSocketService {
     };
   } = {};
 
-  newSub(endpoint: string, subscriber$: Subject<ApiEvent<unknown>>): void {
+  /**
+   * @param endpoint The end point to subscribe to for updates
+   * @returns A subject that emits an object of ApiEvent<T> type
+   * When you are done with the subscription, call `complete` on the subject returned
+   * and WebSocketService will know to not give you anymore updates
+   */
+  newSub<T>(endpoint: string): Subject<ApiEvent<T>> {
+    const subscriber$ = new Subject<ApiEvent<T>>();
     const observable$ = subscriber$.asObservable();
     const subscriberId = UUID.UUID();
     endpoint = endpoint.replace('.', '_'); // Avoid weird behavior
@@ -299,6 +306,7 @@ export class WebSocketService {
         }
       },
     });
+    return subscriber$;
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {

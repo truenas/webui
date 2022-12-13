@@ -21,6 +21,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { DiskUpdate } from 'app/interfaces/storage.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
@@ -89,9 +90,8 @@ export class GroupListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.store$.dispatch(groupPageEntered());
     this.getPreferences();
     this.getGroups();
-    this.subject$ = new Subject<ApiEvent<unknown>>();
-    this.ws.newSub('group.query', this.subject$);
-    this.subject$.pipe(untilDestroyed(this)).subscribe((update: unknown) => {
+    const subject$ = this.ws.newSub<DiskUpdate>('group.query');
+    subject$.pipe(untilDestroyed(this)).subscribe((update) => {
       console.error('update', update);
     });
   }
