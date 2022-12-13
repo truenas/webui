@@ -166,7 +166,7 @@
               (mouseout)="onHover($event, false)"
             >
               <ng-container *ngIf="hasDetails() === true">
-                <ng-container *ngIf="element === expandedElement">
+                <ng-container *ngIf="element?.id === expandedElement?.id">
                   <button
                     class="transparent-btn"
                     [attr.aria-label]="'Close expanded row' | translate"
@@ -179,7 +179,7 @@
                     ></mat-icon>
                   </button>
                 </ng-container>
-                <ng-container *ngIf="element !== expandedElement">
+                <ng-container *ngIf="element?.id !== expandedElement?.id">
                   <button
                     class="transparent-btn"
                     [attr.aria-label]="'Expand row' | translate"
@@ -386,9 +386,9 @@
               ></mat-checkbox>
 
               <mat-spinner
+                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
                 mode="indeterminate"
                 [diameter]="25"
-                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
                 id="checkbox_spinner__{{ getRowIdentifier(element) }}"
               ></mat-spinner>
             </td>
@@ -429,7 +429,7 @@
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'"
+              [@detailExpand]="element?.id === expandedElement?.id ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
@@ -448,7 +448,7 @@
           ix-auto-type="expander"
           id="{{ element[getFirstKey()] }}"
           ix-auto-identifier="{{ element[getFirstKey()] }}"
-          [ngClass]="{ 'expanded-row': expandedElement === element }"
+          [ngClass]="{ 'expanded-row': expandedElement?.id === element?.id }"
           (click)="doRowClick(element)"
         ></tr>
 
