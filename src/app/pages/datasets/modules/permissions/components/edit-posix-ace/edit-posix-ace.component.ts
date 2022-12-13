@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -56,11 +56,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   ) {}
 
   get isUserTag(): boolean {
-    return this.form.value.tag === PosixAclTag.User;
+    return this.ace.tag === PosixAclTag.User;
   }
 
   get isGroupTag(): boolean {
-    return this.form.value.tag === PosixAclTag.Group;
+    return this.ace.tag === PosixAclTag.Group;
   }
 
   ngOnInit(): void {
@@ -87,7 +87,6 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
 
   private onAceUpdated(): void {
     const updatedAce = this.formValuesToAce();
-
     this.store.updateSelectedAce(updatedAce);
   }
 
@@ -104,35 +103,35 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       },
     } as PosixAclItem;
 
-    switch (formValues.tag) {
-      case PosixAclTag.User:
-        ace.who = formValues.user;
-        break;
-      case PosixAclTag.Group:
-        ace.who = formValues.group;
-        break;
-    }
+    if (this.isUserTag) { ace.who = formValues.user; }
+    if (this.isGroupTag) { ace.who = formValues.group; }
 
     return ace;
   }
 
   private updateFormValues(): void {
+    const userField = this.form.get('user');
+    const groupField = this.form.get('group');
+
+    userField.clearValidators();
+    groupField.clearValidators();
+
+    if (this.isUserTag) { userField.addValidators(Validators.required); }
+    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+
     const formValues = {
       tag: this.ace.tag,
-      user: this.ace.tag === PosixAclTag.User ? this.ace.who : '',
-      group: this.ace.tag === PosixAclTag.Group ? this.ace.who : '',
+      user: this.isUserTag ? this.ace.who : null,
+      group: this.isGroupTag ? this.ace.who : null,
       default: this.ace.default,
       permissions: Object.entries(this.ace.perms)
         .filter(([, isOn]) => isOn)
         .map(([permission]) => permission as PosixPermission),
     };
 
-    this.form.reset(formValues, { emitEvent: false });
-
+    this.form.patchValue(formValues, { emitEvent: false });
     this.form.markAllAsTouched();
 
-    setTimeout(() => {
-      this.onFormStatusUpdated();
-    });
+    this.onFormStatusUpdated();
   }
 }
