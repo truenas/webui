@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -95,7 +95,7 @@ export class ImportPoolComponent implements OnInit {
       next: () => {
         dialogRef.close(true);
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInService.close(null, true);
         this.modalService.refreshTable();
       },
       error: (error) => {

@@ -7,11 +7,11 @@
 </mat-icon>
 
 <div class="alert-body">
-  <h3 *ngIf="!alert.dismissed" class="alert-level {{ alertLevelColor }}">
+  <h3 *ngIf="!alert.dismissed" [class]="['alert-level', alertLevelColor]">
     {{ alertLevelLabel }}
   </h3>
   <h4 class="alert-message" [innerHTML]="alert.formatted"></h4>
-  <div *ngIf="isHa" class="alert-node">{{ alert.node }}</div>
+  <div *ngIf="isHaLicensed" class="alert-node">{{ alert.node }}</div>
   <div class="alert-time">
     {{ alert.datetime.$date | formatDateTime }}
     <ng-container *ngIf="timezone$ | async as timezone">

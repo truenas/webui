@@ -1,8 +1,9 @@
 @use '@angular/material' as mat;
-@import '~assets/styles/scss-imports/cssvars';
+@import 'scss-imports/cssvars';
 $standard-height: 40px;
-@import '~@angular/material/theming';
-@include mat.core();
+@import '@angular/material/theming';
+@include mat.all-legacy-component-typographies();
+@include mat.legacy-core();
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
@@ -14,7 +15,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
 // include the custom theme object into the angular material theme
 .ix-dark {
-  @include mat.all-component-themes($ix-theme);
+  @include mat.all-legacy-component-themes($ix-theme);
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -46,6 +47,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox-label {
     color: var(--fg1);
+    white-space: initial;
   }
 
   .mat-bg-accent {
@@ -282,6 +284,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-button:disabled {
+    cursor: not-allowed;
     opacity: 0.38;
   }
 
@@ -699,7 +702,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .fn-theme-tooltip {
-    @import '~ngx-popperjs/scss/theme';
+    @import 'ngx-popperjs/scss/theme';
     @include ngx-popperjs-theme(var(--primary), var(--primary-txt), 400px, 20001);
   }
 
@@ -946,15 +949,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border-bottom: 1px solid var(--lines);
   }
 
-  ix-entity-dialog .has-pwtoggle {
-    background: rgba(0, 0, 0, 0) !important;
-    padding: 0 0 10px !important;
-
-    mat-form-field {
-      width: 79% !important;
-    }
-  }
-
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
   }
@@ -1103,9 +1097,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
 
   // Scrollbars need separate rules for firefox and webkit
-
-  ix-entity-dialog #pool_processes p,
-  ix-export-disconnect-modal .pool-summary,
   ix-confirm-dialog .warning-box {
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);

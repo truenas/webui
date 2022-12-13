@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
@@ -42,6 +43,7 @@ import {
 import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store/index';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +56,7 @@ export class InterfaceFormComponent implements OnInit {
   readonly defaultMtu = 1500;
 
   isLoading = false;
-  isHa = false;
+  isHaLicensed = false;
   ipLabelSuffix = '';
   failoverLabelSuffix = '';
 
@@ -137,6 +139,7 @@ export class InterfaceFormComponent implements OnInit {
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   get isNew(): boolean {
@@ -194,14 +197,14 @@ export class InterfaceFormComponent implements OnInit {
       address: ['', [Validators.required, ipv4or6cidrValidator()]],
       failover_address: ['', [
         this.validatorsService.validateOnCondition(
-          () => this.isHa,
+          () => this.isHaLicensed,
           Validators.required,
         ),
         ipv4or6Validator(),
       ]],
       failover_virtual_address: ['', [
         this.validatorsService.validateOnCondition(
-          () => this.isHa,
+          () => this.isHaLicensed,
           Validators.required,
         ),
         ipv4or6Validator(),
@@ -276,9 +279,9 @@ export class InterfaceFormComponent implements OnInit {
       this.ws.call('failover.node'),
     ])
       .pipe(untilDestroyed(this))
-      .subscribe(([isHa, failoverNode]) => {
-        this.isHa = isHa;
-        if (isHa) {
+      .subscribe(([isHaLicensed, failoverNode]) => {
+        this.isHaLicensed = isHaLicensed;
+        if (isHaLicensed) {
           if (failoverNode === 'A') {
             this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)');
             this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)');
@@ -312,7 +315,7 @@ export class InterfaceFormComponent implements OnInit {
     const aliases = formAliasesToInterfaceAliases(formValues.aliases);
     params.aliases = aliases.aliases;
 
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       params.failover_aliases = aliases.failover_aliases;
       params.failover_virtual_aliases = aliases.failover_virtual_aliases;
     }
@@ -340,7 +343,7 @@ export class InterfaceFormComponent implements OnInit {
       };
     }
 
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       params = {
         ...params,
         failover_critical: formValues.failover_critical,

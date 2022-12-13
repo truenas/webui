@@ -64,6 +64,11 @@ type Summary = {
   [name: string]: string;
 };
 
+const createNewOption = {
+  label: 'Create New',
+  value: 'NEW',
+};
+
 @UntilDestroy()
 @Component({
   template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
@@ -179,10 +184,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           name: 'disk',
           placeholder: helptextSharingIscsi.disk_placeholder,
           tooltip: helptextSharingIscsi.disk_tooltip,
-          options: [{
-            label: 'Create New',
-            value: 'NEW',
-          }],
+          options: [createNewOption],
           isHidden: false,
           disabled: false,
           required: true,
@@ -291,12 +293,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           name: 'target',
           placeholder: helptextSharingIscsi.target_placeholder,
           tooltip: helptextSharingIscsi.target_tooltip,
-          options: [
-            {
-              label: 'Create New',
-              value: 'NEW',
-            },
-          ],
+          options: [createNewOption],
           value: 'NEW',
         },
       ],
@@ -309,12 +306,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           name: 'portal',
           placeholder: helptextSharingIscsi.portal_placeholder,
           tooltip: helptextSharingIscsi.portal_tooltip,
-          options: [
-            {
-              label: 'Create New',
-              value: 'NEW',
-            },
-          ],
+          options: [createNewOption],
           required: true,
         },
         // portal creation
@@ -351,10 +343,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               label: 'None',
               value: '',
             },
-            {
-              label: 'Create New',
-              value: 'NEW',
-            },
+            createNewOption,
           ],
           value: '',
           isHidden: true,
@@ -573,7 +562,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.getExtentDevices().pipe(choicesToOptions(), untilDestroyed(this)).subscribe({
       next: (options) => {
         this.loader.close();
-        diskField.options = options;
+        diskField.options = [...options, createNewOption];
       },
       error: (res) => {
         this.loader.close();
@@ -582,7 +571,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(idNameArrayToOptions(), untilDestroyed(this)).subscribe((targets) => {
-      targetField.options = targets;
+      targetField.options = [...targets, createNewOption];
     });
 
     this.entityWizard.formArray.get([0]).get('type').valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
@@ -629,13 +618,16 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
-      field.options = portals.map((portal) => {
-        const ips = portal.listen.map((ip) => ip.ip).join(', ');
-        return {
-          label: `${portal.tag} (${ips})`,
-          value: portal.id,
-        };
-      });
+      field.options = [
+        ...portals.map((portal) => {
+          const ips = portal.listen.map((ip) => ip.ip).join(', ');
+          return {
+            label: `${portal.tag} (${ips})`,
+            value: portal.id,
+          };
+        }),
+        createNewOption,
+      ];
     });
 
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
@@ -851,6 +843,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as keyof CreatedItems;
+      // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
         if (!(
           (item === 'zvol' && value['disk'] !== 'NEW')

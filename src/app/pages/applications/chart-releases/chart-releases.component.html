@@ -2,29 +2,33 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button [matMenuTriggerFor]="menu">
+    <button mat-button [matMenuTriggerFor]="menu" [disabled]="filteredChartItems.length === 0">
       {{ 'Bulk Actions' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button *ngIf="!areAllAppsSelected" mat-menu-item (click)="onSelectAll()">
-        <mat-icon>check_circle</mat-icon>
+      <button *ngIf="!areAllAppsSelected" mat-menu-item (click)="$event.stopPropagation(); onSelectAll()">
+        <ix-icon name="mdi-check-circle-outline"></ix-icon>
         <span>{{ 'Select All' | translate }}</span>
       </button>
-      <button *ngIf="areAllAppsSelected" mat-menu-item (click)="onUnselectAll()">
-        <mat-icon>check_circle</mat-icon>
+      <button *ngIf="areAllAppsSelected" mat-menu-item (click)="$event.stopPropagation(); onUnselectAll()">
+        <ix-icon name="mdi-check-circle"></ix-icon>
         <span>{{ 'Unselect All' | translate }}</span>
       </button>
       <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkStart()">
-        <mat-icon>play_arrow</mat-icon>
+        <ix-icon name="mdi-play"></ix-icon>
         <span>{{ 'Start' | translate }}</span>
       </button>
       <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkStop()">
-        <mat-icon>stop</mat-icon>
+        <ix-icon name="mdi-stop"></ix-icon>
         <span>{{ 'Stop' | translate }}</span>
       </button>
+      <button mat-menu-item [disabled]="!hasUpdates" (click)="onBulkUpgrade()">
+        <ix-icon name="mdi-update"></ix-icon>
+        <span>{{ 'Upgrade' | translate }}</span>
+      </button>
       <button mat-menu-item [disabled]="!isSomethingSelected" (click)="onBulkDelete()">
-        <mat-icon>delete</mat-icon>
+        <ix-icon name="mdi-delete"></ix-icon>
         <span>{{ 'Delete' | translate }}</span>
       </button>
     </mat-menu>
@@ -66,14 +70,14 @@
             class="chart-name"
             textLimiter
             threshold="20"
-            content="{{ item.name }}"
+            [content]="item.name"
           ></strong>
           <div>
             <span
               class="version"
               textLimiter
               threshold="50"
-              content="{{ item.human_version }}"
+              [content]="item.human_version"
             ></span>
           </div>
           <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
@@ -100,7 +104,7 @@
                 class="ports-text"
                 textLimiter
                 threshold="28"
-                content="{{ appService.getPorts(item) | lowercase }}"
+                [content]="appService.getPorts(item) | lowercase"
               >
               </span>
             </div>
@@ -109,7 +113,7 @@
                 mat-button
                 ix-auto
                 ix-auto-type="button"
-                ix-auto-identifier="{{ item.name }}-portal"
+                [ix-auto-identifier]="item.name + '-portal'"
                 (click)="portalLink(item, portal.key)"
               >
                 {{ portalName(portal.key) }}
@@ -121,7 +125,7 @@
             mat-button
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ item.name }}-stop"
+            [ix-auto-identifier]="item.name + '-stop'"
             (click)="stop(item.name)"
           >
             {{ 'Stop' | translate }}
@@ -131,7 +135,7 @@
             mat-button
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ item.name }}-start"
+            [ix-auto-identifier]="item.name + '-start'"
             (click)="start(item.name)"
           >
             {{ 'Start' | translate }}
@@ -238,7 +242,7 @@
   </mat-card>
 
   <ix-entity-empty
-    *ngIf="filteredChartItems.length == 0"
+    *ngIf="filteredChartItems.length === 0"
     [conf]="emptyPageConf"
   ></ix-entity-empty>
 </div>

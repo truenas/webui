@@ -4,11 +4,13 @@ import {
   DatasetCaseSensitivity,
   DatasetChecksum,
   DatasetRecordSize,
-  DatasetShareType, DatasetSnapdev,
+  DatasetShareType,
+  DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
   DatasetType,
-  DatasetVolumeBlockSize, DatasetXattr,
+  DatasetVolumeBlockSize,
+  DatasetXattr,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -63,7 +65,6 @@ export interface Dataset {
   // Absent if extra.retrieve_children is false
   children?: Dataset[];
 
-  // TODO: Need to confirm that these properties are valid backend properties
   refquota_critical?: ZfsProperty<number>;
   refquota_warning?: ZfsProperty<number>;
   quota_critical?: ZfsProperty<number>;
@@ -199,6 +200,7 @@ export interface DatasetDetails {
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
   atime: boolean;
   casesensitive: boolean;
+  origin: ZfsProperty<string>;
   sync: ZfsProperty<string>;
   compression: ZfsProperty<string>;
   deduplication: ZfsProperty<string>;
@@ -211,7 +213,6 @@ export interface DatasetDetails {
 
 export enum DiskSpaceKey {
   UsedByDataset = 'usedbydataset',
-  UsedBySnapshots = 'usedbysnapshots',
   UsedByChildren = 'usedbychildren',
 }
 export type DiskSpace = { [key in DiskSpaceKey]?: number };

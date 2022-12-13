@@ -121,10 +121,8 @@ export class EntityWizardComponent implements OnInit {
   }
 
   isShow(id: string): boolean {
-    if (this.conf.isBasicMode) {
-      if (this.conf.advancedFields.includes(id)) {
-        return false;
-      }
+    if (this.conf.isBasicMode && this.conf.advancedFields.includes(id)) {
+      return false;
     }
     return true;
   }
@@ -201,7 +199,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  isFieldsetAvailabel(fieldset: FieldSet): boolean {
+  isFieldsetAvailable(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       return fieldset.config.some((config) => !config.isHidden);
     }
@@ -220,14 +218,12 @@ export class EntityWizardComponent implements OnInit {
    * We use isAutoSummary flag to generate summary automatically
    */
   selectionChange(event: StepperSelectionEvent): void {
-    if (this.conf.isAutoSummary) {
-      if (event.selectedIndex === this.conf.wizardConfig.length) {
-        let value = {};
-        Object.values(this.formGroup.value.formArray).forEach((controlValue) => {
-          value = _.merge(value, _.cloneDeep(controlValue));
-        });
-        this.summaryValue = value;
-      }
+    if (this.conf.isAutoSummary && event.selectedIndex === this.conf.wizardConfig.length) {
+      let value = {};
+      Object.values(this.formGroup.value.formArray).forEach((controlValue) => {
+        value = _.merge(value, _.cloneDeep(controlValue));
+      });
+      this.summaryValue = value;
     }
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TooltipPosition } from '@angular/material/tooltip';
+import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -13,14 +13,14 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class TunableListComponent implements EntityTableConfig {
+export class TunableListComponent implements EntityTableConfig<Tunable> {
   title: string = this.translate.instant('Sysctl');
   wsDelete = 'tunable.delete' as const;
   queryCall = 'tunable.query' as const;
   routeAddTooltip: string = this.translate.instant('Add Sysctl');
   protected routeSuccess: string[] = ['system', 'sysctl'];
   protected productType: ProductType;
-  protected entityList: EntityTableComponent;
+  protected entityList: EntityTableComponent<Tunable>;
 
   wsMultiDelete = 'core.bulk' as const;
   multiActions = [
@@ -60,7 +60,7 @@ export class TunableListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
   ) {}
 
-  preInit(entityList: EntityTableComponent): void {
+  preInit(entityList: EntityTableComponent<Tunable>): void {
     this.entityList = entityList;
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
@@ -80,7 +80,7 @@ export class TunableListComponent implements EntityTableConfig {
     this.slideInService.open(TunableFormComponent);
   }
 
-  getActions(row: Tunable): EntityTableAction<Tunable>[] {
+  getActions(tunable: Tunable): EntityTableAction<Tunable>[] {
     return [
       {
         icon: 'edit',
@@ -98,7 +98,7 @@ export class TunableListComponent implements EntityTableConfig {
         actionName: 'delete',
         label: this.translate.instant('Delete'),
         onClick: () => {
-          this.entityList.doDelete(row);
+          this.entityList.doDelete(tunable);
         },
       },
     ] as EntityTableAction<Tunable>[];

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -33,6 +33,8 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const newStorjBucket = 'new_storj_bucket';
+
+type FormValue = CloudsyncFormComponent['form']['value'];
 
 @UntilDestroy()
 @Component({
@@ -62,6 +64,7 @@ export class CloudsyncFormComponent {
     credentials: [null as number, Validators.required],
     bucket: [''],
     bucket_input: ['', Validators.required],
+    acknowledge_abuse: [false],
     folder_destination: [[] as string[]],
     folder_source: [[] as string[]],
     bucket_policy_only: [false],
@@ -250,10 +253,13 @@ export class CloudsyncFormComponent {
         }
 
         this.cloudCredentialService.getCloudsyncCredentials()
-          .pipe(untilDestroyed(this)).subscribe((credentialsList) => {
-            this.credentialsList = credentialsList;
-            this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providersList) => {
-              const targetCredentials = _.find(credentialsList, { id: credentials });
+          .pipe(
+            switchMap((credentialsList) => {
+              this.credentialsList = credentialsList;
+              return this.cloudCredentialService.getProviders();
+            }),
+            map((providersList) => {
+              const targetCredentials = _.find(this.credentialsList, { id: credentials });
               const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
               if (targetProvider && targetProvider.buckets) {
                 this.isLoading = true;
@@ -285,8 +291,8 @@ export class CloudsyncFormComponent {
                 this.form.controls.bucket_policy_only.disable();
               }
 
-              const taskSchema = _.find(providersList, { name: targetCredentials?.provider })
-                ? _.find(providersList, { name: targetCredentials?.provider }).task_schema : [];
+              const schemaFound = _.find(providersList, { name: targetCredentials?.provider });
+              const taskSchema = schemaFound ? schemaFound.task_schema : [];
 
               const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
               for (const i of taskSchemas) {
@@ -299,8 +305,10 @@ export class CloudsyncFormComponent {
                   }
                 }
               }
-            });
-          });
+            }),
+            untilDestroyed(this),
+          )
+          .subscribe();
       } else {
         this.form.controls.bucket.disable();
         this.form.controls.bucket_input.disable();
@@ -329,8 +337,7 @@ export class CloudsyncFormComponent {
       const parentDirectories = values.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -369,8 +376,7 @@ export class CloudsyncFormComponent {
       const parentDirectories = values.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -399,6 +405,7 @@ export class CloudsyncFormComponent {
 
   loadBucketOptions(): void {
     const targetCredentials = _.find(this.credentialsList, { id: this.form.controls.credentials.value });
+
     this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
       next: (buckets) => {
         const bucketOptions = buckets.map((bucket) => ({
@@ -467,6 +474,7 @@ export class CloudsyncFormComponent {
       if (bucket === '') {
         delete data.attributes.bucket;
       }
+
       return this.ws.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
@@ -539,20 +547,21 @@ export class CloudsyncFormComponent {
     if (task.attributes.chunk_size) {
       this.form.controls.chunk_size.setValue(task.attributes.chunk_size as number);
     }
+    if (task.attributes.acknowledge_abuse) {
+      this.form.controls.acknowledge_abuse.setValue(task.attributes.acknowledge_abuse as boolean);
+    }
     if (task.attributes.storage_class) {
       this.form.controls.storage_class.setValue(task.attributes.storage_class as string);
     }
   }
 
-  prepareBwlimit(bwlimit: string): { time: string; bandwidth: string }[] {
+  prepareBwlimit(bwlimit: string[]): CloudSyncTaskUpdate['bwlimit'] {
     const bwlimtArr = [];
 
     for (const limit of bwlimit) {
       const sublimitArr = limit.split(/\s*,\s*/);
-      if (sublimitArr.length === 1 && bwlimit.length === 1) {
-        if (!sublimitArr[0].includes(':')) {
-          sublimitArr.unshift('00:00');
-        }
+      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
+        sublimitArr.unshift('00:00');
       }
       if (sublimitArr[1] && sublimitArr[1] !== 'off') {
         if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
@@ -572,92 +581,78 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  prepareData(formValue: any): CloudSyncTaskUpdate {
-    const value = _.cloneDeep(formValue);
+  prepareData(formValue: FormValue): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
-    if (value.direction === Direction.Pull) {
-      value.path = _.isArray(value.path_destination) ? value.path_destination[0] : value.path_destination;
+    const value: CloudSyncTaskUpdate = {
+      ...formValue,
+      attributes,
+      include: undefined,
+      path: undefined,
+      bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
+      schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
+      snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
+    };
 
-      if (!value.folder_source.length || !_.isArray(value.folder_source)) {
+    const attributesToFill = [
+      'bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption',
+      'storage_class', 'fast_list', 'chunk_size', 'acknowledge_abuse',
+    ] as const;
+
+    ([
+      'path_source', 'path_destination', 'folder_source',
+      'folder_destination', 'cloudsync_picker', ...attributesToFill,
+    ] as const).forEach((key) => {
+      delete (value as unknown as FormValue)[key];
+    });
+
+    if (formValue.direction === Direction.Pull) {
+      value.path = _.isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
+
+      if (!formValue.folder_source.length || !_.isArray(formValue.folder_source)) {
         attributes.folder = '/';
-      } else if (value.folder_source.length === 1) {
-        attributes.folder = value.folder_source[0];
+      } else if (formValue.folder_source.length === 1) {
+        attributes.folder = formValue.folder_source[0];
       } else {
         value.include = [];
-        for (const dir of value.folder_source) {
+        for (const dir of formValue.folder_source) {
           const directory = dir.split('/');
           value.include.push('/' + directory[directory.length - 1] + '/**');
         }
-        const directory = value.folder_source[value.folder_source.length - 1].split('/');
+        const directory = formValue.folder_source[formValue.folder_source.length - 1].split('/');
         attributes.folder = directory.slice(0, directory.length - 1).join('/');
       }
     } else {
-      attributes.folder = _.isArray(value.folder_destination) ? value.folder_destination[0] : value.folder_destination;
+      attributes.folder = _.isArray(formValue.folder_destination)
+        ? formValue.folder_destination[0] : formValue.folder_destination;
 
-      if (!value.path_source.length || !_.isArray(value.path_source)) {
+      if (!formValue.path_source.length || !_.isArray(formValue.path_source)) {
         value.path = '/';
-      } else if (value.path_source.length === 1) {
-        value.path = value.path_source[0];
+      } else if (formValue.path_source.length === 1) {
+        value.path = formValue.path_source[0];
       } else {
         value.include = [];
-        for (const dir of value.path_source) {
+        for (const dir of formValue.path_source) {
           const directory = dir.split('/');
           value.include.push('/' + directory[directory.length - 1] + '/**');
         }
-        const directory = value.path_source[value.path_source.length - 1].split('/');
+        const directory = formValue.path_source[formValue.path_source.length - 1].split('/');
         value.path = directory.slice(0, directory.length - 1).join('/');
       }
     }
 
-    delete value.path_source;
-    delete value.path_destination;
-    delete value.folder_source;
-    delete value.folder_destination;
-
-    if (value.bucket !== undefined) {
-      attributes.bucket = value.bucket;
-      delete value.bucket;
-    }
-    if (value.bucket_input !== undefined) {
-      attributes.bucket = value.bucket_input;
-      delete value.bucket_input;
-    }
-
-    if (value.bucket_policy_only !== undefined) {
-      attributes.bucket_policy_only = value.bucket_policy_only;
-      delete value.bucket_policy_only;
-    }
-
-    if (value.task_encryption !== undefined) {
-      attributes.encryption = value.task_encryption === '' ? null : value.task_encryption;
-      delete value.task_encryption;
-    }
-    if (value.storage_class !== undefined) {
-      attributes.storage_class = value.storage_class;
-      delete value.storage_class;
-    }
-    if (value.fast_list !== undefined) {
-      attributes.fast_list = value.fast_list;
-      delete value.fast_list;
-    }
-    if (value.chunk_size !== undefined) {
-      attributes.chunk_size = value.chunk_size;
-      delete value.chunk_size;
-    }
+    attributesToFill.forEach((name) => {
+      if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
+        if (name === 'task_encryption') {
+          attributes[name] = formValue[name] === '' ? null : formValue[name];
+        } else {
+          attributes[name] = formValue[name];
+        }
+      }
+    });
 
     value.attributes = attributes;
 
-    value.schedule = value.cloudsync_picker ? crontabToSchedule(value.cloudsync_picker) : {};
-    delete value.cloudsync_picker;
-
-    if (value.bwlimit !== undefined) {
-      value.bwlimit = this.prepareBwlimit(value.bwlimit);
-    }
-
-    if (value.direction === Direction.Pull) {
-      value.snapshot = false;
-    }
     return value;
   }
 
@@ -692,6 +687,7 @@ export class CloudsyncFormComponent {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
+
     if (this.isNew) {
       request$ = this.ws.call('cloudsync.create', [payload]);
     } else {

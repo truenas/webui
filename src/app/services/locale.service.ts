@@ -119,8 +119,8 @@ export class LocaleService {
     return [format(date, `${this.dateFormat}`), format(date, `${this.timeFormat}`)];
   }
 
-  formatDateTimeToDateFns(format: string): string {
-    let dateFnsFormat = format
+  formatDateTimeToDateFns(dateTimeFormat: string): string {
+    let dateFnsFormat = dateTimeFormat
       .replace('YYYY', 'yyyy')
       .replace('YY', 'y')
       .replace('DD', 'dd')
@@ -141,14 +141,13 @@ export class LocaleService {
   }
 
   /** Revert DateFns for Chart DateTime format */
-  formatDateTimeToChart(format: string): string {
-    const dateFormat = format
+  formatDateTimeToChart(dateTimeFormat: string): string {
+    return dateTimeFormat
       .replace('yyyy', 'YYYY')
       .replace('y', 'YY')
       .replace('dd', 'DD')
       .replace('d', 'D')
       .replace(' aaaaa\'m\'', ' a')
       .replace(' aa', ' A');
-    return dateFormat;
   }
 }

@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -16,6 +17,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -204,6 +207,7 @@ export class NetworkConfigurationComponent implements OnInit {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -236,9 +240,9 @@ export class NetworkConfigurationComponent implements OnInit {
     );
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.hostnameB.hidden = !isHa;
-        this.hostnameVirtual.hidden = !isHa;
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.hostnameB.hidden = !isHaLicensed;
+        this.hostnameVirtual.hidden = !isHaLicensed;
       });
     }
   }
@@ -255,11 +259,11 @@ export class NetworkConfigurationComponent implements OnInit {
             inherit_dhcp: config.domain === '',
             domain: config.domain,
             domains: config.domains,
-            nameserver1: config.nameserver1,
-            nameserver2: config.nameserver2,
-            nameserver3: config.nameserver3,
-            ipv4gateway: config.ipv4gateway,
-            ipv6gateway: config.ipv6gateway,
+            nameserver1: config.nameserver1 || config.state.nameserver1,
+            nameserver2: config.nameserver2 || config.state.nameserver2,
+            nameserver3: config.nameserver3 || config.state.nameserver3,
+            ipv4gateway: config.ipv4gateway || config.state.ipv4gateway,
+            ipv6gateway: config.ipv6gateway || config.state.ipv6gateway,
             outbound_network_activity: NetworkActivityType.Allow,
             outbound_network_value: [],
             httpproxy: config.httpproxy,

@@ -1,12 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  fieldset_dataset: T('Dataset'),
-  fieldset_schedule: T('Schedule'),
-
   dataset_placeholder: T('Dataset'),
   dataset_tooltip: T('Select a pool, dataset, or zvol.'),
-  dataset_warning: T('Invalid dataset.'),
 
   recursive_placeholder: T('Recursive'),
   recursive_tooltip: T('Set to take separate snapshots of the \
@@ -67,7 +63,4 @@ export default {
   enabled_tooltip: T('To activate this periodic snapshot schedule, set \
  this option. To disable this task without deleting it, unset this \
  option.'),
-
-  snapshot_task_add: T('Add Periodic Snapshot Task'),
-  snapshot_task_edit: T('Edit Periodic Snapshot Task'),
 };

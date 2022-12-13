@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -110,13 +110,11 @@ export class EmailComponent implements OnInit {
   }
 
   onSendTestEmailPressed(): void {
-    this.ws.call('user.query', [[['username', '=', 'root']]]).pipe(untilDestroyed(this)).subscribe((users) => {
-      const rootEmail = users[0].email;
-
-      if (!rootEmail) {
+    this.ws.call('mail.local_administrator_email').pipe(untilDestroyed(this)).subscribe((email) => {
+      if (!email) {
         this.dialogService.info(
           this.translate.instant('Email'),
-          this.translate.instant('Email for root user is not set. Please, configure the root user email address first.'),
+          this.translate.instant('No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.'),
         );
         // TODO: Consider taking user to the user edit page
         return;
@@ -128,7 +126,7 @@ export class EmailComponent implements OnInit {
 
   onLoginToGmailPressed(): void {
     this.window.open(
-      'https://freenas.org/oauth/gmail?origin=' + encodeURIComponent(this.window.location.toString()),
+      'https://truenas.com/oauth/gmail?origin=' + encodeURIComponent(this.window.location.toString()),
       '_blank',
       'width=640,height=480',
     );

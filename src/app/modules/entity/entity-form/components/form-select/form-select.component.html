@@ -1,7 +1,6 @@
 <div
-  class="form-element dynamic-field form-select {{ config.inlineLabel ? 'inline-label' : 'not' }}"
+  [class]="['form-element', 'dynamic-field', 'form-select', fieldShow, (config.inlineLabel ? 'inline-label' : 'not')]"
   [formGroup]="group"
-  [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
   [hidden]="config.isHidden"
   [attr.id]="config.name"
@@ -41,14 +40,14 @@
       *ngIf="config.isLoading"
       diameter="40"
       class="form-select-spinner"
-      id="{{ config.name }}_form-select-spinner"
+      [id]="config.name + '_form-select-spinner'"
     >
     </mat-spinner>
     <mat-select
       #selectTrigger
       ix-auto
       ix-auto-type="select"
-      ix-auto-identifier="{{ config.placeholder }}"
+      [ix-auto-identifier]="config.placeholder"
       [value]="formValue"
       [formControlName]="config.name"
       [multiple]="config.multiple"
@@ -69,7 +68,7 @@
             disabled
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
+            [ix-auto-identifier]="config.placeholder + '_' + option.label"
             [value]="option.value"
           >
             <span *ngIf="config.multiple">
@@ -88,7 +87,7 @@
             *ngIf="!option?.disable"
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
+            [ix-auto-identifier]="config.placeholder + '_' + option.label"
             [value]="option.value"
             [class.text-wrap]="config.enableTextWrapForOptions"
             (click)="onToggleSelect(option)"
@@ -112,13 +111,13 @@
         </ng-container>
       </ng-container>
 
-      <ng-container *ngIf="!formReady || config.options.length == 0">
+      <ng-container *ngIf="!formReady || config.options.length === 0">
         <ng-container>
           <mat-option
             disabled
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{ config.placeholder }}_zeroState"
+            [ix-auto-identifier]="config.placeholder + '_zeroState'"
             [class.text-wrap]="config.enableTextWrapForOptions"
           >
             {{ config.zeroStateMessage ? config.zeroStateMessage : '--' }}

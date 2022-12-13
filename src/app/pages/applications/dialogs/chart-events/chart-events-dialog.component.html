@@ -56,7 +56,7 @@
           class="value"
           textLimiter
           threshold="14"
-          content="{{ catalogApp.catalog }}"
+          [content]="catalogApp.catalog"
         ></span>
       </div>
     </div>
@@ -67,7 +67,7 @@
           class="value"
           textLimiter
           threshold="14"
-          content="{{ catalogApp.catalog_train }}"
+          [content]="catalogApp.catalog_train"
         ></span>
       </div>
     </div>
@@ -77,7 +77,7 @@
         class="value"
         textLimiter
         threshold="14"
-        content="{{ catalogApp.chart_metadata.name }}"
+        [content]="catalogApp.chart_metadata.name"
       ></span>
     </div>
   </div>
@@ -92,7 +92,7 @@
         <div
           *ngFor="let containerImage of catalogApp.resources.container_images | cast | keyvalue; let i = index"
           class="detail-row"
-          [ngClass]="{ 'row-dark': i % 2 == 0 }"
+          [ngClass]="{ 'row-dark': i % 2 === 0 }"
         >
           <div fxLayout="row" fxLayoutAlign="center start">
             <span fxFlex="70%">{{ containerImage.key }}</span>
@@ -117,7 +117,7 @@
             fxLayout="row"
             fxLayoutAlign="start start"
             class="detail-row"
-            [ngClass]="{ 'row-dark': i % 2 == 0 }"
+            [ngClass]="{ 'row-dark': i % 2 === 0 }"
           >
             <div class="event-time">
               {{ event.metadata.creation_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}

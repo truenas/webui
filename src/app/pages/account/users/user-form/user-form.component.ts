@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, Observable, of, Subscription,
+  combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
   filter, map, switchMap,
@@ -76,6 +76,7 @@ export class UserFormComponent {
     home: ['/nonexistent', []],
     home_mode: ['755'],
     sshpubkey: [null as string],
+    sshpubkey_file: [null as File[]],
     password_disabled: [false],
     shell: [null as string],
     locked: [false],
@@ -130,6 +131,15 @@ export class UserFormComponent {
    */
   setupForm(user?: User): void {
     this.editingUser = user;
+
+    this.form.controls.sshpubkey_file.valueChanges.pipe(
+      switchMap((files: File[]) => {
+        return !files?.length ? of('') : from(files[0].text());
+      }),
+      untilDestroyed(this),
+    ).subscribe((key) => {
+      this.form.controls.sshpubkey.setValue(key);
+    });
 
     this.form.get('password_conf').addValidators(
       this.validatorsService.withMessage(
@@ -268,7 +278,7 @@ export class UserFormComponent {
     this.form.get('uid').disable();
     this.form.get('group_create').disable();
 
-    if (user.builtin) {
+    if (user.immutable) {
       this.form.get('group').disable();
       this.form.get('home_mode').disable();
       this.form.get('home').disable();

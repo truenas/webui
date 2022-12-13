@@ -1,9 +1,10 @@
 import {
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -44,7 +45,8 @@ import {
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ModalService } from 'app/services/modal.service';
+import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
+import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
 
 @UntilDestroy()
@@ -94,7 +96,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       if (this.isHaEnabled) {
         this.dialog.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        this.tableService.delete(table, row, deleteAction);
+        this.tableService.delete(table, row as unknown as Record<string, unknown>, deleteAction);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -198,13 +200,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private dialog: DialogService,
     private storageService: StorageService,
     private loader: AppLoaderService,
-    private modalService: ModalService,
     private translate: TranslateService,
     private tableService: TableService,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -244,27 +246,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
       });
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws
-        .call('failover.licensed')
-        .pipe(untilDestroyed(this))
-        .subscribe((isHa) => {
-          if (isHa) {
-            this.ws
-              .call('failover.disabled.reasons')
-              .pipe(untilDestroyed(this))
-              .subscribe((reasons) => {
-                if (reasons.length === 0) {
-                  this.isHaEnabled = true;
-                }
-              });
-          }
-        });
+      this.listenForHaStatus();
     }
 
     this.openInterfaceForEditFromRoute();
 
     this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
+    });
+  }
+
+  private listenForHaStatus(): void {
+    this.store$.select(selectHaStatus).pipe(filter(Boolean), untilDestroyed(this)).subscribe(({ hasHa }) => {
+      this.isHaEnabled = hasHa;
     });
   }
 

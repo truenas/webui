@@ -1,15 +1,19 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable, of } from 'rxjs';
+import {
+  filter, map, switchMap,
+} from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { DialogService } from 'app/services';
@@ -35,24 +39,33 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     large: false,
     title: this.translate.instant('Loading...'),
   };
-  isLoading$ = this.store.isLoading$;
-  emptyOrErrorConfig$: Observable<EmptyConfig> = this.store.isError$.pipe(
-    switchMap((hasError) => {
-      if (hasError) {
-        return of({
-          type: EmptyType.Errors,
-          large: true,
-          title: this.translate.instant('Can not retrieve response'),
-        });
-      }
 
-      return of({
-        type: EmptyType.NoPageData,
-        title: this.translate.instant('No API Keys'),
-        large: true,
-      });
+  readonly EmptyType = EmptyType;
+  isLoading$ = this.store.isLoading$;
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
+    this.store.isError$,
+    this.store.apiKeys$.pipe(
+      map((apiKeys) => apiKeys?.length === 0),
+    ),
+  ]).pipe(
+    switchMap(([isLoading, isError, isNoData]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
+      }
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     private translate: TranslateService,
@@ -62,6 +75,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     private matDialog: MatDialog,
     private dialog: DialogService,
     private ws: WebSocketService,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {

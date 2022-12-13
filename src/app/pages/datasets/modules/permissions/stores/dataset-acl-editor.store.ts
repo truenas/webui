@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import * as _ from 'lodash';
@@ -54,7 +54,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
     return mountpoints$.pipe(
       tap((mountpoint) => {
-        this.patchState({
+        this.setState({
+          ...initialState,
           mountpoint,
           isLoading: true,
         });
@@ -105,7 +106,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((ace, index) => index !== indexToRemove),
       },
       acesWithError: newAcesWithError,
     } as DatasetAclEditorState;

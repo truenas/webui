@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
@@ -160,8 +160,8 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('shows an error when verification fails', async () => {
-      const mockWebsocket = spectator.inject(MockWebsocketService);
-      mockWebsocket.mockCall('cloudsync.credentials.verify', {
+      const websocketMock = spectator.inject(MockWebsocketService);
+      websocketMock.mockCall('cloudsync.credentials.verify', {
         valid: false,
         excerpt: 'Missing some important field',
         error: 'Some error',
@@ -269,6 +269,34 @@ describe('CloudCredentialsFormComponent', () => {
       ]);
       expect(spectator.inject(IxSlideInService).close).toHaveBeenCalledWith();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+
+    it('sets default name when provider is selected and name field has not been touched by the user', async () => {
+      await form.fillForm({
+        Provider: 'Amazon S3',
+      });
+      expect(await form.getValues()).toMatchObject({
+        Name: 'Amazon S3',
+      });
+
+      await form.fillForm({
+        Provider: 'Box',
+      });
+      expect(await form.getValues()).toMatchObject({
+        Name: 'Box',
+      });
+
+      await form.fillForm({
+        Name: 'My Box',
+      });
+      await form.fillForm({
+        Provider: 'Amazon S3',
+      });
+
+      expect(await form.getValues()).toEqual({
+        Name: 'My Box',
+        Provider: 'Amazon S3',
+      });
     });
   });
 });

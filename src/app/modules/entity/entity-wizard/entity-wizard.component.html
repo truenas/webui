@@ -20,7 +20,7 @@
         <mat-step
           *ngIf="!step.skip"
           #matStepInstance
-          formGroupName="{{ i }}"
+          [formGroupName]="i"
           [stepControl]="formArray?.get([i])"
         >
           <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
@@ -34,12 +34,12 @@
                 fxFlex.gt-xs="calc({{ fieldSet.width ? fieldSet.width : '100%' }} - 16px)"
                 [ngClass]="[
                   fieldSet.class ? fieldSet.class : '',
-                  isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
+                  isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
                 ]"
               >
                 <mat-divider *ngIf="fieldSet.divider && i > 0"></mat-divider>
 
-                <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">
+                <h4 *ngIf="fieldSet.label && isFieldsetAvailable(fieldSet)" class="fieldset-label">
                   {{ fieldSet.name | translate }}
                 </h4>
 
@@ -47,12 +47,12 @@
                   *ngFor="let field of fieldSet.config; let k = index"
                   fxFlex="100%"
                   fxFlex.gt-xs="calc({{ field.width ? field.width : '100%'}} - 16px)"
-                  id="{{ k }}"
-                  [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+                  [id]="k"
+                  [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
                 >
                   <div
                     dynamicField
-                    id="dynamicField_{{ field.name }}"
+                    [id]="'dynamicField_' + field.name"
                     [config]="field"
                     [group]="formArray?.get([i]) | cast"
                     [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
@@ -74,23 +74,23 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="cancel_button_{{ i }}"
-              ix-auto-identifier="CANCEL_{{ step.label }}"
+              [id]="'cancel_button_' + i"
+              [ix-auto-identifier]="'CANCEL_' + step.label"
               (click)="goBack()"
             >
               {{ 'Cancel' | translate }}
             </button>
 
             <button
-              *ngIf="i == 0 ? false : true"
+              *ngIf="i !== 0"
               mat-button
               matStepperPrevious
               color="accent"
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="goback_button_{{ i }}"
-              ix-auto-identifier="BACK_{{ step.label }}"
+              [id]="'goback_button_' + i"
+              [ix-auto-identifier]="'BACK_' + step.label"
             >
               {{ 'Back' | translate }}
             </button>
@@ -103,8 +103,8 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="goforward_button_{{ i }}"
-              ix-auto-identifier="NEXT_{{ step.label }}"
+              [id]="'goforward_button_' + i"
+              [ix-auto-identifier]="'NEXT_' + step.label"
               [disabled]="showSpinner"
               (click)="handleNext(matStepInstance)"
             >
@@ -118,8 +118,8 @@
               type="button"
               ix-auto
               ix-auto-type="button"
-              id="custom_button_{{ i }}"
-              ix-auto-identifier="{{ customNextText | uppercase }}"
+              [id]="'custom_button_' + i"
+              [ix-auto-identifier]="customNextText | uppercase"
               (click)="handleNext(matStepInstance)"
             >
               {{ customNextText | translate }}
@@ -133,8 +133,8 @@
                 type="button"
                 ix-auto
                 ix-auto-type="button"
-                id="cust_button_{{ custBtn.name }}"
-                ix-auto-identifier="{{ custBtn.name | uppercase }}"
+                [id]="'cust_button_' + custBtn.name"
+                [ix-auto-identifier]="custBtn.name | uppercase"
                 (click)="custBtn['function']()"
               >
                 {{ custBtn.name | translate }}
@@ -176,7 +176,7 @@
                 color="primary"
                 ix-auto
                 ix-auto-type="button"
-                ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+                [ix-auto-identifier]="saveSubmitText | uppercase"
                 [disabled]="!entityForm.form.valid"
                 (click)="onSubmit()"
               >
@@ -236,7 +236,7 @@
             color="primary"
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+            [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid"
             (click)="onSubmit()"
           >

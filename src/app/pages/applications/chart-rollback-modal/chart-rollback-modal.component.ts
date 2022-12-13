@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
@@ -59,5 +59,14 @@ export class ChartRollbackModalComponent {
     }));
 
     this.versionOptions$ = of(options);
+    if (options.length) {
+      this.selectFirstVersion();
+    }
+  }
+
+  private selectFirstVersion(): void {
+    this.form.patchValue({
+      item_version: Object.keys(this.chartRelease.history)[0],
+    });
   }
 }

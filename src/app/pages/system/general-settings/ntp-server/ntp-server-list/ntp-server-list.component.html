@@ -8,13 +8,18 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    <table ix-table class="mat-elevation-z0" [dataSource]="dataSource">
+    <table
+      ix-table
+      class="mat-elevation-z0"
+      [ix-table-empty]="!dataSource.filteredData.length"
+      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType)"
+      [dataSource]="dataSource"
+    >
       <ng-container matColumnDef="address">
         <th *matHeaderCellDef mat-header-cell>{{ 'Address' | translate }}</th>
         <td
           *matCellDef="let server; dataSource: dataSource"
           mat-cell
-          (click)="doEdit(server)"
         >
           {{ server.address }}
         </td>
@@ -24,7 +29,6 @@
         <td
           *matCellDef="let server; dataSource: dataSource"
           mat-cell
-          (click)="doEdit(server)"
         >
           {{ server.burst }}
         </td>
@@ -34,7 +38,6 @@
         <td
           *matCellDef="let server; dataSource: dataSource"
           mat-cell
-          (click)="doEdit(server)"
         >
           {{ server.iburst }}
         </td>
@@ -44,7 +47,6 @@
         <td
           *matCellDef="let server; dataSource: dataSource"
           mat-cell
-          (click)="doEdit(server)"
         >
           {{ server.prefer }}
         </td>
@@ -54,7 +56,6 @@
         <td
           *matCellDef="let server; dataSource: dataSource"
           mat-cell
-          (click)="doEdit(server)"
         >
           {{ server.minpoll }}
         </td>
@@ -64,7 +65,6 @@
         <td
           *matCellDef="let server; dataSource: dataSource"
           mat-cell
-          (click)="doEdit(server)"
         >
           {{ server.maxpoll }}
         </td>
@@ -77,7 +77,7 @@
             mat-icon-button
             type="button"
             aria-label="Delete"
-            (click)="doDelete(server)"
+            (click)="doDelete(server); $event.stopPropagation()"
           >
             <mat-icon>delete</mat-icon>
           </button>
@@ -89,15 +89,8 @@
         *matRowDef="let server; columns: displayedColumns; dataSource: dataSource"
         mat-row
         class="clickable-row"
+        (click)="doEdit(server)"
       ></tr>
-
-      <tr *matNoDataRow class="mat-row no-data-row">
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <ix-entity-empty
-            [conf]="emptyService.defaultEmptyConfig(emptyType, 'NTP Servers')"
-          ></ix-entity-empty>
-        </td>
-      </tr>
     </table>
   </mat-card-content>
 </mat-card>

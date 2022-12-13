@@ -2,8 +2,8 @@ import {
   AfterViewInit, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,12 +31,12 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ManagerVdev } from 'app/interfaces/vdev-info.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
-import { FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
+import {
+  RepeatVdevDialogComponent, RepeatVdevDialogData,
+} from 'app/pages/storage/components/manager/repeat-vdev-dialog/repeat-vdev-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
@@ -98,8 +98,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
 
   protected needsDisk = true;
-  protected needsDiskMessage = helptext.manager_needsDiskMessage;
-  protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
   size: string;
   protected extendedAvailable: number;
   sizeMessage: string = helptext.manager_sizeMessage;
@@ -182,81 +180,48 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
   ) {}
 
-  duplicate(): void {
-    const duplicableDisks = this.duplicableDisks;
-    let maxVdevs = 0;
-    if (this.firstDataVdevDisknum && this.firstDataVdevDisknum > 0) {
-      maxVdevs = Math.floor(this.duplicableDisks.length / this.firstDataVdevDisknum);
-    }
-    const vdevsOptions = [];
-    for (let i = maxVdevs; i > 0; i--) {
-      vdevsOptions.push({ label: String(i), value: i });
-    }
-    const conf: DialogFormConfiguration = {
-      title: helptext.manager_duplicate_title,
-      fieldConfig: [
-        {
-          type: 'select',
-          name: 'vdevs',
-          value: maxVdevs,
-          placeholder: helptext.manager_duplicate_vdevs_placeholder,
-          tooltip: helptext.manager_duplicate_vdevs_tooltip,
-          options: vdevsOptions,
-        },
-        {
-          type: 'paragraph',
-          name: 'copy_desc',
-          paraText: '',
-        },
-      ],
-
-      saveButtonText: helptext.manager_duplicate_button,
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        const value = entityDialog.formValue as { vdevs: number };
-        const pageIndexBefore = this.lastPageChangedEvent.pageIndex;
-
-        for (let i = 0; i < value.vdevs; i++) {
-          const vdevValues: ManagerVdev = new ManagerVdev(this.firstDataVdevType, 'data');
-          for (let n = 0; n < this.firstDataVdevDisknum; n++) {
-            const duplicateDisk = duplicableDisks.shift();
-            vdevValues.disks.push(duplicateDisk);
-            this.disks.splice(this.disks.findIndex((disk) => disk.devname === duplicateDisk.devname), 1);
-            // remove disk from selected
-            this.selected = _.remove(this.selected, (disk) => disk.devname !== duplicateDisk.devname);
-          }
-          this.addVdev('data', vdevValues);
+  showRepeatDialog(): void {
+    this.mdDialog.open(RepeatVdevDialogComponent, {
+      data: {
+        firstDataVdevDiskNumber: this.firstDataVdevDisknum,
+        duplicableDisksCount: this.duplicableDisks.length,
+        size: filesize(this.firstDataVdevDisksize, { standard: 'iec' }),
+        diskType: this.firstDataVdevDisktype,
+        vdevType: this.firstDataVdevType,
+      } as RepeatVdevDialogData,
+    })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((count: number | null) => {
+        if (count === null) {
+          return;
         }
-        entityDialog.dialogRef.close(true);
-        this.paginator.pageIndex = pageIndexBefore;
-        this.onPageChange({
-          ...this.lastPageChangedEvent,
-          length: this.vdevs.data.length,
-          pageIndex: pageIndexBefore,
-        });
-        setTimeout(() => this.getCurrentLayout(), 100);
-      },
-      afterInit: (entityDialog: EntityDialogComponent) => {
-        const copyDesc = _.find(entityDialog.fieldConfig, { name: 'copy_desc' }) as FormParagraphConfig;
-        const setParatext = (vdevs: number): void => {
-          const used = this.firstDataVdevDisknum * vdevs;
-          const remaining = this.duplicableDisks.length - used;
-          const size = filesize(this.firstDataVdevDisksize, { standard: 'iec' });
-          const type = this.firstDataVdevDisktype;
-          const vdevType = this.firstDataVdevType;
-          copyDesc.paraText = this.translate.instant(
-            'Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.',
-            {
-              vdevs, vdevType, size, used, type, remaining,
-            },
-          );
-        };
-        setParatext(entityDialog.formGroup.controls['vdevs'].value);
-        entityDialog.formGroup.controls['vdevs'].valueChanges.pipe(untilDestroyed(this)).subscribe((vdevs) => {
-          setParatext(vdevs);
-        });
-      },
-    };
-    this.dialog.dialogForm(conf);
+
+        this.repeatVdevs(count);
+      });
+  }
+
+  repeatVdevs(count: number): void {
+    const pageIndexBefore = this.lastPageChangedEvent.pageIndex;
+
+    for (let i = 0; i < count; i++) {
+      const vdevValues: ManagerVdev = new ManagerVdev(this.firstDataVdevType, 'data');
+      for (let n = 0; n < this.firstDataVdevDisknum; n++) {
+        const duplicateDisk = this.duplicableDisks.shift();
+        vdevValues.disks.push(duplicateDisk);
+        this.disks.splice(this.disks.findIndex((disk) => disk.devname === duplicateDisk.devname), 1);
+        // remove disk from selected
+        this.selected = _.remove(this.selected, (disk) => disk.devname !== duplicateDisk.devname);
+      }
+      this.addVdev('data', vdevValues);
+    }
+    this.paginator.pageIndex = pageIndexBefore;
+    this.onPageChange({
+      ...this.lastPageChangedEvent,
+      length: this.vdevs.data.length,
+      pageIndex: pageIndexBefore,
+    });
+    setTimeout(() => this.getCurrentLayout(), 100);
   }
 
   handleError = (error: WebsocketError | Job): void => {
@@ -559,16 +524,17 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.hasVdevDiskSizeError = true;
         this.hasSavableErrors = true;
       }
-      if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
-        if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
-          if (vdev.group === 'log') {
-            this.getLogVdevTypeWarningMsg();
-          } else {
-            this.getStripeVdevTypeErrorMsg(vdev.group);
-          }
-
-          this.hasSavableErrors = true;
+      if (
+        ['dedup', 'log', 'special', 'data'].includes(vdev.group)
+        && vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe'
+      ) {
+        if (vdev.group === 'log') {
+          this.getLogVdevTypeWarningMsg();
+        } else {
+          this.getStripeVdevTypeErrorMsg(vdev.group);
         }
+
+        this.hasSavableErrors = true;
       }
     });
     if (this.isNew) {

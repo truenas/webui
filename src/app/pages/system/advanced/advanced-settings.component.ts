@@ -13,6 +13,7 @@ import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -22,13 +23,12 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
-import { ReplicationSettingsFormComponent } from 'app/pages/system/advanced/replication-settings-form/replication-settings-form.component';
+import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
@@ -423,7 +423,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         this.slideInService.open(KernelFormComponent).setupForm(this.configData);
         break;
       case AdvancedCardId.Replication:
-        this.slideInService.open(ReplicationSettingsFormComponent);
+        this.slideInService.open(ReplicationSettingsComponent);
         break;
       case AdvancedCardId.Syslog:
         this.slideInService.open(SyslogFormComponent);

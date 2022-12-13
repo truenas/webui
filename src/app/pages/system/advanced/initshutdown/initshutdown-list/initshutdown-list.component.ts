@@ -58,9 +58,9 @@ export class InitshutdownListComponent implements EntityTableConfig {
         label: this.translate.instant('Edit'),
         name: 'edit',
         actionName: 'edit',
-        onClick: (row: InitShutdownScript) => {
+        onClick: (rowToEdit: InitShutdownScript) => {
           const modal = this.slideInService.open(InitShutdownFormComponent);
-          modal.setScriptForEdit(row);
+          modal.setScriptForEdit(rowToEdit);
         },
       },
       {

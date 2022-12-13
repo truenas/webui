@@ -25,7 +25,8 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:rxjs/recommended"
+        "plugin:rxjs/recommended",
+        "plugin:sonarjs/recommended"
       ],
       "plugins": [
         "rxjs",
@@ -34,6 +35,7 @@ module.exports = {
         "angular-file-naming",
         "@shopify",
         "unused-imports",
+        "sonarjs",
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -85,7 +87,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "no-trailing-spaces": ["error"],
         "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
         '@typescript-eslint/naming-convention': [
           'error',
@@ -132,7 +133,7 @@ module.exports = {
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
 
-        // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
+        // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
@@ -154,7 +155,6 @@ module.exports = {
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "@typescript-eslint/no-shadow": "off",
         "no-multi-str": "off",
         "no-mixed-operators": ["error", {
           groups: [
@@ -181,6 +181,10 @@ module.exports = {
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
+        "sonarjs/cognitive-complexity": ["off"],
+        "sonarjs/no-duplicate-string": ["off"],
+        "sonarjs/prefer-single-boolean-return": ["off"],
+        "sonarjs/no-nested-switch": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
@@ -309,11 +313,10 @@ module.exports = {
       "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {
         "@angular-eslint/template/attributes-order": ["error"],
+        "@angular-eslint/template/no-duplicate-attributes": ['error'],
 
         // TODO: To be enabled later
-        "@angular-eslint/template/no-duplicate-attributes": ['off'],
         '@angular-eslint/template/use-track-by-function': ['off'],
-        '@angular-eslint/template/eqeqeq': ['off'],
         '@angular-eslint/template/no-negated-async': ['off'],
       }
     }

@@ -1,0 +1,66 @@
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 900;
+  src: local('Titillium Web Black'), local('TitilliumWeb-Black'), url('../../fonts/TitilliumWeb/TitilliumWeb-Black.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Titillium Web Bold'), local('TitilliumWeb-Bold'), url('../../fonts/TitilliumWeb/TitilliumWeb-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Titillium Web Bold Italic'), local('TitilliumWeb-BoldItalic'),
+    url('../../fonts/TitilliumWeb/TitilliumWeb-BoldItalic.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Titillium Web Italic'), local('TitilliumWeb-Italic'), url('../../fonts/TitilliumWeb/TitilliumWeb-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Titillium Web Light'), local('TitilliumWeb-Light'), url('../../fonts/TitilliumWeb/TitilliumWeb-Light.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 300;
+  src: local('Titillium Web Light Italic'), local('TitilliumWeb-LightItalic'),
+    url('../../fonts/TitilliumWeb/TitilliumWeb-LightItalic.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Titillium Web'), local('TitilliumWeb-Regular'), url('../../fonts/TitilliumWeb/TitilliumWeb-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Titillium Web SemiBold'), local('TitilliumWeb-SemiBold'), url('../../fonts/TitilliumWeb/TitilliumWeb-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 500;
+  src: local('Titillium Web SemiBold Italic'), local('TitilliumWeb-SemiBoldItalic'),
+    url('../../fonts/TitilliumWeb/TitilliumWeb-SemiBoldItalic.ttf') format('truetype');
+}

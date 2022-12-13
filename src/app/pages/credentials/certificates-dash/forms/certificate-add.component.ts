@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,7 +12,13 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import {
-  Certificate, CertificateProfile, CertificateExtension, CertificationExtensionAttribute, CertificateCreate,
+  Certificate,
+  CertificateProfile,
+  CertificateExtension,
+  CertificationExtensionAttribute,
+  CertificateCreate,
+  Extension,
+  ExtensionProperty,
 } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -709,9 +715,9 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: unknown): unknown {
     if (fieldConfig.type === 'select') {
-      const option = fieldConfig.options.find((option) => option.value === value);
-      if (option) {
-        value = option.label;
+      const selectedOption = fieldConfig.options.find((option) => option.value === value);
+      if (selectedOption) {
+        value = selectedOption.label;
       }
     }
 
@@ -721,11 +727,10 @@ export class CertificateAddComponent implements WizardConfiguration {
   addToSummary(fieldName: string): void {
     const fieldConfig = this.getTarget(fieldName);
     if (!fieldConfig.isHidden) {
-      const fieldName = fieldConfig.name;
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
@@ -911,19 +916,16 @@ export class CertificateAddComponent implements WizardConfiguration {
   }
 
   getStep(fieldName: string): number {
-    const stepNumber = this.wizardConfig.findIndex((step) => {
+    return this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex((field) => fieldName === field.name);
       return index > -1;
     });
-
-    return stepNumber;
   }
 
   getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
-      return target;
+      return (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
     }
     return null;
   }
@@ -931,8 +933,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   getTarget(fieldName: string): FieldConfig {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
-      return target;
+      return _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
     }
     return null;
   }
@@ -965,8 +966,8 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.csrList.forEach((item) => {
         if (item.id === data.csrlist) {
           data.privatekey = item.privatekey;
-          data.passphrase = (item as any).passphrase;
-          data.passphrase2 = (item as any).passphrase2;
+          data.passphrase = item.passphrase;
+          data.passphrase2 = item.passphrase2;
         }
       });
     }
@@ -1001,10 +1002,10 @@ export class CertificateAddComponent implements WizardConfiguration {
         if (data[key]) {
           if (typeProp.length === 1) {
             for (const item of data[key]) {
-              (certExtensions as any)[typeProp[0]][item] = true;
+              certExtensions[typeProp[0] as Extension][item as ExtensionProperty] = true;
             }
           } else {
-            (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
+            certExtensions[typeProp[0] as Extension][typeProp[1] as ExtensionProperty] = data[key];
           }
         }
         delete data[key];

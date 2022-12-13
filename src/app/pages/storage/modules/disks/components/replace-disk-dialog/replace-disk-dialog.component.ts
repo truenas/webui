@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -77,7 +77,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
   }
 
   warnAboutExportedPool(diskIdentifier: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.identifier === diskIdentifier);
+    const unusedDisk = this.unusedDisks.find((disk) => disk.identifier === diskIdentifier);
     if (!unusedDisk?.exported_zpool) {
       return;
     }

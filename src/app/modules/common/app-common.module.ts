@@ -5,18 +5,18 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartistModule } from 'ng-chartist';
@@ -24,7 +24,6 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
@@ -37,20 +36,17 @@ import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
-import { AdminLayoutComponent } from 'app/modules/common/layouts/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from 'app/modules/common/layouts/auth-layout/auth-layout.component';
-import { ModalComponent } from 'app/modules/common/modal/modal.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { ConsoleFooterComponent } from './console-footer/console-footer.component';
-import { CopyrightLineComponent } from './copyright-line/copyright-line.component';
+import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dialog.component';
 
 @NgModule({
   imports: [
@@ -82,9 +78,9 @@ import { CopyrightLineComponent } from './copyright-line/copyright-line.componen
     ScrollingModule,
     TooltipModule,
     TranslateModule,
-    LayoutModule,
     MatSidenavModule,
     AlertsModule,
+    LayoutModule,
   ],
   declarations: [
     AboutDialogComponent,
@@ -94,15 +90,11 @@ import { CopyrightLineComponent } from './copyright-line/copyright-line.componen
     ErrorDialogComponent,
     GeneralDialogComponent,
     InfoDialogComponent,
-    ModalComponent,
     RedirectDialogComponent,
     SearchInputComponent,
     UpdateDialogComponent,
-    CopyrightLineComponent,
     ResilverProgressDialogComponent,
-    AuthLayoutComponent,
-    AdminLayoutComponent,
-    ConsoleFooterComponent,
+    ShowLogsDialogComponent,
   ],
   providers: [
     LanguageService,
@@ -111,8 +103,7 @@ import { CopyrightLineComponent } from './copyright-line/copyright-line.componen
   ],
   exports: [
     SearchInputComponent,
-    CopyrightLineComponent,
-    ModalComponent,
+    ShowLogsDialogComponent,
   ],
 })
 export class AppCommonModule {}

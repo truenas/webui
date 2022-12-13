@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -181,6 +181,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
     const setAclButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set ACL' }));
     await setAclButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'pool/trivial', 'permissions', 'acl']);
+    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/pool/trivial' } });
   });
 });

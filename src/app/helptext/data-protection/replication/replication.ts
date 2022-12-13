@@ -203,6 +203,7 @@ to determine snapshots creation order.'),
  <code>readonly</code> property during replication.'),
 
   encryption_placeholder: T('Encryption'),
+  // TODO: Check
   encryption_tooltip: repwizardhelptext.encryption_tooltip,
 
   encryption_key_format_placeholder: T('Encryption Key Format'),
@@ -250,7 +251,6 @@ to determine snapshots creation order.'),
  destination system. Enter a number and choose a measure of time from \
  the drop-down.'),
 
-  lifetime_unit_placeholder: T(''),
   lifetime_unit_tooltip: T(''),
 
   compression_placeholder: T('Stream Compression'),
@@ -286,11 +286,6 @@ to determine snapshots creation order.'),
 
   enabled_placeholder: T('Enabled'),
   enabled_tooltip: T('Activates the replication schedule.'),
-
-  replication_restore_dialog: {
-    title: T('Restore Replication Task'),
-    saveButton: T('Restore'),
-  },
 
   replication_task_add: T('Add Replication Task'),
   replication_task_edit: T('Edit Replication Task'),

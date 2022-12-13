@@ -1,7 +1,7 @@
 import {
   AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -65,7 +65,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   catalogSyncJobIds: number[] = [];
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
-  protected entityList: EntityTableComponent;
+  protected entityList: EntityTableComponent<Catalog>;
 
   constructor(
     private mdDialog: MatDialog,
@@ -113,14 +113,14 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     }
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<Catalog>): void {
     this.entityList = entityList;
   }
 
-  getActions(row: Catalog): EntityTableAction[] {
+  getActions(catalog: Catalog): EntityTableAction[] {
     return [
       {
-        id: row.id,
+        id: catalog.id,
         icon: 'edit',
         label: helptext.manageCatalogs.menu.edit,
         name: 'edit',
@@ -129,7 +129,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
         },
       },
       {
-        id: row.id,
+        id: catalog.id,
         icon: 'refresh',
         label: helptext.manageCatalogs.menu.refresh,
         name: 'refresh',
@@ -138,17 +138,17 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
         },
       },
       {
-        id: row.id,
+        id: catalog.id,
         icon: 'delete',
         label: helptext.manageCatalogs.menu.delete,
         name: 'delete',
-        disabled: row.builtin,
+        disabled: catalog.builtin,
         onClick: (row: Catalog) => {
           this.entityList.doDelete(row);
         },
       },
       {
-        id: row.id,
+        id: catalog.id,
         icon: 'summary',
         label: helptext.manageCatalogs.menu.summary,
         name: 'summary',

@@ -3,7 +3,7 @@
   class="dynamic-field form-textarea form-element"
   ix-auto
   ix-auto-type="textarea"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [class.has-tooltip]="config.tooltip"
   [ngClass]="fieldShow"
   [formGroup]="group"

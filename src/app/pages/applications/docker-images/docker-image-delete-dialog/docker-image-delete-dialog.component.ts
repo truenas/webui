@@ -3,7 +3,7 @@ import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, TrackByFunction,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
@@ -50,13 +50,13 @@ export class DockerImageDeleteDialogComponent {
   onSubmit(): void {
     const { force } = this.form.value;
 
-    const params = this.images.map((image) => [image.id, { force }]);
+    const deleteParams = this.images.map((image) => [image.id, { force }]);
 
     this.images.forEach((image) => {
       this.bulkItems.set(image.id, { state: BulkListItemState.Running, item: image });
     });
 
-    this.ws.job('core.bulk', ['container.image.delete', params]).pipe(
+    this.ws.job('core.bulk', ['container.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {

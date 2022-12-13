@@ -1,4 +1,4 @@
-@import '~assets/styles/scss-imports/splitview';
+@import 'scss-imports/splitview';
 
 /* Universal Overrides for Egret */
 
@@ -122,7 +122,6 @@ ngx-datatable .mat-box-shadow {
 }
 
 .mat-card-title-text {
-  font-family: var(--font-family-body);
   font-size: 24px;
   margin: 16px;
 }

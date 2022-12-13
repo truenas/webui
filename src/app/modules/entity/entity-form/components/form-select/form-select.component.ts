@@ -2,8 +2,8 @@ import {
   Component, ViewChild, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
 } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
-import { MatFormField } from '@angular/material/form-field';
-import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { MatLegacyFormField as MatFormField } from '@angular/material/legacy-form-field';
+import { MatLegacySelect as MatSelect, MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -28,16 +28,16 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   @ViewChild('field', { static: true }) field: MatFormField;
 
   formReady = false;
-  selected: string;
-  selectedValues: string[] = [];
+  selected: unknown;
+  selectedValues: unknown[] = [];
   selectStates: boolean[] = []; // Collection of checkmark states
   customTriggerValue: string[];
-  private _formValue: string | string[];
+  private _formValue: unknown;
   private entityUtils = new EntityUtils();
-  get formValue(): string | string[] {
+  get formValue(): unknown {
     return this._formValue;
   }
-  set formValue(value: string | string[]) {
+  set formValue(value: unknown) {
     const result = this.config.multiple ? this.selectedValues : this.selected;
     this._formValue = result;
   }
@@ -85,25 +85,23 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         this.control.setValue(NULL_VALUE);
       }
 
-      if (evt) {
-        if (this.config.multiple && Array.isArray(evt)) {
-          this.selectedValues = evt.map((item) => {
-            // When set the value to null, Change it to 'null_value' string
-            if (item === null) {
-              item = NULL_VALUE;
-            }
-            return item;
-          });
-          const newStates = this.config.options.map((item) => this.selectedValues.includes(item.value));
-          const triggerValue: string[] = [];
-          this.config.options.forEach((option) => {
-            if (this.selectedValues.includes(option.value)) {
-              triggerValue.push(option.label);
-            }
-          });
-          this.selectStates = newStates;
-          this.customTriggerValue = triggerValue;
-        }
+      if (evt && this.config.multiple && Array.isArray(evt)) {
+        this.selectedValues = evt.map((item) => {
+          // When set the value to null, Change it to 'null_value' string
+          if (item === null) {
+            item = NULL_VALUE;
+          }
+          return item;
+        });
+        const newStates = this.config.options.map((item) => this.selectedValues.includes(item.value));
+        const triggerValue: string[] = [];
+        this.config.options.forEach((option) => {
+          if (this.selectedValues.includes(option.value)) {
+            triggerValue.push(option.label);
+          }
+        });
+        this.selectStates = newStates;
+        this.customTriggerValue = triggerValue;
       }
     });
   }
@@ -153,7 +151,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   updateValues(): void {
-    const newValues: string[] = [];
+    const newValues: unknown[] = [];
     const triggerValue: string[] = [];
     this.selectStates.forEach((item, index) => {
       if (item) {

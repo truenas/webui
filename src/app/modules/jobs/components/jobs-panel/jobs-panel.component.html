@@ -52,14 +52,14 @@
   <div *ngIf="error$ | async as error" class="error">
     <mat-icon class="icon" color="accent">cancel</mat-icon>
     <h4 class="message">
-      <span class="error-word">{{ 'Error:' | translate }}</span>
+      <span class="error-word">{{ 'Error' | translate }}:</span>
       {{ error }}
     </h4>
   </div>
 
   <ng-template #loaded>
     <div *appLet="availableJobs$ | async as jobs">
-      <div *ngIf="jobs.length" class="jobs-list">
+      <div *ngIf="jobs.length > 0" class="jobs-list">
         <ix-job-item
           *ngFor="let job of jobs; trackBy: trackByJobId"
           [job]="job"
@@ -70,7 +70,7 @@
       </div>
 
       <div *ngIf="!jobs.length" class="no-jobs">
-        <mat-icon class="icon">info</mat-icon>
+        <ix-icon name="info"></ix-icon>
         <h4 class="message">{{ 'There are no tasks.' | translate }}</h4>
       </div>
     </div>

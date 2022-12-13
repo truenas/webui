@@ -1,6 +1,6 @@
-@import '~assets/styles/mixins/grid';
-@import '~assets/styles/scss-imports/splitview';
-@import 'app/modules/layout/components/breadcrumb/breadcrumb.component';
+@import 'mixins/grid';
+@import 'scss-imports/splitview';
+@import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
@@ -157,19 +157,15 @@ $scrollbar-offset: 20px;
 
   ::ng-deep .header h3.title {
     width: calc(100% - 16px);
+
+    @media(max-width: $breakpoint-tablet) {
+      margin-left: -40px;
+      width: 100%;
+    }
   }
 
   ::ng-deep .cards .scroll-window {
     display: block;
-    padding-bottom: 96px;
-  }
-
-  ::ng-deep .cards .scroll-window > * {
-    display: grid;
-    margin: 0 auto;
-    max-width: $card-width;
-    min-width: unset !important;
-    width: 99% !important;
   }
 
   ix-disk-details-panel {

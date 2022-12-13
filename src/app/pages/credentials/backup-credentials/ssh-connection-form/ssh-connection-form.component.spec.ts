@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -158,7 +158,8 @@ describe('SshConnectionFormComponent', () => {
 
       'TrueNAS URL': 'https://truenas.com',
       Username: 'john',
-      Password: '12345678',
+      'Admin Username': 'admin',
+      'Admin Password': '12345678',
       'One-Time Password (if necessary)': '1234',
       'Private Key': 'key2',
 
@@ -181,6 +182,7 @@ describe('SshConnectionFormComponent', () => {
         otp_token: '1234',
         url: 'https://truenas.com',
         username: 'john',
+        admin_username: 'admin',
       },
     }]);
   });
@@ -213,7 +215,7 @@ describe('SshConnectionFormComponent', () => {
     await form.fillForm({
       Name: 'Test',
       'TrueNAS URL': 'https://truenas.com',
-      Password: '123456',
+      'Admin Password': '123456',
       'Private Key': 'Generate New',
     });
 
@@ -234,6 +236,7 @@ describe('SshConnectionFormComponent', () => {
         password: '123456',
         url: 'https://truenas.com',
         username: 'root',
+        admin_username: 'root',
       },
     }]);
   });

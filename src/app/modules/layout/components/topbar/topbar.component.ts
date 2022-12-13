@@ -2,7 +2,7 @@ import {
   Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,7 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { HaStatusText } from 'app/enums/ha-status-text.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -40,7 +39,8 @@ import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -103,8 +103,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.updateNotificationSent = true;
     });
 
-    this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.screenSize = evt.mqAlias;
+    this.mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      this.screenSize = changes[0].mqAlias;
     });
   }
 
@@ -112,9 +112,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
 
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isFailoverLicensed) => {
-        this.isFailoverLicensed = isFailoverLicensed;
-        this.getHaStatus();
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isFailoverLicensed = isHaLicensed;
+
+        if (isHaLicensed) {
+          this.getHaStatus();
+        }
       });
     }
 
@@ -135,12 +138,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.updateIsDone.unsubscribe();
         });
       }
-      if (!this.isFailoverLicensed) {
-        if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
-          this.systemWillRestart = true;
-          if (event.fields.state === JobState.Success) {
-            this.router.navigate(['/others/reboot']);
-          }
+      if (
+        !this.isFailoverLicensed
+        && event?.fields?.arguments[0]
+        && (event.fields.arguments[0] as { reboot: boolean }).reboot
+      ) {
+        this.systemWillRestart = true;
+        if (event.fields.state === JobState.Success) {
+          this.router.navigate(['/others/reboot']);
         }
       }
 
@@ -159,10 +164,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       } else {
         this.checkNetworkChangesPending();
       }
-      if (evt && evt.data.checkin) {
-        if (this.checkinInterval) {
-          clearInterval(this.checkinInterval);
-        }
+      if (evt && evt.data.checkin && this.checkinInterval) {
+        clearInterval(this.checkinInterval);
       }
     });
 
@@ -338,7 +341,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
-    if (info.status === HaStatusText.HaEnabled) {
+    if (info.hasHa) {
       this.haStatusText = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();

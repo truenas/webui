@@ -1,4 +1,4 @@
-@import '~assets/styles/mixins/cards';
+@import 'mixins/cards';
 
 .card {
   @include details-card();
@@ -33,9 +33,11 @@
         }
       }
     }
-
-    .loader-permissions {
-      padding: 50px 20px 20px;
-    }
   }
+}
+
+.loader-permissions {
+  background-color: var(--bg2);
+  margin: 4px;
+  padding: 50px 24px 24px;
 }

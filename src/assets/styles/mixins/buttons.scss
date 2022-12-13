@@ -1,4 +1,4 @@
-@import 'cssvars';
+@import 'scss-imports/cssvars';
 
 @mixin stroked-button {
   border: 1px solid var(--alt-fg2);

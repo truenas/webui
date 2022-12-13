@@ -1,11 +1,11 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
+import { PreloadAllModules, RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
@@ -26,11 +26,13 @@ import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-trans
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { sentryCustomExtractor } from 'app/helpers/sentry-custom-extractor.helper';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -73,7 +75,10 @@ import { WebSocketService } from './services/ws.service';
       },
       useDefaultLang: false,
     }),
-    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+    RouterModule.forRoot(rootRouterConfig, {
+      useHash: false,
+      preloadingStrategy: PreloadAllModules,
+    }),
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
     CoreComponents,
@@ -121,11 +126,15 @@ import { WebSocketService } from './services/ws.service';
     EntityTableService,
     IxSlideInService,
     IxFileUploadService,
+    DisksUpdateService,
     ThemeService,
     {
       provide: ErrorHandler,
       useValue: Sentry.createErrorHandler({
         showDialog: false,
+        extractor(error, defaultExtractor) {
+          return sentryCustomExtractor(error, defaultExtractor);
+        },
       }),
     },
     {

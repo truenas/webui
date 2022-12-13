@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { TooltipPosition } from '@angular/material/tooltip';
+import { Component, OnDestroy } from '@angular/core';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
-import { forkJoin, lastValueFrom, of } from 'rxjs';
+import {
+  forkJoin, lastValueFrom, of, Subject,
+} from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
-import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -25,13 +27,14 @@ import {
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class DiskListComponent implements EntityTableConfig<Disk> {
+export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   title = this.translate.instant('Disks');
   queryCall = 'disk.query' as const;
   queryCallOption: QueryParams<Disk, { extra: { pools: boolean; passwords: boolean } }> = [[], {
@@ -94,6 +97,8 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     },
   }];
 
+  private diskUpdateSubscriptionId: string;
+
   protected unusedDisks: UnusedDisk[] = [];
   constructor(
     protected ws: WebSocketService,
@@ -103,7 +108,12 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
+    private disksUpdate: DisksUpdateService,
   ) {}
+
+  ngOnDestroy(): void {
+    this.disksUpdate.removeSubscriber(this.diskUpdateSubscriptionId);
+  }
 
   getActions(parentRow: Disk): EntityTableAction[] {
     const actions = [{
@@ -146,13 +156,13 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         icon: 'delete_sweep',
         name: 'wipe',
         label: this.translate.instant('Wipe'),
-        onClick: (disk): void => {
+        onClick: (diskToWipe): void => {
           const unusedDisk: Partial<UnusedDisk> = this.unusedDisks.find(
-            (unusedDisk) => unusedDisk.devname === disk.devname,
+            (disk) => disk.devname === diskToWipe.devname,
           );
           this.matDialog.open(DiskWipeDialogComponent, {
             data: {
-              diskName: disk.name,
+              diskName: diskToWipe.name,
               exportedPool: unusedDisk?.exported_zpool,
             },
           });
@@ -161,16 +171,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     }
 
     return actions as EntityTableAction[];
-  }
-
-  dataHandler(entityList: EntityTableComponent): void {
-    this.diskUpdate(entityList);
-  }
-
-  diskUpdate(entityList: EntityTableComponent): void {
-    entityList.rows.forEach((disk) => {
-      disk.readable_size = filesize(disk.size, { standard: 'iec' });
-    });
   }
 
   prerequisite(): Promise<boolean> {
@@ -192,15 +192,12 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     );
   }
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.core.register({
-      observerClass: this,
-      eventName: 'DisksChanged',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt) {
-        entityList.getData();
-      }
+  afterInit(entityList: EntityTableComponent<Disk>): void {
+    const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
+    disksUpdateTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
+      entityList.getData();
     });
+    this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
       entityList.pageChanged();
@@ -211,15 +208,18 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     return disks.map((disk) => ({
       ...disk,
       pool: this.getPoolColumn(disk),
+      readable_size: filesize(disk.size, { standard: 'iec' }),
+      togglesmart: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.togglesmart : null,
+      smartoptions: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.smartoptions : null,
     }));
   }
 
-  getPoolColumn(disk: Disk): string {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.devname === disk.devname);
+  getPoolColumn(diskToCheck: Disk): string {
+    const unusedDisk = this.unusedDisks.find((disk) => disk.devname === diskToCheck.devname);
     if (unusedDisk?.exported_zpool) {
       return unusedDisk.exported_zpool + ' (' + this.translate.instant('Exported') + ')';
     }
-    return disk.pool || this.translate.instant('N/A');
+    return diskToCheck.pool || this.translate.instant('N/A');
   }
 
   manualTest(selected: Disk | Disk[]): void {

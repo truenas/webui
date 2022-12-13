@@ -8,34 +8,34 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSliderModule } from '@angular/material/slider';
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatLegacyPaginatorModule as MatPaginatorModule } from '@angular/material/legacy-paginator';
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
+import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatTableModule } from '@angular/material/table';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -45,7 +45,6 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { DynamicFieldDirective } from 'app/modules/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from 'app/modules/entity/entity-form/components/form-array/form-array.component';
@@ -84,7 +83,6 @@ import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/ent
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { WizardSummaryComponent } from 'app/modules/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
@@ -93,11 +91,11 @@ import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-ta
 import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
-import { AppLoaderService, JobService } from 'app/services';
+import { AppLoaderService } from 'app/services';
 
 @NgModule({
   imports: [
@@ -133,6 +131,7 @@ import { AppLoaderService, JobService } from 'app/services';
     MatProgressBarModule,
     MatCheckboxModule,
     MatButtonToggleModule,
+    PageHeaderModule,
     MatRadioModule,
     TextFieldModule,
     MatAutocompleteModule,
@@ -151,7 +150,6 @@ import { AppLoaderService, JobService } from 'app/services';
     CastModule,
     MatNativeDateModule,
     SchedulerModule,
-    LayoutModule,
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -160,7 +158,6 @@ import { AppLoaderService, JobService } from 'app/services';
     EntityRowDetailsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
-    EntityTemplateDirective,
     DynamicFieldDirective,
     EntityFormComponent,
     FormButtonComponent,
@@ -191,7 +188,6 @@ import { AppLoaderService, JobService } from 'app/services';
     EntityJobComponent,
     EntityWizardComponent,
     FormParagraphComponent,
-    EntityDialogComponent,
     ToolbarMultimenuComponent,
     ToolbarSliderComponent,
     FormStatusComponent,
@@ -202,7 +198,6 @@ import { AppLoaderService, JobService } from 'app/services';
     WizardSummaryComponent,
   ],
   exports: [
-    EntityTemplateDirective,
     EntityFormComponent,
     EntityTableComponent,
     EntityRowDetailsComponent,
@@ -210,7 +205,6 @@ import { AppLoaderService, JobService } from 'app/services';
     EntityTableActionsComponent,
     DynamicFieldDirective,
     EntityWizardComponent,
-    EntityDialogComponent,
     ToolbarSliderComponent,
     ToolbarMultimenuComponent,
     TableComponent,
@@ -222,8 +216,7 @@ import { AppLoaderService, JobService } from 'app/services';
   providers: [
     EntityFormService,
     AppLoaderService,
-    JobService,
     TableService,
   ],
 })
-export class EntityModule {}
+export class EntityModule { }

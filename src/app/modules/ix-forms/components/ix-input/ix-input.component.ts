@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor,
-  UntypedFormControl,
   NgControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -42,8 +41,6 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() format: (value: string | number) => string;
   @Input() parse: (value: string | number) => string | number;
 
-  formControl = new UntypedFormControl(this).value as UntypedFormControl;
-
   private _value: string | number = '';
   formatted: string | number = '';
 
@@ -76,10 +73,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   writeValue(value: string | number): void {
     let formatted = value;
-    if (value) {
-      if (this.format) {
-        formatted = this.format(value);
-      }
+    if (value && this.format) {
+      formatted = this.format(value);
     }
     this.formatted = formatted;
     this.value = value;

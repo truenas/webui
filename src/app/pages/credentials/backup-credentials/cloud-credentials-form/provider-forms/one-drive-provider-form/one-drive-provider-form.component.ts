@@ -84,14 +84,14 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
 
   private setupDriveSelect(): void {
     this.form.controls.drives.valueChanges.pipe(untilDestroyed(this)).subscribe((driveId) => {
-      const drive = this.drives.find((drive) => drive.drive_id === driveId);
-      if (!drive) {
+      const selectedDrive = this.drives.find((drive) => drive.drive_id === driveId);
+      if (!selectedDrive) {
         return;
       }
 
       this.form.patchValue({
-        drive_type: drive.drive_type,
-        drive_id: drive.drive_id,
+        drive_type: selectedDrive.drive_type,
+        drive_id: selectedDrive.drive_id,
       });
     });
   }

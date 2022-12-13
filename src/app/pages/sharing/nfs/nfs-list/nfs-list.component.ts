@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { shared, helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -24,7 +25,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   routeAddTooltip = this.translate.instant('Add Unix (NFS) Share');
   routeEdit: string[] = ['sharing', 'nfs', 'edit'];
   protected routeDelete: string[] = ['sharing', 'nfs', 'delete'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<NfsShare>;
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No NFS Shares have been configured yet'),
@@ -61,7 +62,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
     private translate: TranslateService,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<NfsShare>): void {
     this.entityList = entityList;
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -81,12 +82,13 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
   }
 
   doEdit(id: number): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
+    const nfsShare = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(NfsFormComponent);
-    form.setNfsShareForEdit(row);
+    form.setNfsShareForEdit(nfsShare);
   }
 
-  onCheckboxChange(row: NfsShare): void {
+  onCheckboxChange(row: NfsShare, loader$: Subject<boolean>): void {
+    loader$.next(true);
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -96,6 +98,9 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
         error: (err) => {
           row.enabled = !row.enabled;
           new EntityUtils().handleWsError(this, err, this.dialog);
+        },
+        complete: () => {
+          loader$.next(false);
         },
       });
   }

@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, TrackByFunction,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
@@ -51,13 +51,13 @@ export class BootPoolDeleteDialogComponent {
   }
 
   onSubmit(): void {
-    const params = this.getSelectedNames(this.bootenvs);
+    const bootenvsToDelete = this.getSelectedNames(this.bootenvs);
 
     this.bootenvs.forEach((bootenv) => {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Running, item: bootenv });
     });
 
-    this.ws.job('core.bulk', ['bootenv.do_delete', params]).pipe(
+    this.ws.job('core.bulk', ['bootenv.do_delete', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], string[][]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {

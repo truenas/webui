@@ -4,10 +4,8 @@
   ngClass.sm="sm"
   ngClass.xs="xs"
   class="view-card {{ chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl' : 'mini' }}"
-  id="{{ currentTab.alias }}"
-  [ngClass]="{
-    'multiple-enclosures': system && system.profile && system.profile.length > 1
-  }"
+  [id]="currentTab.alias"
+  [class.multiple-enclosures]="system && system.profile && system.profile.length > 1"
   (window:resize)="onResize()"
 >
   <mat-toolbar id="Disks-toolbar">
@@ -95,7 +93,7 @@
               <div class="status-icon">
                 <mat-icon
                   [ngClass]="{
-                    online: findDiskBySlotNumber(i + 1).status == 'ONLINE',
+                    online: findDiskBySlotNumber(i + 1).status === 'ONLINE',
                     alert:
                       findDiskBySlotNumber(i + 1).status !== 'ONLINE' &&
                       findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'
@@ -115,7 +113,7 @@
 
     <!-- DETAILS/OVERVIEW -->
     <div #diskDetails fxFlex id="disks-details">
-      <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
+      <ng-container *ngIf="selectedDisk && currentView === 'details'" #details>
         <!-- DISK SELECTED -->
         <div #disksdetails class="header-container" id="details">
           <button class="back-btn" mat-button (click)="clearDisk()">
@@ -139,15 +137,12 @@
 
               <li>
                 <strong>{{ 'Vdev' | translate }}:</strong> &nbsp;&nbsp;&nbsp;
-                <span *ngIf="selectedVdev.type == 'DISK'">
-                  {{ 'NONE' | translate }}
-                </span>
-                <span *ngIf="selectedVdev.type !== 'DISK'">
-                  {{ selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type }}
-                </span>
-
-                <span *ngIf="selectedVdev.topology">
-                  {{ $any(selectedVdev.topology) == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')' }}
+                <span>
+                  {{
+                    selectedVdev.type !== 'DISK'
+                      ? selectedVdev.type === 'None' ? ('Unassigned' | translate) : (selectedVdev.name | uppercase)
+                      : ('NONE' | translate)
+                  }}
                 </span>
               </li>
 
@@ -252,7 +247,7 @@
       </ng-container>
 
       <ng-container
-        *ngIf="currentView == 'pools' || currentView == 'status'"
+        *ngIf="currentView === 'pools' || currentView === 'status'"
         #overview
       >
         <!-- DISK NOT SELECTED -->

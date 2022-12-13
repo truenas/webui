@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -134,7 +135,11 @@ export class ExportDisconnectModalComponent implements OnInit {
       next: (failureData) => {
         let conditionalErrMessage = '';
         if (failureData.error) {
-          if (failureData.exc_info.extra && failureData.exc_info.extra['code'] === 'control_services') {
+          if (
+            _.isObject(failureData.exc_info.extra)
+            && !Array.isArray(failureData.exc_info.extra)
+            && failureData.exc_info.extra['code'] === 'control_services'
+          ) {
             this.dialogRef.close(true);
             this.isFormLoading = false;
             entityJobRef.close(true);
@@ -170,11 +175,11 @@ export class ExportDisconnectModalComponent implements OnInit {
               this.restartServices = true;
               this.startExportDisconnectJob();
             });
-          } else if ((failureData as any).extra && (failureData as any).extra['code'] === 'unstoppable_processes') {
+          } else if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
             this.dialogRef.close(true);
             this.isFormLoading = false;
             const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-            conditionalErrMessage = msg + (failureData as any).extra['processes'];
+            conditionalErrMessage = msg + (failureData.extra.processes as string);
             entityJobRef.close(true);
             this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, failureData.exception);
           } else {

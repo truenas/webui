@@ -8,14 +8,14 @@
     >
       <mat-card-content *ngIf="nicState; else notAvailable" #carouselparent>
         <mat-toolbar-row
-          class="view-{{ currentSlideName }}"
+          [class]="'view-' + currentSlideName"
           [class.drag-handle]="showReorderHandle"
         >
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <!-- Mobile Only: Exit Widget -->
           <button
-            *ngIf="currentSlide == '0'"
+            *ngIf="currentSlide === '0'"
             fxHide.gt-xs
             mat-icon-button
             color="default"
@@ -130,7 +130,7 @@
                       </mat-icon>
                     </div>
 
-                    <div *ngIf="traffic && linkState == LinkState.Up" class="nic-traffic">
+                    <div *ngIf="traffic && linkState === LinkState.Up" class="nic-traffic">
                       <div class="tr">
                         <div class="td label">
                           <strong>{{ 'In' | translate }}: &nbsp;</strong>
@@ -151,7 +151,7 @@
                       </div>
                     </div>
 
-                    <div *ngIf="!traffic && linkState == LinkState.Up" class="nic-traffic-gathering">
+                    <div *ngIf="!traffic && linkState === LinkState.Up" class="nic-traffic-gathering">
                       {{ 'Gathering data...' | translate }}
                     </div>
 
@@ -248,7 +248,7 @@
           </div>
 
           <div
-            *ngIf="path[1].name == PathEnum.Addresses"
+            *ngIf="path[1].name === PathEnum.Addresses"
             class="slide addresses"
             fxFlex="100"
           >
@@ -266,7 +266,7 @@
           </div>
 
           <div
-            *ngIf="path[1].name == PathEnum.Vlans"
+            *ngIf="path[1].name === PathEnum.Vlans"
             class="slide vlans"
             fxFlex="100"
           >
@@ -311,7 +311,7 @@
           </div>
 
           <div
-            *ngIf="path[1].name == PathEnum.Empty"
+            *ngIf="path[1].name === PathEnum.Empty"
             class="slide empty"
             fxFlex="100"
           ></div>
@@ -335,7 +335,7 @@
           </div>
 
           <div
-            *ngIf="path[2].name == PathEnum.Empty"
+            *ngIf="path[2].name === PathEnum.Empty"
             class="slide empty"
             fxFlex="100"
           ></div>

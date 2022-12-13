@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -97,7 +97,7 @@ describe('NetworkConfigurationComponent', () => {
       'Nameserver 1': '',
       'Nameserver 2': '',
       'Nameserver 3': '',
-      'IPv4 Default Gateway': '',
+      'IPv4 Default Gateway': '192.168.30.2',
       'IPv6 Default Gateway': '',
       'Inherit domain from DHCP': false,
       'Outbound Activity': 'Allow All',

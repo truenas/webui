@@ -1,12 +1,8 @@
 import {
   Component,
-  ContentChildren,
   Input,
   OnDestroy,
   OnInit,
-  QueryList,
-  TemplateRef,
-  AfterViewInit,
   OnChanges,
   ChangeDetectorRef,
   AfterViewChecked,
@@ -22,6 +18,7 @@ import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ApiDirectory, ApiParams } from 'app/interfaces/api-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import {
   FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
@@ -29,7 +26,6 @@ import {
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
-import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, DialogService } from 'app/services';
@@ -42,7 +38,7 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['./entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],
 })
-export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
+export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
   @Input() conf: FormConfiguration;
 
   pk: string | number;
@@ -76,10 +72,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.formGroup.value;
   }
 
-  templateTop: TemplateRef<unknown>;
-  @ContentChildren(EntityTemplateDirective)
-    templates: QueryList<EntityTemplateDirective>;
-
   sub: Subscription;
   error: string;
   success = false;
@@ -102,14 +94,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   ) {
     this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
     this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
-  }
-
-  ngAfterViewInit(): void {
-    this.templates.forEach((item) => {
-      if (item.type === 'TOP') {
-        this.templateTop = item.templateRef;
-      }
-    });
   }
 
   ngAfterViewChecked(): void {
@@ -252,23 +236,23 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       } else if (this.conf.queryCall) {
         if (this.pk) {
           let pk = this.pk;
-          let filter = [];
+          let filterParam = [];
           if (this.conf.pk) {
-            filter.push(this.conf.pk);
+            filterParam.push(this.conf.pk);
             pk = this.conf.pk;
           }
           if (this.conf.queryCallOption) {
-            filter.push(this.conf.queryCallOption);
+            filterParam.push(this.conf.queryCallOption);
           }
           if (this.conf.customFilter) {
-            filter = this.conf.customFilter;
+            filterParam = this.conf.customFilter;
           }
           if (this.conf.queryKey) {
-            filter = [[[this.conf.queryKey, '=', parseInt(pk as string, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
+            filterParam = [[[this.conf.queryKey, '=', parseInt(pk as string, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
           }
           this.getFunction = this.ws.call(
             this.conf.queryCall,
-            filter as ApiParams<keyof ApiDirectory>,
+            filterParam as ApiParams<keyof ApiDirectory>,
           ) as Observable<Record<string, unknown>>;
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []) as Observable<Record<string, unknown>>;
@@ -301,10 +285,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   fg.patchValue(this.data[key]);
                 } else {
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
-                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple) {
-                    if (this.data[key]) {
-                      this.data[key] = _.split(this.data[key] as string, ',');
-                    }
+                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple && this.data[key]) {
+                    this.data[key] = _.split(this.data[key] as string, ',');
                   }
                   if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     fg.setValue(this.data[key]);
@@ -404,27 +386,27 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.router.navigate(new Array('/').concat(route));
   }
 
-  addCall(body: any): Observable<any> {
-    const payload = [];
+  addCall(body: unknown): Observable<unknown> {
+    const payload: unknown[] = [];
     const call = this.conf.addCall;
     payload.push(body);
 
     if (this.conf.isCreateJob) {
-      return this.ws.job(call, payload);
+      return this.ws.job(call, payload as ApiParams<keyof ApiDirectory>);
     }
-    return this.ws.call(call, payload);
+    return this.ws.call(call, payload as ApiParams<keyof ApiDirectory>);
   }
 
-  editCall(body: any): Observable<any> {
-    const payload = [body];
+  editCall(body: unknown): Observable<unknown> {
+    const payload: unknown[] = [body];
     if (this.pk) {
       payload.unshift(this.pk);
     }
 
     if (this.conf.isEditJob) {
-      return this.ws.job(this.conf.editCall, payload);
+      return this.ws.job(this.conf.editCall, payload as ApiParams<keyof ApiDirectory>);
     }
-    return this.ws.call(this.conf.editCall, payload);
+    return this.ws.call(this.conf.editCall, payload as ApiParams<keyof ApiDirectory>);
   }
 
   onSubmit(event: Event): void {
@@ -483,11 +465,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.loader.close();
             this.loaderOpen = false;
 
-            if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
-              if (res.exc_info && res.exc_info.extra) {
-                new EntityUtils().handleWsError(this, res);
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && (res as Job).error) {
+              if ((res as Job).exc_info && (res as Job).exc_info.extra) {
+                new EntityUtils().handleWsError(this, res as Job);
               } else {
-                this.dialog.errorReport('Error', res.error, res.exception);
+                this.dialog.errorReport('Error', (res as Job).error, (res as Job).exception);
               }
             } else {
               if (this.conf.afterSave) {
@@ -538,7 +520,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  isFieldsetAvailabel(fieldset: FieldSet): boolean {
+  isFieldsetAvailable(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       return fieldset.config.some((config) => !config.isHidden);
     }

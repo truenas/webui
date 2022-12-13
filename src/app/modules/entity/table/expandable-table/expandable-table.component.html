@@ -26,6 +26,11 @@
       </mat-panel-title>
       <mat-panel-description class="description-panel">
         <div class="actions">
+          <ix-tooltip
+            *ngIf="tableConf.tooltip"
+            [header]="tableConf.tooltip.header | translate"
+            [message]="tableConf.tooltip.message | translate"
+          ></ix-tooltip>
           <button
             *ngIf="tableConf.configure"
             mat-button
@@ -33,7 +38,7 @@
             class="action-icon action-button"
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ tableConf.name }}-configure"
+            [ix-auto-identifier]="tableConf.name + '-configure'"
             (click)="tableConf.configure()"
           >
             {{ 'Configure' | translate }}
@@ -46,7 +51,8 @@
             class="action-icon action-button"
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ tableConf.name }}-add"
+            [ix-auto-identifier]="tableConf.name + '-add'"
+            [disabled]="tableConf.addActionDisabled"
             (click)="tableConf.add()"
           >
             {{ tableConf.addButtonLabel ? tableConf.addButtonLabel : ('Add' | translate) }}
@@ -65,7 +71,7 @@
   >
     <div>
       <a [routerLink]="tableConf.detailsHref.split('/')">
-        {{ 'View Details' | translate }}
+        {{ 'View All' | translate }}
       </a>
     </div>
   </div>

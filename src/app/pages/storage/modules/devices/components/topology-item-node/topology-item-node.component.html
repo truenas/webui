@@ -10,7 +10,7 @@
       <span>{{ name }}</span>
     </div>
   </div>
-  <div class="cell cell-status" [style.background-color]="statusColor">
+  <div class="cell cell-status" [ngClass]="statusClass">
     <span>{{ status }}</span>
   </div>
   <div class="cell cell-capacity">

@@ -6,14 +6,17 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -29,6 +32,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  private disksUpdateSubscriptionId: string;
 
   currentView: ViewConfig = {
     name: 'Disks',
@@ -58,7 +62,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     // the rear bays. SystemProfiler will store a rearIndex value for those machines.
     if (this.system && this.system.rearIndex && this.system.profile.length > 2) {
       return true;
-    } if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
+    }
+    if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
       return true;
     }
     return false;
@@ -86,6 +91,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
+    private disksUpdateService: DisksUpdateService,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -98,7 +104,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             console.warn('No navigation UI detected');
             return;
           }
-          const selector = '.enclosure-' + evt.data.profile.enclosureKey;
+          const selector = `.enclosure-${(evt as EnclosureCanvasEvent).data.profile.enclosureKey}`;
           const el = this.nav.nativeElement.querySelector(selector);
 
           const oldCanvas = this.nav.nativeElement.querySelector(selector + ' canvas');
@@ -106,12 +112,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             el.removeChild(oldCanvas);
           }
 
-          evt.data.canvas.setAttribute('style', 'width: 80% ;');
-          el.appendChild(evt.data.canvas);
+          (evt as EnclosureCanvasEvent).data.canvas.setAttribute('style', 'width: 80% ;');
+          el.appendChild((evt as EnclosureCanvasEvent).data.canvas);
           break;
         }
         case 'Error':
-          this.errors.push(evt.data);
+          this.errors.push(evt.data as ErrorMessage);
           console.warn({ ERROR_REPORT: this.errors });
           break;
       }
@@ -128,10 +134,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       this.events.next(evt);
     });
 
-    core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
-      this.fetchData();
-    });
-
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
       .subscribe((sysInfo) => {
         if (!this.systemProduct) {
@@ -145,15 +147,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  fetchData(): void {
-    this.loadDiskData();
-  }
-
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
+    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
     this.core.unregister({ observerClass: this });
   }
 
@@ -264,17 +263,29 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   private loadDiskData(): void {
     this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((disks) => {
-      this.system.diskData = disks;
-
-      this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
-        this.system.pools = pools;
-        this.events.next({ name: 'PoolsChanged', sender: this });
-        this.addViews();
-      });
-
+      this.handleLoadedDisks(disks);
       setTimeout(() => {
         this.spinner = false;
       }, 1500);
+    });
+    if (!this.disksUpdateSubscriptionId) {
+      const diskUpdatesTrigger$ = new Subject<ApiEvent<Disk>>();
+      diskUpdatesTrigger$.pipe(
+        switchMap(() => this.ws.call('disk.query')),
+        untilDestroyed(this),
+      ).subscribe((disks) => {
+        this.handleLoadedDisks(disks);
+      });
+      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$);
+    }
+  }
+
+  handleLoadedDisks(disks: Disk[]): void {
+    this.system.diskData = disks;
+    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+      this.system.pools = pools;
+      this.events.next({ name: 'PoolsChanged', sender: this });
+      this.addViews();
     });
   }
 }

@@ -4,9 +4,9 @@ import {
   Component, Input, ViewChild,
 } from '@angular/core';
 import {
-  MatPaginator, MatPaginatorIntl,
-} from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+  MatLegacyPaginator as MatPaginator, MatLegacyPaginatorIntl as MatPaginatorIntl,
+} from '@angular/material/legacy-paginator';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 
 @Component({
   selector: 'ix-table-paginator',

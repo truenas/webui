@@ -10,7 +10,7 @@
       <button
         *ngIf="reorderMode"
         mat-button
-        [color]="'primary'"
+        color="primary"
         (click)="onConfirm()"
       >
         {{ 'Save' | translate }}
@@ -18,7 +18,7 @@
       <button
         *ngIf="!reorderMode && !isEmpty"
         mat-button
-        [color]="'primary'"
+        color="primary"
         (click)="onEnter()"
       >
         {{ 'Reorder' | translate }}
@@ -70,9 +70,9 @@
               id="active"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
@@ -85,9 +85,9 @@
               id="passive"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
               [widgetSize]="medium"
               [showReorderHandle]="reorderMode"
@@ -107,7 +107,7 @@
               *ngSwitchCase="'cpu'"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [data]="dataFromConfig(widget) | cast"
               [cpuModel]="systemInformation.model"
               [widgetSize]="medium"
@@ -119,7 +119,7 @@
               *ngSwitchCase="'memory'"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [ecc]="systemInformation.ecc_memory"
               [data]="dataFromConfig(widget) | cast"
               [widgetSize]="medium"
@@ -132,7 +132,7 @@
               *ngSwitchCase="'pool'"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [poolState]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget)"
               [widgetSize]="medium"
@@ -145,7 +145,7 @@
               *ngSwitchCase="'storage'"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [pools]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"
@@ -158,7 +158,7 @@
               *ngSwitchCase="'interface'"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [nicState]="dataFromConfig(widget) | cast"
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
@@ -171,7 +171,7 @@
               *ngSwitchCase="'network'"
               fxFlex.xs="100"
               ixDrag
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [nics]="nics"
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
@@ -210,7 +210,7 @@
               *ngSwitchCase="'system information'"
               id="active"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="false"
               [widgetSize]="medium"
               (back)="onMobileBack()"
@@ -221,7 +221,7 @@
               *ngSwitchCase="'system information(standby)'"
               id="passive"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHa]="isHa"
+              [isHaLicensed]="isHaLicensed"
               [isPassive]="true"
               [widgetSize]="medium"
               (back)="onMobileBack()"
@@ -259,7 +259,7 @@
             <ix-widget-storage
               *ngSwitchCase="'storage'"
               fxFlex.xs="100"
-              fxFlex="{{ widgetWidth }}px"
+              [fxFlex]="widgetWidth + 'px'"
               [pools]="dataFromConfig(widget) | cast"
               [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"

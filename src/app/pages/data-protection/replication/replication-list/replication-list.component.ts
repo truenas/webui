@@ -1,21 +1,27 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import {
+  filter, switchMap, tap,
+} from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
   ReplicationRestoreDialogComponent,
@@ -23,7 +29,6 @@ import {
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import {
   DialogService,
-  JobService,
   WebSocketService,
   StorageService,
   TaskService,
@@ -32,12 +37,12 @@ import {
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [
-    JobService,
     StorageService,
     TaskService,
     KeychainCredentialService,
@@ -46,14 +51,14 @@ import { ModalService } from 'app/services/modal.service';
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements EntityTableConfig {
+export class ReplicationListComponent implements EntityTableConfig<ReplicationTaskUi> {
   title = this.translate.instant('Replication Tasks');
   queryCall = 'replication.query' as const;
   wsDelete = 'replication.delete' as const;
   routeAdd: string[] = ['tasks', 'replication', 'wizard'];
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<ReplicationTaskUi>;
   asyncView = true;
   filterValue = '';
 
@@ -85,18 +90,20 @@ export class ReplicationListComponent implements EntityTableConfig {
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
-    protected job: JobService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private route: ActivatedRoute,
     private slideInService: IxSlideInService,
+    private store$: Store<AppState>,
+    private snackbar: SnackbarService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
     merge([
       this.slideInService.onClose$,
@@ -126,26 +133,26 @@ export class ReplicationListComponent implements EntityTableConfig {
         onClick: (row: ReplicationTaskUi) => {
           this.dialog.confirm({
             title: this.translate.instant('Run Now'),
-            message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
+            message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
             hideCheckBox: true,
-          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-            row.state = { state: JobState.Running };
-            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe({
-              next: (jobId: number) => {
-                this.dialog.info(
-                  this.translate.instant('Task started'),
-                  this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
-                  true,
-                );
-                this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
-                  row.state = { state: job.state };
-                  row.job = job;
-                });
-              },
-              error: (err) => {
-                new EntityUtils().handleWsError(this.entityList, err);
-              },
-            });
+          }).pipe(
+            filter(Boolean),
+            tap(() => row.state = { state: JobState.Running }),
+            switchMap(() => this.ws.call('replication.run', [row.id])),
+            tap(() => this.snackbar.success(
+              this.translate.instant('Replication «{name}» has started.', { name: row.name }),
+            )),
+            switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
+            untilDestroyed(this),
+          ).subscribe({
+            next: (job: Job) => {
+              row.state = { state: job.state };
+              row.job = { ...job };
+              this.cdr.markForCheck();
+            },
+            error: (err) => {
+              new EntityUtils().handleWsError(this.entityList, err);
+            },
           });
         },
       },
@@ -208,14 +215,12 @@ export class ReplicationListComponent implements EntityTableConfig {
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
@@ -223,7 +228,6 @@ export class ReplicationListComponent implements EntityTableConfig {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
@@ -235,8 +239,10 @@ export class ReplicationListComponent implements EntityTableConfig {
           list += warning + '\n';
         });
         this.dialog.errorReport(row.state.state, `<pre>${list}</pre>`);
-      } else {
+      } else if (row.state.error) {
         this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
+      } else if (row.job) {
+        this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
       this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
@@ -263,8 +269,8 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   doEdit(id: number): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
+    const replication = this.entityList.rows.find((row) => row.id === id);
     const form = this.slideInService.open(ReplicationFormComponent, { wide: true });
-    form.setExistingReplication(row);
+    form.setExistingReplication(replication);
   }
 }

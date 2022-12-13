@@ -7,21 +7,22 @@ import {
   TemplateRef,
   OnDestroy, Inject,
 } from '@angular/core';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
@@ -47,27 +48,18 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   defaultSort: Sort = { active: 'id', direction: 'asc' };
 
   isLoading = false;
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Group Quotas'),
-    large: true,
-  };
-  errorConfig: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
-  emptyOrErrorConfig: EmptyConfig = this.emptyConfig;
+  readonly EmptyType = EmptyType;
+
+  emptyType: EmptyType = EmptyType.NoPageData;
 
   useFullFilter = true;
   protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected invalidFilter: QueryParams<DatasetQuota> = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     protected ws: WebSocketService,
@@ -80,6 +72,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
@@ -146,11 +139,11 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   getGroupQuotas(): void {
-    const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
+    const filterParam = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.Group, filter],
+      [this.datasetId, DatasetQuotaType.Group, filterParam],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;
@@ -158,7 +151,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
         this.checkInvalidQuotas();
       },
       error: (error) => {
-        this.emptyOrErrorConfig = this.errorConfig;
+        this.emptyType = EmptyType.Errors;
         this.handleError(error);
       },
     });
@@ -166,7 +159,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
 
   createDataSource(quotas: DatasetQuota[] = []): void {
     if (!quotas.length) {
-      this.emptyOrErrorConfig = this.emptyConfig;
+      this.emptyType = EmptyType.NoPageData;
+    } else {
+      this.emptyType = EmptyType.NoSearchResults;
     }
     this.dataSource = new MatTableDataSource(quotas);
     this.dataSource.sort = this.sort;

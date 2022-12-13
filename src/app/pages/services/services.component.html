@@ -9,7 +9,12 @@
 
 <mat-card>
   <mat-card-content>
-    <table ix-table [dataSource]="dataSource">
+    <table
+      ix-table
+      [ix-table-empty]="shouldShowEmpty"
+      [emptyConfig]="emptyConfigService.defaultEmptyConfig(loading ? EmptyType.Loading : EmptyType.NoSearchResults)"
+      [dataSource]="dataSource"
+    >
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
         <td *matCellDef="let service; dataSource: dataSource" mat-cell>
@@ -23,7 +28,7 @@
           <mat-spinner
             *ngIf="serviceLoadingMap.get(service.service); else slider"
             matTooltipPosition="right"
-            [diameter]="40"
+            [diameter]="30"
             [matTooltip]="
               (service.state === ServiceStatus.Running
                 ? 'Stopping'
@@ -84,11 +89,6 @@
         mat-row
       ></tr>
 
-      <tr *matNoDataRow class="mat-row no-data-row">
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <ix-entity-empty [conf]="loadingConf"></ix-entity-empty>
-        </td>
-      </tr>
     </table>
   </mat-card-content>
 </mat-card>

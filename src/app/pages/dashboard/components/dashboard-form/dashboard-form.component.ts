@@ -6,7 +6,7 @@ import {
 import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { rootUserId } from 'app/constants/root-user-id.contant';
+import { rootUserId } from 'app/constants/root-user-id.constant';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -40,8 +40,7 @@ export class DashboardFormComponent {
   extractName(widget: DashConfigItem): string {
     const name = widget.name;
     if (widget.identifier) {
-      const identifier = widget.identifier.split(',')[1];
-      return identifier;
+      return widget.identifier.split(',')[1];
     }
     return name;
   }

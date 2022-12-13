@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  FormBuilder, FormControl, Validators,
+} from '@angular/forms';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -35,7 +37,6 @@ export class ChartFormComponent implements OnDestroy {
   title: string;
   config: { [key: string]: ChartFormValue };
   catalogApp: CatalogApp;
-  selectedVersionKey: string;
 
   isLoading = false;
   isNew = true;
@@ -73,7 +74,7 @@ export class ChartFormComponent implements OnDestroy {
     this.config = chart.config;
     this.config.release_name = chart.id;
 
-    this.form.addControl('release_name', new UntypedFormControl(this.title, [Validators.required]));
+    this.form.addControl('release_name', new FormControl(this.title, [Validators.required]));
 
     this.dynamicSection.push({
       name: 'Application name',
@@ -107,12 +108,8 @@ export class ChartFormComponent implements OnDestroy {
       }
     });
 
-    if (!this.selectedVersionKey) {
-      this.selectedVersionKey = versionKeys[0];
-    }
-
-    this.form.addControl('version', new UntypedFormControl(this.selectedVersionKey, [Validators.required]));
-    this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
+    this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
+    this.form.addControl('release_name', new FormControl('', [Validators.required]));
     this.form.controls['release_name'].setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
@@ -142,6 +139,7 @@ export class ChartFormComponent implements OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
+    this.form.patchValue({ release_name: this.catalogApp.name });
   }
 
   buildDynamicForm(schema: ChartSchema['schema']): void {
@@ -228,9 +226,7 @@ export class ChartFormComponent implements OnDestroy {
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
-    if (this.isNew) {
-      _.unset(data, keys);
-    } else if (!_.get(this.config, keys)) {
+    if (this.isNew || !_.get(this.config, keys)) {
       _.unset(data, keys);
     }
   }
@@ -259,13 +255,14 @@ export class ChartFormComponent implements OnDestroy {
     });
 
     if (this.isNew) {
+      const version = data.version;
       delete data.version;
       this.dialogRef.componentInstance.setCall('chart.release.create', [{
         catalog: this.catalogApp.catalog.id,
         item: this.catalogApp.name,
         release_name: data.release_name,
         train: this.catalogApp.catalog.train,
-        version: this.selectedVersionKey,
+        version,
         values: data,
       } as ChartReleaseCreate]);
     } else {

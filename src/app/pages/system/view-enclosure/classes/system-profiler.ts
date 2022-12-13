@@ -28,11 +28,11 @@ export interface EnclosureMetadata {
 export interface VDevMetadata {
   pool: string;
   type: string;
-  disks?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
-  diskEnclosures?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
-
+  name: string;
+  disks?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
+  diskEnclosures?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
   topology?: PoolTopologyCategory;
   selectedDisk?: string;
   slots?: { [devName: string]: number };
@@ -120,9 +120,11 @@ export class SystemProfiler {
   getSeriesFromModel(model: string): string {
     if (model.startsWith('Z')) {
       return 'Z Series';
-    } if (model.startsWith('X')) {
+    }
+    if (model.startsWith('X')) {
       return 'X Series';
-    } if (model.startsWith('M')) {
+    }
+    if (model.startsWith('M')) {
       return 'M Series';
     }
     return model;
@@ -132,8 +134,7 @@ export class SystemProfiler {
     // Clean the slate before we start
     this.profile.forEach((enc) => enc.disks = []);
 
-    const data = disks; // DEBUG
-    data.forEach((item: EnclosureDisk) => {
+    disks.forEach((item: EnclosureDisk) => {
       if (!item.enclosure) { return; } // Ignore boot disks
 
       const enclosure = this.profile[item.enclosure.number];
@@ -188,6 +189,7 @@ export class SystemProfiler {
     pool.topology[role].forEach((vdev, vIndex) => {
       const metadata: VDevMetadata = {
         pool: pool.name,
+        name: vdev.name,
         type: vdev.type,
         topology: role,
         poolIndex: pIndex,
@@ -268,6 +270,7 @@ export class SystemProfiler {
         type: 'None',
         poolIndex: -1,
         vdevIndex: -1,
+        name: '',
       };
     }
 
@@ -276,17 +279,17 @@ export class SystemProfiler {
     const vdev = { ...disk.vdev };
     vdev.diskEnclosures = {};
     const keys = Object.keys(slots);
-    keys.forEach((disk) => {
-      const enclosureNumber = this.getEnclosureNumber(disk);
+    keys.forEach((diskKey) => {
+      const enclosureNumber = this.getEnclosureNumber(diskKey);
 
       // is the disk on the current enclosure?
-      const diskObj = enclosure.disks[enclosure.diskKeys[disk]];
+      const diskObj = enclosure.disks[enclosure.diskKeys[diskKey]];
       if (!diskObj) {
-        delete slots[disk];
+        delete slots[diskKey];
       } else {
-        slots[disk] = diskObj.enclosure.slot;
+        slots[diskKey] = diskObj.enclosure.slot;
       }
-      vdev.diskEnclosures[disk] = enclosureNumber;
+      vdev.diskEnclosures[diskKey] = enclosureNumber;
     });
 
     vdev.selectedDisk = diskName;

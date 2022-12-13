@@ -200,9 +200,9 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     });
     const disksWithTempData = Object.keys(tempAgg);
     for (const diskWithTempData of disksWithTempData) {
-      const disk = disks.find((disk) => disk.devname === diskWithTempData);
-      if (disk) {
-        disk.tempAggregates = { ...tempAgg[diskWithTempData] };
+      const dashboardDisk = disks.find((disk) => disk.devname === diskWithTempData);
+      if (dashboardDisk) {
+        dashboardDisk.tempAggregates = { ...tempAgg[diskWithTempData] };
       }
     }
     return of(disks);

@@ -1,6 +1,6 @@
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-entity-table-add-actions [entity]="this"></ix-entity-table-add-actions>
+    <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
   </ix-page-title-header>
 </ng-template>
 
@@ -33,12 +33,12 @@
             *ngFor="let maction of conf.multiActions"
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ maction?.id }}"
+            [ix-auto-identifier]="maction?.id"
           >
             <button
               *ngIf="maction.enable"
               mat-button
-              id="{{ maction?.id }}"
+              [id]="maction?.id"
               (click)="maction.onClick(this.selection.selected)"
             >
               <mat-icon>{{ maction?.icon }}</mat-icon>
@@ -49,7 +49,7 @@
           &nbsp;
         </div>
 
-        <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
+        <div *ngIf="!conf.multiActions || conf.multiActions.length === 0">
           <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
             <!-- With Labels -->
             <ng-container>
@@ -70,7 +70,7 @@
               <button
                 mat-button
                 matTooltipPosition="below"
-                matTooltip="{{ 'Delete selections' | translate }}"
+                [matTooltip]="'Delete selections' | translate"
                 (click)="doMultiDelete(this.selection.selected)"
               >
                 <mat-icon>delete</mat-icon>
@@ -98,7 +98,7 @@
           <!-- Column Template -->
           <ng-container
             *ngIf="isBasicColumnTemplate(column)"
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
             [sticky]="isLeftStickyColumnNo(i)"
           >
             <th
@@ -147,9 +147,9 @@
 
           <!-- Expansion Chevrons -->
           <ng-container
-            *ngIf="column == 'expansion-chevrons'"
+            *ngIf="column === 'expansion-chevrons'"
             stickyEnd
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
           >
             <th
               *matHeaderCellDef
@@ -166,7 +166,7 @@
               (mouseout)="onHover($event, false)"
             >
               <ng-container *ngIf="hasDetails() === true">
-                <ng-container *ngIf="element === expandedElement">
+                <ng-container *ngIf="element?.id === expandedElement?.id">
                   <button
                     class="transparent-btn"
                     [attr.aria-label]="'Close expanded row' | translate"
@@ -179,7 +179,7 @@
                     ></mat-icon>
                   </button>
                 </ng-container>
-                <ng-container *ngIf="element !== expandedElement">
+                <ng-container *ngIf="element?.id !== expandedElement?.id">
                   <button
                     class="transparent-btn"
                     [attr.aria-label]="'Expand row' | translate"
@@ -198,9 +198,9 @@
 
           <!-- Threedot Actions -->
           <ng-container
-            *ngIf="column == 'action'"
+            *ngIf="column === 'action'"
             stickyEnd
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
           >
             <th
               *matHeaderCellDef
@@ -217,7 +217,7 @@
               (mouseout)="onHover($event, false)"
             >
               <ix-entity-table-actions
-                [entity]="this"
+                [entity]="asGenericTable(this)"
                 [row]="element"
                 (mouseover)="onHover($event, true)"
                 (mouseout)="onHover($event, false)"
@@ -228,9 +228,9 @@
 
           <!-- Multiselect Checkboxes -->
           <ng-container
-            *ngIf="column == 'multiselect'"
+            *ngIf="column === 'multiselect'"
             sticky
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
           >
             <th *matHeaderCellDef class="multiselect-column" mat-header-cell>
               <mat-checkbox
@@ -266,8 +266,8 @@
 
           <!-- Interactive Toggle Column -->
           <ng-container
-            *ngIf="column == 'state' && isInteractive(column)"
-            matColumnDef="{{ column }}"
+            *ngIf="column === 'state' && isInteractive(column)"
+            [matColumnDef]="column"
           >
             <th
               *matHeaderCellDef
@@ -303,12 +303,10 @@
                   ix-auto
                   ix-auto-type="overlay"
                   matTooltipPosition="right"
-                  id="overlay__{{ element.name }}_Running"
-                  matTooltip="{{ element.state }}"
-                  [ix-auto-identifier]="column + element.name"
-                  (click)="
-                    $event.stopPropagation(); this.conf.onSliderChange(element)
-                  "
+                  [id]="'overlay__' + getRowIdentifier(element) + '_Running'"
+                  [matTooltip]="element.state"
+                  [ix-auto-identifier]="column + getRowIdentifier(element)"
+                  (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 ></div>
 
                 <mat-slide-toggle
@@ -316,8 +314,8 @@
                   ix-auto
                   ix-auto-type="slider"
                   color="primary"
-                  id="slide-toggle__{{ column }}_{{ element.name }}"
-                  ix-auto-identifier="{{ column }}__{{ element.name }}"
+                  [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
+                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>
@@ -328,8 +326,8 @@
                   mat-stroked-button
                   ix-auto
                   ix-auto-type="slider"
-                  id="interactive-button_{{ column }}_{{ element.name }}"
-                  ix-auto-identifier="{{ column }}__{{ element.name }}"
+                  [id]="'interactive-button_' + column + '_' + getRowIdentifier(element)"
+                  [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
                   [ngClass]="getButtonClass(element[column])"
                   (click)="
                     $event.stopPropagation(); this.conf.onButtonClick(element)
@@ -353,16 +351,13 @@
               ['enabled', 'enable', 'autostart'].includes(column) &&
               isInteractive(column)
             "
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
           >
             <th
               *matHeaderCellDef
               class="toggle-column"
               mat-header-cell
-              [class.padded-away]="
-                !shouldApplyStickyOffset(i) &&
-                !(isLeftStickyColumnNo(i) && isTableOverflow())
-              "
+              [class.padded-away]="isPaddedAway(i)"
             >
               {{ currentColumns[i].name | translate }}
             </th>
@@ -370,30 +365,36 @@
               *matCellDef="let element"
               class="toggle-column"
               mat-cell
-              [class.padded-away]="
-                !shouldApplyStickyOffset(i) &&
-                !(isLeftStickyColumnNo(i) && isTableOverflow())
-              "
+              [class.padded-away]="isPaddedAway(i)"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
               <mat-checkbox
+                *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
                 color="primary"
                 class="checkbox"
                 ix-auto
                 ix-auto-type="checkbox"
-                id="checkbox__{{ element.name }}"
-                ix-auto-identifier="{{ column }}__{{ element.name }}"
+                [id]="'checkbox__' + getRowIdentifier(element)"
+                [ix-auto-identifier]="column + '__' + getRowIdentifier(element)"
+                [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
-                (change)="this.conf.onCheckboxChange(element)"
+                (change)="checkboxChanged(element)"
                 (click)="$event.stopPropagation()"
               ></mat-checkbox>
+
+              <mat-spinner
+                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
+                mode="indeterminate"
+                [diameter]="25"
+                [id]="'checkbox_spinner__' + getRowIdentifier(element)"
+              ></mat-spinner>
             </td>
           </ng-container>
 
           <ng-container
-            *ngIf="['path', 'paths'].includes(column) && isInteractive(column)"
-            matColumnDef="{{ column }}"
+            *ngIf="['path', 'paths', 'path_local'].includes(column) && isInteractive(column)"
+            [matColumnDef]="column"
           >
             <th *matHeaderCellDef mat-header-cell>
               {{ currentColumns[i].name | translate }}
@@ -426,11 +427,11 @@
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+              [@detailExpand]="element?.id === expandedElement?.id ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
-                [parent]="this"
+                [parent]="asGenericTable(this)"
               ></ix-entity-table-row-details>
             </div>
           </td>
@@ -443,9 +444,9 @@
           class="element-row"
           ix-auto
           ix-auto-type="expander"
-          id="{{ element[getFirstKey()] }}"
-          ix-auto-identifier="{{ element[getFirstKey()] }}"
-          [ngClass]="{ 'expanded-row': expandedElement === element }"
+          [id]="element[getFirstKey()]"
+          [ix-auto-identifier]="element[getFirstKey()]"
+          [ngClass]="{ 'expanded-row': expandedElement?.id === element?.id }"
           (click)="doRowClick(element)"
         ></tr>
 

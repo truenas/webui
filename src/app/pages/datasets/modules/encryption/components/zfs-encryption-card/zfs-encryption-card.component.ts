@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import {
 import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import {
   ExportDatasetKeyDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/export-dataset-key-dialog/export-dataset-key-dialog.component';
@@ -17,7 +18,7 @@ import {
   LockDatasetDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/lock-dataset-dialog/lock-dataset-dialog.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isEncryptionRoot, isPasswordEncrypted } from 'app/pages/datasets/utils/dataset.utils';
+import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 // TODO: Add support for exporting all keys on root dataset.
 // TODO: Bug with spaces in dataset name
@@ -100,5 +101,15 @@ export class ZfsEncryptionCardComponent {
     this.matDialog.open(ExportDatasetKeyDialogComponent, {
       data: this.dataset,
     });
+  }
+
+  onExportAllKeys(): void {
+    this.matDialog.open(ExportAllKeysDialogComponent, {
+      data: this.dataset,
+    });
+  }
+
+  get isRoot(): boolean {
+    return isRootDataset(this.dataset);
   }
 }

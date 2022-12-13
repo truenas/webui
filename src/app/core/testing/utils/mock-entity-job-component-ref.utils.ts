@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { of } from 'rxjs';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 
@@ -19,6 +19,7 @@ export const mockEntityJobComponentRef = {
     failure: new EventEmitter(),
     wsshow: jest.fn(),
     wspost: jest.fn(),
+    updateSize: jest.fn(),
   },
   close: jest.fn(),
 } as unknown as MatDialogRef<EntityJobComponent>;

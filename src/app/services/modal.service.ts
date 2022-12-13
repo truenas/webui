@@ -3,8 +3,8 @@ import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ModalConfiguration } from 'app/modules/common/modal/modal-configuration.interface';
-import { ModalComponent } from 'app/modules/common/modal/modal.component';
+import { ModalConfiguration } from 'app/modules/layout/components/modal/modal-configuration.interface';
+import { ModalComponent } from 'app/modules/layout/components/modal/modal.component';
 
 export interface ModalServiceMessage {
   action: string;
@@ -24,7 +24,6 @@ export class ModalService {
   private modalTypeOpenedInSlideIn: Type<unknown> = null;
   readonly refreshTable$ = new Subject<void>();
   readonly onClose$ = new Subject<{ modalType?: Type<unknown>; response: unknown }>();
-  refreshForm$ = new Subject<void>();
   getRow$ = new Subject();
 
   constructor(
@@ -68,18 +67,18 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal = this.modals.find((modal) => modal.id === id);
-    modal.open(conf);
+    const modalToOpen = this.modals.find((modal) => modal.id === id);
+    modalToOpen.open(conf);
   }
 
   private close(id: string): Promise<boolean> {
     // close modal specified by id
-    const modal = this.modals.find((modal) => modal.id === id);
+    const modalToClose = this.modals.find((modal) => modal.id === id);
     if (id === slideInModalId) {
       this.onClose$.next({ modalType: this.modalTypeOpenedInSlideIn, response: true });
     } else {
       this.onClose$.next({ response: true });
     }
-    return modal.close();
+    return modalToClose.close();
   }
 }

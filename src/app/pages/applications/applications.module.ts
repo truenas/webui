@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatSortModule } from '@angular/material/sort';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -23,16 +23,23 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { ApplicationsRoutingModule } from 'app/pages/applications/applications-routing.module';
 import { ApplicationsComponent } from 'app/pages/applications/applications.component';
 import { CatalogComponent } from 'app/pages/applications/catalog/catalog.component';
 import { ChartReleasesComponent } from 'app/pages/applications/chart-releases/chart-releases.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ChartBulkUpgradeComponent } from 'app/pages/applications/dialogs/chart-bulk-upgrade/chart-bulk-upgrade.component';
 import { ChartEventsDialogComponent } from 'app/pages/applications/dialogs/chart-events/chart-events-dialog.component';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ManageCatalogSummaryDialogComponent } from 'app/pages/applications/dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import {
+  PodSelectLogsDialogComponent,
+} from 'app/pages/applications/dialogs/pod-select-logs/pod-select-logs-dialog.component';
+import { PodSelectDialogComponent } from 'app/pages/applications/dialogs/pod-select/pod-select-dialog.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/applications/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/applications/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/applications/docker-images/docker-images-list/docker-images-list.component';
@@ -51,6 +58,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
 
 @NgModule({
   imports: [
+    AppLoaderModule,
     AppCommonModule,
     ApplicationsRoutingModule,
     CastModule,
@@ -60,6 +68,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     FlexLayoutModule,
     FormsModule,
     ImgFallbackModule,
+    JobsModule,
     IxFormsModule,
     IxTableModule,
     LayoutModule,
@@ -99,9 +108,12 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     ManageCatalogSummaryDialogComponent,
     PodLogsComponent,
     PodShellComponent,
+    PodSelectDialogComponent,
+    PodSelectLogsDialogComponent,
     PullImageFormComponent,
     SelectPoolDialogComponent,
     ChartRollbackModalComponent,
+    ChartBulkUpgradeComponent,
   ],
   providers: [
     DockerImagesComponentStore,

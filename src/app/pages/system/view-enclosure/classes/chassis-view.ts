@@ -4,8 +4,10 @@ import {
   easing,
 } from 'popmotion';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
+import { ChangeDriveTrayColorEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 // TODO: See if can be removed.
 // eslint-disable-next-line
@@ -83,13 +85,14 @@ export class ChassisView {
     this.driveTrays = new PIXI.Container();
     this.events = new Subject<CoreEvent>();
 
-    this.events.subscribe((evt: CoreEvent) => {
-      switch (evt.name) {
-        case 'ChangeDriveTrayColor':
-          this.colorDriveTray(parseInt(evt.data.id), evt.data.color);
-          break;
-      }
-    });
+    this.events
+      .pipe(filter((event) => event.name === 'ChangeDriveTrayColor'))
+      .subscribe((evt: CoreEvent) => {
+        this.colorDriveTray(
+          parseInt((evt as ChangeDriveTrayColorEvent).data.id),
+          (evt as ChangeDriveTrayColorEvent).data.color,
+        );
+      });
 
     // defaults
     this.rows = 6;

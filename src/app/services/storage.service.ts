@@ -74,8 +74,7 @@ export class StorageService {
       { responseType: 'blob' }).pipe(
       map(
         (res) => {
-          const blob = new Blob([res], { type: mimeType });
-          return blob;
+          return new Blob([res], { type: mimeType });
         },
       ),
     );
@@ -99,7 +98,7 @@ export class StorageService {
     });
 
     // If all values are the same, just return the array without sorting or flipping it
-    if (!tempArr.some((val, _, arr) => val !== arr[0])) {
+    if (!tempArr.some((val, _) => val !== tempArr[0])) {
       return arr;
     }
 

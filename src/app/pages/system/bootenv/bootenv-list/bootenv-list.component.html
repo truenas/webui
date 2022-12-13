@@ -49,6 +49,8 @@
   ix-table
   matSort
   matSortDisableClear="true"
+  [ix-table-empty]="!dataSource.filteredData.length"
+  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
   [dataSource]="dataSource"
   [matSortActive]="defaultSort.active"
   [matSortDirection]="defaultSort.direction"
@@ -114,7 +116,7 @@
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell class="keep-td">
       <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
-      {{ (bootenv.keep ? 'Yes' : 'No') | translate }}
+      {{ bootenv.keep ? ('Yes' | translate) : ('No' | translate) }}
     </td>
   </ng-container>
 
@@ -156,7 +158,7 @@
           <ix-icon
             [name]="bootenv.keep ? 'bookmark_border' : 'bookmark'"
           ></ix-icon>
-          {{ (bootenv.keep ? 'Unkeep' : 'Keep') | translate }}
+          {{ bootenv.keep ? ('Unkeep' | translate) : ('Keep' | translate) }}
         </a>
       </mat-menu>
     </td>
@@ -168,15 +170,7 @@
     mat-row
   ></tr>
 
-  <tr *matNoDataRow class="mat-row no-data-row">
-    <td
-      *ngIf="!(isLoading$ | async)"
-      class="mat-cell"
-      [attr.colspan]="displayedColumns.length"
-    >
-      <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
-    </td>
-  </tr>
+  
 </table>
 
 <ix-table-paginator

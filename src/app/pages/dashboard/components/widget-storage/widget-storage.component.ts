@@ -6,7 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
@@ -118,7 +118,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   updatePoolInfoMap(): void {
     this.pools.forEach((pool) => {
       this.poolInfoMap[pool.name] = {
-        totalDisks: this.totalDisks(pool),
+        totalDisks: this.getTotalDisks(pool),
         status: this.getStatusItemInfo(pool),
         freeSpace: this.getFreeSpace(pool),
         usedSpace: this.getUsedSpaceItemInfo(pool),
@@ -244,7 +244,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       }
 
       if (this.cols > 1) {
-        value += ' of ' + this.totalDisks(pool);
+        value += ' of ' + this.getTotalDisks(pool);
       }
     }
 
@@ -255,17 +255,9 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     };
   }
 
-  totalDisks(pool: Pool): string {
+  getTotalDisks(pool: Pool): string {
     if (pool && pool.topology) {
-      let total = 0;
-      pool.topology.data.forEach((item) => {
-        if (item.type === TopologyItemType.Disk) {
-          total++;
-        } else {
-          total += item.children.length;
-        }
-      });
-      return total.toString() + ' (data)';
+      return countDisksTotal(pool.topology);
     }
 
     return this.translate.instant('Unknown');

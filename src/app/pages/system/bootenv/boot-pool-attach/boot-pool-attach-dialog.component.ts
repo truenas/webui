@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -84,7 +84,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
   }
 
   warnForExportedPools(diskName: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+    const unusedDisk = this.unusedDisks.find((disk) => disk.name === diskName);
     if (!unusedDisk?.exported_zpool) {
       return;
     }

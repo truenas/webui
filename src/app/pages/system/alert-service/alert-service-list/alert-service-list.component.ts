@@ -68,7 +68,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
     return true;
   }
 
-  afterInit(entityTable: EntityTableComponent): void {
+  afterInit(entityTable: EntityTableComponent<AlertService>): void {
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       entityTable.getData();
     });
@@ -78,11 +78,11 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
     this.slideInService.open(AlertServiceComponent);
   }
 
-  doEdit(id: number, entityTable: EntityTableComponent): void {
-    const row = entityTable.rows.find((row) => row.id === id);
+  doEdit(id: number, entityTable: EntityTableComponent<AlertService>): void {
+    const alertService = entityTable.rows.find((row) => row.id === id);
 
     const form = this.slideInService.open(AlertServiceComponent);
-    form.setAlertServiceForEdit(row);
+    form.setAlertServiceForEdit(alertService);
   }
 
   onCheckboxChange(row: AlertService): void {
