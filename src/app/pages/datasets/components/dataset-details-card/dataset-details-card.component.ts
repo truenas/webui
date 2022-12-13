@@ -10,10 +10,13 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -35,6 +38,9 @@ export class DatasetDetailsCardComponent {
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private ws: WebSocketService,
+    private dialogService: DialogService,
+    private snackbar: SnackbarService,
   ) { }
 
   get datasetCompression(): string {
@@ -61,6 +67,10 @@ export class DatasetDetailsCardComponent {
     return this.dataset.comments?.source === ZfsPropertySource.Local && !!this.dataset.comments?.value?.length;
   }
 
+  get canBePromoted(): boolean {
+    return Boolean(this.dataset.origin?.parsed);
+  }
+
   deleteDataset(): void {
     this.mdDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
       .afterClosed()
@@ -70,6 +80,20 @@ export class DatasetDetailsCardComponent {
         this.datasetStore.selectedParentDataset$.pipe(first(), untilDestroyed(this)).subscribe((parent) => {
           this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
         });
+      });
+  }
+
+  promoteDataset(): void {
+    this.ws.call('pool.dataset.promote', [this.dataset.id])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
+          this.datasetStore.datasetUpdated();
+        },
+        error: (error) => {
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+        },
       });
   }
 
