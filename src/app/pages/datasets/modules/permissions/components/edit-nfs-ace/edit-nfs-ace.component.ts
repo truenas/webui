@@ -91,11 +91,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   ) {}
 
   get isUserTag(): boolean {
-    return this.ace.tag === NfsAclTag.User;
+    return this.form.value.tag === NfsAclTag.User;
   }
 
   get isGroupTag(): boolean {
-    return this.ace.tag === NfsAclTag.UserGroup;
+    return this.form.value.tag === NfsAclTag.UserGroup;
   }
 
   get arePermissionsBasic(): boolean {

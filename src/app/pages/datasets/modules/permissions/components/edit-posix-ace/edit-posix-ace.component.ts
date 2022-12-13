@@ -56,11 +56,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   ) {}
 
   get isUserTag(): boolean {
-    return this.ace.tag === PosixAclTag.User;
+    return this.form.value.tag === PosixAclTag.User;
   }
 
   get isGroupTag(): boolean {
-    return this.ace.tag === PosixAclTag.Group;
+    return this.form.value.tag === PosixAclTag.Group;
   }
 
   ngOnInit(): void {
