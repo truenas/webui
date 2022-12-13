@@ -214,7 +214,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       this.datasetStore.selectDatasetById(routeDatasetId);
     } else {
       const firstNode = this.treeControl.dataNodes[0];
-      this.router.navigate(['/datasets', firstNode.id]);
+      if (firstNode) {
+        this.router.navigate(['/datasets', firstNode.id]);
+      }
     }
   }
 

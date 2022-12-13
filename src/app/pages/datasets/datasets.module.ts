@@ -7,8 +7,8 @@ import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-c
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularResizeEventModule } from 'angular-resize-event';
 import { ChartsModule } from 'ng2-charts';
@@ -73,7 +73,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxFormsModule,
     IxTreeModule,
     IxTableModule,
-    MatDialogModule,
     EntityModule,
     MatDialogModule,
     EntityModule,
