@@ -124,8 +124,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   get unhealthyPools(): Pool[] {
-    const sickPools = this.getUnhealthyPools();
-    return sickPools;
+    return this.getUnhealthyPools();
   }
 
   private _selectedVdev: VDevMetadata;
@@ -608,27 +607,24 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const enclosure: ChassisView = extractedChassis.front;
 
-    enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
-      switch (evt.name) {
-        case 'Ready':
-          this.container.addChild(enclosure.container);
-          enclosure.container.name = enclosure.model + '_for_extraction';
-          enclosure.container.width = enclosure.container.width / 2;
-          enclosure.container.height = enclosure.container.height / 2;
+    enclosure.events
+      .pipe(filter((event) => event.name === 'Ready'), untilDestroyed(this))
+      .subscribe(() => {
+        this.container.addChild(enclosure.container);
+        enclosure.container.name = enclosure.model + '_for_extraction';
+        enclosure.container.width = enclosure.container.width / 2;
+        enclosure.container.height = enclosure.container.height / 2;
 
-          enclosure.container.x = this.pixiWidth / 2 - enclosure.container.width / 2;
-          enclosure.container.y = this.pixiHeight / 2 - enclosure.container.height / 2;
+        enclosure.container.x = this.pixiWidth / 2 - enclosure.container.width / 2;
+        enclosure.container.y = this.pixiHeight / 2 - enclosure.container.height / 2;
 
-          this.optimizeChassisOpacity(enclosure);
+        this.optimizeChassisOpacity(enclosure);
 
-          profile.disks.forEach((disk) => {
-            this.setDiskHealthState(disk, enclosure);
-          });
-          this.extractEnclosure(enclosure, profile);
-
-          break;
-      }
-    });
+        profile.disks.forEach((disk) => {
+          this.setDiskHealthState(disk, enclosure);
+        });
+        this.extractEnclosure(enclosure, profile);
+      });
 
     enclosure.load();
   }
@@ -655,8 +651,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   makeDriveTray(): DriveTray {
-    const dt = this.enclosure.makeDriveTray();
-    return dt;
+    return this.enclosure.makeDriveTray();
   }
 
   onImport(): void {
@@ -912,12 +907,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const analyze = (disk: EnclosureDisk): void => {
       let failed = false;
-      const reasons = [];
 
       // Health based on disk.status
       if (disk && disk.status && disk.status === 'FAULT') {
         failed = true;
-        reasons.push("Disk Status is 'FAULT'");
       }
 
       // Also check slot status

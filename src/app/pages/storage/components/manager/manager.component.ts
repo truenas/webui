@@ -524,16 +524,17 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.hasVdevDiskSizeError = true;
         this.hasSavableErrors = true;
       }
-      if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
-        if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
-          if (vdev.group === 'log') {
-            this.getLogVdevTypeWarningMsg();
-          } else {
-            this.getStripeVdevTypeErrorMsg(vdev.group);
-          }
-
-          this.hasSavableErrors = true;
+      if (
+        ['dedup', 'log', 'special', 'data'].includes(vdev.group)
+        && vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe'
+      ) {
+        if (vdev.group === 'log') {
+          this.getLogVdevTypeWarningMsg();
+        } else {
+          this.getStripeVdevTypeErrorMsg(vdev.group);
         }
+
+        this.hasSavableErrors = true;
       }
     });
     if (this.isNew) {

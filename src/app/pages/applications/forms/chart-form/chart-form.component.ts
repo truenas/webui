@@ -226,9 +226,7 @@ export class ChartFormComponent implements OnDestroy {
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
-    if (this.isNew) {
-      _.unset(data, keys);
-    } else if (!_.get(this.config, keys)) {
+    if (this.isNew || !_.get(this.config, keys)) {
       _.unset(data, keys);
     }
   }

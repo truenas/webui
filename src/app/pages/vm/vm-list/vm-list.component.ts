@@ -293,7 +293,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         if (method === this.wsMethods.start && err.error === 12) {
           this.onMemoryError(row);
           return;
-        } if (method === this.wsMethods.update) {
+        }
+        if (method === this.wsMethods.update) {
           row.autostart = !row.autostart;
         }
         new EntityUtils().handleWsError(this, err, this.dialogService);

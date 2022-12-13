@@ -142,13 +142,12 @@ export class LocaleService {
 
   /** Revert DateFns for Chart DateTime format */
   formatDateTimeToChart(dateTimeFormat: string): string {
-    const dateFormat = dateTimeFormat
+    return dateTimeFormat
       .replace('yyyy', 'YYYY')
       .replace('y', 'YY')
       .replace('dd', 'DD')
       .replace('d', 'D')
       .replace(' aaaaa\'m\'', ' a')
       .replace(' aa', ' A');
-    return dateFormat;
   }
 }

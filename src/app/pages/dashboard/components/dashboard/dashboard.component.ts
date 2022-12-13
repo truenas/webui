@@ -401,18 +401,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    switch (item.name.toLowerCase()) {
-      case 'storage':
-        return this.volumeData;
-      default: {
-        const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        if (!dashboardPool) {
-          console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-          return;
-        }
-        return this.volumeData && this.volumeData[dashboardPool.name];
-      }
+    if (item.name.toLowerCase() === 'storage') {
+      return this.volumeData;
     }
+
+    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+    if (!dashboardPool) {
+      console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
+      return;
+    }
+    return this.volumeData && this.volumeData[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {

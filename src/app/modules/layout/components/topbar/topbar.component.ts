@@ -138,12 +138,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.updateIsDone.unsubscribe();
         });
       }
-      if (!this.isFailoverLicensed) {
-        if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
-          this.systemWillRestart = true;
-          if (event.fields.state === JobState.Success) {
-            this.router.navigate(['/others/reboot']);
-          }
+      if (
+        !this.isFailoverLicensed
+        && event?.fields?.arguments[0]
+        && (event.fields.arguments[0] as { reboot: boolean }).reboot
+      ) {
+        this.systemWillRestart = true;
+        if (event.fields.state === JobState.Success) {
+          this.router.navigate(['/others/reboot']);
         }
       }
 
@@ -162,10 +164,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       } else {
         this.checkNetworkChangesPending();
       }
-      if (evt && evt.data.checkin) {
-        if (this.checkinInterval) {
-          clearInterval(this.checkinInterval);
-        }
+      if (evt && evt.data.checkin && this.checkinInterval) {
+        clearInterval(this.checkinInterval);
       }
     });
 

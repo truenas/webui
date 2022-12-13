@@ -127,23 +127,19 @@ export class GeneralSettingsComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(name: GeneralCardId): void {
-    switch (name) {
-      case GeneralCardId.Gui:
-        this.slideInService.open(GuiFormComponent);
-        this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(({ response }: ResponseOnClose) => {
-          // TODO: Do not simplify. Refactor slideInService to be more like MatDialog.
-          if (response === true) {
-            return;
-          }
+    if (name === GeneralCardId.Gui) {
+      this.slideInService.open(GuiFormComponent);
+      this.slideInService.onClose$.pipe(take(1), untilDestroyed(this)).subscribe(({ response }: ResponseOnClose) => {
+        // TODO: Do not simplify. Refactor slideInService to be more like MatDialog.
+        if (response === true) {
+          return;
+        }
 
-          this.store$.dispatch(guiFormClosedWithoutSaving());
-        });
-        break;
-      default: {
-        const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
-        localizationFormModal.setupForm(this.localizationSettings);
-        break;
-      }
+        this.store$.dispatch(guiFormClosedWithoutSaving());
+      });
+    } else {
+      const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
+      localizationFormModal.setupForm(this.localizationSettings);
     }
   }
 }
