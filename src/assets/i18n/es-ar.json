@@ -608,7 +608,7 @@
   "Pod Shell": "",
   "Pods": "",
   "Pool": "",
-  "Pool Disks have {alerts} alerts and {smartTests} failed SMART tests": "",
+  "Pool Disks have {alerts} alerts": "",
   "Pool Options for {pool}": "",
   "Pool contains {status} Data VDEVs": "",
   "Pool has been unset.": "",
