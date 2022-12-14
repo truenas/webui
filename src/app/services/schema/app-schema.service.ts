@@ -1,26 +1,33 @@
 import { Injectable } from '@angular/core';
-import {
-  Validators, AbstractControl, FormGroup,
-} from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { BehaviorSubject, of, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
-  AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaInput, DynamicFormSchemaNode,
+  AddListItemEvent,
+  DeleteListItemEvent,
+  DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
-import { CustomUntypedFormArray } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
-import { CustomUntypedFormControl } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
+import {
+  CustomUntypedFormArray,
+} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
+import {
+  CustomUntypedFormControl,
+} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
 import {
   CustomUntypedFormField,
 } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import {
+  CustomUntypedFormGroup,
+} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { FormSchema } from './form-schema';
 
 @UntilDestroy()
 @Injectable({
@@ -46,156 +53,14 @@ export class AppSchemaService {
       ChartSchemaType.Hostpath,
       ChartSchemaType.Ipaddr,
     ].includes(schema.type)) {
-      switch (schema.type) {
-        case ChartSchemaType.Int:
-          if (schema.enum) {
-            const inputSchema = {
-              controlName: chartSchemaNode.variable,
-              type: DynamicFormSchemaType.Select,
-              title: chartSchemaNode.label,
-              options: of(schema.enum.map((option) => ({
-                value: option.value,
-                label: option.description,
-              }))),
-              required: schema.required,
-              hideEmpty: true,
-              editable: schema.editable,
-              tooltip: chartSchemaNode.description,
-            };
-            if (!isNew && (!!schema.immutable || isParentImmutable)) {
-              inputSchema.editable = false;
-            }
-            newSchema.push(inputSchema);
-          } else {
-            const inputSchema: DynamicFormSchemaInput = {
-              controlName: chartSchemaNode.variable,
-              type: DynamicFormSchemaType.Input,
-              title: chartSchemaNode.label,
-              required: schema.required,
-              tooltip: chartSchemaNode.description,
-              editable: schema.editable,
-              inputType: 'number',
-            };
-            if (!isNew && (!!schema.immutable || isParentImmutable)) {
-              inputSchema.editable = false;
-            }
-            newSchema.push(inputSchema);
-          }
-          break;
-        case ChartSchemaType.String:
-          if (schema.enum) {
-            const inputSchema = {
-              controlName: chartSchemaNode.variable,
-              type: DynamicFormSchemaType.Select,
-              title: chartSchemaNode.label,
-              options: of(schema.enum.map((option) => ({
-                value: option.value,
-                label: option.description,
-              }))),
-              required: schema.required,
-              hideEmpty: true,
-              editable: schema.editable,
-              tooltip: chartSchemaNode.description,
-            };
-            if (!isNew && (!!schema.immutable || isParentImmutable)) {
-              inputSchema.editable = false;
-            }
-            newSchema.push(inputSchema);
-          } else {
-            const inputSchema: DynamicFormSchemaInput = {
-              controlName: chartSchemaNode.variable,
-              type: DynamicFormSchemaType.Input,
-              title: chartSchemaNode.label,
-              required: schema.required,
-              editable: schema.editable,
-              tooltip: chartSchemaNode.description,
-              inputType: schema.private ? 'password' : undefined,
-            };
-            if (!isNew && (!!schema.immutable || isParentImmutable)) {
-              inputSchema.editable = false;
-            }
-            newSchema.push(inputSchema);
-          }
-          break;
-        case ChartSchemaType.Path:
-        {
-          const inputSchema = {
-            controlName: chartSchemaNode.variable,
-            type: DynamicFormSchemaType.Input,
-            title: chartSchemaNode.label,
-            required: schema.required,
-            editable: schema.editable,
-            tooltip: chartSchemaNode.description,
-          };
-          if (!isNew && (!!schema.immutable || isParentImmutable)) {
-            inputSchema.editable = false;
-          }
-          newSchema.push(inputSchema);
-          break;
-        }
-        case ChartSchemaType.Hostpath:
-        {
-          const inputSchema = {
-            controlName: chartSchemaNode.variable,
-            type: DynamicFormSchemaType.Explorer,
-            title: chartSchemaNode.label,
-            nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
-            required: schema.required,
-            editable: schema.editable,
-            tooltip: chartSchemaNode.description,
-          };
-          if (!isNew && (!!schema.immutable || isParentImmutable)) {
-            inputSchema.editable = false;
-          }
-          newSchema.push(inputSchema);
-          break;
-        }
-        case ChartSchemaType.Boolean:
-        {
-          const inputSchema = {
-            controlName: chartSchemaNode.variable,
-            type: DynamicFormSchemaType.Checkbox,
-            title: chartSchemaNode.label,
-            required: schema.required,
-            editable: schema.editable,
-            tooltip: chartSchemaNode.description,
-          };
-          if (!isNew && (!!schema.immutable || isParentImmutable)) {
-            inputSchema.editable = false;
-          }
-          newSchema.push(inputSchema);
-          break;
-        }
-        case ChartSchemaType.Ipaddr:
-          if (schema.cidr) {
-            const inputSchema = {
-              controlName: chartSchemaNode.variable,
-              type: DynamicFormSchemaType.Ipaddr,
-              title: chartSchemaNode.label,
-              required: schema.required,
-              editable: schema.editable,
-              tooltip: chartSchemaNode.description,
-            };
-            if (!isNew && (!!schema.immutable || isParentImmutable)) {
-              inputSchema.editable = false;
-            }
-            newSchema.push(inputSchema);
-          } else {
-            const inputSchema = {
-              controlName: chartSchemaNode.variable,
-              type: DynamicFormSchemaType.Input,
-              title: chartSchemaNode.label,
-              required: schema.required,
-              tooltip: chartSchemaNode.description,
-              editable: schema.editable,
-            };
-            if (!isNew && (!!schema.immutable || isParentImmutable)) {
-              inputSchema.editable = false;
-            }
-            newSchema.push(inputSchema);
-          }
-          break;
+      const inputSchema = this.transformSimpleNode(chartSchemaNode);
+
+      if (!isNew && (!!chartSchemaNode.schema.immutable || isParentImmutable)) {
+        inputSchema.editable = false;
       }
+
+      newSchema.push(inputSchema);
+
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
           const objs = this.transformNode(subquestion, isNew, !!schema.immutable || isParentImmutable);
@@ -211,6 +76,7 @@ export class AppSchemaService {
       schema.attrs.forEach((attr) => {
         attrs = attrs.concat(this.transformNode(attr, isNew, !!schema.immutable || isParentImmutable));
       });
+
       const inputSchema = {
         controlName: chartSchemaNode.variable,
         type: DynamicFormSchemaType.Dict,
@@ -255,6 +121,46 @@ export class AppSchemaService {
     return newSchema;
   }
 
+  private transformSimpleNode(
+    chartSchemaNode: ChartSchemaNode,
+  ): DynamicFormSchemaNode {
+    switch (chartSchemaNode.schema.type) {
+      case ChartSchemaType.Int:
+        if (chartSchemaNode.schema.enum) {
+          return FormSchema.selectFromEnum(chartSchemaNode);
+        }
+
+        return {
+          ...FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input),
+          inputType: 'number',
+        } as DynamicFormSchemaNode;
+      case ChartSchemaType.String:
+        if (chartSchemaNode.schema.enum) {
+          return FormSchema.selectFromEnum(chartSchemaNode);
+        }
+        return {
+          ...FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input),
+          inputType: chartSchemaNode.schema.private ? 'password' : undefined,
+        } as DynamicFormSchemaNode;
+      case ChartSchemaType.Path:
+        return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input);
+      case ChartSchemaType.Hostpath:
+        return {
+          ...FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Explorer),
+          nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
+        } as DynamicFormSchemaNode;
+      case ChartSchemaType.Boolean:
+        return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Checkbox);
+      case ChartSchemaType.Ipaddr:
+        if (chartSchemaNode.schema.cidr) {
+          return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Ipaddr);
+        }
+
+        return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input);
+    }
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   addFormControls(
     chartSchemaNode: ChartSchemaNode,
     formGroup: CustomUntypedFormGroup | FormGroup,
