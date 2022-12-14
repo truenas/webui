@@ -34,8 +34,8 @@ export const defaultSize = 48;
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: CdkTree, useExisting: IxTreeVirtualScrollViewComponent },
-    { provide: IxTree, useExisting: IxTreeVirtualScrollViewComponent },
+    { provide: CdkTree, useExisting: this },
+    { provide: IxTree, useExisting: this },
   ],
 })
 export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements OnChanges {
