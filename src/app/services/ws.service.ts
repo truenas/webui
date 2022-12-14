@@ -284,13 +284,13 @@ export class WebSocketService {
    * and will unsubscribe from the middleware endpoint on its own
    * when no subscriptions are active
    */
-  newSub<K extends ApiMethod>(apiMethod: K): Observable<ApiEvent<ApiDirectory[K]['response']>> {
+  newSub<T>(apiMethod: string): Observable<ApiEvent<T>> {
     const endpoint = apiMethod.replace('.', '_'); // Avoid weird behavior
     if (this.newSubscribers[endpoint]?.observable$) {
-      return this.newSubscribers[endpoint].observable$ as Observable<ApiEvent<ApiDirectory[K]['response']>>;
+      return this.newSubscribers[endpoint].observable$ as Observable<ApiEvent<T>>;
     }
 
-    const subscriber$ = new Subject<ApiEvent<ApiDirectory[K]['response']>>();
+    const subscriber$ = new Subject<ApiEvent<T>>();
     const subscriptionId = UUID.UUID();
     const payload = {
       id: subscriptionId,
