@@ -203,9 +203,5 @@ def click_the_enable_checkbox_and_click_save(driver, nas_url, ad_user, ad_passwo
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
-    time.sleep(1)
-    # leave Active Directory to ensure there is no issue with LDAP test.
-    payload = {"username": ad_user, "password": ad_password}
-    results = post(nas_url, "activedirectory/leave/", (user, password), payload)
-    assert results.status_code == 200, results.text
-    time.sleep(5)
+    # Sleep 10 to give HA time to handle changes
+    time.sleep(10)
