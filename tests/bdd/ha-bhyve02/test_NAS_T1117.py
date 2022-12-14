@@ -85,7 +85,7 @@ def click_save_then_please_wait_should_appear_and_you_should_see_settings_saved(
     assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     # allow time for the NAS to settle down
-    time.sleep(5)
+    time.sleep(10)
 
 
 @then('verify there is non local user and group with API call')
