@@ -843,6 +843,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as keyof CreatedItems;
+      // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
         if (!(
           (item === 'zvol' && value['disk'] !== 'NEW')

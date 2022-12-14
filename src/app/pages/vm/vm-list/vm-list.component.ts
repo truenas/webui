@@ -1,11 +1,13 @@
 import {
   AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -13,11 +15,11 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiParams } from 'app/interfaces/api-directory.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import {
   VirtualizationDetails,
   VirtualMachine, VirtualMachineUpdate,
 } from 'app/interfaces/virtual-machine.interface';
-import { EmptyType, EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -54,6 +56,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
   canAdd = false;
+  expandedElement?: VirtualMachineRow | null = null;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -113,11 +116,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   ) {}
 
   ngOnInit(): void {
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.entityList.getData();
-      },
-    );
+    merge(this.modalService.onClose$, this.slideIn.onClose$)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.entityList.getData());
   }
 
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
@@ -292,7 +293,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
         if (method === this.wsMethods.start && err.error === 12) {
           this.onMemoryError(row);
           return;
-        } if (method === this.wsMethods.update) {
+        }
+        if (method === this.wsMethods.update) {
           row.autostart = !row.autostart;
         }
         new EntityUtils().handleWsError(this, err, this.dialogService);

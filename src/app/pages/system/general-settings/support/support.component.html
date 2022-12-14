@@ -87,7 +87,7 @@
                 mat-menu-item
                 ix-auto
                 ix-auto-type="button"
-                ix-auto-identifier="{{ ticketText }}"
+                [ix-auto-identifier]="ticketText"
                 (click)="fileTicket()"
               >
                 <span>{{ ticketText | translate }}</span>
@@ -97,7 +97,7 @@
                 mat-menu-item
                 ix-auto
                 ix-auto-type="button"
-                ix-auto-identifier="{{ proactiveText }}"
+                [ix-auto-identifier]="proactiveText"
                 (click)="openProactive()"
               >
                 <span>{{ proactiveText | translate }}</span>
@@ -111,7 +111,7 @@
               color="default"
               ix-auto
               ix-auto-type="button"
-              ix-auto-identifier="{{ ticketText }}"
+              [ix-auto-identifier]="ticketText"
               (click)="fileTicket()"
             >
               {{ ticketText | translate }}
@@ -123,7 +123,7 @@
               color="default"
               ix-auto
               ix-auto-type="button"
-              ix-auto-identifier="{{ proactiveText }}"
+              [ix-auto-identifier]="proactiveText"
               (click)="openProactive()"
             >
               {{ proactiveText | translate }}

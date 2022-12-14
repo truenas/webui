@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -19,7 +20,10 @@ export class SystemConfigEffects {
         this.ws.call('system.general.config'),
         this.ws.call('system.advanced.config'),
       ]).pipe(
-        map(([generalConfig, advancedConfig]) => systemConfigLoaded({ generalConfig, advancedConfig })),
+        map(([generalConfig, advancedConfig]) => {
+          this.window.localStorage.setItem('language', generalConfig.language);
+          return systemConfigLoaded({ generalConfig, advancedConfig });
+        }),
         catchError((error) => {
           // TODO: Basically a fatal error. Handle it.
           console.error(error);
@@ -32,5 +36,6 @@ export class SystemConfigEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 }

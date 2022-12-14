@@ -1,8 +1,9 @@
 @use '@angular/material' as mat;
-@import '~assets/styles/scss-imports/cssvars';
+@import 'scss-imports/cssvars';
 $standard-height: 40px;
-@import '~@angular/material/theming';
-@include mat.core();
+@import '@angular/material/theming';
+@include mat.all-legacy-component-typographies();
+@include mat.legacy-core();
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
@@ -14,7 +15,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
 // include the custom theme object into the angular material theme
 .ix-dark {
-  @include mat.all-component-themes($ix-theme);
+  @include mat.all-legacy-component-themes($ix-theme);
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -46,6 +47,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox-label {
     color: var(--fg1);
+    white-space: initial;
   }
 
   .mat-bg-accent {
@@ -700,7 +702,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .fn-theme-tooltip {
-    @import '~ngx-popperjs/scss/theme';
+    @import 'ngx-popperjs/scss/theme';
     @include ngx-popperjs-theme(var(--primary), var(--primary-txt), 400px, 20001);
   }
 

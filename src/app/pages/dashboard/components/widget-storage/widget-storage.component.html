@@ -108,7 +108,7 @@
                   >
                     <ul fxLayout="column" [fxFlex]="cols === 1 ? 31 : 100">
                       <li fxLayout="row">
-                        <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}">
+                        <span [class]="['icon', poolInfoMap[pool.name]?.status?.level]">
                           <ix-icon
                             [name]="poolInfoMap[pool.name]?.status?.icon"
                           ></ix-icon
@@ -121,7 +121,7 @@
                         </span>
                       </li>
                       <li fxLayout="row">
-                        <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}">
+                        <span [class]="['icon', poolInfoMap[pool.name]?.usedSpace?.level]">
                           <ix-icon
                             [name]="poolInfoMap[pool.name]?.usedSpace?.icon"
                           ></ix-icon
@@ -137,7 +137,7 @@
                         ></span>
                       </li>
                       <li fxLayout="row">
-                        <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}">
+                        <span [class]="['icon', poolInfoMap[pool.name]?.disksWithError?.level]">
                           <ix-icon
                             [name]="poolInfoMap[pool.name]?.disksWithError?.icon"
                           ></ix-icon>
@@ -160,7 +160,7 @@
                           class="storage-value"
                           textLimiter
                           threshold="32"
-                          content="{{ pool.path }}"
+                          [content]="pool.path"
                         ></span>
                       </li>
                     </ul>
@@ -175,7 +175,7 @@
                             class="storage-value"
                             textLimiter
                             threshold="17"
-                            content="{{ pool.path }}"
+                            [content]="pool.path"
                           ></span>
                         </li>
                         <li fxLayout="row">

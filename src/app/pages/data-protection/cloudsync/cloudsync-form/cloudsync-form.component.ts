@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -64,6 +64,7 @@ export class CloudsyncFormComponent {
     credentials: [null as number, Validators.required],
     bucket: [''],
     bucket_input: ['', Validators.required],
+    acknowledge_abuse: [false],
     folder_destination: [[] as string[]],
     folder_source: [[] as string[]],
     bucket_policy_only: [false],
@@ -336,8 +337,7 @@ export class CloudsyncFormComponent {
       const parentDirectories = values.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -376,8 +376,7 @@ export class CloudsyncFormComponent {
       const parentDirectories = values.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -548,6 +547,9 @@ export class CloudsyncFormComponent {
     if (task.attributes.chunk_size) {
       this.form.controls.chunk_size.setValue(task.attributes.chunk_size as number);
     }
+    if (task.attributes.acknowledge_abuse) {
+      this.form.controls.acknowledge_abuse.setValue(task.attributes.acknowledge_abuse as boolean);
+    }
     if (task.attributes.storage_class) {
       this.form.controls.storage_class.setValue(task.attributes.storage_class as string);
     }
@@ -558,10 +560,8 @@ export class CloudsyncFormComponent {
 
     for (const limit of bwlimit) {
       const sublimitArr = limit.split(/\s*,\s*/);
-      if (sublimitArr.length === 1 && bwlimit.length === 1) {
-        if (!sublimitArr[0].includes(':')) {
-          sublimitArr.unshift('00:00');
-        }
+      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
+        sublimitArr.unshift('00:00');
       }
       if (sublimitArr[1] && sublimitArr[1] !== 'off') {
         if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
@@ -594,9 +594,15 @@ export class CloudsyncFormComponent {
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };
 
-    const attributesToFill = ['bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption', 'storage_class', 'fast_list', 'chunk_size'] as const;
+    const attributesToFill = [
+      'bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption',
+      'storage_class', 'fast_list', 'chunk_size', 'acknowledge_abuse',
+    ] as const;
 
-    (['path_source', 'path_destination', 'folder_source', 'folder_destination', 'cloudsync_picker', ...attributesToFill] as const).forEach((key) => {
+    ([
+      'path_source', 'path_destination', 'folder_source',
+      'folder_destination', 'cloudsync_picker', ...attributesToFill,
+    ] as const).forEach((key) => {
       delete (value as unknown as FormValue)[key];
     });
 

@@ -70,7 +70,7 @@
             >
               <mat-grid-tile
                 *ngFor="let nic of availableNics; let i = index"
-                class="tile-{{ i }}"
+                [class]="'tile-' + i"
                 [colspan]="getColspan(i)"
               >
                 <div

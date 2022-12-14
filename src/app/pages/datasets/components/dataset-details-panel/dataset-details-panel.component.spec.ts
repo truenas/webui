@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
@@ -17,11 +17,12 @@ import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/data
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
-import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ModalService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
@@ -32,6 +33,9 @@ describe('DatasetDetailsPanelComponent', () => {
     setVolId: jest.fn(),
     setTitle: jest.fn(),
     isNew: undefined as boolean,
+  };
+  const fakeSlideInRef = {
+    zvolFormInit: jest.fn(),
   };
   const dataset = {
     id: 'root/parent/child',
@@ -65,6 +69,10 @@ describe('DatasetDetailsPanelComponent', () => {
         openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => fakeSlideInRef),
+        onClose$: of(),
+      }),
       mockProvider(DatasetTreeStore, {
         selectedDataset$: of(datasetDetails),
         selectedParentDataset$: of(parentDatasetDetails),
@@ -74,7 +82,7 @@ describe('DatasetDetailsPanelComponent', () => {
           {
             selector: selectSystemInfo,
             value: {
-              version: 'TrueNAS-SCALE-22.12-MASTER-20221111-015225',
+              version: 'TrueNAS-SCALE-22.12',
             } as SystemInfo,
           },
         ],
@@ -108,9 +116,8 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormOldComponent);
-    expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
-    expect(fakeModalRef.isNew).toBe(true);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ZvolFormComponent);
+    expect(fakeSlideInRef.zvolFormInit).toHaveBeenCalledWith(true, 'root/parent/child');
   });
 
   it('shows all the cards', () => {

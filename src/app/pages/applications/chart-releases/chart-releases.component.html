@@ -70,14 +70,14 @@
             class="chart-name"
             textLimiter
             threshold="20"
-            content="{{ item.name }}"
+            [content]="item.name"
           ></strong>
           <div>
             <span
               class="version"
               textLimiter
               threshold="50"
-              content="{{ item.human_version }}"
+              [content]="item.human_version"
             ></span>
           </div>
           <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
@@ -104,7 +104,7 @@
                 class="ports-text"
                 textLimiter
                 threshold="28"
-                content="{{ appService.getPorts(item) | lowercase }}"
+                [content]="appService.getPorts(item) | lowercase"
               >
               </span>
             </div>
@@ -113,7 +113,7 @@
                 mat-button
                 ix-auto
                 ix-auto-type="button"
-                ix-auto-identifier="{{ item.name }}-portal"
+                [ix-auto-identifier]="item.name + '-portal'"
                 (click)="portalLink(item, portal.key)"
               >
                 {{ portalName(portal.key) }}
@@ -125,7 +125,7 @@
             mat-button
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ item.name }}-stop"
+            [ix-auto-identifier]="item.name + '-stop'"
             (click)="stop(item.name)"
           >
             {{ 'Stop' | translate }}
@@ -135,7 +135,7 @@
             mat-button
             ix-auto
             ix-auto-type="button"
-            ix-auto-identifier="{{ item.name }}-start"
+            [ix-auto-identifier]="item.name + '-start'"
             (click)="start(item.name)"
           >
             {{ 'Start' | translate }}

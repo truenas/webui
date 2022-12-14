@@ -25,7 +25,8 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:rxjs/recommended"
+        "plugin:rxjs/recommended",
+        "plugin:sonarjs/recommended"
       ],
       "plugins": [
         "rxjs",
@@ -34,6 +35,7 @@ module.exports = {
         "angular-file-naming",
         "@shopify",
         "unused-imports",
+        "sonarjs",
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -179,6 +181,10 @@ module.exports = {
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
+        "sonarjs/cognitive-complexity": ["off"],
+        "sonarjs/no-duplicate-string": ["off"],
+        "sonarjs/prefer-single-boolean-return": ["off"],
+        "sonarjs/no-nested-switch": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",

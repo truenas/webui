@@ -7,10 +7,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -22,7 +24,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
@@ -400,18 +401,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    switch (item.name.toLowerCase()) {
-      case 'storage':
-        return this.volumeData;
-      default: {
-        const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        if (!dashboardPool) {
-          console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-          return;
-        }
-        return this.volumeData && this.volumeData[dashboardPool.name];
-      }
+    if (item.name.toLowerCase() === 'storage') {
+      return this.volumeData;
     }
+
+    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+    if (!dashboardPool) {
+      console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
+      return;
+    }
+    return this.volumeData && this.volumeData[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
