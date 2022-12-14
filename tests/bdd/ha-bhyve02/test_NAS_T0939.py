@@ -195,7 +195,7 @@ def click_on_directory_services_then_active_directory(driver):
 
 
 @then('Click the Enable checkbox and click SAVE')
-def click_the_enable_checkbox_and_click_save(driver, ad_user, ad_password):
+def click_the_enable_checkbox_and_click_save(driver, nas_url, ad_user, ad_password, user, password):
     """Click the Enable checkbox and click SAVE."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
@@ -206,6 +206,6 @@ def click_the_enable_checkbox_and_click_save(driver, ad_user, ad_password):
     time.sleep(1)
     # leave Active Directory to ensure there is no issue with LDAP test.
     payload = {"username": ad_user, "password": ad_password}
-    results = post("/activedirectory/leave/", payload)
+    results = post(nas_url, "activedirectory/leave/", (user, password), payload)
     assert results.status_code == 200, results.text
     time.sleep(5)
