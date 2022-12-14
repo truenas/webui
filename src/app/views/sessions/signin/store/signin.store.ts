@@ -76,6 +76,8 @@ export class SigninStore extends ComponentStore<SigninState> {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
         this.loadFailoverStatus(),
+        // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
+        this.systemGeneralService.loadProductType(),
       ])
         .pipe(
           switchMap(() => {
@@ -104,13 +106,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
-    switchMap(() => {
-      return forkJoin([
-        this.authenticateWithToken(),
-        // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
-        this.systemGeneralService.loadProductType(),
-      ]);
-    }),
+    switchMap(() => this.authenticateWithToken()),
     tapResponse(
       () => {
         if (this.statusSubscriptionId) {
