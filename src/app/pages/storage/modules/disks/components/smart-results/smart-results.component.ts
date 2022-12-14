@@ -3,9 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { SmartTestResults } from 'app/interfaces/smart-test.interface';
+import { SmartTestResult, SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { PageTitleService } from 'app/services/page-title.service';
+
+interface SmartTestResultsRow extends SmartTestResult {
+  disk: string;
+}
 
 @UntilDestroy()
 @Component({
@@ -49,15 +53,23 @@ export class SmartResultsComponent implements EntityTableConfig {
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.disk = params['pk'];
-      const pageTitle = this.translate.instant('S.M.A.R.T Test Results of {disk}', {
-        disk: this.disk,
-      });
-      this.pageTitleService.setTitle(pageTitle);
-      this.queryCallOption = [[['disk', '=', this.disk]]];
+      if (this.disk) {
+        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T Test Results of {disk}', { disk: this.disk }));
+        this.queryCallOption = [[['disk', '=', this.disk]]];
+      } else {
+        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T Test Results'));
+        this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
+      }
     });
   }
 
-  resourceTransformIncomingRestData(data: SmartTestResults[]): SmartTestResults['tests'] {
-    return data[0]?.tests || [];
+  resourceTransformIncomingRestData(data: SmartTestResults[]): SmartTestResultsRow[] {
+    const rows: SmartTestResultsRow[] = [];
+    data.forEach((item) => {
+      item?.tests.forEach((test) => {
+        rows.push({ ...test, disk: item.disk });
+      });
+    });
+    return rows;
   }
 }

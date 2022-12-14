@@ -50,7 +50,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (this.disks) {
-      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
+      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTestsFailed, 0);
       this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
       this.loadTemperatures();
     }
