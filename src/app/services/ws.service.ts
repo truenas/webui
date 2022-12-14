@@ -5,9 +5,13 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
+  defer,
+  noop,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
-import { filter, share, switchMap } from 'rxjs/operators';
+import {
+  filter, finalize, share, switchMap,
+} from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -148,14 +152,11 @@ export class WebSocketService {
     }
 
     const collectionName = (data as ApiEvent).collection?.replace('.', '_');
-    if (collectionName && this.newSubscribers[collectionName]) {
-      const subscribers = Object.values(this.newSubscribers[collectionName]?.subscribers);
-      for (const subscriber$ of subscribers) {
-        if ('error' in data && data.error) {
-          subscriber$.error(data.error);
-        }
-        subscriber$.next(data as ApiEvent);
+    if (collectionName && this.newSubscribers[collectionName]?.subscriber$) {
+      if ('error' in data && data.error) {
+        this.newSubscribers[collectionName]?.subscriber$.error(data.error);
       }
+      this.newSubscribers[collectionName]?.subscriber$.next(data as ApiEvent);
     }
     if (collectionName && this.pendingSubs[collectionName]?.observers) {
       Object.values(this.pendingSubs[collectionName].observers).forEach((subObserver) => {
@@ -272,41 +273,61 @@ export class WebSocketService {
   newSubscribers: {
     [endpoint: string]: {
       subscriptionId: string;
-      subscribers: { [key: string]: Subject<ApiEvent<unknown>> };
+      subscriber$: Subject<ApiEvent<unknown>>;
+      observable$: Observable<ApiEvent<unknown>>;
     };
   } = {};
 
   /**
    * @param endpoint The end point to subscribe to for updates
-   * @returns A subject that emits an object of ApiEvent<T> type
-   * When you are done with the subscription, call `complete` on the subject returned
-   * and WebSocketService will know to not give you anymore updates
+   * @returns An observable which keep tracks of its subscribers,
+   * and will unsubscribe from the middleware endpoint on its own
+   * when no subscriptions are active
    */
-  newSub<T>(endpoint: string): Subject<ApiEvent<T>> {
-    const subscriber$ = new Subject<ApiEvent<T>>();
-    const observable$ = subscriber$.asObservable();
-    const subscriberId = UUID.UUID();
-    endpoint = endpoint.replace('.', '_'); // Avoid weird behavior
-    if (!this.newSubscribers[endpoint]) {
-      this.newSubscribers[endpoint] = { subscriptionId: UUID.UUID(), subscribers: {} };
-      const payload = {
-        id: this.newSubscribers[endpoint].subscriptionId,
-        name: endpoint,
-        msg: OutgoingApiMessageType.Sub,
-      };
-      this.send(payload);
+  newSub<K extends ApiMethod>(apiMethod: K): Observable<ApiEvent<ApiDirectory[K]['response']>> {
+    const endpoint = apiMethod.replace('.', '_'); // Avoid weird behavior
+    if (this.newSubscribers[endpoint]?.observable$) {
+      return this.newSubscribers[endpoint].observable$ as Observable<ApiEvent<ApiDirectory[K]['response']>>;
     }
 
-    this.newSubscribers[endpoint].subscribers[subscriberId] = subscriber$;
-    observable$.subscribe({
-      complete: () => {
-        delete this.newSubscribers[endpoint].subscribers[subscriberId];
-        if (!Object.values(this.newSubscribers[endpoint].subscribers).length) {
-          this.send({ id: this.newSubscribers[endpoint].subscriptionId, msg: OutgoingApiMessageType.UnSub });
+    const subscriber$ = new Subject<ApiEvent<ApiDirectory[K]['response']>>();
+    const subscriptionId = UUID.UUID();
+    const payload = {
+      id: subscriptionId,
+      name: endpoint,
+      msg: OutgoingApiMessageType.Sub,
+    };
+    this.send(payload);
+
+    const countedObservable$ = subscriber$.pipe(
+      this.subCounterOperator((noOfSubs: number) => {
+        if (noOfSubs === 0) {
+          this.send({ id: subscriptionId, msg: OutgoingApiMessageType.UnSub });
+          delete this.newSubscribers[endpoint];
         }
-      },
-    });
-    return subscriber$;
+      }),
+    );
+    this.newSubscribers[endpoint] = { subscriptionId, subscriber$, observable$: countedObservable$ };
+
+    return countedObservable$;
+  }
+
+  subCounterOperator<T>(onCountUpdate: (n: number) => void = noop) {
+    return function refCountOperatorFunction(source$: Subject<ApiEvent<T>>) {
+      let counter = 0;
+
+      return defer(() => {
+        counter++;
+        onCountUpdate(counter);
+        return source$;
+      })
+        .pipe(
+          finalize(() => {
+            counter--;
+            onCountUpdate(counter);
+          }),
+        );
+    };
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {

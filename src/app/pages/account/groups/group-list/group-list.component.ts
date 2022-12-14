@@ -8,26 +8,22 @@ import {
   ViewChildren,
   AfterViewInit,
   TemplateRef,
-  OnDestroy,
 } from '@angular/core';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import {
-  Observable, combineLatest, of, Subject,
+  Observable, combineLatest, of,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Group } from 'app/interfaces/group.interface';
-import { DiskUpdate } from 'app/interfaces/storage.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { groupPageEntered } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -40,7 +36,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GroupListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
@@ -82,26 +78,16 @@ export class GroupListComponent implements OnInit, AfterViewInit, OnDestroy {
     private store$: Store<AppState>,
     private layoutService: LayoutService,
     private emptyService: EmptyService,
-    private ws: WebSocketService,
   ) { }
 
-  subject$: Subject<ApiEvent<unknown>>;
   ngOnInit(): void {
     this.store$.dispatch(groupPageEntered());
     this.getPreferences();
     this.getGroups();
-    const subject$ = this.ws.newSub<DiskUpdate>('group.query');
-    subject$.pipe(untilDestroyed(this)).subscribe((update) => {
-      console.error('update', update);
-    });
   }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  ngOnDestroy(): void {
-    this.subject$.complete();
   }
 
   getPreferences(): void {
