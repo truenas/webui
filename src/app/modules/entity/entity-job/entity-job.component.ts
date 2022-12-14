@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
@@ -123,14 +122,13 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   }
 
   submit(): void {
-    let subscriptionId: string = null;
     this.ws.job(this.method, this.args)
       .pipe(untilDestroyed(this)).subscribe({
         next: (job) => {
           this.job = job;
           this.showAbortButton = this.job.abortable;
           if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
-            subscriptionId = this.getRealtimeLogs();
+            this.getRealtimeLogs();
           }
           if (job.progress && !this.showRealtimeLogs) {
             this.progress.emit(job.progress);
@@ -147,9 +145,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.success.emit(this.job);
           } else if (this.job.state === JobState.Failed) {
             this.failure.emit(this.job);
-          }
-          if (this.realtimeLogsSubscribed) {
-            this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
           }
         },
       });
@@ -248,21 +243,17 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  /**
-   * This method returns the subscription id that is used when subscribing to real time
-   * websocket updates. The subscription id is used to unsubscribe form those real time
-   * websocket updates at a later time. Unsubscription is not possible without this id
-   */
-  getRealtimeLogs(): string {
+  getRealtimeLogs(): void {
     this.realtimeLogsSubscribed = true;
-    const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.newSub<{ data: string }>(subName).pipe(
+      map((event) => event.fields),
+      untilDestroyed(this),
+    ).subscribe((res) => {
       if (res && res.data && typeof res.data === 'string') {
         this.realtimeLogs += res.data;
       }
     });
-    return subscriptionId;
   }
 
   scrollBottom(): void {

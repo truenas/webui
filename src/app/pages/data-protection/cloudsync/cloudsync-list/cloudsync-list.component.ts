@@ -292,20 +292,13 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         dialogRef.componentInstance.jobId = row.job.id;
         dialogRef.componentInstance.job = row.job;
         dialogRef.componentInstance.enableRealtimeLogs(true);
-        const subId = dialogRef.componentInstance.getRealtimeLogs();
+        dialogRef.componentInstance.getRealtimeLogs();
         dialogRef.componentInstance.wsshow();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-        });
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => dialogRef.close());
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => dialogRef.close());
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
-          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
