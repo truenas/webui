@@ -31,7 +31,7 @@ export class ResilverProgressDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.newSub<PoolScan>('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
       if (!event || !event.fields.scan.function.includes(PoolScanFunction.Resilver)) {
         return;
       }

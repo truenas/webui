@@ -207,7 +207,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
           this.wsjobUpdate(jobs[0]);
         }
       });
-    this.ws.subscribe('core.get_jobs')
+    this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs')
       .pipe(
         filter((event) => event.id === this.jobId),
         map((event) => event.fields),
