@@ -267,10 +267,10 @@ def disable_active_directory():
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    wait_on_element(7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
+        wait_on_element(7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+        web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+        assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
 
 
 def disable_ldap():
@@ -287,10 +287,10 @@ def disable_ldap():
     value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
-    wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
+        wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+        web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+        assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
 
 
 def disable_nis():

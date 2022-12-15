@@ -3,11 +3,13 @@
 
 import pytest
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_cmd,
+    refresh_if_element_missing
 )
 from pytest_bdd import (
     given,
@@ -19,122 +21,165 @@ from pytest_bdd import (
 
 
 @pytest.mark.dependency(name='NAS-T940')
-@scenario('features/NAS-T940.feature', 'Setting up LDAP')
-def test_setting_up_ldap(driver):
-    """Setting up LDAP."""
+@scenario('features/NAS-T940.feature', 'Setting up LDAP and verify that LDAP still work after failover')
+def test_setting_up_ldap_and_verify_that_ldap_still_work_after_failover():
+    """Setting up LDAP and verify that LDAP still work after failover."""
 
 
-@given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
-    """The browser is open navigate to "{nas_url}"."""
-    if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/dashboard/")
+@given(parsers.parse('the browser is open on "{virtual_hostname}" and logged in'))
+def the_browser_is_open_on_virtual_hostname_and_logged_in(driver, virtual_hostname):
+    """the browser is open on "{virtual_hostname}" and logged in."""
+    if virtual_hostname not in driver.current_url:
+        driver.get(f"http://{virtual_hostname}/ui/dashboard/")
         time.sleep(1)
-
-
-@when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
-def if_login_page_appear_enter_root_and_password(driver, user, password):
-    """If login page appear enter "user" and "password"."""
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
-        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys('testing')
+        assert wait_on_element(driver, 4, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    if not is_element_present(driver, xpaths.breadcrumb.dashboard):
+        assert wait_on_element(driver, 10, xpaths.sideMenu.root)
+        element = driver.find_element_by_xpath(xpaths.sideMenu.root)
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@then('You should see the dashboard and "System Information"')
-def you_should_see_the_dashboard_and_system_information(driver):
-    """You should see the dashboard and "System Information"."""
-    assert wait_on_element(driver, 7, '//a[text()="Dashboard"]')
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+@when('you see the Dashboard go to Directory Services and select LDAP')
+def you_see_the_dashboard_go_to_directory_services_and_select_ldap(driver):
+    """you see the Dashboard go to Directory Services and select LDAP."""
+    assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
+    assert wait_on_element(driver, 5, xpaths.dashboard.system_information)
+    assert wait_on_element(driver, 5, xpaths.sideMenu.directory_services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services_ldap)
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services_ldap).click()
 
 
-@then('Go to Directory Services and select LDAP')
-def go_to_directory_services_and_select_ldap(driver):
-    """Go to Directory Services and select LDAP."""
-    assert wait_on_element(driver, 5, '//span[contains(.,"root")]')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__LDAP"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
-
-
-@then('The LDAP page should open')
-def the_ldap_page_should_open(driver):
-    """The LDAP page should open."""
+@then('on the LDAP page input the <ldap_hostname>, <base_dn>, <bind_dn>')
+def on_the_ldap_page_input_the_ldap_hostname_base_dn_bind_dn(driver, ldap_hostname, base_dn, bind_dn):
+    """on the LDAP page input the <ldap_hostname>, <base_dn>, <bind_dn>."""
+    assert wait_on_element(driver, 5, '//li[span/a/text()="LDAP"]')
     assert wait_on_element(driver, 5, '//div[contains(.,"Server Credentials")]')
-
-
-@then(parsers.parse('Input "{hostname}" for Hostname, "{base_dn}" Base DN'))
-def input_ldap_hostname_for_hostname_ldap_base_dn(driver, hostname, base_dn):
-    """Input "hostname" for Hostname, "base_dn" Base DN."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Hostname"]', 'clickable')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Hostname"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(hostname)
+    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(ldap_hostname)
     driver.find_element_by_xpath('//input[@placeholder="Base DN"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Base DN"]').send_keys(base_dn)
-
-
-@then(parsers.parse('Input "{bind_dn}" for Bind DN and "{password}" for Bind Password'))
-def input_ldap_bind_dn_and_bind_password(driver, bind_dn, password):
-    """Input "bind_dn" for Bind DN and "password" for Bind Password."""
     driver.find_element_by_xpath('//input[@placeholder="Bind DN"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Bind DN"]').send_keys(bind_dn)
+
+
+@then('input <bind_password> then click Enable checkbox and Advanced Options')
+def input_bind_password_then_click_enable_checkbox_and_advanced_options(driver, bind_password):
+    """input <bind_password> then click Enable checkbox and Advanced Options."""
     driver.find_element_by_xpath('//input[@placeholder="Bind Password"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Bind Password"]').send_keys(password)
-
-
-@then('Click Advanced Options')
-def click_advanced_options(driver):
-    """Click Advanced Options."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
-
-
-@then('Click Enable checkbox, then Samba Schema and select ON for Encryption Mode')
-def click_enable_checkbox_then_samba_schema_and_select_on_for_encryption_mode(driver):
-    """Click Enable checkbox, then Samba Schema and select ON for Encryption Mode."""
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Encryption Mode"]', 'clickable')
+    driver.find_element_by_xpath('//input[@placeholder="Bind Password"]').send_keys(bind_password)
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
+    driver.find_element_by_xpath(xpaths.button.advanced_options).click()
+    time.sleep(1)
+
+
+@then('click to enable Samba Schema and ensure Encryption Mode is ON')
+def click_to_enable_samba_schema_and_ensure_encryption_mode_is_on(driver):
+    """click to enable Samba Schema and ensure Encryption Mode is ON."""
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Samba Schema (DEPRECATED - see help text)"]', 'clickable')
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Encryption Mode"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Samba Schema (DEPRECATED - see help text)"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Encryption Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Encryption Mode_ON"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Mode_ON"]').click()
 
 
-@then('Click SAVE "Please wait" should appear while settings are applied')
-def click_save_please_wait_should_appear_while_settings_are_applied(driver):
-    """Click SAVE "Please wait" should appear while settings are applied."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-
-
-@then('After settings are applied you should see "Settings saved."')
-def after_settings_are_applied_you_should_see_settings_saved(driver):
-    """After settings are applied you should see "Settings saved."."""
+@then('click SAVE, then "Please wait" should appear, and you should see "Settings saved."')
+def click_save_then_please_wait_should_appear_and_you_should_see_settings_saved(driver):
+    """click SAVE, then "Please wait" should appear, and you should see "Settings saved."."""
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
+    # allow time for the NAS to settle down
+    time.sleep(5)
 
 
-@then(parsers.parse('run "{command}" trough ssh at "{host}" with "{password}"'))
-def run_command_trough_ssh(driver, command, host, password):
-    """run "command" trough ssh."""
-    global ssh_result
-    ssh_result = ssh_cmd(command, 'root', password, host)
+@then(parsers.parse('ssh to virtual node and run "{pdbedit_cmd}", return "{ldap_user}" info'))
+def ssh_to_virtual_node_and_run_pdbedit_cmd_return_ldap_user_info(pdbedit_cmd, ldap_user, virtual_hostname):
+    """ssh to virtual node and run "{pdbedit_cmd}", return "{ldap_user}" info."""
+    ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtual_hostname)
+    assert ssh_result['result'] is True, str(ssh_result['output'])
+    assert ldap_user in ssh_result['output'], str(ssh_result['output'])
+
+
+@then(parsers.parse('run "{getent_cmd}" and verify it return LDAP user info'))
+def run_getent_cmd_and_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtual_hostname):
+    """run "{getent_cmd}" and verify it return LDAP user info."""
+    ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtual_hostname)
     assert ssh_result['result'], ssh_result['output']
+    assert ldap_user in ssh_result['output'], ssh_result['output']
 
 
-@then(parsers.parse('the ssh result should pass and return "{user}" info'))
-def the_ssh_result_should_pass_and_return_user_info(driver, user):
-    """the ssh result should pass and return "user" info."""
-    assert user in ssh_result['output'], ssh_result['output']
+@then('go to the Dashboard, verify HA is enabled, then Trigger failover')
+def go_to_the_dashboard_verify_ha_is_enabled_then_trigger_failover(driver):
+    """Go to the Dashboard, verify HA is enabled, then Trigger failover."""
+    assert wait_on_element(driver, 10, xpaths.sideMenu.root)
+    element = driver.find_element_by_xpath(xpaths.sideMenu.root)
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 10, xpaths.topToolbar.ha_enable)
+    time.sleep(5)
+    assert wait_on_element(driver, 60, xpaths.button.initiate_failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.initiate_failover).click()
+    assert wait_on_element(driver, 5, xpaths.popupTitle.initiate_failover)
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 5, xpaths.button.failover)
+    driver.find_element_by_xpath(xpaths.button.failover).click()
+
+
+@then('on the login, wait to see HA is enabled before login')
+def on_the_login_wait_to_see_ha_is_enabled_before_login(driver):
+    """on the login, wait to see HA is enabled before login."""
+    assert wait_on_element(driver, 120, xpaths.login.user_input)
+    # wait for HA is enabled to avoid UI refreshing
+    assert wait_on_element(driver, 300, xpaths.login.ha_status('HA is enabled'))
+    assert wait_on_element(driver, 7, xpaths.login.user_input)
+    driver.find_element_by_xpath(xpaths.login.user_input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+    driver.find_element_by_xpath(xpaths.login.password_input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_input).send_keys('testing')
+    assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+
+
+@then('on the Dashboard, make sure HA is enabled')
+def on_the_dashboard_make_sure_ha_is_enabled(driver):
+    """on the Dashboard, make sure HA is enabled."""
+    assert wait_on_element(driver, 7, xpaths.breadcrumb.dashboard)
+    assert wait_on_element(driver, 60, xpaths.dashboard.system_information)
+    if wait_on_element(driver, 5, xpaths.popupTitle.help):
+        assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
+    # refresh_if_element_missing need to be replace with wait_on_element when NAS-118299
+    assert refresh_if_element_missing(driver, 30, xpaths.topToolbar.ha_enable)
+    time.sleep(5)
+
+
+@then('ssh to the virtual node again to verify the pdbedit command still works')
+def ssh_to_the_virtual_node_again_to_verify_the_pdbedit_command_still_works(pdbedit_cmd, ldap_user, virtual_hostname):
+    """ssh to the virtual node again to verify the pdbedit command still works."""
+    ssh_result = ssh_cmd(pdbedit_cmd, 'root', 'testing', virtual_hostname)
+    assert ssh_result['result'] is True, str(ssh_result)
+    assert ldap_user in ssh_result['output'], str(ssh_result)
+
+
+@then('rerun the getent command to verify it return LDAP user info')
+def rerun_the_getent_command_to_verify_it_return_ldap_user_info(getent_cmd, ldap_user, virtual_hostname):
+    """rerun the getent command to verify it return LDAP user info."""
+    ssh_result = ssh_cmd(getent_cmd, 'root', 'testing', virtual_hostname)
+    assert ssh_result['result'], str(ssh_result)
+    assert ldap_user in ssh_result['output'], str(ssh_result)

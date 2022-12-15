@@ -8,7 +8,8 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     refresh_if_element_missing,
-    get
+    attribute_value_exist,
+    get,
 )
 from pytest_bdd import (
     given,
@@ -74,7 +75,10 @@ def on_the_nis_page_input_the_nis_domian_nis_server_then_click_enable_checkbox(d
     driver.find_element_by_xpath('//input[@placeholder="NIS Servers"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="NIS Servers"]').send_keys(nis_server + Keys.ENTER)
     assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    time.sleep(1)
+    value_exist = attribute_value_exist(driver, xpaths.checkbox.enable, 'class', 'mat-checkbox-checked')
+    if not value_exist:
+        driver.find_element_by_xpath(xpaths.checkbox.enable).click()
 
 
 @then('click SAVE, then "Please wait" should appear, and you should see "Settings saved."')
@@ -85,7 +89,7 @@ def click_save_then_please_wait_should_appear_and_you_should_see_settings_saved(
     assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     # allow time for the NAS to settle down
-    time.sleep(5)
+    time.sleep(10)
 
 
 @then('verify there is non local user and group with API call')
@@ -164,9 +168,17 @@ def click_on_Directory_Services_and_select_NIS_then_disable_NIS(driver):
     driver.find_element_by_xpath(xpaths.sideMenu.directory_services_nis).click()
     assert wait_on_element(driver, 5, '//li[span/a/text()="NIS"]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Network Information Service (NIS)")]')
+    # Clear settings
+    assert wait_on_element(driver, 5, '//input[@placeholder="NIS Domain"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="NIS Domain"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="NIS Servers"]').click()
+    driver.find_element_by_xpath('//input[@placeholder="NIS Servers"]').send_keys(Keys.BACKSPACE)
+    driver.find_element_by_xpath('//input[@placeholder="NIS Servers"]').send_keys(Keys.BACKSPACE)
+    driver.find_element_by_xpath('//input[@placeholder="NIS Servers"]').send_keys(Keys.BACKSPACE)
     assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.enable).click()
-    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    value_exist = attribute_value_exist(driver, xpaths.checkbox.enable, 'class', 'mat-checkbox-checked')
+    if value_exist:
+        driver.find_element_by_xpath(xpaths.checkbox.enable).click()
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 30, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')

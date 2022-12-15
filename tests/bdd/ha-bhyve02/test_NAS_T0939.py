@@ -168,11 +168,11 @@ def click_on_smb_start_automatically_checkbox(driver):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]').click()
 
 
-@then(parsers.parse('Send a file to the share with "{nas_url}"/"{smbname}" and "{user}"%"{password}"'))
-def send_a_file_to_the_share_with_nas_url_smbname_and_user_password(driver, nas_url, smbname, user, password):
+@then(parsers.parse('Send a file to the share with "{nas_url}"/"{smbname}" and "{ad_user}"%"{ad_password}"'))
+def send_a_file_to_the_share_with_nas_url_smbname_and_user_password(driver, nas_url, smbname, ad_user, ad_password):
     """Send a file the share with "nas_url"/"smbname" and "user"%"password"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_url}/{smbname} -W AD02 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_url}/{smbname} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
@@ -195,7 +195,7 @@ def click_on_directory_services_then_active_directory(driver):
 
 
 @then('Click the Enable checkbox and click SAVE')
-def click_the_enable_checkbox_and_click_save(driver):
+def click_the_enable_checkbox_and_click_save(driver, nas_url, ad_user, ad_password, user, password):
     """Click the Enable checkbox and click SAVE."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
@@ -203,3 +203,5 @@ def click_the_enable_checkbox_and_click_save(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, xpaths.popupTitle.please_wait)
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
+    # Sleep 10 to give HA time to handle changes
+    time.sleep(10)

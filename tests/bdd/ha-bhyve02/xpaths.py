@@ -46,4 +46,4 @@ class sideMenu:
 
 class topToolbar:
     ha_enable = '//mat-icon[@svgicon="ha_enabled"]'
-    ha_disabled = '//mat-icon[@svgicon="ha_disabled"]'
+    ha_disabled = '//mat-icon[contains(.,"ha_disabled")]'
