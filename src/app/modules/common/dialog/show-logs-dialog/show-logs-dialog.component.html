@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Logs' | translate }}</h1>
 
-<div class="logs" *ngIf="job?.logs_excerpt">
+<div *ngIf="job?.logs_excerpt" class="logs">
   <pre><code>{{ job.logs_excerpt }}</code></pre>
   <ix-copy-btn [text]="job.logs_excerpt"></ix-copy-btn>
 </div>

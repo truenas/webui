@@ -22,7 +22,7 @@ export const helptextSystemAdvanced = {
   consolemenu_tooltip: T('Unset to add a login prompt to the system before\
  the console menu is shown.'),
 
-  serialconsole_placeholder: T('Enable Serial Console'),
+  serialconsole_placeholder: T('Configure Serial Console'),
   serialconsole_tooltip: T('Do not set this if the Serial Port is disabled.'),
 
   serialport_placeholder: T('Serial Port'),

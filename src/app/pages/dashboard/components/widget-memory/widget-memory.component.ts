@@ -71,8 +71,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
 
     this.utils = new ThemeUtils();
 
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
   }
@@ -121,13 +121,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
 
     const services = data['total'] - data['free'] - data['arc_size'];
 
-    const columns = [
+    return [
       ['Free', this.bytesToGigabytes(data['free']).toFixed(1)],
       ['ZFS Cache', this.bytesToGigabytes(data['arc_size']).toFixed(1)],
       ['Services', this.bytesToGigabytes(services).toFixed(1)],
     ];
-
-    return columns;
   }
 
   setMemData(data: MemoryStatsEventData): void {
@@ -190,12 +188,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
       },
     };
 
-    const chart = new Chart(el.getContext('2d'), {
+    return new Chart(el.getContext('2d'), {
       type: 'doughnut',
       data,
       options,
     });
-    return chart;
   }
 
   updateChart(chart: Chart): void {

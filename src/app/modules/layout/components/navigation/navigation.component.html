@@ -9,8 +9,8 @@
         routerLinkActive="highlighted"
         ix-auto
         ix-auto-type="option"
-        id="nav-{{ i }}"
-        ix-auto-identifier="{{ item.name }}"
+        [id]="'nav-' + i"
+        [ix-auto-identifier]="item.name"
         [class.has-submenu]="item.type === MenuItemType.SlideOut"
         [class.highlighted]="isHighlighted === item.state"
         (click)="updateHighlightedClass(item.state)"

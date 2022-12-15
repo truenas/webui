@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
@@ -12,11 +12,15 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import {
+  SaveAsPresetModalComponent,
+} from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
+import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
+import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
@@ -142,6 +146,15 @@ export class DatasetAclEditorComponent implements OnInit {
       ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
       applyOwner: this.ownerFormGroup.get('applyOwner').value,
       applyGroup: this.ownerFormGroup.get('applyGroup').value,
+    });
+  }
+
+  onSavePreset(): void {
+    this.matDialog.open(SaveAsPresetModalComponent, {
+      data: {
+        aclType: this.acl.acltype,
+        datasetPath: this.datasetPath,
+      } as SaveAsPresetModalConfig,
     });
   }
 

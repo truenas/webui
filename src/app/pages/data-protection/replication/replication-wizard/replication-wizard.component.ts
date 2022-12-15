@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -1058,172 +1058,170 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   async doCreate(
     data: any, item: keyof CreatedItems,
   ): Promise<KeychainCredential | KeychainSshCredentials | PeriodicSnapshotTask[] | ReplicationTask | ZfsSnapshot[]> {
-    if (item === 'private_key') {
-      const payload = {
-        name: data['name'] + ' Key',
-        type: KeychainCredentialType.SshKeyPair,
-        attributes: data['sshkeypair'],
-      };
-      return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
-    }
+    switch (item) {
+      case 'private_key': {
+        const payload = {
+          name: data['name'] + ' Key',
+          type: KeychainCredentialType.SshKeyPair,
+          attributes: data['sshkeypair'],
+        };
+        return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
+      }
+      case 'ssh_credentials': {
+        let payload: SshSemiAutomaticSetup | KeychainCredentialCreate;
+        const sshCreateItem = `${item}_${data['setup_method']}` as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
+        if (data['setup_method'] === 'manual') {
+          payload = {
+            name: data['name'],
+            type: KeychainCredentialType.SshCredentials,
+            attributes: {
+              cipher: data['cipher'],
+              host: data['host'],
+              port: data['port'],
+              private_key: data['private_key'],
+              remote_host_key: data['remote_host_key'],
+              username: data['username'],
+            },
+          } as KeychainCredentialCreate;
+          return lastValueFrom(this.ws.call(this.createCalls[sshCreateItem], [payload]));
+        }
 
-    if (item === 'ssh_credentials') {
-      let payload: SshSemiAutomaticSetup | KeychainCredentialCreate;
-      const sshCreateItem = `${item}_${data['setup_method']}` as 'ssh_credentials_semiautomatic' | 'ssh_credentials_manual';
-      if (data['setup_method'] === 'manual') {
         payload = {
           name: data['name'],
-          type: KeychainCredentialType.SshCredentials,
-          attributes: {
-            cipher: data['cipher'],
-            host: data['host'],
-            port: data['port'],
-            private_key: data['private_key'],
-            remote_host_key: data['remote_host_key'],
-            username: data['username'],
-          },
-        } as KeychainCredentialCreate;
-        return this.ws.call(this.createCalls[sshCreateItem], [payload]).toPromise();
+          private_key: data['private_key'],
+          cipher: data['cipher'],
+        } as SshSemiAutomaticSetup;
+        for (const i of this.semiSshFieldGroup) {
+          payload[i] = data[i];
+        }
+        return lastValueFrom(this.ws.call(this.createCalls[sshCreateItem], [payload]));
       }
-
-      payload = {
-        name: data['name'],
-        private_key: data['private_key'],
-        cipher: data['cipher'],
-      } as SshSemiAutomaticSetup;
-      for (const i of this.semiSshFieldGroup) {
-        payload[i] = data[i];
+      case 'periodic_snapshot_tasks': {
+        let payload: PeriodicSnapshotTaskCreate;
+        this.existSnapshotTasks = [];
+        const snapshotPromises: Promise<PeriodicSnapshotTask>[] = [];
+        for (const dataset of data['source_datasets']) {
+          payload = {
+            dataset,
+            recursive: data['recursive'],
+            schedule: this.parsePickerTime(data['schedule_picker']),
+            lifetime_value: 2,
+            lifetime_unit: LifetimeUnit.Week,
+            naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
+            enabled: true,
+          };
+          await this.isSnapshotTaskExist(payload).then((tasks) => {
+            if (tasks.length === 0) {
+              snapshotPromises.push(
+                lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
+              );
+            } else {
+              this.existSnapshotTasks.push(...tasks.map((task) => task.id));
+            }
+          });
+        }
+        return Promise.all(snapshotPromises);
       }
-      return lastValueFrom(this.ws.call(this.createCalls[sshCreateItem], [payload]));
-    }
-
-    if (item === 'periodic_snapshot_tasks') {
-      let payload: PeriodicSnapshotTaskCreate;
-      this.existSnapshotTasks = [];
-      const snapshotPromises: Promise<PeriodicSnapshotTask>[] = [];
-      for (const dataset of data['source_datasets']) {
-        payload = {
-          dataset,
+      case 'snapshot': {
+        const snapshotPromises = [];
+        for (const dataset of data['source_datasets']) {
+          const payload = {
+            dataset,
+            naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
+            recursive: data['recursive'] ? data['recursive'] : false,
+          };
+          snapshotPromises.push(
+            lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
+          );
+        }
+        return Promise.all(snapshotPromises);
+      }
+      case 'replication': {
+        let payload = {
+          name: data['name'],
+          direction: data['source_datasets_from'] === DatasetSource.Remote ? Direction.Pull : Direction.Push,
+          source_datasets: data['source_datasets'],
+          target_dataset: data['target_dataset'],
+          ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
+          transport: data['transport'] ? data['transport'] : TransportMode.Local,
+          retention_policy: data['retention_policy'],
           recursive: data['recursive'],
-          schedule: this.parsePickerTime(data['schedule_picker']),
-          lifetime_value: 2,
-          lifetime_unit: LifetimeUnit.Week,
-          naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
-          enabled: true,
-        };
-        await this.isSnapshotTaskExist(payload).then((tasks) => {
-          if (tasks.length === 0) {
-            snapshotPromises.push(
-              lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
-            );
+          encryption: data['encryption'],
+        } as ReplicationCreate;
+        if (payload.encryption) {
+          payload['encryption_key_format'] = data['encryption_key_format'];
+          if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
+            payload['encryption_key'] = data['encryption_key_passphrase'];
           } else {
-            this.existSnapshotTasks.push(...tasks.map((task) => task.id));
+            payload['encryption_key'] = data['encryption_key_generate']
+              ? this.replicationService.generateEncryptionHexKey(64)
+              : data['encryption_key_hex'];
           }
-        });
-      }
-      return Promise.all(snapshotPromises);
-    }
 
-    if (item === 'snapshot') {
-      const snapshotPromises = [];
-      for (const dataset of data['source_datasets']) {
-        const payload = {
-          dataset,
-          naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
-          recursive: data['recursive'] ? data['recursive'] : false,
-        };
-        snapshotPromises.push(
-          lastValueFrom(this.ws.call(this.createCalls[item], [payload])),
-        );
-      }
-      return Promise.all(snapshotPromises);
-    }
-
-    if (item === 'replication') {
-      let payload = {
-        name: data['name'],
-        direction: data['source_datasets_from'] === DatasetSource.Remote ? Direction.Pull : Direction.Push,
-        source_datasets: data['source_datasets'],
-        target_dataset: data['target_dataset'],
-        ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
-        transport: data['transport'] ? data['transport'] : TransportMode.Local,
-        retention_policy: data['retention_policy'],
-        recursive: data['recursive'],
-        encryption: data['encryption'],
-      } as ReplicationCreate;
-      if (payload.encryption) {
-        payload['encryption_key_format'] = data['encryption_key_format'];
-        if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
-          payload['encryption_key'] = data['encryption_key_passphrase'];
-        } else {
-          payload['encryption_key'] = data['encryption_key_generate']
-            ? this.replicationService.generateEncryptionHexKey(64)
-            : data['encryption_key_hex'];
+          payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
         }
 
-        payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
-      }
-
-      // schedule option
-      if (data['schedule_method'] === ScheduleMethod.Cron) {
-        payload['auto'] = true;
-        if (payload['direction'] === Direction.Pull) {
-          payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
-        } else {
-          payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
-        }
-      } else {
-        payload['auto'] = false;
-        if (payload['direction'] === Direction.Pull) {
-          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
-        } else if (data['schema_or_regex'] === SnapshotNamingOption.NamingSchema) {
-          payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
-        } else {
-          payload.name_regex = data['name_regex'];
-        }
-      }
-
-      if (data['retention_policy'] === RetentionPolicy.Custom) {
-        payload['lifetime_value'] = data['lifetime_value'];
-        payload['lifetime_unit'] = data['lifetime_unit'];
-      }
-
-      if (payload['transport'] === TransportMode.Netcat) {
-        payload['netcat_active_side'] = NetcatMode.Remote; // default?
-      }
-
-      payload['readonly'] = data['schedule_method'] === ScheduleMethod.Cron || data['readonly']
-        ? ReadOnlyMode.Set
-        : ReadOnlyMode.Ignore;
-
-      return this.ws.call('replication.target_unmatched_snapshots', [
-        payload['direction'],
-        payload['source_datasets'],
-        payload['target_dataset'],
-        payload['transport'],
-        payload['ssh_credentials'],
-      ]).toPromise().then(
-        (res) => {
-          const hasBadSnapshots = Object.values(res).some((snapshots) => snapshots.length > 0);
-          if (hasBadSnapshots) {
-            return this.dialogService.confirm({
-              title: helptext.clearSnapshotDialog_title,
-              message: helptext.clearSnapshotDialog_content,
-            }).toPromise().then(
-              (dialogResult) => {
-                payload['allow_from_scratch'] = dialogResult;
-                return this.ws.call(this.createCalls[item], [payload]).toPromise();
-              },
-            );
+        // schedule option
+        if (data['schedule_method'] === ScheduleMethod.Cron) {
+          payload['auto'] = true;
+          if (payload['direction'] === Direction.Pull) {
+            payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
+            payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
+          } else {
+            payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
           }
-          return this.ws.call(this.createCalls[item], [payload]).toPromise();
-        },
-        () => {
-          // show error ?
-          this.ws.call(this.createCalls[item], [payload]).toPromise();
-        },
-      ) as Promise<ReplicationTask>;
+        } else {
+          payload['auto'] = false;
+          if (payload['direction'] === Direction.Pull) {
+            payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
+          } else if (data['schema_or_regex'] === SnapshotNamingOption.NamingSchema) {
+            payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
+          } else {
+            payload.name_regex = data['name_regex'];
+          }
+        }
+
+        if (data['retention_policy'] === RetentionPolicy.Custom) {
+          payload['lifetime_value'] = data['lifetime_value'];
+          payload['lifetime_unit'] = data['lifetime_unit'];
+        }
+
+        if (payload['transport'] === TransportMode.Netcat) {
+          payload['netcat_active_side'] = NetcatMode.Remote; // default?
+        }
+
+        payload['readonly'] = data['schedule_method'] === ScheduleMethod.Cron || data['readonly']
+          ? ReadOnlyMode.Set
+          : ReadOnlyMode.Ignore;
+
+        return this.ws.call('replication.target_unmatched_snapshots', [
+          payload['direction'],
+          payload['source_datasets'],
+          payload['target_dataset'],
+          payload['transport'],
+          payload['ssh_credentials'],
+        ]).toPromise().then(
+          (res) => {
+            const hasBadSnapshots = Object.values(res).some((snapshots) => snapshots.length > 0);
+            if (hasBadSnapshots) {
+              return this.dialogService.confirm({
+                title: helptext.clearSnapshotDialog_title,
+                message: helptext.clearSnapshotDialog_content,
+              }).toPromise().then(
+                (dialogResult) => {
+                  payload['allow_from_scratch'] = dialogResult;
+                  return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                },
+              );
+            }
+            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+          },
+          () => {
+            // show error ?
+            this.ws.call(this.createCalls[item], [payload]).toPromise();
+          },
+        ) as Promise<ReplicationTask>;
+      }
     }
   }
 
@@ -1243,6 +1241,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     // eslint-disable-next-line no-restricted-syntax,guard-for-in
     for (const createdItem in createdItems) {
       const item = createdItem as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
+      // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
         if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local))
                 && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {

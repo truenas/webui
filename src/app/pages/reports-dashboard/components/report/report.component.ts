@@ -206,11 +206,11 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.report?.firstChange) {
-      this.updateReport$.next(changes);
-    } else if (changes.report.previousValue && !this.isReady) {
-      this.updateReport$.next(changes);
-    } else if (changes.report.previousValue.title !== changes.report.currentValue.title) {
+    const wasReportChanged = changes?.report?.firstChange
+      || (changes.report.previousValue && !this.isReady)
+      || (changes.report.previousValue.title !== changes.report.currentValue.title);
+
+    if (wasReportChanged) {
       this.updateReport$.next(changes);
     }
   }

@@ -18,4 +18,4 @@
     </ng-template>
   </div>
 </div>
-<div class="jw-modal-background {{id}}-background" (click)="close()"></div>
+<div [class]="['jw-modal-background', id + '-background']" (click)="close()"></div>

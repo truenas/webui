@@ -1,8 +1,7 @@
 import { CdkDragEnter, DragDropModule, DropListRef } from '@angular/cdk/drag-drop';
 import { DOCUMENT } from '@angular/common';
 import {
-  ComponentFactory,
-  ComponentFactoryResolver, ComponentRef, EventEmitter, Injector, Provider, ReflectiveInjector, ViewContainerRef,
+  ComponentRef, EventEmitter, Injector, ViewContainerRef,
 } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
@@ -16,10 +15,8 @@ const animationTimeoutMs = 200;
 describe('IxDropGridDirective', () => {
   let spectator: SpectatorDirective<IxDropGridDirective>;
 
-  let resolveAndCreateOriginal: (providers: Provider[], parent?: Injector) => ReflectiveInjector;
+  let resolveAndCreateOriginal: typeof Injector.create;
   let viewContainerRefMock: ViewContainerRef;
-  let componentFactoryResolverMock: ComponentFactoryResolver;
-  const fakeFactory = {};
   const fakeInjector = {};
 
   const createDirective = createDirectiveFactory({
@@ -33,30 +30,23 @@ describe('IxDropGridDirective', () => {
       mockProvider(ViewContainerRef, {
         createComponent: jest.fn(),
       }),
-      mockProvider(ComponentFactoryResolver, {
-        resolveComponentFactory: jest.fn(),
-      }),
     ],
   });
 
   function setupMocks(): void {
-    resolveAndCreateOriginal = ReflectiveInjector.resolveAndCreate;
-    ReflectiveInjector.resolveAndCreate = jest.fn().mockReturnValue(fakeInjector);
+    resolveAndCreateOriginal = Injector.create;
+    Injector.create = jest.fn().mockReturnValue(fakeInjector);
 
     viewContainerRefMock = spectator.inject(ViewContainerRef);
     jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as ComponentRef<unknown>);
     spectator.directive['viewContainerRef'] = viewContainerRefMock;
-
-    componentFactoryResolverMock = spectator.inject(ComponentFactoryResolver);
-    jest.spyOn(componentFactoryResolverMock, 'resolveComponentFactory').mockReturnValue(fakeFactory as ComponentFactory<unknown>);
-    spectator.directive['resolver'] = componentFactoryResolverMock;
 
     spectator.detectChanges();
   }
 
   function restoreMocks(): void {
     jest.restoreAllMocks();
-    ReflectiveInjector.resolveAndCreate = resolveAndCreateOriginal;
+    Injector.create = resolveAndCreateOriginal;
   }
 
   describe('ngOnInit()', () => {
@@ -70,13 +60,15 @@ describe('IxDropGridDirective', () => {
     });
 
     it('calls \'resolveAndCreate()\' with correct arguments', () => {
-      expect(ReflectiveInjector.resolveAndCreate)
-        .toHaveBeenCalledWith([{ provide: ixDropGridDirectiveToken, useValue: spectator.directive }]);
+      expect(Injector.create)
+        .toHaveBeenCalledWith({
+          providers: [{ provide: ixDropGridDirectiveToken, useValue: spectator.directive }],
+        });
     });
 
     it('calls \'createComponent()\' with correct arguments', () => {
       expect(viewContainerRefMock.createComponent)
-        .toHaveBeenCalledWith(fakeFactory, 0, fakeInjector);
+        .toHaveBeenCalledWith(IxDropGridPlaceholderComponent, expect.objectContaining({ index: 0 }));
     });
   });
 

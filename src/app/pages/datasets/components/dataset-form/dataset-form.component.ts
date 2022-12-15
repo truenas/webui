@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -864,7 +864,8 @@ export class DatasetFormComponent implements FormConfiguration {
   isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode) {
+    }
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -1052,6 +1053,7 @@ export class DatasetFormComponent implements FormConfiguration {
     parent?: string;
   };
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   preInit(entityForm: EntityFormComponent): void {
     this.volid = this.paramMap['volid'];
 

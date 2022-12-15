@@ -3,7 +3,7 @@
   class="dynamic-field form-input form-element"
   ix-auto
   ix-auto-type="file-uploader"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [class.has-tooltip]="config.tooltip"
@@ -43,7 +43,7 @@
         #fileInput
         id="fb"
         type="file"
-        accept="{{ config.acceptedFiles }}"
+        [accept]="config.acceptedFiles"
         [formControlName]="config.name"
         (change)="upload(config.fileLocation)"
       />
@@ -53,7 +53,7 @@
           id="fb"
           type="file"
           multiple
-          accept="{{ config.acceptedFiles }}"
+          [accept]="config.acceptedFiles"
           [formControlName]="config.name"
           (change)="upload(config.fileLocation)"
         />
@@ -72,7 +72,7 @@
         #fileInput
         id="fb"
         type="file"
-        accept="{{ config.acceptedFiles }}"
+        [accept]="config.acceptedFiles"
         [formControlName]="config.name"
       />
     </mat-card-content>

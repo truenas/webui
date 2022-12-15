@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -60,7 +60,7 @@ describe('ConsoleFormComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('system.advanced.config');
     expect(values).toEqual({
       'Show Text Console without Password Prompt': true,
-      'Enable Serial Console': true,
+      'Configure Serial Console': true,
       'Serial Port': 'ttyS0',
       'Serial Speed': '9600',
       'MOTD Banner': 'Welcome back, commander',
@@ -69,7 +69,7 @@ describe('ConsoleFormComponent', () => {
 
   it('disables Serial Port and Serial Speed controls when Serial Console is disabled', async () => {
     const serialConsoleCheckbox = await loader.getHarness(IxCheckboxHarness.with({
-      label: 'Enable Serial Console',
+      label: 'Configure Serial Console',
     }));
 
     await serialConsoleCheckbox.setValue(false);

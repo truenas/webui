@@ -3,14 +3,13 @@
   class="entity-slider"
   ix-auto
   ix-auto-type="slider"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [ngClass]="fieldShow"
   [attr.id]="config.name"
 >
   <label>{{ config.placeholder | translate }}</label>
   <mat-slider
-    MatSliderChange
     class="full-width"
     thumbLabel
     [min]="config.min"

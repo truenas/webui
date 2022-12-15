@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -916,19 +916,16 @@ export class CertificateAddComponent implements WizardConfiguration {
   }
 
   getStep(fieldName: string): number {
-    const stepNumber = this.wizardConfig.findIndex((step) => {
+    return this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex((field) => fieldName === field.name);
       return index > -1;
     });
-
-    return stepNumber;
   }
 
   getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
-      return target;
+      return (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
     }
     return null;
   }
@@ -936,8 +933,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   getTarget(fieldName: string): FieldConfig {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
-      return target;
+      return _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
     }
     return null;
   }
