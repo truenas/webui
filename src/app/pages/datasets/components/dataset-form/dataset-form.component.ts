@@ -1053,6 +1053,7 @@ export class DatasetFormComponent implements FormConfiguration {
     parent?: string;
   };
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   preInit(entityForm: EntityFormComponent): void {
     this.volid = this.paramMap['volid'];
 

@@ -9,8 +9,8 @@ import {
   DynamicFormSchemaList,
   DynamicFormSchemaIpaddr,
 } from 'app/interfaces/dynamic-form-schema.interface';
-import { AppSchemaService } from 'app/services/app-schema.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 const beforeIntString = [{
   variable: 'variable_dict',

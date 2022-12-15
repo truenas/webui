@@ -17,12 +17,17 @@ import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.in
 import { DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
-import { CustomUntypedFormArray } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
-import { CustomUntypedFormControl } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
+import {
+  CustomUntypedFormArray,
+} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
+import {
+  CustomUntypedFormControl,
+} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
 import {
   CustomUntypedFormField,
 } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { FilesystemService } from 'app/services/filesystem.service';
 import {
   isCommonSchemaType,
   transformBooleanSchemaType,
@@ -33,8 +38,7 @@ import {
   transformListSchemaType,
   transformPathSchemaType,
   transformStringSchemaType,
-} from 'app/services/app-shema.transformer';
-import { FilesystemService } from 'app/services/filesystem.service';
+} from 'app/services/schema/app-shema.transformer';
 
 @UntilDestroy()
 @Injectable({
