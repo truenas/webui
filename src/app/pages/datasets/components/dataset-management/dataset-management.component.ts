@@ -44,7 +44,7 @@ import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
-import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.token';
+import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.token';
+import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
