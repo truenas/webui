@@ -8,8 +8,8 @@ import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import {
   CommonSchemaAddControl,
   CommonSchemaTransform,
-  FormControlAdder,
-  FormListItemAdder,
+  FormControlPayload,
+  FormListItemPayload,
   KeysRestoredFromFormGroup,
   SerializeFormValue,
 } from 'app/interfaces/app-schema.interface';
@@ -89,9 +89,9 @@ export class AppSchemaService {
         });
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      newSchema.push(transformDictSchemaType(transformPayload, this.transformNode));
+      newSchema.push(transformDictSchemaType(transformPayload, this.transformNode.bind(this)));
     } else if (schema.type === ChartSchemaType.List) {
-      newSchema.push(transformListSchemaType(transformPayload, this.transformNode));
+      newSchema.push(transformListSchemaType(transformPayload, this.transformNode.bind(this)));
     } else {
       console.error('Unsupported type = ', schema.type);
     }
@@ -99,7 +99,7 @@ export class AppSchemaService {
     return newSchema;
   }
 
-  addFormControls(payload: FormControlAdder): Subscription {
+  addFormControls(payload: FormControlPayload): Subscription {
     const { chartSchemaNode } = payload;
     const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
@@ -162,7 +162,7 @@ export class AppSchemaService {
     return path;
   }
 
-  addFormListItem(payload: FormListItemAdder): Subscription {
+  addFormListItem(payload: FormListItemPayload): Subscription {
     const {
       event, isNew, isParentImmutable, config,
     } = payload;

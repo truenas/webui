@@ -5,31 +5,31 @@ import { AddListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
 
-export type FormControlAdder = {
+export interface FormControlPayload {
   chartSchemaNode: ChartSchemaNode;
   formGroup: CustomUntypedFormGroup | FormGroup;
   config: HierarchicalObjectMap<ChartFormValue>;
   isNew: boolean;
   isParentImmutable: boolean;
   path?: string;
-};
+}
 
-export type FormListItemAdder = {
+export interface FormListItemPayload {
   event: AddListItemEvent;
   isNew: boolean;
   isParentImmutable: boolean;
   config?: HierarchicalObjectMap<ChartFormValue>;
-};
+}
 
-export type CommonSchemaTransform = {
+export interface CommonSchemaTransform {
   schema: ChartSchemaNodeConf;
   chartSchemaNode: ChartSchemaNode;
   isNew: boolean;
   isParentImmutable: boolean;
   newSchema: DynamicFormSchemaNode[];
-};
+}
 
-export type CommonSchemaAddControl = {
+export interface CommonSchemaAddControl {
   schema: ChartSchemaNodeConf;
   isNew: boolean;
   subscription: Subscription;
@@ -38,22 +38,22 @@ export type CommonSchemaAddControl = {
   isParentImmutable: boolean;
   chartSchemaNode: ChartSchemaNode;
   path?: string;
-};
+}
 
-export type CommonSchemaBase = {
+export interface CommonSchemaBase {
   controlName: string;
   title: string;
   required: boolean;
   editable: boolean;
   tooltip: string;
-};
+}
 
-export type KeysRestoredFromFormGroup = {
+export interface KeysRestoredFromFormGroup {
   newConfig: HierarchicalObjectMap<ChartFormValue>;
   keyConfig: string;
   valueConfig: ChartFormValue | HierarchicalObjectMap<ChartFormValue>;
   formConfig: FormGroup;
-};
+}
 
 export type SerializeFormValue = HierarchicalObjectMap<ChartFormValue>
 | HierarchicalObjectMap<ChartFormValue>[]
