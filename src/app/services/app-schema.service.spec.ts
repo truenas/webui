@@ -337,7 +337,7 @@ describe('AppSchemaService', () => {
       });
     });
     beforeEnum.forEach((item, idx) => {
-      it('converts schema with "emum" parameter', () => {
+      it('converts schema with "enum" parameter', () => {
         const transformed = service.transformNode(item, true, false);
         expect(transformed).toEqual(afterEnum[idx]);
       });
@@ -375,7 +375,13 @@ describe('AppSchemaService', () => {
   });
   describe('addFormControls()', () => {
     beforeIntString.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null, true, false);
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
     });
 
     it('creates form for "int" with default value', () => {
@@ -398,7 +404,13 @@ describe('AppSchemaService', () => {
     });
 
     beforeBoolean.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null, true, false);
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
     });
 
     it('creates form for "boolean"', () => {
@@ -407,7 +419,13 @@ describe('AppSchemaService', () => {
     });
 
     beforeList.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null, true, false);
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
     });
 
     it('creates form for "list"', () => {
@@ -415,7 +433,13 @@ describe('AppSchemaService', () => {
     });
 
     beforeHidden.forEach((item) => {
-      service.addFormControls(item, dynamicForm, null, true, false);
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
     });
 
     it('creates form for hidden field', () => {
