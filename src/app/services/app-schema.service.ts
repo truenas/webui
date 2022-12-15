@@ -8,7 +8,6 @@ import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import {
   CommonSchemaAddControl,
   CommonSchemaTransform,
-  commonSchemaTypes,
   FormControlAdder,
   FormListItemAdder,
   KeysRestoredFromFormGroup,
@@ -25,6 +24,7 @@ import {
 } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
 import {
+  isCommonSchemaType,
   transformBooleanSchemaType,
   transformDictSchemaType,
   transformHostPathSchemaType,
@@ -52,7 +52,7 @@ export class AppSchemaService {
 
     if (schema.hidden) { return newSchema; }
 
-    if (this.isCommonSchemaType(schema.type)) {
+    if (isCommonSchemaType(schema.type)) {
       switch (schema.type) {
         case ChartSchemaType.Int:
           newSchema.push(transformIntSchemaType(transformPayload));
@@ -106,7 +106,7 @@ export class AppSchemaService {
     };
 
     switch (true) {
-      case this.isCommonSchemaType(schema.type):
+      case isCommonSchemaType(schema.type):
         this.addCommonSchemaTypeControl(addControlPayload);
         break;
       case schema.type === ChartSchemaType.Dict:
@@ -283,10 +283,6 @@ export class AppSchemaService {
     );
 
     return newConfig;
-  }
-
-  private isCommonSchemaType(type: ChartSchemaType): boolean {
-    return commonSchemaTypes.includes(type);
   }
 
   private addCommonSchemaTypeControl(payload: CommonSchemaAddControl): void {

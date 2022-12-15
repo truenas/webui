@@ -1,6 +1,5 @@
 import { FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartFormValue, ChartSchemaNode, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
@@ -48,15 +47,6 @@ export type CommonSchemaBase = {
   editable: boolean;
   tooltip: string;
 };
-
-export const commonSchemaTypes = [
-  ChartSchemaType.Int,
-  ChartSchemaType.String,
-  ChartSchemaType.Boolean,
-  ChartSchemaType.Path,
-  ChartSchemaType.Hostpath,
-  ChartSchemaType.Ipaddr,
-];
 
 export type KeysRestoredFromFormGroup = {
   newConfig: HierarchicalObjectMap<ChartFormValue>;

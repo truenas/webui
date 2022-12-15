@@ -1,9 +1,23 @@
 import { of } from 'rxjs';
+import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { CommonSchemaBase, CommonSchemaTransform, TransformNodeFunction } from 'app/interfaces/app-schema.interface';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { DynamicFormSchemaInput, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
+
+const commonSchemaTypes = [
+  ChartSchemaType.Int,
+  ChartSchemaType.String,
+  ChartSchemaType.Boolean,
+  ChartSchemaType.Path,
+  ChartSchemaType.Hostpath,
+  ChartSchemaType.Ipaddr,
+];
+
+export function isCommonSchemaType(type: ChartSchemaType): boolean {
+  return commonSchemaTypes.includes(type);
+}
 
 export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): CommonSchemaBase {
   const {
