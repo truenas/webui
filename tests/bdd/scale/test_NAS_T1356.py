@@ -15,17 +15,20 @@ from pytest_bdd import (
 
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='App_Container')
 @scenario('features/NAS-T1356.feature', 'Apps Page - Validate adding TrueCommand as a custom app')
 def test_apps_page__validate_adding_truecommand_as_a_custom_app():
     """Apps Page - Validate adding TrueCommand as a custom app."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -48,6 +51,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('when the Apps page loads, open available applications')
@@ -168,6 +172,20 @@ def set_resource_reservation(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click()
 
 
+@then('set Resource Limits')
+def set_resource_limits(driver):
+    """set Resource Limits."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
+
+
+@then('set Portal Configuration')
+def set_portal_configuration(driver):
+    """set Resource Limits."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Portal Configuration"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Portal Configuration"]').click()
+
+
 @then('Confirm Options')
 def confirm_options(driver):
     """Confirm Options."""
@@ -175,18 +193,19 @@ def confirm_options(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 180, '//*[contains(.,"Installing")]')
+    assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Installing")]')
 
 
 @then('confirm installation is successful')
 def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
-    assert wait_on_element(driver, 180, '//h3[text()="plex"]')
+    assert wait_on_element(driver, 120, '//h3[text()="plex"]')
     assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
     time.sleep(1)
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    assert wait_on_element(driver, 120, '//strong[text()="plex-test"]')
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+    assert wait_on_element(driver, 1200, '//mat-card[contains(.,"plex-test")]')
     time.sleep(2)
     if is_element_present(driver, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]') is False:
         assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]')
@@ -207,6 +226,6 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 500, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 500, '//mat-card[contains(.,"truecommand-test")]//span[@class="status active"]')

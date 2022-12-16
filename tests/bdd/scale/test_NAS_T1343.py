@@ -14,6 +14,7 @@ from pytest_bdd import (
     when,
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -23,8 +24,9 @@ def test__apps_page__validate_nextcloud():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -47,6 +49,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('the Apps page load, open available applications')
@@ -92,6 +95,14 @@ def set_storage(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
 
 
+@then('on CronJob configuration click next')
+def on_cronjob_configuration_click_next(driver):
+    """on CronJob configuration click next."""
+    wait_on_element(driver, 5, '//mat-step-header[contains(.,"CronJob configuration") and @tabindex="0"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_CronJob configuration"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_CronJob configuration"]').click()
+
+
 @then('set Scaling Upgrade Policy')
 def set_scaling_upgrade_policy(driver):
     """set Scaling Upgrade Policy."""
@@ -104,6 +115,13 @@ def advanced_dns_settings(driver):
     """Advanced DNS Settings."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Advanced DNS Settings"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Advanced DNS Settings"]').click()
+
+
+@then('set Resource Limits')
+def set_resource_limits(driver):
+    """set Resource Limits."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
 
 
 @then('confirm options')
@@ -121,7 +139,7 @@ def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
     if is_element_present(driver, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]') is False:
         assert wait_on_element(driver, 20, '//strong[contains(.,"nextcloud-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"nextcloud-test")]', 'clickable')
@@ -147,6 +165,7 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
             assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
             driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-            assert wait_on_element(driver, 300, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
+            assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+            assert wait_on_element(driver, 500, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
     else:
-        assert wait_on_element(driver, 300, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
+        assert wait_on_element(driver, 500, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')

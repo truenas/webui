@@ -13,6 +13,7 @@ from pytest_bdd import (
     when,
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -22,8 +23,9 @@ def test_apps_page__stop_an_app():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_Collabora'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -54,13 +56,14 @@ def the_apps_page_load_open_installed_applications(driver):
     if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-        assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('click the stop button and confirm')
 def click_the_stop_button_and_confirm(driver):
     """click the stop button and confirm."""
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//span[contains(.,"Stop")]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-card[contains(.,"collabora-test")]')
+    assert wait_on_element(driver, 5, '//mat-card[contains(.,"collabora")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//span[contains(.,"Stop")]').click()
 
 

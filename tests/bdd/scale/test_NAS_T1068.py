@@ -13,6 +13,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1068.feature', 'Change Shell for user')
@@ -21,8 +22,9 @@ def test_change_shell_for_user():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['First_User'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -60,9 +62,9 @@ def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driv
 @when('the User Field should expand down, then click the Edit button')
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
-    #time.sleep(1)
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]').click()
+    # time.sleep(1)
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @when('the User Edit Page should open, change the user shell and click save')
@@ -70,15 +72,15 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
     """the User Edit Page should open, change the user shell and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    element = driver.find_element_by_xpath('//button[span[contains(.,"Save")]]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="shell"]', 'clickable')
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="shell"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Shell"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"zsh")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[span[contains(.,"zsh")]]').click()
-    wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
-    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_zsh"]').click()
+    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('open the user dropdown, and verify the shell value has changed')

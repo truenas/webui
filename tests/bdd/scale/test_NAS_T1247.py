@@ -51,10 +51,7 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 def on_the_service_page_press_on_configure_smb(driver):
     """on the service page, press on configure SMB."""
     assert wait_on_element(driver, 7, '//h1[text()="Services"]')
-    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
-    # Scroll to SSH service
-    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 5, '//td[contains(text(),"SMB")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//button', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"SMB")]//button').click()
 
@@ -65,14 +62,14 @@ def the_smb_page_loads_click_advanced(driver):
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//h1[contains(text(),"SMB")]')
-    assert wait_on_element(driver, 10, '//button[contains(.,"Advanced Settings")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Advanced Settings")]').click()
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
 
 
 @then('Enter parameters and click save')
 def enter_parameters_and_click_save(driver):
     """Enter parameters and click save."""
-    element = driver.find_element_by_xpath('//button[contains(.,"Cancel")]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]')
     # Scroll to SSH service
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__Auxiliary Parameters"]//textarea', 'inputable')
