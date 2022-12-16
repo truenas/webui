@@ -13,6 +13,7 @@ from pytest_bdd import (
     when,
 )
 import pytest
+from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
@@ -22,8 +23,9 @@ def test_apps_page__validate_removing_an_app():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_Chia'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -54,6 +56,7 @@ def make_sure_the_installed_tab_is_open(driver):
     if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
         assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
         driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('click three dots icon for Chia and select delete')
@@ -61,8 +64,8 @@ def click_three_dots_icon_for_chia_and_select_delete(driver):
     """click three dots icon for Chia and select delete."""
     assert wait_on_element(driver, 60, '//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"chia-test")]//mat-icon[contains(.,"more_vert")]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"Delete")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Delete")]').click()
+    assert wait_on_element(driver, 10, '//button[contains(.,"Delete")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Delete")]').click()
 
 
 @then('confirm the delete confirmation')

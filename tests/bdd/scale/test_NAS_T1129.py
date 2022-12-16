@@ -17,6 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1129.feature', 'Create an smb share with the LDAP dataset and verify the connection')
@@ -25,8 +26,9 @@ def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['LDAP_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -84,6 +86,12 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     time.sleep(0.5)
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
+        assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
+        if wait_on_element(driver, 3, '//span[text()="SMB Service"]'):
+            assert wait_on_element(driver, 5, '//button[span/text()="Close"]', 'clickable')
+            driver.find_element_by_xpath('//button[span/text()="Close"]').click()
 
 
 @then('the ldapsmbshare should be added to the Shares list')

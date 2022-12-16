@@ -8,8 +8,7 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -18,6 +17,7 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1123.feature', 'Create an smb share with the system ACL dataset')
@@ -26,8 +26,9 @@ def test_create_an_smb_share_with_the_system_acl_dataset():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -58,7 +59,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Sharing")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()   
+    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
@@ -86,17 +87,18 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    time.sleep(2)
+    if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
+        assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
+        if wait_on_element(driver, 3, '//span[text()="SMB Service"]'):
+            assert wait_on_element(driver, 5, '//button[span/text()="Close"]', 'clickable')
+            driver.find_element_by_xpath('//button[span/text()="Close"]').click()
 
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    if is_element_present(driver, '//h1[contains(.,"Enable service")]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
-        assert wait_on_element(driver, 5, '//h1[contains(.,"SMB Service")]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 5, f'//div[contains(.,"mysmbshare")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"mysmbshare")]')
     time.sleep(2)
 
 

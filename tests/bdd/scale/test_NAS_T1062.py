@@ -20,6 +20,7 @@ import pytest
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='Setup_SSH')
 @scenario('features/NAS-T1062.feature', 'Verify SSH Access with root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with root works."""
@@ -69,11 +70,8 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 @then('on the service page, press on configure(pencil) SSH')
 def on_the_service_page_press_on_configurepencil_ssh(driver):
     """on the service page, press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
-    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
-    # Scroll to SSH service
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
+    assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
 
@@ -102,15 +100,14 @@ def verify_the_checkbox_works_and_click_save(driver):
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, '//h1[text()="Services"]')
 
 
 @then('click the Start Automatically SSH checkbox and enable the SSH service')
 def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click the Start Automatically SSH checkbox and enable the SSH service."""
-    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
+    assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
     # Scroll to SSH service
-    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')

@@ -1,13 +1,12 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -17,6 +16,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='Second_User')
 @scenario('features/NAS-T1130.feature', 'Add a second user to test smb share permission')
 def test_add_a_second_user_to_test_smb_share_permission():
     """Add a second user to test smb share permission."""

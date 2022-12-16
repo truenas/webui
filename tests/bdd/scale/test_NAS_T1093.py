@@ -5,7 +5,6 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
     wait_on_element_disappear,
     ssh_cmd,
 )
@@ -15,6 +14,7 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1093.feature', 'Disable password for a user')
@@ -23,8 +23,9 @@ def test_disable_password_for_a_user():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['First_User', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -58,8 +59,8 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change "Disable Password" to Yes and click save')
@@ -67,14 +68,11 @@ def the_user_edit_page_should_open_change_disable_password_to_yes_and_click_save
     """the User Edit Page should open, change "Disable Password" to Yes and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    #driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
-    assert wait_on_element(driver, 3, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label', 'clickable')
-    driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
-    value_exist = attribute_value_exist(driver, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle/label').click()
-    wait_on_element(driver, 10, '//button[span[contains(.,"Save")]]', 'clickable')
-    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
+    assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_Yes"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_Yes"]').click()
+    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('change should be saved, open the user page and verify the user Disable Password is true')

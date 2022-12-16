@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -14,6 +15,7 @@ from pytest_bdd import (
 )
 
 
+@pytest.mark.dependency(name='First_User')
 @scenario('features/NAS-T1067.feature', 'Create a new user call ericbsd')
 def test_create_a_new_user_call_ericbsd():
     """Create a new user call ericbsd."""
@@ -47,13 +49,13 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_and_cl
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
-    
+
 @when('the Users page should open, click on the "Add" Button')
 def the_users_page_should_open_click_on_the_add_button(driver):
     """the Users page should open, click on the "Add" Button."""
-    if is_element_present(driver, '//h1[contains(.,"Display Note")]'):
-        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()  
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
@@ -65,17 +67,17 @@ def the_users_add_page_should_open_input_the_fields_full_name_username_password_
     assert wait_on_element(driver, 7, '//h3[contains(.,"Add User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     """input in the following fields Full Name, Username, and password."""
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="full_name"]//input')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="full_name"]//input').send_keys('Eric Turgeon')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys('ericbsd')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing')
-    assert wait_on_element(driver, 7, '//button[span[contains(.,"Save")]]', 'clickable')
-    driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('Eric Turgeon')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('ericbsd')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('the new User should be created and added to the user list')

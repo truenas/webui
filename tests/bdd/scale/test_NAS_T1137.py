@@ -17,6 +17,7 @@ from pytest_bdd import (
     when,
     parsers,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1137.feature', 'Create smb share for ericbsd verify only ericbsd can access it')
@@ -25,8 +26,9 @@ def test_create_smb_share_for_ericbsd_verify_only_ericbsd_can_access_it():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['ericbsd_dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -59,7 +61,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
     assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
-    assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')  
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')
 
 
 @then(parsers.parse('Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
@@ -84,6 +86,12 @@ def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
+        assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
+        if wait_on_element(driver, 3, '//span[text()="SMB Service"]'):
+            assert wait_on_element(driver, 5, '//button[span/text()="Close"]', 'clickable')
+            driver.find_element_by_xpath('//button[span/text()="Close"]').click()
 
 
 @then(parsers.parse('{sharename} should be added, start service if its not running'))
@@ -92,7 +100,7 @@ def sharename_should_be_added_start_service_if_its_not_running(driver, sharename
     assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
     assert wait_on_element(driver, 5, f'//div[contains(.,"{sharename}")]')
     if not is_element_present(driver, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]'):
-        assert wait_on_element(driver, 10, '//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]', 'clickable')      
+        assert wait_on_element(driver, 10, '//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]', 'clickable')
         driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]').click()
         assert wait_on_element(driver, 10, '//button[normalize-space(text())="Turn On Service"]', 'clickable')
         driver.find_element_by_xpath('//button[normalize-space(text())="Turn On Service"]').click()

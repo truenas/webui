@@ -1,14 +1,13 @@
 # coding=utf-8
-"""SCALE UI feature tests."""
+"""SCALE UI: feature tests."""
 
 import time
 from function import (
     wait_on_element,
     is_element_present,
-    wait_for_attribute_value,
     wait_on_element_disappear,
+    attribute_value_exist,
 )
-from selenium.webdriver.common.keys import (Keys)
 from pytest_bdd import (
     given,
     scenario,
@@ -18,15 +17,15 @@ from pytest_bdd import (
 from pytest_dependency import depends
 
 
-@scenario('features/NAS-T1089.feature', 'Add root to auxiliary group of a user')
-def test_add_root_to_auxiliary_group_of_a_user():
-    """Add root to auxiliary group of a user."""
+@scenario('features/NAS-T1098.feature', 'Change the permissions of a user home directory')
+def test_change_the_permissions_of_a_user_home_directory():
+    """Change the permissions of a user home directory."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
 def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
-    depends(request, ['First_User'], scope='session')
+    depends(request, ['First_User', 'First_User_Home'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -69,35 +68,26 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
     driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
-@then('the User Edit Page should open, add the root group and click save')
-def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
-    """the User Edit Page should open, add the root group and click save."""
+@then('the User Edit Page should open, change some permissions for the Home Directory and click save')
+def the_user_edit_page_should_open_change_some_permissions_for_the_home_directory_and_click_save(driver):
+    """the User Edit Page should open, change some permissions for the Home Directory and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
+    assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
     time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'clickable')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
     wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
-@then('change should be saved, reopen the edit page, root group value should be visible')
-def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visible(driver):
-    """change should be saved, reopen the edit page, root group value should be visible."""
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+@then('reopen the user edit page and verify all permissions are save properly')
+def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(driver):
+    """reopen the user edit page and verify all permissions are save properly."""
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
@@ -105,21 +95,29 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
+    assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerWrite"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerRead"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerExec"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupRead"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]', 'class', 'mat-checkbox-checked') is False
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherRead"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]', 'class', 'mat-checkbox-checked') is False
+
+
+@then('revert your changes, click save, and return to dashboard')
+def revert_your_changes_click_save_and_return_to_dashboard(driver):
+    """revert your changes, click save, and return to dashboard."""
+    assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
     time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'clickable')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    wait_for_value = wait_for_attribute_value(driver, 5, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'class', 'mat-selected')
-    assert wait_for_value
-    # return to dashboard
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')

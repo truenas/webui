@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 import time
 from function import (
     wait_on_element,
@@ -15,16 +16,19 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='AD_Setup')
 @scenario('features/NAS-T1104.feature', 'Setup AD and verify it is working')
 def test_setup_ad_and_verify_it_is_working():
     """Setup AD and verify it is working."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['system_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -55,18 +59,18 @@ def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver
     """on the network page, click on setting on the Global Configuration card.."""
     time.sleep(2)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 10, '//button[contains(.,"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Settings")]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__globalSettings"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
 
 
 @then(parsers.parse('on the Network Global Configuration page, change the first nameserver to "{nameserver1}".'))
 def on_the_network_global_configuration_page_change_the_first_nameserver_to_nameserver1(driver, nameserver1):
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}".."""
     time.sleep(2)
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Global Configuration")]')
-    assert wait_on_element(driver, 7, '//ix-input[contains(.,"Nameserver 1")]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
-    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Hostname and Domain")]')
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
 
 
 @then(parsers.parse('change the Domain for "{ad_domain}", and click Save.'))
@@ -75,18 +79,19 @@ def change_the_domain_for_ad_domain_and_click_save(driver, ad_domain):
     time.sleep(2)
     global domain
     domain = ad_domain
-    assert wait_on_element(driver, 5, '//ix-input[contains(.,"Domain")]')
-    driver.find_element_by_xpath('//ix-input[contains(.,"Domain")]//input').clear()
-    driver.find_element_by_xpath('//ix-input[contains(.,"Domain")]//input').send_keys(ad_domain)
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(ad_domain)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('Please wait should appear while settings are being applied.')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied.."""
-    assert wait_on_element_disappear(driver, 20, '//div[contains(@class,"mat-progress-bar-element")]')
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    time.sleep(2)
+    assert wait_on_element(driver, 7, f'//li[contains(.,"{domain}")]')
 
 
 @then('after, click on Credentials on the left sidebar, then Directory Services.')
@@ -226,12 +231,14 @@ def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, data
 def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_group_name_for_group_name_check_the_apply_group(driver, group_name):
     """The Edit ACL page should open, select OPEN for Default ACL Option, select "{group_name}" for Group name, check the Apply Group.."""
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
-    assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname = "ownerGroup"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname = "ownerGroup"]//input').click()
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname = "ownerGroup"]//input').clear()
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname = "ownerGroup"]//input').send_keys(group_name)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and @class="control"]//input', 'inputable')
+    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').click()
+    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys(group_name)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Updating Dataset ACL"]')
+    assert wait_on_element_disappear(driver, 15, '//h1[text()="Updating Dataset ACL"]')
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
@@ -241,14 +248,15 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     assert wait_on_element(driver, 5, '//div[contains(text(),"Dataset Permissions")]')
     assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]')
     driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
-    assert wait_on_element(driver, 5, '//ix-select[@formcontrolname = "tag"]//mat-select')
-    driver.find_element_by_xpath('//ix-select[@formcontrolname = "tag"]//mat-select').click()
-    driver.find_element_by_xpath('//span[contains(text(),"Group")]').click()
-    assert wait_on_element(driver, 5, '//ix-combobox[@formcontrolname="group"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="group"]//input').clear()
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="group"]//input').send_keys(group_name)
-    assert wait_on_element(driver, 5, '//ix-select[@formcontrolname="basicPermission"]//mat-select', 'clickable')
-    driver.find_element_by_xpath('//ix-select[@formcontrolname="basicPermission"]//mat-select').click()
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[contains(.,"Group")]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[contains(.,"Group")]').click()
+    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys(group_name)
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
     assert wait_on_element(driver, 5, '//div//mat-option//span[contains(text(),"Full Control")]', 'clickable')
     driver.find_element_by_xpath('//div//mat-option//span[contains(text(),"Full Control")]').click()
 

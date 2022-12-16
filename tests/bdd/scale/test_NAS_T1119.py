@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -13,16 +14,19 @@ from pytest_bdd import (
     when,
     parsers
 )
+from pytest_dependency import depends
 
 
+@pytest.mark.dependency(name='AD_tank_Dataset')
 @scenario('features/NAS-T1119.feature', 'Create an Active Directory dataset on the tank pool')
 def test_create_an_active_directory_dataset_on_the_tank_pool():
     """Create an Active Directory dataset on the tank pool."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the FreeNAS URL and logged in."""
+    depends(request, ['tank_pool', 'AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
@@ -104,6 +108,8 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys(group_name)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Updating Dataset ACL"]')
+    assert wait_on_element_disappear(driver, 15, '//h1[text()="Updating Dataset ACL"]')
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
@@ -115,7 +121,8 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]').click()
-    driver.find_element_by_xpath('//span[contains(text(),"Group")]').click()
+    assert wait_on_element(driver, 5, '//mat-option[contains(.,"Group")]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[contains(.,"Group")]').click()
     assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys(group_name)
