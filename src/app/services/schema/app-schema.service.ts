@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormGroup, Validators } from '@angular/forms';
+import { Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
-import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
-  AddListItemEvent,
-  DeleteListItemEvent,
-  DynamicFormSchemaNode,
-} from 'app/interfaces/dynamic-form-schema.interface';
+  CommonSchemaAddControl,
+  CommonSchemaTransform,
+  FormControlPayload,
+  FormListItemPayload,
+  KeysRestoredFromFormGroup,
+  SerializeFormValue,
+} from 'app/interfaces/app-schema.interface';
+import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import {
@@ -23,43 +26,57 @@ import {
 import {
   CustomUntypedFormField,
 } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import {
-  CustomUntypedFormGroup,
-} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { FormSchema } from './form-schema';
+import {
+  isCommonSchemaType,
+  transformBooleanSchemaType,
+  transformDictSchemaType,
+  transformHostPathSchemaType,
+  transformIntSchemaType,
+  transformIpaddrSchemaType,
+  transformListSchemaType,
+  transformPathSchemaType,
+  transformStringSchemaType,
+} from 'app/services/schema/app-shema.transformer';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AppSchemaService {
-  constructor(
-    protected filesystemService: FilesystemService,
-  ) {}
+  constructor(protected filesystemService: FilesystemService) {}
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
     let newSchema: DynamicFormSchemaNode[] = [];
-    if (schema.hidden) {
-      return newSchema;
-    }
+    const transformPayload: CommonSchemaTransform = {
+      schema, chartSchemaNode, isNew, isParentImmutable, newSchema,
+    };
 
-    if ([
-      ChartSchemaType.Int,
-      ChartSchemaType.String,
-      ChartSchemaType.Boolean,
-      ChartSchemaType.Path,
-      ChartSchemaType.Hostpath,
-      ChartSchemaType.Ipaddr,
-    ].includes(schema.type)) {
-      const inputSchema = this.transformSimpleNode(chartSchemaNode);
+    if (schema.hidden) { return newSchema; }
 
-      if (!isNew && (!!chartSchemaNode.schema.immutable || isParentImmutable)) {
-        inputSchema.editable = false;
+    if (isCommonSchemaType(schema.type)) {
+      switch (schema.type) {
+        case ChartSchemaType.Int:
+          newSchema.push(transformIntSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.String:
+          newSchema.push(transformStringSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.Path:
+          newSchema.push(transformPathSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.Hostpath:
+          newSchema.push(transformHostPathSchemaType(transformPayload, this.filesystemService));
+          break;
+        case ChartSchemaType.Ipaddr:
+          newSchema.push(transformIpaddrSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.Boolean:
+          newSchema.push(transformBooleanSchemaType(transformPayload));
+          break;
       }
-
-      newSchema.push(inputSchema);
 
       if (schema.subquestions) {
         schema.subquestions.forEach((subquestion) => {
@@ -72,357 +89,47 @@ export class AppSchemaService {
         });
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      let attrs: DynamicFormSchemaNode[] = [];
-      schema.attrs.forEach((attr) => {
-        attrs = attrs.concat(this.transformNode(attr, isNew, !!schema.immutable || isParentImmutable));
-      });
-
-      const inputSchema = {
-        controlName: chartSchemaNode.variable,
-        type: DynamicFormSchemaType.Dict,
-        title: chartSchemaNode.label,
-        attrs,
-        editable: schema.editable,
-      };
-      if (!isNew && (!!schema.immutable || isParentImmutable)) {
-        inputSchema.editable = false;
-      }
-      newSchema.push(inputSchema);
+      newSchema.push(transformDictSchemaType(transformPayload, this.transformNode.bind(this)));
     } else if (schema.type === ChartSchemaType.List) {
-      let items: DynamicFormSchemaNode[] = [];
-      let itemsSchema: ChartSchemaNode[] = [];
-      schema.items.forEach((item) => {
-        if (item.schema.attrs) {
-          item.schema.attrs.forEach((attr) => {
-            items = items.concat(this.transformNode(attr, isNew, !!schema.immutable || isParentImmutable));
-            itemsSchema = itemsSchema.concat(attr);
-          });
-        } else {
-          items = items.concat(this.transformNode(item, isNew, !!schema.immutable || isParentImmutable));
-          itemsSchema = itemsSchema.concat(item);
-        }
-      });
-      const inputSchema = {
-        controlName: chartSchemaNode.variable,
-        type: DynamicFormSchemaType.List,
-        title: chartSchemaNode.label,
-        items,
-        itemsSchema,
-        editable: schema.editable,
-        dependsOn: schema.show_if?.map((conditional) => conditional[0]),
-      };
-      if (!isNew && (!!schema.immutable || isParentImmutable)) {
-        inputSchema.editable = false;
-      }
-      newSchema.push(inputSchema);
+      newSchema.push(transformListSchemaType(transformPayload, this.transformNode.bind(this)));
     } else {
       console.error('Unsupported type = ', schema.type);
     }
+
     return newSchema;
   }
 
-  private transformSimpleNode(
-    chartSchemaNode: ChartSchemaNode,
-  ): DynamicFormSchemaNode {
-    switch (chartSchemaNode.schema.type) {
-      case ChartSchemaType.Int:
-        if (chartSchemaNode.schema.enum) {
-          return FormSchema.selectFromEnum(chartSchemaNode);
-        }
-
-        return {
-          ...FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input),
-          inputType: 'number',
-        } as DynamicFormSchemaNode;
-      case ChartSchemaType.String:
-        if (chartSchemaNode.schema.enum) {
-          return FormSchema.selectFromEnum(chartSchemaNode);
-        }
-        return {
-          ...FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input),
-          inputType: chartSchemaNode.schema.private ? 'password' : undefined,
-        } as DynamicFormSchemaNode;
-      case ChartSchemaType.Path:
-        return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input);
-      case ChartSchemaType.Hostpath:
-        return {
-          ...FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Explorer),
-          nodeProvider: this.filesystemService.getFilesystemNodeProvider(),
-        } as DynamicFormSchemaNode;
-      case ChartSchemaType.Boolean:
-        return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Checkbox);
-      case ChartSchemaType.Ipaddr:
-        if (chartSchemaNode.schema.cidr) {
-          return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Ipaddr);
-        }
-
-        return FormSchema.schemaOfType(chartSchemaNode, DynamicFormSchemaType.Input);
-    }
-  }
-
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  addFormControls(
-    chartSchemaNode: ChartSchemaNode,
-    formGroup: CustomUntypedFormGroup | FormGroup,
-    config: HierarchicalObjectMap<ChartFormValue>,
-    isNew: boolean,
-    isParentImmutable: boolean,
-    path = '',
-  ): Subscription {
-    path = path ? path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
+  addFormControls(payload: FormControlPayload): Subscription {
+    const { chartSchemaNode } = payload;
+    const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
 
-    if ([
-      ChartSchemaType.Int,
-      ChartSchemaType.String,
-      ChartSchemaType.Boolean,
-      ChartSchemaType.Path,
-      ChartSchemaType.Hostpath,
-      ChartSchemaType.Ipaddr,
-    ].includes(schema.type)) {
-      let altDefault: string | boolean | number = '';
-      if (schema.type === ChartSchemaType.Int) {
-        altDefault = null;
-      } else if (schema.type === ChartSchemaType.Boolean) {
-        altDefault = false;
-      }
+    const addControlPayload: CommonSchemaAddControl = {
+      ...payload, subscription, schema, path,
+    };
 
-      const defaultValue = schema.default !== undefined ? schema.default : altDefault;
-
-      const newFormControl = new CustomUntypedFormControl(defaultValue, [
-        schema.required ? Validators.required : Validators.nullValidator,
-        schema.max ? Validators.max(schema.max) : Validators.nullValidator,
-        schema.min ? Validators.min(schema.min) : Validators.nullValidator,
-        schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
-        schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
-      ]);
-
-      if (schema.subquestions) {
-        schema.subquestions.forEach((subquestion) => {
-          subscription.add(
-            this.addFormControls(
-              subquestion,
-              formGroup,
-              config,
-              isNew,
-              !!schema.immutable || isParentImmutable,
-              path,
-            ),
-          );
-
-          const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-          if (!formField.hidden$) {
-            formField.hidden$ = new BehaviorSubject<boolean>(false);
-          }
-          if (newFormControl.value === schema.show_subquestions_if) {
-            formField.hidden$.next(false);
-            formField.enable();
-          } else {
-            formField.hidden$.next(true);
-            formField.disable();
-          }
-        });
-        subscription.add(newFormControl.valueChanges.subscribe((value) => {
-          schema.subquestions.forEach((subquestion) => {
-            const parentControl = (formGroup.controls[subquestion.variable].parent as CustomUntypedFormField);
-            if (!parentControl.hidden$) {
-              parentControl.hidden$ = new BehaviorSubject<boolean>(false);
-            }
-            parentControl.hidden$.pipe(
-              take(1),
-            ).subscribe((isParentHidden) => {
-              if (!isParentHidden) {
-                const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-                if (!formField.hidden$) {
-                  formField.hidden$ = new BehaviorSubject<boolean>(false);
-                }
-                if (value === schema.show_subquestions_if) {
-                  formField.hidden$.next(false);
-                  if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
-                    formField.disable();
-                  } else {
-                    formField.enable();
-                  }
-                } else {
-                  formField.hidden$.next(true);
-                  formField.disable();
-                }
-              }
-            });
-          });
-        }));
-      }
-
-      formGroup.addControl(chartSchemaNode.variable, newFormControl);
-
-      if (!isNew && (isParentImmutable || !!schema.immutable)) {
-        newFormControl.disable();
-      }
-    } else if (schema.type === ChartSchemaType.Dict) {
-      formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
-      for (const attr of schema.attrs) {
-        subscription.add(
-          this.addFormControls(
-            attr,
-            formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormGroup,
-            config,
-            isNew,
-            isParentImmutable || !!schema.immutable,
-            path,
-          ),
-        );
-      }
-    } else if (schema.type === ChartSchemaType.List) {
-      formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormArray([]));
-
-      if (config) {
-        let items: ChartSchemaNode[] = [];
-        chartSchemaNode.schema.items.forEach((item) => {
-          if (item.schema.attrs) {
-            item.schema.attrs.forEach((attr) => {
-              items = items.concat(attr);
-            });
-          } else {
-            items = items.concat(item);
-          }
-        });
-
-        const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-        let nextItem = config;
-        for (const controlPath of configControlPath) {
-          if (nextItem) {
-            nextItem = nextItem[controlPath] as HierarchicalObjectMap<ChartFormValue>;
-          }
-        }
-
-        if (Array.isArray(nextItem)) {
-          for (const item of nextItem) {
-            subscription.add(
-              this.addFormListItem(
-                {
-                  array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
-                  schema: items,
-                },
-                isNew,
-                isParentImmutable || !!schema.immutable,
-                item,
-              ),
-            );
-          }
-        }
-      }
-    } else {
-      console.error('Unsupported type = ', schema.type);
-      return;
+    switch (true) {
+      case isCommonSchemaType(schema.type):
+        this.addCommonSchemaTypeControl(addControlPayload);
+        break;
+      case schema.type === ChartSchemaType.Dict:
+        this.addDictSchemaTypeControl(addControlPayload);
+        break;
+      case schema.type === ChartSchemaType.List:
+        this.addListSchemaTypeControl(addControlPayload);
+        break;
+      default:
+        console.error('Unsupported type = ', schema.type);
+        break;
     }
 
     if (schema.hidden) {
-      const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
-      if (!formField.hidden$) {
-        formField.hidden$ = new BehaviorSubject<boolean>(false);
-      }
-      formField.hidden$.next(true);
-      formField.disable();
+      this.handleAddFormControlWithSchemaHidden(addControlPayload);
     }
 
     if (schema.show_if && !schema.hidden) {
-      const relations: Relation[] = schema.show_if.map((item) => ({
-        fieldName: item[0],
-        operatorName: item[1],
-        operatorValue: item[2],
-      }));
-      relations.forEach((relation) => {
-        let control = formGroup.controls[relation.fieldName];
-        if (!control) {
-          formGroup.addControl(relation.fieldName, new CustomUntypedFormControl());
-          control = formGroup.controls[relation.fieldName];
-          const formField = (control as CustomUntypedFormField);
-          if (!formField.hidden$) {
-            formField.hidden$ = new BehaviorSubject<boolean>(false);
-          }
-          formField.hidden$.next(true);
-          formField.disable();
-        }
-        switch (relation.operatorName) {
-          case '=':
-            if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
-              const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
-              if (!formField.hidden$) {
-                formField.hidden$ = new BehaviorSubject<boolean>(false);
-              }
-              formField.hidden$.next(true);
-              formField.disable();
-            }
-            subscription.add(formGroup.controls[relation.fieldName].valueChanges
-              .subscribe((value) => {
-                const parentControl = (formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField);
-                if (!parentControl.hidden$) {
-                  parentControl.hidden$ = new BehaviorSubject<boolean>(false);
-                }
-                parentControl.hidden$.pipe(
-                  take(1),
-                ).subscribe((isParentHidden) => {
-                  if (value !== null && !isParentHidden) {
-                    const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
-                    if (!formField.hidden$) {
-                      formField.hidden$ = new BehaviorSubject<boolean>(false);
-                    }
-                    if (_.isEqual(value, relation.operatorValue)) {
-                      formField.hidden$.next(false);
-                      if (!isNew && (isParentImmutable || !!schema.immutable)) {
-                        formField.disable();
-                      } else {
-                        formField.enable();
-                      }
-                    } else {
-                      formField.hidden$.next(true);
-                      formField.disable();
-                    }
-                  }
-                });
-              }));
-            break;
-          case '!=':
-            if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
-              const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
-              if (!formField.hidden$) {
-                formField.hidden$ = new BehaviorSubject<boolean>(false);
-              }
-              formField.hidden$.next(true);
-              formField.disable();
-            }
-            subscription.add(formGroup.controls[relation.fieldName].valueChanges
-              .subscribe((value) => {
-                const parentControl = (formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField);
-                if (!parentControl.hidden$) {
-                  parentControl.hidden$ = new BehaviorSubject<boolean>(false);
-                }
-                parentControl.hidden$.pipe(
-                  take(1),
-                ).subscribe((isParentHidden) => {
-                  if (value !== null && !isParentHidden) {
-                    const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
-                    if (!formField.hidden$) {
-                      formField.hidden$ = new BehaviorSubject<boolean>(false);
-                    }
-                    if (!_.isEqual(value, relation.operatorValue)) {
-                      formField.hidden$.next(false);
-                      if (!isNew && (isParentImmutable || !!schema.immutable)) {
-                        formField.disable();
-                      } else {
-                        formField.enable();
-                      }
-                    } else {
-                      formField.hidden$.next(true);
-                      formField.disable();
-                    }
-                  }
-                });
-              }));
-            break;
-        }
-      });
+      this.handleAddFormControlWithSchemaVisible(addControlPayload);
     }
 
     return subscription;
@@ -455,23 +162,22 @@ export class AppSchemaService {
     return path;
   }
 
-  addFormListItem(
-    event: AddListItemEvent,
-    isNew: boolean,
-    isParentImmutable: boolean,
-    config?: HierarchicalObjectMap<ChartFormValue>,
-  ): Subscription {
+  addFormListItem(payload: FormListItemPayload): Subscription {
+    const {
+      event, isNew, isParentImmutable, config,
+    } = payload;
+
     const subscriptionEvent = new Subscription();
     const itemFormGroup = new CustomUntypedFormGroup({});
     event.schema.forEach((item: ChartSchemaNode) => {
       subscriptionEvent.add(
-        this.addFormControls(
-          item,
-          itemFormGroup,
-          config,
+        this.addFormControls({
           isNew,
-          isParentImmutable || !!item.schema.immutable,
-        ),
+          chartSchemaNode: item,
+          formGroup: itemFormGroup,
+          config,
+          isParentImmutable: isParentImmutable || !!item.schema.immutable,
+        }),
       );
     });
     event.array.push(itemFormGroup);
@@ -483,21 +189,16 @@ export class AppSchemaService {
     event.array.removeAt(event.index);
   }
 
-  serializeFormValue(
-    data: HierarchicalObjectMap<ChartFormValue> | HierarchicalObjectMap<ChartFormValue>[] | ChartFormValue,
-  ): HierarchicalObjectMap<ChartFormValue> | HierarchicalObjectMap<ChartFormValue>[] | ChartFormValue {
+  serializeFormValue(data: SerializeFormValue): SerializeFormValue {
     if (data == null) {
       return data;
     }
-
     if (Array.isArray(data)) {
       return this.serializeFormList(data);
     }
-
     if (typeof data === 'object') {
       return this.serializeFormGroup(data as HierarchicalObjectMap<ChartFormValue>);
     }
-
     return data;
   }
 
@@ -533,34 +234,343 @@ export class AppSchemaService {
     config: HierarchicalObjectMap<ChartFormValue>,
     form: FormGroup,
   ): HierarchicalObjectMap<ChartFormValue> {
-    const newConfig = {} as HierarchicalObjectMap<ChartFormValue>;
+    let newConfig = {} as HierarchicalObjectMap<ChartFormValue>;
     for (const [keyConfig, valueConfig] of Object.entries(config)) {
       const formConfig = form.controls[keyConfig] as FormGroup;
-      if (!formConfig) {
-        continue;
-      }
+      const restoreKeysPayload: KeysRestoredFromFormGroup = {
+        newConfig, formConfig, keyConfig, valueConfig,
+      };
+
+      if (!formConfig) { continue; }
 
       if (_.isArray(valueConfig)) {
-        newConfig[keyConfig] = valueConfig.map((valueItem, idxItem) => {
-          if (_.isPlainObject(valueItem)) {
-            return this.restoreKeysFromFormGroup(
-              valueItem as HierarchicalObjectMap<ChartFormValue>,
-              formConfig.controls[idxItem] as FormGroup,
-            );
-          }
-          const keyItem = Object.keys(formConfig.value[idxItem])[0];
-          return { [keyItem]: valueItem };
-        });
+        newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
       } else if (_.isPlainObject(valueConfig)) {
-        newConfig[keyConfig] = this.restoreKeysFromFormGroup(
-          valueConfig as HierarchicalObjectMap<ChartFormValue>,
-          formConfig,
-        );
+        newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;
       }
     }
 
     return newConfig;
+  }
+
+  private createHierarchicalObjectFromArray(payload: KeysRestoredFromFormGroup): HierarchicalObjectMap<ChartFormValue> {
+    const {
+      newConfig, keyConfig, valueConfig, formConfig,
+    } = payload;
+
+    newConfig[keyConfig] = (valueConfig as ChartFormValue[]).map((valueItem, idxItem) => {
+      if (_.isPlainObject(valueItem)) {
+        return this.restoreKeysFromFormGroup(
+          valueItem as HierarchicalObjectMap<ChartFormValue>,
+          formConfig.controls[idxItem] as FormGroup,
+        );
+      }
+      const keyItem = Object.keys(formConfig.value[idxItem])[0];
+      return { [keyItem]: valueItem };
+    });
+
+    return newConfig;
+  }
+
+  private createHierarchicalObjectFromPlainObject(
+    payload: KeysRestoredFromFormGroup,
+  ): HierarchicalObjectMap<ChartFormValue> {
+    const {
+      newConfig, keyConfig, valueConfig, formConfig,
+    } = payload;
+
+    newConfig[keyConfig] = this.restoreKeysFromFormGroup(
+      valueConfig as HierarchicalObjectMap<ChartFormValue>,
+      formConfig,
+    );
+
+    return newConfig;
+  }
+
+  private addCommonSchemaTypeControl(payload: CommonSchemaAddControl): void {
+    const {
+      schema, isNew, formGroup, isParentImmutable, chartSchemaNode,
+    } = payload;
+
+    let altDefault: string | boolean | number = '';
+    if (schema.type === ChartSchemaType.Int) {
+      altDefault = null;
+    } else if (schema.type === ChartSchemaType.Boolean) {
+      altDefault = false;
+    }
+
+    const defaultValue = schema.default !== undefined ? schema.default : altDefault;
+
+    const newFormControl = new CustomUntypedFormControl(defaultValue, [
+      schema.required ? Validators.required : Validators.nullValidator,
+      schema.max ? Validators.max(schema.max) : Validators.nullValidator,
+      schema.min ? Validators.min(schema.min) : Validators.nullValidator,
+      schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
+      schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
+    ]);
+
+    this.handleSchemaSubQuestions(payload, newFormControl);
+
+    formGroup.addControl(chartSchemaNode.variable, newFormControl);
+
+    if (!isNew && (isParentImmutable || !!schema.immutable)) {
+      newFormControl.disable();
+    }
+  }
+
+  private addDictSchemaTypeControl(payload: CommonSchemaAddControl): void {
+    const {
+      schema, isNew, path, subscription, formGroup, config, isParentImmutable, chartSchemaNode,
+    } = payload;
+
+    formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
+    for (const attr of schema.attrs) {
+      subscription.add(
+        this.addFormControls({
+          isNew,
+          path,
+          chartSchemaNode: attr,
+          formGroup: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormGroup,
+          config,
+          isParentImmutable: isParentImmutable || !!schema.immutable,
+        }),
+      );
+    }
+  }
+
+  private addListSchemaTypeControl(payload: CommonSchemaAddControl): void {
+    const {
+      schema, isNew, subscription, formGroup, config, isParentImmutable, chartSchemaNode,
+    } = payload;
+
+    formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormArray([]));
+
+    if (config) {
+      let items: ChartSchemaNode[] = [];
+      chartSchemaNode.schema.items.forEach((item) => {
+        if (item.schema.attrs) {
+          item.schema.attrs.forEach((attr) => {
+            items = items.concat(attr);
+          });
+        } else {
+          items = items.concat(item);
+        }
+      });
+
+      const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
+      let nextItem = config;
+      for (const controlPath of configControlPath) {
+        if (nextItem) {
+          nextItem = nextItem[controlPath] as HierarchicalObjectMap<ChartFormValue>;
+        }
+      }
+
+      if (Array.isArray(nextItem)) {
+        for (const item of nextItem) {
+          subscription.add(
+            this.addFormListItem({
+              isNew,
+              event: {
+                array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
+                schema: items,
+              },
+              isParentImmutable: isParentImmutable || !!schema.immutable,
+              config: item,
+            }),
+          );
+        }
+      }
+    }
+  }
+
+  private handleAddFormControlWithSchemaHidden(payload: CommonSchemaAddControl): void {
+    const { formGroup, chartSchemaNode } = payload;
+
+    const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+    if (!formField.hidden$) {
+      formField.hidden$ = new BehaviorSubject<boolean>(false);
+    }
+    formField.hidden$.next(true);
+    formField.disable();
+  }
+
+  private handleAddFormControlWithSchemaVisible(payload: CommonSchemaAddControl): void {
+    const { schema, formGroup } = payload;
+
+    const relations: Relation[] = schema.show_if.map((item) => ({
+      fieldName: item[0],
+      operatorName: item[1],
+      operatorValue: item[2],
+    }));
+    relations.forEach((relation) => {
+      let control = formGroup.controls[relation.fieldName];
+      if (!control) {
+        formGroup.addControl(relation.fieldName, new CustomUntypedFormControl());
+        control = formGroup.controls[relation.fieldName];
+        const formField = (control as CustomUntypedFormField);
+        if (!formField.hidden$) {
+          formField.hidden$ = new BehaviorSubject<boolean>(false);
+        }
+        formField.hidden$.next(true);
+        formField.disable();
+      }
+
+      if (relation.operatorName === '=') {
+        this.handleEqualOperatorNameSubscription(payload, relation);
+      }
+      if (relation.operatorName === '!=') {
+        this.handleNonEqualOperatorNameSubscription(payload, relation);
+      }
+    });
+  }
+
+  private handleEqualOperatorNameSubscription(payload: CommonSchemaAddControl, relation: Relation): void {
+    const {
+      schema, isNew, subscription, formGroup, isParentImmutable, chartSchemaNode,
+    } = payload;
+
+    if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
+      const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+      if (!formField.hidden$) {
+        formField.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      formField.hidden$.next(true);
+      formField.disable();
+    }
+
+    subscription.add(formGroup.controls[relation.fieldName].valueChanges
+      .subscribe((value) => {
+        const parentControl = (formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField);
+        if (!parentControl.hidden$) {
+          parentControl.hidden$ = new BehaviorSubject<boolean>(false);
+        }
+
+        parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
+          if (value !== null && !isParentHidden) {
+            const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+            if (!formField.hidden$) {
+              formField.hidden$ = new BehaviorSubject<boolean>(false);
+            }
+            if (_.isEqual(value, relation.operatorValue)) {
+              formField.hidden$.next(false);
+              if (!isNew && (isParentImmutable || !!schema.immutable)) {
+                formField.disable();
+              } else {
+                formField.enable();
+              }
+            } else {
+              formField.hidden$.next(true);
+              formField.disable();
+            }
+          }
+        });
+      }));
+  }
+
+  private handleNonEqualOperatorNameSubscription(payload: CommonSchemaAddControl, relation: Relation): void {
+    const {
+      schema, isNew, subscription, formGroup, isParentImmutable, chartSchemaNode,
+    } = payload;
+
+    if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
+      const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+      if (!formField.hidden$) {
+        formField.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      formField.hidden$.next(true);
+      formField.disable();
+    }
+
+    subscription.add(formGroup.controls[relation.fieldName].valueChanges
+      .subscribe((value) => {
+        const parentControl = (formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField);
+        if (!parentControl.hidden$) {
+          parentControl.hidden$ = new BehaviorSubject<boolean>(false);
+        }
+
+        parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
+          if (value !== null && !isParentHidden) {
+            const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+            if (!formField.hidden$) {
+              formField.hidden$ = new BehaviorSubject<boolean>(false);
+            }
+            if (!_.isEqual(value, relation.operatorValue)) {
+              formField.hidden$.next(false);
+              if (!isNew && (isParentImmutable || !!schema.immutable)) {
+                formField.disable();
+              } else {
+                formField.enable();
+              }
+            } else {
+              formField.hidden$.next(true);
+              formField.disable();
+            }
+          }
+        });
+      }));
+  }
+
+  private handleSchemaSubQuestions(payload: CommonSchemaAddControl, newFormControl: CustomUntypedFormControl): void {
+    const {
+      schema, isNew, path, subscription, formGroup, config, isParentImmutable,
+    } = payload;
+
+    if (schema.subquestions) {
+      schema.subquestions.forEach((subquestion) => {
+        subscription.add(
+          this.addFormControls({
+            isNew,
+            path,
+            chartSchemaNode: subquestion,
+            formGroup,
+            config,
+            isParentImmutable: !!schema.immutable || isParentImmutable,
+          }),
+        );
+
+        const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
+        if (!formField.hidden$) {
+          formField.hidden$ = new BehaviorSubject<boolean>(false);
+        }
+        if (newFormControl.value === schema.show_subquestions_if) {
+          formField.hidden$.next(false);
+          formField.enable();
+        } else {
+          formField.hidden$.next(true);
+          formField.disable();
+        }
+      });
+
+      subscription.add(newFormControl.valueChanges.subscribe((value) => {
+        schema.subquestions.forEach((subquestion) => {
+          const parentControl = (formGroup.controls[subquestion.variable].parent as CustomUntypedFormField);
+          if (!parentControl.hidden$) {
+            parentControl.hidden$ = new BehaviorSubject<boolean>(false);
+          }
+
+          parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
+            if (!isParentHidden) {
+              const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
+              if (!formField.hidden$) {
+                formField.hidden$ = new BehaviorSubject<boolean>(false);
+              }
+              if (value === schema.show_subquestions_if) {
+                formField.hidden$.next(false);
+                if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
+                  formField.disable();
+                } else {
+                  formField.enable();
+                }
+              } else {
+                formField.hidden$.next(true);
+                formField.disable();
+              }
+            }
+          });
+        });
+      }));
+    }
   }
 }

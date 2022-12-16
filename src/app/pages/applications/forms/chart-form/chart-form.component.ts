@@ -165,13 +165,13 @@ export class ChartFormComponent implements OnDestroy {
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls(
+      this.appSchemaService.addFormControls({
         chartSchemaNode,
-        this.form,
-        this.config,
-        this.isNew,
-        false,
-      ),
+        formGroup: this.form,
+        config: this.config,
+        isNew: this.isNew,
+        isParentImmutable: false,
+      }),
     );
   }
 
@@ -186,7 +186,11 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   addItem(event: AddListItemEvent): void {
-    this.appSchemaService.addFormListItem(event, this.isNew, false);
+    this.appSchemaService.addFormListItem({
+      event,
+      isNew: this.isNew,
+      isParentImmutable: false,
+    });
   }
 
   deleteItem(event: DeleteListItemEvent): void {
