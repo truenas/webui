@@ -2,6 +2,7 @@
 """SCALE UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -100,7 +101,7 @@ def on_the_dashboard_click_on_systems_settings_then_services(driver):
 @then('on the Services page, verify SSH is enabled')
 def on_the_services_page_verify_ssh_is_enabled(driver):
     """on the Services page, verify SSH is enabled."""
-    assert wait_on_element(driver, 10, '//h1[text()="Services"]')
+    assert wait_on_element(driver, 10, xpaths.services.title)
     assert wait_on_element(driver, 5, '//tr[contains(.,"S3")]//button', 'clickable')
     element = driver.find_element_by_xpath('//tr[contains(.,"S3")]//button')
     driver.execute_script("arguments[0].scrollIntoView();", element)

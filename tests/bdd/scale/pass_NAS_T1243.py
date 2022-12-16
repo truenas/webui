@@ -98,8 +98,8 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     #driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox', 'clickable')
     driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox').click()   
-    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
     assert wait_on_element(driver, 10, '//h1[contains(.,"Encryption Options Saved")]')
