@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -50,7 +51,7 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 @then('on the service page, press on configure SMB')
 def on_the_service_page_press_on_configure_smb(driver):
     """on the service page, press on configure SMB."""
-    assert wait_on_element(driver, 7, '//h1[text()="Services"]')
+    assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, '//td[contains(text(),"SMB")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//button', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"SMB")]//button').click()
