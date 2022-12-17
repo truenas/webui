@@ -212,7 +212,9 @@ export class RsyncTaskFormComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleWsFormError(error, this.form, {
+          remotehost: 'remotepath',
+        });
         this.cdr.markForCheck();
       },
     });
