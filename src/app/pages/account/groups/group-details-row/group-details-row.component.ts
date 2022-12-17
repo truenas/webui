@@ -4,15 +4,11 @@ import {
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Group } from 'app/interfaces/group.interface';
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import {
-  WebSocketService,
-} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -28,8 +24,6 @@ export class GroupDetailsRowComponent {
   @Output() update = new EventEmitter<void>();
 
   constructor(
-    private ws: WebSocketService,
-    private translate: TranslateService,
     private slideIn: IxSlideInService,
     private router: Router,
     private matDialog: MatDialog,

@@ -1,12 +1,11 @@
 import {
-  Component, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
+  Component, OnInit, AfterViewInit, ViewChild, TemplateRef,
 } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Subscription } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -16,6 +15,7 @@ import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
@@ -42,7 +42,7 @@ interface CatalogSyncJob {
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
-export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CatalogComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
   commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
@@ -55,8 +55,6 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedPool = '';
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
-
-  jobsSubscription: Subscription;
 
   imagePlaceholder = appImagePlaceholder;
   private noAvailableCatalog = true;
@@ -87,7 +85,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadCatalogs();
     this.loadPoolSet();
 
-    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
@@ -103,12 +101,6 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  ngOnDestroy(): void {
-    if (this.jobsSubscription) {
-      this.ws.unsubscribe(this.jobsSubscription);
-    }
   }
 
   loadCatalogs(): void {

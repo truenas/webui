@@ -1,9 +1,8 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MatLegacyDialogState as MatDialogState } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import helptext from 'app/helptext/topbar';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -19,13 +18,12 @@ import { WebSocketService } from 'app/services';
   templateUrl: './directory-services-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
+export class DirectoryServicesIndicatorComponent implements OnInit {
   tooltips = helptext.mat_tooltips;
 
   isIconShown = false;
 
   private servicesMonitorRef: MatDialogRef<DirectoryServicesMonitorComponent>;
-  private statusSubscription: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -39,10 +37,6 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDirectoryServicesStatus();
-  }
-
-  ngOnDestroy(): void {
-    this.statusSubscription?.unsubscribe();
   }
 
   onIndicatorClicked(): void {
@@ -61,9 +55,11 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       this.updateIconVisibility(state);
     });
-    this.statusSubscription = this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((event) => {
-      this.updateIconVisibility(event.fields);
-    });
+    this.ws.newSub<DirectoryServicesState>('directoryservices.status')
+      .pipe(untilDestroyed(this))
+      .subscribe((event) => {
+        this.updateIconVisibility(event.fields);
+      });
   }
 
   updateIconVisibility(servicesState: DirectoryServicesState): void {

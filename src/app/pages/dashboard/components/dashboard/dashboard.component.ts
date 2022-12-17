@@ -6,7 +6,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -270,27 +270,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
 
-    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
-      if (update.cpu) {
-        this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
-      }
-
-      if (update.virtual_memory) {
-        const memStats: MemoryStatsEventData = { ...update.virtual_memory };
-
-        if (update.zfs && update.zfs.arc_size !== null) {
-          memStats.arc_size = update.zfs.arc_size;
+    this.ws.newSub<ReportingRealtimeUpdate>('reporting.realtime')
+      .pipe(
+        map((event) => event.fields),
+        untilDestroyed(this),
+      )
+      .subscribe((update) => {
+        if (update.cpu) {
+          this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
         }
-        this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
-      }
 
-      if (update.interfaces) {
-        const keys = Object.keys(update.interfaces);
-        keys.forEach((key) => {
-          this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });
-        });
-      }
-    });
+        if (update.virtual_memory) {
+          const memStats: MemoryStatsEventData = { ...update.virtual_memory };
+
+          if (update.zfs && update.zfs.arc_size !== null) {
+            memStats.arc_size = update.zfs.arc_size;
+          }
+          this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
+        }
+
+        if (update.interfaces) {
+          const keys = Object.keys(update.interfaces);
+          keys.forEach((key) => {
+            this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });
+          });
+        }
+      });
   }
 
   setVolumeData(data: Dataset[]): void {

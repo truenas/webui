@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { UUID } from 'angular2-uuid';
+import { map } from 'rxjs';
 import { WebSocketService } from 'app/services';
 
 export interface ConsoleMessagesState {
@@ -20,7 +20,6 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
 
   private readonly logPath = 'filesystem.file_tail_follow:/var/log/messages:500';
   private readonly maxMessages = 500;
-  private subscriptionId: string;
 
   private addMessage = this.updater((state, message: string) => {
     const newLines = message.split('\n')
@@ -38,16 +37,11 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
     super(initialConsoleMessagesState);
   }
 
-  ngOnDestroy(): void {
-    super.ngOnDestroy();
-    if (this.subscriptionId) {
-      this.ws.unsub(this.logPath, this.subscriptionId);
-    }
-  }
-
   subscribeToMessageUpdates(): void {
-    this.subscriptionId = UUID.UUID();
-    this.ws.sub(this.logPath, this.subscriptionId).pipe(untilDestroyed(this)).subscribe((log) => {
+    this.ws.newSub<{ data: string }>(this.logPath).pipe(
+      map((event) => event.fields),
+      untilDestroyed(this),
+    ).subscribe((log) => {
       if (typeof log?.data !== 'string') {
         return;
       }

@@ -137,7 +137,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
       },
     });
 
-    this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.newSub<VirtualMachine>('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       entityList.patchCurrentRows(
         (row: VirtualMachineRow) => row.id === event.id,
         (changedRow: VirtualMachineRow) => {

@@ -8,6 +8,7 @@ import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
@@ -76,7 +77,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   ) {}
 
   ngOnInit(): void {
-    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(
+    this.jobsSubscription = this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
       filter((event) => event.fields.method === 'catalog.sync'),
       untilDestroyed(this),
     ).subscribe((event) => {

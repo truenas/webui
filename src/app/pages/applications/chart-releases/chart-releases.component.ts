@@ -184,7 +184,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   addChartReleaseChangedEventListener(): void {
-    this.chartsSubscription = this.ws.subscribe('chart.release.query').pipe(
+    this.chartsSubscription = this.ws.newSub<ChartRelease>('chart.release.query').pipe(
       untilDestroyed(this),
     ).subscribe((evt) => {
       const app = this.chartItems.get(evt.fields.name);

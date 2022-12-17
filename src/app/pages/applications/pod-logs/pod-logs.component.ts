@@ -1,12 +1,11 @@
 import {
   AfterViewInit,
-  Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
+  Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -32,7 +31,7 @@ interface PodLogEvent {
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PodLogsComponent implements OnInit, AfterViewInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
@@ -41,7 +40,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   podName: string;
   containerName: string;
   protected tailLines = 500;
-  podLogSubscriptionId: string = null;
   podLogSubName = '';
 
   private podLogsChangedListener: Subscription;
@@ -72,26 +70,20 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  ngOnDestroy(): void {
-    if (this.podLogsChangedListener) {
-      this.podLogsChangedListener.unsubscribe();
-      this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
-    }
-  }
-
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
     this.podLogs = [];
 
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
-      this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
     }
 
     this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
-    this.podLogSubscriptionId = UUID.UUID();
-    this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
-      .pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
+    this.podLogsChangedListener = this.ws.newSub<PodLogEvent>(this.podLogSubName)
+      .pipe(
+        map((event) => event.fields),
+        untilDestroyed(this),
+      ).subscribe((res: PodLogEvent) => {
         if (res.msg && res.collection) {
           this.dialogService.closeAllDialogs();
           this.dialogService.errorReport('Pod Connection', `${res.collection} ${res.msg}`);

@@ -105,7 +105,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   getUpdates(): void {
-    this.ws.subscribe('service.query').pipe(
+    this.ws.newSub<Service>('service.query').pipe(
       map((event) => event.fields),
       filter((service) => !this.hiddenServices.includes(service.service)),
       untilDestroyed(this),

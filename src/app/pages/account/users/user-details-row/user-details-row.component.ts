@@ -10,9 +10,6 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import {
-  WebSocketService, DialogService,
-} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -28,9 +25,7 @@ export class UserDetailsRowComponent {
   @Output() update = new EventEmitter<void>();
 
   constructor(
-    private ws: WebSocketService,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private slideIn: IxSlideInService,
     private matDialog: MatDialog,
   ) {}

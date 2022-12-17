@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -33,12 +33,11 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['./zfs-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
+export class ZfsHealthCardComponent implements OnChanges {
   @Input() pool: Pool;
 
   scan: PoolScanUpdate;
   totalZfsErrors = 0;
-  poolScanSubscriptionId: string;
 
   hasScrubTask$: Observable<LoadingState<boolean>>;
 
@@ -168,15 +167,10 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
       .subscribe(() => this.store.loadDashboard());
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribeFromScan();
-  }
-
   private subscribeToScan(): void {
-    this.unsubscribeFromScan();
-    this.poolScanSubscriptionId = `zfs.pool.scan - ${this.pool.name}`;
-    this.ws.sub<PoolScan>('zfs.pool.scan', this.poolScanSubscriptionId)
+    this.ws.newSub<PoolScan>('zfs.pool.scan')
       .pipe(
+        map((event) => event.fields),
         filter((scan) => scan.name === this.pool.name),
         untilDestroyed(this),
       )
@@ -210,13 +204,5 @@ export class ZfsHealthCardComponent implements OnChanges, OnDestroy {
           + (vdev.stats?.checksum_errors || 0);
       }, 0);
     }, 0);
-  }
-
-  private unsubscribeFromScan(): void {
-    if (!this.poolScanSubscriptionId) {
-      return;
-    }
-
-    this.ws.unsub('zfs.pool.scan', this.poolScanSubscriptionId);
   }
 }
