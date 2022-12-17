@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -16,7 +15,6 @@ import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-m
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
-import { DisksUpdateService } from 'app/services/disks-update.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -32,7 +30,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  private disksUpdateSubscriptionId: string;
 
   currentView: ViewConfig = {
     name: 'Disks',
@@ -90,7 +87,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
-    private disksUpdateService: DisksUpdateService,
   ) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -151,7 +147,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
     this.core.unregister({ observerClass: this });
   }
 
@@ -267,16 +262,12 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
         this.spinner = false;
       }, 1500);
     });
-    if (!this.disksUpdateSubscriptionId) {
-      const diskUpdatesTrigger$ = new Subject<ApiEvent<Disk>>();
-      diskUpdatesTrigger$.pipe(
-        switchMap(() => this.ws.call('disk.query')),
-        untilDestroyed(this),
-      ).subscribe((disks) => {
-        this.handleLoadedDisks(disks);
-      });
-      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$);
-    }
+    this.ws.newSub<Disk>('disk.query').pipe(
+      switchMap(() => this.ws.call('disk.query')),
+      untilDestroyed(this),
+    ).subscribe((disks) => {
+      this.handleLoadedDisks(disks);
+    });
   }
 
   handleLoadedDisks(disks: Disk[]): void {

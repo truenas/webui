@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
 import { Router } from '@angular/router';
@@ -6,10 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import {
-  forkJoin, lastValueFrom, of, Subject,
+  forkJoin, lastValueFrom, of,
 } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
@@ -26,15 +25,13 @@ import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { WebSocketService, DialogService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
-import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
+export class DiskListComponent implements EntityTableConfig<Disk> {
   title = this.translate.instant('Disks');
   queryCall = 'disk.query' as const;
   queryCallOption: QueryParams<Disk, { extra: { pools: boolean; passwords: boolean } }> = [[], {
@@ -97,23 +94,15 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     },
   }];
 
-  private diskUpdateSubscriptionId: string;
-
   protected unusedDisks: UnusedDisk[] = [];
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
     private matDialog: MatDialog,
-    private core: CoreService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private disksUpdate: DisksUpdateService,
   ) {}
-
-  ngOnDestroy(): void {
-    this.disksUpdate.removeSubscriber(this.diskUpdateSubscriptionId);
-  }
 
   getActions(parentRow: Disk): EntityTableAction[] {
     const actions = [{
@@ -193,11 +182,9 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   }
 
   afterInit(entityList: EntityTableComponent<Disk>): void {
-    const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
-    disksUpdateTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.newSub<Disk>('disk.query').pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
     });
-    this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
       entityList.pageChanged();

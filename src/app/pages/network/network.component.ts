@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom, Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -495,8 +495,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
     this.ws
-      .sub<ReportingRealtimeUpdate>('reporting.realtime')
-      .pipe(untilDestroyed(this))
+      .newSub<ReportingRealtimeUpdate>('reporting.realtime')
+      .pipe(
+        map((event) => event.fields),
+        untilDestroyed(this),
+      )
       .subscribe((evt) => {
         if (evt.interfaces) {
           tableSource.forEach((row) => {
