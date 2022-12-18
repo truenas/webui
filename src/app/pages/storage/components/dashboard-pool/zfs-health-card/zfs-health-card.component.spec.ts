@@ -10,11 +10,13 @@ import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -58,7 +60,7 @@ describe('ZfsHealthCardComponent', () => {
     total_secs_left: 574,
   } as PoolScanUpdate;
   let websocket: WebSocketService;
-  const websocketSubscription$ = new Subject<PoolScan>();
+  const websocketSubscription$ = new Subject<ApiEvent<PoolScan>>();
 
   const createComponent = createComponentFactory({
     component: ZfsHealthCardComponent,
@@ -76,8 +78,7 @@ describe('ZfsHealthCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(WebSocketService, {
-        sub: jest.fn(() => websocketSubscription$),
-        unsub: jest.fn(),
+        newSub: jest.fn(() => websocketSubscription$.asObservable()),
         call: jest.fn((method: string) => {
           if (method === 'pool.scrub.query') {
             return of([
@@ -152,12 +153,17 @@ describe('ZfsHealthCardComponent', () => {
     });
 
     it('shows information about an active scan task', async () => {
-      expect(websocket.newSub).toHaveBeenCalledWith('zfs.pool.scan', 'zfs.pool.scan - tank');
+      expect(websocket.newSub).toHaveBeenCalledWith('zfs.pool.scan');
 
       websocketSubscription$.next({
-        name: 'tank',
-        scan: activeScrub,
-      } as PoolScan);
+        id: 1,
+        collection: 'zfs.pool.scan',
+        msg: IncomingApiMessageType.Changed,
+        fields: {
+          name: 'tank',
+          scan: activeScrub,
+        },
+      } as ApiEvent<PoolScan>);
       spectator.detectChanges();
 
       const scanInProgress = spectator.query('.scan-in-progress');
