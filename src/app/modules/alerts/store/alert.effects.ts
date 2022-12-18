@@ -4,9 +4,10 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import {
-  catchError, filter, map, mergeMap, pairwise, switchMap, withLatestFrom,
+  catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { Alert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -39,30 +40,20 @@ export class AlertEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      return this.ws.subscribe('alert.list').pipe(
-        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+      return this.ws.newSub<Alert>('alert.list').pipe(
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
               return alertAdded({ alert: event.fields });
             case IncomingApiMessageType.Changed:
               return alertChanged({ alert: event.fields });
+            case IncomingApiMessageType.Removed:
+              return alertRemoved({ id: event.id.toString() });
           }
         }),
-      );
-    }),
-  ));
-
-  subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
-    switchMap(() => {
-      return this.ws.sub('alert.list').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-        map((event) => alertRemoved({ id: event.id })),
       );
     }),
   ));

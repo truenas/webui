@@ -3,10 +3,11 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap,
+  catchError, map, switchMap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Job } from 'app/interfaces/job.interface';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
@@ -40,30 +41,20 @@ export class JobEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
-      return this.ws.subscribe('core.get_jobs').pipe(
-        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+      return this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
               return jobAdded({ job: event.fields });
             case IncomingApiMessageType.Changed:
               return jobChanged({ job: event.fields });
+            case IncomingApiMessageType.Removed:
+              return jobRemoved({ id: event.id.toString() });
           }
         }),
-      );
-    }),
-  ));
-
-  subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
-    ofType(jobsLoaded),
-    switchMap(() => {
-      return this.ws.sub('core.get_jobs').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-        map((event) => jobRemoved({ id: event.id })),
       );
     }),
   ));

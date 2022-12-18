@@ -6,7 +6,9 @@ import {
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -63,19 +65,31 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
   });
 
   readonly subscribeToUpdates = this.effect(() => {
-    return this.ws.subscribe('core.get_jobs').pipe(
-      filter((event) => event.fields.method === 'container.image.pull' && event.fields.state === JobState.Success && !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+    return this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
+      filter((event) => (
+        this.isImagePullSuccessfull(event)
+          && !this.isEventRemoved(event)
+      )),
       switchMap(() => this.ws.call('container.image.query')),
       map((entities) => this.patchState({ entities })),
     );
   });
 
+  isImagePullSuccessfull(event: ApiEvent<Job<unknown, unknown[]>>): boolean {
+    return event.fields.method === 'container.image.pull'
+    && event.fields.state === JobState.Success;
+  }
+
   readonly subscribeToRemoval = this.effect(() => {
-    return this.ws.sub('container.image.query').pipe(
-      filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-      map((event) => this.entityDeleted(event.id)),
+    return this.ws.newSub<Job<unknown, unknown[]>>('container.image.query').pipe(
+      filter((event) => this.isEventRemoved(event)),
+      map((event) => this.entityDeleted(event.id.toString())),
     );
   });
+
+  isEventRemoved(event: ApiEvent<Job<unknown, unknown[]>>): boolean {
+    return event.msg === IncomingApiMessageType.Removed;
+  }
 
   entityDeleted = this.updater((state, entityId: string) => {
     const index = state.entities.findIndex((entity) => entity.id === entityId);

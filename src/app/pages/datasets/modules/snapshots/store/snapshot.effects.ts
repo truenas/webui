@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap,
+  catchError, map, switchMap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -43,30 +43,20 @@ export class SnapshotEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
-      return this.ws.subscribe('zfs.snapshot.query').pipe(
-        filter((event) => !(event.msg === IncomingApiMessageType.Changed && event.cleared)),
+      return this.ws.newSub<ZfsSnapshot>('zfs.snapshot.query').pipe(
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:
               return snapshotAdded({ snapshot: event.fields });
             case IncomingApiMessageType.Changed:
               return snapshotChanged({ snapshot: event.fields });
+            case IncomingApiMessageType.Removed:
+              return snapshotRemoved({ id: event.id.toString() });
           }
         }),
-      );
-    }),
-  ));
-
-  subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
-    ofType(snapshotsLoaded),
-    switchMap(() => {
-      return this.ws.sub('zfs.snapshot.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-        map((event) => snapshotRemoved({ id: event.id })),
       );
     }),
   ));

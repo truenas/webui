@@ -7,7 +7,7 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   defer,
   noop,
-  Observable, Observer, Subject, Subscriber, Subscription,
+  Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
 import {
   filter, finalize, share, switchMap,
@@ -16,7 +16,6 @@ import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-me
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -181,27 +180,6 @@ export class WebSocketService {
     }
   }
 
-  subscribe<K extends keyof ApiEventDirectory>(name: K | '*'): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    return new Observable((observer) => {
-      if (this.subscriptions.has(name)) {
-        this.subscriptions.get(name).push(observer);
-      } else {
-        this.subscriptions.set(name, [observer]);
-      }
-    });
-  }
-
-  unsubscribe(observer: Subscription): void {
-    // FIXME: just does not have a good performance :)
-    this.subscriptions.forEach((observers) => {
-      observers.forEach((item) => {
-        if (item === observer) {
-          observers.splice(observers.indexOf(item), 1);
-        }
-      });
-    });
-  }
-
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     const payload = {
@@ -333,7 +311,7 @@ export class WebSocketService {
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
     return new Observable((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
       this.call(method, params).pipe(
-        switchMap((jobId) => this.subscribe('core.get_jobs').pipe(filter((event) => event.id === jobId))),
+        switchMap((jobId) => this.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(filter((event) => event.id === jobId))),
         untilDestroyed(this),
       ).subscribe({
         next: (event) => {

@@ -1,9 +1,8 @@
 import {
-  AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -27,14 +26,13 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-manage-catalogs',
   templateUrl: './manage-catalogs.component.html',
 })
-export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit, OnDestroy {
+export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   title = 'Catalogs';
   queryCall = 'catalog.query' as const;
   wsDelete = 'catalog.delete' as const;
   queryCallOption: CatalogQueryParams = [[], { extra: { item_details: true } }];
-  jobsSubscription: Subscription;
   disableActionsConfig = true;
 
   columns = [
@@ -77,7 +75,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   ) {}
 
   ngOnInit(): void {
-    this.jobsSubscription = this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
+    this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
       filter((event) => event.fields.method === 'catalog.sync'),
       untilDestroyed(this),
     ).subscribe((event) => {
@@ -99,12 +97,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  ngOnDestroy(): void {
-    if (this.jobsSubscription) {
-      this.ws.unsubscribe(this.jobsSubscription);
-    }
   }
 
   refresh(): void {

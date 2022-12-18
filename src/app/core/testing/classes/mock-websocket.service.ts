@@ -1,11 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
-import { Observable, of, Subject } from 'rxjs';
-import { ValuesType } from 'utility-types';
+import { of, Subject } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
@@ -37,7 +35,6 @@ export class MockWebsocketService extends WebSocketService {
     this.call = jest.fn();
     this.job = jest.fn();
     this.logout = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
     this.sub = jest.fn(() => of());
     this.unsub = jest.fn();
     this.socket = {
