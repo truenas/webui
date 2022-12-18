@@ -39,7 +39,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
 
   subscribeToMessageUpdates(): void {
     this.ws.newSub<{ data: string }>(this.logPath).pipe(
-      map((event) => event as unknown as { data: string }),
+      map((event) => event.fields),
       untilDestroyed(this),
     ).subscribe((log) => {
       if (typeof log?.data !== 'string') {

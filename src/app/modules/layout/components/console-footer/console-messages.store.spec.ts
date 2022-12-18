@@ -9,7 +9,7 @@ describe('ConsoleMessagesStore', () => {
     service: ConsoleMessagesStore,
     providers: [
       mockProvider(WebSocketService, {
-        newSub: jest.fn(() => of({
+        sub: jest.fn(() => of({
           data: '[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.',
         })),
       }),
@@ -24,7 +24,7 @@ describe('ConsoleMessagesStore', () => {
     spectator.service.subscribeToMessageUpdates();
 
     expect(spectator.inject(WebSocketService).newSub)
-      .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500');
+      .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500', expect.any(String));
     const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({
       lines: [
