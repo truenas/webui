@@ -35,8 +35,6 @@ export class MockWebsocketService extends WebSocketService {
     this.call = jest.fn();
     this.job = jest.fn();
     this.logout = jest.fn();
-    this.sub = jest.fn(() => of());
-    this.unsub = jest.fn();
     this.socket = {
       send: jest.fn(),
       close: jest.fn(),

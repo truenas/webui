@@ -23,7 +23,7 @@ describe('ConsoleMessagesStore', () => {
   it('subscribeToMessageUpdates - subscribes to log updates and calls addMessage when new message is received', async () => {
     spectator.service.subscribeToMessageUpdates();
 
-    expect(spectator.inject(WebSocketService).sub)
+    expect(spectator.inject(WebSocketService).newSub)
       .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500', expect.any(String));
     const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({
@@ -46,16 +46,5 @@ describe('ConsoleMessagesStore', () => {
     spectator.service.subscribeToMessageUpdates();
     const lines = await firstValueFrom(spectator.service.lastThreeLogLines$);
     expect(lines).toBe('[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
-  });
-
-  it('unsubscribes from updates when component is destroyed', () => {
-    spectator.service.subscribeToMessageUpdates();
-    const subscriptionId = spectator.inject(WebSocketService).sub.mock.lastCall[1];
-
-    spectator.service.ngOnDestroy();
-    expect(spectator.inject(WebSocketService).unsub).toHaveBeenCalledWith(
-      'filesystem.file_tail_follow:/var/log/messages:500',
-      subscriptionId,
-    );
   });
 });

@@ -40,13 +40,11 @@ export class GroupEffects {
     }),
   ));
 
-  // groupAdded() and groupChanged() are dispatched from the Group Form
-
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(groupsLoaded),
     switchMap(() => {
-      return this.ws.sub('group.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
+      return this.ws.newSub('group.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => groupRemoved({ id: event.id })),
       );
     }),

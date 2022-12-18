@@ -152,7 +152,7 @@ describe('ZfsHealthCardComponent', () => {
     });
 
     it('shows information about an active scan task', async () => {
-      expect(websocket.sub).toHaveBeenCalledWith('zfs.pool.scan', 'zfs.pool.scan - tank');
+      expect(websocket.newSub).toHaveBeenCalledWith('zfs.pool.scan', 'zfs.pool.scan - tank');
 
       websocketSubscription$.next({
         name: 'tank',

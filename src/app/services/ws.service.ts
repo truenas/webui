@@ -198,56 +198,6 @@ export class WebSocketService {
     }).pipe(share());
   }
 
-  /**
-   * This method subscribes to the provided api end point for real time updates
-   * @param api The api end point to subscribe to
-   * @param subscriptionId The unique id that will be used as request id and can be
-   * used to unsubscribe from the websocket subscription with the `unsub(api, subscriptionId)`
-   * method
-   * @returns
-   */
-  sub<T = any>(api: string, subscriptionId?: string): Observable<T> {
-    const nom = api.replace('.', '_'); // Avoid weird behavior
-    if (!this.pendingSubs[nom]) {
-      this.pendingSubs[nom] = {
-        observers: {},
-      };
-    }
-
-    const uuid = subscriptionId || UUID.UUID();
-    const payload = { id: uuid, name: api, msg: OutgoingApiMessageType.Sub };
-    return new Observable((observer: Subscriber<T>) => {
-      this.pendingSubs[nom].observers[uuid] = observer;
-      this.send(payload);
-
-      // cleanup routine
-      observer.complete = () => {
-        this.send({ id: uuid, msg: OutgoingApiMessageType.UnSub });
-        this.pendingSubs[nom].observers[uuid].unsubscribe();
-        delete this.pendingSubs[nom].observers[uuid];
-        if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
-      };
-      return observer;
-    });
-  }
-
-  /**
-   * This method unsubscribes from real time websocket updates to the given api end point
-   * @param api The api end point to unsubscribe from
-   * @param subscriptionId The subscription Id used to setup the subscription in the `sub(api, subscriptionId)` method
-   */
-  unsub(api: string, subscriptionId: string): void {
-    const nom = api.replace('.', '_');
-    if (this.pendingSubs[nom].observers[subscriptionId]) {
-      this.send({ id: subscriptionId, msg: OutgoingApiMessageType.UnSub });
-      this.pendingSubs[nom].observers[subscriptionId].unsubscribe();
-      delete this.pendingSubs[nom].observers[subscriptionId];
-      if (!this.pendingSubs[nom].observers) {
-        delete this.pendingSubs[nom];
-      }
-    }
-  }
-
   newSubscribers: {
     [endpoint: string]: {
       subscriptionId: string;
