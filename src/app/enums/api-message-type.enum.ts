@@ -5,12 +5,12 @@ export enum IncomingApiMessageType {
   Result = 'result',
   Connected = 'connected',
   Pong = 'pong',
-  Method = 'method',
   Ready = 'ready',
   NoSub = 'nosub',
 }
 
 export enum OutgoingApiMessageType {
+  Method = 'method',
   Connect = 'connect',
   UnSub = 'unsub',
   Sub = 'sub',

@@ -16,7 +16,9 @@ import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-me
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
-import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
+import {
+  ApiEvent, IncomingWebsocketMessage, ResultMessage,
+} from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
 
@@ -38,19 +40,19 @@ export class WebSocketService {
     args: unknown;
     observer: Subscriber<unknown>;
   }>();
-  private pendingSubs: {
-    [name: string]: {
-      observers: {
-        [id: string]: Subscriber<unknown>;
-      };
-    };
-  } = {};
+
   private pendingMessages: unknown[] = [];
 
   private protocol: string;
   private remote: string;
 
-  private subscriptions = new Map<string, Subscriber<unknown>[]>();
+  newSubscribers: {
+    [endpoint: string]: {
+      subscriptionId: string;
+      subscriber$: Subject<ApiEvent<unknown>>;
+      observable$: Observable<ApiEvent<unknown>>;
+    };
+  } = {};
 
   constructor(
     protected router: Router,
@@ -111,64 +113,81 @@ export class WebSocketService {
   }
 
   onmessage(msg: { data: string }): void {
-    let data: IncomingWebsocketMessage;
-    try {
-      data = JSON.parse(msg.data);
-    } catch (error: unknown) {
-      console.warn(`Malformed response: "${msg.data}"`);
+    const data: IncomingWebsocketMessage = this.parseIncomingData(msg);
+
+    if (!data) {
       return;
     }
 
-    if ('error' in data && data.error.error === 13 /** Not Authenticated */) {
-      return this.socket.close(); // will trigger onClose which handles redirection
+    if (this.hasAuthError(data)) {
+      return this.triggerRedirectionWithOnClose();
     }
 
-    if (data.msg === IncomingApiMessageType.Result) {
-      const call = this.pendingCalls.get(data.id);
-
-      this.pendingCalls.delete(data.id);
-      if (data.error) {
-        console.error('Error: ', data.id, data.error);
-        call?.observer?.error(data.error);
-      }
-      if (call && call.observer) {
-        call.observer.next(data.result);
-        call.observer.complete();
-      }
-    } else if (data.msg === IncomingApiMessageType.Connected) {
-      this.connected = true;
-      setTimeout(() => this.ping(), 20000);
-      this.onconnect();
-    } else if (data.msg === IncomingApiMessageType.Changed || data.msg === IncomingApiMessageType.Added) {
-      this.subscriptions.forEach((observers, name) => {
-        if (name === '*' || name === (data as ApiEvent).collection) {
-          observers.forEach((item) => item.next(data));
-        }
-      });
-    } else if (!Object.values(IncomingApiMessageType).includes(data.msg)) {
-      // do nothing for pong or sub, otherwise console warn
-      console.warn('Unknown message: ', data);
+    switch (data.msg) {
+      case IncomingApiMessageType.Result:
+        return this.handleResultMessage(data);
+      case IncomingApiMessageType.Connected:
+        return this.handleConnectedMessage();
+      case IncomingApiMessageType.Changed:
+      case IncomingApiMessageType.Added:
+      case IncomingApiMessageType.Removed:
+        return this.handleSubEvent(data);
     }
 
-    const collectionName = (data as ApiEvent).collection?.replace('.', '_');
+    if (!Object.values(IncomingApiMessageType).includes(data.msg)) {
+      return console.warn('Unknown message: ', data);
+    }
+  }
+
+  /**
+   *
+   * @returns parsed IncomingWebsocketMessage object or null in case of malformed JSON string
+   */
+  parseIncomingData(msg: { data: string }): IncomingWebsocketMessage {
+    let data: IncomingWebsocketMessage;
+    try {
+      data = JSON.parse(msg.data);
+      return data;
+    } catch (error: unknown) {
+      console.warn(`Malformed response: "${msg.data}"`);
+      return null;
+    }
+  }
+
+  hasAuthError(data: IncomingWebsocketMessage): boolean {
+    return 'error' in data && data.error.error === 13;
+  }
+
+  triggerRedirectionWithOnClose(): void {
+    this.socket.close();
+  }
+
+  handleResultMessage(data: ResultMessage<unknown>): void {
+    const call = this.pendingCalls.get(data.id);
+    this.pendingCalls.delete(data.id);
+    if (data.error) {
+      console.error('Error: ', data.id, data.error);
+      call?.observer?.error(data.error);
+    }
+    if (call && call.observer) {
+      call.observer.next(data.result);
+      call.observer.complete();
+    }
+  }
+
+  handleConnectedMessage(): void {
+    this.connected = true;
+    setTimeout(() => this.ping(), 20000);
+    this.onconnect();
+  }
+
+  handleSubEvent(data: ApiEvent<unknown>): void {
+    const collectionName = (data).collection?.replace('.', '_');
     if (collectionName && this.newSubscribers[collectionName]?.subscriber$) {
       if ('error' in data && data.error) {
         this.newSubscribers[collectionName]?.subscriber$.error(data.error);
       }
-      this.newSubscribers[collectionName]?.subscriber$.next(data as ApiEvent);
-    }
-    if (collectionName && this.pendingSubs[collectionName]?.observers) {
-      Object.values(this.pendingSubs[collectionName].observers).forEach((subObserver) => {
-        if ('error' in data && data.error) {
-          console.error('Error: ', data.error);
-          subObserver.error(data.error);
-        }
-        if (subObserver && 'fields' in data && data.fields) {
-          subObserver.next(data.fields);
-        } else if (subObserver && !(data as ApiEvent).fields) {
-          subObserver.next(data);
-        }
-      });
+      this.newSubscribers[collectionName]?.subscriber$.next(data);
     }
   }
 
@@ -183,7 +202,7 @@ export class WebSocketService {
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     const payload = {
-      id: uuid, msg: IncomingApiMessageType.Method, method, params,
+      id: uuid, msg: OutgoingApiMessageType.Method, method, params,
     };
 
     // Create the observable
@@ -197,14 +216,6 @@ export class WebSocketService {
       this.send(payload);
     }).pipe(share());
   }
-
-  newSubscribers: {
-    [endpoint: string]: {
-      subscriptionId: string;
-      subscriber$: Subject<ApiEvent<unknown>>;
-      observable$: Observable<ApiEvent<unknown>>;
-    };
-  } = {};
 
   /**
    * @param endpoint The end point to subscribe to for updates
@@ -231,6 +242,7 @@ export class WebSocketService {
       this.subCounterOperator((noOfSubs: number) => {
         if (noOfSubs === 0) {
           this.send({ id: subscriptionId, msg: OutgoingApiMessageType.UnSub });
+          this.newSubscribers[endpoint].subscriber$.complete();
           delete this.newSubscribers[endpoint];
         }
       }),
