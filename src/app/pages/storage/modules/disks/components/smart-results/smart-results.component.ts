@@ -54,10 +54,10 @@ export class SmartResultsComponent implements EntityTableConfig {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.disk = params['pk'];
       if (this.disk) {
-        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T Test Results of {disk}', { disk: this.disk }));
+        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results of {disk}', { disk: this.disk }));
         this.queryCallOption = [[['disk', '=', this.disk]]];
       } else {
-        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T Test Results'));
+        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results'));
         this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
       }
     });
