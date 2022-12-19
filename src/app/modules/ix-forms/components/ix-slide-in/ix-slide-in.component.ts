@@ -29,6 +29,8 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   isSlideInOpen = false;
   wide = false;
   private element: HTMLElement;
+  timeOutOfClear: any;
+  clearBodyExpected = false;
 
   constructor(
     private el: ElementRef,
@@ -67,11 +69,12 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
   closeSlideIn(): void {
     this.isSlideInOpen = false;
-
-    setTimeout(() => {
+    this.clearBodyExpected = true;
+    this.timeOutOfClear = setTimeout(() => {
       // Destroying child component later improves performance a little bit.
       // 200ms matches transition duration
       this.slideInBody.clear();
+      this.clearBodyExpected = false;
     }, 200);
   }
 
@@ -79,7 +82,11 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.isSlideInOpen = true;
     this.wide = !!params?.wide;
 
+    if (this.clearBodyExpected) {
+      clearTimeout(this.timeOutOfClear);
+    }
     this.slideInBody.clear();
+    this.clearBodyExpected = false;
 
     const componentRef = this.slideInBody.createComponent<T>(componentType);
     return componentRef.instance;
