@@ -63,10 +63,10 @@ def click_on_the_credentials_on_the_side_menu_click_on_local_users(driver):
 def click_the_down_caret_right_of_the_users(driver):
     """click the down caret right of the users, then click the Edit button."""
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_user).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
 
 @then('click Enable Permit Sudo checkbox and click save')
@@ -100,9 +100,9 @@ def open_the_user_dropdown(driver):
     """open the user dropdown."""
     assert wait_on_element(driver, 7, xpaths.users.title, 'clickable')
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    driver.find_element_by_xpath(xpaths.users.eric_user).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
 
 @then('updated value should be visible')

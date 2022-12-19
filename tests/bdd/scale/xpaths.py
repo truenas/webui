@@ -6,10 +6,13 @@ class activeDirectory:
 
 class addUser:
     title = '//h3[text()="Add User"]'
+    edit_title = '//h3[text()="Edit User"]'
     fullName_input = '//ix-input[@formcontrolname="full_name"]//input'
     username_input = '//ix-input[@formcontrolname="username"]//input'
     password_input = '//ix-input[@formcontrolname="password"]//input'
     confirm_password_input = '//ix-input[@formcontrolname="password_conf"]//input'
+    select_shell = '//ix-combobox[@formcontrolname="shell"]//input'
+    shell_option = '//mat-option[contains(.,"zsh")]'
 
 
 class button:
@@ -122,3 +125,4 @@ class toolbar:
 class users:
     title = '//h1[text()="Users"]'
     eric_user = '//tr[contains(.,"ericbsd")]/td'
+    eric_edit_button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
