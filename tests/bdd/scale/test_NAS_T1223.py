@@ -2,6 +2,7 @@
 """SCALE UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -28,28 +29,28 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     depends(request, ['Set_Interface'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
     else:
         # the UI seams to get brooked at this point
         driver.refresh()
-    if not wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]', 'inputable')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    if not wait_on_element(driver, 5, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 5, xpaths.login.user_input, 'inputable')
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 7, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('on the dashboard, if there is dismiss all notification')
 def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
     """on the dashboard, if there is dismiss all notification."""
     assert wait_on_element(driver, 7, '//h1[text()="Dashboard"]')
-    assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
+    assert wait_on_element(driver, 7, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')

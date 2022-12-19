@@ -5,6 +5,7 @@
 import time
 import glob
 import os
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -29,17 +30,17 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you should be on the dashboard, click on Directory Services in the side menu')
@@ -50,9 +51,9 @@ def you_should_be_on_the_dashboard_click_on_directory_services_in_the_side_menu(
     # assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
     # assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     # driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    # assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    # assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    # assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    # assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+    # driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     # / temp fix for 1st start popup bug
     time.sleep(1)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
@@ -116,6 +117,6 @@ def verify_that_the_file_was_accepted_and_utilized(driver):
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Kerberos Keytab")]//div[contains(text(),"keytab_test")]')
 
     # return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     time.sleep(1)

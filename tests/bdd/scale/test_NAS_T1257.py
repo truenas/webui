@@ -31,23 +31,23 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     depends(request, ['Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
     elif not wait_on_element(driver, 3, '//button[@name="Power"]', 'clickable'):
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
         driver.refresh()
-        wait_on_element(driver, 3, '//input[@data-placeholder="Username"]', 'inputable')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        wait_on_element(driver, 3, xpaths.login.user_input, 'inputable')
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('on the Dashboard, get the ssh host key')
@@ -77,15 +77,15 @@ def click_on_the_power_button_then_restart(driver):
 @then('wait for the login UI to come back and login')
 def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
     """wait for the login UI to come back and login."""
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
     time.sleep(5)
-    assert wait_on_element(driver, 300, '//input[@data-placeholder="Username"]')
-    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-    assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    assert wait_on_element(driver, 300, xpaths.login.user_input)
+    driver.find_element_by_xpath(xpaths.login.user_input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+    driver.find_element_by_xpath(xpaths.login.password_input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+    assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
 
 @then('on the Dashboard click on Systems Settings then Services')
