@@ -73,7 +73,7 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 @then('the User Edit Page should open, add the root group and click save')
 def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     """the User Edit Page should open, add the root group and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')
@@ -104,7 +104,7 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
     assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')

@@ -67,7 +67,7 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
 @then('the User Edit Page should open, change "Disable Password" to No and click save')
 def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(driver):
     """the User Edit Page should open, change "Disable Password" to No and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 3, '//mat-select[@ix-auto="select__Disable Password"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()

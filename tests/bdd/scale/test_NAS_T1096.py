@@ -65,7 +65,7 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
 @then('the User Edit Page should open, change the password in the 2nd field')
 def the_user_edit_page_should_open_change_the_password_in_the_2nd_field(driver):
     """the User Edit Page should open, change the password in the 2nd field."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, xpaths.addUser.password_input, 'inputable')
     driver.find_element_by_xpath(xpaths.addUser.password_input).clear()
