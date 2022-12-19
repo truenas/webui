@@ -49,7 +49,7 @@ export class DiskTemperatureService {
       if (this.subscribers > 0) this.start();
     });
 
-    this.websocket.newSub<Disk>('disk.query').pipe(
+    this.websocket.newSub('disk.query').pipe(
       tap(() => this.stop()),
       switchMap(() => this.websocket.call('disk.query', [[], queryOptions])),
       untilDestroyed(this),

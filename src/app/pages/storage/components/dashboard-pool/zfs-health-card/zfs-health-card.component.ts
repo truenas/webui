@@ -18,7 +18,6 @@ import { getPoolStatusLabels, PoolStatus } from 'app/enums/pool-status.enum';
 import { secondsToDuration } from 'app/helpers/time.helpters';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import {
   AutotrimDialogComponent,
@@ -168,7 +167,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   private subscribeToScan(): void {
-    this.ws.newSub<PoolScan>('zfs.pool.scan')
+    this.ws.newSub('zfs.pool.scan')
       .pipe(
         map((event) => event.fields),
         filter((scan) => scan.name === this.pool.name),

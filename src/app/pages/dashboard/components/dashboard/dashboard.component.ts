@@ -21,7 +21,6 @@ import {
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
@@ -270,7 +269,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
 
-    this.ws.newSub<ReportingRealtimeUpdate>('reporting.realtime')
+    this.ws.newSub('reporting.realtime')
       .pipe(
         map((event) => event.fields),
         untilDestroyed(this),

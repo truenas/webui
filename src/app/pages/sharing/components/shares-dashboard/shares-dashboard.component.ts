@@ -125,7 +125,7 @@ export class SharesDashboardComponent implements AfterViewInit {
 
   subscribeToServiceUpdates(): void {
     this.ws
-      .newSub<Service>('service.query')
+      .newSub('service.query')
       .pipe(
         map((event) => event.fields),
         filter((service) => this.servicesToCheck.includes(service.service)),

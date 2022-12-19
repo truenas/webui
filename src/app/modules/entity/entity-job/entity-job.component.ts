@@ -202,7 +202,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
           this.wsjobUpdate(jobs[0]);
         }
       });
-    this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs')
+    this.ws.newSub('core.get_jobs')
       .pipe(
         filter((event) => event.id === this.jobId),
         map((event) => event.fields),
@@ -246,7 +246,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   getRealtimeLogs(): void {
     this.realtimeLogsSubscribed = true;
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.newSub<{ data: string }>(subName).pipe(
+    this.ws.newSub(subName).pipe(
       map((event) => event.fields),
       untilDestroyed(this),
     ).subscribe((res) => {

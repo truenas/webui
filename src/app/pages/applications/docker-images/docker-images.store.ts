@@ -65,7 +65,7 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
   });
 
   readonly subscribeToUpdates = this.effect(() => {
-    return this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
+    return this.ws.newSub('core.get_jobs').pipe(
       filter((event) => (
         this.isImagePullSuccessfull(event)
           && !this.isEventRemoved(event)
@@ -81,13 +81,13 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
   }
 
   readonly subscribeToRemoval = this.effect(() => {
-    return this.ws.newSub<Job<unknown, unknown[]>>('container.image.query').pipe(
+    return this.ws.newSub('container.image.query').pipe(
       filter((event) => this.isEventRemoved(event)),
       map((event) => this.entityDeleted(event.id.toString())),
     );
   });
 
-  isEventRemoved(event: ApiEvent<Job<unknown, unknown[]>>): boolean {
+  isEventRemoved(event: ApiEvent<unknown>): boolean {
     return event.msg === IncomingApiMessageType.Removed;
   }
 

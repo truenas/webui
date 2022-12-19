@@ -7,7 +7,6 @@ import {
   catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { Alert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -43,7 +42,7 @@ export class AlertEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      return this.ws.newSub<Alert>('alert.list').pipe(
+      return this.ws.newSub('alert.list').pipe(
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:

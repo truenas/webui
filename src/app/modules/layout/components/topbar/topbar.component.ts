@@ -21,8 +21,6 @@ import helptext from 'app/helptext/topbar';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
-import { Job } from 'app/interfaces/job.interface';
-import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import {
@@ -123,7 +121,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.newSub('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (!event || (event.fields.method !== 'update.update' && event.fields.method !== 'failover.upgrade')) {
         return;
       }
@@ -171,7 +169,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.ws.newSub<PoolScan>('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((resilverJob) => {
+    this.ws.newSub('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((resilverJob) => {
       const scan = resilverJob.fields.scan;
       if (scan.function !== PoolScanFunction.Resilver) {
         return;

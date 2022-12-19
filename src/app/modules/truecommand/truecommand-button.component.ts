@@ -58,7 +58,7 @@ export class TruecommandButtonComponent implements OnInit {
       this.tcStatus = config;
       this.tcConnected = !!config.api_key;
     });
-    this.ws.newSub<TrueCommandConfig>('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.newSub('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
       this.tcStatus = event.fields;
       this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {

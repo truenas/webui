@@ -182,7 +182,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   afterInit(entityList: EntityTableComponent<Disk>): void {
-    this.ws.newSub<Disk>('disk.query').pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.newSub('disk.query').pipe(untilDestroyed(this)).subscribe(() => {
       entityList.getData();
     });
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

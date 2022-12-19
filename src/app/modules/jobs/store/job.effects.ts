@@ -7,7 +7,6 @@ import {
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { Job } from 'app/interfaces/job.interface';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
@@ -44,7 +43,7 @@ export class JobEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
-      return this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(
+      return this.ws.newSub('core.get_jobs').pipe(
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:

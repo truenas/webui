@@ -18,7 +18,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -495,7 +494,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
     this.ws
-      .newSub<ReportingRealtimeUpdate>('reporting.realtime')
+      .newSub('reporting.realtime')
       .pipe(
         map((event) => event.fields),
         untilDestroyed(this),

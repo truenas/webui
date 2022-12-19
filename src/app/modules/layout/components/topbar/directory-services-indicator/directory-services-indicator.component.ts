@@ -55,7 +55,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit {
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       this.updateIconVisibility(state);
     });
-    this.ws.newSub<DirectoryServicesState>('directoryservices.status')
+    this.ws.newSub('directoryservices.status')
       .pipe(untilDestroyed(this))
       .subscribe((event) => {
         this.updateIconVisibility(event.fields);

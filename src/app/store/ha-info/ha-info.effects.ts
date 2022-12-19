@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap } from 'rxjs/operators';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -38,7 +37,7 @@ export class HaInfoEffects {
   subscribeToHa = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.newSub<{ disabled_reasons: FailoverDisabledReason[] }>('failover.disabled.reasons').pipe(
+      return this.ws.newSub('failover.disabled.reasons').pipe(
         map((event) => {
           const failoverDisabledReasons = event.fields?.disabled_reasons;
           const haEnabled = failoverDisabledReasons.length === 0;

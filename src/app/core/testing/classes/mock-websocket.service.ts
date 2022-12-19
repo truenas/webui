@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
-import { of, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
+import { ValuesType } from 'utility-types';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
@@ -39,7 +41,7 @@ export class MockWebsocketService extends WebSocketService {
       send: jest.fn(),
       close: jest.fn(),
     } as unknown as WebSocket;
-    this.newSub = jest.fn(() => of());
+    this.newSub = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
     when(this.call).mockImplementation((method: ApiMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });

@@ -46,7 +46,7 @@ export class SnapshotEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
-      return this.ws.newSub<ZfsSnapshot>('zfs.snapshot.query').pipe(
+      return this.ws.newSub('zfs.snapshot.query').pipe(
         map((event) => {
           switch (event.msg) {
             case IncomingApiMessageType.Added:

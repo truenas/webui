@@ -79,9 +79,9 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
     }
 
     this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
-    this.podLogsChangedListener = this.ws.newSub<PodLogEvent>(this.podLogSubName)
+    this.podLogsChangedListener = this.ws.newSub(this.podLogSubName)
       .pipe(
-        map((event) => event.fields),
+        map((event) => event.fields as unknown as PodLogEvent),
         untilDestroyed(this),
       ).subscribe((res: PodLogEvent) => {
         if (res.msg && res.collection) {

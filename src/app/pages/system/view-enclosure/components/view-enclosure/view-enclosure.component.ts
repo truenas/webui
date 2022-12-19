@@ -262,7 +262,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
         this.spinner = false;
       }, 1500);
     });
-    this.ws.newSub<Disk>('disk.query').pipe(
+    this.ws.newSub('disk.query').pipe(
       switchMap(() => this.ws.call('disk.query')),
       untilDestroyed(this),
     ).subscribe((disks) => {

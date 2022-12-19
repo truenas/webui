@@ -15,7 +15,6 @@ import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ControlConfig, ToolbarOption } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
@@ -85,7 +84,7 @@ export class CatalogComponent implements OnInit, AfterViewInit {
     this.loadCatalogs();
     this.loadPoolSet();
 
-    this.ws.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.newSub('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;

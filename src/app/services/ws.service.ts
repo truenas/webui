@@ -10,17 +10,20 @@ import {
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
 import {
-  filter, finalize, share, switchMap,
+  filter, finalize, map, share, switchMap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiEventDirectory, LogsEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import {
   ApiEvent, IncomingWebsocketMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
+
+// type ApiSubscriptionDirectory = ValuesType<ApiEventDirectory | LogsEventDirectory>['response'];
 
 @UntilDestroy()
 @Injectable()
@@ -46,7 +49,7 @@ export class WebSocketService {
   private protocol: string;
   private remote: string;
 
-  newSubscribers: {
+  private newSubscribers: {
     [endpoint: string]: {
       subscriptionId: string;
       subscriber$: Subject<ApiEvent<unknown>>;
@@ -223,13 +226,13 @@ export class WebSocketService {
    * and will unsubscribe from the middleware endpoint on its own
    * when no subscriptions are active
    */
-  newSub<T>(apiMethod: string): Observable<ApiEvent<T>> {
+  newSub<K extends keyof ApiEventDirectory>(apiMethod: K | string): Observable<ApiEvent<ApiEventDirectory[K]['response'] & LogsEventDirectory[K]['response']>> {
     const endpoint = apiMethod.replace('.', '_'); // Avoid weird behavior
     if (this.newSubscribers[endpoint]?.observable$) {
-      return this.newSubscribers[endpoint].observable$ as Observable<ApiEvent<T>>;
+      return this.newSubscribers[endpoint].observable$ as Observable<ApiEvent<ApiEventDirectory[K]['response'] & LogsEventDirectory[K]['response']>>;
     }
 
-    const subscriber$ = new Subject<ApiEvent<T>>();
+    const subscriber$ = new Subject<ApiEvent<ApiEventDirectory[K]['response'] & LogsEventDirectory[K]['response']>>();
     const subscriptionId = UUID.UUID();
     const payload = {
       id: subscriptionId,
@@ -273,7 +276,8 @@ export class WebSocketService {
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
     return new Observable((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
       this.call(method, params).pipe(
-        switchMap((jobId) => this.newSub<Job<unknown, unknown[]>>('core.get_jobs').pipe(filter((event) => event.id === jobId))),
+        switchMap((jobId) => this.newSub('core.get_jobs').pipe(filter((event) => event.id === jobId))),
+        map((event) => event as ApiEvent<Job<unknown, unknown[]>>),
         untilDestroyed(this),
       ).subscribe({
         next: (event) => {
