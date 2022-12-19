@@ -95,7 +95,7 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 @then('the User Edit Page should open, input the SSH key and click save')
 def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_key):
     """the User Edit Page should open, input the SSH key and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
@@ -113,7 +113,7 @@ def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
     assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)

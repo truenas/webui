@@ -68,7 +68,7 @@ def the_users_page_should_open_expand_the_user_and_click_the_edit_button(driver)
 @then('the User Edit Page should open, change the path of the users Home Directory')
 def the_user_edit_page_should_open_change_the_path_of_the_users_home_directory(driver):
     """the User Edit Page should open, change the path of the users Home Directory."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__home"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()

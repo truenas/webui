@@ -72,7 +72,7 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 @then('the User Edit Page should open, change some permissions for the Home Directory and click save')
 def the_user_edit_page_should_open_change_some_permissions_for_the_home_directory_and_click_save(driver):
     """the User Edit Page should open, change some permissions for the Home Directory and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     time.sleep(1)
     assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]', 'clickable')
@@ -94,7 +94,7 @@ def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(drive
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
     assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     time.sleep(1)
     assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]')

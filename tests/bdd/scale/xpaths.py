@@ -13,6 +13,7 @@ class addUser:
     confirm_password_input = '//ix-input[@formcontrolname="password_conf"]//input'
     select_shell = '//ix-combobox[@formcontrolname="shell"]//input'
     shell_option = '//mat-option[contains(.,"zsh")]'
+    sudo_checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
 
 
 class button:
@@ -20,6 +21,7 @@ class button:
     save = '//button[contains(*/text(),"Save")]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
+    close = '//mat-icon[@id="ix-close-icon"]'
 
 
 class checkbox:

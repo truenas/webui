@@ -72,14 +72,14 @@ def click_the_down_caret_right_of_the_users(driver):
 @then('click Enable Permit Sudo checkbox and click save')
 def click_enable_permit_sudo_checkbox_and_click_save(driver):
     """click Enable Permit Sudo checkbox and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(5)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, xpaths.addUser.sudo_checkbox, 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
+        driver.find_element_by_xpath(xpaths.addUser.sudo_checkbox).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -101,6 +101,9 @@ def open_the_user_dropdown(driver):
     assert wait_on_element(driver, 7, xpaths.users.title, 'clickable')
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
+    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
+    assert element_text == 'true'
     assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
@@ -108,14 +111,14 @@ def open_the_user_dropdown(driver):
 @then('updated value should be visible')
 def updated_value_should_be_visible(driver):
     """updated value should be visible."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert attribute_value_exist(driver, xpaths.addUser.sudo_checkbox, 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
     time.sleep(0.5)
 
 
