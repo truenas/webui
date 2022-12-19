@@ -71,7 +71,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
         activedirectory: DirectoryServiceState.Disabled,
         ldap: DirectoryServiceState.Disabled,
       },
-    } as ApiEvent<DirectoryServicesState>));
+    } as ApiEvent<DirectoryServicesState & { data: string }>));
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
