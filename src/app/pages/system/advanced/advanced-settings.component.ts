@@ -567,6 +567,9 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   }
 
   private getUsername(credentialsData: AuthSessionCredentialsData): string {
-    return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
+    if (credentialsData && credentialsData.credentials_data) {
+      return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
+    }
+    return '';
   }
 }
