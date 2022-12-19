@@ -14,6 +14,11 @@ export const routes: Routes = [
         data: { title: 'Disks', breadcrumb: 'Disks' },
       },
       {
+        path: 'smartresults',
+        component: SmartResultsComponent,
+        data: { title: 'S.M.A.R.T. Test Results', breadcrumb: 'S.M.A.R.T. Test Results' },
+      },
+      {
         path: 'smartresults/:pk',
         component: SmartResultsComponent,
         data: { title: 'S.M.A.R.T. Test Results', breadcrumb: 'S.M.A.R.T. Test Results' },
