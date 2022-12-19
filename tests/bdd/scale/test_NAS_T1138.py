@@ -52,15 +52,15 @@ def you_should_be_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
     assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     time.sleep(1)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @then('click on the tank three dots button, select Add Zvol, and the Add Zvol page should open')
 def click_on_the_tank_three_dots_button_select_add_zvol_and_the_add_zvol_page_should_open(driver):
     """click on the tank three dots button, select Add Zvol, and the Add Zvol page should open."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Zvol"]', 'clickable')

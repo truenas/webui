@@ -46,14 +46,14 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_are_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you are on the dashboard, click Storage on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @then('the pools page appears click the three dots for the encrypted pool')
 def the_pools_page_appears_click_the_three_dots_for_the_encrypted_pool(driver):
     """the pools page appears click the three dots for the encrypted pool."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
 

@@ -53,10 +53,10 @@ def you_should_be_on_the_dashboard(driver):
 @then(parsers.parse('click Storage on the side menu and click on the "{dataset_name}" 3 dots button, select Edit Permissions'))
 def click_storage_on_the_side_menu_and_click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, dataset_name):
     """click Storage on the side menu and click on the "{dataset_name}" 3 dots button, select Edit Permissions."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
@@ -95,7 +95,7 @@ def click_the_save_button_return_to_the_pools_page_click_on_the_my_acl_dataset_3
     """click the Save button, return to the Pools page, click on the "my_acl_dataset" 3 dots button, select Edit Permissions."""
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 5, '//mat-panel-title[contains(.,"system")]')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()

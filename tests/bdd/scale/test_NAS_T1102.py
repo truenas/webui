@@ -47,25 +47,25 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click Storage on the side menu')
 def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @when('the pools page appears click create pool')
 def the_pools_page_appears_click_create_pool(driver):
     """the pools page appears click create pool."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
+    assert wait_on_element(driver, 10, xpaths.storage.title)
+    assert wait_on_element(driver, 10, xpaths.storage.create_pool_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.storage.create_pool_button).click()
 
 
 @then('the Pool Manager appears, enter the system for pool name')
 def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
     """the Pool Manager appears, enter the system for pool name."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
-    assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]', 'inputable')
-    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('system')
+    assert wait_on_element(driver, 7, xpaths.pool_manager.title)
+    assert wait_on_element(driver, 10, xpaths.pool_manager.name_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('system')
 
 
 @then('click sdc checkbox, press the right arrow under Data VDevs')
@@ -101,7 +101,7 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
     """Create pool should appear while pool is being created."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
 
 
 @then('the pools system should appear in the list')

@@ -47,10 +47,10 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you are on the dashboard click on storage in the side menu')
 def you_are_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
     """you are on the dashboard click on storage in the side menu."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.storage.title)
 
 
 @then(parsers.parse('Create 1st dataset {dataset_name}'))
@@ -207,9 +207,9 @@ def create_smb_share_with_path_tankrtacltest1share(driver, path):
 @then('Apply ACL to rt-acl-test-1 with recusrive checked')
 def apply_acl_to_rtacltest1_with_recusrive_checked(driver):
     """Apply ACL to rt-acl-test-1 with recusrive checked."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 10, '//div[contains(text(),"rt-acl-test-1")]')
     time.sleep(1)
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
