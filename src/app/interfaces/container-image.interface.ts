@@ -19,14 +19,21 @@ export interface PullContainerImageResponse {
 }
 
 export interface ContainerImage {
-  created: ApiTimestamp;
-  dangling: boolean;
   id: string;
   labels: { [label: string]: string };
-  repo_digests: string[];
   repo_tags: string[];
+  repo_digests: string[];
   size: number;
-  system_image: boolean;
+  dangling: boolean;
   update_available: boolean;
+  system_image: boolean;
+  created: ApiTimestamp;
   state?: string;
+  parsed_repo_tags?: {
+    image?: string;
+    tag?: string;
+    registry?: string;
+    complete_tag?: string;
+  }[];
+  complete_tags?: string[];
 }
