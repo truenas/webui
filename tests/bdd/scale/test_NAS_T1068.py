@@ -46,17 +46,17 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @when('the Users page should open, click the down carat sign right of the users')
 def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driver):
     """the Users page should open, click the down carat sign right of the users."""
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    assert wait_on_element(driver, 10, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
@@ -88,7 +88,7 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
 def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     """open the user dropdown, and verify the shell value has changed."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    assert wait_on_element(driver, 10, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '//div[contains(.,"zsh")]')

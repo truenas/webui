@@ -99,8 +99,8 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
 def after_click_on_credentials_on_the_left_sidebar_then_directory_services(driver):
     """after, click on Credentials on the left sidebar, then Directory Services.."""
     time.sleep(2)
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
 

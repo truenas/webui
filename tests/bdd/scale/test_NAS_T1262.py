@@ -45,10 +45,10 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_certificates(driver):
     """on the Dashboard, click on credentials and certificates."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @then('click on the trash icon for cert1')

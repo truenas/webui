@@ -52,17 +52,17 @@ def you_should_be_on_the_dashboard(driver):
 @then('click on the Credentials on the side menu, click on Local Users')
 def click_on_the_credentials_on_the_side_menu_click_on_local_users(driver):
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     time.sleep(1)
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @then('click the down caret right of the users, then click the Edit button')
 def click_the_down_caret_right_of_the_users(driver):
     """click the down caret right of the users, then click the Edit button."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
@@ -89,17 +89,17 @@ def the_changes_should_be_saved(driver):
     """the changes should be saved."""
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @then('open the user dropdown')
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]', 'clickable')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.users.title, 'clickable')
+    assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
     driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
