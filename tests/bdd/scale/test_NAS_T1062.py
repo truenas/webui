@@ -100,9 +100,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
     """click the Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 5, xpaths.services.title)
     assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
-    # Scroll to SSH service
-    time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox', 'clickable')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
@@ -110,6 +108,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
+    time.sleep(1)
 
 
 @then('the service should be enabled with no errors')

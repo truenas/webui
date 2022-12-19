@@ -3,6 +3,7 @@
 
 import pytest
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -30,24 +31,24 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you should be on the dashboard, click on storage')
 def you_should_be_on_the_dashboard_click_on_storage(driver):
     """you should be on the dashboard, click on storage."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
@@ -67,7 +68,7 @@ def click_on_storage_in_the_side_menu_and_click_the_tank_three_dots_and_add_data
 def the_add_datasetpage_should_open_input_wheel_dataset_for_the_naem_and_click_save(driver, dataset_name):
     """the add datasetpage should open, input "{dataset_name}" for the naem and click save."""
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, xpaths.button.save)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
@@ -75,9 +76,9 @@ def the_add_datasetpage_should_open_input_wheel_dataset_for_the_naem_and_click_s
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
 @then('the wheel_dataset should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit')

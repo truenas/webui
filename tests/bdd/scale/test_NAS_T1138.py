@@ -3,6 +3,7 @@
 
 import pytest
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -30,26 +31,26 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you should be on the dashboard, click on Storage in the side menu')
 def you_should_be_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
     """you should be on the dashboard, click on Storage in the side menu."""
     """you should be on the dashboard, click on Storage in the side menu and click the tank three dots and add dataset."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
@@ -76,16 +77,16 @@ def input_nopeer1_for_zvol_name_and_1_gib_for_zvol_size_click_the_submit_button(
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').send_keys(name)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Size for this zvol"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_1G_size)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('Please wait should appear, And the nopeer1 zvol should be created')
 def please_wait_should_appear_and_the_nopeer1_zvol_should_be_created(driver):
     """Please wait should appear, And the nopeer1 zvol should be created."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, '//div[contains(.,"nopeer1")]')
     # return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     time.sleep(1)

@@ -2,6 +2,7 @@
 """SCALE UI feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -29,23 +30,23 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['First_User', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you should be on the dashboard')
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
 
 
 @then('click on the Credentials on the side menu, click on Local Users')
@@ -72,22 +73,22 @@ def click_the_down_caret_right_of_the_users(driver):
 def click_enable_permit_sudo_checkbox_and_click_save(driver):
     """click Enable Permit Sudo checkbox and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(5)
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('the changes should be saved')
 def the_changes_should_be_saved(driver):
     """the changes should be saved."""
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
@@ -108,8 +109,8 @@ def open_the_user_dropdown(driver):
 def updated_value_should_be_visible(driver):
     """updated value should be visible."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')

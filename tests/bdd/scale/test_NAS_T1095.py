@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -28,24 +29,24 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['First_User', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you should be on the dashboard, click on the Accounts on the side menu, click on Users')
 def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
@@ -67,20 +68,20 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
 def the_user_edit_page_should_open_change_the_password_in_both_fields_and_click_save(driver):
     """the User Edit Page should open, change the password in both fields and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, '//input[@ix-auto="input__Password"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1234')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('the changes should be saved without an error try to ssh with the old password for that user')
 def the_changes_should_be_saved_without_an_error_try_to_ssh_with_the_old_password_for_that_user(driver, nas_ip):
     """the changes should be saved without an error try to ssh with the old password for that user."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 2, '//div[contains(.,"Users")]')
 
 

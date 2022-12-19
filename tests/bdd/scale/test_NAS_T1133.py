@@ -3,6 +3,7 @@
 
 import time
 # from selenium.webdriver.common.keys import Keys
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -33,18 +34,18 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['755_dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('add the user to group root for later tests')
@@ -56,7 +57,7 @@ def add_the_user_to_group_root_for_later_tests(driver):
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
@@ -85,9 +86,9 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
     if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
         assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()

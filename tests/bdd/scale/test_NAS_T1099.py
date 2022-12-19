@@ -4,6 +4,7 @@
 import os
 import pytest
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -51,24 +52,24 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['First_User', 'Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('on the dashboard, click on the Accounts on the side menu, click on Users')
 def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """on the dashboard, click on the Accounts on the side menu, click on Users."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
@@ -95,13 +96,13 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_key):
     """the User Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
-    assert wait_on_element(driver, 2, '//button[@ix-auto="button__SAVE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 2, xpaths.button.save)
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
 
 
 @then('reopen the user edit page and verify sshkey was saved.')
@@ -113,7 +114,7 @@ def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
     driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
     time.sleep(0.5)

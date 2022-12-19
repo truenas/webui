@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -31,24 +32,24 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['LDAP_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
 @when('you should be on the dashboard, click on sharing and click add.')
 def you_should_be_on_the_dashboard_click_on_sharing_and_click_add(driver):
     """you should be on the dashboard, click on sharing and click add.."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
@@ -82,10 +83,10 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     time.sleep(0.5)
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
     if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
         assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
@@ -139,7 +140,7 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, '//h1[text()="Directory Services"]')
     # Make sure Active Directory and LDAP are both disabled
     assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')

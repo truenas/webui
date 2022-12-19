@@ -32,12 +32,32 @@ class directoryServices:
 
 class globalConfiguration:
     title = '//h3[text()="Edit Global Configuration"]'
+    nameserver1_input = '//ix-input[contains(.,"Nameserver 1")]//input'
+    nameserver2_input = '//ix-input[contains(.,"Nameserver 2")]//input'
+    nameserver3_input = '//ix-input[contains(.,"Nameserver 3")]//input'
+    ipv4_defaultGateway_input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
+    hostname_input = '//ix-input[contains(.,"Hostname")]//input'
+
+
+class interface:
+    title = '//h3[contains(text(),"Edit Interface")]'
+    dhcp_checkbox = '//mat-checkbox[contains(.,"DHCP")]'
+    add_allias = '//div[@class="label-container" and contains(.,"Aliases")]//button'
+    ipAddress_input = '//ix-ip-input-with-netmask//input'
+    netmask_select = '//ix-ip-input-with-netmask//mat-select'
+    netmask_option = '//mat-option[contains(.,"24")]'
 
 
 class login:
     user_input = '//input[@data-placeholder="Username"]'
     password_input = '//input[@data-placeholder="Password"]'
     signin_button = '//button[@name="signin_button"]'
+
+
+class network:
+    title = '//h1[contains(.,"Network")]'
+    globalConfigurationTitle = '//h3[text()="Global Configuration"]'
+    interface = '//mat-icon[@id="enp0s8"]'
 
 
 class progress:
@@ -64,6 +84,7 @@ class sideMenu:
     Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
+    network = '//mat-list-item[@ix-auto="option__Network"]'
 
 
 class sharing:
