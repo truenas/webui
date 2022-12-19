@@ -26,6 +26,7 @@ class button:
 
 class checkbox:
     enable = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
+    confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
 
 
 class dashboard:
@@ -74,8 +75,16 @@ class network:
     interface = '//mat-icon[@id="enp0s8"]'
 
 
-class progress:
-    progressbar = '//mat-progress-bar'
+class pool_manager:
+    title = '//div[contains(.,"Pool Manager")]'
+    name_input = xpaths.pool_manager.name_input
+    firstDisk_checkbox = '(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]'
+    vdevAdd_button = '//button[@id="vdev__add-button"]'
+    force_checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
+    warning_box_title = '//h1[contains(.,"Warning")]'
+    create_button = '//button[@name="create-button"]'
+    create_pool_button = '//button[@ix-auto="button__CREATE POOL"]'
+    create_pool_popup = '//h1[contains(.,"Create Pool")]'
 
 
 class popup:
@@ -83,6 +92,10 @@ class popup:
     smbRestartButton = '//button[contains(*/text(),"Restart Service")]'
     pleaseWait = '//h6[contains(.,"Please wait")]'
     activeDirectory = '//h1[text()="Active Directory"]'
+
+
+class progress:
+    progressbar = '//mat-progress-bar'
 
 
 class services:
@@ -100,6 +113,7 @@ class sideMenu:
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
+    storage = '//mat-list-item[@ix-auto="option__Storage"]'
 
 
 class sharing:
@@ -117,6 +131,11 @@ class smb:
     description = '//ix-input[@formcontrolname="comment"]//input'
     path = '//ix-explorer[@formcontrolname="path"]//input'
     name = '//ix-input[@formcontrolname="name"]//input'
+
+
+class storage:
+    title = '//h1[contains(text(),"Storage Dashboard")]'
+    create_pool_button = '//a[contains(.,"Create Pool")]'
 
 
 class toolbar:

@@ -49,14 +49,14 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_storage(driver):
     """you should be on the dashboard, click on Storage.."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @then('the storage page should open, then click on the tank three dots button, select Add Dataset')
 def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select_add_dataset(driver):
     """the storage page should open, then click on the tank three dots button, select Add Dataset."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
@@ -115,7 +115,7 @@ def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_
 @then(parsers.parse('on the storage page, click on the "{dataset_name}" three dots button, select Edit Permissions and verify that user and group name is "{user}"'))
 def on_the_storage_page_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions_and_verify_that_user_and_group_name_is_eturgeon(driver, dataset_name):
     """on the storage page, click on the "{dataset_name}" three dots button, select Edit Permissions and verify that user and group name is "{user}"."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')

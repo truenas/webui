@@ -182,8 +182,8 @@ def run_cmd3(driver, cmd3, root_password, nas_ip):
 @then('after open the Storage page and click on the system 3 dots button, select Add Dataset.')
 def after_open_the_storage_page_and_click_on_the_system_3_dots_button_select_add_dataset(driver):
     """after open the Storage page and click on the system 3 dots button, select Add Dataset.."""
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
     # This will wait for the spinner to go away and looks like this xpath work for all spinners.
     assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')

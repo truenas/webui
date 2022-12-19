@@ -46,9 +46,9 @@ def on_the_dashboard_click_on_storage(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @then('the storage page opens click the pool config button')

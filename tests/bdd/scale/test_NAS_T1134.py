@@ -48,10 +48,10 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click on Storage in the side menu and click the tank three dots and add dataset')
 def you_should_be_on_the_dashboard_click_on_storage_in_the_side_menu_and_click_the_tank_three_dots_and_add_dataset(driver):
     """you should be on the dashboard, click on Storage in the side menu and click the tank three dots and add dataset."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
@@ -77,7 +77,7 @@ def the_add_datasetpage_should_open_input_ericbsd_dataset_for_the_naem_and_click
 @then(parsers.parse('the {dataset_name} should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit'))
 def the_ericbsd_dataset_should_be_created_click_the_dataset_three_dots_and_select_view_permissions_then_click_the_pencil_to_edit(driver, dataset_name):
     """the {dataset_name} should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 10, '//mat-panel-title[contains(text(),"tank")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]', 'clickable')
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')

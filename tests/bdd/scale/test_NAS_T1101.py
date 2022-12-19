@@ -42,15 +42,15 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click Storage on the side menu')
 def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @when('the pools page appears click disk and select disks')
 def the_pools_page_appears_click_disk_and_select_disks(driver):
     """the pools page appears click disk and select disks."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 10, '//button[contains(.,"Disks")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Disks")]').click()
     assert wait_on_element(driver, 10, '//a[@ix-auto="button__STORAGE_DISKS"]', 'clickable')
