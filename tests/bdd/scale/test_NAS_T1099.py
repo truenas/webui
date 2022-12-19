@@ -71,16 +71,16 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
     """on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @when('the Users page should open, click the Greater-Than-Sign right of the users')
 def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driver):
     """the Users page should open, click the Greater-Than-Sign right of the users."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
@@ -108,7 +108,7 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
 @then('reopen the user edit page and verify sshkey was saved.')
 def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the user edit page and verify sshkey was saved.."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')

@@ -4,7 +4,16 @@ class activeDirectory:
     enableCheckbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
 
 
+class addUser:
+    title = '//h3[text()="Add User"]'
+    fullName_input = '//ix-input[@formcontrolname="full_name"]//input'
+    username_input = '//ix-input[@formcontrolname="username"]//input'
+    password_input = '//ix-input[@formcontrolname="password"]//input'
+    confirm_password_input = '//ix-input[@formcontrolname="password_conf"]//input'
+
+
 class button:
+    add = '//button[contains(.,"Add")]'
     save = '//button[contains(*/text(),"Save")]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
@@ -83,6 +92,7 @@ class sideMenu:
     systemSetting = '//mat-list-item[@ix-auto="option__System Settings"]'
     Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
+    local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
 
@@ -107,3 +117,8 @@ class smb:
 class toolbar:
     ha_disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
     ha_enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+
+
+class users:
+    title = '//h1[text()="Users"]'
+    eric_user = '//tr[contains(.,"ericbsd")]/td'

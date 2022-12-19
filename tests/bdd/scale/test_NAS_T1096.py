@@ -46,16 +46,16 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @when('the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button')
 def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
@@ -67,11 +67,11 @@ def the_user_edit_page_should_open_change_the_password_in_the_2nd_field(driver):
     """the User Edit Page should open, change the password in the 2nd field."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//input[@ix-auto="input__Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('1234testing')
+    assert wait_on_element(driver, 10, xpaths.addUser.password_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addUser.password_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.password_input).send_keys('testing1234')
+    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).send_keys('1234testing')
 
 
 @then('you should not be able to save the changes and an error message should appear')

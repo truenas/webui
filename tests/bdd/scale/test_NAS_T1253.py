@@ -47,28 +47,28 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_local_users(driver):
     """on the dashboard click on Credentials and Local Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @then('create new qetestuser user add to qatest group')
 def create_new_qetestuser_user_add_to_qatest_group(driver):
     """create new qetestuser user add to qatest group."""
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Add User")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('QE user')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('qetestuser')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
+    assert wait_on_element(driver, 10, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.add).click()
+    assert wait_on_element(driver, 7, xpaths.addUser.title)
+    assert wait_on_element(driver, 7, xpaths.addUser.fullName_input)
+    driver.find_element_by_xpath(xpaths.addUser.fullName_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.fullName_input).send_keys('QE user')
+    driver.find_element_by_xpath(xpaths.addUser.username_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.username_input).send_keys('qetestuser')
+    driver.find_element_by_xpath(xpaths.addUser.password_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.password_input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).send_keys('testing')
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     # scroll down to Auxiliary Groups
     element = driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]')
@@ -87,7 +87,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
 
 
@@ -103,8 +103,8 @@ def verify_user_can_ssh_in_and_cannot_sudo(driver, nas_ip):
 @then('click on Credentials and Local Groups')
 def click_on_credentials_and_local_groups(driver):
     """click on Credentials and Local Groups."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
 

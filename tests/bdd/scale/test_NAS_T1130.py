@@ -48,35 +48,35 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts(drive
     time.sleep(1)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     time.sleep(2)
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
 @then('the users page should open, click add and the add page will open.')
 def the_users_page_should_open_click_add_and_the_add_page_will_open(driver):
     """the users page should open, click add and the add page will open.."""
     time.sleep(3)
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
+    assert wait_on_element(driver, 10, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.add).click()
     time.sleep(1)
 
 
 @then('Input fullname, username, password, confirmpassword, and click save')
 def input_fullname_username_password_confirmpassword_and_click_save(driver):
     """Input fullname, username, password, confirmpassword, and click save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('FooTest')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').send_keys('foo')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
+    assert wait_on_element(driver, 7, xpaths.addUser.fullName_input)
+    driver.find_element_by_xpath(xpaths.addUser.fullName_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.fullName_input).send_keys('FooTest')
+    driver.find_element_by_xpath(xpaths.addUser.username_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.username_input).send_keys('foo')
+    driver.find_element_by_xpath(xpaths.addUser.password_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.password_input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).send_keys('testing')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -86,8 +86,8 @@ def the_new_user_should_be_created_and_added_to_the_user_list(driver):
     """the new user should be created and added to the user list.."""
     time.sleep(4)
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, '//div[contains(.,"foo")]')
     # return to dashboard
     time.sleep(2)
-    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
