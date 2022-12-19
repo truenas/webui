@@ -57,29 +57,29 @@ def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driv
     """the Users page should open, click the down carat sign right of the users."""
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    driver.find_element_by_xpath(xpaths.users.eric_user).click()
 
 
 @when('the User Field should expand down, then click the Edit button')
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
     # time.sleep(1)
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
 
 @when('the User Edit Page should open, change the user shell and click save')
 def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
     """the User Edit Page should open, change the user shell and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Shell"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"zsh")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_zsh"]').click()
+    assert wait_on_element(driver, 5, xpaths.addUser.select_shell, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.select_shell).click()
+    assert wait_on_element(driver, 10, xpaths.addUser.shell_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.shell_option).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -87,8 +87,8 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
 @then('open the user dropdown, and verify the shell value has changed')
 def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     """open the user dropdown, and verify the shell value has changed."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '//div[contains(.,"zsh")]')
+    driver.find_element_by_xpath(xpaths.users.eric_user).click()
+    assert wait_on_element(driver, 10, '//dd[contains(.,"/usr/bin/zsh")]')
