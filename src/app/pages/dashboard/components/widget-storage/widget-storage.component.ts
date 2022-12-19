@@ -130,7 +130,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getStatusItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Safe;
     let icon = StatusIcon.CheckCircle;
-    let value = pool.status;
+    let value: string = pool.status;
 
     switch (pool.status) {
       case PoolStatus.Online:
