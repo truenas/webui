@@ -12,6 +12,7 @@ from pytest_bdd import (
     scenario,
     then,
     when,
+    parsers
 )
 from pytest_dependency import depends
 
@@ -67,14 +68,16 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
 
-@then('the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save')
-def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom_and_click_save(driver):
-    """the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save."""
+@then(parsers.parse('the User Edit Page should open, change the user email "{email}" and click save'))
+def the_user_edit_page_should_open_change_the_user_email_and_click_save(driver, email):
+    """the User Edit Page should open, change the user email "{email}" and click save."""
+    global users_email
+    users_email = email
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys("eturgeon@ixsystems.com")
+    assert wait_on_element(driver, 7, xpaths.addUser.email_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addUser.email_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.email_input).send_keys(email)
     assert wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -88,4 +91,5 @@ def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visi
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
-    driver.find_element_by_xpath('//div[contains(.,"Email:")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 7, f'//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dd[contains(text(),"{users_email}")]')

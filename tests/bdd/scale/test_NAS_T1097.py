@@ -74,9 +74,9 @@ def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom(dr
     """the User Edit Page should open, change the user email "eturgeon@ixsystemscom"."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys("eturgeon@ixsystemscom")
+    assert wait_on_element(driver, 7, xpaths.addUser.email_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addUser.email_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.email_input).send_keys("eturgeon@ixsystemscom")
 
 
 @then('you should not be able to save the changes and an error message should appear')

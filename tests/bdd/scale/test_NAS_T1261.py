@@ -108,9 +108,9 @@ def set_cert_subject_and_click_next(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').send_keys('QE')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys('qa@ixsystems.com')
+    assert wait_on_element(driver, 5, xpaths.addUser.email_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addUser.email_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.email_input).send_keys('qa@ixsystems.com')
 
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Common Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').clear()
