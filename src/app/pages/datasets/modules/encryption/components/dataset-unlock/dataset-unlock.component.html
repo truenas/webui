@@ -18,6 +18,7 @@
           formControlName="file"
           [label]="helptext.upload_key_file_placeholder | translate"
           [tooltip]="helptext.upload_key_file_tooltip | translate"
+          [required]="true"
         ></ix-file-input>
       </ng-container>
     
@@ -42,6 +43,7 @@
               formControlName="key"
               [label]="helptext.dataset_key_placeholder | translate"
               [tooltip]="helptext.dataset_key_placeholder | translate"
+              [required]="true"
             ></ix-textarea>
             <ix-file-input
               *ngIf="!dataset.value.is_passphrase"
@@ -53,6 +55,7 @@
               type="password"
               [label]="helptext.dataset_passphrase_placeholder | translate"
               [tooltip]="helptext.dataset_passphrase_tooltip | translate"
+              [required]="true"
             ></ix-input>
           </ix-list-item>
         </ix-list>

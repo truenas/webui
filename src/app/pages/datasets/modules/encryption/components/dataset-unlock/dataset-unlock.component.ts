@@ -8,12 +8,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { from, of, switchMap } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
-import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
-import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
+import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
+import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { DatasetUnlockFormValues } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock-form-values.interface';
+import { UnlockDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -27,10 +29,12 @@ export class DatasetUnlockComponent implements OnInit {
   pk: string;
   dialogOpen = false;
   isFormLoading = false;
+
   form = this.formBuilder.group({
     use_file: [true],
     unlock_children: [true],
-    file: [null as File[]],
+    file: [null as File[], [Validators.required]],
+    key: [''],
     datasets: this.formBuilder.array([]),
     force: [false],
   });
@@ -49,6 +53,10 @@ export class DatasetUnlockComponent implements OnInit {
     return this.form.controls.use_file.value;
   }
 
+  private get apiEndPoint(): string {
+    return '/_upload?auth_token=' + this.ws.token;
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     protected aroute: ActivatedRoute,
@@ -60,9 +68,17 @@ export class DatasetUnlockComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params['datasetId'];
-      this.getEncryptionSummary();
+    this.pk = this.aroute.snapshot.params['datasetId'];
+    this.getEncryptionSummary();
+
+    this.form.controls.use_file.valueChanges.pipe(untilDestroyed(this)).subscribe((useFile) => {
+      if (useFile) {
+        this.form.controls.file.enable();
+        this.form.controls.datasets.disable();
+      } else {
+        this.form.controls.file.disable();
+        this.form.controls.datasets.enable();
+      }
     });
   }
 
@@ -86,23 +102,31 @@ export class DatasetUnlockComponent implements OnInit {
         if (job.result && job.result.length > 0) {
           for (let i = 0; i < job.result.length; i++) {
             const result = job.result[i];
+            const isPassphrase = result.key_format === DatasetEncryptionType.Passphrase;
             if (this.form.controls.datasets.controls[i] === undefined) {
-              this.form.controls.datasets.push(this.formBuilder.group({
-                name: [''],
-                key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
-                file: [null as File[]],
-                passphrase: ['', [Validators.minLength(8)]],
-                is_passphrase: [result.key_format === DatasetEncryptionType.Passphrase],
-              }));
+              if (isPassphrase) {
+                this.form.controls.datasets.push(this.formBuilder.group({
+                  name: [''],
+                  passphrase: ['', [Validators.minLength(8)]],
+                  is_passphrase: [true],
+                }));
+              } else {
+                this.form.controls.datasets.push(this.formBuilder.group({
+                  name: [''],
+                  key: ['', [Validators.minLength(64), Validators.maxLength(64), Validators.required]],
+                  file: [null as File[]],
+                  is_passphrase: [false],
+                }));
+              }
 
-              (this.form.controls.datasets.controls[i].controls.file as FormControl).valueChanges.pipe(
+              (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
                 switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
                 untilDestroyed(this),
               ).subscribe((key) => {
                 (this.form.controls.datasets.controls[i].controls.key as FormControl).setValue(key);
               });
             }
-            const isPassphrase = result.key_format === DatasetEncryptionType.Passphrase;
+            this.form.controls.datasets.disable();
             (this.form.controls.datasets.controls[i].controls.name as FormControl).setValue(result.name);
             (this.form.controls.datasets.controls[i].controls.is_passphrase as FormControl).setValue(isPassphrase);
           }
@@ -126,13 +150,145 @@ export class DatasetUnlockComponent implements OnInit {
   };
 
   unlockSubmit(payload: DatasetUnlockParams): void {
-    console.warn(payload);
-    // TODO: Submit data
+    const values = this.form.value as DatasetUnlockFormValues;
+    payload.recursive = !values.use_file || values.unlock_children;
+
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: { title: helptext.unlocking_datasets_title },
+      disableClose: true,
+    });
+
+    if (payload.key_file) {
+      const formData: FormData = new FormData();
+      formData.append('data', JSON.stringify({
+        method: 'pool.dataset.unlock',
+        params: [this.pk, payload],
+      }));
+      formData.append('file', values.key);
+      dialogRef.componentInstance.wspost(this.apiEndPoint, formData);
+    } else {
+      dialogRef.componentInstance.setCall('pool.dataset.unlock', [this.pk, payload]);
+      dialogRef.componentInstance.submit();
+    }
+
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
+      next: (job: Job<DatasetUnlockResult>) => {
+        dialogRef.close();
+        const errors: { name: string; unlock_error: string }[] = [];
+        let skipped: { name: string }[] = [];
+        const unlock: { name: string }[] = [];
+        if (job && job.result) {
+          if (job.result.failed) {
+            const failed = job.result.failed;
+            Object.entries(failed).forEach(([errorDataset, fail]) => {
+              const error = fail.error;
+              const skip = fail.skipped;
+              errors.push({ name: errorDataset, unlock_error: error });
+              skipped = skip.map((dataset) => ({ name: dataset }));
+            });
+          }
+          job.result.unlocked.forEach((name) => {
+            unlock.push({ name });
+          });
+          if (!this.dialogOpen) { // prevent dialog from opening more than once
+            this.dialogOpen = true;
+            const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
+            unlockDialogRef.componentInstance.parent = this;
+            unlockDialogRef.componentInstance.showFinalResults();
+            unlockDialogRef.componentInstance.unlockDatasets = unlock;
+            unlockDialogRef.componentInstance.errorDatasets = errors;
+            unlockDialogRef.componentInstance.skippedDatasets = skipped;
+            unlockDialogRef.componentInstance.data = payload;
+          }
+        }
+      },
+      error: this.handleError,
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
+      next: (failedJob) => {
+        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        dialogRef.close();
+      },
+      error: this.handleError,
+    });
   }
 
   onSubmit(): void {
-    console.warn(this.form.value);
-    // TODO: Submit data
+    const values = this.form.value as DatasetUnlockFormValues;
+    const datasets: DatasetEncryptionSummaryQueryParamsDataset[] = [];
+
+    if (!values.use_file) {
+      values.datasets.forEach((dataset) => {
+        if (values.unlock_children || dataset.name === this.pk) {
+          if (dataset.is_passphrase) {
+            datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
+          } else {
+            datasets.push({ name: dataset.name, key: dataset.key });
+          }
+        }
+      });
+    }
+
+    const payload: DatasetEncryptionSummaryQueryParams = {
+      key_file: values.use_file,
+      force: values.force,
+      datasets: !values.use_file ? datasets : undefined,
+    };
+
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: { title: helptext.fetching_encryption_summary_title },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setDescription(
+      this.translate.instant(helptext.fetching_encryption_summary_message) + this.pk,
+    );
+
+    if (values.use_file) {
+      const formData: FormData = new FormData();
+      formData.append('data', JSON.stringify({
+        method: 'pool.dataset.encryption_summary',
+        params: [this.pk, payload],
+      }));
+      formData.append('file', values.key);
+      dialogRef.componentInstance.wspost(this.apiEndPoint, formData);
+    } else {
+      dialogRef.componentInstance.setCall('pool.dataset.encryption_summary', [this.pk, payload]);
+      dialogRef.componentInstance.submit();
+    }
+
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
+      next: (job: Job<DatasetEncryptionSummary[]>) => {
+        dialogRef.close();
+        // show summary dialog;
+        const errors: DatasetEncryptionSummary[] = [];
+        const unlock: DatasetEncryptionSummary[] = [];
+        if (job && job.result) {
+          job.result.forEach((result) => {
+            if (result.unlock_successful) {
+              unlock.push(result);
+            } else {
+              errors.push(result);
+            }
+          });
+        }
+        if (!this.dialogOpen) { // prevent dialog from opening more than once
+          this.dialogOpen = true;
+          const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
+          unlockDialogRef.componentInstance.parent = this;
+          unlockDialogRef.componentInstance.unlockDatasets = unlock;
+          unlockDialogRef.componentInstance.errorDatasets = errors;
+          unlockDialogRef.componentInstance.data = payload as DatasetUnlockParams;
+        }
+      },
+      error: this.handleError,
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
+      next: (failedJob) => {
+        this.dialogService.errorReport(failedJob.error, failedJob.state, failedJob.exception);
+        dialogRef.close();
+      },
+      error: this.handleError,
+    });
   }
 
   goBack(): void {
