@@ -20,6 +20,15 @@ class addUser:
     qatestGroup_option = '//mat-option[contains(.,"qatest")]'
     home_input = '//ix-explorer[@formcontrolname="home"]//input'
     password_disabled_slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
+    home_mode_ownerWrite_checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
+    home_mode_ownerRead_checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[2]'
+    home_mode_ownerExec_checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[3]'
+    home_mode_groupRead_checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[1]'
+    home_mode_groupWrite_checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[2]'
+    home_mode_groupExec_checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[3]'
+    home_mode_otherRead_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[1]'
+    home_mode_otherWrite_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[2]'
+    home_mode_otherExec_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[3]'
 
 
 class button:
