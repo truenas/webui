@@ -37,6 +37,7 @@ class button:
     save = '//button[contains(*/text(),"Save")]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
+    close = '//button[contains(.,"Close")]'
     close_icon = '//mat-icon[@id="ix-close-icon"]'
 
 
@@ -59,6 +60,21 @@ class directoryServices:
     deleteConfirmCheckbox = '//mat-checkbox[@name="confirm_checkbox"]'
     deleteConfirmButton = '//button[@id="confirm-dialog__action-button"]'
     deleteADAccountButton = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
+
+
+class disks:
+    title = '//h1[text()="Disks"]'
+    all_disk = '//div[contains(text(),"sd")]'
+    wipe_button = '//div[@class="form-actions"]//button[contains(.,"Wipe")]'
+
+    def disk_expander(disk):
+        return f'//tr[@ix-auto="expander__{disk}"]/td[2]'
+
+    def wipe_disk_button(disk):
+        return f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]'
+
+    def confirm_box_title(disk):
+        return f'//h1[contains(.,"Wipe Disk {disk}")]'
 
 
 class globalConfiguration:
@@ -152,6 +168,7 @@ class smb:
 class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
     create_pool_button = '//a[contains(.,"Create Pool")]'
+    disks_button = '//a[*/text()=" Disks "]'
 
 
 class toolbar:
