@@ -19,6 +19,7 @@ class addUser:
     rootGroup_option = '//mat-option[contains(.,"root")]'
     qatestGroup_option = '//mat-option[contains(.,"qatest")]'
     home_input = '//ix-explorer[@formcontrolname="home"]//input'
+    password_disabled_slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
 
 
 class button:

@@ -69,9 +69,8 @@ def the_user_edit_page_should_open_change_disable_password_to_yes_and_click_save
     """the User Edit Page should open, change "Disable Password" to Yes and click save."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
-    assert wait_on_element(driver, 3, '//mat-option[@ix-auto="option__Disable Password_Yes"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_Yes"]').click()
+    assert wait_on_element(driver, 3, xpaths.addUser.password_disabled_slide, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.password_disabled_slide).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
