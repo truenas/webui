@@ -22,7 +22,7 @@ pytestmark = [pytest.mark.debug_test]
 
 
 @pytest.mark.dependency(name='Set_Interface')
-@scenario('features/NAS-T1066.feature', 'Set interface')
+@scenario('features/NAS-T1066.feature', 'Set DNS and static IP')
 def test_set_interface():
     """Set interface."""
 
@@ -115,9 +115,9 @@ def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_
     driver.find_element_by_xpath(xpaths.button.save).click()
 
 
-@then('"Please wait" should appear while settings are being applied, when the Interfaces page appears verify Nameservers do not list (DHCP)')
-def please_wait_should_appear_while_settings_are_being_applied_when_the_interfaces_page_appears_verify_nameservers_do_not_list_dhcp(driver):
-    """"Please wait" should appear while settings are being applied, when the Interfaces page appears verify Nameservers do not list (DHCP)."""
+@then('"Please wait" should appear while settings are being applied')
+def please_wait_should_appear_while_settings_are_being_applied(driver):
+    """"Please wait" should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.network.title)
     assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
@@ -133,29 +133,23 @@ def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__TEST CHANGES"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-
-
-@then('when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"')
-def when_please_wait_goes_away_and_there_are_unapplied_network_changes_click_save_changes(driver):
-    """when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"."""
-    assert wait_on_element_disappear(driver, 65, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, xpaths.network.title)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__keepChange"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__keepChange"]').click()
+
+
+@then('when Save Changes appear click the "Save Changes" button')
+def when_save_changes_appear_click_the_save_changes_button(driver):
+    """when Save Changes appear click the "Save Changes" button."""
+    assert wait_on_element_disappear(driver, 65, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 10, xpaths.network.title)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Save Changes")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+
+
+@then('the changes should be successfully saved')
+def the_changes_should_be_successfully_saved(driver):
+    """the changes should be successfully saved."""
     assert wait_on_element(driver, 10, '//div[contains(.,"Network interface changes have been made permanent.")]')
-
-
-@then('on the Save Changes widget, click Save')
-def on_the_save_changes_widget_click_save(driver):
-    """on the Save Changes widget, click Save."""
-
-
-@then('on the Interfaces page, Nameservers do not list (DHCP)')
-def on_the_interfaces_page_nameservers_do_not_list_dhcp(driver):
-    """on the Interfaces page, Nameservers do not list (DHCP)."""
     assert wait_on_element(driver, 10, xpaths.network.title)
     assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
-    assert wait_on_element_disappear(driver, 10, '//span[contains(.,"DHCP")]')
