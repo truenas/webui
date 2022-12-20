@@ -88,7 +88,7 @@ def the_user_edit_page_should_open_change_some_permissions_for_the_home_director
 @then('reopen the user edit page and verify all permissions are save properly')
 def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(driver):
     """reopen the user edit page and verify all permissions are save properly."""
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
@@ -120,5 +120,5 @@ def revert_your_changes_click_save_and_return_to_dashboard(driver):
     time.sleep(0.5)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)

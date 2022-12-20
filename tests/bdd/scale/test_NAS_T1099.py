@@ -102,7 +102,7 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
     driver.find_element_by_xpath(xpaths.addUser.sshpubkey_textarea).send_keys(ssh_key)
     assert wait_on_element(driver, 2, xpaths.button.save)
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
 @then('reopen the user edit page and verify sshkey was saved.')

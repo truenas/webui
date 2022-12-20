@@ -78,7 +78,7 @@ def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(
 @then('change should be saved, open the user page and verify the user Disable Password is false')
 def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_password_is_false(driver):
     """change should be saved, open the user page and verify the user Disable Password is false."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.users.title)
 
 

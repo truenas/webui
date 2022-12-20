@@ -41,15 +41,15 @@ def ssh_key():
     return ssh_key_file.read().strip()
 
 
-@scenario('features/NAS-T1099.feature', 'Add a ssh key to a user and verify it works')
+@scenario('features/NAS-T1100.feature', 'Add a ssh key to the root user and verify it works')
 def test_add_a_ssh_key_to_a_user_and_verify_it_works():
-    """Add a ssh key to a user and verify it works."""
+    """Add a ssh key to the root user and verify it works."""
 
 
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['First_User', 'Setup_SSH'], scope='session')
+    depends(request, ['Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -77,24 +77,25 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
     driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
-@when('the Users page should open, click the Greater-Than-Sign right of the users')
-def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driver):
-    """the Users page should open, click the Greater-Than-Sign right of the users."""
+@when('the Users page should open, click the Greater-Than-Sign right of the root user')
+def the_users_page_should_open_click_the_greaterthansign_right_of_the_root_user(driver):
+    """the Users page should open, click the Greater-Than-Sign right of the root user."""
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.root_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.root_user).click()
 
 
-@then('the User Field should expand down, click the Edit button')
-def the_user_field_should_expand_down_click_the_edit_button(driver):
+@then('the root user Field should expand down, click the Edit button')
+def the_root_user_field_should_expand_down_click_the_edit_button(driver):
+    """the root user Field should expand down, click the Edit button."""
     """the User Field should expand down, click the Edit button."""
     assert wait_on_element(driver, 10, xpaths.users.root_edit_button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.root_edit_button).click()
 
 
-@then('the User Edit Page should open, input the SSH key and click save')
-def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_key):
-    """the User Edit Page should open, input the SSH key and click save."""
+@then('the root user Edit Page should open, input the SSH key and click save')
+def the_root_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver):
+    """the root user Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, xpaths.addUser.sshpubkey_textarea, 'inputable')
@@ -102,12 +103,12 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
     driver.find_element_by_xpath(xpaths.addUser.sshpubkey_textarea).send_keys(ssh_key)
     assert wait_on_element(driver, 2, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
-@then('reopen the user edit page and verify sshkey was saved.')
-def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
-    """reopen the user edit page and verify sshkey was saved.."""
+@then('reopen the root user edit page and verify sshkey was saved.')
+def reopen_the_root_user_edit_page_and_verify_sshkey_was_saved(driver):
+    """reopen the root user edit page and verify sshkey was saved.."""
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.root_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.root_user).click()
@@ -122,9 +123,9 @@ def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     driver.find_element_by_xpath(xpaths.button.close_icon).click()
 
 
-@then('Verify that you can ssh with the sshkey')
-def verify_that_you_can_ssh_with_the_sshkey(driver, nas_ip):
-    """Verify that you can ssh with the sshkey."""
+@then('verify that you can ssh with the root user sshkey')
+def verify_that_you_can_ssh_with_the_root_user_sshkey(nas_ip):
+    """verify that you can ssh with the root user sshkey."""
     global results
     cmd = 'ls -al'
     results = ssh_cmd(cmd, 'root', None, nas_ip)

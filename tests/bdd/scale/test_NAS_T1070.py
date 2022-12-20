@@ -88,7 +88,7 @@ def click_enable_permit_sudo_checkbox_and_click_save(driver):
 def the_changes_should_be_saved(driver):
     """the changes should be saved."""
     """click on the Credentials on the side menu, click on Local Users."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
