@@ -77,8 +77,8 @@ def confirm_unset_pool_and_wait(driver):
     assert wait_on_element(driver, 10, '//span[contains(text(),"UNSET")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"UNSET")]').click()
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('click setting, reset pool')
@@ -96,6 +96,6 @@ def click_setting_reset_pool(driver):
     assert wait_on_element(driver, 7, '//button[@name="Choose_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')

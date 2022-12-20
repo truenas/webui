@@ -43,8 +43,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(driver):
     """on the dashboard, click on the System Settings side menu, then click services."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.systemSetting, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 

@@ -101,8 +101,8 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
     assert wait_on_element(driver, 10, '//h1[contains(.,"Encryption Options Saved")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('lock the pool when the pool page reloads')
@@ -143,7 +143,7 @@ def unlock_the_pool(driver):
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets were successfully unlocked.")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
     assert wait_on_element(driver, 20, '//mat-icon[@fonticon="mdi-lock-open-variant"]')

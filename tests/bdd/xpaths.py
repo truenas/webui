@@ -32,9 +32,18 @@ class addUser:
     sshpubkey_textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
 
 
+class advanced:
+    title = '//h1[contains(.,"Advanced")]'
+    systemDatasetPool_card = '//h3[text()="System Dataset Pool"]'
+    systemDatasetPool_configure_button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
+
+    def systemDatasetPool_pool(pool_name):
+        return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
+
+
 class button:
     add = '//button[contains(.,"Add")]'
-    save = '//button[contains(*/text(),"Save")]'
+    save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
     close = '//button[contains(.,"Close")]'
@@ -113,7 +122,6 @@ class pool_manager:
     firstDisk_checkbox = '(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]'
     vdevAdd_button = '//button[@id="vdev__add-button"]'
     force_checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
-    warning_box_title = '//h1[contains(.,"Warning")]'
     create_button = '//button[@name="create-button"]'
     create_pool_button = '//button[@ix-auto="button__CREATE POOL"]'
     create_pool_popup = '//h1[contains(.,"Create Pool")]'
@@ -124,6 +132,7 @@ class popup:
     smbRestartButton = '//button[contains(*/text(),"Restart Service")]'
     pleaseWait = '//h6[contains(.,"Please wait")]'
     activeDirectory = '//h1[text()="Active Directory"]'
+    warning = '//h1[contains(.,"Warning")]'
 
 
 class progress:
@@ -140,6 +149,7 @@ class sideMenu:
     dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
     shares = '//mat-list-item[@ix-auto="option__Shares"]'
     systemSetting = '//mat-list-item[@ix-auto="option__System Settings"]'
+    advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
     Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
@@ -169,6 +179,14 @@ class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
     create_pool_button = '//a[contains(.,"Create Pool")]'
     disks_button = '//a[*/text()=" Disks "]'
+
+
+class system_dataset:
+    title = '//h3[text()="System Dataset Pool" and @class="ix-formtitle"]'
+    select_pool = '//mat-select'
+
+    def pool_option(pool_name):
+        return f'//mat-option[contains(.,"{pool_name}")]'
 
 
 class toolbar:

@@ -103,8 +103,8 @@ def smb_should_be_added(driver):
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"wheelsmbshare")]')
     # Make sure SMB is started
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.systemSetting, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
     time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()

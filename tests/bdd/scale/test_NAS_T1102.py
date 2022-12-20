@@ -82,14 +82,14 @@ def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
 @then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
 def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
     """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
-    assert wait_on_element(driver, 10, xpaths.pool_manager.warning_box_title)
+    assert wait_on_element(driver, 10, xpaths.popup.warning)
     assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_button).click()
-    assert wait_on_element(driver, 10, xpaths.pool_manager.warning_box_title)
+    assert wait_on_element(driver, 10, xpaths.popup.warning)
     assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
@@ -107,45 +107,46 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
 @then('the pools system should appear in the list')
 def the_pools_system_should_appear_in_the_list(driver):
     """the pools system should appear in the list."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"system")]')
+    assert wait_on_element(driver, 7, '//h2[text()="system"]')
 
 
 @then('navigate to System Setting and click Advanced to open the Advanced page should open')
 def navigate_to_system_setting_and_click_advanced_to_open_the_advanced_page_should_open(driver):
     """navigate to System Setting and click Advanced to open the Advanced page should open."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.systemSetting, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.advanced, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.advanced).click()
 
 
 @then('click on System Dataset Configure button and close the popup')
 def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     """click on System Dataset Configure button and close the popup."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
-    assert wait_on_element(driver, 7, '//h3[contains(text(),"System Dataset Pool")]')
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]').click()
-    assert wait_on_element(driver, 5, xpaths.pool_manager.warning_box_title)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, xpaths.advanced.title)
+    assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_card)
+    assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_configure_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.advanced.systemDatasetPool_configure_button).click()
+    assert wait_on_element(driver, 5, xpaths.popup.warning)
+    assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('click on System Dataset Pool select system, click Save')
 def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
-    assert wait_on_element(driver, 5, '//h3[contains(text(),"System Dataset Pool") and @class="ix-formtitle"]')
-    assert wait_on_element(driver, 5, '//label[contains(text(),"Select Pool")]')
-    time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//mat-select', 'clickable')
-    driver.find_element_by_xpath('//mat-select').click()
-    assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"system")]')
-    driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"system")]').click()
-    assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 5, xpaths.system_dataset.title)
+    time.sleep(1)
+    assert wait_on_element(driver, 5, xpaths.system_dataset.select_pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.system_dataset.select_pool).click()
+    assert wait_on_element(driver, 5, xpaths.system_dataset.pool_option('system'))
+    driver.find_element_by_xpath(xpaths.system_dataset.pool_option('system')).click()
+    assert wait_on_element(driver, 30, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 20, xpaths.advanced.systemDatasetPool_pool('tank'))
+    assert wait_on_element(driver, 5, xpaths.advanced.systemDatasetPool_pool('system'))
