@@ -117,8 +117,8 @@ def updated_value_should_be_visible(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     assert attribute_value_exist(driver, xpaths.addUser.sudo_checkbox, 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close).click()
+    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_icon).click()
     time.sleep(0.5)
 
 

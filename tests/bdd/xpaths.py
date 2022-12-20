@@ -15,6 +15,9 @@ class addUser:
     shell_option = '//mat-option[contains(.,"zsh")]'
     sudo_checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
     email_input = '//ix-input[@formcontrolname="email"]//input'
+    auxiliaryGroups_select = '//ix-select[@formcontrolname="groups"]//mat-select'
+    rootGroup_option = '//mat-option[contains(.,"root")]'
+    qatestGroup_option = '//mat-option[contains(.,"qatest")]'
 
 
 class button:
@@ -22,7 +25,7 @@ class button:
     save = '//button[contains(*/text(),"Save")]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
-    close = '//mat-icon[@id="ix-close-icon"]'
+    close_icon = '//mat-icon[@id="ix-close-icon"]'
 
 
 class checkbox:
