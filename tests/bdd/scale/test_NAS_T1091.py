@@ -80,7 +80,7 @@ def click_save_and_changes_should_be_saved_the_dropdown_details_pane_should_show
     """click save and changes should be saved, the drop-down details pane should show the home directory has changed."""
     assert wait_on_element(driver, 2, xpaths.button.save)
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()

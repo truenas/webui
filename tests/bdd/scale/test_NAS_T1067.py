@@ -81,6 +81,6 @@ def the_users_add_page_should_open_input_the_fields_full_name_username_password_
 @then('the new User should be created and added to the user list')
 def the_new_user_should_be_created_and_added_to_the_user_list(driver):
     """the new User should be created and added to the user list."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user)

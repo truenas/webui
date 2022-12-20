@@ -81,7 +81,7 @@ def the_user_edit_page_should_open_change_the_password_in_both_fields_and_click_
 @then('the changes should be saved without an error try to ssh with the old password for that user')
 def the_changes_should_be_saved_without_an_error_try_to_ssh_with_the_old_password_for_that_user(driver, nas_ip):
     """the changes should be saved without an error try to ssh with the old password for that user."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 2, xpaths.users.title)
 
 
