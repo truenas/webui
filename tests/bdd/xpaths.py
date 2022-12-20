@@ -29,6 +29,7 @@ class addUser:
     home_mode_otherRead_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[1]'
     home_mode_otherWrite_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[2]'
     home_mode_otherExec_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[3]'
+    sshpubkey_textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
 
 
 class button:
@@ -162,3 +163,5 @@ class users:
     title = '//h1[text()="Users"]'
     eric_user = '//tr[contains(.,"ericbsd")]/td'
     eric_edit_button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    root_user = '//tr[contains(.,"root")]/td'
+    root_edit_button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
