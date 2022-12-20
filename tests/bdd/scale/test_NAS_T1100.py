@@ -81,15 +81,15 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
 def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driver):
     """the Users page should open, click the Greater-Than-Sign right of the users."""
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, '//tr[contains(.,"root")]//mat-icon', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"root")]//mat-icon').click()
+    assert wait_on_element(driver, 10, xpaths.users.root_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_user).click()
 
 
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, xpaths.users.root_edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_edit_button).click()
 
 
 @then('the User Edit Page should open, input the SSH key and click save')
@@ -97,9 +97,9 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
     """the User Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
-    driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
+    assert wait_on_element(driver, 5, xpaths.addUser.sshpubkey_textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.addUser.sshpubkey_textarea).clear()
+    driver.find_element_by_xpath(xpaths.addUser.sshpubkey_textarea).send_keys(ssh_key)
     assert wait_on_element(driver, 2, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
@@ -109,14 +109,14 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
 def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the user edit page and verify sshkey was saved.."""
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, '//tr[contains(.,"root")]//mat-icon', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"root")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('(//tr[contains(.,"root")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, xpaths.users.root_user, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_user).click()
+    assert wait_on_element(driver, 10, xpaths.users.root_edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.root_edit_button).click()
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
-    assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
+    assert wait_on_element(driver, 5, xpaths.addUser.sshpubkey_textarea, 'inputable')
+    assert attribute_value_exist(driver, xpaths.addUser.sshpubkey_textarea, 'value', ssh_key)
     time.sleep(0.5)
     assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_icon).click()
