@@ -102,8 +102,8 @@ def enter_abcd1234_and_confirm(driver):
 def unlock_the_pool(driver):
     """unlock the pool."""
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets were successfully unlocked.")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')

@@ -68,7 +68,7 @@ def click_on_advanced_and_kerberos_keytab_add(driver):
     time.sleep(1)
     driver.find_element_by_xpath('//span[contains(text(),"Show")]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Warning")]')
+    assert wait_on_element(driver, 7, xpaths.pool_manager.warning_box_title)
     driver.find_element_by_xpath('//span[contains(text(),"CONTINUE")]').click()
     time.sleep(1)
     driver.find_element_by_xpath('//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]').click()
