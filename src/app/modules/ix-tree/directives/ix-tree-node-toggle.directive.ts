@@ -1,6 +1,11 @@
 import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
-import { Directive } from '@angular/core';
+import { Directive, ChangeDetectorRef } from '@angular/core';
+import {
+  animationFrameScheduler, asapScheduler, auditTime, merge,
+} from 'rxjs';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
+
+const frameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
 @Directive({
   selector: '[ixTreeNodeToggle]',
@@ -18,8 +23,15 @@ export class IxTreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
   constructor(
     protected _tree: IxTree<T>,
     protected _treeNode: CdkTreeNode<T>,
+    protected cdr: ChangeDetectorRef,
   ) {
     super(_tree, _treeNode);
+
+    merge(_treeNode._dataChanges, _tree._dataSourceChanged)
+      .pipe(auditTime(0, frameScheduler))
+      .subscribe(() => {
+        this.cdr.markForCheck();
+      });
   }
 
   /**

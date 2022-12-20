@@ -16,7 +16,7 @@ import {
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 
-// TODO: Find a better way rather than `any`.
+// TODO: Find a replacement for `any`
 type TreeControlAny = any;
 
 @Component({ template: '' })
