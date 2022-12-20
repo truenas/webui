@@ -18,6 +18,7 @@ class addUser:
     auxiliaryGroups_select = '//ix-select[@formcontrolname="groups"]//mat-select'
     rootGroup_option = '//mat-option[contains(.,"root")]'
     qatestGroup_option = '//mat-option[contains(.,"qatest")]'
+    home_input = '//ix-explorer[@formcontrolname="home"]//input'
 
 
 class button:

@@ -70,9 +70,9 @@ def the_user_edit_page_should_open_change_the_path_of_the_users_home_directory(d
     """the User Edit Page should open, change the path of the users Home Directory."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__home"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
+    assert wait_on_element(driver, 7, xpaths.addUser.home_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addUser.home_input).clear()
+    driver.find_element_by_xpath(xpaths.addUser.home_input).send_keys('/mnt/tank/ericbsd')
 
 
 @then('click save and changes should be saved, the drop-down details pane should show the home directory has changed')
