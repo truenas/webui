@@ -5,7 +5,7 @@ import {
 import {
   UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, FormControl,
 } from '@angular/forms';
-import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
+import { MatButton } from '@angular/material/button';
 import { MatLegacyProgressBar as MatProgressBar } from '@angular/material/legacy-progress-bar';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Router } from '@angular/router';

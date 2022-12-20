@@ -72,7 +72,7 @@ ix-breadcrumb {
   }
 }
 
-.actions-container > ::ng-deep .mat-button {
+.actions-container > ::ng-deep .mat-mdc-button {
   @media (max-width: $breakpoint-tablet) {
     min-width: 40%;
   }
