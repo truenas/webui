@@ -106,6 +106,6 @@ def unlock_the_pool(driver):
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets were successfully unlocked.")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 10, '//mat-icon[@fonticon="mdi-lock-open-variant"]')

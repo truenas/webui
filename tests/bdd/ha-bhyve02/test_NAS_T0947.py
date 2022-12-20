@@ -53,8 +53,8 @@ def you_should_see_the_dashboard(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
         try:
-            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
+            driver.find_element_by_xpath(xpaths.button.close).click()
         except ElementClickInterceptedException:
             assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
             pass
@@ -83,8 +83,8 @@ def click_on_localusers(driver):
 def the_users_page_should_open(driver):
     """The Users page should open."""
     if wait_on_element(driver, 5, '//h1[contains(.,"Display Note")]'):
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 

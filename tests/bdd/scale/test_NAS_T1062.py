@@ -46,8 +46,8 @@ def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
     assert wait_on_element(driver, 5, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('on the dashboard click on the System Settings side menu, then click services')

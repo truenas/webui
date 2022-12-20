@@ -72,8 +72,8 @@ def when_choose_a_pool_for_apps_appear_select_pool(driver):
     assert wait_on_element(driver, 7, '//button[@name="Choose_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('the Available Applications Tab loads')
