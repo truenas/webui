@@ -14,6 +14,7 @@ class addUser:
     select_shell = '//ix-combobox[@formcontrolname="shell"]//input'
     shell_option = '//mat-option[contains(.,"zsh")]'
     sudo_checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
+    email_input = '//ix-input[@formcontrolname="email"]//input'
 
 
 class button:

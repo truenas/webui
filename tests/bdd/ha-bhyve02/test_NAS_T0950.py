@@ -107,6 +107,8 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('Change the users email for "{email}" and click save'))
 def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
+    global users_email
+    users_email = email
     assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
     assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="email"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="email"]//input').clear()
@@ -134,4 +136,4 @@ def open_the_user_drop_down_to_verify_the_email_has_been_changed(driver):
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dd[contains(text(),"eturgeon@ixsystems.com")]')
+    assert wait_on_element(driver, 7, f'//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dd[contains(text(),"{users_email}")]')
