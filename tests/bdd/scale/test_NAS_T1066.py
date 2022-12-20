@@ -123,15 +123,14 @@ def please_wait_should_appear_while_settings_are_being_applied_when_the_interfac
     assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
 
 
-
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     """click Test Changes, check Confirm, click Test Changes again."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__testChange"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__testChange"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Test Changes")]')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__TEST CHANGES"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
@@ -147,6 +146,7 @@ def when_please_wait_goes_away_and_there_are_unapplied_network_changes_click_sav
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Network interface changes have been made permanent.")]')
+
 
 @then('on the Save Changes widget, click Save')
 def on_the_save_changes_widget_click_save(driver):

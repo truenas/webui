@@ -61,8 +61,8 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 10, xpaths.checkbox.confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__LOCK"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__LOCK"]').click()
 

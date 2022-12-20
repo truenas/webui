@@ -116,8 +116,8 @@ def click_delete(driver):
 def confirm(driver):
     """confirm."""
 
-    assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 2, xpaths.checkbox.confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
 
