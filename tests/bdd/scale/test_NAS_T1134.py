@@ -25,9 +25,9 @@ def test_create_a_new_dataset_with_access_permission_to_only_ericbsd():
     """Create a new dataset with access permission to only ericbsd."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
-    """the browser is open, the FreeNAS URL and logged in."""
+@given('the browser is open, the TrueNAS URL and logged in')
+def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
+    """the browser is open, the TrueNAS URL and logged in."""
     depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")

@@ -26,9 +26,9 @@ def test_create_an_smb_share_with_the_system_acl_dataset():
     """Create an smb share with the system ACL dataset."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password, request):
-    """the browser is open, the FreeNAS URL and logged in."""
+@given('the browser is open, the TrueNAS URL and logged in')
+def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
+    """the browser is open, the TrueNAS URL and logged in."""
     depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")

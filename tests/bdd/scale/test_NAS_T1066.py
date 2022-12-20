@@ -27,9 +27,9 @@ def test_set_interface():
     """Set interface."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
-    """the browser is open, the FreeNAS URL and logged in."""
+@given('the browser is open, the TrueNAS URL and logged in')
+def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password):
+    """the browser is open, the TrueNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
