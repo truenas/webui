@@ -118,8 +118,8 @@ def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_icon).click()
 
 
 @then('Verify that you can ssh with the sshkey')

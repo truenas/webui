@@ -84,5 +84,5 @@ def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appea
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 3, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 3, '//mat-error[contains(.,"The passwords do not match.")]')
-    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_icon).click()
