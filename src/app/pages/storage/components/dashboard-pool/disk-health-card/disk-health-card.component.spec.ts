@@ -49,7 +49,8 @@ const disks: StorageDashboardDisk[] = [
     zfs_guid: '12387051346845729003',
     alerts: [],
     tempAggregates: { min: 10, max: 50, avg: 30 },
-    smartTests: 0,
+    smartTestsRunning: 0,
+    smartTestsFailed: 0,
   },
 ];
 
