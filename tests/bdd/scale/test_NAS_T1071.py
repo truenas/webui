@@ -71,45 +71,45 @@ def on_the_pool_manager_page_enter_tank_for_pool_name(driver):
 @then('select the a disk and press right arrow under Data VDevs')
 def select_the_a_disk_and_press_right_arrow_under_data_vdev(driver):
     """select the a disk and press right arrow under data vdev."""
-    assert wait_on_element(driver, 5, '//datatable-body[contains(.,"sd")]//mat-checkbox[1]', 'clickable')
-    driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
-    assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    assert wait_on_element(driver, 5, xpaths.pool_manager.firstDisk_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.firstDisk_checkbox).click()
+    assert wait_on_element(driver, 5, xpaths.pool_manager.vdevAdd_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.vdevAdd_button).click()
 
 
 @then('click on the Force checkbox on the warning box')
 def click_on_the_force_checkbox_on_the_warning_box(driver):
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    assert wait_on_element(driver, 7, xpaths.pool_manager.force_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.force_checkbox).click()
 
 
 @then('click Confirm checkbox and click CONTINUE')
 def click_confirm_checkbox_and_click_continue(driver):
     """click Confirm checkbox and click CONTINUE."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Warning")]')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@name="confirm_checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 10, xpaths.pool_manager.warning_box_title)
+    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
 @then('click Create, click on Confirm checkbox and click CREATE POOL')
 def click_create_click_on_confirm_checkbox_and_click_create_pool(driver):
     """click Create, click on Confirm checkbox and click CREATE POOL."""
-    assert wait_on_element(driver, 5, '//button[@id="pool-manager__create-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="pool-manager__create-button"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Warning")]')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@name="confirm_checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+    assert wait_on_element(driver, 5, xpaths.pool_manager.create_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.create_button).click()
+    assert wait_on_element(driver, 10, xpaths.pool_manager.warning_box_title)
+    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
 
 
 @then('Create Pool should appear while the pool is being created')
 def create_pool_should_appear_while_the_pool_is_being_created(driver):
     """Create Pool should appear while the pool is being created."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element(driver, 10, xpaths.pool_manager.create_pool_popup)
+    assert wait_on_element_disappear(driver, 120, xpaths.pool_manager.create_pool_popup)
     assert wait_on_element(driver, 10, xpaths.storage.title)
 
 

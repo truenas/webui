@@ -139,8 +139,8 @@ def unlock_the_pool(driver):
     driver.find_element_by_xpath(xpaths.button.save).click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets were successfully unlocked.")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')

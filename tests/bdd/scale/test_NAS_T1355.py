@@ -75,8 +75,8 @@ def confirm_the_delete_confirmation(driver):
     assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
     assert wait_on_element(driver, 2, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting...")]')
     assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Deleting...")]')
 
