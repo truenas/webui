@@ -62,7 +62,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     // the rear bays. SystemProfiler will store a rearIndex value for those machines.
     if (this.system && this.system.rearIndex && this.system.profile.length > 2) {
       return true;
-    } if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
+    }
+    if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
       return true;
     }
     return false;

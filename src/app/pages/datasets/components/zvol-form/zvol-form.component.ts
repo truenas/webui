@@ -239,95 +239,7 @@ export class ZvolFormComponent {
             this.form.controls.encryption_type.setValue('passphrase');
           }
           this.setEncryptionFieldsDisabled(true);
-          this.form.controls.inherit_encryption.valueChanges
-            .pipe(untilDestroyed(this)).subscribe((inheritEncryption: boolean) => {
-              this.inheritEncryption = inheritEncryption;
-              if (inheritEncryption) {
-                this.setEncryptionFieldsDisabled(true);
-                this.setPassphraseFieldsDisabled(true);
-                this.setKeyFieldsDisabled(true);
-                this.form.controls.encryption.disable();
-              }
-              if (!inheritEncryption) {
-                this.form.controls.encryption_type.enable();
-                this.form.controls.algorithm.enable();
-                if (this.passphraseParent) { // keep it hidden if it passphrase
-                  this.form.controls.encryption_type.disable();
-                }
-                if (this.encryptionType === 'key') {
-                  this.form.controls.passphrase.disable();
-                  this.form.controls.confirm_passphrase.disable();
-                  this.form.controls.pbkdf2iters.disable();
-                  this.form.controls.generate_key.disable();
-                } else {
-                  this.form.controls.passphrase.enable();
-                  this.form.controls.confirm_passphrase.enable();
-                  this.form.controls.pbkdf2iters.enable();
-                  this.form.controls.generate_key.enable();
-                }
-                if (this.encryptedParent) {
-                  this.form.controls.encryption.disable();
-                } else {
-                  this.form.controls.encryption.enable();
-                }
-              }
-            });
-          this.form.controls.encryption.valueChanges
-            .pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
-              // if on an encrypted parent we should warn the user, otherwise just disable the fields
-              if (this.encryptedParent && !encryption && !this.nonEncryptedWarned) {
-                this.dialogService.confirm({
-                  title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-                  message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
-                }).pipe(untilDestroyed(this)).subscribe((isConfirm) => {
-                  this.nonEncryptedWarned = true;
-                  if (isConfirm) {
-                    this.setEncryptionFieldsDisabled(true);
-                    this.setPassphraseFieldsDisabled(true);
-                    this.setKeyFieldsDisabled(true);
-                  } else {
-                    this.form.controls.encryption.setValue(true);
-                  }
-                });
-              } else if (!this.form.controls.inherit_encryption.value) {
-                if (this.encryptionType === 'key') {
-                  this.setEncryptionFieldsDisabled(!encryption);
-                } else if (encryption) {
-                  this.form.controls.encryption_type.enable();
-                  this.form.controls.algorithm.enable();
-                } else {
-                  this.form.controls.encryption_type.disable();
-                  this.form.controls.algorithm.disable();
-                }
-                if (this.encryptionType === 'key' && !this.generateKey) {
-                  this.setKeyFieldsDisabled(!encryption);
-                }
-                if (this.encryptionType === 'passphrase') {
-                  this.setPassphraseFieldsDisabled(!encryption);
-                }
-                if (this.passphraseParent) { // keep this field hidden if parent has a passphrase
-                  this.form.controls.encryption_type.disable();
-                }
-              }
-            });
-          this.form.controls.encryption_type.valueChanges
-            .pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
-              this.encryptionType = type;
-              const key = (type === 'key');
-              this.setPassphraseFieldsDisabled(key);
-              if (key) {
-                this.form.controls.generate_key.enable();
-                this.setKeyFieldsDisabled(this.generateKey);
-              } else {
-                this.form.controls.generate_key.disable();
-                this.setKeyFieldsDisabled(true);
-              }
-            });
-          this.form.controls.generate_key.valueChanges
-            .pipe(untilDestroyed(this)).subscribe((generateKey: boolean) => {
-              this.generateKey = generateKey;
-              this.setKeyFieldsDisabled(generateKey);
-            });
+          this.setupEncryptionFieldEvents();
         } else {
           this.form.controls.name.disable();
         }
@@ -473,6 +385,99 @@ export class ZvolFormComponent {
         new EntityUtils().handleWsError(this.form, error, this.dialogService);
       },
     });
+  }
+
+  setupEncryptionFieldEvents(): void {
+    this.form.controls.inherit_encryption.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((inheritEncryption: boolean) => {
+        this.inheritEncryption = inheritEncryption;
+        if (inheritEncryption) {
+          this.setEncryptionFieldsDisabled(true);
+          this.setPassphraseFieldsDisabled(true);
+          this.setKeyFieldsDisabled(true);
+          this.form.controls.encryption.disable();
+        }
+        if (!inheritEncryption) {
+          this.form.controls.encryption_type.enable();
+          this.form.controls.algorithm.enable();
+          if (this.passphraseParent) { // keep it hidden if it passphrase
+            this.form.controls.encryption_type.disable();
+          }
+          if (this.encryptionType === 'key') {
+            this.form.controls.passphrase.disable();
+            this.form.controls.confirm_passphrase.disable();
+            this.form.controls.pbkdf2iters.disable();
+            this.form.controls.generate_key.disable();
+          } else {
+            this.form.controls.passphrase.enable();
+            this.form.controls.confirm_passphrase.enable();
+            this.form.controls.pbkdf2iters.enable();
+            this.form.controls.generate_key.enable();
+          }
+          if (this.encryptedParent) {
+            this.form.controls.encryption.disable();
+          } else {
+            this.form.controls.encryption.enable();
+          }
+        }
+      });
+
+    this.form.controls.encryption.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
+      // if on an encrypted parent we should warn the user, otherwise just disable the fields
+        if (this.encryptedParent && !encryption && !this.nonEncryptedWarned) {
+          this.dialogService.confirm({
+            title: helptext.dataset_form_encryption.non_encrypted_warning_title,
+            message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+          }).pipe(untilDestroyed(this)).subscribe((isConfirm) => {
+            this.nonEncryptedWarned = true;
+            if (isConfirm) {
+              this.setEncryptionFieldsDisabled(true);
+              this.setPassphraseFieldsDisabled(true);
+              this.setKeyFieldsDisabled(true);
+            } else {
+              this.form.controls.encryption.setValue(true);
+            }
+          });
+        } else if (!this.form.controls.inherit_encryption.value) {
+          if (this.encryptionType === 'key') {
+            this.setEncryptionFieldsDisabled(!encryption);
+          } else if (encryption) {
+            this.form.controls.encryption_type.enable();
+            this.form.controls.algorithm.enable();
+          } else {
+            this.form.controls.encryption_type.disable();
+            this.form.controls.algorithm.disable();
+          }
+          if (this.encryptionType === 'key' && !this.generateKey) {
+            this.setKeyFieldsDisabled(!encryption);
+          }
+          if (this.encryptionType === 'passphrase') {
+            this.setPassphraseFieldsDisabled(!encryption);
+          }
+          if (this.passphraseParent) { // keep this field hidden if parent has a passphrase
+            this.form.controls.encryption_type.disable();
+          }
+        }
+      });
+    this.form.controls.encryption_type.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
+        this.encryptionType = type;
+        const key = (type === 'key');
+        this.setPassphraseFieldsDisabled(key);
+        if (key) {
+          this.form.controls.generate_key.enable();
+          this.setKeyFieldsDisabled(this.generateKey);
+        } else {
+          this.form.controls.generate_key.disable();
+          this.setKeyFieldsDisabled(true);
+        }
+      });
+    this.form.controls.generate_key.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((generateKey: boolean) => {
+        this.generateKey = generateKey;
+        this.setKeyFieldsDisabled(generateKey);
+      });
   }
 
   setEncryptionFieldsDisabled(disabled: boolean): void {

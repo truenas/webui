@@ -864,7 +864,8 @@ export class DatasetFormComponent implements FormConfiguration {
   isCustomActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode) {
+    }
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -1052,6 +1053,7 @@ export class DatasetFormComponent implements FormConfiguration {
     parent?: string;
   };
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   preInit(entityForm: EntityFormComponent): void {
     this.volid = this.paramMap['volid'];
 

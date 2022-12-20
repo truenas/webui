@@ -337,8 +337,7 @@ export class CloudsyncFormComponent {
       const parentDirectories = values.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -377,8 +376,7 @@ export class CloudsyncFormComponent {
       const parentDirectories = values.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -562,10 +560,8 @@ export class CloudsyncFormComponent {
 
     for (const limit of bwlimit) {
       const sublimitArr = limit.split(/\s*,\s*/);
-      if (sublimitArr.length === 1 && bwlimit.length === 1) {
-        if (!sublimitArr[0].includes(':')) {
-          sublimitArr.unshift('00:00');
-        }
+      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
+        sublimitArr.unshift('00:00');
       }
       if (sublimitArr[1] && sublimitArr[1] !== 'off') {
         if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {

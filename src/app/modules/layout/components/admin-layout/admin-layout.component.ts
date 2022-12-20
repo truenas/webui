@@ -187,7 +187,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
     const iconified = this.layoutService.isMenuCollapsed;
     if (this.isSidenavOpen && iconified && this.sidenavMode === 'side') {
       return '48px';
-    } if (this.isSidenavOpen && !iconified && this.sidenavMode === 'side') {
+    }
+    if (this.isSidenavOpen && !iconified && this.sidenavMode === 'side') {
       return '240px';
     }
     return '0px';
