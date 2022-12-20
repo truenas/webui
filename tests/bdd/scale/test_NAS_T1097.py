@@ -13,6 +13,7 @@ from pytest_bdd import (
     scenario,
     then,
     when,
+    parsers
 )
 from pytest_dependency import depends
 
@@ -69,14 +70,14 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
 
-@then('the User Edit Page should open, change the user email "eturgeon@ixsystemscom"')
-def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom(driver):
-    """the User Edit Page should open, change the user email "eturgeon@ixsystemscom"."""
+@then(parsers.parse('the User Edit Page should open, change the user email "{invalid_email}"'))
+def the_user_edit_page_should_open_change_the_user_email_with_invalid_email(driver, invalid_email):
+    """the User Edit Page should open, change the user email "{invalid_email}"."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 7, xpaths.addUser.email_input, 'inputable')
     driver.find_element_by_xpath(xpaths.addUser.email_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.email_input).send_keys("eturgeon@ixsystemscom")
+    driver.find_element_by_xpath(xpaths.addUser.email_input).send_keys(invalid_email)
 
 
 @then('you should not be able to save the changes and an error message should appear')
@@ -84,8 +85,7 @@ def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appea
     """you should not be able to save the changes and an error message should appear."""
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element(driver, 3, '//h4[contains(.,"Identification")]')
-    assert wait_on_element(driver, 3, '//mat-error[contains(.,"Not a valid E-Mail address")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
+    assert wait_on_element(driver, 5, xpaths.button.close_icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_icon).click()
