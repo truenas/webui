@@ -77,7 +77,7 @@ class network:
 
 class pool_manager:
     title = '//div[contains(.,"Pool Manager")]'
-    name_input = xpaths.pool_manager.name_input
+    name_input = '//input[@id="pool-manager__name-input-field"]'
     firstDisk_checkbox = '(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]'
     vdevAdd_button = '//button[@id="vdev__add-button"]'
     force_checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
