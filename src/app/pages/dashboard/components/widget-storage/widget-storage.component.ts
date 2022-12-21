@@ -68,6 +68,25 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   contentHeight = 400 - 56;
   rowHeight = 150;
 
+  getSubwidgetColumnWidth(pool: Pool): number {
+    const badStatus = [
+      PoolStatus.Locked,
+      PoolStatus.Unknown,
+      PoolStatus.Offline,
+      PoolStatus.Degraded,
+    ].includes(pool.status);
+
+    if (this.cols === 1 && !badStatus) {
+      return 31;
+    }
+
+    if (this.cols === 1 && badStatus) {
+      return 50;
+    }
+
+    return 100;
+  }
+
   constructor(public router: Router, public translate: TranslateService) {
     super(translate);
     this.configurable = false;
