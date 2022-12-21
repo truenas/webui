@@ -77,7 +77,7 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
     driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
 
-@when('the Users page should open, click the Greater-Than-Sign right of the root user')
+@then('the Users page should open, click the Greater-Than-Sign right of the root user')
 def the_users_page_should_open_click_the_greaterthansign_right_of_the_root_user(driver):
     """the Users page should open, click the Greater-Than-Sign right of the root user."""
     assert wait_on_element(driver, 7, xpaths.users.title)
