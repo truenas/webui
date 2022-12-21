@@ -61,14 +61,14 @@ def you_should_be_on_the_dashboard_click_on_storage_in_the_side_menu_and_click_t
 @then(parsers.parse('the add datasetpage should open, input "{dataset_name}" for the naem and click save'))
 def the_add_datasetpage_should_open_input_ericbsd_dataset_for_the_naem_and_click_save(driver, dataset_name):
     """the add datasetpage should open, input "{dataset_name}" for the naem and click save."""
-    assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
+    assert wait_on_element(driver, 5, xpaths.addDataset.title)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
+    assert wait_on_element(driver, 5, xpaths.addDataset.select_share_type)
+    driver.find_element_by_xpath(xpaths.addDataset.select_share_type).click()
+    assert wait_on_element(driver, 5, xpaths.addDataset.shareTypeSMB_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.addDataset.shareTypeSMB_option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
@@ -91,7 +91,7 @@ def the_ericbsd_dataset_should_be_created_click_the_dataset_three_dots_and_selec
 @then(parsers.parse('the Edit Permissions page should open, select "{user}" for User, click on the Apply User checkbox, select {group} for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button'))
 def the_edit_permissions_page_should_open_select_ericbsd_for_user_click_on_the_apply_user_checkbox_select_ericbbsd_for_group_name_click_on_the_apply_group_checkbox_click_on_group_write_access_and_click_the_save_button(driver, user, group):
     """the Edit Permissions page should open, select "{user}" for User, click on the Apply User checkbox, select {group} for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button."""
-    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, xpaths.editAcl.title)
     assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
     driver.find_element_by_xpath('//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
     time.sleep(0.5)

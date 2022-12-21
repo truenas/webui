@@ -66,23 +66,23 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
 def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
     """on the Dataset page, click on the "my_ad_dataset" tree."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
-    assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')
-    driver.find_element_by_xpath(f'//ix-tree-node[contains(.,"{dataset_name}")]').click()
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_name(dataset_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_tree(dataset_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_tree(dataset_name)).click()
 
 
 @then('click on Edit beside Permissions card title')
 def click_on_edit_beside_permissions_card_title(driver):
     """click on Edit beside Permissions card title."""
-    assert wait_on_element(driver, 5, '//h3[text()="Permissions"]')
-    assert wait_on_element(driver, 5, '//a[*/text()=" Edit "]')
-    driver.find_element_by_xpath('//a[*/text()=" Edit "]').click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_tile)
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_edit_button)
+    driver.find_element_by_xpath(xpaths.dataset.permission_edit_button).click()
 
 
 @then('on the Edit ACL page, click on Add Item')
 def on_the_edit_acl_page_click_on_add_item(driver):
     """on the Edit ACL page, click on Add Item."""
-    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, xpaths.editAcl.title)
     assert wait_on_element(driver, 5, '//button[contains(.,"Add Item")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Add Item")]').click()
 
@@ -106,11 +106,11 @@ def in_user_input_enter_ericbsd_click_the_save_access_control_list(driver, usern
     assert wait_on_element(driver, 7, '//div[text()="User - ericbsd"]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Save Access Control List")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 60, '//h1[text()="Updating Dataset ACL"]')
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
 
 
 @then(parsers.parse('on the Permission card, verify the new ACL item "{username}" exist'))
 def on_the_permission_card_verify_the_new_acl_item_ericbsd_exist(driver, username):
     """on the Permission card, verify the new ACL item "ericbsd" exist."""
-    assert wait_on_element(driver, 5, '//h3[text()="Permissions"]')
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_tile)
     assert wait_on_element(driver, 5, f'//div[text()="User - {username}"]')
