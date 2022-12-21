@@ -142,7 +142,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         id: parentRow.name,
         icon: 'format_list_bulleted',
         name: 'smartresults',
-        label: this.translate.instant('S.M.A.R.T Test Results'),
+        label: this.translate.instant('S.M.A.R.T. Test Results'),
         onClick: (row) => {
           this.router.navigate(['/storage', 'disks', 'smartresults', row.name]);
         },

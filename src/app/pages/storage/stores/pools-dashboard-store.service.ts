@@ -183,7 +183,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     },
   ): Observable<StorageDashboardDisk[]> {
     for (const disk of disks) {
-      disk.smartTests = 0;
+      disk.smartTestsRunning = 0;
+      disk.smartTestsFailed = 0;
       disk.alerts = [];
     }
     for (const alert of alerts) {
@@ -196,7 +197,9 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
       const tests = diskWithResults?.tests ?? [];
       const testsStillRunning = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-      testDisk.smartTests = testsStillRunning.length;
+      const testsStillFailed = tests.filter((test) => test.status !== SmartTestResultStatus.Failed);
+      testDisk.smartTestsRunning = testsStillRunning.length;
+      testDisk.smartTestsFailed = testsStillFailed.length;
     });
     const disksWithTempData = Object.keys(tempAgg);
     for (const diskWithTempData of disksWithTempData) {
