@@ -53,8 +53,8 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_servi
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
 
 
 @then('the Directory Services page should open, then click LDAP settings button')
@@ -62,7 +62,7 @@ def the_directory_services_page_should_open_then_click_ldap_settings_button(driv
     """the Directory Services page should open, then click LDAP settings button."""
     # Verify the page is starting to load
     assert wait_on_element(driver, 5, '//h1[text()="Directory Services"]')
-    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
+    assert wait_on_element(driver, 10, xpaths.directoryServices.directory_disable_title)
     assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Configure LDAP")]').click()
     # Verify the LDAP box is starting to load

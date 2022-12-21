@@ -2,6 +2,10 @@
 class activeDirectory:
     title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
     enableCheckbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
+    domain_input = '//ix-input[@formcontrolname="domainname"]//input'
+    account_input = '//ix-input[@formcontrolname="bindname"]//input'
+    password_input = '//ix-input[@formcontrolname="bindpw"]//input'
+    ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
 
 
 class addUser:
@@ -48,6 +52,7 @@ class button:
     Continue = '//button[contains(*/text(),"Continue")]'
     close = '//button[contains(.,"Close")]'
     close_icon = '//mat-icon[@id="ix-close-icon"]'
+    advanced_option = '//button[contains(*/text(),"Advanced Options")]'
 
 
 class checkbox:
@@ -60,8 +65,24 @@ class dashboard:
     systemInfoCardTitle = '//span[text()="System Information"]'
 
 
+class dataset:
+    title = '//h1[text()="Datasets"]'
+    add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
+
+    def pool_tree_name(pool_name):
+        return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
+
+    def pool_selected(pool_name):
+        return f'//span[text()="{pool_name}" and contains(@class,"own-name")]'
+
+    def pool_tree(pool_name):
+        return f'//ix-dataset-node[contains(.,"{pool_name}")]/div'
+
+
 class directoryServices:
     title = '//h1[text()="Directory Services"]'
+    directory_disable_title = '//h3[text()="Active Directory and LDAP are disabled."]'
+    configureAD_button = '//button[contains(.,"Configure Active Directory")]'
     showButton = '//button[contains(*/text(),"Show")]'
     warningDialog = '//h1[text()="Warning"]'
     deleteAD02RealmButton = '//tr[contains(.,"AD02")]//button'
@@ -147,6 +168,7 @@ class services:
 class sideMenu:
     """xpath for the menu on the left side"""
     dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
+    datasets = '//mat-list-item[@ix-auto="option__Datasets"]'
     shares = '//mat-list-item[@ix-auto="option__Shares"]'
     systemSetting = '//mat-list-item[@ix-auto="option__System Settings"]'
     advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
