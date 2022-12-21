@@ -87,7 +87,7 @@ def the_user_edit_page_should_open_change_the_user_email_and_click_save(driver, 
 @then('change should be saved, open the user dropdown, the email value should be visible')
 def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visible(driver):
     """change should be saved, open the user dropdown, the email value should be visible."""
-    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbars)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
