@@ -99,10 +99,6 @@ export const helptextSystemGeneral = {
     tooltip: T('Choose a time format.'),
   },
 
-  secretseed: {
-    placeholder: T('Export Password Secret Seed'),
-  },
-
   crash_reporting: {
     label: T('Crash reporting'),
     tooltip: T('Send failed HTTP request data which can include client\
@@ -171,8 +167,4 @@ export const helptextSystemGeneral = {
   guiPageTitle: T('GUI Settings'),
   ntpTitle: T('NTP Servers'),
   supportTitle: T('Support'),
-  deleteServer: {
-    title: T('Delete Server'),
-    message: T('Delete'),
-  },
 };

@@ -24,7 +24,7 @@
           [(ngModel)]="selectedTrain"
           (ngModelChange)="onOptionChanged()"
         >
-          <mat-option *ngFor="let option of trainOptions" value="{{ option | translate }}">
+          <mat-option *ngFor="let option of trainOptions" [value]="option">
             {{ option }}
           </mat-option>
         </mat-select>
@@ -40,7 +40,7 @@
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onOptionChanged()"
         >
-          <mat-option *ngFor="let option of statusOptions" value="{{ option | translate }}">
+          <mat-option *ngFor="let option of statusOptions" [value]="option">
             {{ option }}
           </mat-option>
         </mat-select>
@@ -61,16 +61,16 @@
       >
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="25%" class="item-train">
-            <span textLimiter threshold="15" content="{{ item.train }}"></span>
+            <span textLimiter threshold="15" [content]="item.train"></span>
           </div>
           <span fxFlex="25%" class="item-app">
-            <span textLimiter threshold="15" content="{{ item.app }}"></span>
+            <span textLimiter threshold="15" [content]="item.app"></span>
           </span>
           <span fxFlex="50%" class="info-col">
             <span
               textLimiter
               threshold="22"
-              content="{{ item.healthy ? 'Healthy' : 'Unhealthy' }}"
+              [content]="item.healthy ? ('Healthy' | translate) : ('Unhealthy' | translate)"
             ></span>
           </span>
         </div>

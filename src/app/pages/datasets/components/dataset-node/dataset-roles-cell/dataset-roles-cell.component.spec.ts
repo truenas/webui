@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MatLegacyTooltip as MatTooltip } from '@angular/material/legacy-tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';

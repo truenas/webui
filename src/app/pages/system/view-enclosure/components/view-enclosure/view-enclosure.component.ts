@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -62,7 +62,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     // the rear bays. SystemProfiler will store a rearIndex value for those machines.
     if (this.system && this.system.rearIndex && this.system.profile.length > 2) {
       return true;
-    } if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
+    }
+    if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
       return true;
     }
     return false;

@@ -1,14 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ChangeDetectorRef,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AclType } from 'app/enums/acl-type.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService } from 'app/services';
@@ -38,14 +40,15 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     private store: PermissionsCardStore,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private router: Router,
   ) {}
 
-  get editPermissionsUrl(): string[] {
+  redirectToEditPermissions(): void {
     if (this.acl.trivial) {
-      return ['/datasets', this.dataset.id, 'permissions', 'edit'];
+      this.router.navigate(['/datasets', this.dataset.id, 'permissions', 'edit']);
+    } else {
+      this.router.navigate(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/' + this.dataset.id } });
     }
-
-    return ['/datasets', this.dataset.id, 'permissions', 'acl'];
   }
 
   get canEditPermissions(): boolean {

@@ -74,8 +74,7 @@ export class StorageService {
       { responseType: 'blob' }).pipe(
       map(
         (res) => {
-          const blob = new Blob([res], { type: mimeType });
-          return blob;
+          return new Blob([res], { type: mimeType });
         },
       ),
     );

@@ -5,18 +5,20 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
+import filesize from 'filesize';
 import { Subject } from 'rxjs';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { ReportingParams } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
@@ -190,43 +192,38 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       this.fetchReportData();
     }, 10000);
 
-    this.stats.pipe(
-      filter((evt) => evt.name.startsWith('NetTraffic_')),
-      filter((evt) => {
-        const [, nicName] = evt.name.split('_');
-        return this.availableNics.findIndex((nic) => nic.name === nicName) !== -1;
-      }),
-      throttleTime(500),
-      untilDestroyed(this),
-    ).subscribe((evt: NetworkTrafficEvent) => {
-      const [, nicName] = evt.name.split('_');
-      if (nicName in this.nicInfoMap) {
-        const sent = this.utils.convert(evt.data.sent_bytes_rate);
-        const received = this.utils.convert(evt.data.received_bytes_rate);
+    this.availableNics.forEach((nic) => {
+      this.stats.pipe(
+        filter((evt) => evt.name.startsWith(`NetTraffic_${nic.name}`)),
+        throttleTime(500),
+        untilDestroyed(this),
+      ).subscribe((evt: NetworkTrafficEvent) => {
+        const nicName = nic.name;
+        if (nicName in this.nicInfoMap) {
+          const nicInfo = this.nicInfoMap[nicName];
+          if (evt.data.link_state) {
+            nicInfo.state = evt.data.link_state;
+          }
+          nicInfo.in = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.out = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
 
-        const nicInfo = this.nicInfoMap[nicName];
-        if (evt.data.link_state) {
-          nicInfo.state = evt.data.link_state;
-        }
-        nicInfo.in = `${received.value} ${received.units}/s`;
-        nicInfo.out = `${sent.value} ${sent.units}/s`;
+          if (
+            evt.data.sent_bytes !== undefined
+            && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+          ) {
+            nicInfo.lastSent = evt.data.sent_bytes;
+            this.tableService.updateStateInfoIcon(nicName, 'sent');
+          }
 
-        if (
-          evt.data.sent_bytes !== undefined
-          && evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
-        ) {
-          nicInfo.lastSent = evt.data.sent_bytes;
-          this.tableService.updateStateInfoIcon(nicName, 'sent');
+          if (
+            evt.data.received_bytes !== undefined
+            && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+          ) {
+            nicInfo.lastReceived = evt.data.received_bytes;
+            this.tableService.updateStateInfoIcon(nicName, 'received');
+          }
         }
-
-        if (
-          evt.data.received_bytes !== undefined
-          && evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
-        ) {
-          nicInfo.lastReceived = evt.data.received_bytes;
-          this.tableService.updateStateInfoIcon(nicName, 'received');
-        }
-      }
+      });
     });
   }
 

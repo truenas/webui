@@ -40,11 +40,9 @@ export class ListSelectionImpl<T> implements ListSelection<T> {
   }
 
   mouseUp(item: T, event?: MouseEvent): void {
-    if (!event.ctrlKey) {
-      if (this._selectedItems.length > 1 && this.isSelected(item)) {
-        this._selectedItems.length = 0;
-        this._selectedItems.push(item);
-      }
+    if (!event.ctrlKey && this._selectedItems.length > 1 && this.isSelected(item)) {
+      this._selectedItems.length = 0;
+      this._selectedItems.push(item);
     }
   }
 

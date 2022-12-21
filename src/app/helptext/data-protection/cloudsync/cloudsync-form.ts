@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
@@ -10,27 +9,22 @@ export default {
 
   description_placeholder: T('Description'),
   description_tooltip: T('Enter a description of the Cloud Sync Task.'),
-  description_validation: [Validators.required],
 
   direction_placeholder: T('Direction'),
   direction_tooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i> \
  receives data from cloud storage. Changing the direction resets the \
  <i>Transfer Mode</i> to COPY.'),
-  direction_validation: [Validators.required],
 
   credentials_placeholder: T('Credential'),
   credentials_tooltip: T('Select the cloud storage provider credentials from the\
  list of available Cloud Credentials.'),
   credentials_add_option: T('+ Add a backup credential'),
-  credentials_validation: [Validators.required],
 
   bucket_placeholder: T('Bucket'),
   bucket_tooltip: T('Select the pre-defined S3 bucket to use.'),
-  bucket_validation: [Validators.required],
 
   bucket_input_placeholder: T('Bucket'),
   bucket_input_tooltip: T('Enter the pre-defined S3 bucket to use.'),
-  bucket_input_validation: [Validators.required],
 
   folder_placeholder: T('Folder'),
   folder_tooltip: T('Enter or select the cloud storage location to use for this task.'),
@@ -55,6 +49,9 @@ export default {
  largest file being transferred must fit into no more than 10,000 \
  chunks.'),
 
+  acknowledge_abuse_placeholder: T('Allow files which return cannotDownloadAbusiveFile to be downloaded.'),
+  acknowledge_abuse_tooltip: T('If downloading a file returns the error "This file has been identified as malware or spam and cannot be downloaded" with the error code "cannotDownloadAbusiveFile" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.'),
+
   fast_list_placeholder: T('Use --fast-list'),
   fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
  This can also speed up or slow down the transfer.'),
@@ -64,11 +61,8 @@ export default {
  for Push syncs, or the destination to be written for\
  Pull syncs. Be cautious about the destination of Pull\
  jobs to avoid overwriting existing files.'),
-  path_validation: [Validators.required],
 
   transfer_mode_placeholder: T('Transfer Mode'),
-
-  transfer_mode_validation: [Validators.required],
 
   transfer_mode_warning_sync: T('<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match those on the\
  source. If a file does not exist on the source, it is also <i><u>deleted</u></i>\
@@ -152,7 +146,7 @@ export default {
   bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
  Separate entries by pressing <code>Enter</code>. Example: \
  <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
- Units can be specified with the beginning letter: <samp>b</samp>,\
+ Units can be specified with a suffix of <samp>b</samp>,\
  <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
  See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
  target="_blank">rclone --bwlimit</a>.'),

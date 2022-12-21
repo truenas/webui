@@ -4,7 +4,7 @@ import {
 import {
   AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -354,12 +354,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
     for (let i = 0; i < num; i++) {
       const dataset = body.datasets[i];
       const ds = { name: dataset.name } as DatasetEncryptionSummaryQueryParamsDataset;
-      if (dataset.is_passphrase) {
+      if (dataset.is_passphrase && dataset.passphrase && dataset.passphrase !== '') {
         // don't pass empty passphrases, they won't work
-        if (dataset.passphrase && dataset.passphrase !== '') {
-          ds['passphrase'] = dataset.passphrase;
-          datasets.push(ds);
-        }
+        ds['passphrase'] = dataset.passphrase;
+        datasets.push(ds);
       }
       if (!dataset.is_passphrase && !body.key_file) {
         ds['key'] = dataset.key;

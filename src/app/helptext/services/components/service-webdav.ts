@@ -41,6 +41,4 @@ export default {
 
   password2_placeholder: T('Confirm Password'),
   fieldset_title: T('Configuration'),
-
-  formTitle: 'WebDAV',
 };

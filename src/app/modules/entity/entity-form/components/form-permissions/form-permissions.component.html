@@ -3,7 +3,7 @@
   class="dynamic-field form-permissions form-element"
   ix-auto
   ix-auto-type="permissions"
-  ix-auto-identifier="{{ config.placeholder }}"
+  [ix-auto-identifier]="config.placeholder"
   [formGroup]="group"
   [class.has-tooltip]="config.tooltip"
   [ngClass]="fieldShow"
@@ -27,7 +27,7 @@
         matInput
         ix-auto
         ix-auto-type="input"
-        ix-auto-identifier="{{ config.placeholder }}"
+        [ix-auto-identifier]="config.placeholder"
         [type]="config.inputType ? config.inputType : 'text'"
         [placeholder]="config.placeholder | translate"
         [attr.value]="config.value"
@@ -51,7 +51,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_ownerRead"
+          [ix-auto-identifier]="config.name + '_ownerRead'"
           [checked]="ownerRead"
           (change)="toggleOwnerRead()"
         ></mat-checkbox>
@@ -61,7 +61,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_ownerWrite"
+          [ix-auto-identifier]="config.name + '_ownerWrite'"
           [checked]="ownerWrite"
           (change)="toggleOwnerWrite()"
         ></mat-checkbox>
@@ -71,7 +71,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_ownerExec"
+          [ix-auto-identifier]="config.name + '_ownerExec'"
           [checked]="ownerExec"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
@@ -86,7 +86,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_groupRead"
+          [ix-auto-identifier]="config.name + '_groupRead'"
           [checked]="groupRead"
           (change)="toggleGroupRead()"
         ></mat-checkbox>
@@ -96,7 +96,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_groupWrite"
+          [ix-auto-identifier]="config.name + '_groupWrite'"
           [checked]="groupWrite"
           (change)="toggleGroupWrite()"
         ></mat-checkbox>
@@ -106,7 +106,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_groupExec"
+          [ix-auto-identifier]="config.name + '_groupExec'"
           [checked]="groupExec"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
@@ -121,7 +121,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_otherRead"
+          [ix-auto-identifier]="config.name + '_otherRead'"
           [checked]="otherRead"
           (change)="toggleOtherRead()"
         ></mat-checkbox
@@ -132,7 +132,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_otherWrite"
+          [ix-auto-identifier]="config.name + '_otherWrite'"
           [checked]="otherWrite"
           (change)="toggleOtherWrite()"
         ></mat-checkbox
@@ -143,7 +143,7 @@
           color="primary"
           ix-auto
           ix-auto-type="checkbox"
-          ix-auto-identifier="{{ config.name }}_otherExec"
+          [ix-auto-identifier]="config.name + '_otherExec'"
           [checked]="otherExec"
           (change)="toggleOtherExec()"
         ></mat-checkbox>

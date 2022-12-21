@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -849,14 +849,12 @@ export class DataProtectionDashboardComponent implements OnInit {
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });
@@ -864,7 +862,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
           if (subId) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
           }
         });

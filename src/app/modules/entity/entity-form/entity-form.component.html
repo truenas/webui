@@ -1,7 +1,3 @@
-<ng-template
-  [ngTemplateOutlet]="templateTop"
-  [ngTemplateOutletContext]="this"
-></ng-template>
 <p *ngIf="!hasConf">
   Please
   <button
@@ -44,12 +40,12 @@
             fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
             [ngClass]="[
               fieldSet.class ? fieldSet.class : '',
-              isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset'
+              isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
             ]"
           >
             <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
             <h4
-              *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)"
+              *ngIf="fieldSet.label && isFieldsetAvailable(fieldSet)"
               class="fieldset-label"
             >
               {{ fieldSet.name | translate }}
@@ -58,12 +54,12 @@
               *ngFor="let field of fieldSet.config; let ii = index"
               fxFlex="100%"
               fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
-              id="{{ fieldSet.name }}-{{ ii }}"
+              [id]="fieldSet.name + '-' + ii"
               [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
             >
               <div
                 dynamicField
-                id="form_field_{{ field.name }}"
+                [id]="'form_field_' + field.name"
                 [config]="field"
                 [group]="formGroup"
                 [fieldShow]="isShow(field.name) ? 'show' : 'hide'"
@@ -80,7 +76,7 @@
             mat-button
             ix-auto-type="button"
             color="primary"
-            ix-auto-identifier="{{ saveSubmitText | uppercase }}"
+            [ix-auto-identifier]="saveSubmitText | uppercase"
             [disabled]="!entityForm.form.valid || !conf.saveButtonEnabled"
             [ix-auto]=""
           >
@@ -106,8 +102,8 @@
               mat-button
               class="mat-basic"
               ix-auto-type="button"
-              id="cust_button_{{ custBtn.name }}"
-              ix-auto-identifier="{{ custBtn.name | uppercase }}"
+              [id]="'cust_button_' + custBtn.name"
+              [ix-auto-identifier]="custBtn.name | uppercase"
               [color]="custBtn.buttonColor ? custBtn.buttonColor : 'default'"
               [disabled]="conf.isCustomActionDisabled !== undefined ? conf.isCustomActionDisabled(custBtn.id) : custBtn.disabled"
               [type]="custBtn.buttonType ? custBtn.buttonType : 'button'"

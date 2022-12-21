@@ -9,9 +9,9 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -21,12 +21,14 @@ import {
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
@@ -46,17 +48,24 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [FormatDateTimePipe],
 })
 export class SnapshotListComponent implements OnInit, AfterViewInit {
+  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
     this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectSnapshotState).pipe(map((state) => state.error)),
   ]).pipe(
-    switchMap(([, isError]) => {
-      if (isError) {
-        return of(this.errorConfig);
+    switchMap(([isLoading, isNoData, isError]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
       }
-
-      return of(this.emptyConfig);
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
   showExtraColumns: boolean;
@@ -88,6 +97,10 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = this.defaultColumns;
   datasetFilter = '';
 
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
+
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -97,6 +110,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     private slideIn: IxSlideInService,
     private layoutService: LayoutService,
     private route: ActivatedRoute,
+    private emptyService: EmptyService,
   ) {
     this.datasetFilter = this.route.snapshot.paramMap.get('dataset') || '';
   }

@@ -1,5 +1,5 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -68,8 +68,21 @@ describe('IxComboboxComponent', () => {
     it('shows value when type it in', () => {
       spectator.typeInElement('new value', 'input');
       spectator.detectComponentChanges();
+      spectator.detectComponentChanges();
 
       expect(spectator.query('input')).toHaveValue('new value');
+    });
+
+    it('form control value is set to custom value if [allowCustomValue] enabled', () => {
+      spectator.setInput('allowCustomValue', true);
+      spectator.typeInElement('/my-custom-1', 'input');
+      expect(formControl.value).toBe('/my-custom-1');
+    });
+
+    it('if [allowCustomValue] is disabled and user types custom value.', () => {
+      spectator.setInput('allowCustomValue', false);
+      spectator.typeInElement('/my-custom-2', 'input');
+      expect(formControl.value).toBeNull();
     });
 
     it('shows values autocomplete when type start', async () => {

@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -16,6 +16,7 @@ describe('PodSelectDialogComponent', () => {
   let spectator: Spectator<PodSelectDialogComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let mockCustomSubmit: jest.Mock;
   const createComponent = createComponentFactory({
     component: PodSelectDialogComponent,
     imports: [
@@ -25,7 +26,6 @@ describe('PodSelectDialogComponent', () => {
     ],
     providers: [
       mockProvider(MatDialogRef),
-      mockProvider(Router),
       mockWebsocket([
         mockCall('chart.release.pod_console_choices', {
           pod1: ['container11', 'container12', 'container13'],
@@ -37,6 +37,7 @@ describe('PodSelectDialogComponent', () => {
 
   describe('dialog type is Shell', () => {
     beforeEach(async () => {
+      mockCustomSubmit = jest.fn();
       spectator = createComponent({
         providers: [
           {
@@ -44,6 +45,7 @@ describe('PodSelectDialogComponent', () => {
             useValue: {
               appName: 'app_name',
               type: PodSelectDialogType.Shell,
+              customSubmit: mockCustomSubmit,
             },
           },
         ],
@@ -52,7 +54,7 @@ describe('PodSelectDialogComponent', () => {
       form = await loader.getHarness(IxFormHarness);
     });
 
-    it('redirects to Shell page when Choose is pressed', async () => {
+    it('the function should pass the value of the shell form to the relevant component when Choose is pressed', async () => {
       await form.fillForm({ Pods: 'pod2' });
       expect(await form.getValues()).toEqual({
         Pods: 'pod2',
@@ -62,13 +64,18 @@ describe('PodSelectDialogComponent', () => {
 
       const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
       await chooseButton.click();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps/1/shell/', 'app_name', 'pod2', '/bin/sh']);
+      expect(mockCustomSubmit).toHaveBeenCalledWith({
+        command: '/bin/sh',
+        containers: 'container21',
+        pods: 'pod2',
+      }, 'app_name');
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     });
   });
 
   describe('dialog type is Logs', () => {
     beforeEach(async () => {
+      mockCustomSubmit = jest.fn();
       spectator = createComponent({
         providers: [
           {
@@ -76,6 +83,7 @@ describe('PodSelectDialogComponent', () => {
             useValue: {
               appName: 'app_name',
               type: PodSelectDialogType.Logs,
+              customSubmit: mockCustomSubmit,
             },
           },
         ],
@@ -84,7 +92,7 @@ describe('PodSelectDialogComponent', () => {
       form = await loader.getHarness(IxFormHarness);
     });
 
-    it('redirects to Logs page when Choose is pressed', async () => {
+    it('the function should pass the value of the logs form to the relevant component when Choose is pressed', async () => {
       await form.fillForm({ Pods: 'pod2' });
       expect(await form.getValues()).toEqual({
         Pods: 'pod2',
@@ -94,8 +102,21 @@ describe('PodSelectDialogComponent', () => {
 
       const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
       await chooseButton.click();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps/1/logs/', 'app_name', 'pod2', 'container21', '500']);
+      expect(mockCustomSubmit).toHaveBeenCalledWith({
+        tail_lines: 500,
+        containers: 'container21',
+        pods: 'pod2',
+      }, 'app_name');
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    });
+
+    it('warning dialog should be displayed if there are no pods', () => {
+      const ws = spectator.inject(MockWebsocketService);
+      ws.mockCall('chart.release.pod_console_choices', {});
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+      const dialogContent = spectator.query('.mat-dialog-content');
+      expect(dialogContent).toHaveText('At least one pool must be available to use apps');
     });
   });
 });

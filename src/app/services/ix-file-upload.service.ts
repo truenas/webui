@@ -53,10 +53,8 @@ export class IxFileUploadService {
       next: (event: HttpEvent<unknown>) => {
         if (event.type === HttpEventType.UploadProgress) {
           this.fileUploadProgress$.next(event);
-        } else if (event instanceof HttpResponse) {
-          if (event.statusText === 'OK') {
-            this.fileUploadSuccess$.next(event);
-          }
+        } else if (event instanceof HttpResponse && event.statusText === 'OK') {
+          this.fileUploadSuccess$.next(event);
         }
       },
       error: (error: HttpErrorResponse) => {

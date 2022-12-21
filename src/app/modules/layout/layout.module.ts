@@ -3,14 +3,14 @@ import { NgModule } from '@angular/core';
 import { FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -21,7 +21,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/layout/components/auth-layout/auth-layout.component';
-import { BreadcrumbComponent } from 'app/modules/layout/components/breadcrumb/breadcrumb.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
@@ -66,7 +65,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
   ],
   declarations: [
     ChangePasswordDialogComponent,
-    BreadcrumbComponent,
     NavigationComponent,
     SecondaryMenuComponent,
     PowerMenuComponent,

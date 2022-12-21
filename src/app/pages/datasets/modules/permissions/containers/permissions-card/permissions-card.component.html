@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
-    <a *ngIf="canEditPermissions" mat-button [routerLink]="editPermissionsUrl">
+    <a *ngIf="canEditPermissions" mat-button (click)="redirectToEditPermissions()">
       {{ 'Edit' | translate }}
     </a>
   </mat-card-header>
@@ -52,7 +52,7 @@
 
 <div *ngIf="isLoading" class="permissions loader-permissions">
   <ngx-skeleton-loader
-    [count]="3"
+    [count]="4"
   ></ngx-skeleton-loader>
 </div>
 

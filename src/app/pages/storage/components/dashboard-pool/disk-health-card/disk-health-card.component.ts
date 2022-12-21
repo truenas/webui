@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { PoolStatus } from 'app/enums/pool-status.enum';
+import { TranslateService } from '@ngx-translate/core';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 interface DiskState {
-  health: DiskHealthLevel;
   highestTemperature: number;
   lowestTemperature: number;
   averageTemperature: number;
@@ -17,12 +17,6 @@ interface DiskState {
   smartTests: number;
   unit: string;
   symbolText: string;
-}
-
-export enum DiskHealthLevel {
-  Warn = 'warn',
-  Error = 'error',
-  Safe = 'safe',
 }
 
 @UntilDestroy()
@@ -40,10 +34,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     return getPoolDisks(this.poolState);
   }
 
-  readonly diskHealthLevel = DiskHealthLevel;
-
   diskState: DiskState = {
-    health: DiskHealthLevel.Safe,
     highestTemperature: null,
     lowestTemperature: null,
     averageTemperature: null,
@@ -53,14 +44,16 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     symbolText: '',
   };
 
+  constructor(
+    public translate: TranslateService,
+  ) { }
+
   ngOnInit(): void {
     if (this.disks) {
-      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTests, 0);
+      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTestsFailed, 0);
       this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
       this.loadTemperatures();
     }
-
-    this.checkVolumeHealth(this.poolState);
   }
 
   ngOnChanges(): void {
@@ -79,34 +72,21 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     return this.diskState.lowestTemperature !== null && !Number.isNaN(this.diskState.lowestTemperature);
   }
 
-  private checkVolumeHealth(poolState: Pool): void {
-    const isError = this.isStatusError(poolState);
-    const isWarning = this.isStatusWarning(poolState);
-
-    if (isError) {
-      this.diskState.health = DiskHealthLevel.Error;
-    } else if (isWarning || !poolState.healthy) {
-      this.diskState.health = DiskHealthLevel.Warn;
-    } else {
-      this.diskState.health = DiskHealthLevel.Safe;
+  get iconType(): PoolCardIconType {
+    if (this.diskState.alerts || this.diskState.smartTests) {
+      return PoolCardIconType.Warn;
     }
+    return PoolCardIconType.Safe;
   }
 
-  private isStatusError(poolState: Pool): boolean {
-    return [
-      PoolStatus.Faulted,
-      PoolStatus.Unavailable,
-      PoolStatus.Removed,
-    ].includes(poolState.status);
-  }
-
-  private isStatusWarning(poolState: Pool): boolean {
-    return [
-      PoolStatus.Locked,
-      PoolStatus.Unknown,
-      PoolStatus.Offline,
-      PoolStatus.Degraded,
-    ].includes(poolState.status);
+  get iconTooltip(): string {
+    if (this.diskState.alerts || this.diskState.smartTests) {
+      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed SMART tests', {
+        alerts: this.diskState.alerts,
+        smartTests: this.diskState.smartTests,
+      });
+    }
+    return this.translate.instant('Everything is fine');
   }
 
   private loadTemperatures(): void {

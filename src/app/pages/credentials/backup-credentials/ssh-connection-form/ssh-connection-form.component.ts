@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -52,6 +52,7 @@ export class SshConnectionFormComponent {
     )],
 
     username: ['root', Validators.required],
+    admin_username: ['root'],
     password: ['', this.validatorsService.validateOnCondition(
       (control) => control.parent && !this.isManualSetup,
       Validators.required,
@@ -229,6 +230,7 @@ export class SshConnectionFormComponent {
     } else {
       params.semi_automatic_setup = {
         url: values.url,
+        admin_username: values.admin_username,
         password: values.password,
         username: values.username,
         otp_token: values.otp_token,

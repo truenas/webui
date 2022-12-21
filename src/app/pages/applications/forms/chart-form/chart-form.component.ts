@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  FormBuilder, FormControl, Validators,
+} from '@angular/forms';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -22,8 +24,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
-import { AppSchemaService } from 'app/services/app-schema.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +74,7 @@ export class ChartFormComponent implements OnDestroy {
     this.config = chart.config;
     this.config.release_name = chart.id;
 
-    this.form.addControl('release_name', new UntypedFormControl(this.title, [Validators.required]));
+    this.form.addControl('release_name', new FormControl(this.title, [Validators.required]));
 
     this.dynamicSection.push({
       name: 'Application name',
@@ -106,8 +108,8 @@ export class ChartFormComponent implements OnDestroy {
       }
     });
 
-    this.form.addControl('version', new UntypedFormControl(versionKeys[0], [Validators.required]));
-    this.form.addControl('release_name', new UntypedFormControl('', [Validators.required]));
+    this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
+    this.form.addControl('release_name', new FormControl('', [Validators.required]));
     this.form.controls['release_name'].setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
@@ -137,6 +139,7 @@ export class ChartFormComponent implements OnDestroy {
     });
 
     this.buildDynamicForm(catalogApp.schema);
+    this.form.patchValue({ release_name: this.catalogApp.name });
   }
 
   buildDynamicForm(schema: ChartSchema['schema']): void {
@@ -162,13 +165,13 @@ export class ChartFormComponent implements OnDestroy {
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls(
+      this.appSchemaService.addFormControls({
         chartSchemaNode,
-        this.form,
-        this.config,
-        this.isNew,
-        false,
-      ),
+        formGroup: this.form,
+        config: this.config,
+        isNew: this.isNew,
+        isParentImmutable: false,
+      }),
     );
   }
 
@@ -183,7 +186,11 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   addItem(event: AddListItemEvent): void {
-    this.appSchemaService.addFormListItem(event, this.isNew, false);
+    this.appSchemaService.addFormListItem({
+      event,
+      isNew: this.isNew,
+      isParentImmutable: false,
+    });
   }
 
   deleteItem(event: DeleteListItemEvent): void {
@@ -223,9 +230,7 @@ export class ChartFormComponent implements OnDestroy {
     fieldTobeDeleted: string,
   ): void {
     const keys = fieldTobeDeleted.split('.');
-    if (this.isNew) {
-      _.unset(data, keys);
-    } else if (!_.get(this.config, keys)) {
+    if (this.isNew || !_.get(this.config, keys)) {
       _.unset(data, keys);
     }
   }

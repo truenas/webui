@@ -4,7 +4,7 @@ import {
 import {
   OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
 } from '@angular/core';
-import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
@@ -149,7 +149,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + this.job.logs_path);
             this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
           }
         },

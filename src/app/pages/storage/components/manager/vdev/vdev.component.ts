@@ -90,10 +90,11 @@ export class VdevComponent implements OnInit {
   }
 
   getType(): string {
-    if (this.typeControl.value === undefined || this.typeControl.value === null) {
-      if (this.manager.firstDataVdevType !== undefined) {
-        this.typeControl.setValue(this.manager.firstDataVdevType);
-      }
+    if (
+      (this.typeControl.value === undefined || this.typeControl.value === null)
+      && this.manager.firstDataVdevType !== undefined
+    ) {
+      this.typeControl.setValue(this.manager.firstDataVdevType);
     }
 
     // TODO: Enum

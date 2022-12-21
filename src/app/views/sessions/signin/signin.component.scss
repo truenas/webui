@@ -1,4 +1,4 @@
-@import 'cssvars';
+@import 'scss-imports/cssvars';
 
 .session-form-hold {
   margin: 0 auto;
@@ -188,4 +188,9 @@ input:-webkit-autofill:active {
   &.phonelink {
     top: 2px;
   }
+}
+
+mat-radio-button {
+  margin: 0 10px 10px 0;
+  width: 100%;
 }

@@ -1,12 +1,8 @@
 import {
   Component,
-  ContentChildren,
   Input,
   OnDestroy,
   OnInit,
-  QueryList,
-  TemplateRef,
-  AfterViewInit,
   OnChanges,
   ChangeDetectorRef,
   AfterViewChecked,
@@ -30,7 +26,6 @@ import {
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
-import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService, DialogService } from 'app/services';
@@ -43,7 +38,7 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['./entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],
 })
-export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
+export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
   @Input() conf: FormConfiguration;
 
   pk: string | number;
@@ -77,10 +72,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.formGroup.value;
   }
 
-  templateTop: TemplateRef<unknown>;
-  @ContentChildren(EntityTemplateDirective)
-    templates: QueryList<EntityTemplateDirective>;
-
   sub: Subscription;
   error: string;
   success = false;
@@ -103,14 +94,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   ) {
     this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
     this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
-  }
-
-  ngAfterViewInit(): void {
-    this.templates.forEach((item) => {
-      if (item.type === 'TOP') {
-        this.templateTop = item.templateRef;
-      }
-    });
   }
 
   ngAfterViewChecked(): void {
@@ -192,6 +175,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.conf.fieldConfig = this.fieldConfig;
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   async ngOnInit(): Promise<void> {
     if (this.conf.saveButtonEnabled === undefined) {
       this.conf.saveButtonEnabled = true;
@@ -217,7 +201,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (this.conf.isEntity) {
         if (this.conf.rowid) {
           this.pk = this.conf.rowid;
-          // delete this.conf.rowid;
         } else {
           this.pk = params['pk'];
         }
@@ -302,10 +285,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   fg.patchValue(this.data[key]);
                 } else {
                   const selectField: FormSelectConfig = currentField as FormSelectConfig;
-                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple) {
-                    if (this.data[key]) {
-                      this.data[key] = _.split(this.data[key] as string, ',');
-                    }
+                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple && this.data[key]) {
+                    this.data[key] = _.split(this.data[key] as string, ',');
                   }
                   if (!(selectField.type === 'select' && selectField.options.length === 0)) {
                     fg.setValue(this.data[key]);
@@ -539,7 +520,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  isFieldsetAvailabel(fieldset: FieldSet): boolean {
+  isFieldsetAvailable(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       return fieldset.config.some((config) => !config.isHidden);
     }

@@ -44,6 +44,8 @@ export interface Certificate {
   organization: string;
   organizational_unit: string;
   parsed: boolean;
+  passphrase: string;
+  passphrase2: string;
   privatekey: string;
   privatekey_path: string;
   revoked: boolean;

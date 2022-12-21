@@ -1,7 +1,7 @@
 import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -26,7 +26,6 @@ import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.inter
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
@@ -85,7 +84,6 @@ export interface DiskFailure {
 })
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
   showCaption = true;
-  protected pendingDialog: EntityDialogComponent;
   protected aborted = false;
 
   mqAlias: string;
@@ -126,8 +124,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   get unhealthyPools(): Pool[] {
-    const sickPools = this.getUnhealthyPools();
-    return sickPools;
+    return this.getUnhealthyPools();
   }
 
   private _selectedVdev: VDevMetadata;
@@ -232,12 +229,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       switch (evt.name) {
         case 'CanvasExtract':
           this.createExtractedEnclosure((evt as CanvasExtractEvent).data);
-          break;
-        case 'EnclosureLabelChanged':
-          if (this.pendingDialog !== undefined) {
-            this.pendingDialog.loader.close();
-            this.pendingDialog.dialogRef.close();
-          }
           break;
         case 'PoolsChanged':
           this.setDisksEnabledState();
@@ -616,27 +607,24 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const enclosure: ChassisView = extractedChassis.front;
 
-    enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
-      switch (evt.name) {
-        case 'Ready':
-          this.container.addChild(enclosure.container);
-          enclosure.container.name = enclosure.model + '_for_extraction';
-          enclosure.container.width = enclosure.container.width / 2;
-          enclosure.container.height = enclosure.container.height / 2;
+    enclosure.events
+      .pipe(filter((event) => event.name === 'Ready'), untilDestroyed(this))
+      .subscribe(() => {
+        this.container.addChild(enclosure.container);
+        enclosure.container.name = enclosure.model + '_for_extraction';
+        enclosure.container.width = enclosure.container.width / 2;
+        enclosure.container.height = enclosure.container.height / 2;
 
-          enclosure.container.x = this.pixiWidth / 2 - enclosure.container.width / 2;
-          enclosure.container.y = this.pixiHeight / 2 - enclosure.container.height / 2;
+        enclosure.container.x = this.pixiWidth / 2 - enclosure.container.width / 2;
+        enclosure.container.y = this.pixiHeight / 2 - enclosure.container.height / 2;
 
-          this.optimizeChassisOpacity(enclosure);
+        this.optimizeChassisOpacity(enclosure);
 
-          profile.disks.forEach((disk) => {
-            this.setDiskHealthState(disk, enclosure);
-          });
-          this.extractEnclosure(enclosure, profile);
-
-          break;
-      }
-    });
+        profile.disks.forEach((disk) => {
+          this.setDiskHealthState(disk, enclosure);
+        });
+        this.extractEnclosure(enclosure, profile);
+      });
 
     enclosure.load();
   }
@@ -663,8 +651,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   makeDriveTray(): DriveTray {
-    const dt = this.enclosure.makeDriveTray();
-    return dt;
+    return this.enclosure.makeDriveTray();
   }
 
   onImport(): void {
@@ -819,9 +806,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       extractedEnclosure.chassis.alpha = opacity;
     } else {
       opacity = hsl[2] < 60 ? 0.25 : 0.75;
-      this.chassis.front.setChassisOpacity(opacity);
+      if (this.chassis?.front) {
+        this.chassis.front.setChassisOpacity(opacity);
+      }
 
-      if (this.chassis.rear) {
+      if (this.chassis?.rear) {
         this.chassis.rear.setChassisOpacity(opacity);
       }
     }
@@ -918,12 +907,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const analyze = (disk: EnclosureDisk): void => {
       let failed = false;
-      const reasons = [];
 
       // Health based on disk.status
       if (disk && disk.status && disk.status === 'FAULT') {
         failed = true;
-        reasons.push("Disk Status is 'FAULT'");
       }
 
       // Also check slot status
@@ -1116,8 +1103,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   resizeView(): void {
     // Layout helper code goes in here...
-    const visualizer = this.overview.nativeElement.querySelector('#visualizer');
-    visualizer.classList.add('resized');
+    if (this.overview?.nativeElement) {
+      const visualizer = this.overview.nativeElement.querySelector('#visualizer');
+      visualizer.classList.add('resized');
+    }
   }
 
   enclosureOverride(view: string): void {

@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';

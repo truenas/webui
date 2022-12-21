@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
@@ -30,6 +30,7 @@ import {
 import {
   PermissionsItemComponent,
 } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
+import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
@@ -106,9 +107,14 @@ describe('DatasetAclEditorComponent', () => {
         userQueryDsCache: () => of(),
         groupQueryDsCache: () => of(),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(),
+        })),
+      }),
     ],
-    params: {
-      datasetId: 'pool/dataset',
+    queryParams: {
+      path: '/mnt/pool/dataset',
     },
   });
 
@@ -128,13 +134,23 @@ describe('DatasetAclEditorComponent', () => {
       jest.restoreAllMocks();
     });
 
-    it('shows preset modal if user presses "Use Preset"', async () => {
-      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use ACL Preset' }));
+    it('shows select preset modal if user presses "Use Preset"', async () => {
+      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
       await usePresetButton.click();
 
       expect(matDialog.open).toHaveBeenCalledWith(
         SelectPresetModalComponent,
         { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset' } },
+      );
+    });
+
+    it('shows save as preset modal if user presses "Save As Preset"', async () => {
+      const saveAsPresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save As Preset' }));
+      await saveAsPresetButton.click();
+
+      expect(matDialog.open).toHaveBeenCalledWith(
+        SaveAsPresetModalComponent,
+        { data: { aclType: AclType.Nfs4, datasetPath: '/mnt/pool/dataset' } },
       );
     });
   });
@@ -177,7 +193,7 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     it('adds another ace when Add item is pressed', async () => {
-      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
+      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'add Add Item' }));
       await addAceButton.click();
 
       const items = spectator.queryAll('ix-permissions-item');

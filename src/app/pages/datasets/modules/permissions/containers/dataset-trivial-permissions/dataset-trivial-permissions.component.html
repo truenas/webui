@@ -4,7 +4,9 @@
 
     <div class="dataset-path">
       <div class="dataset-path-label">{{ 'Dataset' | translate }}:</div>
-      <div>{{ datasetPath }}</div>
+      <div class="dataset-path-value" [matTooltip]="datasetPath">
+        {{ datasetPath }}
+      </div>
     </div>
   </mat-card-header>
 

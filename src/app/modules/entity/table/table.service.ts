@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';

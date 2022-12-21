@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import * as _ from 'lodash';
@@ -54,7 +54,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
     return mountpoints$.pipe(
       tap((mountpoint) => {
-        this.patchState({
+        this.setState({
+          ...initialState,
           mountpoint,
           isLoading: true,
         });

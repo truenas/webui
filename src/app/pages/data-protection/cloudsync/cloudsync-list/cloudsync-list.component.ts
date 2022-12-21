@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -296,18 +296,15 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         dialogRef.componentInstance.wsshow();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
           this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
           this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
-          this.ws.unsubscribe('filesystem.file_tail_follow:' + row.job.logs_path);
           this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
       } else {

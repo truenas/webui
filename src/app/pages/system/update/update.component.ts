@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -27,6 +27,7 @@ import {
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -187,7 +188,7 @@ export class UpdateComponent implements OnInit {
 
     if (this.productType === ProductType.ScaleEnterprise) {
       setTimeout(() => { // To get around too many concurrent calls???
-        this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isLicensed) => {
+        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isLicensed) => {
           if (isLicensed) {
             this.updateMethod = 'failover.upgrade';
             this.isHa = true;

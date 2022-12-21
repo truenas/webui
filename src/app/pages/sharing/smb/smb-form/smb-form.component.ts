@@ -5,7 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -247,7 +247,7 @@ export class SmbFormComponent implements OnInit {
       return;
     }
     const nameControl = this.form.get('name');
-    if (pathControl.value && !nameControl.value) {
+    if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
     }
@@ -393,7 +393,7 @@ export class SmbFormComponent implements OnInit {
     request$.pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (smbShareResponse: SmbShare) => {
         this.getCifsService().pipe(
           switchMap((cifsService) => {
             if (cifsService.state === ServiceStatus.Stopped) {
@@ -408,18 +408,27 @@ export class SmbFormComponent implements OnInit {
             this.isLoading = false;
             this.cdr.markForCheck();
             if (redirect) {
-              const sharePath = this.form.get('path').value;
-              const homeShare = this.form.get('home').value;
-              const datasetId = sharePath.replace('/mnt/', '');
-              this.router.navigate(
-                ['/', 'datasets', datasetId, 'permissions', 'acl'],
-                { queryParams: { homeShare } },
-              );
+              this.dialog.confirm({
+                title: this.translate.instant('Configure ACL'),
+                message: this.translate.instant('Do you want to сonfigure the ACL?'),
+                buttonMsg: this.translate.instant('Configure'),
+                hideCheckBox: true,
+              }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
+                if (isConfigure) {
+                  const homeShare = this.form.get('home').value;
+                  this.router.navigate(
+                    ['/', 'datasets', 'acl', 'edit'],
+                    { queryParams: { homeShare, path: smbShareResponse.path_local } },
+                  );
+                }
+                this.slideInService.close();
+              });
+            } else {
+              this.slideInService.close();
             }
-            this.slideInService.close();
           },
           error: (err) => {
-            if (err.reason.includes('[ENOENT]')) {
+            if (err.reason.includes('[ENOENT]') || err.reason.includes('[EXDEV]')) {
               this.dialog.closeAllDialogs();
             } else {
               this.dialog.errorReport(err.error, err.reason, err.trace.formatted);

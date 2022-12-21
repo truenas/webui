@@ -9,11 +9,18 @@
 
 .dataset-path {
   display: flex;
-  margin-left: 10%;
+  margin-left: 0;
 
   .dataset-path-label {
     font-weight: 500;
     margin-right: 6px;
+  }
+
+  .dataset-path-value {
+    max-width: 30vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

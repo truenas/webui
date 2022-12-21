@@ -11,6 +11,7 @@ export interface User {
   shell: string;
   full_name: string;
   builtin: boolean;
+  immutable: boolean;
   smb: boolean;
   password_disabled: boolean;
   locked: boolean;

@@ -1,8 +1,9 @@
 import { Type } from '@angular/core';
-import { TooltipPosition } from '@angular/material/tooltip';
+import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
 import { Observable, Subject } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 
 export interface SomeRow {
@@ -140,6 +141,7 @@ export interface EntityTableColumn {
   checkbox?: boolean;
   toggle?: boolean;
   button?: boolean;
+  disabled?: boolean;
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
   emptyText?: string;

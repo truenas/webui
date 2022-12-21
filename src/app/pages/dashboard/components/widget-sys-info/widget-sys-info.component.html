@@ -76,19 +76,19 @@
 
               <div
                 fxFlex="20"
-                class="platform-logo-wrapper {{ productType.toLowerCase() }}"
+                [class]="['platform-logo-wrapper', productType.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <mat-icon
                     svgIcon="ix:truenas_scale_logo_full"
-                    id="{{ productModel }}"
+                    [id]="productModel"
                   ></mat-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
                   <mat-icon
                     svgIcon="ix:truenas_scale_logotype"
-                    id="{{ productModel }}"
+                    [id]="productModel"
                   ></mat-icon>
                 </ng-template>
               </div>
@@ -101,7 +101,7 @@
                 [fxFlex.xs]="productType === ProductType.ScaleEnterprise && productImage === 'X10' ? 80 : 100"
               >
                 <div
-                  class="product-image {{ productEnclosure }}"
+                  [class]="'product-image ' + productEnclosure"
                   [class.truenas]="productType === ProductType.ScaleEnterprise"
                   [class.freenas]="productType !== ProductType.ScaleEnterprise"
                   [class.ix-logo]="productImage === 'ix-original.svg'"

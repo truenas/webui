@@ -119,6 +119,11 @@
           [tooltip]="tooltips.sshpubkey | translate"
         ></ix-textarea>
 
+        <ix-file-input
+          formControlName="sshpubkey_file"
+          [label]="'Upload SSH Key' | translate"
+        ></ix-file-input>
+
         <ix-combobox
           formControlName="shell"
           [label]="'Shell' | translate"

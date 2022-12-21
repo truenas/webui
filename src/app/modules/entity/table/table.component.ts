@@ -4,10 +4,11 @@ import {
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 
 export interface AppTableAction<Row = unknown> {
@@ -15,6 +16,7 @@ export interface AppTableAction<Row = unknown> {
   icon: string;
   matTooltip?: string;
   onChanging?: boolean;
+  disabled?: boolean;
   onClick: (row: Row) => void;
 }
 
@@ -32,6 +34,7 @@ export interface AppTableColumn {
   prop2?: string;
   checkbox?: boolean;
   slideToggle?: boolean;
+  disabled?: boolean;
   onChange?(data: unknown): void;
   width?: string;
   state?: {
@@ -88,6 +91,9 @@ export interface AppTableConfig<P = unknown> {
   tableFooterActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];
   confirmDeleteDialog?: AppTableConfirmDeleteDialog;
+  addActionDisabled?: boolean;
+  editActionDisabled?: boolean;
+  deleteActionDisabled?: boolean;
 
   add?(): void; // add action function
   afterGetData?(data: unknown): void;
@@ -265,7 +271,7 @@ implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   editRow(row: Row): void {
-    if (this._tableConf.edit) {
+    if (this._tableConf.edit && !this._tableConf.editActionDisabled) {
       this._tableConf.edit(row);
     }
   }

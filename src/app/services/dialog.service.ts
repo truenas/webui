@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -10,8 +10,6 @@ import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
-import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
@@ -131,16 +129,6 @@ export class DialogService {
     dialogRef.componentInstance.info = info;
     dialogRef.componentInstance.icon = 'warning';
     dialogRef.componentInstance.isHtml = isHtml;
-
-    return dialogRef.afterClosed();
-  }
-
-  /**
-   * @deprecated Build a separate dialog component instead of using this method.
-   */
-  dialogForm(conf: DialogFormConfiguration, disableClose = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(EntityDialogComponent, { maxWidth: '420px', minWidth: '350px', disableClose });
-    dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
   }

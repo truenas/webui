@@ -3,12 +3,12 @@ import {
   Component, Input, OnChanges,
 } from '@angular/core';
 import {
-  ControlValueAccessor, UntypedFormControl, NgControl,
+  ControlValueAccessor, NgControl,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { SelectOption } from 'app/interfaces/option.interface';
+import { Option, SelectOption } from 'app/interfaces/option.interface';
 
 type IxSelectValue = string | number | string[] | number[];
 
@@ -30,11 +30,25 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
 
-  formControl = new UntypedFormControl(this).value as UntypedFormControl;
   isDisabled = false;
   hasErrorInOptions = false;
   opts$: Observable<SelectOption[]>;
   isLoading = false;
+  private opts: Option[] = [];
+
+  get multipleLabels(): string[] {
+    const selectedLabels: string[] = [];
+    this.opts.forEach((opt) => {
+      if (Array.isArray(this.value)) {
+        if (this.value.some((val) => val === opt.value)) {
+          selectedLabels.push(` ${opt.label}`);
+        }
+      } else {
+        return null;
+      }
+    });
+    return selectedLabels.length > 0 ? selectedLabels : null;
+  }
 
   constructor(
     public controlDirective: NgControl,
@@ -59,6 +73,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
           this.cdr.markForCheck();
         }),
       );
+
+      this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
+        this.opts = opts;
+      });
     }
   }
 

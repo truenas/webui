@@ -2,14 +2,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   choosePool: {
-    title: T('Choose a pool for Apps'),
-    placeholder: T('Pools'),
-    migrateApplications: T('Migrate applications to the new pool'),
-    action: T('Choose'),
     jobTitle: T('Configuring...'),
-    success: T('Success'),
     unsetPool: {
-      label: T('Unset Pool'),
       confirm: {
         title: T('Unset Pool'),
         message: T('Confirm to unset pool?'),
@@ -45,40 +39,8 @@ export default {
   unset_pool: T('Unset Pool'),
 
   bulkActions: {
-    success: T('Success'),
-    error: T('Error'),
-    no_selected: T('Please select the applications'),
     title: T('Bulk actions'),
     finished: T('Requested action performed for selected Applications'),
-    failed: T('Failed to do bulk actions'),
-    unSelectAll: T('Unselect All'),
-    selectAll: T('Select All'),
-    options: [
-      {
-        value: 'select_all',
-        label: T('Select All') as string,
-        icon: 'check_circle',
-        disabled: false,
-      },
-      {
-        value: 'start',
-        label: T('Start'),
-        icon: 'play_arrow',
-        disabled: false,
-      },
-      {
-        value: 'stop',
-        label: T('Stop'),
-        icon: 'stop',
-        disabled: false,
-      },
-      {
-        value: 'delete',
-        label: T('Delete'),
-        icon: 'delete',
-        disabled: false,
-      },
-    ],
   },
 
   launch: T('Launch Docker Image'),
@@ -97,45 +59,17 @@ export default {
       formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
       modalWarning: T('You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.'),
     },
-    validateHostPathWarning: {
-      title: T('Warning'),
-      modalWarning: T('Disabling validation of host path can result in a data loss.'),
-    },
-    cluster_cidr: {
-      placeholder: T('Cluster CIDR'),
-      tooltip: T(''),
-    },
-    service_cidr: {
-      placeholder: T('Service CIDR'),
-      tooltip: T(''),
-    },
-    cluster_dns_ip: {
-      placeholder: T('Cluster DNS IP'),
-      tooltip: T(''),
-    },
-    node_ip: {
-      placeholder: T('Node IP'),
-      tooltip: T(''),
-    },
-    route_v4_interface: {
-      placeholder: T('Route v4 Interface'),
-      tooltip: T(''),
-    },
-    route_v4_gateway: {
-      placeholder: T('Route v4 Gateway'),
-      tooltip: T(''),
-    },
-    route_v6_interface: {
-      placeholder: T('Route v6 Interface'),
-      tooltip: T(''),
-    },
-    route_v6_gateway: {
-      placeholder: T('Route v6 Gateway'),
-      tooltip: T(''),
+    validateHostPath: {
+      title: T('Validate Host Path'),
+      warning: T(`Disabling host path validation may result in undefined behavior from TrueNAS system
+      services that access host paths mounted within kubernetes.<br>
+      Undefined behavior may include loss of access to data through inadvertent permissions changes,
+      loss of data due to lack of validation of application compatibility, and application stability issues.<br><br>
+      As such, this configuration is unsupported and bug reports in which this configuration plays a role
+      may be closed as a user configuration issue without further investigation.`),
     },
     enable_container_image_update: {
       placeholder: T('Enable Container Image Updates'),
-      tooltip: T(''),
     },
     configure_gpus: {
       placeholder: T('Enable GPU support'),

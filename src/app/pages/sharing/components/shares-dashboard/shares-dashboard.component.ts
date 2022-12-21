@@ -83,6 +83,8 @@ export class SharesDashboardComponent implements AfterViewInit {
   readonly servicesToCheck = [ServiceName.Cifs, ServiceName.Iscsi, ServiceName.WebDav, ServiceName.Nfs];
   readonly ServiceStatus = ServiceStatus;
 
+  isClustered = false;
+
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -91,6 +93,22 @@ export class SharesDashboardComponent implements AfterViewInit {
     private slideInService: IxSlideInService,
   ) {
     this.getInitialServiceStatus();
+    this.loadClusteredState();
+  }
+
+  loadClusteredState(): void {
+    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
+      this.isClustered = isClustered;
+      if (this.isClustered) {
+        this.smbTableConf.addActionDisabled = true;
+        this.smbTableConf.deleteActionDisabled = true;
+        this.smbTableConf.tooltip = {
+          header: this.translate.instant('Windows (SMB) Shares'),
+          message: this.translate.instant('This share is configured through TrueCommand'),
+        };
+        _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_enabled }).disabled = true;
+      }
+    });
   }
 
   getInitialServiceStatus(): void {
@@ -344,7 +362,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           parent: this,
           columns: [
             { name: helptextSharingSmb.column_name, prop: 'name' },
-            { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+            { name: helptextSharingSmb.column_path, prop: 'path_local', showLockedStatus: true },
             { name: helptextSharingSmb.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptextSharingSmb.column_enabled,
@@ -359,8 +377,15 @@ export class SharesDashboardComponent implements AfterViewInit {
             this.slideInService.open(SmbFormComponent);
           },
           edit: (row: SmbShare) => {
-            const form = this.slideInService.open(SmbFormComponent);
-            form.setSmbShareForEdit(row);
+            if (this.isClustered) {
+              this.dialog.info(
+                this.translate.instant('Windows (SMB) Shares'),
+                this.translate.instant('This share is configured through TrueCommand'),
+              );
+            } else {
+              const form = this.slideInService.open(SmbFormComponent);
+              form.setSmbShareForEdit(row);
+            }
           },
           afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;
@@ -372,14 +397,12 @@ export class SharesDashboardComponent implements AfterViewInit {
           },
           limitRows: 5,
           isActionVisible: (actionId: string, row: SmbShare) => {
-            switch (actionId) {
-              case 'edit_acl': {
-                const rowName = row.path.replace('/mnt/', '');
-                return rowName.includes('/');
-              }
-              default:
-                return true;
+            if (actionId === 'edit_acl') {
+              const rowName = row.path.replace('/mnt/', '');
+              return rowName.includes('/');
             }
+
+            return true;
           },
           getActions: () => {
             return [
@@ -387,6 +410,7 @@ export class SharesDashboardComponent implements AfterViewInit {
                 icon: 'share',
                 name: 'share_acl',
                 matTooltip: helptextSharingSmb.action_share_acl,
+                disabled: this.isClustered,
                 onClick: (row: SmbShare) => {
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
@@ -411,14 +435,16 @@ export class SharesDashboardComponent implements AfterViewInit {
                 name: 'edit_acl',
                 matTooltip: helptextSharingSmb.action_edit_acl,
                 onClick: (row: SmbShare) => {
-                  const rowName = row.path.replace('/mnt/', '');
-                  const datasetId = rowName;
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
                       if (isLocked) {
                         this.lockedPathDialog(row.path);
                       } else {
-                        this.router.navigate(['/', 'datasets', datasetId, 'permissions', 'acl']);
+                        this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                          queryParams: {
+                            path: row.path_local,
+                          },
+                        });
                       }
                     },
                   );

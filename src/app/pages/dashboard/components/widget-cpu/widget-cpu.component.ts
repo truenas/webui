@@ -96,13 +96,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.utils = new ThemeUtils();
 
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
+    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
       const size = {
-        width: evt.mqAlias === 'xs' ? 320 : 536,
+        width: changes[0].mqAlias === 'xs' ? 320 : 536,
         height: 140,
       };
 
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
 
       if (this.chart && this.screenType !== currentScreenType) {
         (this.chart.resize as (size: { width: number; height: number }) => void)(size);
@@ -381,8 +381,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const rgb = valueType === 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
-    const rgba = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
-
-    return rgba;
+    return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
   }
 }

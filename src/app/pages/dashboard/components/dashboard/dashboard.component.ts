@@ -7,10 +7,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -22,13 +24,13 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
@@ -141,10 +143,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkScreenSize();
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
-      if (hasFailover) {
-        this.isHaLicensed = true;
-      }
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.isHaLicensed = isHaLicensed;
     });
     this.sysinfoReady = true;
   }
@@ -191,8 +191,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.screenType = currentScreenType;
 
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
-    this.optimizeWidgetContainer();
+    if (wrapper) {
+      wrapper.style.overflow = this.screenType === ScreenType.Mobile ? 'hidden' : 'auto';
+      this.optimizeWidgetContainer();
+    }
   }
 
   optimizeWidgetContainer(): void {
@@ -399,18 +401,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    switch (item.name.toLowerCase()) {
-      case 'storage':
-        return this.volumeData;
-      default: {
-        const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        if (!dashboardPool) {
-          console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-          return;
-        }
-        return this.volumeData && this.volumeData[dashboardPool.name];
-      }
+    if (item.name.toLowerCase() === 'storage') {
+      return this.volumeData;
     }
+
+    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+    if (!dashboardPool) {
+      console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
+      return;
+    }
+    return this.volumeData && this.volumeData[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
