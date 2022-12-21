@@ -2,11 +2,16 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import time
 import xpaths
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    attribute_value_exist,
+    wait_for_attribute_value,
+    run_cmd,
+    post
 )
 from pytest_bdd import (
     given,
@@ -18,16 +23,34 @@ from pytest_bdd import (
 from pytest_dependency import depends
 
 
-@pytest.mark.dependency(name='AD_tank_Dataset')
-@scenario('features/NAS-T1119.feature', 'Create an Active Directory dataset on the tank pool')
-def test_create_an_active_directory_dataset_on_the_tank_pool():
-    """Create an Active Directory dataset on the tank pool."""
+@scenario('features/NAS-T1119.feature', 'Verify an smb share with  AD dataset from a system pool works')
+def test_verify_an_smb_share_with__ad_dataset_from_a_system_pool_works(driver):
+    """Verify an smb share with  AD dataset from a system pool works."""
+    # stop AD after the test is completed.
+    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices)
+    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 7, xpaths.directoryServices.title)
+
+    assert wait_on_element(driver, 5, xpaths.button.settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.settings).click()
+
+    assert wait_on_element(driver, 5, xpaths.activeDirectory.title)
+    assert wait_on_element(driver, 7, xpaths.activeDirectory.enableCheckbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.activeDirectory.enableCheckbox).click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.activeDirectory)
 
 
 @given('the browser is open, the TrueNAS URL and logged in')
-def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
+def the_browser_is_open_the_truenas_url_and_logged_in(driver, root_password, nas_ip, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['tank_pool', 'AD_Setup'], scope='session')
+    depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -44,106 +67,107 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click Storage on the left sidebar.')
-def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
-    """on the Dashboard, click Storagek on the left sidebar.."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+@when('on the dashboard, click on Shares on the left sidebar')
+def on_the_dashboard_click_on_shares_on_the_left_sidebar(driver):
+    """on the dashboard, click on Shares on the left sidebar."""
+    assert wait_on_element(driver, 7, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.shares, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
 
 
-@then('open the Storage page and click on the system 3 dots button, select Add Dataset.')
-def open_the_storage_page_and_click_on_the_system_3_dots_button_select_add_dataset(driver):
-    """open the Storage page and click on the system 3 dots button, select Add Dataset.."""
-    assert wait_on_element(driver, 10, xpaths.storage.title)
-    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
+@then('on the Sharing page, click the Add button on Windows (SMB) Shares')
+def on_the_sharing_page_click_the_add_button_on_windows_smb_shares(driver):
+    """on the Sharing page, click the Add button on Windows (SMB) Shares."""
+    assert wait_on_element(driver, 7, xpaths.sharing.title)
+    assert wait_on_element(driver, 5, xpaths.sharing.smbPanelTitle)
+    assert wait_on_element(driver, 5, xpaths.sharing.smbAddButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
 
 
-@then(parsers.parse('on the Add Dataset page, input the dataset name "{dataset_name}".'))
-def on_the_add_dataset_page_input_the_dataset_name_dataset_name(driver, dataset_name):
-    """on the Add Dataset page, input the dataset name "{dataset_name}".."""
-    assert wait_on_element(driver, 5, xpaths.addDataset.title)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, xpaths.addDataset.select_share_type)
-    driver.find_element_by_xpath(xpaths.addDataset.select_share_type).click()
-    assert wait_on_element(driver, 5, xpaths.addDataset.shareTypeSMB_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.addDataset.shareTypeSMB_option).click()
+@then(parsers.parse('on the Add SMB slide box, set the Path to "{dataset_path}"'))
+def on_the_add_smb_slide_box_set_the_path_to_mntdozermy_ad_dataset(driver, dataset_path):
+    """on the Add SMB slide box, set the Path to "/mnt/dozer/my_ad_dataset"."""
+    global dataset
+    dataset = dataset_path
+    assert wait_on_element(driver, 7, xpaths.smb.addTitle)
+    assert wait_on_element(driver, 5, xpaths.smb.description)
+    assert wait_on_element(driver, 5, xpaths.smb.path, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path).send_keys(dataset_path)
+
+
+@then(parsers.parse('input "{share_name}" as name, then click to enable'))
+def input_myadsmbshare_as_name_then_click_to_enable(driver, share_name):
+    """input "myadsmbshare" as name, then click to enable."""
+    assert wait_on_element(driver, 5, xpaths.smb.name, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.name).click()
+    driver.find_element_by_xpath(xpaths.smb.name).clear()
+    driver.find_element_by_xpath(xpaths.smb.name).send_keys(share_name)
+    assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
+    if not attribute_value_exist(driver, xpaths.checkbox.enable, 'class', 'mat-checkbox-checked'):
+        driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+
+
+@then(parsers.parse('input "{description}" as the description, click Save'))
+def input_my_active_directory_smb_share_as_the_description_click_save(driver, description):
+    """input "My Active Directory SMB share" as the description, click Save."""
+    driver.find_element_by_xpath(xpaths.smb.description).send_keys(description)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
-@then(parsers.parse('click Summit the "{dataset_name}" data should be created.'))
-def click_summit_the_dataset_name_data_should_be_created(driver, dataset_name):
-    """click Summit the "{dataset_name}" data should be created.."""
-    assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
-    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
+@then('if Restart SMB Service box appears, click Restart Service')
+def if_restart_smb_service_box_appears_click_restart_service(driver):
+    """if Restart SMB Service box appears, click Restart Service."""
+    assert wait_on_element(driver, 7, xpaths.popup.smbRestartTitle)
+    assert wait_on_element(driver, 5, xpaths.popup.smbRestartButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smbRestartButton).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
-@then(parsers.parse('click on the "{dataset_name}" 3 dots button, select Edit Permissions.'))
-def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, dataset_name):
-    """click on the "{dataset_name}" 3 dots button, select Edit Permissions.."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
+@then(parsers.parse('"{share_name}" should appear on the Sharing page under SMB'))
+def myadsmbshare_should_appear_on_the_sharing_page_under_smb(driver, share_name):
+    """"myadsmbshare" should appear on the Sharing page under SMB."""
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
+    assert wait_on_element(driver, 5, xpaths.sharing.smbShareName(share_name))
 
 
-@then(parsers.parse('The Edit ACL page should open, select OPEN for Default ACL Option, select "{group_name}" for Group name, check the Apply Group.'))
-def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_group_name_for_group_name_check_the_apply_group(driver, group_name):
-    """The Edit ACL page should open, select OPEN for Default ACL Option, select "group_name" for Group name, check the Apply Group."""
-    assert wait_on_element(driver, 10, xpaths.editAcl.title)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and @class="control"]//input', 'inputable')
-    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').click()
-    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').clear()
-    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys(group_name)
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatingAcl)
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.updatingAcl)
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
-    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Dataset Permissions")]', 'clickable')
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[contains(.,"Group")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[contains(.,"Group")]').click()
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys(group_name)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div//mat-option//span[contains(text(),"Full Control")]', 'clickable')
-    driver.find_element_by_xpath('//div//mat-option//span[contains(text(),"Full Control")]').click()
+@then('verify the SMB service status is RUNNING under Windows (SMB) Shares')
+def verify_the_smb_service_status_is_running_under_windows_smb_shares(driver):
+    """verify the SMB service status is RUNNING under Windows (SMB) Shares."""
+    assert wait_on_element(driver, 5, xpaths.sharing.smbServiceStatus)
 
 
-@then(parsers.parse('click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "{group_name}".'))
-def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_edit_acl_page_verify_that_the_group_name_is_group_name(driver, group_name):
-    """click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "group_name"."""
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
-    assert wait_on_element_disappear(driver, 15, '//mat-spinner[@role="progressbar"]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"tank_acl_dataset")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 10, f'//div[text()="Group - {group_name}"]')
+@then('click on System Settings on the left sidebar, and click Services')
+def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
+    """click on System Settings on the left sidebar, and click Services."""
+    assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
+
+
+@then('on the Service page, verify SMB service is started')
+def on_the_Service_page_verify_smb_service_is_started(driver):
+    """on the Service page, verify SMB service is started."""
+    assert wait_on_element(driver, 7, xpaths.services.title)
+    assert wait_on_element(driver, 5, xpaths.services.smbtoggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smbtoggle, 'class', 'mat-checked')
+
+
+@then(parsers.parse('send a file to "{share_name}" with "{ad_user}"%"{ad_password}"'))
+def send_a_file_to_the_share(driver, nas_ip, share_name, ad_user, ad_password):
+    """send a file to {share}" with "{ad_user}"%"{ad_password}"."""
+    run_cmd('touch testfile.txt')
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
+    run_cmd('rm testfile.txt')
+    assert results['result'], results['output']
+    time.sleep(1)
+
+
+@then('verify that the file is on the share dataset')
+def verify_that_the_file_is_on_the_share_dataset(nas_ip, root_password):
+    """verify that the file is on the share dataset."""
+    file = f'{dataset}/testfile.txt'
+    results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
+    assert results.status_code == 200, results.text
