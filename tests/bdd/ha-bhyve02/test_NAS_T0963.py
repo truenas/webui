@@ -83,29 +83,29 @@ def click_on_edit_beside_permissions_card_title(driver):
 def on_the_edit_acl_page_click_on_add_item(driver):
     """on the Edit ACL page, click on Add Item."""
     assert wait_on_element(driver, 5, xpaths.editAcl.title)
-    assert wait_on_element(driver, 5, '//button[contains(.,"Add Item")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Add Item")]').click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.addItem_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.addItem_button).click()
 
 
 @then('the new Access Control should appear, click on who and select User')
 def the_new_access_control_should_appear_click_on_who_and_select_user(driver):
     """the new Access Control should appear, click on who and select User."""
     assert wait_on_element(driver, 7, '//div[text()="User - ?"]')
-    assert wait_on_element(driver, 7, '//ix-select[@formcontrolname="tag"]//mat-select', 'clickable')
-    driver.find_element_by_xpath('//ix-select[@formcontrolname="tag"]//mat-select').click()
-    assert wait_on_element(driver, 5, '//mat-option[contains(.,"User")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[contains(.,"User")]').click()
+    assert wait_on_element(driver, 7, xpaths.editAcl.who_select, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.who_select).click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.whoUser_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.whoUser_option).click()
 
 
 @then(parsers.parse('in User input, enter "{username}" click the Save Access Control List'))
 def in_user_input_enter_ericbsd_click_the_save_access_control_list(driver, username):
     """in User input, enter "ericbsd" click the Save Access Control List."""
-    assert wait_on_element(driver, 7, '//ix-combobox[@formcontrolname="user"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-combobox[@formcontrolname="user"]//input').send_keys(username)
+    assert wait_on_element(driver, 7, xpaths.editAcl.user_combobox, 'inputable')
+    driver.find_element_by_xpath(xpaths.editAcl.user_combobox).send_keys(username)
     ActionChains(driver).send_keys(Keys.TAB).perform()
-    assert wait_on_element(driver, 7, '//div[text()="User - ericbsd"]')
-    assert wait_on_element(driver, 5, '//button[contains(.,"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
+    assert wait_on_element(driver, 7, xpaths.editAcl.userInAcl(username))
+    assert wait_on_element(driver, 5, xpaths.editAcl.saveAcl_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.saveAcl_button).click()
     assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
 
 
@@ -113,4 +113,4 @@ def in_user_input_enter_ericbsd_click_the_save_access_control_list(driver, usern
 def on_the_permission_card_verify_the_new_acl_item_ericbsd_exist(driver, username):
     """on the Permission card, verify the new ACL item "ericbsd" exist."""
     assert wait_on_element(driver, 5, xpaths.dataset.permission_tile)
-    assert wait_on_element(driver, 5, f'//div[text()="User - {username}"]')
+    assert wait_on_element(driver, 5, xpaths.dataset.permissionUser(username))
