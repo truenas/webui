@@ -94,7 +94,7 @@ def the_root_user_field_should_expand_down_click_the_edit_button(driver):
 
 
 @then('the root user Edit Page should open, input the SSH key and click save')
-def the_root_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver):
+def the_root_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_key):
     """the root user Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
@@ -107,7 +107,7 @@ def the_root_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver)
 
 
 @then('reopen the root user edit page and verify sshkey was saved.')
-def reopen_the_root_user_edit_page_and_verify_sshkey_was_saved(driver):
+def reopen_the_root_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the root user edit page and verify sshkey was saved.."""
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.root_user, 'clickable')
