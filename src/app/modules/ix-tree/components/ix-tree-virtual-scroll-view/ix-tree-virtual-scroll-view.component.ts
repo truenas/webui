@@ -1,4 +1,4 @@
-import { CdkVirtualScrollViewport, DEFAULT_SCROLL_TIME } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   CdkTree, CdkTreeNodeOutletContext,
 } from '@angular/cdk/tree';
@@ -16,13 +16,14 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
+import { auditTime, map } from 'rxjs/operators';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
 import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
 
 export const defaultSize = 48;
+export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
 @UntilDestroy()
 @Component({
@@ -59,15 +60,7 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
     protected changeDetectorRef: ChangeDetectorRef,
   ) {
     super(differs, changeDetectorRef);
-    this.renderNodeChanges$.pipe(
-      debounceTime(DEFAULT_SCROLL_TIME),
-      map((data) => [...data].map((node, index) => this.createNode(node, index))),
-      untilDestroyed(this),
-    ).subscribe((nodes) => {
-      this.nodes$.next(nodes);
-      this._dataSourceChanged.next();
-      this.changeDetectorRef.markForCheck();
-    });
+    this.listenForNodeChanges();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -102,5 +95,17 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
       context,
       nodeDef: node,
     };
+  }
+
+  private listenForNodeChanges(): void {
+    this.renderNodeChanges$.pipe(
+      auditTime(0, scrollFrameScheduler),
+      map((data) => [...data].map((node, index) => this.createNode(node, index))),
+      untilDestroyed(this),
+    ).subscribe((nodes) => {
+      this.nodes$.next(nodes);
+      this._dataSourceChanged.next();
+      this.changeDetectorRef.markForCheck();
+    });
   }
 }
