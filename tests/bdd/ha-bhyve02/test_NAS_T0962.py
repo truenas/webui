@@ -112,7 +112,7 @@ def after_click_on_credentials_on_the_left_sidebar_then_directory_services(drive
 def on_the_directory_services_page_click_setting_on_the_active_directory_card(driver):
     """on the Directory Services page, click Setting on the Active Directory card."""
     assert wait_on_element(driver, 7, xpaths.directoryServices.title)
-    assert wait_on_element(driver, 5, '//h3[text()="Active Directory and LDAP are disabled."]')
+    assert wait_on_element(driver, 5, xpaths.directoryServices.directory_disable_title)
     assert wait_on_element(driver, 5, '//button[contains(.,"Configure Active Directory")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Configure Active Directory")]').click()
 
@@ -255,14 +255,14 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
 def after_click_dataset_on_the_left_sidebar(driver):
     """after click Dataset on the left sidebar."""
     assert wait_on_element(driver, 20, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Datasets"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Datasets"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
 
 
 @then('on the Dataset page, click on the dozer tree and click Add Dataset')
 def on_the_dataset_page_click_on_the_dozer_tree_and_click_add_dataset(driver):
     """on the Dataset page, click on the dozer tree and click Add Dataset."""
-    assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
     assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
     driver.find_element_by_xpath('//ix-dataset-node[contains(.,"dozer")]/div').click()
     assert wait_on_element(driver, 7, '//span[text()="dozer" and contains(@class,"own-name")]')
@@ -339,7 +339,7 @@ def click_the_save_access_control_list_button(driver):
 @then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))
 def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
     """on the Dataset page click on the "my_ad_dataset" tree."""
-    assert wait_on_element(driver, 7, '//h1[text()="Datasets"]')
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
     assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{dataset_name}")]')
     assert wait_on_element(driver, 5, f'//ix-tree-node[contains(.,"{dataset_name}")]')

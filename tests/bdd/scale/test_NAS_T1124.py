@@ -27,8 +27,8 @@ def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
     # Disable the AD
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
     """the Directory Services page should open, then click LDAP settings button."""
     # Verify the page is starting to load
     assert wait_on_element(driver, 5, '//h1[text()="Directory Services"]')
@@ -47,7 +47,7 @@ def test_create_an_smb_share_with_the_tank_acl_dataset(driver):
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
     assert wait_on_element_disappear(driver, 20, '//h1[text()="Start"]')
-    assert wait_on_element(driver, 10, '//h3[text()="Active Directory and LDAP are disabled."]')
+    assert wait_on_element(driver, 10, xpaths.directoryServices.directory_disable_title)
 
 
 @given('the browser is open, the TrueNAS URL and logged in')

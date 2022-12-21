@@ -58,8 +58,8 @@ def you_should_be_on_the_dashboard_click_on_directory_services_in_the_side_menu(
     time.sleep(1)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
 
 
 @then('click on advanced and Kerberos Keytab Add')

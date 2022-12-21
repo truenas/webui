@@ -2,7 +2,6 @@
 """SCALE UI: feature tests."""
 
 import xpaths
-import xpaths
 from function import (
     wait_on_element,
     is_element_present,
@@ -64,8 +63,8 @@ def the_smb_page_loads_click_advanced(driver):
     if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
         assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//h1[contains(text(),"SMB")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.advanced_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_option).click()
 
 
 @then('Enter parameters and click save')
