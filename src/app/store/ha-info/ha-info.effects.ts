@@ -5,7 +5,13 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
-import { failoverLicensedStatusLoaded, haSettingsUpdated, haStatusLoaded } from './ha-info.actions';
+import {
+  failoverLicensedStatusLoaded,
+  haSettingsUpdated,
+  haStatusLoaded,
+  loadUpgradePendingState,
+  upgradePendingStateLoaded,
+} from './ha-info.actions';
 
 @Injectable()
 export class HaInfoEffects {
@@ -29,6 +35,17 @@ export class HaInfoEffects {
           this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
 
           return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
+        }),
+      );
+    }),
+  ));
+
+  loadUpgradePendingState = createEffect(() => this.actions$.pipe(
+    ofType(loadUpgradePendingState),
+    mergeMap(() => {
+      return this.ws.call('failover.upgrade_pending').pipe(
+        map((isUpgradePending) => {
+          return upgradePendingStateLoaded({ isUpgradePending });
         }),
       );
     }),
