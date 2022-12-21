@@ -35,6 +35,7 @@ import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dat
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
+  AppLoaderService,
   DialogService,
   UserService,
   WebSocketService,
@@ -275,6 +276,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private loader: AppLoaderService,
   ) {}
 
   ngOnInit(): void {
@@ -521,11 +523,19 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   }
 
   terminateSession(sessionId: string): void {
-    this.ws.call('auth.terminate_session', [sessionId]).pipe(untilDestroyed(this)).subscribe(() => this.refreshTables());
+    this.loader.open();
+    this.ws.call('auth.terminate_session', [sessionId]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.loader.close();
+      this.refreshTables();
+    });
   }
 
   terminateOtherSessions(): void {
-    this.ws.call('auth.terminate_other_sessions').pipe(untilDestroyed(this)).subscribe(() => this.refreshTables());
+    this.loader.open();
+    this.ws.call('auth.terminate_other_sessions').pipe(untilDestroyed(this)).subscribe(() => {
+      this.loader.close();
+      this.refreshTables();
+    });
   }
 
   refreshTables(): void {
