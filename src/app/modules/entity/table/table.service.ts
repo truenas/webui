@@ -40,6 +40,7 @@ export class TableService {
           table.tableConf.getInOutInfo(res);
         }
         table.dataSource = res as Record<string, unknown>[];
+        table.showCollapse = false;
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
             type: EmptyType.NoPageData,
