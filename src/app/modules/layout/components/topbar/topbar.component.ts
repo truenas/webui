@@ -111,7 +111,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
-      this.listenForUpgradePendingStatus();
+      this.listenForUpgradePendingState();
 
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isFailoverLicensed = isHaLicensed;
@@ -343,7 +343,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
     this.haStatusText = info.hasHa ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
-    this.checkUpgradePending();
+    this.store$.dispatch(loadUpgradePendingState());
   }
 
   getHaStatus(): void {
@@ -377,10 +377,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     } else {
       this.dialogService.info(haStatus, reasons, true);
     }
-  }
-
-  checkUpgradePending(): void {
-    this.store$.dispatch(loadUpgradePendingState());
   }
 
   upgradePendingDialog(): void {
@@ -431,7 +427,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  private listenForUpgradePendingStatus(): void {
+  private listenForUpgradePendingState(): void {
     this.store$.select(selectIsUpgradePending).pipe(untilDestroyed(this)).subscribe((isUpgradePending) => {
       this.upgradeWaitingToFinish = isUpgradePending;
       if (isUpgradePending) {
