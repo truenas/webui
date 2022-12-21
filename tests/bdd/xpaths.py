@@ -99,6 +99,9 @@ class dataset:
     def permissionAtGroup(group_name):
         return f'//div[text()="group@ - {group_name}"]'
 
+    def permissionUser(user_name):
+        return f'//div[text()="User - {user_name}"]'
+
 
 class directoryServices:
     title = '//h1[text()="Directory Services"]'
@@ -135,9 +138,16 @@ class editAcl:
     group_combobox = '//ix-combobox[@formcontrolname="ownerGroup"]//input'
     gourpApply_checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
     saveAcl_button = '//button[contains(*/text(),"Save Access Control List")]'
+    addItem_button = '//button[contains(.,"Add Item")]'
+    who_select = '//ix-select[@formcontrolname="tag"]//mat-select'
+    whoUser_option = '//mat-option[contains(.,"User")]'
+    user_combobox = '//ix-combobox[@formcontrolname="user"]//input'
 
     def combobox_option(option):
         return f'//mat-option[contains(.,"{option}")]'
+
+    def userInAcl(user_name):
+        return f'//div[text()="User - {user_name}"]'
 
 
 class globalConfiguration:
@@ -187,7 +197,7 @@ class popup:
     pleaseWait = '//h6[contains(.,"Please wait")]'
     activeDirectory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
-    updatingAcl = '//h1[text()="Updating Dataset ACL"]'
+    updatingAcl = '//h1[text()="Updating ACL"]'
 
 
 class progress:
