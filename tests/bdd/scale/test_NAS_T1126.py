@@ -66,7 +66,7 @@ def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select
 @then(parsers.parse('the Dataset window should open, input dataset name "{dataset_name}" and click save'))
 def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_save(driver, dataset_name):
     """the Dataset window should open, input dataset name "{dataset_name}" and click save."""
-    assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
+    assert wait_on_element(driver, 5, xpaths.addDataset.title)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)

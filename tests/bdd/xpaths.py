@@ -8,6 +8,13 @@ class activeDirectory:
     ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
 
 
+class addDataset:
+    title = '//h3[text()="Add Dataset"]'
+    name_textarea = '//div[@id="name"]//textarea'
+    select_share_type = '//mat-select[@ix-auto="select__Share Type"]'
+    shareTypeSMB_option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
+
+
 class addUser:
     title = '//h3[text()="Add User"]'
     edit_title = '//h3[text()="Edit User"]'
@@ -68,6 +75,8 @@ class dashboard:
 class dataset:
     title = '//h1[text()="Datasets"]'
     add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
+    permission_tile = '//h3[text()="Permissions"]'
+    permission_edit_button = '//a[*/text()=" Edit "]'
 
     def pool_tree_name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
@@ -77,6 +86,18 @@ class dataset:
 
     def pool_tree(pool_name):
         return f'//ix-dataset-node[contains(.,"{pool_name}")]/div'
+
+    def dataset_name(dataset_name):
+        return f'//span[contains(text(),"{dataset_name}")]'
+
+    def dataset_tree(dataset_name):
+        return f'//ix-tree-node[contains(.,"{dataset_name}")]'
+
+    def permissionAtOwner(user_name):
+        return f'//div[text()="owner@ - {user_name}"]'
+
+    def permissionAtGroup(group_name):
+        return f'//div[text()="group@ - {group_name}"]'
 
 
 class directoryServices:
@@ -105,6 +126,18 @@ class disks:
 
     def confirm_box_title(disk):
         return f'//h1[contains(.,"Wipe Disk {disk}")]'
+
+
+class editAcl:
+    title = '//h1[text()="Edit ACL"]'
+    owner_combobox = '//ix-combobox[@formcontrolname="owner"]//input'
+    ownerApply_checkbox = '//mat-checkbox[contains(.,"Apply Owner")]'
+    group_combobox = '//ix-combobox[@formcontrolname="ownerGroup"]//input'
+    gourpApply_checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
+    saveAcl_button = '//button[contains(*/text(),"Save Access Control List")]'
+
+    def combobox_option(option):
+        return f'//mat-option[contains(.,"{option}")]'
 
 
 class globalConfiguration:
@@ -154,6 +187,7 @@ class popup:
     pleaseWait = '//h6[contains(.,"Please wait")]'
     activeDirectory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
+    updatingAcl = '//h1[text()="Updating Dataset ACL"]'
 
 
 class progress:
