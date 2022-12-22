@@ -128,11 +128,11 @@ def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
     assert wait_on_element(driver, 5, xpaths.sharing.smbServiceStatus)
 
 
-@then(parsers.parse('send a file to the share with ip/"{ldapsmbshare}" and "{ldap_user}" and "{ldap_password}"'))
-def send_a_file_to_the_share_with_ipldapsmbshare_and_eturgeon_and_need_4_testing(ldapsmbshare, ldap_user, ldap_password, nas_ip):
-    """send a file to the share with ip/ldapsmbshare and "eturgeon" and "Need_4_testing"."""
+@then(parsers.parse('send a file to the share with ip/"{smb_share}" and "{ldap_user}" and "{ldap_password}"'))
+def send_a_file_to_the_share(smb_share, ldap_user, ldap_password, nas_ip):
+    """send a file to the share with ip/{smb_share} and "{ldap_user}" and "{ldap_password}""."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{ldapsmbshare} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smb_share} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 
