@@ -2,7 +2,6 @@
 """SCALE UI: feature tests."""
 
 import pytest
-import time
 import xpaths
 from function import (
     wait_on_element,

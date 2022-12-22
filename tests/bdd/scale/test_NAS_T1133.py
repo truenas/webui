@@ -25,7 +25,6 @@ from pytest_dependency import depends
 @scenario('features/NAS-T1133.feature', 'Create a wheel group smb share and verify only wheel group can send files')
 def test_create_a_wheel_group_smb_share_and_verify_only_wheel_group_can_send_files():
     """Create a wheel group smb share and verify only wheel group can send files."""
-    pass
 
 
 @given('the browser is open, the TrueNAS URL and logged in')

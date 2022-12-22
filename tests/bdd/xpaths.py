@@ -150,6 +150,8 @@ class editAcl:
     who_select = '//ix-select[@formcontrolname="tag"]//mat-select'
     whoUser_option = '//mat-option[contains(.,"User")]'
     user_combobox = '//ix-combobox[@formcontrolname="user"]//input'
+    builtinUsers_cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
+    builtinAdministrators_cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
 
     def combobox_option(option):
         return f'//mat-option[contains(.,"{option}")]'
