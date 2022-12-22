@@ -71,6 +71,7 @@
     }
 
     &.bulk-list {
+      display: block;
       max-height: 50vh;
       overflow-y: auto;
       padding-bottom: 16px;

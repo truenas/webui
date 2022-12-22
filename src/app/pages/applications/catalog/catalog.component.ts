@@ -4,7 +4,6 @@ import {
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Subscription } from 'rxjs';
 import {
@@ -75,7 +74,6 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogService: DialogService,
     private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog,
-    private translate: TranslateService,
     private ws: WebSocketService,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
