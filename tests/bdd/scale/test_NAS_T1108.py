@@ -97,7 +97,7 @@ def click_on_the_my_ad_dataset_tree_click_on_edit_beside_permissions(driver, dat
     driver.find_element_by_xpath(xpaths.dataset.permission_edit_button).click()
 
 
-@then(parsers.parse('on the Edit ACL page, input "{user_name}" for User name'))
+@then(parsers.parse('on the Edit ACL page, input "{user_name}" for Owner, click Apply Owner'))
 def on_the_edit_acl_input_the_user_name(driver, user_name):
     """On the Edit ACL, input "{user_name}" for User name."""
     assert wait_on_element(driver, 5, xpaths.editAcl.title)
@@ -110,7 +110,7 @@ def on_the_edit_acl_input_the_user_name(driver, user_name):
     driver.find_element_by_xpath(xpaths.editAcl.ownerApply_checkbox).click()
 
 
-@then(parsers.parse('input "{group_name}" for Group name'))
+@then(parsers.parse('input "{group_name}" for Owner Group, click Apply Group'))
 def input_the_group_name(driver, group_name):
     """input "{group_name}" for Group name."""
     assert wait_on_element(driver, 5, xpaths.editAcl.group_combobox, 'inputable')
