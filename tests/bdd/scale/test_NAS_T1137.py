@@ -51,16 +51,16 @@ def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(drive
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.shares, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
 
 
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
+    assert wait_on_element(driver, 7, xpaths.sharing.smbAddButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
     assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')
 
@@ -71,19 +71,19 @@ def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name
     time.sleep(1)
     global smb_path
     smb_path = path
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path_input).clear()
+    driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(path)
+    assert wait_on_element(driver, 5, xpaths.smb.name_input)
+    driver.find_element_by_xpath(xpaths.smb.name_input).clear()
+    driver.find_element_by_xpath(xpaths.smb.name_input).send_keys(smbname)
+    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
+        driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
+    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 5, xpaths.smb.description_input)
+    driver.find_element_by_xpath(xpaths.smb.description_input).clear()
+    driver.find_element_by_xpath(xpaths.smb.description_input).send_keys(description)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)

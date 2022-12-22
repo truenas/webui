@@ -69,8 +69,8 @@ def input_the_group_name_and_click_save(driver):
     assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="name"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').clear()
     driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').send_keys('qetest')
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('verify the group was added')

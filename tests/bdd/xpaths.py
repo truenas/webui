@@ -258,9 +258,9 @@ class sharing:
 
 class smb:
     addTitle = '//h3[text()="Add SMB"]'
-    description = '//ix-input[@formcontrolname="comment"]//input'
-    path = '//ix-explorer[@formcontrolname="path"]//input'
-    name = '//ix-input[@formcontrolname="name"]//input'
+    description_input = '//ix-input[@formcontrolname="comment"]//input'
+    path_input = '//ix-explorer[@formcontrolname="path"]//input'
+    name_input = '//ix-input[@formcontrolname="name"]//input'
 
 
 class storage:

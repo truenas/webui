@@ -122,8 +122,8 @@ def check_the_enable_sudo_box_and_click_save(driver):
     assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
     assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'clickable')
     driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox').click()
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     # give middleware time to actually do its work
     time.sleep(4)
 
