@@ -6,12 +6,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { Acl } from 'app/interfaces/acl.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 describe('SaveAsPresetModalComponent', () => {
   let spectator: Spectator<SaveAsPresetModalComponent>;
@@ -24,6 +26,8 @@ describe('SaveAsPresetModalComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      DatasetAclEditorStore,
+      mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockWebsocket([
@@ -35,6 +39,7 @@ describe('SaveAsPresetModalComponent', () => {
           { name: 'b', acltype: AclType.Posix1e, acl: [] },
           { name: 'f', acltype: AclType.Nfs4, acl: [] },
         ]),
+        mockCall('filesystem.acltemplate.create'),
       ]),
       {
         provide: MAT_DIALOG_DATA,
@@ -89,11 +94,16 @@ describe('SaveAsPresetModalComponent', () => {
   it('creates new preset after \'Save\' button click', async () => {
     const actionsInput = await loader.getHarness(IxInputHarness);
     await actionsInput.setValue('New Preset');
+    spectator.component.acl = { acl: [], acltype: AclType.Posix1e } as Acl;
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    // TODO: Check sending a request to save a new preset
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.create', [{
+      name: 'New Preset',
+      acltype: 'POSIX1E',
+      acl: [],
+    }]);
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
