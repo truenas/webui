@@ -54,7 +54,7 @@
   "Synchronize Time": "同步线程",
   "Synchronize time": "同步线程",
   "System dataset updated.": "系统数据集已升级。",
-  "The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?": "这些组件 { n, plural, one {application} other {# applications} } 将被升级，您确定吗？",
+  "The following { n, plural, one {application} other {# applications} } will be upgraded. Are you sure you want to proceed?": "这{ n, plural, one {# 个应用} other {# 个应用} } 将被升级，您确定吗？",
   "There are no records to show.": "没有可供展示的记录。",
   "This share is configured through TrueCommand": "此共享通过TrueCommand配置",
   "Updating ACL": "正在升级ACL",
