@@ -27,7 +27,7 @@ def test_add_an_acl_item_and_verify_is_preserve_on_the_ad_dataset():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    #depends(request, ['AD_Setup'], scope='session')
+    depends(request, ['AD_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
