@@ -63,7 +63,8 @@ class button:
 
 
 class checkbox:
-    enable = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
+    enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
+    enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
 
 
@@ -107,6 +108,7 @@ class directoryServices:
     title = '//h1[text()="Directory Services"]'
     directory_disable_title = '//h3[text()="Active Directory and LDAP are disabled."]'
     configureAD_button = '//button[contains(.,"Configure Active Directory")]'
+    configureLdap_button = '//button[contains(.,"Configure LDAP")]'
     showButton = '//button[contains(*/text(),"Show")]'
     warningDialog = '//h1[text()="Warning"]'
     deleteAD02RealmButton = '//tr[contains(.,"AD02")]//button'
@@ -114,6 +116,11 @@ class directoryServices:
     deleteConfirmCheckbox = '//mat-checkbox[@name="confirm_checkbox"]'
     deleteConfirmButton = '//button[@id="confirm-dialog__action-button"]'
     deleteADAccountButton = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
+    ldapCard_title = '//mat-card//h3[text()="LDAP"]'
+    ldapStatus = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
+
+    def ldapHostname(hostname):
+        return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
 
 
 class disks:
@@ -168,6 +175,17 @@ class interface:
     netmask_option = '//mat-option[contains(.,"24")]'
 
 
+class ldap():
+    title = '//h3[@class="ix-formtitle" and text()="LDAP"]'
+    hostname_input = '//ix-chips[@formcontrolname="hostname"]//input'
+    basedn_input = '//ix-input[@formcontrolname="basedn"]//input'
+    binddn_input = '//ix-input[@formcontrolname="binddn"]//input'
+    bindpw_input = '//ix-input[@formcontrolname="bindpw"]//input'
+    sambaSchema_checkbox = '//ix-checkbox[@formcontrolname="has_samba_schema"]//mat-checkbox'
+    encryptionMode_select = '//ix-select[@formcontrolname="ssl"]//mat-select'
+    encryptionModeOn_option = '//mat-option[contains(.,"ON")]'
+
+
 class login:
     user_input = '//input[@data-placeholder="Username"]'
     password_input = '//input[@data-placeholder="Password"]'
@@ -198,6 +216,7 @@ class popup:
     activeDirectory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
     updatingAcl = '//h1[text()="Updating ACL"]'
+    settingLdap = '//h1[text()="Setting up LDAP"]'
 
 
 class progress:
