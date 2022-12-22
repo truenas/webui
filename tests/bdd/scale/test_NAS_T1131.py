@@ -45,85 +45,118 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('you should be on the dashboard, click on storage')
-def you_should_be_on_the_dashboard_click_on_storage(driver):
-    """you should be on the dashboard, click on storage."""
+@when('on the Dashboard, click Dataset on the left sidebar')
+def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
+    """on the Dashboard, click Dataset on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
 
 
-@then('click on Storage in the side menu and click the tank three dots and add dataset')
-def click_on_storage_in_the_side_menu_and_click_the_tank_three_dots_and_add_dataset(driver):
-    """click on Storage in the side menu and click the tank three dots and add dataset."""
-    assert wait_on_element(driver, 10, xpaths.storage.title)
-    assert wait_on_element(driver, 10, '//mat-panel-title[contains(text(),"tank")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
+@then('on the Dataset page, click on the system pool tree and click Add Dataset')
+def on_the_dataset_page_click_on_the_system_pool_tree_and_click_add_dataset(driver):
+    """on the Dataset page, click on the system pool tree and click Add Dataset."""
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('system'))
+    driver.find_element_by_xpath(xpaths.dataset.pool_tree('system')).click()
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_selected('system'))
+    assert wait_on_element(driver, 5, xpaths.dataset.add_dataset_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.dataset.add_dataset_button).click()
 
 
-@then(parsers.parse('the add datasetpage should open, input "{dataset_name}" for the naem and click save'))
-def the_add_datasetpage_should_open_input_wheel_dataset_for_the_naem_and_click_save(driver, dataset_name):
-    """the add datasetpage should open, input "{dataset_name}" for the naem and click save."""
+@then(parsers.parse('on the Add Dataset slide, input Name "{dataset_name}" and Share Type SMB'))
+def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_name):
+    """on the Add Dataset slide, input Name "my_ad_dataset" and Share Type SMB."""
     assert wait_on_element(driver, 5, xpaths.addDataset.title)
-    assert wait_on_element(driver, 5, xpaths.button.save)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
+    assert wait_on_element(driver, 5, xpaths.addDataset.name_textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.addDataset.name_textarea).clear()
+    driver.find_element_by_xpath(xpaths.addDataset.name_textarea).send_keys(dataset_name)
     assert wait_on_element(driver, 5, xpaths.addDataset.select_share_type)
     driver.find_element_by_xpath(xpaths.addDataset.select_share_type).click()
     assert wait_on_element(driver, 5, xpaths.addDataset.shareTypeSMB_option, 'clickable')
     driver.find_element_by_xpath(xpaths.addDataset.shareTypeSMB_option).click()
+
+
+@then(parsers.parse('click Save the "{dataset_name}" data should be created'))
+def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
+    """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_name(dataset_name))
 
 
-@then('the wheel_dataset should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit')
-def the_wheel_dataset_should_be_created_click_the_dataset_three_dots_and_select_view_permissions_then_click_the_pencil_to_edit(driver):
-    """the wheel_dataset should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit."""
-    assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
-    assert wait_on_element(driver, 10, '//mat-panel-title[contains(text(),"tank")]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"wheel_dataset")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"wheel_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"wheel_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
+@then(parsers.parse('click on the "{dataset_name}" tree, click on Edit beside Permissions'))
+def click_on_the_my_ad_dataset_tree_click_on_edit_beside_permissions(driver, dataset_name):
+    """click on the "my_ad_dataset" tree, click on Edit beside Permissions."""
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_tree(dataset_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_tree(dataset_name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_tile)
+    assert wait_on_element(driver, 5, xpaths.dataset.permission_edit_button)
+    driver.find_element_by_xpath(xpaths.dataset.permission_edit_button).click()
 
 
-@then('the Edit Permissions page should open, select root for User, click on the Apply User checkbox, select wheel for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button')
-def the_edit_permissions_page_should_open_select_root_for_user_click_on_the_apply_user_checkbox_select_wheel_for_group_name_click_on_the_apply_group_checkbox_click_on_group_write_access_and_click_the_save_button(driver):
-    """the Edit Permissions page should open, select root for User, click on the Apply User checkbox, select wheel for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button."""
+@then(parsers.parse('on the Edit ACL page, input "{user_name}" for Owner, click Apply Owner'))
+def on_the_edit_acl_input_the_user_name(driver, user_name):
+    """On the Edit ACL, input "{user_name}" for User name."""
     assert wait_on_element(driver, 5, xpaths.editAcl.title)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.owner_combobox, 'inputable')
+    driver.find_element_by_xpath(xpaths.editAcl.owner_combobox).clear()
+    driver.find_element_by_xpath(xpaths.editAcl.owner_combobox).send_keys(user_name)
+    assert wait_on_element(driver, 5, xpaths.editAcl.combobox_option(user_name), 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.combobox_option(user_name)).click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.ownerApply_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.ownerApply_checkbox).click()
+
+
+@then(parsers.parse('input "{group_name}" for Owner Group, click Apply Group'))
+def input_the_group_name(driver, group_name):
+    """input "{group_name}" for Group name."""
+    assert wait_on_element(driver, 5, xpaths.editAcl.group_combobox, 'inputable')
+    driver.find_element_by_xpath(xpaths.editAcl.group_combobox).clear()
+    driver.find_element_by_xpath(xpaths.editAcl.group_combobox).send_keys(group_name)
+    assert wait_on_element(driver, 5, xpaths.editAcl.combobox_option(group_name), 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.combobox_option(group_name)).click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.gourpApply_checkbox)
+    driver.find_element_by_xpath(xpaths.editAcl.gourpApply_checkbox).click()
+
+
+@then('clear built in user and administrators and click the Save Access Control List button')
+def clear_built_in_user_and_administrators_and_click_the_save_access_control_list_button(driver):
+    """clear built in user and administrators and click the Save Access Control List button."""
+    assert wait_on_element(driver, 5, xpaths.editAcl.builtinUsers_cancel, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.builtinUsers_cancel).click()
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.builtinAdministrators_cancel, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.builtinAdministrators_cancel).click()
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+
+    assert wait_on_element(driver, 5, xpaths.editAcl.saveAcl_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.saveAcl_button).click()
+    time.sleep(1)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
 
 
-@then('you should be returned to the pool list page, click on the wheel_dataset three dots button, view and edit Permissions, and the Edit Permissions page should open')
-def you_should_be_returned_to_the_pool_list_page_click_on_the_wheel_dataset_three_dots_button_view_and_edit_permissions_and_the_edit_permissions_page_should_open(driver):
-    """you should be returned to the pool list page, click on the wheel_dataset three dots button, view and edit Permissions, and the Edit Permissions page should open."""
-    assert wait_on_element(driver, 10, '//h1[text()="Storage"]')
-    assert wait_on_element(driver, 10, '//mat-panel-title[contains(text(),"tank")]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"wheel_dataset")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"wheel_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"wheel_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+@then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))
+def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
+    """on the Dataset page click on the "my_ad_dataset" tree."""
+    assert wait_on_element(driver, 7, xpaths.dataset.title)
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('system'))
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_name(dataset_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_tree(dataset_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_tree(dataset_name)).click()
 
 
-@then('verify that the user is root and the group is wheel')
-def verify_that_the_user_is_root_and_the_group_is_wheel(driver):
-    """verify that the user is root and the group is wheel."""
-    assert wait_on_element(driver, 5, '//div[contains(text(),"owner@ - root")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"group@ - root")]')
-    assert not is_element_present(driver, '//div[contains(text(),"Group - builtin_users")]')
+@then(parsers.parse('on the permission card, verify the user is "{user_name}"'))
+def on_the_permission_card_verify_the_user_is_user_name(driver, user_name):
+    """on the permission card, verify the user is "{user_name}"."""
+    element = driver.find_element_by_xpath(xpaths.dataset.permission_tile)
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 5, xpaths.dataset.permissionAtOwner(user_name))
+
+
+@then(parsers.parse('verify the group name is "{group_name}"'))
+def verify_the_group_name_is_group_name(driver, group_name):
+    """verify the group name is "{group_name}"."""
+    assert wait_on_element(driver, 5, xpaths.dataset.permissionAtGroup(group_name))

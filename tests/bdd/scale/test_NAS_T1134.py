@@ -92,11 +92,11 @@ def the_ericbsd_dataset_should_be_created_click_the_dataset_three_dots_and_selec
 def the_edit_permissions_page_should_open_select_ericbsd_for_user_click_on_the_apply_user_checkbox_select_ericbbsd_for_group_name_click_on_the_apply_group_checkbox_click_on_group_write_access_and_click_the_save_button(driver, user, group):
     """the Edit Permissions page should open, select "{user}" for User, click on the Apply User checkbox, select {group} for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button."""
     assert wait_on_element(driver, 5, xpaths.editAcl.title)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.builtinUsers_cancel, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.builtinUsers_cancel).click()
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]').click()
+    assert wait_on_element(driver, 5, xpaths.editAcl.builtinAdministrators_cancel, 'clickable')
+    driver.find_element_by_xpath(xpaths.editAcl.builtinAdministrators_cancel).click()
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//div[contains(.,"Owner:") and contains(@class,"control")]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Owner:") and contains(@class,"control")]//input').clear()
