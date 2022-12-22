@@ -309,13 +309,6 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
-
-      // Subscribe to all events by default
-      this.send({
-        id: UUID.UUID(),
-        name: '*',
-        msg: OutgoingApiMessageType.Sub,
-      });
     } else {
       this.loggedIn = false;
       this.authStatus$.next(this.loggedIn);
