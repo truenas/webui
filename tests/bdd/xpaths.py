@@ -28,6 +28,7 @@ class addUser:
     email_input = '//ix-input[@formcontrolname="email"]//input'
     auxiliaryGroups_select = '//ix-select[@formcontrolname="groups"]//mat-select'
     rootGroup_option = '//mat-option[contains(.,"root")]'
+    wheelGroup_option = '//mat-option[contains(.,"wheel")]'
     qatestGroup_option = '//mat-option[contains(.,"qatest")]'
     home_input = '//ix-explorer[@formcontrolname="home"]//input'
     password_disabled_slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
