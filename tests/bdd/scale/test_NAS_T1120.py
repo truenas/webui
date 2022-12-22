@@ -104,8 +104,8 @@ def input_myadsmbshare_as_name_then_click_to_enable(driver, share_name):
     driver.find_element_by_xpath(xpaths.smb.name).click()
     driver.find_element_by_xpath(xpaths.smb.name).clear()
     driver.find_element_by_xpath(xpaths.smb.name).send_keys(share_name)
-    assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enable, 'class', 'mat-checkbox-checked'):
+    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
+    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.checkbox.enable).click()
 
 
