@@ -107,7 +107,7 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
     # save
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('verify that the file was accepted and utilized')

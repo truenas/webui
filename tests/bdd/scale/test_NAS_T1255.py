@@ -75,8 +75,8 @@ def input_the_group_name_gid_enable_duplicate_gids_and_click_save(driver):
     assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox', 'clickable')
     driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox').click()
 
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('verify the group was added')
@@ -110,8 +110,8 @@ def input_the_duplicate_group_name_gid_enable_duplicate_gids_and_click_save(driv
     assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox', 'clickable')
     driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox').click()
 
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('verify the duplicate group was added')
