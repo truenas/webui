@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacyProgressBarHarness as MatProgressBarHarness } from '@angular/material/legacy-progress-bar/testing';
 import {
   byText, createComponentFactory, mockProvider, Spectator,

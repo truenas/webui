@@ -15,4 +15,18 @@
   --primary-lighter: var(--primary);
   --font-family-header: 'Titillium Web', sans-serif;
   --font-family-body: 'IBM Plex Sans', sans-serif;
+  --mdc-dialog-subhead-color: var(--fg1);
+  --mdc-dialog-supporting-text-color: var(--fg2);
+  --mdc-dialog-supporting-text-font: 'IBM Plex Sans', 'Roboto' , 'Helvetica Neue' ,sans-serif;
+  --mdc-dialog-supporting-text-size: 0.875rem;
+  --mdc-dialog-subhead-size: 1.42rem;
+  --mdc-dialog-subhead-font: 'Roboto', 'Helvetica Neue', sans-serif;
+  --mdc-dialog-supporting-text-weight: 400;
+  --mdc-dialog-subhead-weight: 600;
+  --mdc-dialog-supporting-text-line-height: 1.65;
+  --mdc-dialog-subhead-line-height: 1.65;
+  --mdc-dialog-supporting-text-tracking: 0;
+  --mdc-dialog-container-shape: 4px;
+  --mdc-dialog-subhead-tracking: 0;
+  --mdc-shape-medium: 4px;
 }

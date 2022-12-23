@@ -13,8 +13,8 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';

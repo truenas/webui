@@ -1,7 +1,7 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
