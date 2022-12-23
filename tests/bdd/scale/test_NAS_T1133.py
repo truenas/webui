@@ -57,7 +57,7 @@ def you_should_be_on_the_dashboard_click_on_shares_on_the_side_menu(driver):
 @then('on the Shares page click on the SMB Add button')
 def on_the_shares_page_click_on_the_smb_add_button(driver):
     """on the Shares page click on the SMB Add button."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
     assert wait_on_element(driver, 7, xpaths.sharing.smbAddButton, 'clickable')
     driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
 
@@ -67,7 +67,7 @@ def on_the_smb_add_set_path_to_mnttankwheel_dataset(driver, path):
     """on the SMB Add set Path to "/mnt/tank/wheel_dataset"."""
     global dataset_path
     dataset_path = path
-    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
+    assert wait_on_element(driver, 5, xpaths.smb.addTitle)
     assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.path_input).clear()
     driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(path)

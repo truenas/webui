@@ -178,10 +178,10 @@ def create_smb_share_with_path_tankrtacltest1share(driver, path):
     """Create SMB share with path tank/rt-acl-test-1/share."""
     assert wait_on_element(driver, 10, xpaths.sideMenu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
     assert wait_on_element(driver, 7, xpaths.sharing.smbAddButton, 'clickable')
     driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
-    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
+    assert wait_on_element(driver, 5, xpaths.smb.addTitle)
     global smb_path
     smb_path = path
     assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
@@ -258,7 +258,7 @@ def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(d
     """Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1."""
     assert wait_on_element(driver, 10, xpaths.sideMenu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]', 'clickable')
     driver.find_element_by_xpath('//mat-panel-title//h5//a[contains(.,"(SMB)")]').click()
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]', 'clickable')
