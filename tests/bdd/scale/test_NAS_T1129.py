@@ -45,7 +45,7 @@ def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection(dri
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    #depends(request, ['LDAP_Dataset'], scope='session')
+    depends(request, ['LDAP_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)

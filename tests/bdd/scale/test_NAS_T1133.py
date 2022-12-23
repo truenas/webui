@@ -30,7 +30,7 @@ def test_create_a_wheel_group_smb_share_and_verify_only_wheel_group_can_send_fil
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    #depends(request, ['755_dataset'], scope='session')
+    depends(request, ['755_dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -74,7 +74,7 @@ def on_the_smb_add_set_path_to_mnttankwheel_dataset(driver, path):
     driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(path)
 
 
-@then(parsers.parse('input "{share_name}" as name, Click to enable'))
+@then(parsers.parse('input "{share_name}" as name, click to enable'))
 def input_wheelsmbshare_as_name_click_to_enable(driver, share_name):
     """input "wheelsmbshare" as name, Click to enable."""
     assert wait_on_element(driver, 5, xpaths.smb.name_input, 'inputable')
