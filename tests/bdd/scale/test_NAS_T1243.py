@@ -54,7 +54,7 @@ def the_pools_page_appears_click_the_three_dots_for_the_encrypted_pool(driver):
     """the pools page appears click the three dots for the encrypted pool."""
     assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
+    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
 
 
 @then('click encryption Options')
@@ -109,7 +109,7 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
 def lock_the_pool_when_the_pool_page_reloads(driver):
     """lock the pool when the pool page reloads."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
+    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Lock"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Lock Dataset encrypted_tank")]')
@@ -128,7 +128,7 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
 def unlock_the_pool(driver):
     """unlock the pool."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
+    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Unlock"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')

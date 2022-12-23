@@ -56,8 +56,8 @@ def you_are_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
 @then(parsers.parse('Create 1st dataset {dataset_name}'))
 def create_1st_dataset_rtacltest1(driver, dataset_name):
     """Create 1st dataset rt-acl-test-1."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
+    assert wait_on_element(driver, 5, xpaths.storage.manageDataset_button('tank'), 'clickable')
+    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
     assert wait_on_element(driver, 5, xpaths.addDataset.title)
