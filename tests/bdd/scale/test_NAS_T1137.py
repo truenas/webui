@@ -45,9 +45,9 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('you should be on the dashboard, click on Sharing then Windows Shares(SMB)')
-def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(driver):
-    """you should be on the dashboard, click on Sharing then Windows Shares(SMB)."""
+@when('you should be on the dashboard, click on Shares on the side menu')
+def you_should_be_on_the_dashboard_click_on_shares_on_the_side_menu(driver):
+    """you should be on the dashboard, click on Shares on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
