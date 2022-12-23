@@ -54,7 +54,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
     """on the Dashboard, get the ssh host key."""
     global hostkey_before
-    assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     results = ssh_cmd('ssh-keyscan 127.0.0.1', 'root', root_password, nas_ip)
     assert results['result'], results['output']
     hostkey_before = results['output']
@@ -91,7 +91,7 @@ def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
 @then('on the Dashboard click on Systems Settings then Services')
 def on_the_dashboard_click_on_systems_settings_then_services(driver):
     """on the Dashboard click on Systems Settings then Services."""
-    assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 7, '//a[@name="System_Settings-menu"]', 'clickable')
     driver.find_element_by_xpath('//a[@name="System_Settings-menu"]').click()
     assert wait_on_element(driver, 5, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
