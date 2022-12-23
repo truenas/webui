@@ -15,6 +15,12 @@ class addDataset:
     shareTypeSMB_option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
 
 
+class addKerberosKeytab:
+    title = '//h3[text()="Add Kerberos Keytab"]'
+    name_input = '//ix-input[@formcontrolname="name"]//input'
+    file_input = '//ix-file-input[@formcontrolname="file"]//input'
+
+
 class addUser:
     title = '//h3[text()="Add User"]'
     edit_title = '//h3[text()="Edit User"]'
@@ -126,6 +132,7 @@ class directoryServices:
     deleteADAccountButton = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
     ldapCard_title = '//mat-card//h3[text()="LDAP"]'
     ldapStatus = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
+    kerberosKeytabAdd_button = '//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]'
 
     def ldapHostname(hostname):
         return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
