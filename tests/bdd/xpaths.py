@@ -44,6 +44,12 @@ class addUser:
     sshpubkey_textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
 
 
+class addZvol:
+    title = '//h3[text()="Add Zvol"]'
+    name_input = '//ix-input[@formcontrolname="name"]//input'
+    size_input = '//ix-input[@formcontrolname="volsize"]//input'
+
+
 class advanced:
     title = '//h1[contains(.,"Advanced")]'
     systemDatasetPool_card = '//h3[text()="System Dataset Pool"]'
@@ -78,7 +84,8 @@ class dataset:
     title = '//h1[text()="Datasets"]'
     add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
     permission_tile = '//h3[text()="Permissions"]'
-    permission_edit_button = '//a[*/text()=" Edit "]'
+    permission_edit_button = '//button[normalize-space(span/text())="Save"]'
+    addZvol_button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
 
     def pool_tree_name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
@@ -269,6 +276,9 @@ class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
     create_pool_button = '//a[contains(.,"Create Pool")]'
     disks_button = '//a[*/text()=" Disks "]'
+
+    def manageDataset_button(pool_name):
+        return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
 
 
 class system_dataset:

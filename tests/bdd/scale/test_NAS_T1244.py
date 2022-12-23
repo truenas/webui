@@ -54,7 +54,7 @@ def you_are_on_the_dashboard_click_storage_on_the_side_menu(driver):
 def lock_the_pool_when_the_pool_page_reloads(driver):
     """lock the pool when the pool page reloads."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
+    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Lock"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="Lock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Lock Dataset encrypted_tank")]')
@@ -74,7 +74,7 @@ def enter_1234abcd_and_verify_that_an_error_shows(driver):
     """enter 1234abcd and verify that an error shows."""
 
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
+    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Unlock"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
