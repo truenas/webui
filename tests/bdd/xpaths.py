@@ -213,8 +213,10 @@ class pool_manager:
 
 
 class popup:
-    smbRestartTitle = '//h3[text()="Restart SMB Service"]'
-    smbRestartButton = '//button[contains(*/text(),"Restart Service")]'
+    smbRestart_title = '//h3[text()="Restart SMB Service"]'
+    smbRestart_button = '//button[contains(*/text(),"Restart Service")]'
+    smbStart_title = '//h1[text()="Start SMB Service"]'
+    enableService_button = '//button[contains(*/text(),"Enable Service")]'
     pleaseWait = '//h6[contains(.,"Please wait")]'
     activeDirectory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'

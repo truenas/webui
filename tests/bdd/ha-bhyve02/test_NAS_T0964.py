@@ -151,9 +151,9 @@ def input_my_active_directory_smb_share_as_the_description_click_save(driver, de
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smbRestartTitle)
-    assert wait_on_element(driver, 5, xpaths.popup.smbRestartButton, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smbRestartButton).click()
+    assert wait_on_element(driver, 7, xpaths.popup.smbRestart_title)
+    assert wait_on_element(driver, 5, xpaths.popup.smbRestart_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smbRestart_button).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
