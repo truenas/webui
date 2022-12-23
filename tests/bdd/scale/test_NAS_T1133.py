@@ -10,7 +10,7 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    ssh_cmd
+    post
 )
 from pytest_bdd import (
     given,
@@ -30,7 +30,7 @@ def test_create_a_wheel_group_smb_share_and_verify_only_wheel_group_can_send_fil
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['755_dataset'], scope='session')
+    #depends(request, ['755_dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -47,118 +47,102 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('add the user to group root for later tests')
-def add_the_user_to_group_root_for_later_tests(driver):
-    """add the user to group root for later tests."""
-    pass
-
-
-@then('The Windows Shares(SMB) page should open, Click Add')
-def the_windows_sharessmb_page_should_open_click_add(driver):
-    """The Windows Shares(SMB) page should open, Click Add."""
+@when('you should be on the dashboard, click on Shares on the side menu')
+def you_should_be_on_the_dashboard_click_on_shares_on_the_side_menu(driver):
+    """you should be on the dashboard, click on Shares on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
+
+
+@then('on the Shares page click on the SMB Add button')
+def on_the_shares_page_click_on_the_smb_add_button(driver):
+    """on the Shares page click on the SMB Add button."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
     assert wait_on_element(driver, 7, xpaths.sharing.smbAddButton, 'clickable')
     driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
 
 
-@then(parsers.parse('Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
-def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_name_click_to_enable_input_test_wheel_smb_share_as_description_and_click_summit(driver, path, smbname, description):
-    """Set Path to the LDAP dataset {path}, Input {smbname} as name, Click to enable, Input {description} as description, and Click Summit."""
+@then(parsers.parse('on the SMB Add set Path to "{path}"'))
+def on_the_smb_add_set_path_to_mnttankwheel_dataset(driver, path):
+    """on the SMB Add set Path to "/mnt/tank/wheel_dataset"."""
+    global dataset_path
+    dataset_path = path
     assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
-    global smb_path
-    smb_path = path
     assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.path_input).clear()
     driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(path)
+
+
+@then(parsers.parse('input "{share_name}" as name, Click to enable'))
+def input_wheelsmbshare_as_name_click_to_enable(driver, share_name):
+    """input "wheelsmbshare" as name, Click to enable."""
     assert wait_on_element(driver, 5, xpaths.smb.name_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.name_input).click()
     driver.find_element_by_xpath(xpaths.smb.name_input).clear()
-    driver.find_element_by_xpath(xpaths.smb.name_input).send_keys(smbname)
+    driver.find_element_by_xpath(xpaths.smb.name_input).send_keys(share_name)
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
     checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
     assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
-    time.sleep(1)
+
+
+@then(parsers.parse('input "{description}" as description, and click save'))
+def input_test_wheel_smb_share_as_description_and_click_save(driver, description):
+    """input "test wheel SMB share" as description, and click save."""
     assert wait_on_element(driver, 5, xpaths.smb.description_input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.description_input).clear()
     driver.find_element_by_xpath(xpaths.smb.description_input).send_keys(description)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
-    if wait_on_element(driver, 3, '//h1[text()="Enable service"]'):
-        assert wait_on_element(driver, 5, '//button[contains(.,"ENABLE SERVICE")]', 'clickable')
-        driver.find_element_by_xpath('//button[contains(.,"ENABLE SERVICE")]').click()
-        if wait_on_element(driver, 3, '//span[text()="SMB Service"]'):
-            assert wait_on_element(driver, 5, '//button[span/text()="Close"]', 'clickable')
-            driver.find_element_by_xpath('//button[span/text()="Close"]').click()
 
 
-@then('smb should be added')
-def smb_should_be_added(driver):
-    """"smbname should be added."""
-    assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]')
-    assert wait_on_element(driver, 5, '//div[contains(.,"wheelsmbshare")]')
-    # Make sure SMB is started
-    assert wait_on_element(driver, 10, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 7, '//services')
-    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
-    # Scroll to SSH service
-    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-checkbox')
-    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-checkbox', 'class', 'mat-checkbox-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SMB")]//mat-checkbox').click()
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-slide-toggle/label', 'clickable')
-    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-slide-toggle', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//tr[contains(.,"SMB")]//mat-slide-toggle/label').click()
-    # This sleep is to make sure that the NAS VM is ready for the step
-    time.sleep(2)
+@then('if Restart SMB Service box appears, click Restart Service')
+def if_restart_smb_service_box_appears_click_restart_service(driver):
+    """if Restart SMB Service box appears, click Restart Service."""
+    assert wait_on_element(driver, 7, xpaths.popup.smbRestart_title)
+    assert wait_on_element(driver, 5, xpaths.popup.smbRestart_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smbRestart_button).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
-@then(parsers.parse('Send a file to the share with nas_ip/"{wheelshare}" and "{user}" and "{password}"'))
-def send_a_file_to_the_share_with_nas_ipwheelshare_and_administrator_and_abcd1234(driver, nas_ip, wheelshare, user, password):
-    """Send a file to the share with nas_IP/"{wheelshare}" and "{user}" and "{password}"."""
+@then(parsers.parse('the {share_name} should be added to the Shares list'))
+def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
+    """the ldapsmbshare should be added to the Shares list."""
+    assert wait_on_element(driver, 5, xpaths.sharing.smbShareName(share_name))
+    assert wait_on_element(driver, 5, xpaths.sharing.smbServiceStatus)
+
+
+@then(parsers.parse('send a file to the "{share_name}" and "{user}"%"{password}" should succeed'))
+def send_a_file_to_the_wheelsmbshare(driver, nas_ip, share_name, user, password):
+    """send a file to the "wheelsmbshare" and "{user}"%"{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -U {user}%{password} -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 
 
-@then('Verify that the is on nas_ip with root and password')
-def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, nas_ip):
-    """Verify that the is on nas_ip with root and password."""
-    global results
-    cmd = 'ls -la /mnt/tank/wheel_dataset/'
-    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'], results['output']
-    assert 'testfile' in results['output'], results['output']
+@then('verify that the file is in the dataset')
+def verify_that_the_file_is_in_the_dataset(root_password, nas_ip):
+    """verify that the file is in the dataset."""
+    file = f'{dataset_path}/testfile.txt'
+    results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
+    assert results.status_code == 200, results.text
 
 
-@then(parsers.parse('send a file to the share should fail with NAS IP/{wheelname} and {user}%{password}'))
-def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(driver, nas_ip, wheelshare, user, password):
-    """send a file to the share should fail with NAS IP/"{wheelshare}" and {user}%{password}."""
+@then(parsers.parse('send a file to "{share_name}" with "{user}"%"{password}" should fail'))
+def send_a_file_to_wheelsmbshare_with_foo_should_fail(driver, nas_ip, share_name, user, password):
+    """send a file to "wheelsmbshare" with "{user}"%"{password}" should fail."""
     run_cmd('touch testfile2.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
-    time.sleep(1)
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
     run_cmd('rm testfile2.txt')
     assert not results['result'], results['output']
 
 
-@then('verify that the file is not on the NAS')
-def verify_that_the_file_is_not_on_the_nas(driver, root_password, nas_ip):
-    """verify that the file is not on the NAS."""
-    global results
-    cmd = 'ls -la /mnt/tank/wheel_dataset/'
-    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'], results['output']
-    assert 'testfile2' not in results['output'], results['output']
+@then('verify that the file is not is in the dataset')
+def verify_that_the_file_is_not_is_in_the_dataset(root_password, nas_ip):
+    """verify that the file is not is in the dataset."""
+    file = f'{dataset_path}/testfile2.txt'
+    results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
+    assert results.status_code == 200, results.text

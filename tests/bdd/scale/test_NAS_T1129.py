@@ -45,7 +45,7 @@ def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection(dri
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['LDAP_Dataset'], scope='session')
+    #depends(request, ['LDAP_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -115,9 +115,12 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_save(driver, descr
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smbRestartTitle)
-    assert wait_on_element(driver, 5, xpaths.popup.smbRestartButton, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smbRestartButton).click()
+    if wait_on_element(driver, 3, xpaths.popup.smbRestart_title):
+        assert wait_on_element(driver, 3, xpaths.popup.smbRestart_button, 'clickable')
+        driver.find_element_by_xpath(xpaths.popup.smbRestart_button).click()
+    elif wait_on_element(driver, 3, xpaths.popup.smbStart_title):
+        assert wait_on_element(driver, 3, xpaths.popup.enableService_button, 'clickable')
+        driver.find_element_by_xpath(xpaths.popup.enableService_button).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
@@ -132,7 +135,7 @@ def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
 def send_a_file_to_the_share(smb_share, ldap_user, ldap_password, nas_ip):
     """send a file to the share with ip/{smb_share} and "{ldap_user}" and "{ldap_password}""."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smb_share} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smb_share} -U "{ldap_user}"%"{ldap_password}" -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 

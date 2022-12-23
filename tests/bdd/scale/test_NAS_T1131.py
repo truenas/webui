@@ -54,13 +54,13 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
 
 
-@then('on the Dataset page, click on the system pool tree and click Add Dataset')
-def on_the_dataset_page_click_on_the_system_pool_tree_and_click_add_dataset(driver):
-    """on the Dataset page, click on the system pool tree and click Add Dataset."""
+@then('on the Dataset page, click on the tank pool tree and click Add Dataset')
+def on_the_dataset_page_click_on_the_tank_pool_tree_and_click_add_dataset(driver):
+    """on the Dataset page, click on the tank pool tree and click Add Dataset."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('system'))
-    driver.find_element_by_xpath(xpaths.dataset.pool_tree('system')).click()
-    assert wait_on_element(driver, 7, xpaths.dataset.pool_selected('system'))
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('tank'))
+    driver.find_element_by_xpath(xpaths.dataset.pool_tree('tank')).click()
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_selected('tank'))
     assert wait_on_element(driver, 5, xpaths.dataset.add_dataset_button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.add_dataset_button).click()
 
@@ -142,7 +142,7 @@ def clear_built_in_user_and_administrators_and_click_the_save_access_control_lis
 def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
     """on the Dataset page click on the "my_ad_dataset" tree."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('system'))
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('tank'))
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_name(dataset_name))
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_tree(dataset_name))
     driver.find_element_by_xpath(xpaths.dataset.dataset_tree(dataset_name)).click()
