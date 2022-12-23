@@ -1,7 +1,6 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 # from selenium.webdriver.common.keys import Keys
 import xpaths
 from function import (
@@ -145,4 +144,5 @@ def verify_that_the_file_is_not_is_in_the_dataset(root_password, nas_ip):
     """verify that the file is not is in the dataset."""
     file = f'{dataset_path}/testfile2.txt'
     results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
-    assert results.status_code == 200, results.text
+    assert results.status_code == 422, results.text
+    assert results.json()['message'] == f'Path {dataset_path}/testfile2.txt not found', results.text
