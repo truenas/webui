@@ -1,4 +1,5 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { PullContainerImageResponse, PullContainerImageParams } from 'app/interfaces/container-image.interface';
@@ -17,7 +18,8 @@ export type ApiEventDirectory = {
   'chart.release.query': { response: ChartRelease };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
-  'failover.disabled.reasons': { response: { disabled_reasons: FailoverDisabledReason[] } };
+  'failover.status': { response: FailoverStatus };
+  'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
   'service.query': { response: Service };
   'truecommand.config': { response: TrueCommandConfig };
   'vm.query': { response: VirtualMachine };
@@ -27,3 +29,7 @@ export type ApiEventDirectory = {
   'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
   'disk.query': { response: Disk };
 };
+
+export interface FailoverDisabledReasonEvent {
+  disabled_reasons: FailoverDisabledReason[];
+}
