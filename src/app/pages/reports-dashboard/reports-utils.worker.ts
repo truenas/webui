@@ -138,9 +138,6 @@ function formatValue(value: number, units: string): string | number {
   let converted;
   switch (units.toLowerCase()) {
     case 'bits':
-      converted = convertKmgt(value, units);
-      output = maxDecimals(converted.value).toString() + converted.shortName;
-      break;
     case 'bytes':
       converted = convertKmgt(value, units);
       output = maxDecimals(converted.value).toString() + converted.shortName;
@@ -306,12 +303,10 @@ const commands = {
     return output;
   },
   avgFromReportData: (input: number[][]) => {
-    const output = avgFromReportData(input);
-    return output;
+    return avgFromReportData(input);
   },
   optimizeLegend: (input: ReportingData) => {
-    const output = optimizeLegend(input);
-    return output;
+    return optimizeLegend(input);
   },
   convertAggregations: (input: ReportingData, options?: [string]) => {
     const output = options ? convertAggregations(input, ...options) : input;
@@ -321,16 +316,13 @@ const commands = {
     return output;
   },
   avgCpuTempReport: (input: ReportingData) => {
-    const output = avgCpuTempReport(input);
-    return output;
+    return avgCpuTempReport(input);
   },
   arrayAvg: (input: number[]) => {
-    const output = arrayAvg(input);
-    return output;
+    return arrayAvg(input);
   },
   maxDecimals: (input: number, options?: [number]) => {
-    const output = options ? maxDecimals(input, ...options) : maxDecimals(input);
-    return output;
+    return options ? maxDecimals(input, ...options) : maxDecimals(input);
   },
 };
 

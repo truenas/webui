@@ -10,7 +10,7 @@
 
       <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
       <button *ngIf="isZvol" mat-button (click)="editZvol()">
-        {{ 'Edit' | translate }}
+        {{ 'Edit Zvol' | translate }}
       </button>
     </mat-card-header>
     <mat-card-content>
@@ -77,6 +77,13 @@
       </div>
     </mat-card-content>
     <mat-card-actions *ngIf="dataset.id !== dataset.pool">
+      <button
+        *ngIf="canBePromoted"
+        mat-stroked-button
+        (click)="promoteDataset()"
+      >
+        {{ 'Promote' | translate }}
+      </button>
       <button mat-stroked-button (click)="deleteDataset()">
         {{ 'Delete' | translate }}
       </button>

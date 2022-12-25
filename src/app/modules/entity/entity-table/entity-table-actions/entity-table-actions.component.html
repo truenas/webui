@@ -1,5 +1,5 @@
 <div
-  class="panel_container action-length-{{ actions.length }}"
+  [class]="['panel_container', 'action-length-' + actions.length]"
   [style.paddingTop]="inlineActions ? 0 : '4px'"
 >
   <ng-container *ngIf="actions && isSingleAction && singleAction">
@@ -7,8 +7,8 @@
       *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
       mat-button
       ix-auto-type="button"
-      id="action_{{ singleAction.name }}__{{ singleAction.id }}"
-      ix-auto-identifier="{{ row.name }}_{{ singleAction.id }}_{{ singleAction.name }}"
+      [id]="'action_' + singleAction.name + '__' + singleAction.id"
+      [ix-auto-identifier]="row.name + '_' + singleAction.id + '_' + singleAction.name"
       [disabled]="singleAction.disabled"
       [ix-auto]=""
       [color]="actions[0].actions[0].color ? actions[0].actions[0].color : 'default'"
@@ -31,7 +31,7 @@
     >
       <mat-icon
         fontSet="mdi-set"
-        id="{{ row[entity?.conf?.rowIdentifier || 'name'] }}_{{ action }}_button"
+        [id]="row[entity?.conf?.rowIdentifier || 'name'] + '_' + action + '_button'"
         [fontIcon]="iconName"
         [style.cursor]="'pointer'"
         [style.font-size]="'24px'"
@@ -47,7 +47,7 @@
       (click)="noPropagate($event)"
     >
       <mat-icon
-        id="{{ row[entity?.conf?.rowIdentifier || 'name'] }}_{{ action }}_button"
+        [id]="row[entity?.conf?.rowIdentifier || 'name'] + '_' + action + '_button'"
         [style.cursor]="'pointer'"
       >
         {{ iconName }}
@@ -66,8 +66,8 @@
             *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
             ix-auto-type="action"
             mat-menu-item
-            id="action_button_{{ action?.name }}__{{ action.id }}"
-            ix-auto-identifier="{{ action.id }}_{{ action.label }}"
+            [id]="'action_button_' + action?.name + '__' + action.id"
+            [ix-auto-identifier]="action.id + '_' + action.label"
             [disabled]="action.disabled"
             [ix-auto]=""
             (click)="action.onClick(this.row)"
@@ -97,8 +97,8 @@
               *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
               mat-menu-item
               ix-auto-type="action"
-              id="action_button_{{ action?.name }}__{{ action.id }}"
-              ix-auto-identifier="{{ action.id }}_{{ action.label }}"
+              [id]="'action_button_' + action?.name + '__' + action.id"
+              [ix-auto-identifier]="action.id + '_' + action.label"
               [disabled]="action.disabled"
               [ix-auto]=""
               (click)="action.onClick(this.row)"
@@ -117,8 +117,8 @@
         *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
         mat-icon-button
         ix-auto-type="action"
-        id="action_button_{{ action?.name }}__{{ action.id }}"
-        ix-auto-identifier="{{ action.id }}_{{ action.name | uppercase }}"
+        [id]="'action_button_' + action?.name + '__' + action.id"
+        [ix-auto-identifier]="action.id + '_' + action.name | uppercase"
         [disabled]="action.disabled"
         [ix-auto]=""
         [matTooltip]="action.label | translate"

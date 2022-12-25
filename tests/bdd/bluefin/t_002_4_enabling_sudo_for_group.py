@@ -6,12 +6,9 @@ from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
     ssh_sudo
 )
-
-
 
 
 def test_enabling_sudo_for_group(driver, nas_ip):
@@ -23,7 +20,6 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
-
 
     # create new qetestuser user add to qatest group
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
@@ -61,9 +57,8 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.find_element_by_xpath('//button[span[contains(.,"Save")]]').click()
 
-
-    #verify in UI
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    # verify in UI
+    assert wait_on_element_disappear(driver, 20, '//mat-progress-bar')
     assert wait_on_element(driver, 20, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 20, '//div[contains(.,"qetestuser")]')
     if is_element_present(driver, '//div[contains(@class,"title-container") and contains(@class,"ng-star-inserted")]'):
@@ -71,8 +66,8 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     if is_element_present(driver, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]'):
         assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"ix-slide-in-background") and contains(@class,"open")]')
     if is_element_present(driver, '//div[contains(@class,"input-container")]'):
-        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"input-container")]')        
-        
+        assert wait_on_element_disappear(driver, 10, '//div[contains(@class,"input-container")]')
+
     assert wait_on_element(driver, 20, '//tr[contains(.,"qetestuser")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"qetestuser")]//mat-icon').click()
 
@@ -89,14 +84,12 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
 
-
     # on the Groups page expand QE group and click edit
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
     assert wait_on_element(driver, 10, '//td[contains(text(),"qetest")]', 'clickable')
     driver.find_element_by_xpath('//td[contains(text(),"qetest")]').click()
     assert wait_on_element(driver, 7, '//span[contains(text(),"Edit")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Edit")]').click()
-
 
     # check the enable sudo box and click save
     assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
@@ -105,9 +98,9 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     # give middleware time to actually do its work
-    time.sleep(1)
+    assert wait_on_element_disappear(driver, 20, '//mat-progress-bar')
 
-    #verify in ui
+    # verify in ui
     assert wait_on_element(driver, 20, '//h1[contains(text(),"Groups")]')
     assert wait_on_element(driver, 20, '//td[contains(text(),"qetest")]', 'clickable')
     driver.find_element_by_xpath('//td[contains(text(),"qetest")]').click()
@@ -119,7 +112,6 @@ def test_enabling_sudo_for_group(driver, nas_ip):
     assert attribute_value_exist(driver, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 5, '//mat-icon[@id="ix-close-icon"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
-
 
     # ssh in with qetest user and try to sudo
     global sudo_group_results2

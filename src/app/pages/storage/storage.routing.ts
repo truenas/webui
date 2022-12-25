@@ -19,6 +19,11 @@ export const routes: Routes = [
         data: { title: 'Create Pool', breadcrumb: 'Create Pool' },
       },
       {
+        path: 'create_new',
+        loadChildren: () => import('./modules/pool-manager/pool-manager.module').then((module) => module.PoolManagerModule),
+        data: { title: 'Pool Creation Wizard', breadcrumb: 'Pool Creation Wizard' },
+      },
+      {
         path: ':poolId/devices',
         redirectTo: ':poolId/devices/',
         pathMatch: 'full',

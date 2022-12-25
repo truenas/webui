@@ -40,7 +40,7 @@
       class="value"
       textLimiter
       threshold="35"
-      content="{{ catalogApp.categories.join(', ') }}"
+      [content]="catalogApp.categories.join(', ')"
     ></span>
   </div>
   <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
@@ -57,7 +57,7 @@
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onStatusOptionChanged()"
         >
-          <mat-option *ngFor="let option of statusOptions" value="{{ option | translate }}">
+          <mat-option *ngFor="let option of statusOptions" [value]="option">
             {{ option }}
           </mat-option>
         </mat-select>
@@ -83,13 +83,13 @@
       >
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="70%" class="version-number">
-            <span textLimiter threshold="30" content="{{ version.key }}"></span>
+            <span textLimiter threshold="30" [content]="version.key"></span>
             <span>{{ versionStatusLabel(version) }}</span>
           </div>
           <span fxFlex="30%" class="text-center info-col">
             <mat-icon
               class="version-tooltip"
-              htmlTooltip="{{ version.value.healthy ? version.value.app_readme : version.value.healthy_error }}"
+              [htmlTooltip]="version.value.healthy ? version.value.app_readme : version.value.healthy_error"
             >
               info
             </mat-icon>

@@ -1,5 +1,5 @@
 <div class="header">
-  <h3 class="title {{ !dataset.locked && !isZvol ? '' : 'no-buttons'}}">
+  <h3 class="title" [class.no-buttons]="dataset.locked || isZvol">
     <div class="mobile-prefix">
       <a
         tabindex="0"
@@ -24,10 +24,7 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button *appIfNightly  mat-button(click)="onAddZvol()">
-        {{ 'Add Zvol (New)' | translate }}
-      </button>
-      <button mat-button (click)="onAddZvolOld()">
+      <button mat-button (click)="onAddZvol()">
         {{ 'Add Zvol' | translate }}
       </button>
       <button mat-button color="primary" (click)="onAddDataset()">

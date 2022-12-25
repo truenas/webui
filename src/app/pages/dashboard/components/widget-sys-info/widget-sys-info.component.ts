@@ -258,11 +258,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       pmin = '0' + pmin;
     }
 
+    // TODO: Replace with ICU strings
     if (days > 0) {
       if (days === 1) {
-        this.uptimeString += days + this.translate.instant(' day, ');
+        this.uptimeString += `${days}${this.translate.instant(' day, ')}`;
       } else {
-        this.uptimeString += days + this.translate.instant(' days, ') + `${hrs}:${pmin}`;
+        this.uptimeString += `${days}${this.translate.instant(' days, ')}${hrs}:${pmin}`;
       }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;

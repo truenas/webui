@@ -326,7 +326,8 @@ export class FieldRelationService {
   getDataType(data: unknown): string {
     if (Array.isArray(data)) {
       return 'array';
-    } if (data !== null && typeof data === 'object') {
+    }
+    if (data !== null && typeof data === 'object') {
       return 'object';
     }
     return 'basic';
@@ -337,171 +338,59 @@ export class FieldRelationService {
   }
 
   isRelationGreaterThan(x: unknown, y: unknown): boolean {
-    let result = false;
-    switch (this.getDataType(x)) {
-      case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'basic':
-      default:
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            result = (x > y);
-            break;
-        }
-        break;
+    const xDataType = this.getDataType(x);
+    if (xDataType === 'array' || xDataType === 'object') {
+      return false;
     }
-    return result;
+
+    const yDataType = this.getDataType(y);
+    if (yDataType === 'array' || yDataType === 'object') {
+      return false;
+    }
+
+    return x > y;
   }
 
   isRelationGreaterThanOrEqual(x: unknown, y: unknown): boolean {
-    let result = false;
-    switch (this.getDataType(x)) {
-      case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'basic':
-      default:
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            result = (x >= y);
-            break;
-        }
-        break;
+    const xDataType = this.getDataType(x);
+    if (xDataType === 'array' || xDataType === 'object') {
+      return false;
     }
-    return result;
+
+    const yDataType = this.getDataType(y);
+    if (yDataType === 'array' || yDataType === 'object') {
+      return false;
+    }
+
+    return x >= y;
   }
 
   isRelationLessThan(x: unknown, y: unknown): boolean {
-    let result = false;
-    switch (this.getDataType(x)) {
-      case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'basic':
-      default:
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            result = (x < y);
-            break;
-        }
-        break;
+    const xDataType = this.getDataType(x);
+    if (xDataType === 'array' || xDataType === 'object') {
+      return false;
     }
-    return result;
+
+    const yDataType = this.getDataType(y);
+    if (yDataType === 'array' || yDataType === 'object') {
+      return false;
+    }
+
+    return x < y;
   }
 
   isRelationLessThanOrEqual(x: unknown, y: unknown): boolean {
-    let result = false;
-    switch (this.getDataType(x)) {
-      case 'array':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'object':
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            break;
-        }
-        break;
-      case 'basic':
-      default:
-        switch (this.getDataType(y)) {
-          case 'array':
-            break;
-          case 'object':
-            break;
-          case 'basic':
-          default:
-            result = (x <= y);
-            break;
-        }
-        break;
+    const xDataType = this.getDataType(x);
+    if (xDataType === 'array' || xDataType === 'object') {
+      return false;
     }
-    return result;
+
+    const yDataType = this.getDataType(y);
+    if (yDataType === 'array' || yDataType === 'object') {
+      return false;
+    }
+
+    return x <= y;
   }
 
   isRelationRegMatch(x: unknown, y: unknown): boolean {
@@ -533,47 +422,32 @@ export class FieldRelationService {
 
   isRelationIn(x: unknown, y: unknown): boolean {
     let result = false;
+    const xDataType = this.getDataType(x);
+    const yDataType = this.getDataType(y);
 
     if (y !== null) {
-      switch (this.getDataType(y)) {
+      switch (yDataType) {
         case 'array':
-          switch (this.getDataType(x)) {
-            case 'array':
-              break;
-            case 'object':
-              break;
-            case 'basic':
-            default:
-              result = (y as unknown[]).includes(x);
-              break;
+          if (xDataType === 'array' || xDataType === 'object') {
+            break;
           }
+
+          result = (y as unknown[]).includes(x);
           break;
         case 'object':
-          switch (this.getDataType(x)) {
-            case 'array':
-              break;
-            case 'object':
-              break;
-            case 'basic':
-            default:
-              result = Object.keys(y).includes(x as string);
-              break;
+          if (xDataType === 'array' || xDataType === 'object') {
+            break;
           }
+
+          result = Object.keys(y).includes(x as string);
           break;
         case 'basic':
         default:
-          switch (this.getDataType(x)) {
-            case 'array':
-              break;
-            case 'object':
-              break;
-            case 'basic':
-            default:
-              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              result = `${y}`.includes(`${x}`);
-              break;
+          if (xDataType === 'array' || xDataType === 'object') {
+            break;
           }
-          break;
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          result = `${y}`.includes(`${x}`);
       }
     }
 

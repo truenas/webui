@@ -73,10 +73,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   writeValue(value: string | number): void {
     let formatted = value;
-    if (value) {
-      if (this.format) {
-        formatted = this.format(value);
-      }
+    if (value && this.format) {
+      formatted = this.format(value);
     }
     this.formatted = formatted;
     this.value = value;

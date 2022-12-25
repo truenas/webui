@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
@@ -10,10 +10,14 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
-import { ZvolFormOldComponent } from 'app/pages/datasets/components/zvol-form-old/zvol-form-old.component';
+import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -33,8 +37,11 @@ export class DatasetDetailsCardComponent {
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
-    private cdr: ChangeDetectorRef,
+    private slideIn: IxSlideInService,
     private router: Router,
+    private ws: WebSocketService,
+    private dialogService: DialogService,
+    private snackbar: SnackbarService,
   ) { }
 
   get datasetCompression(): string {
@@ -61,6 +68,10 @@ export class DatasetDetailsCardComponent {
     return this.dataset.comments?.source === ZfsPropertySource.Local && !!this.dataset.comments?.value?.length;
   }
 
+  get canBePromoted(): boolean {
+    return Boolean(this.dataset.origin?.parsed);
+  }
+
   deleteDataset(): void {
     this.mdDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
       .afterClosed()
@@ -73,6 +84,20 @@ export class DatasetDetailsCardComponent {
       });
   }
 
+  promoteDataset(): void {
+    this.ws.call('pool.dataset.promote', [this.dataset.id])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
+          this.datasetStore.datasetUpdated();
+        },
+        error: (error) => {
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+        },
+      });
+  }
+
   editDataset(): void {
     const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, this.dataset.id);
     editDatasetComponent.setPk(this.dataset.id);
@@ -81,10 +106,7 @@ export class DatasetDetailsCardComponent {
   }
 
   editZvol(): void {
-    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormOldComponent, this.dataset.id);
-    addZvolComponent.setParent(this.dataset.id);
-    addZvolComponent.isNew = false;
-    // form doesnt work without cdr.markForCheck
-    this.cdr.markForCheck();
+    const editZvolComponent = this.slideIn.open(ZvolFormComponent);
+    editZvolComponent.zvolFormInit(false, this.dataset.id);
   }
 }

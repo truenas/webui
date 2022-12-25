@@ -75,7 +75,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('shows path of the dataset being edited', () => {
     const datasetPath = spectator.query('.dataset-path');
 
-    expect(datasetPath).toHaveText('Dataset:/mnt/pool/trivial');
+    expect(datasetPath).toHaveText('Dataset: /mnt/pool/trivial');
   });
 
   it('shows current setting owner and access information', async () => {

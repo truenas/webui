@@ -59,7 +59,8 @@ const dashboardDisks: StorageDashboardDisk[] = [
     ...disk,
     alerts: [],
     tempAggregates: { min: 20, max: 50, avg: 40 },
-    smartTests: 0,
+    smartTestsRunning: 0,
+    smartTestsFailed: 0,
   },
 ];
 
@@ -92,18 +93,19 @@ describe('PoolsDashboardStore', () => {
         { id: 'pool2' },
       ] as Dataset[];
       jest.spyOn(mockWebsocket, 'call').mockImplementation((method: string) => {
-        if (method === 'pool.dataset.query') {
-          return cold('-a|', { a: rootDatasets });
-        } if (method === 'pool.query') {
-          return cold('-a|', { a: pools });
-        } if (method === 'disk.query') {
-          return cold('-a|', { a: [...disks] });
-        } if (method === 'disk.temperature_alerts') {
-          return cold('-a|', { a: [] });
-        } if (method === 'smart.test.results') {
-          return cold('-a|', { a: [] });
-        } if (method === 'disk.temperature_agg') {
-          return cold('-a|', { a: { ...temperatureAgg } });
+        switch (method) {
+          case 'pool.dataset.query':
+            return cold('-a|', { a: rootDatasets });
+          case 'pool.query':
+            return cold('-a|', { a: pools });
+          case 'disk.query':
+            return cold('-a|', { a: [...disks] });
+          case 'disk.temperature_alerts':
+            return cold('-a|', { a: [] });
+          case 'smart.test.results':
+            return cold('-a|', { a: [] });
+          case 'disk.temperature_agg':
+            return cold('-a|', { a: { ...temperatureAgg } });
         }
       });
 

@@ -16,7 +16,7 @@
         *ngFor="let item of availableItems.totalItems"
         cdkDrag
         class="draggable"
-        [ngClass]="{ chosen: availableItems.isSelected(item) }"
+        [class.chosen]="availableItems.isSelected(item)"
         (cdkDragStarted)="onDragStart($event)"
         (mousedown)="availableItems.mouseDown(item, $event)"
         (mouseup)="availableItems.mouseUp(item, $event)"
@@ -77,7 +77,7 @@
         *ngFor="let item of selectedItems.totalItems"
         cdkDrag
         class="draggable"
-        [ngClass]="{ chosen: selectedItems.isSelected(item) }"
+        [class.chosen]="selectedItems.isSelected(item)"
         (cdkDragStarted)="onDragStart($event)"
         (mousedown)="selectedItems.mouseDown(item, $event)"
         (mouseup)="selectedItems.mouseUp(item, $event)"

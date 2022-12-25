@@ -97,19 +97,19 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     let wide = 0;
     const type = devs[0]?.type;
     const size = devs[0]?.children.length
-      ? this.disks.find((disk) => disk.name === devs[0]?.children[0]?.disk)?.size
-      : this.disks.find((disk) => disk.name === (devs[0] as TopologyDisk)?.disk)?.size;
+      ? this.disks?.find((disk) => disk.name === devs[0]?.children[0]?.disk)?.size
+      : this.disks?.find((disk) => disk.name === (devs[0] as TopologyDisk)?.disk)?.size;
 
     devs.forEach((dev) => {
       if (dev.type && dev.type !== type) {
         isMix = true;
       }
-      if (!dev.children.length && this.disks.find((disk) => disk.name === (dev as TopologyDisk).disk)?.size !== size) {
+      if (!dev.children.length && this.disks?.find((disk) => disk.name === (dev as TopologyDisk).disk)?.size !== size) {
         isMix = true;
       }
       dev.children.forEach((child) => {
         wide += 1;
-        if (this.disks.find((disk) => disk.name === child.disk)?.size !== size) {
+        if (this.disks?.find((disk) => disk.name === child.disk)?.size !== size) {
           isMix = true;
         }
       });

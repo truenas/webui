@@ -119,7 +119,7 @@ export class WebSocketService {
       return;
     }
 
-    if ('error' in data && data.error.error === 13 /** Not Authenticated */) {
+    if ('error' in data && data.error.error === 207 /** Not Authenticated */) {
       return this.socket.close(); // will trigger onClose which handles redirection
     }
 
