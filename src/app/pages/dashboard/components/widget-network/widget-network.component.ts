@@ -203,8 +203,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (evt.data.link_state) {
             nicInfo.state = evt.data.link_state;
           }
-          nicInfo.in = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
-          nicInfo.out = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.in = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.out = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
 
           if (
             evt.data.sent_bytes !== undefined
