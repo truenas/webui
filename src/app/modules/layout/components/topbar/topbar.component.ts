@@ -39,7 +39,6 @@ import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { loadUpgradePendingState } from 'app/store/ha-info/ha-info.actions';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
@@ -343,7 +342,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
     this.haStatusText = info.hasHa ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
-    this.store$.dispatch(loadUpgradePendingState());
   }
 
   getHaStatus(): void {

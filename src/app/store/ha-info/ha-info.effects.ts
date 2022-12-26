@@ -9,7 +9,6 @@ import {
   failoverLicensedStatusLoaded,
   haSettingsUpdated,
   haStatusLoaded,
-  loadUpgradePendingState,
   upgradePendingStateLoaded,
 } from './ha-info.actions';
 
@@ -41,13 +40,15 @@ export class HaInfoEffects {
   ));
 
   loadUpgradePendingState = createEffect(() => this.actions$.pipe(
-    ofType(loadUpgradePendingState),
-    mergeMap(() => {
-      return this.ws.call('failover.upgrade_pending').pipe(
-        map((isUpgradePending) => {
-          return upgradePendingStateLoaded({ isUpgradePending });
-        }),
-      );
+    ofType(haStatusLoaded),
+    mergeMap(({ haStatus }) => {
+      if (haStatus.hasHa && haStatus.reasons.length === 0) {
+        return this.ws.call('failover.upgrade_pending').pipe(
+          map((isUpgradePending) => {
+            return upgradePendingStateLoaded({ isUpgradePending });
+          }),
+        );
+      }
     }),
   ));
 

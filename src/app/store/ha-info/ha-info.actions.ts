@@ -6,8 +6,6 @@ export const haStatusLoaded = createAction(
   props<{ haStatus: HaStatus }>(),
 );
 
-export const loadUpgradePendingState = createAction('[HA Info API] Load Upgrade pending state');
-
 export const upgradePendingStateLoaded = createAction(
   '[HA Info API] Upgrade pending state loaded',
   props<{ isUpgradePending: boolean }>(),
