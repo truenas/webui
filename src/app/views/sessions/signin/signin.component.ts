@@ -1,6 +1,4 @@
-import {
-  Component, OnInit, ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
