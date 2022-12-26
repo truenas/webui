@@ -34,7 +34,3 @@ export type ApiEventDirectory = {
   'container.image.query': { response: ContainerImage };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
 };
-
-export type LogsEventDirectory = {
-  [key: string]: { response: { data: string } };
-};

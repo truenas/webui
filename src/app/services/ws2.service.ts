@@ -115,6 +115,10 @@ export class WebSocketService2 implements OnDestroy {
     return subObs$;
   }
 
+  subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
+    return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
+  }
+
   buildWebSocketConnection(): WebSocketSubject<unknown> {
     return webSocket(
       (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://')
