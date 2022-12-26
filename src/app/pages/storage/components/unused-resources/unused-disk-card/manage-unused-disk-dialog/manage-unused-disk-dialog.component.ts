@@ -69,13 +69,12 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
       return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
     });
-    const groupDiskFormats = Object.keys(groupDisks).map((format: string) => {
+    return Object.keys(groupDisks).map((format: string) => {
       return {
         formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
         exportedPool: groupDisks[format][0].exportedPool,
       };
     });
-    return groupDiskFormats;
   }
 
   get isExistingMode(): boolean {

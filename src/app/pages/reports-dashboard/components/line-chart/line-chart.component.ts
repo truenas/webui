@@ -207,7 +207,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       }
 
       return rows;
-    } if (structure === 'columns') {
+    }
+    if (structure === 'columns') {
       const columns = [];
 
       for (let i = 0; i < (rd.data as number[][]).length; i++) {

@@ -311,12 +311,12 @@ export type ApiDirectory = {
 
   // Auth
   'auth.generate_token': { params: [number]; response: string };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.login': {
     params: LoginParams;
     response: boolean;
   };
-  'auth.token': { params: [token: string]; response: boolean };
   'auth.logout': { params: void; response: void };
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };

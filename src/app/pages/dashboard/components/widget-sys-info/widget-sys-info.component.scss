@@ -41,12 +41,12 @@
   color: #efefef;
 }
 
-.widget .left button.mat-button {
+.widget .left button.mat-mdc-button {
   background-color: var(--primary) !important;
   color: var(--primary-txt) !important;
 }
 
-.widget .left button.mat-button:focus-visible {
+.widget .left button.mat-mdc-button:focus-visible {
   outline-width: 0;
 }
 
@@ -261,6 +261,7 @@ img.clickable,
 
 .product-image {
   &.rackmount,
+  &.truenas,
   &.ix-logo {
     img {
       width: 80%;

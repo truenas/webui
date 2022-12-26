@@ -49,11 +49,11 @@ export class IxDynamicFormItemComponent implements OnInit {
       && this.dynamicSchema.editable !== undefined
       && !this.dynamicSchema.editable
     ) {
-      this.dynamicForm?.get(this.dynamicSchema.controlName).disable();
+      this.dynamicForm?.get(this.dynamicSchema.controlName)?.disable();
     }
 
     if (this.dynamicSchema?.hidden) {
-      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$.next(true);
+      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$.next(true);
     }
   }
 

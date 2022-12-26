@@ -119,7 +119,7 @@
                   empty string5
                 </div>
                 <div
-                  [class]="['product-image', productEnclosure]"
+                  [class]="'product-image ' + productEnclosure"
                   [class.truenas]="productType === ProductType.ScaleEnterprise"
                   [class.freenas]="productType !== ProductType.ScaleEnterprise"
                   [class.ix-logo]="productImage === 'ix-original.svg'"
