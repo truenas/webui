@@ -162,9 +162,9 @@ describe('GuiFormComponent', () => {
     ]);
   });
 
-  it('shows confirm dialog if enable redirect HTTPS', async () => {
+  it('shows confirm dialog if HTTPS redirect is enabled', async () => {
     const websocket = spectator.inject(WebSocketService);
-    websocket.connected = true;
+    jest.spyOn(websocket, 'connected', 'get').mockReturnValue(true);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -182,7 +182,7 @@ describe('GuiFormComponent', () => {
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
     const websocket = spectator.inject(WebSocketService);
-    websocket.connected = true;
+    jest.spyOn(websocket, 'connected', 'get').mockReturnValue(true);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

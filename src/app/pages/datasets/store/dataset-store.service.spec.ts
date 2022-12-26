@@ -2,6 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
+import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeState, DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
@@ -22,9 +23,7 @@ describe('DatasetTreeStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).toEqual(expected);
-    });
+    testScheduler = getTestScheduler();
   });
 
   it('loads datasets and sets loading indicators when loadDatasets is called', () => {

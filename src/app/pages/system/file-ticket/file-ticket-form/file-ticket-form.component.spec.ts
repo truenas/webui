@@ -43,7 +43,7 @@ describe('FileTicketFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(WebSocketService, {
         token: 'token.is.mocked',
-        onCloseSubject$,
+        onClose$: onCloseSubject$,
         job: jest.fn((method) => {
           switch (method) {
             case 'support.new_ticket':

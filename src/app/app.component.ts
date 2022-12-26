@@ -4,7 +4,6 @@ import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import productText from './helptext/product';
 import { SystemGeneralService, WebSocketService } from './services';
 
 @UntilDestroy()
@@ -20,8 +19,7 @@ export class AppComponent {
     private sysGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
-    const product = productText.product.trim();
-    this.title.setTitle(product + ' - ' + this.window.location.hostname);
+    this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
     const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
     const savedProductType = this.window.localStorage.product_type;
