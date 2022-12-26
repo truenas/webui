@@ -211,6 +211,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   sessionsTableConf: AppTableConfig = {
     title: helptextSystemAdvanced.fieldset_sessions,
     queryCall: 'auth.sessions',
+    queryCallOption: [[['internal', '=', false]]],
     parent: this,
     emptyEntityLarge: false,
     columns: [
