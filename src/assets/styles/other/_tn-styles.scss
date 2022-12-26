@@ -477,7 +477,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     :not(.mat-mdc-dialog-content) {
       > form {
         padding: 0 24px 24px;
+
+        .mat-mdc-dialog-content,
+        .mat-mdc-dialog-actions {
+          padding: 0;
+        }
       }
+    }
+
+    .mat-mdc-dialog-actions {
+      justify-content: end;
     }
   }
 
@@ -488,6 +497,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mdc-dialog__actions {
+    min-height: inherit;
     padding: 0 24px 20px;
   }
 
