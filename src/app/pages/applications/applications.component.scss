@@ -168,6 +168,9 @@ mat-tab-group {
   }
 
   .more-info {
+    align-items: center;
+    display: flex;
+    justify-content: center;
     position: absolute;
     right: 0;
     top: 10px;
@@ -179,6 +182,7 @@ mat-tab-group {
   }
 
   .status {
+    margin-bottom: 6px;
     opacity: 0.75;
     padding: 3px;
   }

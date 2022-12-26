@@ -185,7 +185,7 @@ module.exports = {
         "sonarjs/prefer-single-boolean-return": ["off"],
 
         // Other overwrites
-        "sonarjs/cognitive-complexity": ["error", 70],
+        "sonarjs/cognitive-complexity": ["error", 60],
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
           ...airbnbSharedRules['@typescript-eslint/indent'][2],
