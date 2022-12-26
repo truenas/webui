@@ -14,7 +14,7 @@ import {
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { FailoverDisabledReasonEvent } from 'app/interfaces/api-event-directory.interface';
+import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
