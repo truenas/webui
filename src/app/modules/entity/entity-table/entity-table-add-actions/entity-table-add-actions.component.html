@@ -18,7 +18,7 @@
         ix-auto
         ix-auto-type="input"
         autocomplete="off"
-        placeholder="{{ 'Filter' | translate }} {{ entity.title | translate }}"
+        [placeholder]="'Filter {item}' | translate: { item: entity.title | translate }"
         [ix-auto-identifier]="'Filter ' + conf.title"
         [value]="filterValue"
       />

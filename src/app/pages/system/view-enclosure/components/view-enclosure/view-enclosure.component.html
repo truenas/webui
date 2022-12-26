@@ -25,7 +25,7 @@
     <!-- Persistent Visualizer -->
     <div
       class="main-content"
-      fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )"
+      [fxFlex]="'calc(100% - ' + (system.enclosures.length * 240).toString() + 'px )'"
     >
       <div>
         <mat-spinner

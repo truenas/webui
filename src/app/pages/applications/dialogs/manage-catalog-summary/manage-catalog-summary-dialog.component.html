@@ -4,7 +4,7 @@
       class="catalog-name"
       textLimiter
       threshold="40"
-      content="{{ catalog.label }} {{ 'Catalog Summary' | translate }}"
+      [content]="'{app} Catalog Summary' | translate: { app: catalog.label }"
     ></strong>
     <span *ngIf="catalog.healthy" class="status active">
       {{ 'Healthy' | translate }}
