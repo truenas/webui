@@ -42,7 +42,6 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebsocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 
@@ -112,7 +111,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private store$: Store<AppState>,
     private systemService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
-    private websocket2: WebsocketService2,
   ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
@@ -122,18 +120,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           this.closeMobileDetails();
         }
       });
-    this.websocket2.setupCall('auth.login', ['root', 'testing']).pipe(untilDestroyed(this)).subscribe((/* data */) => {
-      this.websocket2.setupCall('disk.query').pipe(untilDestroyed(this)).subscribe((/* data */) => {
-        // console.log('disks', data);
-      });
-      const obs$ = this.websocket2.setupSubscription('alert.list');
-      obs$.pipe(untilDestroyed(this)).subscribe((/* alerts */) => {
-        // console.log('alerts', alerts);
-
-        // run the following command in the shell to simulate alert
-        // midclt call alert.oneshot_create UnscheduledReboot "Something bad happened"
-      });
-    });
   }
 
   ngOnInit(): void {
