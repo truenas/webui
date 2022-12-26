@@ -1,0 +1,17 @@
+.content-container {
+  border: 1px solid var(--lines);
+  display: flex;
+  margin: 20px 0;
+  padding: 20px 0;
+
+  .automad-disk-selection-container {
+    border-right: 1px solid var(--lines);
+    padding: 0 30px;
+    width: 100%;
+  }
+
+  .advaced-options-container {
+    padding: 0 30px;
+    width: 100%;
+  }
+}

@@ -1,11 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-
-interface GeneralForm {
-  name: FormControl<string>;
-  encryption: FormControl<boolean>;
-}
+import { PoolManagerWizardForm } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form';
 
 @UntilDestroy()
 @Component({
@@ -15,5 +10,5 @@ interface GeneralForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralWizardStepComponent {
-  @Input() form: FormGroup<GeneralForm>;
+  @Input() form: PoolManagerWizardForm['general'];
 }
