@@ -1,7 +1,5 @@
 import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
-import { Directive, ChangeDetectorRef } from '@angular/core';
-import { merge, auditTime } from 'rxjs';
-import { scrollFrameScheduler } from 'app/modules/ix-tree/components/ix-tree-virtual-scroll-view/ix-tree-virtual-scroll-view.component';
+import { Directive } from '@angular/core';
 import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 
 @Directive({
@@ -20,15 +18,8 @@ export class IxTreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
   constructor(
     protected _tree: IxTree<T>,
     protected _treeNode: CdkTreeNode<T>,
-    protected cdr: ChangeDetectorRef,
   ) {
     super(_tree, _treeNode);
-
-    merge(_treeNode._dataChanges, _tree._dataSourceChanged)
-      .pipe(auditTime(0, scrollFrameScheduler))
-      .subscribe(() => {
-        this.cdr.markForCheck();
-      });
   }
 
   /**

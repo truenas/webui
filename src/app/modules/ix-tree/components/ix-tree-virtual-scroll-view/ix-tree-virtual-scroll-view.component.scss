@@ -18,7 +18,7 @@ ix-tree-virtual-scroll-view {
     position: absolute;
     transform: translateX(-50%);
 
-    &.mat-icon-button {
+    &.mat-mdc-icon-button {
       background-color: var(--alt-bg1);
     }
   }

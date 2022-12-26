@@ -1,9 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, Inject,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
@@ -14,10 +13,8 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetNodeComponent {
-  constructor(
-    @Inject(datasetToken) public dataset: DatasetDetails,
-    @Inject(isSystemDatasetToken) public isSystemDataset: boolean,
-  ) {}
+  @Input() dataset: DatasetDetails;
+  @Input() isSystemDataset: boolean;
 
   get label(): string {
     return getDatasetLabel(this.dataset);
