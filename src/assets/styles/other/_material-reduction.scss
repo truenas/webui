@@ -343,55 +343,6 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   padding: 1px 16px 0 !important;
 }
 
-/* Login Form */
-.login-form .form-element .mat-form-field-wrapper {
-  max-height: 33px;
-  min-height: unset;
-  width: 100% !important;
-}
-
-
-.login-form .form-element .mat-form-field-wrapper input {
-  background: none;
-  border: none;
-  margin: 0;
-  padding: 0 0 2px;
-}
-
-.login-form .form-element .mat-form-field-prefix .mat-icon {
-  font-size: 16px;
-}
-
-.login-form .form-element .mat-form-field-prefix {
-  margin-bottom: 2px;
-}
-
-.login-form .form-element.username .mat-form-field-prefix {
-  top: -6px;
-}
-
-.login-form .form-element.username .mat-form-field-flex {
-  align-items: flex-start;
-  position: relative;
-  top: -2px;
-}
-
-.login-form .form-element.password .mat-form-field-prefix {
-  top: -11px;
-}
-
-.login-form .form-element input[type = 'password'],
-.login-form .form-element .has_toggle_pw input {
-  padding: 2px 0 0;
-  top: -10px;
-}
-
-.login-form .form-element button.toggle_pw {
-  bottom: 2px;
-  position: absolute;
-  right: 4px;
-}
-
 .form-element .mat-form-field-suffix {
   top: -2px;
 }
