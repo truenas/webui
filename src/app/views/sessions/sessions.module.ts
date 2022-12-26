@@ -4,25 +4,25 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
-import {
-  DisconnectedMessageComponent,
-} from 'app/views/sessions/signin/disconnected-message/disconnected-message.component';
-import {
-  TrueCommandStatusComponent,
-} from 'app/views/sessions/signin/true-command-status/true-command-status.component';
+import { SetAdminPasswordFormComponent } from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
+import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
+import { TrueCommandStatusComponent } from 'app/views/sessions/signin/true-command-status/true-command-status.component';
 import { sessionsRoutes } from './sessions.routing';
+import { DisconnectedMessageComponent } from './signin/disconnected-message/disconnected-message.component';
+import { FailoverStatusComponent } from './signin/failover-status/failover-status.component';
+import { SigninFormComponent } from './signin/signin-form/signin-form.component';
 import { SigninComponent } from './signin/signin.component';
 
 @NgModule({
@@ -31,25 +31,31 @@ import { SigninComponent } from './signin/signin.component';
     LayoutModule,
     FormsModule,
     ReactiveFormsModule,
-    MatProgressBarModule,
-    MatButtonModule,
-    MatInputModule,
-    MatRadioModule,
     MatCardModule,
-    MatCheckboxModule,
+    MatProgressBarModule,
+    MatRadioModule,
+    MatButtonModule,
     MatSnackBarModule,
     IxIconModule,
-    MatTooltipModule,
     FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(sessionsRoutes),
     CoreComponents,
+    IxFormsModule,
+    MatInputModule,
     AppCommonModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     SigninComponent,
-    DisconnectedMessageComponent,
+    SigninFormComponent,
+    SetAdminPasswordFormComponent,
     TrueCommandStatusComponent,
+    FailoverStatusComponent,
+    DisconnectedMessageComponent,
+  ],
+  providers: [
+    SigninStore,
   ],
 })
 export class SessionsModule { }

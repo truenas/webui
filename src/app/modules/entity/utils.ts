@@ -85,6 +85,7 @@ export class EntityUtils {
     });
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   handleWsError(
     entity: any,
     res: WebsocketError | Job,

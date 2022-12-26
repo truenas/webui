@@ -955,6 +955,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    position: absolute;
+    right: 0;
+    top: -4px;
+
+    i {
+      font-size: 17px;
+    }
   }
 
   datatable-selection > .empty-row {
