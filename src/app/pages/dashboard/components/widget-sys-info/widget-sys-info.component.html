@@ -100,24 +100,6 @@
                 fxLayoutAlign="center center"
                 [fxFlex.xs]="productType === ProductType.ScaleEnterprise && productImage === 'X10' ? 80 : 100"
               >
-                <div [class]="['product-image', productEnclosure]" [class.pizza]="true" [class.somethingelse]="false">
-                  {{ productEnclosure }}
-                </div>
-                <div [class]="['product-image', '']" [class.pizza]="true">
-                  empty string1
-                </div>
-                <div [class]="['product-image', false]" [class.pizza]="true">
-                  empty string2
-                </div>
-                <div [class]="['product-image', null]" [class.pizza]="true">
-                  empty string3
-                </div>
-                <div [class]="['product-image', undefined]" [class.pizza]="true">
-                  empty string4
-                </div>
-                <div [class]="['product-image', undefined, 'asdfasfd']" [class.pizza]="true">
-                  empty string5
-                </div>
                 <div
                   [class]="'product-image ' + productEnclosure"
                   [class.truenas]="productType === ProductType.ScaleEnterprise"
