@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
@@ -31,6 +32,7 @@ export class SmartInfoCardComponent implements OnChanges {
   totalResults$: Observable<LoadingState<number>>;
   lastResultsInCategory$: Observable<SmartTestResult[]>;
   smartTasksCount$: Observable<LoadingState<number>>;
+  SmartTestResultPageType = SmartTestResultPageType;
 
   readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
 

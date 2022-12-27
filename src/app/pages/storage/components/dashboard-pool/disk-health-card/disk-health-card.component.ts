@@ -4,6 +4,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
@@ -29,6 +30,8 @@ interface DiskState {
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[] = [];
+
+  SmartTestResultPageType = SmartTestResultPageType;
 
   get disksNames(): string[] {
     return getPoolDisks(this.poolState);

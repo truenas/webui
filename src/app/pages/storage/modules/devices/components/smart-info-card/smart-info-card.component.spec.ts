@@ -98,7 +98,7 @@ describe('SmartInfoCardComponent', () => {
   it('shows a link to view all smart tests for a disk', () => {
     const link = spectator.query(byText('View All Test Results'));
     expect(link).toBeTruthy();
-    expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/sdc');
+    expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/disk/sdc');
   });
 
   it('shows a dialog to run a manual SMART test when Run Manual Test is pressed', async () => {

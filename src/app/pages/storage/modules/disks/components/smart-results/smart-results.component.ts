@@ -2,9 +2,12 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { lastValueFrom, map, tap } from 'rxjs';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResult, SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { WebSocketService } from 'app/services';
 import { PageTitleService } from 'app/services/page-title.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
@@ -47,25 +50,41 @@ export class SmartResultsComponent implements EntityTableConfig {
   noActions = true;
   noAdd = true;
 
-  protected disk: string;
+  protected pk: string;
+  protected type: string;
 
   constructor(
     private aroute: ActivatedRoute,
     private translate: TranslateService,
     private pageTitleService: PageTitleService,
+    private ws: WebSocketService,
   ) { }
 
-  preInit(): void {
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.disk = params['pk'];
-      if (this.disk) {
-        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results of {disk}', { disk: this.disk }));
-        this.queryCallOption = [[['disk', '=', this.disk]]];
-      } else {
-        this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results'));
-        this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
-      }
-    });
+  prerequisite(): Promise<boolean> {
+    return lastValueFrom(
+      this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+        tap((disks) => {
+          this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+            this.pk = params['pk'];
+            this.type = params['type'];
+
+            if (this.type === SmartTestResultPageType.Disk) {
+              this.queryCallOption = [[['disk', '=', this.pk]]];
+              this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results of {pk}', { pk: this.pk }));
+            } else if (this.type === SmartTestResultPageType.Pool) {
+              const disksNames = disks.filter((disk) => disk.pool === this.pk).map((disk) => disk.name);
+              this.queryCallOption = [[['disk', 'in', disksNames]]];
+              this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results of {pk}', { pk: this.pk }));
+              this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
+            } else {
+              this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results'));
+              this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
+            }
+          });
+        }),
+        map(() => true),
+      ),
+    );
   }
 
   resourceTransformIncomingRestData(data: SmartTestResults[]): SmartTestResultsRow[] {
