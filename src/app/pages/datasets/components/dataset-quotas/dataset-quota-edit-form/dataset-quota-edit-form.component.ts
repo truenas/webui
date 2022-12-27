@@ -113,8 +113,8 @@ export class DatasetQuotaEditFormComponent {
         this.datasetQuota = quotas[0];
         this.isFormLoading = false;
         this.form.patchValue({
-          name: this.datasetQuota.name,
-          data_quota: this.datasetQuota.quota,
+          name: this.datasetQuota.name || '',
+          data_quota: this.datasetQuota.quota || null,
           obj_quota: this.datasetQuota.obj_quota,
         });
         this.cdr.markForCheck();
