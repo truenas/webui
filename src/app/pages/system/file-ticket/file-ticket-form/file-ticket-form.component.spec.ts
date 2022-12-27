@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -43,7 +43,7 @@ describe('FileTicketFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(WebSocketService, {
         token: 'token.is.mocked',
-        onCloseSubject$,
+        onClose$: onCloseSubject$,
         job: jest.fn((method) => {
           switch (method) {
             case 'support.new_ticket':

@@ -91,10 +91,10 @@ export class CloudsyncFormComponent {
   });
 
   isLoading = false;
-  bucketPlaceholder = helptext.bucket_placeholder;
-  bucketTooltip = helptext.bucket_tooltip;
-  bucketInputPlaceholder = helptext.bucket_input_placeholder;
-  bucketInputTooltip = helptext.bucket_input_tooltip;
+  bucketPlaceholder: string = helptext.bucket_placeholder;
+  bucketTooltip: string = helptext.bucket_tooltip;
+  bucketInputPlaceholder: string = helptext.bucket_input_placeholder;
+  bucketInputTooltip: string = helptext.bucket_input_tooltip;
 
   readonly transferModeTooltip = `
     ${helptext.transfer_mode_warning_sync}<br><br>

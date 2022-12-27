@@ -102,7 +102,7 @@ nav.view-nav-bar {
   opacity: 0.85;
 }
 
-.view-card .tiles .mat-button {
+.view-card .tiles .mat-mdc-button {
   margin: 16px;
 }
 
@@ -411,7 +411,7 @@ div.vdev-disk {
   }
 }
 
-.mini .header-container .mat-button.back-btn {
+.mini .header-container .mat-mdc-button.back-btn {
   position: absolute;
   right: 0;
   top: -10px;

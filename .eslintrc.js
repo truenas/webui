@@ -181,12 +181,11 @@ module.exports = {
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/cognitive-complexity": ["off"],
         "sonarjs/no-duplicate-string": ["off"],
         "sonarjs/prefer-single-boolean-return": ["off"],
-        "sonarjs/no-nested-switch": ["off"],
 
         // Other overwrites
+        "sonarjs/cognitive-complexity": ["error", 60],
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
           ...airbnbSharedRules['@typescript-eslint/indent'][2],
