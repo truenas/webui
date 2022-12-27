@@ -1,11 +1,12 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -21,6 +22,7 @@ import {
   NetworkInterface, NetworkInterfaceAlias,
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -80,6 +82,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   interval: Interval;
 
   readonly ScreenType = ScreenType;
+
+  testControl1 = new FormControl();
+  testControl2 = new FormControl();
+
+  testOptions$: Observable<SelectOption[]> = of([
+    { label: 'Option 1', value: 'option1', tooltip: 'Tooltip 1' },
+    { label: 'Option 2', value: 'option2' },
+    { label: 'Option 3 with very long test that will wrap to another line', value: 'option3', tooltip: 'Tooltip 3' },
+  ]);
 
   get isLoaded(): boolean {
     return this.dashStateReady
