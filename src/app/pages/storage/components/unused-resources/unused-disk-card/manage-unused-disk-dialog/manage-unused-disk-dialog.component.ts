@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -69,13 +69,12 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
       return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
     });
-    const groupDiskFormats = Object.keys(groupDisks).map((format: string) => {
+    return Object.keys(groupDisks).map((format: string) => {
       return {
         formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
         exportedPool: groupDisks[format][0].exportedPool,
       };
     });
-    return groupDiskFormats;
   }
 
   get isExistingMode(): boolean {

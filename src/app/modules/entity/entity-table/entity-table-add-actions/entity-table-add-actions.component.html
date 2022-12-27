@@ -19,7 +19,7 @@
         ix-auto-type="input"
         autocomplete="off"
         placeholder="{{ 'Filter' | translate }} {{ entity.title | translate }}"
-        ix-auto-identifier="Filter {{ conf.title }}"
+        [ix-auto-identifier]="'Filter ' + conf.title"
         [value]="filterValue"
       />
       <span
@@ -45,8 +45,8 @@
         ix-auto-type="button"
         type="button"
         color="default"
-        id="cust_button_{{ custBtn.name }}"
-        ix-auto-identifier="{{ custBtn.name }}"
+        [id]="'cust_button_' + custBtn.name"
+        [ix-auto-identifier]="custBtn.name"
         (click)="custBtn['function']()"
       >
         {{ custBtn.name | translate }}
@@ -62,11 +62,11 @@
       class="menu-toggle"
       ix-auto
       ix-auto-type="button"
-      ix-auto-identifier="{{ conf.title }}_COLUMNS"
+      [ix-auto-identifier]="conf.title + '_COLUMNS'"
       [matMenuTriggerFor]="menu"
     >
       {{ 'Columns' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" multiple overlapTrigger="false">
       <!-- SELECT ALL -->
@@ -99,8 +99,8 @@
           mat-menu-item
           ix-auto
           ix-auto-type="action"
-          id="menu_option-{{ col.name }}"
-          ix-auto-identifier="COLUMNS_{{ col.name }}"
+          [id]="'menu_option-' + col.name"
+          [ix-auto-identifier]="'COLUMNS_' + col.name"
           (click)="entity.toggle(col)"
         >
           <span>
@@ -139,12 +139,12 @@
       class="menu-toggle"
       ix-auto
       ix-auto-type="button"
-      matTooltip="{{ this.menuTriggerMessage | translate }}"
-      ix-auto-identifier="{{ entity.conf.title }}_ACTIONS"
+      [matTooltip]="menuTriggerMessage | translate"
+      [ix-auto-identifier]="entity.conf.title + '_ACTIONS'"
       [matMenuTriggerFor]="menu"
     >
       {{ 'Actions' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" overlapTrigger="false">
       <button
@@ -153,7 +153,7 @@
         id="add_action_button"
         ix-auto
         ix-auto-type="button"
-        ix-auto-identifier="{{ entity.conf.title }}_ADD"
+        [ix-auto-identifier]="entity.conf.title + '_ADD'"
         (click)="this.entity.doAdd()"
       >
         <span>{{ 'Add' | translate }}</span>
@@ -163,8 +163,8 @@
         mat-menu-item
         ix-auto
         ix-auto-type="button"
-        id="add_action_button_{{ action?.label }}"
-        ix-auto-identifier="{{ entity.conf.title }}_{{ action.label }}"
+        [id]="'add_action_button_' + action?.label"
+        [ix-auto-identifier]="entity.conf.title + '_' + action.label"
         (click)="action.onClick()"
       >
         <span>{{ action.label | translate }}</span>
@@ -180,8 +180,8 @@
         id="add_action_button"
         ix-auto
         ix-auto-type="button"
-        matTooltip="{{ this.entity.conf.routeAddTooltip | translate }}"
-        ix-auto-identifier="{{ entity.conf.title }}_ADD"
+        [matTooltip]="entity.conf.routeAddTooltip | translate"
+        [ix-auto-identifier]="entity.conf.title + '_ADD'"
         [disabled]="entity.conf.addBtnDisabled"
         (click)="this.entity.doAdd()"
       >
@@ -193,9 +193,9 @@
         color="primary"
         ix-auto
         ix-auto-type="button"
-        id="add_action_button_{{ actions[0]?.label }}"
-        matTooltip="{{ actions[0].label | translate }}"
-        ix-auto-identifier="{{ entity.conf.title }}_{{ this.actions[0].label }}"
+        [id]="'add_action_button_' + actions[0]?.label"
+        [matTooltip]="actions[0].label | translate"
+        [ix-auto-identifier]="entity.conf.title + '_' + this.actions[0].label"
         (click)="this.actions[0].onClick()"
       >
         {{ this.actions[0].label | translate }}
@@ -209,8 +209,8 @@
       mat-icon-button
       ix-auto
       ix-auto-type="settings"
-      id="{{ conf.globalConfig.id }}"
-      ix-auto-identifier="{{ entity.title }}"
+      [id]="conf.globalConfig.id"
+      [ix-auto-identifier]="entity.title"
       [matTooltip]="conf.globalConfig.tooltip"
       (click)="conf.globalConfig.onClick()"
     >

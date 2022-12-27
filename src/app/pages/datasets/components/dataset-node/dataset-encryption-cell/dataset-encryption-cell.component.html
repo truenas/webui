@@ -8,7 +8,7 @@
   <ng-container *ngIf="dataset.locked; else unlockedCell">
     <mat-icon
       fontSet="mdi-set"
-      fontIcon="mdi-lock{{ isEncryptionRoot ? '' : '-outline' }}"
+      [fontIcon]="'mdi-lock' + (isEncryptionRoot ? '' : '-outline')"
     ></mat-icon>
     <div class="encryption-description">
       <div>{{ 'Locked' | translate }}</div>
@@ -21,7 +21,7 @@
   <ng-template #unlockedCell>
     <mat-icon
       fontSet="mdi-set"
-      fontIcon="mdi-lock-open-variant{{ isEncryptionRoot ? '' : '-outline' }}"
+      [fontIcon]="'mdi-lock-open-variant' + (isEncryptionRoot ? '' : '-outline')"
     ></mat-icon>
     <div class="encryption-description">
       <div>{{ 'Unlocked' | translate }}</div>

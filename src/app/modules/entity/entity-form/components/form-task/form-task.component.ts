@@ -2,7 +2,7 @@ import {
   Component, AfterViewInit, OnInit, ViewChild,
 } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
-import { MatTabGroup } from '@angular/material/tabs';
+import { MatLegacyTabGroup as MatTabGroup } from '@angular/material/legacy-tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import {

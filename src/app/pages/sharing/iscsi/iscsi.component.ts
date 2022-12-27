@@ -17,31 +17,31 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class IscsiComponent implements OnInit {
   activeTab = 'configuration';
   navLinks = [{
-    label: this.translate.instant('Target Global Configuration') as string,
+    label: this.translate.instant('Target Global Configuration'),
     path: '/sharing/iscsi/configuration',
   },
   {
-    label: this.translate.instant('Portals') as string,
+    label: this.translate.instant('Portals'),
     path: '/sharing/iscsi/portals',
   },
   {
-    label: this.translate.instant('Initiators Groups') as string,
+    label: this.translate.instant('Initiators Groups'),
     path: '/sharing/iscsi/initiator',
   },
   {
-    label: this.translate.instant('Authorized Access') as string,
+    label: this.translate.instant('Authorized Access'),
     path: '/sharing/iscsi/auth',
   },
   {
-    label: this.translate.instant('Targets') as string,
+    label: this.translate.instant('Targets'),
     path: '/sharing/iscsi/target',
   },
   {
-    label: this.translate.instant('Extents') as string,
+    label: this.translate.instant('Extents'),
     path: '/sharing/iscsi/extent',
   },
   {
-    label: this.translate.instant('Associated Targets') as string,
+    label: this.translate.instant('Associated Targets'),
     path: '/sharing/iscsi/associatedtarget',
   },
   ];

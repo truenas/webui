@@ -31,12 +31,12 @@ export class TargetListComponent implements EntityTableConfig<IscsiTarget>, OnIn
 
   columns = [
     {
-      name: this.translate.instant('Target Name') as string,
+      name: this.translate.instant('Target Name'),
       prop: 'name',
       always_display: true,
     },
     {
-      name: this.translate.instant('Target Alias') as string,
+      name: this.translate.instant('Target Alias'),
       prop: 'alias',
     },
   ];

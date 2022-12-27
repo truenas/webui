@@ -34,7 +34,7 @@
       class="mat-button mat-accent action-btn"
       name="Cancel_button"
       ix-auto-type="button"
-      ix-auto-identifier="{{ 'Cancel' | uppercase }}"
+      [ix-auto-identifier]="'Cancel' | uppercase"
       [ix-auto]=""
       (click)="onCancel()"
     >
@@ -49,8 +49,8 @@
         class="mat-button action-btn"
         id="cust_button_deregister"
         ix-auto-type="button"
-        ix-auto-identifier="{{ helptext.tcDeregisterBtn | uppercase }}"
-        [ix-auto]=""
+        ix-auto
+        [ix-auto-identifier]="helptext.tcDeregisterBtn | uppercase"
         [name]="helptext.tcDeregisterBtn + '_button'"
         (click)="onDeregister()"
       >
@@ -63,10 +63,10 @@
       type="submit"
       class="mat-button mat-primary"
       ix-auto-type="button"
-      ix-auto-identifier="{{ saveButtonText | uppercase }}"
+      ix-auto
+      [ix-auto-identifier]="saveButtonText | uppercase"
       [name]="saveButtonText + '_button'"
       [disabled]="form.invalid"
-      [ix-auto]=""
     >
       {{ saveButtonText | translate }}
     </button>

@@ -73,10 +73,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   writeValue(value: string | number): void {
     let formatted = value;
-    if (value) {
-      if (this.format) {
-        formatted = this.format(value);
-      }
+    if (value && this.format) {
+      formatted = this.format(value);
     }
     this.formatted = formatted;
     this.value = value;
@@ -117,7 +115,9 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   getType(): string {
-    return this.type === 'password' ? 'search' : this.type;
+    // Mimicking a password field to prevent browsers from remembering passwords.
+    const isFakePassword = this.type === 'password' && (this.autocomplete === 'off' || this.showPassword);
+    return isFakePassword ? 'search' : this.type;
   }
 
   isPasswordField(): boolean {

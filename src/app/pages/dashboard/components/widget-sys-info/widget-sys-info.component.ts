@@ -98,8 +98,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.isUpdateRunning = res === 'true';
     });
 
-    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      const currentScreenType = evt.mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
 
@@ -258,11 +258,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       pmin = '0' + pmin;
     }
 
+    // TODO: Replace with ICU strings
     if (days > 0) {
       if (days === 1) {
-        this.uptimeString += days + this.translate.instant(' day, ');
+        this.uptimeString += `${days}${this.translate.instant(' day, ')}`;
       } else {
-        this.uptimeString += days + this.translate.instant(' days, ') + `${hrs}:${pmin}`;
+        this.uptimeString += `${days}${this.translate.instant(' days, ')}${hrs}:${pmin}`;
       }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
@@ -314,7 +315,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.loader.close();
-          sessionStorage.setItem('systemInfoLoaded', currentTime.toString());
           this.store$.dispatch(
             systemInfoDatetimeUpdated({ datetime: { $date: currentTime } }),
           );

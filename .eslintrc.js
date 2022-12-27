@@ -25,7 +25,8 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:rxjs/recommended"
+        "plugin:rxjs/recommended",
+        "plugin:sonarjs/recommended"
       ],
       "plugins": [
         "rxjs",
@@ -34,6 +35,7 @@ module.exports = {
         "angular-file-naming",
         "@shopify",
         "unused-imports",
+        "sonarjs",
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -179,8 +181,11 @@ module.exports = {
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
+        "sonarjs/no-duplicate-string": ["off"],
+        "sonarjs/prefer-single-boolean-return": ["off"],
 
         // Other overwrites
+        "sonarjs/cognitive-complexity": ["error", 60],
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
           ...airbnbSharedRules['@typescript-eslint/indent'][2],

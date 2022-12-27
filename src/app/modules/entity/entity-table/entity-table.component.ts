@@ -13,11 +13,11 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -29,13 +29,14 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableAction,
@@ -150,7 +151,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   };
   asyncView = false; // default table view is not async
   showDefaults = false;
-  showSpinner = false;
+  showSpinner = true;
   cardHeaderReady = false;
   showActions = true;
   hasActions = true;
@@ -284,11 +285,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
             if (this.conf.afterInit) {
               this.conf.afterInit(this);
             }
-          } else {
-            this.showSpinner = false;
-            if (this.conf.prerequisiteFailedHandler) {
-              this.conf.prerequisiteFailedHandler(this);
-            }
+          } else if (this.conf.prerequisiteFailedHandler) {
+            this.conf.prerequisiteFailedHandler(this);
           }
         },
       );
@@ -337,11 +335,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (typeof (this.conf.hideTopActions) !== 'undefined') {
       this.hideTopActions = this.conf.hideTopActions;
     }
-
-    // Delay spinner 500ms so it won't show up on a fast-loading page
-    setTimeout(() => {
-      this.setShowSpinner();
-    }, 500);
   }
 
   ngAfterViewInit(): void {
@@ -382,8 +375,13 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      let emptyType: EmptyType = this.firstUse ? EmptyType.FirstUse : EmptyType.NoPageData;
-      if (this.dataSource.filter) {
+      let emptyType: EmptyType = EmptyType.NoPageData;
+
+      if (this.firstUse && !this.showSpinner) {
+        emptyType = EmptyType.FirstUse;
+      } else if (this.showSpinner) {
+        emptyType = EmptyType.Loading;
+      } else if (this.dataSource.filter) {
         emptyType = EmptyType.NoSearchResults;
       }
 
@@ -524,20 +522,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
   }
 
-  setShowSpinner(): void {
-    this.showSpinner = true;
-  }
-
   getData(): void {
-    const sort: string[] = [];
-
-    this.config.sorting.columns.forEach((col) => {
-      if (col.sort === 'asc') {
-        sort.push(col.name);
-      } else if (col.sort === 'desc') {
-        sort.push('-' + col.name);
-      }
-    });
+    this.showSpinner = true;
 
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
@@ -670,6 +656,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
 
     this.dataSourceStreamer$.next(this.currentRows);
+
+    this.showSpinner = false;
 
     return res;
   }
@@ -1226,7 +1214,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     this.store$.pipe(waitForPreferences, take(1), untilDestroyed(this)).subscribe((preferences) => {
       const preferredCols = preferences.tableDisplayedColumns || [];
       // Turn off preferred cols for snapshots to allow for two different column sets to be displayed
-      if (preferredCols.length < 0) {
+      if (preferredCols.length === 0) {
         return;
       }
 

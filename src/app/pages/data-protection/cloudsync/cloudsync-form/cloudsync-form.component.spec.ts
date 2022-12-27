@@ -138,7 +138,7 @@ describe('CloudsyncFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
-      attributes: { folder: '/' },
+      attributes: { folder: '/', acknowledge_abuse: false },
       bwlimit: [],
       create_empty_src_dirs: false,
       credentials: 1,
@@ -169,6 +169,7 @@ describe('CloudsyncFormComponent', () => {
     spectator.component.setTaskForEdit(existingTask);
 
     expect(spectator.component.form.value).toEqual({
+      acknowledge_abuse: false,
       bwlimit: ['13:00, 1 KB', '15:00, off'],
       cloudsync_picker: '0 0 * * 0',
       create_empty_src_dirs: true,
@@ -207,7 +208,7 @@ describe('CloudsyncFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
-      attributes: { folder: mntPath },
+      attributes: { folder: mntPath, acknowledge_abuse: false },
       bwlimit: [
         { time: '9:00' },
         { bandwidth: 2097152, time: '12:30' },

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormControl, FormsModule, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatSelectHarness } from '@angular/material/select/testing';
+import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
 import {
   createHostFactory,
   Spectator,
@@ -183,7 +183,9 @@ describe('IxSelectComponent', () => {
       await select.open();
       await select.clickOptions({ text: 'GBR' });
       await select.clickOptions({ text: 'GRL' });
+      const currentValue = await select.getValueText();
 
+      expect(currentValue).toBe('GBR, GRL');
       expect(control.value).toEqual(['Great Britain', 'Greenland']);
     });
   });

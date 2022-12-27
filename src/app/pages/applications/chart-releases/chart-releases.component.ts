@@ -1,7 +1,7 @@
 import {
   Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,13 +10,14 @@ import { of, Subscription } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEvent, ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';

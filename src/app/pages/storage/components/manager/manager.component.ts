@@ -2,8 +2,8 @@ import {
   AfterViewInit, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -524,16 +524,17 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.hasVdevDiskSizeError = true;
         this.hasSavableErrors = true;
       }
-      if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
-        if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
-          if (vdev.group === 'log') {
-            this.getLogVdevTypeWarningMsg();
-          } else {
-            this.getStripeVdevTypeErrorMsg(vdev.group);
-          }
-
-          this.hasSavableErrors = true;
+      if (
+        ['dedup', 'log', 'special', 'data'].includes(vdev.group)
+        && vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe'
+      ) {
+        if (vdev.group === 'log') {
+          this.getLogVdevTypeWarningMsg();
+        } else {
+          this.getStripeVdevTypeErrorMsg(vdev.group);
         }
+
+        this.hasSavableErrors = true;
       }
     });
     if (this.isNew) {

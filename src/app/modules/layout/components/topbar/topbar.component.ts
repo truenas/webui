@@ -2,7 +2,7 @@ import {
   Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -103,8 +103,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.updateNotificationSent = true;
     });
 
-    this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.screenSize = evt.mqAlias;
+    this.mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      this.screenSize = changes[0].mqAlias;
     });
   }
 
@@ -138,12 +138,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.updateIsDone.unsubscribe();
         });
       }
-      if (!this.isFailoverLicensed) {
-        if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
-          this.systemWillRestart = true;
-          if (event.fields.state === JobState.Success) {
-            this.router.navigate(['/others/reboot']);
-          }
+      if (
+        !this.isFailoverLicensed
+        && event?.fields?.arguments[0]
+        && (event.fields.arguments[0] as { reboot: boolean }).reboot
+      ) {
+        this.systemWillRestart = true;
+        if (event.fields.state === JobState.Success) {
+          this.router.navigate(['/others/reboot']);
         }
       }
 
@@ -162,10 +164,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       } else {
         this.checkNetworkChangesPending();
       }
-      if (evt && evt.data.checkin) {
-        if (this.checkinInterval) {
-          clearInterval(this.checkinInterval);
-        }
+      if (evt && evt.data.checkin && this.checkinInterval) {
+        clearInterval(this.checkinInterval);
       }
     });
 
@@ -182,7 +182,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.hostname = sysInfo.hostname;
     });
 
-    this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.closeSlideIn();
     });
   }

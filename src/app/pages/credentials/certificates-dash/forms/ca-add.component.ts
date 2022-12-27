@@ -808,19 +808,16 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   }
 
   getStep(fieldName: string): number {
-    const stepNumber = this.wizardConfig.findIndex((step) => {
+    return this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex((field) => fieldName === field.name);
       return index > -1;
     });
-
-    return stepNumber;
   }
 
   getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
-      return target;
+      return (this.entityWizard.formArray.get([stepNumber]) as UntypedFormGroup).controls[fieldName];
     }
     return null;
   }
@@ -828,8 +825,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   getTarget(fieldName: string): FieldConfig {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
-      return target;
+      return _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
     }
     return null;
   }

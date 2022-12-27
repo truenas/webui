@@ -1,6 +1,6 @@
 import { ComponentHarness, parallel } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 

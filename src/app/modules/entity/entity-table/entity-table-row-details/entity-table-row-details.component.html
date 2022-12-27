@@ -10,7 +10,7 @@
         <mat-icon
           class="widget-icon"
           fontSet="mdi-set"
-          fontIcon="mdi-{{ column.widget.icon }}"
+          [fontIcon]="'mdi-' + column.widget.icon"
           [matMenuTriggerFor]="widget"
         ></mat-icon>
         <mat-menu #widget="matMenu">
@@ -49,8 +49,8 @@
         *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
         mat-button
         ix-auto-type="button"
-        ix-auto-identifier="{{ action?.name | uppercase }}_{{ action.id }}"
-        id="action_button_{{ action?.name }}__{{ action.id }}"
+        [ix-auto-identifier]="(action?.name | uppercase) + '_' + action.id"
+        [id]="'action_button_' + action?.name + '__' + action.id"
         [disabled]="action.disabled"
         [ix-auto]="config.name | cast"
         (click)="action.onClick(this.config)"

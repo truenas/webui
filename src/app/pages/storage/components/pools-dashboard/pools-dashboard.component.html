@@ -11,6 +11,10 @@
     <a mat-button color="primary" [routerLink]="['/storage', 'create']">
       {{ 'Create Pool' | translate }}
     </a>
+
+    <a *appIfNightly mat-button color="primary" [routerLink]="['/storage', 'create_new']">
+      {{ 'Create Pool (New)' }}
+    </a>
   </ix-page-title-header>
 </ng-template>
 

@@ -43,6 +43,6 @@ def test_create_a_group(driver):
 
 
     # verify the group was added
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//mat-progress-bar')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"qetest")]')

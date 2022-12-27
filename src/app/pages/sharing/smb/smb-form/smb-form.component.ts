@@ -5,7 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,6 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
@@ -55,7 +54,6 @@ export class SmbFormComponent implements OnInit {
   namesInUse: string[] = [];
   existingSmbShare: SmbShare;
   readonly helptextSharingSmb = helptextSharingSmb;
-  productType = localStorage.getItem('product_type') as ProductType;
   private wasStripAclWarningShown = false;
 
   title: string = helptextSharingSmb.formTitleAdd;
@@ -247,7 +245,7 @@ export class SmbFormComponent implements OnInit {
       return;
     }
     const nameControl = this.form.get('name');
-    if (pathControl.value && !nameControl.value) {
+    if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
     }

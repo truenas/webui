@@ -2,7 +2,7 @@
   <ix-page-title-header>
     <button mat-button [matMenuTriggerFor]="elementsMenu">
       {{ 'Elements' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #elementsMenu="matMenu">
       <button
@@ -76,7 +76,8 @@
       <ng-container *ngFor="let enclosure of system.profile; let i = index">
         <div
           *ngIf="enclosure.enclosureKey !== system.rearIndex"
-          class="enclosure enclosure-{{ i }} {{ selectedEnclosure.enclosureKey === i ? 'active' : '' }}"
+          [class]="['enclosure', 'enclosure-'+ i]"
+          [class.active]="selectedEnclosure.enclosureKey === i"
           (click)="selectEnclosure(i)"
         >
           <div *ngIf="system.enclosures[enclosure.enclosureKey].label === system.enclosures[enclosure.enclosureKey].name">

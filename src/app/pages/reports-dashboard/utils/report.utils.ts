@@ -17,31 +17,21 @@ export function formatLegendSeries(
   series: dygraphs.SeriesLegendData[],
   data: ReportingData,
 ): dygraphs.SeriesLegendData[] {
-  switch (data.name) {
-    case 'interface':
-      series.forEach((element) => {
-        element.yHTML = formatInterfaceUnit(element.yHTML);
-      });
-      break;
-    default:
-      break;
+  if (data.name === 'interface') {
+    series.forEach((element) => {
+      element.yHTML = formatInterfaceUnit(element.yHTML);
+    });
   }
   return series;
 }
 
 export function formatData(data: ReportingData): ReportingData {
-  switch (data.name) {
-    case 'interface':
-      if (data.aggregations) {
-        Object.keys(data.aggregations).forEach((key) => {
-          _.set(data.aggregations, key, data.aggregations[key as ReportingAggregationKeys].map(
-            (value) => formatInterfaceUnit(value),
-          ));
-        });
-      }
-      break;
-    default:
-      break;
+  if (data.name === 'interface' && data.aggregations) {
+    Object.keys(data.aggregations).forEach((key) => {
+      _.set(data.aggregations, key, data.aggregations[key as ReportingAggregationKeys].map(
+        (value) => formatInterfaceUnit(value),
+      ));
+    });
   }
   return data;
 }

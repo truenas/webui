@@ -120,7 +120,7 @@
         <!-- DETAILS OVERLAY -->
         <div *ngIf="currentView === 'details' || exitingView === 'details'" class="details stage-left dom-overlay">
           <div class="content">
-            <h1 class="disk-name {{ selectedDisk.name }}">
+            <h1 [class]="['disk-name', selectedDisk.name]">
               {{ selectedDisk.name }}
             </h1>
             <div class="title">
@@ -159,7 +159,7 @@
             <div *ngIf="selectedVdevDisks; else noVdevDisks" class="legend">
               <div
                 *ngFor="let disk of selectedVdevDisks; let i = index"
-                class="vdev-disk {{ disk }}"
+                [class]="['vdev-disk', disk]"
                 (mouseenter)="highlightPath(disk)"
                 (mouseleave)="unhighlightPath(disk)"
               >

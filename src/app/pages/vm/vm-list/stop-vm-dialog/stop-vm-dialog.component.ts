@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/vm/vm-list';
@@ -45,12 +45,12 @@ export class StopVmDialogComponent {
     jobDialogRef.componentInstance.submit();
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close(false);
-      this.dialogRef.close(true);
       this.dialogService.info(
         this.translate.instant('Finished'),
         this.translate.instant(helptext.stop_dialog.successMessage, { vmName: this.vm.name }),
         true,
       );
     });
+    this.dialogRef.close(true);
   }
 }

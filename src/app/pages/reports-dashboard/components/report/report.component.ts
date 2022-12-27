@@ -19,11 +19,11 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
@@ -206,11 +206,11 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.report?.firstChange) {
-      this.updateReport$.next(changes);
-    } else if (changes.report.previousValue && !this.isReady) {
-      this.updateReport$.next(changes);
-    } else if (changes.report.previousValue.title !== changes.report.currentValue.title) {
+    const wasReportChanged = changes?.report?.firstChange
+      || (changes.report.previousValue && !this.isReady)
+      || (changes.report.previousValue.title !== changes.report.currentValue.title);
+
+    if (wasReportChanged) {
       this.updateReport$.next(changes);
     }
   }

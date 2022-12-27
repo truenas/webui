@@ -32,7 +32,9 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/assets/styles/scss-imports"
+                "./src/assets/styles",
+                "./node_modules",
+                "./src"
               ]
             },
             "styles": [

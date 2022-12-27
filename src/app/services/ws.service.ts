@@ -5,6 +5,7 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
+  BehaviorSubject,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
 import { filter, share, switchMap } from 'rxjs/operators';
@@ -20,11 +21,10 @@ import { Job } from 'app/interfaces/job.interface';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  onCloseSubject$ = new Subject<boolean>();
-  onOpenSubject$ = new Subject<boolean>();
+  onClose$ = new Subject<boolean>();
 
   socket: WebSocket;
-  connected = false;
+  isConnected$ = new BehaviorSubject(false);
   loggedIn = false;
   @LocalStorage() token: string;
   shuttingdown = false;
@@ -58,6 +58,10 @@ export class WebSocketService {
     this.connect();
   }
 
+  get connected(): boolean {
+    return this.isConnected$.value;
+  }
+
   get authStatus(): Observable<boolean> {
     return this.authStatus$.asObservable();
   }
@@ -79,7 +83,6 @@ export class WebSocketService {
   }
 
   onopen(): void {
-    this.onOpenSubject$.next(true);
     this.send({ msg: OutgoingApiMessageType.Connect, version: '1', support: ['1'] });
   }
 
@@ -92,8 +95,8 @@ export class WebSocketService {
   }
 
   onclose(): void {
-    this.connected = false;
-    this.onCloseSubject$.next(true);
+    this.isConnected$.next(false);
+    this.onClose$.next(true);
     setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
       this.router.navigate(['/sessions/signin']);
@@ -116,7 +119,7 @@ export class WebSocketService {
       return;
     }
 
-    if ('error' in data && data.error.error === 13 /** Not Authenticated */) {
+    if ('error' in data && data.error.error === 207 /** Not Authenticated */) {
       return this.socket.close(); // will trigger onClose which handles redirection
     }
 
@@ -133,7 +136,7 @@ export class WebSocketService {
         call.observer.complete();
       }
     } else if (data.msg === IncomingApiMessageType.Connected) {
-      this.connected = true;
+      this.isConnected$.next(true);
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg === IncomingApiMessageType.Changed || data.msg === IncomingApiMessageType.Added) {
@@ -250,7 +253,7 @@ export class WebSocketService {
    */
   unsub(api: string, subscriptionId: string): void {
     const nom = api.replace('.', '_');
-    if (this.pendingSubs[nom].observers[subscriptionId]) {
+    if (this.pendingSubs[nom]?.observers?.[subscriptionId]) {
       this.send({ id: subscriptionId, msg: OutgoingApiMessageType.UnSub });
       this.pendingSubs[nom].observers[subscriptionId].unsubscribe();
       delete this.pendingSubs[nom].observers[subscriptionId];
@@ -265,10 +268,15 @@ export class WebSocketService {
       this.call(method, params).pipe(
         switchMap((jobId) => this.subscribe('core.get_jobs').pipe(filter((event) => event.id === jobId))),
         untilDestroyed(this),
-      ).subscribe((event) => {
-        observer.next(event.fields);
-        if (event.fields.state === JobState.Success) observer.complete();
-        if (event.fields.state === JobState.Failed) observer.error(event.fields);
+      ).subscribe({
+        next: (event) => {
+          observer.next(event.fields);
+          if (event.fields.state === JobState.Success) observer.complete();
+          if (event.fields.state === JobState.Failed) observer.error(event.fields);
+        },
+        error: (error) => {
+          observer.error(error);
+        },
       });
     });
   }
@@ -305,10 +313,10 @@ export class WebSocketService {
     observer.complete();
   }
 
-  loginToken(token: string): Observable<boolean> {
+  loginWithToken(token: string): Observable<boolean> {
     return new Observable((observer: Subscriber<boolean>) => {
       if (token) {
-        this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
+        this.call('auth.login_with_token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);
         });
       }

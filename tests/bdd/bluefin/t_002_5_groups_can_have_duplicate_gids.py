@@ -1,15 +1,11 @@
 # coding=utf-8
 """SCALE UI feature tests."""
-import time
+
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
-
-
 
 
 def test_groups_can_have_duplicate_gids(driver):
@@ -42,18 +38,15 @@ def test_groups_can_have_duplicate_gids(driver):
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
-
     # verify the group was added
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//mat-progress-bar')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"gidtest")]')
-
 
     # on the Groups page click Add again
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Add")]').click()
-
 
     # input the duplicate group name, GID, enable duplicate gids and click save
     assert wait_on_element(driver, 7, '//h3[contains(.,"Add Group")]')
@@ -71,8 +64,7 @@ def test_groups_can_have_duplicate_gids(driver):
     assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
-
     # verify the duplicate group was added
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//mat-progress-bar')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"gidtestdupe")]')

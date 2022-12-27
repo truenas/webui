@@ -13,6 +13,7 @@ import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -22,7 +23,6 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
