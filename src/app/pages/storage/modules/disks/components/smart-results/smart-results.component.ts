@@ -9,6 +9,7 @@ import { PageTitleService } from 'app/services/page-title.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
   disk: string;
+  id: number;
 }
 
 @UntilDestroy()
@@ -16,19 +17,23 @@ interface SmartTestResultsRow extends SmartTestResult {
   template: '<ix-entity-table [conf]="this"></ix-entity-table>',
 })
 export class SmartResultsComponent implements EntityTableConfig {
-  title = 'SMART test results';
+  title = 'S.M.A.R.T. test results';
   queryCall = 'smart.test.results' as const;
   queryCallOption: QueryParams<SmartTestResults> = [];
 
   emptyTableConfigMessages = {
+    first_use: {
+      title: this.translate.instant('No S.M.A.R.T. test results'),
+      message: this.translate.instant('No S.M.A.R.T. tests have been performed on this disk yet.'),
+    },
     no_page_data: {
-      title: this.translate.instant('No SMART test results'),
-      message: this.translate.instant('No SMART tests have been performed on this disk yet.'),
+      title: this.translate.instant('No S.M.A.R.T. test results'),
+      message: this.translate.instant('No S.M.A.R.T. tests have been performed on this disk yet.'),
     },
   };
 
   columns = [
-    { name: this.translate.instant('ID'), prop: 'num', always_display: true },
+    { name: this.translate.instant('ID'), prop: 'id', always_display: true },
     { name: this.translate.instant('Description'), prop: 'description' },
     { name: this.translate.instant('Status'), prop: 'status' },
     { name: this.translate.instant('Remaining'), prop: 'remaining', hidden: true },
@@ -67,7 +72,7 @@ export class SmartResultsComponent implements EntityTableConfig {
     const rows: SmartTestResultsRow[] = [];
     data.forEach((item) => {
       item?.tests.forEach((test) => {
-        rows.push({ ...test, disk: item.disk });
+        rows.push({ ...test, disk: item.disk, id: test.num });
       });
     });
     return rows;
