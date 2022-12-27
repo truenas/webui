@@ -37,6 +37,7 @@ export class SmartResultsComponent implements EntityTableConfig {
 
   columns = [
     { name: this.translate.instant('ID'), prop: 'id', always_display: true },
+    { name: this.translate.instant('Disk'), prop: 'disk', always_display: true },
     { name: this.translate.instant('Description'), prop: 'description' },
     { name: this.translate.instant('Status'), prop: 'status' },
     { name: this.translate.instant('Remaining'), prop: 'remaining', hidden: true },
@@ -75,10 +76,8 @@ export class SmartResultsComponent implements EntityTableConfig {
               const disksNames = disks.filter((disk) => disk.pool === this.pk).map((disk) => disk.name);
               this.queryCallOption = [[['disk', 'in', disksNames]]];
               this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results of {pk}', { pk: this.pk }));
-              this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
             } else {
               this.pageTitleService.setTitle(this.translate.instant('S.M.A.R.T. Test Results'));
-              this.columns.unshift({ name: this.translate.instant('Disk'), prop: 'disk', always_display: true });
             }
           });
         }),
