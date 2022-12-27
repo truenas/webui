@@ -81,7 +81,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   get iconTooltip(): string {
     if (this.diskState.alerts || this.diskState.smartTests) {
-      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed SMART tests', {
+      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed S.M.A.R.T. tests', {
         alerts: this.diskState.alerts,
         smartTests: this.diskState.smartTests,
       });
