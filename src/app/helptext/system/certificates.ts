@@ -2,6 +2,7 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { helptextSystemCa } from 'app/helptext/system/ca';
 
 export const helptextSystemCertificates = {
   add: {
@@ -12,6 +13,7 @@ export const helptextSystemCertificates = {
     fieldset_certificate: T('Certificate Subject'),
     fieldset_extra: T('Extra Constraints'),
 
+    // TODO: Clean up and rename placeholder to label.
     name: {
       placeholder: T('Name'),
       tooltip: T('Descriptive identifier for this certificate.'),
@@ -72,11 +74,13 @@ matches your certificate usage scenario.'),
 
     key_type: {
       placeholder: T('Key Type'),
+      tooltip: helptextSystemCa.add.key_type.tooltip,
       validation: [Validators.required],
     },
 
     ec_curve: {
       placeholder: T('EC Curve'),
+      tooltip: helptextSystemCa.add.ec_curve.tooltip,
     },
 
     key_length: {

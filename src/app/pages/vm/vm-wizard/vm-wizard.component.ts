@@ -921,7 +921,7 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   getFormArrayIndexFromFieldName(fieldName: string, parent: VmWizardComponent = this): number {
-    return parent.wizardConfig.findIndex((conf: FormConfiguration) => {
+    return parent.wizardConfig.findIndex((conf) => {
       return conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0;
     });
   }

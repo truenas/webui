@@ -1,6 +1,6 @@
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
-import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
-import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { EcCurve } from 'app/enums/ec-curve.enum';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 
@@ -112,7 +112,7 @@ export interface CertificateAuthority {
   internal: string;
   issuer: string | { name: string };
   key_length: number;
-  key_type: string;
+  key_type: CertificateKeyType;
   lifetime: number;
   name: string;
   organization: string;

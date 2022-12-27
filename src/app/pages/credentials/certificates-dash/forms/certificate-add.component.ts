@@ -4,6 +4,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
@@ -14,10 +15,10 @@ import { CertificateExtensions } from 'app/interfaces/certificate-authority.inte
 import {
   Certificate,
   CertificateProfile,
-  CertificateExtension,
+  SomeCertificateExtension,
   CertificationExtensionAttribute,
   CertificateCreate,
-  Extension,
+  CertificateExtension,
   ExtensionProperty,
 } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
@@ -37,7 +38,7 @@ import { ModalService } from 'app/services/modal.service';
   template: '<ix-entity-wizard [conf]="this"></ix-entity-wizard>',
   providers: [SystemGeneralService],
 })
-export class CertificateAddComponent implements WizardConfiguration {
+export class OldCertificateAddComponent implements WizardConfiguration {
   addWsCall = 'certificate.create' as const;
   private entityForm: EntityWizardComponent;
   private csrList: Certificate[] = [];
@@ -206,13 +207,13 @@ export class CertificateAddComponent implements WizardConfiguration {
           placeholder: helptextSystemCertificates.add.digest_algorithm.placeholder,
           tooltip: helptextSystemCertificates.add.digest_algorithm.tooltip,
           options: [
-            { label: 'SHA1', value: 'SHA1' },
-            { label: 'SHA224', value: 'SHA224' },
-            { label: 'SHA256', value: 'SHA256' },
-            { label: 'SHA384', value: 'SHA384' },
-            { label: 'SHA512', value: 'SHA512' },
+            { label: 'SHA1', value: CertificateDigestAlgorithm.Sha1 },
+            { label: 'SHA224', value: CertificateDigestAlgorithm.Sha224 },
+            { label: 'SHA256', value: CertificateDigestAlgorithm.Sha256 },
+            { label: 'SHA384', value: CertificateDigestAlgorithm.Sha384 },
+            { label: 'SHA512', value: CertificateDigestAlgorithm.Sha512 },
           ],
-          value: 'SHA256',
+          value: CertificateDigestAlgorithm.Sha256,
           required: true,
           validation: helptextSystemCertificates.add.digest_algorithm.validation,
           isHidden: false,
@@ -878,9 +879,9 @@ export class CertificateAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
+          Object.keys(value['cert_extensions']).forEach((type: CertificateExtension) => {
             Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
-              const extension = value['cert_extensions'][type] as CertificateExtension;
+              const extension = value['cert_extensions'][type] as SomeCertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === extension[prop]) {
@@ -1002,10 +1003,10 @@ export class CertificateAddComponent implements WizardConfiguration {
         if (data[key]) {
           if (typeProp.length === 1) {
             for (const item of data[key]) {
-              certExtensions[typeProp[0] as Extension][item as ExtensionProperty] = true;
+              certExtensions[typeProp[0] as CertificateExtension][item as ExtensionProperty] = true;
             }
           } else {
-            certExtensions[typeProp[0] as Extension][typeProp[1] as ExtensionProperty] = data[key];
+            certExtensions[typeProp[0] as CertificateExtension][typeProp[1] as ExtensionProperty] = data[key];
           }
         }
         delete data[key];

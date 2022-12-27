@@ -9,10 +9,10 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateAuthorityUpdate, CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import {
-  CertificateExtension,
+  SomeCertificateExtension,
   CertificateProfile,
   CertificationExtensionAttribute,
-  Extension,
+  CertificateExtension,
   ExtensionProperty,
 } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
@@ -770,9 +770,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
+          Object.keys(value['cert_extensions']).forEach((type: CertificateExtension) => {
             Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
-              const extension = value['cert_extensions'][type] as CertificateExtension;
+              const extension = value['cert_extensions'][type] as SomeCertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === extension[prop]) {
@@ -871,10 +871,10 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         if (data[key]) {
           if (typeProp.length === 1) {
             for (const item of data[key]) {
-              certExtensions[typeProp[0] as Extension][item as ExtensionProperty] = true;
+              certExtensions[typeProp[0] as CertificateExtension][item as ExtensionProperty] = true;
             }
           } else {
-            certExtensions[typeProp[0] as Extension][typeProp[1] as ExtensionProperty] = data[key];
+            certExtensions[typeProp[0] as CertificateExtension][typeProp[1] as ExtensionProperty] = data[key];
           }
         }
         delete data[key];
