@@ -48,7 +48,7 @@ import { ModalService } from 'app/services/modal.service';
 export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  @Output() updateTab: EventEmitter<ApplicationUserEvent> = new EventEmitter();
+  @Output() updateTab = new EventEmitter<ApplicationUserEvent>();
   @Output() switchTab = new EventEmitter<string>();
 
   filteredChartItems: ChartRelease[] = [];
@@ -304,7 +304,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
             upgradeSummary: summary,
           } as ChartUpgradeDialogConfig,
         });
-        dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
+        dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe((version: string) => {
           const jobDialogRef = this.mdDialog.open(EntityJobComponent, {
             data: {
               title: helptext.charts.upgrade_dialog.job,
@@ -531,7 +531,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    const tailLines = formValue.tail_lines.toString();
+    const tailLines = (formValue.tail_lines as number).toString();
     this.router.navigate(['/apps/1/logs/', appName, formValue.pods, formValue.containers, tailLines]);
   }
 

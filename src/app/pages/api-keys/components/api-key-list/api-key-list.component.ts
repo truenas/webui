@@ -31,7 +31,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['name', 'created_at', 'actions'];
-  dataSource: MatTableDataSource<ApiKey> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ApiKey>([]);
   defaultSort: Sort = { active: 'name', direction: 'asc' };
   filterValue = '';
   loadingConfig: EmptyConfig = {
