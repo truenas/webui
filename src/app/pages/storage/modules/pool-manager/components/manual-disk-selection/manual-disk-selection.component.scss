@@ -1,0 +1,27 @@
+.container {
+  height: 80vh;
+  width: 70vw;
+}
+
+.inner-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.filter-container {
+  flex: 1;
+}
+
+.enclosure-container {
+  flex: 3;
+}
+
+.select-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  ix-select {
+    flex: 1;
+  }
+}

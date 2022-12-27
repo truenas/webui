@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 
 @UntilDestroy()
 @Component({
@@ -25,5 +27,10 @@ export class PoolManagerWizardComponent {
 
   constructor(
     private fb: FormBuilder,
+    private dialog: MatDialog,
   ) {}
+
+  openManualDiskSelection(): void {
+    this.dialog.open(ManualDiskSelectionComponent);
+  }
 }

@@ -1,0 +1,80 @@
+<mat-card class="container">
+  <mat-card-header>
+    <mat-card-title>{{ 'Manual Selection' | translate }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form">
+      <div
+        class="inner-container" 
+      >
+        <div class="filter-container">
+          <ix-search-input
+          ></ix-search-input>
+          <div class="select-container">
+            <ix-select
+              formControlName="diskType"
+              [label]="'Filter by Disk Type'"
+            ></ix-select>
+            <ix-select
+              formControlName="diskSize"
+              [label]="'Filter by Disk Size'"
+            ></ix-select>
+          </div>
+          <div>
+            <ix-tree
+              class="disk-tree"
+              [dataSource]="dataSource"
+              [treeControl]="treeControl"
+            >
+              <ix-tree-node
+                *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
+                ixTreeNodeToggle
+                routerLinkActive="selected"
+                [ixTreeNodeToggleRecursive]="false"
+                [ixTreeNodeDefDataSource]="dataSource"
+                [class.selected]="topologyItem.identifier === selectedNode?.identifier"
+              >
+                <button mat-icon-button disabled></button>
+                Rehan
+                <ix-icon
+                  name="mdi-chevron-right"
+                  class="mobile-actions"
+                ></ix-icon>
+              </ix-tree-node>
+
+              <ix-nested-tree-node
+                *ixTreeNodeDef="let group; dataSource: dataSource; when: isGroup"
+                [ixTreeNodeDefDataSource]="dataSource"
+              >
+                <div
+                  class="disk-nested-tree-root-node"
+                >
+                  <button
+                    mat-icon-button
+                    ixTreeNodeToggle
+                    class="vdev-group-toggle"
+                    [attr.aria-label]="'Toggle {row}' | translate: { row: group.identifier }"
+                    (click)="$event.preventDefault()"
+                  >
+                    <mat-icon>
+                      {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
+                    </mat-icon>
+                  </button>
+                </div>
+
+                <ng-container
+                  *ngIf="isExpanded(group)"
+                  ixTreeNodeOutlet
+                ></ng-container>
+              </ix-nested-tree-node>
+
+            </ix-tree>
+          </div>
+        </div>
+        <div class="enclosure-container">
+
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
