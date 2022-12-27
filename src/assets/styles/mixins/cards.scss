@@ -40,19 +40,14 @@
     border-bottom: 1px solid var(--lines);
     justify-content: space-between;
     min-height: 40px;
-    padding: 15px 15px 15px 0;
-
-    // Smaller text for smaller screens
-    @media (max-width: $breakpoint-flex) {
-      padding: 8px 8px 8px 0;
-    }
+    padding: 8px 16px;
 
     .mat-mdc-button {
       flex-shrink: 0;
     }
   }
 
-  .mat-card-title {
+  .mat-mdc-card-title {
     align-items: center;
     column-gap: 5px;
     display: flex;
@@ -133,7 +128,7 @@
     display: flex;
     justify-content: flex-end;
     margin: 0;
-    padding: 15px;
+    padding: 8px 16px;
 
     .mdc-button--outlined {
       @include stroked-button();
