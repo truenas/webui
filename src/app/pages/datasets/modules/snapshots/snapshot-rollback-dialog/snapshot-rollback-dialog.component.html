@@ -1,5 +1,5 @@
 <h1 matDialogTitle>{{ 'Dataset Rollback From Snapshot' | translate }}</h1>
-<div *ngIf="isLoading; else loaded" class="loading">
+<div *ngIf="isLoading; else loaded" mat-dialog-content class="loading">
   <mat-spinner [diameter]="40"></mat-spinner>
 </div>
 
