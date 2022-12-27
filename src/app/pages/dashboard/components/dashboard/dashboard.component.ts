@@ -1,12 +1,14 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -20,6 +22,7 @@ import {
   NetworkInterface, NetworkInterfaceAlias,
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -79,6 +82,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   interval: Interval;
 
   readonly ScreenType = ScreenType;
+
+  testControl1 = new FormControl();
+  testControl2 = new FormControl();
+
+  testOptions$: Observable<SelectOption[]> = of([
+    { label: 'Option 1', value: 'option1', tooltip: 'Tooltip 1' },
+    { label: 'Option 2', value: 'option2' },
+    { label: 'Option 3 with very long test that will wrap to another line', value: 'option3', tooltip: 'Tooltip 3' },
+  ]);
 
   get isLoaded(): boolean {
     return this.dashStateReady
@@ -209,12 +221,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onMobileLaunch(evt: DashConfigItem): void {
     this.activeMobileWidget = [evt];
 
-    // Transition
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
-    const vpw = viewport.get('width'); // 600;
+    const { carousel, vpw } = this.getCarouselHtmlData();
 
     const startX = 0;
     const endX = vpw * -1;
@@ -227,12 +234,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileBack(): void {
-    // Transition
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
-    const vpw = viewport.get('width'); // 600;
+    const { carousel, vpw } = this.getCarouselHtmlData();
 
     const startX = vpw * -1;
     const endX = 0;
@@ -253,12 +255,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileResize(evt: Event): void {
     if (this.screenType === ScreenType.Desktop) { return; }
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
+    const { carousel, startX } = this.getCarouselHtmlData();
 
-    const startX = viewport.get('x');
     const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
 
     if (startX !== endX) {
@@ -674,5 +672,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.nics = clone;
       this.isDataReady();
     });
+  }
+
+  private getCarouselHtmlData(): { carousel: Styler; vpw: number; startX: number } {
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
+    const vpw = viewport.get('width');
+    const startX = viewport.get('x');
+
+    return { carousel, vpw, startX };
   }
 }

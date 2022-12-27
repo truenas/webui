@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -75,7 +75,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('shows path of the dataset being edited', () => {
     const datasetPath = spectator.query('.dataset-path');
 
-    expect(datasetPath).toHaveText('Dataset:/mnt/pool/trivial');
+    expect(datasetPath).toHaveText('Dataset: /mnt/pool/trivial');
   });
 
   it('shows current setting owner and access information', async () => {

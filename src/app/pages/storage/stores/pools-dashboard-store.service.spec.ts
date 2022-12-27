@@ -1,6 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { TestScheduler } from 'rxjs/testing';
+import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -58,7 +59,8 @@ const dashboardDisks: StorageDashboardDisk[] = [
     ...disk,
     alerts: [],
     tempAggregates: { min: 20, max: 50, avg: 40 },
-    smartTests: 0,
+    smartTestsRunning: 0,
+    smartTestsFailed: 0,
   },
 ];
 
@@ -76,9 +78,7 @@ describe('PoolsDashboardStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).toEqual(expected);
-    });
+    testScheduler = getTestScheduler();
   });
 
   it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {

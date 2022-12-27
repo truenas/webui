@@ -2,9 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  CertificateAddComponent
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import * as _ from 'lodash';
 import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -26,6 +23,9 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import {
+  CertificateAddComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -121,7 +121,7 @@ export class CertificatesDashComponent implements OnInit {
                 if (!result) {
                   return;
                 }
-                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') } });
+                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') }, disableClose: true });
                 this.dialogRef.componentInstance.setCall(
                   table.tableConf.deleteCall,
                   [item.id, (result as { force: boolean }).force],

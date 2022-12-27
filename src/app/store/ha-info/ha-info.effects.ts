@@ -26,7 +26,7 @@ export class HaInfoEffects {
       return this.ws.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {
           const haEnabled = failoverDisabledReasons.length === 0;
-          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
+          this.window.localStorage.setItem('ha_status', haEnabled.toString());
 
           return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
         }),
@@ -41,7 +41,7 @@ export class HaInfoEffects {
         map((event) => {
           const failoverDisabledReasons = event.fields?.disabled_reasons;
           const haEnabled = failoverDisabledReasons.length === 0;
-          this.window.sessionStorage.setItem('ha_status', haEnabled.toString());
+          this.window.localStorage.setItem('ha_status', haEnabled.toString());
 
           return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
         }),

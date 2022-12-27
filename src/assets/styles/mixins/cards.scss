@@ -47,7 +47,7 @@
       padding: 8px 8px 8px 0;
     }
 
-    .mat-button {
+    .mat-mdc-button {
       flex-shrink: 0;
     }
   }
@@ -135,7 +135,7 @@
     margin: 0;
     padding: 15px;
 
-    .mat-stroked-button {
+    .mdc-button--outlined {
       @include stroked-button();
     }
   }

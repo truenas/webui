@@ -82,7 +82,7 @@ a:hover {
 }
 
 a:focus-visible,
-button.mat-button.mat-accent:focus-visible,
+button.mat-mdc-button.mat-accent:focus-visible,
 .ix-dark button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
@@ -320,7 +320,7 @@ samp {
   padding: 0 1.5rem 1.5rem;
 }
 
-.mat-button,
+.mat-mdc-button,
 .mat-raised-button {
   font-weight: 400 !important;
 }

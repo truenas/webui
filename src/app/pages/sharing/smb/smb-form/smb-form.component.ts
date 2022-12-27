@@ -19,7 +19,6 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
@@ -55,7 +54,6 @@ export class SmbFormComponent implements OnInit {
   namesInUse: string[] = [];
   existingSmbShare: SmbShare;
   readonly helptextSharingSmb = helptextSharingSmb;
-  productType = localStorage.getItem('product_type') as ProductType;
   private wasStripAclWarningShown = false;
 
   title: string = helptextSharingSmb.formTitleAdd;

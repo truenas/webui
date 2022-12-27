@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
@@ -36,7 +36,7 @@ import {
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
-  CertificateAddComponent
+  CertificateAddComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import {
   SignCsrDialogComponent,
@@ -63,13 +63,13 @@ import { CertificateEditComponent } from './certificates-dash/certificate-edit/c
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
 import { OldCertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
-import { CertificateOptionsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
-import { CertificateSubjectComponent } from './certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
-import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
-import { CertificateSummaryComponent } from './certificates-dash/forms/certificate-add/steps/certificate-summary/certificate-summary.component';
-import { CertificateImportComponent } from './certificates-dash/forms/common-steps/certificate-import/certificate-import.component';
 import { CertificateCsrExistsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-csr-exists/certificate-csr-exists.component';
+import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
+import { CertificateOptionsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
+import { CertificateSummaryComponent } from './certificates-dash/forms/certificate-add/steps/certificate-summary/certificate-summary.component';
+import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+import { CertificateImportComponent } from './certificates-dash/forms/common-steps/certificate-import/certificate-import.component';
+import { CertificateSubjectComponent } from './certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 
 @NgModule({
   declarations: [
