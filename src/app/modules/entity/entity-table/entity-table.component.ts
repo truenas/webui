@@ -352,13 +352,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
         if (data.length === 0) this.isTableEmpty = true;
 
-        this.dataSource.data = data.map((item) => {
-          return {
-            ...item,
-            id: this.getRowIdentifier(item),
-          };
-        });
-
+        this.dataSource.data = data;
         this.changeDetectorRef.detectChanges();
       });
 
@@ -977,7 +971,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getRowIdentifier(row: Row): string {
-    return row.name || row.path || row.id || row.identifier || row.uuid || UUID.UUID();
+    if (row) {
+      return row.id || row.identifier || row.uuid || row.name || row.path || row.num || UUID.UUID();
+    }
+    return UUID.UUID();
   }
 
   getDisabled(column: string): boolean {
