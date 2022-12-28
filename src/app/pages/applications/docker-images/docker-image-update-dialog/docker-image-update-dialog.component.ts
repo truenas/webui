@@ -75,7 +75,7 @@ export class DockerImageUpdateDialogComponent {
   onSubmit(): void {
     this.wasSubmitted = true;
 
-    const payload = Object.entries(this.form.value).map(([key, value]) => {
+    const payload = Object.entries(this.form.value).map(([key, value]: [key: string, value: string]) => {
       this.bulkItems.set(key, { ...this.bulkItems.get(key), state: BulkListItemState.Running });
       const params = value.split(':');
       return [{

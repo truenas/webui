@@ -12,7 +12,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RedirectDialogComponent {
-  @ViewChild('el', { static: false }) el: ElementRef;
+  @ViewChild('el', { static: false }) el: ElementRef<HTMLInputElement>;
 
   constructor(
     public dialogRef: MatDialogRef<RedirectDialogComponent>,

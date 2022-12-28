@@ -42,7 +42,7 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  dataSource: MatTableDataSource<Bootenv> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<Bootenv>([]);
   displayedColumns = ['select', 'name', 'active', 'created', 'rawspace', 'keep', 'actions'];
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;

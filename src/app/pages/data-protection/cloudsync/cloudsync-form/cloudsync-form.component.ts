@@ -139,7 +139,7 @@ export class CloudsyncFormComponent {
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 
-  bucketOptions$: Observable<SelectOption[]> = of([]);
+  bucketOptions$ = of<SelectOption[]>([]);
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();

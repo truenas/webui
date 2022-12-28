@@ -25,7 +25,7 @@
       class="value"
       textLimiter
       threshold="70"
-      content="{{ appService.getPorts(catalogApp) || ('No ports are being used.' | translate) }}"
+      [content]="appService.getPorts(catalogApp) || ('No ports are being used.' | translate)"
     ></span>
   </div>
   <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">

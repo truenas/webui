@@ -48,7 +48,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     cc: [[] as string[], [
       this.validatorsService.customValidator(
-        (control: AbstractControl) => {
+        (control: AbstractControl<string[]>) => {
           return control.value?.every((item: string) => EmailValidator.validate(item));
         },
         this.translate.instant(helptext.cc.err),
