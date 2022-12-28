@@ -70,7 +70,9 @@ class button:
     save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
+    CONTINUE = '//button[contains(*/text(),"CONTINUE")]'
     close = '//button[contains(.,"Close")]'
+    CLOSE = '//button[contains(.,"CLOSE")]'
     close_icon = '//mat-icon[@id="ix-close-icon"]'
     advanced_option = '//button[contains(*/text(),"Advanced Options")]'
 
@@ -90,8 +92,14 @@ class dataset:
     title = '//h1[text()="Datasets"]'
     add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
     permission_tile = '//h3[text()="Permissions"]'
-    permission_edit_button = '//a[*/text()=" Edit "]'
+    permission_edit_button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
     addZvol_button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
+    zfsEncryption_title = '//h3[text()="ZFS Encryption"]'
+    zfsEncryption_edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
+    lock_button = '//button[contains(.,"Lock")]'
+    unlock_button = '//a[contains(.,"Unlock")]'
+    lockPool_icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock"]'
+    unlockPool_icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock-open-variant"]'
 
     def pool_tree_name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
@@ -174,6 +182,20 @@ class editAcl:
         return f'//div[text()="User - {user_name}"]'
 
 
+class editEncryption:
+    title = '//h1[contains(.,"Edit Encryption Options")]'
+    encryptionType_checkbox = '//ix-select[@formcontrolname="encryption_type"]//mat-select'
+    encryptionType_passphrase_option = '//mat-option[contains(.,"Passphrase")]'
+    passphrase_input = '//ix-input[@formcontrolname="passphrase"]//input'
+    confirmPassphrase_input = '//ix-input[@formcontrolname="confirm_passphrase"]//input'
+    confirm_checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
+
+
+class error:
+    def message_text(message):
+        return f'//mat-error[contains(.,"{message}")]'
+
+
 class globalConfiguration:
     title = '//h3[text()="Edit Global Configuration"]'
     nameserver1_input = '//ix-input[contains(.,"Nameserver 1")]//input'
@@ -201,6 +223,12 @@ class ldap():
     sambaSchema_checkbox = '//ix-checkbox[@formcontrolname="has_samba_schema"]//mat-checkbox'
     encryptionMode_select = '//ix-select[@formcontrolname="ssl"]//mat-select'
     encryptionModeOn_option = '//mat-option[contains(.,"ON")]'
+
+
+class lockDataset:
+    title = '//h1[text()="Lock Dataset"]'
+    forceUnmount_checkbox = '//ix-checkbox[contains(.,"Force unmount")]'
+    lock_button = '//mat-dialog-container//button[contains(.,"Lock")]'
 
 
 class login:
@@ -300,6 +328,13 @@ class system_dataset:
 class toolbar:
     ha_disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
     ha_enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+
+
+class unlockDataset:
+    title = '//h1[contains(.,"Unlock Datasets")]'
+    datasetPassphrase_input = '//input[@ix-auto="input__Dataset Passphrase"]'
+    unlockDatasets_message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
+    unlockDatasets_message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
 
 
 class users:
