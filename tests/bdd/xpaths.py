@@ -90,7 +90,7 @@ class dataset:
     title = '//h1[text()="Datasets"]'
     add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
     permission_tile = '//h3[text()="Permissions"]'
-    permission_edit_button = '//button[normalize-space(span/text())="Save"]'
+    permission_edit_button = '//a[*/text()=" Edit "]'
     addZvol_button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
 
     def pool_tree_name(pool_name):
