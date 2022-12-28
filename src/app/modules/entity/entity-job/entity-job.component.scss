@@ -1,6 +1,12 @@
 :host {
   display: block;
   position: relative;
+
+  ::ng-deep {
+    .mat-mdc-dialog-actions {
+      position: static;
+    }
+  }
 }
 
 mat-dialog-content.entity-job-dialog {
@@ -13,10 +19,10 @@ mat-dialog-content.entity-job-dialog {
   }
 }
 
-.mat-mdc-dialogclose {
+.mat-dialog-close {
   position: absolute;
-  right: -24px;
-  top: -24px;
+  right: 5px;
+  top: 5px;
 }
 
 .entity-job-progress {
