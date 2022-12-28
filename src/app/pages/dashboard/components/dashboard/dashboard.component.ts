@@ -127,7 +127,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected ws: WebSocketService,
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,

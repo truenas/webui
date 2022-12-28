@@ -101,8 +101,8 @@ export class AlertConfigFormComponent implements OnInit {
     this.isFormLoading = true;
     const payload: AlertClassesUpdate = { classes: {} };
     for (const [className, classControl] of Object.entries(this.form.controls)) {
-      const levelControl = classControl.controls.level as FormControl;
-      const policyControl = classControl.controls.policy as FormControl;
+      const levelControl = classControl.controls.level as FormControl<AlertLevel>;
+      const policyControl = classControl.controls.policy as FormControl<AlertPolicy>;
       if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
         payload.classes[className] = {};
         if (levelControl.value !== levelControl.defaultValue) {

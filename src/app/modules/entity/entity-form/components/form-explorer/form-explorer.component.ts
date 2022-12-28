@@ -34,7 +34,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   private actionMapping: IActionMapping = {
     mouse: {
-      contextMenu: (tree, node, $event) => {
+      contextMenu: (tree, node, $event: Event) => {
         $event.preventDefault();
       },
       dblClick: (tree, node, $event) => {
@@ -166,7 +166,7 @@ export class FormExplorerComponent implements Field, OnInit {
     if (this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
-          const target = event.treeModel.getNodeById(item.uuid);
+          const target: TreeNode = event.treeModel.getNodeById(item.uuid);
           target.setIsSelected(true);
         }
       }
@@ -181,7 +181,7 @@ export class FormExplorerComponent implements Field, OnInit {
     ) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
-          const target = event.treeModel.getNodeById(item.uuid);
+          const target = event.treeModel.getNodeById(item.uuid) as TreeNode;
           target.setIsSelected(true);
         }
       }

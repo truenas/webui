@@ -111,8 +111,7 @@ export class EntityUtils {
           const field = extraItem[0].split('.')[1];
           const error = extraItem[1];
 
-          let fc = _.find(entity.fieldConfig, { name: field })
-            || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          let fc = _.find(entity.fieldConfig, { name: field });
           let stepIndex;
           if (entity.wizardConfig) {
             _.find(entity.wizardConfig, (step, index) => {
@@ -122,8 +121,7 @@ export class EntityUtils {
             });
           }
           if (targetFieldConfig) {
-            fc = _.find(targetFieldConfig, { name: field })
-              || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+            fc = _.find(targetFieldConfig, { name: field });
           }
 
           if (fc && !fc['isHidden']) {
