@@ -27,21 +27,6 @@
   </ix-page-title-header>
 </ng-template>
 
-<mat-card style="width: 250px;">
-  <ix-select
-    label="Test me"
-    [formControl]="testControl1"
-    [options]="testOptions$"
-  ></ix-select>
-
-  <ix-select
-    label="Test me (multiple)"
-    [formControl]="testControl2"
-    [options]="testOptions$"
-    [multiple]="true"
-  ></ix-select>
-</mat-card>
-
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
   <div
     *ngIf="screenType === ScreenType.Desktop && dashStateReady && isEmpty"
