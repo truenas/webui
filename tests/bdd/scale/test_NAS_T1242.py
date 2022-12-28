@@ -61,21 +61,22 @@ def the_pools_page_appears_click_create_pool(driver):
     driver.find_element_by_xpath(xpaths.storage.create_pool_button).click()
 
 
-@then('the Pool Manager appears, enter encrypted_tank for pool name')
-def the_pool_manager_appears_enter_encrypted_tank_for_pool_name(driver):
-    """the Pool Manager appears, enter encrypted_tank for pool name."""
+@then('the Pool Manager appears, enter encrypted for pool name')
+def the_pool_manager_appears_enter_encrypted_for_pool_name(driver):
+    """the Pool Manager appears, enter encrypted for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
     assert wait_on_element(driver, 10, xpaths.pool_manager.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('encrypted_tank')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('encrypted')
 
 
 @then('click encryption and confirm popup')
 def click_encryption_and_confirm_popup(driver):
     """click encryption and confirm popup."""
-    assert wait_on_element(driver, 10, '//mat-checkbox[@id="pool-manager__encryption-checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__encryption-checkbox"]').click()
-    assert wait_on_element(driver, 10, '//mat-checkbox[@id="confirm-dialog__confirm-checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="confirm-dialog__confirm-checkbox"]').click()
+    assert wait_on_element(driver, 10, xpaths.pool_manager.encryption_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.encryption_checkbox).click()
+    assert wait_on_element(driver, 7, xpaths.popup.warning)
+    assert wait_on_element(driver, 10, xpaths.checkbox.confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__I UNDERSTAND"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I UNDERSTAND"]').click()
 
@@ -115,4 +116,4 @@ def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
 @then('the pool should be listed on the storage page')
 def the_pool_should_be_listed_on_the_storage_page(driver):
     """the pool should be listed on the storage page."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"encrypted_tank")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"encrypted")]')
