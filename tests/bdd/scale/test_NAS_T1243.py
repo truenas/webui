@@ -135,9 +135,9 @@ def once_save_and_back_on_dataset_lock_the_pool(driver):
     assert wait_on_element(driver, 5, xpaths.dataset.lockPool_icon)
 
 
-@then(parsers.parse('try to unlock the pool with the right passphrase "{passphrase}" it should succeed'))
-def try_to_unlock_the_pool_with_the_right_passphrase_it_should_succeed(driver, passphrase):
-    """try to unlock the pool with the right passphrase "{passphrase}" it should succeed."""
+@then(parsers.parse('unlock the pool with "{passphrase}"'))
+def unlock_the_pool_with_passphrase(driver, passphrase):
+    """unlock the pool with "{passphrase}"."""
     driver.find_element_by_xpath(xpaths.dataset.pool_tree('encrypted_pool')).click()
     assert wait_on_element(driver, 7, xpaths.dataset.pool_selected('encrypted_pool'))
     assert wait_on_element(driver, 4, xpaths.dataset.unlock_button, 'clickable')
