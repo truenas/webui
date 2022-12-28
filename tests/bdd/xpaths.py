@@ -224,6 +224,7 @@ class pool_manager:
     create_button = '//button[@name="create-button"]'
     create_pool_button = '//button[@ix-auto="button__CREATE POOL"]'
     create_pool_popup = '//h1[contains(.,"Create Pool")]'
+    encryption_checkbox = '//mat-checkbox[@id="pool-manager__encryption-checkbox"]'
 
 
 class popup:
