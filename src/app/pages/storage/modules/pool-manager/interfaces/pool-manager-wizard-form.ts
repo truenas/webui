@@ -1,4 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 
 export interface PoolManagerWizardForm {
@@ -18,7 +19,7 @@ interface GeneralInfoForm {
 
 interface CreateDataForm {
   type: FormControl<CreateVdevLayout>;
-  size: FormControl<string>;
+  size_and_type: FormControl<(string | DiskType)[]>;
   width: FormControl<number>;
   number: FormControl<number>;
 }

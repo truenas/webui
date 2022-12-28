@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
 import { of } from 'rxjs';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerWizardForm } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form';
@@ -23,7 +24,7 @@ export class CreateDataWizardStepComponent implements OnInit {
   @Input() form: PoolManagerWizardForm['data'];
 
   unusedDisks: UnusedDisk[] = [];
-  sizeDisksMap: SizeDisksMap = {};
+  sizeDisksMap: SizeDisksMap = { hdd: {}, ssd: {} };
 
   vdevLayoutOptions$ = of([
     { label: 'Stripe', value: CreateVdevLayout.Stripe },
@@ -45,8 +46,12 @@ export class CreateDataWizardStepComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    this.form.controls.size.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedSize) => {
-      this.updateWidthOptions(this.sizeDisksMap[selectedSize]);
+    this.form.controls.size_and_type.valueChanges.pipe(untilDestroyed(this)).subscribe(([size, type]) => {
+      if (type === DiskType.Hdd) {
+        this.updateWidthOptions(this.sizeDisksMap.hdd[size]);
+      } else {
+        this.updateWidthOptions(this.sizeDisksMap.ssd[size]);
+      }
     });
 
     this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedWidth) => {
@@ -55,15 +60,23 @@ export class CreateDataWizardStepComponent implements OnInit {
   }
 
   updateDiskSizeOptions(): void {
-    this.form.controls.size.setValue(null);
-    this.sizeDisksMap = getSizeDisksMap(this.unusedDisks);
+    this.form.controls.size_and_type.setValue([null, null]);
+    this.sizeDisksMap = {
+      hdd: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
+      ssd: getSizeDisksMap(this.unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
+    };
 
-    this.diskSizeOptions$ = of(
-      Object.keys(this.sizeDisksMap).map((size) => ({
-        label: filesize(Number(size), { standard: 'iec' }),
-        value: size,
-      })),
-    );
+    const hddOptions = Object.keys(this.sizeDisksMap.hdd).map((size) => ({
+      label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Hdd})`,
+      value: [size, DiskType.Hdd],
+    }));
+
+    const ssdOptions = Object.keys(this.sizeDisksMap.ssd).map((size) => ({
+      label: `${filesize(Number(size), { standard: 'iec' })} (${DiskType.Ssd})`,
+      value: [size, DiskType.Ssd],
+    }));
+
+    this.diskSizeOptions$ = of(hddOptions.concat(ssdOptions));
   }
 
   updateWidthOptions(length: number): void {

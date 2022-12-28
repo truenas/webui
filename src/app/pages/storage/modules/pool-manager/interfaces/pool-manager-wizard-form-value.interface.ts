@@ -1,3 +1,4 @@
+import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 
 export interface PoolManagerWizardFormValue {
@@ -7,7 +8,7 @@ export interface PoolManagerWizardFormValue {
   };
   data?: {
     type?: CreateVdevLayout;
-    size?: string;
+    size_and_type?: (string | DiskType)[];
     width?: number;
     number?: number;
   };

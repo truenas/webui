@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { PoolManagerWizardForm } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
@@ -20,7 +21,7 @@ export class PoolManagerWizardComponent implements OnInit {
     }),
     data: this.fb.group({
       type: [CreateVdevLayout.Stripe, Validators.required],
-      size: [null as string, Validators.required],
+      size_and_type: [[null, null] as (string | DiskType)[], Validators.required],
       width: [null as number, Validators.required],
       number: [null as number, Validators.required],
     }),

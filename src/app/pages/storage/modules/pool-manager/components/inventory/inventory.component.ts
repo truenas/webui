@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
@@ -16,7 +17,7 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryComponent implements OnInit {
-  sizeDisksMap: SizeDisksMap = {};
+  sizeDisksMap: SizeDisksMap = { hdd: {}, ssd: {} };
   formValue: PoolManagerWizardFormValue;
 
   constructor(
@@ -26,7 +27,10 @@ export class InventoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.poolManagerStore.unusedDisks$.pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
-      this.sizeDisksMap = getSizeDisksMap(unusedDisks);
+      this.sizeDisksMap = {
+        hdd: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Hdd)),
+        ssd: getSizeDisksMap(unusedDisks.filter((disk) => disk.type === DiskType.Ssd)),
+      };
       this.cdr.markForCheck();
     });
 
@@ -37,12 +41,19 @@ export class InventoryComponent implements OnInit {
   }
 
   get inventory(): SizeDisksMap {
-    const filterdSizeDisksMap: SizeDisksMap = {};
-    Object.entries(this.sizeDisksMap).forEach(([size, number]) => {
-      if (size === this.formValue.data.size) {
-        filterdSizeDisksMap[size] = number - this.formValue.data.number;
+    const isHdd = this.formValue.data.size_and_type[1] === DiskType.Hdd;
+    const selectedSize = this.formValue.data.size_and_type[0];
+
+    const filterdSizeDisksMap: SizeDisksMap = {
+      hdd: !isHdd ? this.sizeDisksMap.hdd : {},
+      ssd: isHdd ? this.sizeDisksMap.ssd : {},
+    };
+
+    Object.entries(isHdd ? this.sizeDisksMap.hdd : this.sizeDisksMap.ssd).forEach(([size, number]) => {
+      if (isHdd) {
+        filterdSizeDisksMap.hdd[size] = size === selectedSize ? number - this.formValue.data.number : number;
       } else {
-        filterdSizeDisksMap[size] = number;
+        filterdSizeDisksMap.ssd[size] = size === selectedSize ? number - this.formValue.data.number : number;
       }
     });
     return filterdSizeDisksMap;
