@@ -22,6 +22,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import {
   Observable, of, Subscription, EMPTY, Subject, BehaviorSubject,
@@ -354,7 +355,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         this.dataSource.data = data.map((item) => {
           return {
             ...item,
-            id: item.id || item?.identifier || item?.uuid || Math.random().toString(36).replace('0.', ''),
+            id: this.getRowIdentifier(item),
           };
         });
 
@@ -976,7 +977,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getRowIdentifier(row: Row): string {
-    return row.name || row.path || row.id;
+    return row.name || row.path || row.id || row.identifier || row.uuid || UUID.UUID();
   }
 
   getDisabled(column: string): boolean {
