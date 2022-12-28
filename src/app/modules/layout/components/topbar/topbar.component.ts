@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -426,11 +426,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   private listenForUpgradePendingState(): void {
-    this.store$.select(selectIsUpgradePending).pipe(untilDestroyed(this)).subscribe((isUpgradePending) => {
-      this.upgradeWaitingToFinish = isUpgradePending;
-      if (isUpgradePending) {
-        this.upgradePendingDialog();
-      }
+    this.store$.select(selectIsUpgradePending).pipe(filter(Boolean), take(1), untilDestroyed(this)).subscribe(() => {
+      this.upgradeWaitingToFinish = true;
+      this.upgradePendingDialog();
     });
   }
 }
