@@ -25,3 +25,17 @@
     flex: 1;
   }
 }
+
+.group-row {
+  align-items: center;
+  background: var(--bg1);
+  border: 1px solid var(--alt-bg2);
+  cursor: pointer;
+  display: flex;
+  height: 24px;
+  justify-content: space-between;
+}
+
+.group-name {
+  margin-left: 5px;
+}

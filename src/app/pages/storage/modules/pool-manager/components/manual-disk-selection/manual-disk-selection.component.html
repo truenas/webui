@@ -22,44 +22,28 @@
           </div>
           <div>
             <ix-tree
-              class="disk-tree"
               [dataSource]="dataSource"
               [treeControl]="treeControl"
             >
               <ix-tree-node
-                *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
+                *ixTreeNodeDef="let disk; dataSource: dataSource"
                 ixTreeNodeToggle
                 routerLinkActive="selected"
                 [ixTreeNodeToggleRecursive]="false"
                 [ixTreeNodeDefDataSource]="dataSource"
-                [class.selected]="topologyItem.identifier === selectedNode?.identifier"
               >
-                <button mat-icon-button disabled></button>
-                Rehan
-                <ix-icon
-                  name="mdi-chevron-right"
-                  class="mobile-actions"
-                ></ix-icon>
+                {{ disk.identifier }}
               </ix-tree-node>
 
               <ix-nested-tree-node
                 *ixTreeNodeDef="let group; dataSource: dataSource; when: isGroup"
                 [ixTreeNodeDefDataSource]="dataSource"
               >
-                <div
-                  class="disk-nested-tree-root-node"
-                >
-                  <button
-                    mat-icon-button
-                    ixTreeNodeToggle
-                    class="vdev-group-toggle"
-                    [attr.aria-label]="'Toggle {row}' | translate: { row: group.identifier }"
-                    (click)="$event.preventDefault()"
-                  >
-                    <mat-icon>
-                      {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
-                    </mat-icon>
-                  </button>
+                <div class="group-row" ixTreeNodeToggle>
+                  <span class="group-name">{{ group.identifier }}</span>
+                  <mat-icon >
+                    {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
+                  </mat-icon>
                 </div>
 
                 <ng-container

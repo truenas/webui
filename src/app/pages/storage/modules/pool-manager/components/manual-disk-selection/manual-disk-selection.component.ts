@@ -51,6 +51,11 @@ export class ManualDiskSelectionComponent {
   ) {
     this.dataSource = new IxNestedTreeDataSource([
       this.data,
+      {
+        ...this.data,
+        group: 'enclosure1',
+        identifier: 'enclosure2',
+      },
     ]);
   }
 
