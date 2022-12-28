@@ -54,8 +54,8 @@ def on_the_dashboard_click_on_storage(driver):
 @then('the storage page opens click the pool config button')
 def the_storage_page_opens_click_the_pool_config_button(driver):
     """the storage page opens click the pool config button."""
-    assert wait_on_element(driver, 10, '//mat-icon[@id="encrypted_tank_settings_button"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[@id="encrypted_tank_settings_button"]').click()
+    assert wait_on_element(driver, 10, '//mat-icon[@id="encrypted_pool_settings_button"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[@id="encrypted_pool_settings_button"]').click()
 
 
 @then('in the dropdown click Export Disconnect')
@@ -73,7 +73,7 @@ def click_the_checkboxes_enter_name_and_click_export(driver):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__"]').click()
     # driver.find_element_by_xpath('//input[@ix-auto="input__"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__"]').send_keys("encrypted_tank")
+    driver.find_element_by_xpath('//input[@ix-auto="input__"]').send_keys("encrypted_pool")
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Confirm Export/Disconnect"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm Export/Disconnect"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EXPORT/DISCONNECT"]', 'clickable')
@@ -85,4 +85,4 @@ def storage_page_should_load_and_the_pool_should_be_gone(driver):
     """storage page should load and the pool should be gone."""
     assert wait_on_element(driver, 20, xpaths.button.close, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close).click()
-    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"encrypted_tank")]')
+    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"encrypted_pool")]')
