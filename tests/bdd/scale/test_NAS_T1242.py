@@ -42,9 +42,9 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('you are on the dashboard, click Storage on the side menu')
-def you_are_on_the_dashboard_click_storage_on_the_side_menu(driver):
-    """you are on the dashboard, click Storage on the side menu."""
+@when('on the dashboard, click Storage on the side menu')
+def on_the_dashboard_click_storage_on_the_side_menu(driver):
+    """on the dashboard, click Storage on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
@@ -53,20 +53,20 @@ def you_are_on_the_dashboard_click_storage_on_the_side_menu(driver):
     driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
-@then('the pools page appears click create pool')
-def the_pools_page_appears_click_create_pool(driver):
-    """the pools page appears click create pool."""
+@then('on the Storage page click create pool')
+def on_the_storage_page_click_create_pool(driver):
+    """on the Storage page click create pool."""
     assert wait_on_element(driver, 10, xpaths.storage.title)
     assert wait_on_element(driver, 10, xpaths.storage.create_pool_button, 'clickable')
     driver.find_element_by_xpath(xpaths.storage.create_pool_button).click()
 
 
-@then('the Pool Manager appears, enter encrypted for pool name')
-def the_pool_manager_appears_enter_encrypted_for_pool_name(driver):
-    """the Pool Manager appears, enter encrypted for pool name."""
+@then('on the Pool Manager enter encrypted_poo for pool name')
+def on_the_pool_manager_enter_encrypted_poo_for_pool_name(driver):
+    """on the Pool Manager enter encrypted_poo for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
     assert wait_on_element(driver, 10, xpaths.pool_manager.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('encrypted')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('encrypted_pool')
 
 
 @then('click encryption and confirm popup')
@@ -113,7 +113,7 @@ def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     assert wait_on_element(driver, 10, xpaths.storage.title)
 
 
-@then('the pool should be listed on the storage page')
-def the_pool_should_be_listed_on_the_storage_page(driver):
-    """the pool should be listed on the storage page."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"encrypted")]')
+@then('the pool should appear on the storage page')
+def the_pool_should_appear_on_the_storage_page(driver):
+    """the pool should appear on the storage page."""
+    assert wait_on_element(driver, 7, '//div[contains(.,"encrypted_pool")]')
