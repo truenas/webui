@@ -53,8 +53,117 @@ export class ManualDiskSelectionComponent {
       this.data,
       {
         ...this.data,
-        group: 'enclosure1',
+        group: 'enclosure2',
         identifier: 'enclosure2',
+        children: [
+          {
+            identifier: 'sdb',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdc',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdd',
+            children: [],
+          } as unknown as EnclosureDisk,
+        ],
+      },
+      {
+        ...this.data,
+        group: 'enclosure3',
+        identifier: 'enclosure3',
+        children: [
+          {
+            identifier: 'sdb',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdc',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdd',
+            children: [],
+          } as unknown as EnclosureDisk,
+        ],
+      },
+      {
+        ...this.data,
+        group: 'enclosure4',
+        identifier: 'enclosure4',
+        children: [
+          {
+            identifier: 'sdb',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdc',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdd',
+            children: [],
+          } as unknown as EnclosureDisk,
+        ],
+      },
+      {
+        ...this.data,
+        group: 'enclosure5',
+        identifier: 'enclosure5',
+        children: [
+          {
+            identifier: 'sdb',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdc',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdd',
+            children: [],
+          } as unknown as EnclosureDisk,
+        ],
+      },
+      {
+        ...this.data,
+        group: 'enclosure6',
+        identifier: 'enclosure6',
+        children: [
+          {
+            identifier: 'sdb',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdc',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdd',
+            children: [],
+          } as unknown as EnclosureDisk,
+        ],
+      },
+      {
+        ...this.data,
+        group: 'enclosure7',
+        identifier: 'enclosure7',
+        children: [
+          {
+            identifier: 'sdb',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdc',
+            children: [],
+          } as unknown as EnclosureDisk,
+          {
+            identifier: 'sdd',
+            children: [],
+          } as unknown as EnclosureDisk,
+        ],
       },
     ]);
   }

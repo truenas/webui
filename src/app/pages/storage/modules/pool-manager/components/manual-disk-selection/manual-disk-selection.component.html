@@ -2,7 +2,7 @@
   <mat-card-header>
     <mat-card-title>{{ 'Manual Selection' | translate }}</mat-card-title>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content class="content">
     <form [formGroup]="form">
       <div
         class="inner-container" 
@@ -20,7 +20,7 @@
               [label]="'Filter by Disk Size'"
             ></ix-select>
           </div>
-          <div>
+          <div class="tree-container">
             <ix-tree
               [dataSource]="dataSource"
               [treeControl]="treeControl"
@@ -32,7 +32,19 @@
                 [ixTreeNodeToggleRecursive]="false"
                 [ixTreeNodeDefDataSource]="dataSource"
               >
-                {{ disk.identifier }}
+                <ix-disk-icon 
+                  class="disk-icon"
+                  [identifier]="disk.identifier"
+                  [size]="'4 Tib'"
+                ></ix-disk-icon>
+
+                <ix-disk-info
+                  class="disk-info"
+                  [slot]="'1'"
+                  [type]="'HDD'"
+                  [model]="'Western Digital'"
+                  [serial]="'a1b2c3d4xxxx'"
+                ></ix-disk-info>
               </ix-tree-node>
 
               <ix-nested-tree-node
@@ -41,7 +53,7 @@
               >
                 <div class="group-row" ixTreeNodeToggle>
                   <span class="group-name">{{ group.identifier }}</span>
-                  <mat-icon >
+                  <mat-icon>
                     {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
                   </mat-icon>
                 </div>
@@ -55,6 +67,7 @@
             </ix-tree>
           </div>
         </div>
+        <mat-divider class="divider" [vertical]="true"></mat-divider>
         <div class="enclosure-container">
 
         </div>

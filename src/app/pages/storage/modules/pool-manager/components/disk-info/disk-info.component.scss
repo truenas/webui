@@ -1,0 +1,22 @@
+.horizontal {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  height: 88px;
+  justify-content: space-between;
+  padding: 5px;
+  width: 100%;
+}
+
+.vertical {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 50%;
+}
+
+.item {
+  align-items: center;
+  display: flex;
+  height: 50%;
+}

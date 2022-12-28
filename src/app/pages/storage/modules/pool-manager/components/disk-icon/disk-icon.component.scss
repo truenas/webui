@@ -1,0 +1,22 @@
+.container {
+  border: 1px solid var(--alt-bg2);
+  border-radius: 5px;
+  height: 88px;
+  width: 56px;
+}
+
+.icon-container {
+  background: var(--bg1);
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.identifier-container,
+.size-container {
+  align-items: center;
+  background: var(--alt-bg1);
+  display: flex;
+  justify-content: center;
+}
