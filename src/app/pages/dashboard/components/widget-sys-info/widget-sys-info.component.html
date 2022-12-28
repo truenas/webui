@@ -108,8 +108,8 @@
                 >
                   <img
                     *ngIf="productImage; else generic"
-                    matTooltip="View Enclosure"
                     matTooltipPosition="above"
+                    [matTooltip]="'View Enclosure' | translate"
                     [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
