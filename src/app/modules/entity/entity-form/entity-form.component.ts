@@ -84,6 +84,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private fb: UntypedFormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,

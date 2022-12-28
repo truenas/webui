@@ -32,7 +32,7 @@ import { LayoutService } from 'app/services/layout.service';
 export class DockerImagesListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ContainerImage> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ContainerImage>([]);
 
   displayedColumns = ['select', 'id', 'repo_tags', 'created', 'size', 'update', 'actions'];
 
