@@ -767,7 +767,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let duration = 360;
 
     // x is the position relative to it's starting point.
-    const width = el.get('width');
+    const width = el.get('width') as number;
     const startX = 0;
     let endX = className === 'stage-left' ? width * -1 : width;
     if (className === 'full-stage') {
@@ -1050,7 +1050,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.identifyBtnRef = null;
     } else if (!this.identifyBtnRef && !kill) {
       const btn = popmotion.styler(this.details.nativeElement.querySelector('#identify-btn'), {});
-      const startShadow = btn.get('box-shadow');
+      const startShadow = btn.get('box-shadow') as string;
 
       const elementBorder = popmotion.value(
         { borderColor: '', borderWidth: 0 },

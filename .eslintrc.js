@@ -228,7 +228,12 @@ module.exports = {
           argsIgnorePattern: "^_$",
           ignoreRestSiblings: true,
         }],
-        "@typescript-eslint/ban-types": ["error"],
+        "@typescript-eslint/ban-types": ["error", {
+          extendDefaults: true,
+          types: {
+            UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
+          }
+        }],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
         "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-selector": ["error", {

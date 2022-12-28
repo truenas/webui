@@ -84,7 +84,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   };
 
   private screenshots: File[] = [];
-  jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
+  jobs$ = new BehaviorSubject<Observable<Job>[]>([]);
 
   constructor(
     private ws: WebSocketService,

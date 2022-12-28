@@ -75,7 +75,7 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ZfsSnapshot> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ZfsSnapshot>([]);
   defaultSort: Sort = { active: 'snapshot_name', direction: 'desc' };
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
