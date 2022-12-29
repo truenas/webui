@@ -827,6 +827,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async customSubmit(value: any): Promise<void> {
     this.loader.open();
     let toStop = false;
@@ -889,6 +890,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   doCreate(value: any, item: keyof CreatedItems): Promise<CreatedItem> {
     if (item === 'zvol') {
       const payload = {

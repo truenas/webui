@@ -13,7 +13,7 @@ const extractApiError = (err: WebsocketError | Job): string | void => {
 };
 
 export const sentryCustomExtractor = (
-  errorCandidate: WebsocketError | Job | Error | any,
+  errorCandidate: WebsocketError | Job | Error | unknown,
   defaultExtractor: (error: unknown) => unknown,
 ): unknown => {
   const defaultExtractorResults = defaultExtractor(errorCandidate);
@@ -29,7 +29,7 @@ export const sentryCustomExtractor = (
   }
 
   try {
-    const parsedErrorValue = ErrorStackParser.parse(errorCandidate);
+    const parsedErrorValue = ErrorStackParser.parse(errorCandidate as Error);
 
     if (parsedErrorValue) {
       return parsedErrorValue;

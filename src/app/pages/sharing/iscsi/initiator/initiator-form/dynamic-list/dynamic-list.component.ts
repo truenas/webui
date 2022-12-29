@@ -16,7 +16,7 @@ export class DynamicListComponent implements OnInit {
   @Input() group: UntypedFormGroup;
   @Input() source: MatSelectionList;
 
-  listControl: AbstractControl;
+  listControl: AbstractControl<Set<unknown>>;
   inputConfig: FieldConfig;
   inputControl: AbstractControl;
   formGroup: UntypedFormGroup;

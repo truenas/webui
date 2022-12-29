@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncOneDriveDrive } from 'app/interfaces/cloudsync-credential.interface';
@@ -48,7 +48,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     },
   ]);
 
-  drives$: Observable<Option[]> = of([]);
+  drives$ = of<Option[]>([]);
 
   private drives: CloudsyncOneDriveDrive[] = [];
 

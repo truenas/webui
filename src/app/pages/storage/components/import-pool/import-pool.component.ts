@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Job } from 'app/interfaces/job.interface';
@@ -32,17 +32,12 @@ export class ImportPoolComponent implements OnInit {
     guid: ['' as string, Validators.required],
   });
 
-  pool: {
-    readonly fcName: 'guid';
-    label: string;
-    tooltip: string;
-    options: Observable<Option[]>;
-  } = {
-      fcName: 'guid',
-      label: helptext.guid_placeholder,
-      tooltip: helptext.guid_tooltip,
-      options: of([]),
-    };
+  pool = {
+    fcName: 'guid',
+    label: helptext.guid_placeholder,
+    tooltip: helptext.guid_tooltip,
+    options: of<Option[]>([]),
+  };
 
   constructor(
     private fb: FormBuilder,

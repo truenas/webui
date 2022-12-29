@@ -4,8 +4,8 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { Validators, FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -29,6 +29,7 @@ import {
   SmbPresetType,
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -121,7 +122,7 @@ export class SmbFormComponent implements OnInit {
   form = this.formBuilder.group({
     path: ['', Validators.required],
     name: ['', [Validators.required]],
-    purpose: [''],
+    purpose: [null as SmbPresetType],
     comment: [''],
     enabled: [true],
     acl: [false],
@@ -148,7 +149,7 @@ export class SmbFormComponent implements OnInit {
   constructor(
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private mdDialog: MatDialog,
     private dialog: DialogService,
@@ -240,11 +241,11 @@ export class SmbFormComponent implements OnInit {
   }
 
   setNameFromPath(): void {
-    const pathControl = this.form.get('path');
+    const pathControl = this.form.controls.path;
     if (!pathControl.value) {
       return;
     }
-    const nameControl = this.form.get('name');
+    const nameControl = this.form.controls.name;
     if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
@@ -425,11 +426,11 @@ export class SmbFormComponent implements OnInit {
               this.slideInService.close();
             }
           },
-          error: (err) => {
+          error: (err: WebsocketError) => {
             if (err.reason.includes('[ENOENT]') || err.reason.includes('[EXDEV]')) {
               this.dialog.closeAllDialogs();
             } else {
-              this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+              this.dialog.errorReport(String(err.error), err.reason, err.trace.formatted);
             }
             this.isLoading = false;
             this.cdr.markForCheck();

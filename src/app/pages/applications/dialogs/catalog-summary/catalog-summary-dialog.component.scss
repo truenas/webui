@@ -1,4 +1,4 @@
-.ix-dark ix-catalog-summary-dialog div.mat-dialog-content {
+.ix-dark ix-catalog-summary-dialog div.mat-mdc-dialog-content {
   overflow: auto !important;
 }
 
@@ -92,10 +92,6 @@ ix-catalog-summary-dialog {
     .info-col {
       height: 20px;
     }
-  }
-
-  .button-bar {
-    margin-bottom: -8px;
   }
 }
 

@@ -74,7 +74,12 @@ export class FormComboboxComponent implements Field {
             takeUntil(this.autocompleteTrigger.panelClosingActions),
           )
           .pipe(untilDestroyed(this)).subscribe(() => {
-            const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
+            const {
+              scrollTop,
+              scrollHeight,
+              clientHeight: elementHeight,
+            } = this.autoCompleteRef.panel.nativeElement as HTMLElement;
+
             const atBottom = scrollHeight === scrollTop + elementHeight;
             if (atBottom) {
               this.loadMoreSearchOptions();
@@ -123,7 +128,8 @@ export class FormComboboxComponent implements Field {
   }
 
   hasValue(): boolean {
-    return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
+    return this.group.controls[this.config.name].value
+      && String(this.group.controls[this.config.name].value).length > 0;
   }
 
   resetInput(): void {

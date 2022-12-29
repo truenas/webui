@@ -1,6 +1,7 @@
 {
   "": "",
   "Available version: {version}": "",
+  "Enable Serial Console": "",
   "Error authenticating with token, please try again.": "",
   "Error generating token, please try again.": "",
   "Filter {item}": "",
@@ -751,7 +752,6 @@
   "Configure Active Directory": "配置活动目录",
   "Configure Dashboard": "配置仪表板",
   "Configure LDAP": "配置LDAP",
-  "Configure Serial Console": "配置串行控制台",
   "Configure now": "立即配置",
   "Configure permissions for this share's dataset now?": "现在配置此共享的数据集的权限？",
   "Configure virtual addressing topology when running in TUN mode.  (TAP mode always uses a SUBNET topology.)": "在TUN模式下运行时，配置虚拟寻址拓扑。（TAP模式始终使用子网拓扑）",
@@ -1262,7 +1262,6 @@
   "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to Graphite as separate  path components: <i>host.cpu.0.cpu.idle</i>.<br><br> Disabling sends  the <i>plugin</i> and <i>plugin instance</i> as one path component and  <i>type</i> and <i>type instance</i> as another component:  <i>host.cpu-0.cpu-idle</i>.": "启用会将<i>插件实例</i>和<i>类型实例</i>作为单独的路径组件发送到Graphite：<i> host.cpu.0.cpu.idle </i>。<br><br> 禁用会将<i>插件</i>和<i>插件实例</i>作为一个路径组件发送，并将<i>类型</i>和<i>类型实例</i>作为另一个组件发送：<i> host.cpu-0.cpu-idle </i>。",
   "Enabling this option can expose administrator credentials and is not recommended.": "启用此选项可以公开管理员凭据，因此不建议这样做。",
   "Enabling this option is <b>not</b> recommended as it bypasses a security mechanism.": "建议<b>不要</b>启用此选项，因为它会绕过安全机制。",
-  "Enabling this option may have performance implications on your pools.": "启用此选项可能会对池产生性能影响。",
   "Encipher Only": "仅加密",
   "Enclosure": "机柜",
   "Enclosure Label": "外壳标签",
