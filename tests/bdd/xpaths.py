@@ -244,6 +244,7 @@ class globalConfiguration:
 
 class groups:
     title = '//h1[contains(text(),"Groups")]'
+    edit_button = '//button[contains(.,"Edit")]'
     qetest_name = '//div[contains(.,"qetest")]'
     qetest_expemnd = '//tr[contains(.,"qetest")]/td'
     qatest_name = '//div[contains(.,"qatest")]'
