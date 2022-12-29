@@ -47,8 +47,8 @@ def on_the_dashboard_click_on_credentials_and_certificates(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.local_user, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.certificates, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.certificates).click()
 
 
 @then('click on Certificate add')
