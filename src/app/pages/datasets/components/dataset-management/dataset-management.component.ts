@@ -3,7 +3,6 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { DEFAULT_SCROLL_TIME, DEFAULT_RESIZE_TIME } from '@angular/cdk/scrolling';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
@@ -17,7 +16,7 @@ import {
   ElementRef,
   Inject,
   TemplateRef,
-  Injector,
+  TrackByFunction,
 } from '@angular/core';
 import {
   ActivatedRoute, NavigationStart, Router,
@@ -41,9 +40,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { IxTreeDataSource } from 'app/modules/ix-tree/tree-datasource';
-import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
-import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
-import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService, DialogService } from 'app/services';
@@ -101,15 +97,16 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   // Flat API
   treeControl = new FlatTreeControl<DatasetDetails>(
     (dataset) => dataset.name.split('/').length - 1,
-    (dataset) => dataset?.children?.length > 0,
+    (dataset) => dataset.children.length > 0,
   );
   treeFlattener = new IxTreeFlattener<DatasetDetails, DatasetDetails>(
-    (dataset) => dataset,
+    (dataset: DatasetDetails, level: number) => ({ ...dataset, level }),
     (dataset) => dataset.name.split('/').length - 1,
-    (dataset) => dataset?.children?.length > 0,
-    (dataset) => dataset.children,
+    (dataset) => dataset.children.length > 0,
+    () => ([]),
   );
   dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener);
+  trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
   constructor(
@@ -151,6 +148,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       next: (datasets) => {
         this.sortDatasetsByName(datasets);
         this.createDataSource(datasets);
+        this.expandDatasetBranch();
         this.cdr.markForCheck();
       },
       error: this.handleError,
@@ -184,13 +182,12 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource.data = datasets;
+    this.dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener, datasets);
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      return flattenTreeWithFilter(datasetsToFilter, (dataset) => {
+      return datasetsToFilter.filter((dataset) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
-    this.expandDatasetBranch();
   }
 
   private expandDatasetBranch(): void {
@@ -335,16 +332,5 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   onImportData(): void {
     this.slideIn.open(ImportDataComponent);
-  }
-
-  getDatasetNodePortal(dataset: DatasetDetails): ComponentPortal<DatasetNodeComponent> {
-    const portalInjector = Injector.create({
-      providers: [
-        { provide: datasetToken, useValue: dataset },
-        { provide: isSystemDatasetToken, useValue: this.systemDataset === dataset.name },
-      ],
-    });
-
-    return new ComponentPortal(DatasetNodeComponent, null, portalInjector);
   }
 }
