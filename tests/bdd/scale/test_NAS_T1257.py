@@ -32,7 +32,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
-    elif not wait_on_element(driver, 3, '//button[@name="Power"]', 'clickable'):
+    elif not wait_on_element(driver, 3, xpaths.button.power, 'clickable'):
         assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
         driver.refresh()
@@ -63,15 +63,15 @@ def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
 @then('click on the power button then Restart')
 def click_on_the_power_button_then_restart(driver):
     """click on the power button then Restart."""
-    assert wait_on_element(driver, 10, '//button[@name="Power"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="Power"]').click()
-    assert wait_on_element(driver, 5, '//button[@name="power-restart"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="power-restart"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.power, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.power).click()
+    assert wait_on_element(driver, 5, xpaths.button.restart, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.restart).click()
     assert wait_on_element(driver, 5, '//h1[text()="Restart"]')
     assert wait_on_element(driver, 5, xpaths.checkbox.confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
-    assert wait_on_element(driver, 5, '//button[@name="ok_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="ok_button"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.ok, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.ok).click()
 
 
 @then('wait for the login UI to come back and login')
@@ -92,21 +92,18 @@ def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
 def on_the_dashboard_click_on_systems_settings_then_services(driver):
     """on the Dashboard click on Systems Settings then Services."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 7, '//a[@name="System_Settings-menu"]', 'clickable')
-    driver.find_element_by_xpath('//a[@name="System_Settings-menu"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.systemSetting, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
 
 
 @then('on the Services page, verify SSH is enabled')
 def on_the_services_page_verify_ssh_is_enabled(driver):
     """on the Services page, verify SSH is enabled."""
     assert wait_on_element(driver, 10, xpaths.services.title)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"S3")]//button', 'clickable')
-    element = driver.find_element_by_xpath('//tr[contains(.,"S3")]//button')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
-    assert attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.sshService_button, 'clickable')
+    assert attribute_value_exist(driver, xpaths.services.sshService_toggle, 'class', 'mat-checked')
 
 
 @then('get the ssh host key again')
