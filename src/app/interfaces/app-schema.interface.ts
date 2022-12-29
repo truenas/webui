@@ -33,7 +33,7 @@ export interface CommonSchemaAddControl {
   schema: ChartSchemaNodeConf;
   isNew: boolean;
   subscription: Subscription;
-  formGroup: CustomUntypedFormGroup | FormGroup<any>;
+  formGroup: CustomUntypedFormGroup | FormGroup;
   config: HierarchicalObjectMap<ChartFormValue>;
   isParentImmutable: boolean;
   chartSchemaNode: ChartSchemaNode;

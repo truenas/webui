@@ -1292,6 +1292,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   beforeSubmit(data: any): void {
     if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
       delete data['naming_schema'];

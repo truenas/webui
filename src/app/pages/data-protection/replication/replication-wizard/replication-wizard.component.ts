@@ -829,6 +829,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   setSchemaOrRegexForObject(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any,
     schemaOrRegex: SnapshotNamingOption,
     schema: string = null,
@@ -960,6 +961,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadReplicationTask(task: any): void {
     // TODO: Update logic to use ReplicationTask as a type
     // Add something similar to resourceTransformIncomingRestData for EntityWizard
@@ -1053,6 +1055,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async customSubmit(value: any): Promise<void> {
     if (typeof (value.source_datasets) === 'string') {
       value.source_datasets = _.filter(value.source_datasets.split(',').map(_.trim));

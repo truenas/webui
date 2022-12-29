@@ -952,6 +952,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   beforeSubmit(data: any): CertificateCreate {
     if (data.san) {
       for (let i = 0; i < data.san.length; i++) {
