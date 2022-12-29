@@ -116,4 +116,4 @@ def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
 @then('the pool should appear on the storage page')
 def the_pool_should_appear_on_the_storage_page(driver):
     """the pool should appear on the storage page."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"encrypted_pool")]')
+    assert wait_on_element(driver, 7, xpaths.storage.encryptedPool)
