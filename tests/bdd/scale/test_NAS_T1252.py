@@ -76,4 +76,4 @@ def verify_that_the_group_name_shows_as_qatest(driver):
     """verify that the group name shows as qatest."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, '//div[contains(.,"qatest")]')
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_name)

@@ -226,6 +226,7 @@ class groups:
     qetest_name = '//div[contains(.,"qetest")]'
     qetest_expemnd = '//tr[contains(.,"qetest")]/td'
     edit_button = '//button[contains(.,"Edit")]'
+    qatest_name = '//div[contains(.,"qatest")]'
 
 
 class interface:
