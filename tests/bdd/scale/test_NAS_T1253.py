@@ -102,14 +102,14 @@ def click_on_credentials_and_local_groups(driver):
     """click on Credentials and Local Groups."""
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_group).click()
 
 
 @then('on the Groups page expand QE group and click edit')
 def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     """on the Groups page expand QE group and click edit."""
-    assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
+    assert wait_on_element(driver, 10, xpaths.groups.title)
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__qatest"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__qatest"]/td').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_qatest_qatest"]', 'clickable')

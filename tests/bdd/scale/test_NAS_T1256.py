@@ -48,8 +48,8 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     time.sleep(1)
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_group).click()
 
 
 @then('on the Groups page click to expand the gidtestdupe entry')
@@ -76,5 +76,5 @@ def click_delete_click_the_confirm_checkbox_and_click_delete(driver):
 def verify_the_group_was_deleted(driver):
     """verify the group was deleted."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
+    assert wait_on_element(driver, 10, xpaths.groups.title)
     assert wait_on_element_disappear(driver, 10, '//div[contains(.,"gidtestdupe")]')

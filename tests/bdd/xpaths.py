@@ -15,6 +15,11 @@ class addDataset:
     shareTypeSMB_option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
 
 
+class addGroup:
+    title = '//h3[contains(.,"Add Group")]'
+    name_input = '//ix-input[@formcontrolname="name"]//input'
+
+
 class addKerberosKeytab:
     title = '//h3[text()="Add Kerberos Keytab"]'
     name_input = '//ix-input[@formcontrolname="name"]//input'
@@ -215,6 +220,11 @@ class globalConfiguration:
     hostname_input = '//ix-input[contains(.,"Hostname")]//input'
 
 
+class groups:
+    title = '//h1[contains(text(),"Groups")]'
+    qetest_name = '//div[contains(.,"qetest")]'
+
+
 class interface:
     title = '//h3[contains(text(),"Edit Interface")]'
     dhcp_checkbox = '//mat-checkbox[contains(.,"DHCP")]'
@@ -297,6 +307,7 @@ class sideMenu:
     advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
     services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
+    local_group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
