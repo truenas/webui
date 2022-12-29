@@ -1261,7 +1261,6 @@
   "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to Graphite as separate  path components: <i>host.cpu.0.cpu.idle</i>.<br><br> Disabling sends  the <i>plugin</i> and <i>plugin instance</i> as one path component and  <i>type</i> and <i>type instance</i> as another component:  <i>host.cpu-0.cpu-idle</i>.": "",
   "Enabling this option can expose administrator credentials and is not recommended.": "",
   "Enabling this option is <b>not</b> recommended as it bypasses a security mechanism.": "",
-  "Enabling this option may have performance implications on your pools.": "",
   "Encipher Only": "",
   "Enclosure": "",
   "Enclosure Label": "",
