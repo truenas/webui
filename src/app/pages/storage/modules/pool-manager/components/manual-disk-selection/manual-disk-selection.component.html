@@ -1,13 +1,13 @@
 <mat-card class="container">
-  <mat-card-header>
-    <mat-card-title>{{ 'Manual Selection' | translate }}</mat-card-title>
-  </mat-card-header>
   <mat-card-content class="content">
     <form [formGroup]="form">
       <div
         class="inner-container" 
       >
+
         <div class="filter-container">
+          <div class="header header-top"><h3>{{ 'Manual Selection' | translate }}</h3></div>
+
           <ix-search-input
           ></ix-search-input>
           <div class="select-container">
@@ -32,19 +32,21 @@
                 [ixTreeNodeToggleRecursive]="false"
                 [ixTreeNodeDefDataSource]="dataSource"
               >
-                <ix-disk-icon 
-                  class="disk-icon"
-                  [identifier]="disk.identifier"
-                  [size]="'4 Tib'"
-                ></ix-disk-icon>
+                <div class="info-wrapper">
+                  <ix-disk-icon 
+                    class="disk-icon"
+                    [identifier]="disk.identifier"
+                    [size]="'4 Tib'"
+                  ></ix-disk-icon>
 
-                <ix-disk-info
-                  class="disk-info"
-                  [slot]="'1'"
-                  [type]="'HDD'"
-                  [model]="'Western Digital'"
-                  [serial]="'a1b2c3d4xxxx'"
-                ></ix-disk-info>
+                  <ix-disk-info
+                    class="disk-info"
+                    [slot]="'1'"
+                    [type]="'HDD'"
+                    [model]="'Western Digital'"
+                    [serial]="'a1b2c3d4xxxx'"
+                  ></ix-disk-info>
+                </div>
               </ix-tree-node>
 
               <ix-nested-tree-node
@@ -70,6 +72,16 @@
         <mat-divider class="divider" [vertical]="true"></mat-divider>
         <div class="enclosure-container">
 
+          <div class="header header-vdevs">
+            <h3>{{ 'Data VDevs' | translate }}</h3>
+            <div class="header-actions">
+              <button
+                mat-button
+                class="mat-button"
+              >{{ 'Add' | translate }}</button>
+            </div>
+          </div>
+          <mat-divider class="header-divider"></mat-divider>
         </div>
       </div>
     </form>

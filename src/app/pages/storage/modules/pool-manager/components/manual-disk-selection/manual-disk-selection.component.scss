@@ -11,12 +11,14 @@
 
 .filter-container {
   display: flex;
-  flex: 3;
+  flex: 4;
   flex-direction: column;
 }
 
 .enclosure-container {
-  flex: 7;
+  flex: 9;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .select-container {
@@ -32,10 +34,10 @@
 .group-row {
   align-items: center;
   background: var(--bg1);
-  border: 1px solid var(--alt-bg2);
+  border: 1px solid var(--alt-bg1);
   cursor: pointer;
   display: flex;
-  height: 24px;
+  height: 36px;
   justify-content: space-between;
 }
 
@@ -74,4 +76,47 @@ mat-card-content {
 
 .tree-container {
   overflow-y: scroll;
+}
+
+.info-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 60%;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  &:last-child {
+    flex-grow: 1;
+  }
+}
+
+.header {
+  height: 36px;
+  margin-bottom: 8px;
+}
+
+.header-vdevs {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+
+  h3 {
+    display: inline-block;
+  }
+
+  .header-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-grow: 1;
+  }
+}
+
+.header-divider {
+  margin-bottom: 8px;
+}
+
+.header-top {
+  align-items: center;
+  display: flex;
+  margin-bottom: 16px;
 }
