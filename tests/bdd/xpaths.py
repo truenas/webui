@@ -89,6 +89,7 @@ class checkbox:
     enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
+    sudo = '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox'
 
 
 class dashboard:
@@ -227,6 +228,7 @@ class groups:
     qetest_expemnd = '//tr[contains(.,"qetest")]/td'
     edit_button = '//button[contains(.,"Edit")]'
     qatest_name = '//div[contains(.,"qatest")]'
+    qatest_expemnd = '//tr[contains(.,"qatest")]/td'
 
 
 class interface:

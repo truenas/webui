@@ -27,7 +27,7 @@ def test_verify_enabling_sudo_for_group_works():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Set_Group'], scope='session')
+    #depends(request, ['Set_Group'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -77,7 +77,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.find_element_by_xpath(xpaths.addUser.auxiliaryGroups_select).click()
     assert wait_on_element(driver, 15, xpaths.addUser.qatestGroup_option, 'clickable')
     driver.find_element_by_xpath(xpaths.addUser.qatestGroup_option).click()
-    # time.sleep(2)
+
     driver.find_element_by_xpath(xpaths.addUser.qatestGroup_option).send_keys(Keys.TAB)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -110,18 +110,19 @@ def click_on_credentials_and_local_groups(driver):
 def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     """on the Groups page expand QE group and click edit."""
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__qatest"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__qatest"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_qatest_qatest"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_qatest_qatest"]').click()
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_name)
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_expemnd, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.qatest_expemnd).click()
+    assert wait_on_element(driver, 7, xpaths.groups.edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.edit_button).click()
 
 
 @then('check the enable sudo box and click save')
 def check_the_enable_sudo_box_and_click_save(driver):
     """check the enable sudo box and click save."""
     assert wait_on_element(driver, 10, xpaths.addGroup.edit_title)
-    assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox').click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.sudo, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.sudo).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     # give middleware time to actually do its work
