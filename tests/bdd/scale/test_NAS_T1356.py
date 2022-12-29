@@ -74,8 +74,8 @@ def click_launch_docker_image(driver):
 
     assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
-    if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
-        assert wait_on_element_disappear(driver, 120, '//*[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
+        assert wait_on_element_disappear(driver, 120, xpaths.popup.pleaseWait)
 
 
 @then('set Application Name')
@@ -212,8 +212,8 @@ def confirm_installation_is_successful(driver):
         assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"truecommand-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"truecommand-test")]').click()
-        if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
-            assert wait_on_element_disappear(driver, 60, '//*[contains(.,"Please wait")]')
+        if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
+            assert wait_on_element_disappear(driver, 60, xpaths.popup.pleaseWait)
         # refresh loop
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
@@ -222,8 +222,8 @@ def confirm_installation_is_successful(driver):
             assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
             # make sure Please wait pop up is gone before continuing.
-            if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
-                assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+            if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
+                assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()

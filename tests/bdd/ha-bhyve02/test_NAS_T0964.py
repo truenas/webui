@@ -175,8 +175,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
     """click on System Settings on the left sidebar, and click Services."""
     assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
 
 
 @then('on the Service page, verify SMB service is started')

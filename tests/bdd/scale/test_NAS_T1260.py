@@ -134,7 +134,7 @@ def click_save_on_the_confirm_options_page(driver):
     assert wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 5, '/*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 
 @then('verify that the CA was added')

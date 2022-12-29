@@ -125,6 +125,6 @@ def confirm(driver):
 @then('confirm image is deleted')
 def confirm_image_is_deleted(driver):
     """confirm image is deleted."""
-    assert wait_on_element(driver, 10, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 35, '//*[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 35, xpaths.popup.pleaseWait)
     assert wait_on_element_disappear(driver, 15, '//tr[contains(.,"nextcloud")]')

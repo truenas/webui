@@ -55,8 +55,8 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
     """on the dashboard click on the System Settings side menu, then click services."""
     assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
 
 
 @then('on the service page, press on configure(pencil) SSH')
