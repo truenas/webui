@@ -352,6 +352,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         if (data.length === 0) this.isTableEmpty = true;
 
         this.dataSource.data = data;
+
         this.changeDetectorRef.detectChanges();
       });
 
