@@ -9,7 +9,7 @@
   background-position-x: 50%;
   background-position-y: 20%;
   background-size: cover;
-  margin: -24px -24px 20px;
+  margin: 0;
   text-align: center;
 }
 
@@ -28,10 +28,6 @@
 .help {
   font-size: 1.2rem;
   font-weight: 500;
-}
-
-.content-wrapper {
-  padding-top: 10px;
 }
 
 .line-item {
@@ -80,13 +76,6 @@
 .emphasis {
   font-style: italic;
   opacity: 0.6;
-}
-
-#actions {
-  align-items: flex-end;
-  justify-content: flex-end;
-  margin-bottom: 0;
-  padding-bottom: 0;
 }
 
 #button-wrapper {

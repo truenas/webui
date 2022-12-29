@@ -173,7 +173,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-select-panel,
   .mat-select-panel-done-animating,
   .mat-expansion-panel,
-  .mat-dialog-container,
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface,
   .mat-stepper-horizontal,
   .mat-stepper-vertical,
   .dx-treelist-container {
@@ -190,7 +191,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(background, --alt-fg1, $alt-fg1);
     opacity: 0.15;
   }
-
 
   .sidebar-panel .mat-nav-list .mat-list-item,
   .app-user .app-user-name,
@@ -472,23 +472,49 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     top: -17px;
   }
   /////////////////// END SpecSelectors
-
-  .mat-dialog-container {
+  .mat-mdc-dialog-container {
+    border-radius: var(--mdc-dialog-container-shape);
     max-width: 800px;
+
+    :not(.mat-mdc-dialog-content) {
+      > form {
+        padding: 0 24px 24px;
+
+        .mat-mdc-dialog-content,
+        .mat-mdc-dialog-actions {
+          padding: 0;
+        }
+      }
+    }
+
+    .mat-mdc-dialog-actions {
+      justify-content: end;
+    }
   }
 
-  .overflow-dialog .mat-dialog-container {
+  .mat-mdc-dialog-title {
+    display: flex;
+    margin: 0 0 15px;
+    padding: 24px 24px 0;
+  }
+
+  .mdc-dialog__actions {
+    min-height: inherit;
+    padding: 0 24px 20px;
+  }
+
+  .overflow-dialog .mat-mdc-dialog-container {
     max-height: calc(100vh - 100px);
     overflow: auto !important;
   }
 
-  .ix-overflow-dialog .mat-dialog-container {
+  .ix-overflow-dialog .mat-mdc-dialog-container {
     max-height: calc(100vh - 100px);
     overflow: auto !important;
     padding-top: 0;
   }
 
-  .mat-dialog-title {
+  .mat-mdc-dialog-title {
     .warning-icon {
       color: var(--orange);
       margin-right: 10px;
@@ -497,7 +523,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     overflow: hidden;
     padding-bottom: 0;
 
@@ -872,8 +898,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring tooltips to the front in dialogs
-  .mat-dialog-container,
-  .mat-dialog-content {
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-content {
     overflow: visible !important;
   }
 
@@ -1334,18 +1360,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .topbar-panel {
-    .mat-dialog-container {
+    .mat-mdc-dialog-container {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       padding-bottom: 8px;
       padding-top: 8px;
     }
 
-    .mat-dialog-content {
+    .mat-mdc-dialog-content {
       overflow: auto !important;
     }
 
-    .mat-dialog-actions {
+    .mat-mdc-dialogactions {
       padding-bottom: 24px;
     }
   }

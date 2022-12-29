@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
 import { SystemGeneralService } from 'app/services';
