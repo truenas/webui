@@ -17,6 +17,7 @@ class addDataset:
 
 class addGroup:
     title = '//h3[contains(.,"Add Group")]'
+    edit_title = '//h3[contains(.,"Edit Group")]'
     name_input = '//ix-input[@formcontrolname="name"]//input'
 
 
@@ -223,6 +224,8 @@ class globalConfiguration:
 class groups:
     title = '//h1[contains(text(),"Groups")]'
     qetest_name = '//div[contains(.,"qetest")]'
+    qetest_expemnd = '//tr[contains(.,"qetest")]/td'
+    edit_button = '//button[contains(.,"Edit")]'
 
 
 class interface:

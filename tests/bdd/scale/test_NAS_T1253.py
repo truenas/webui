@@ -119,7 +119,7 @@ def on_the_groups_page_expand_qe_group_and_click_edit(driver):
 @then('check the enable sudo box and click save')
 def check_the_enable_sudo_box_and_click_save(driver):
     """check the enable sudo box and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
+    assert wait_on_element(driver, 10, xpaths.addGroup.edit_title)
     assert wait_on_element(driver, 7, '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox', 'clickable')
     driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox').click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
