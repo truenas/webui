@@ -45,7 +45,7 @@ export class IxTreeFlattener<T, F, K = F> {
    */
   flattenNodes(structuredData: T[]): F[] {
     const resultNodes: F[] = [];
-    structuredData.forEach((node) => this._flattenNode(node, 0, resultNodes, []));
+    structuredData?.forEach((node) => this._flattenNode(node, 0, resultNodes, []));
     return resultNodes;
   }
 

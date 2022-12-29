@@ -42,6 +42,7 @@ import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { IxTreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -95,18 +96,20 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private readonly scrollSubject = new Subject<number>();
 
   // Flat API
+  getLevel = (dataset: DatasetDetails): number => dataset?.name?.split('/')?.length - 1;
+  isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
   treeControl = new FlatTreeControl<DatasetDetails>(
-    (dataset) => dataset.name.split('/').length - 1,
-    (dataset) => dataset.children.length > 0,
+    this.getLevel,
+    this.isExpandable,
   );
   treeFlattener = new IxTreeFlattener<DatasetDetails, DatasetDetails>(
-    (dataset: DatasetDetails, level: number) => ({ ...dataset, level }),
-    (dataset) => dataset.name.split('/').length - 1,
-    (dataset) => dataset.children.length > 0,
+    (dataset) => dataset,
+    this.getLevel,
+    this.isExpandable,
     () => ([]),
   );
   dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener);
-  trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset.id;
+  trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
   constructor(
@@ -183,11 +186,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   private createDataSource(datasets: DatasetDetails[]): void {
     this.dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener, datasets);
-    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      return datasetsToFilter.filter((dataset) => {
-        return dataset.name.toLowerCase().includes(query.toLowerCase());
-      });
-    };
+    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
+      datasetsToFilter,
+      (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
+    );
   }
 
   private expandDatasetBranch(): void {
