@@ -198,6 +198,14 @@ class error:
         return f'//mat-error[contains(.,"{message}")]'
 
 
+class exportDisconnectPool:
+    title = '//h1[contains(text(),"Export/disconnect pool")]'
+    destroy_checkbox = '//ix-checkbox[@formcontrolname="destroy"]//mat-checkbox'
+    confirm_checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
+    poolName_input = '//ix-input[@formcontrolname="nameInput"]//input'
+    exportDisconnect_button = '//mat-dialog-container//button[contains(.,"Export/Disconnect")]'
+
+
 class globalConfiguration:
     title = '//h3[text()="Edit Global Configuration"]'
     nameserver1_input = '//ix-input[contains(.,"Nameserver 1")]//input'
@@ -321,6 +329,8 @@ class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
     create_pool_button = '//a[contains(.,"Create Pool")]'
     disks_button = '//a[*/text()=" Disks "]'
+    encryptedPool = '//h2[text()="encrypted_pool"]'
+    exportDisconnect_button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'
 
     def manageDataset_button(pool_name):
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
