@@ -54,16 +54,16 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
 def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     """on the Groups page expand QE group and click edit."""
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__qetest"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__qetest"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_qetest_qetest"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_qetest_qetest"]').click()
+    assert wait_on_element(driver, 10, xpaths.groups.qetest_expemnd, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.qetest_expemnd).click()
+    assert wait_on_element(driver, 7, xpaths.groups.edit_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.edit_button).click()
 
 
 @then('change the group name from qetest to qatest and click save')
 def change_the_group_name_from_qetest_to_qatest_and_click_save(driver):
     """change the group name from qetest to qatest and click save."""
-    assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
+    assert wait_on_element(driver, 10, xpaths.addGroup.edit_title)
     assert wait_on_element(driver, 7, xpaths.addGroup.name_input)
     driver.find_element_by_xpath(xpaths.addGroup.name_input).clear()
     driver.find_element_by_xpath(xpaths.addGroup.name_input).send_keys('qatest')

@@ -134,4 +134,4 @@ def try_saving_a_blank_email(driver):
 def You_should_not_be_allowed_to_save_a_blank_email(driver):
     """You should not be allowed to save a blank email."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
-    driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
+    driver.find_element_by_xpath(xpaths.button.close_icon).click()
