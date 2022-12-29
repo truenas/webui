@@ -13,7 +13,7 @@ export class InterfaceNameValidatorService {
     private validatorsService: IxValidatorsService,
   ) {}
 
-  validate: ValidatorFn = (control: AbstractControl): ValidationErrors => {
+  validate: ValidatorFn = (control: AbstractControl<string>): ValidationErrors => {
     if (!control.parent) {
       return null;
     }

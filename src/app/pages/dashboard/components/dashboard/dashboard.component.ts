@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -126,7 +127,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected ws: WebSocketService,
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
@@ -209,12 +210,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onMobileLaunch(evt: DashConfigItem): void {
     this.activeMobileWidget = [evt];
 
-    // Transition
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
-    const vpw = viewport.get('width'); // 600;
+    const { carousel, vpw } = this.getCarouselHtmlData();
 
     const startX = 0;
     const endX = vpw * -1;
@@ -227,12 +223,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileBack(): void {
-    // Transition
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
-    const vpw = viewport.get('width'); // 600;
+    const { carousel, vpw } = this.getCarouselHtmlData();
 
     const startX = vpw * -1;
     const endX = 0;
@@ -253,12 +244,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileResize(evt: Event): void {
     if (this.screenType === ScreenType.Desktop) { return; }
-    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
-    const viewport = styler(viewportElement);
-    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
-    const carousel = styler(carouselElement);
+    const { carousel, startX } = this.getCarouselHtmlData();
 
-    const startX = viewport.get('x');
     const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
 
     if (startX !== endX) {
@@ -674,5 +661,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.nics = clone;
       this.isDataReady();
     });
+  }
+
+  private getCarouselHtmlData(): { carousel: Styler; vpw: number; startX: number } {
+    const viewportElement = this.el.nativeElement.querySelector('.mobile-viewport');
+    const viewport = styler(viewportElement);
+    const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    const carousel = styler(carouselElement);
+    const vpw = viewport.get('width') as number;
+    const startX = viewport.get('x') as number;
+
+    return { carousel, vpw, startX };
   }
 }

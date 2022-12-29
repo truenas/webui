@@ -10,7 +10,7 @@
       [matMenuTriggerFor]="menu"
       [ix-auto-identifier]="id + '_' + config.label"
     >
-      {{ config.label }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      {{ config.label }} <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" multiple overlapTrigger="false">
       <!-- SELECT ALL -->

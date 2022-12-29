@@ -21,7 +21,7 @@ export class CrontabPartValidatorService {
   ) {}
 
   crontabPartValidator(part: CrontabPart): ValidatorFn {
-    const validator = (control: AbstractControl): ValidationErrors | null => {
+    const validator = (control: AbstractControl<string>): ValidationErrors | null => {
       const parts = (new Array(5)).fill('*');
       parts[part] = control.value;
 

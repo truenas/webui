@@ -61,6 +61,7 @@ import { DiskTemperatureService, Temperature } from 'app/services/disk-temperatu
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import CanvasExtract = PIXI.extract.CanvasExtract;
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -87,10 +88,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   protected aborted = false;
 
   mqAlias: string;
-  @ViewChild('visualizer', { static: true }) visualizer: ElementRef;
-  @ViewChild('disksoverview', { static: true }) overview: ElementRef;
-  @ViewChild('diskdetails', { static: false }) details: ElementRef;
-  @ViewChild('domLabels', { static: false }) domLabels: ElementRef;
+  @ViewChild('visualizer', { static: true }) visualizer: ElementRef<HTMLElement>;
+  @ViewChild('disksoverview', { static: true }) overview: ElementRef<HTMLElement>;
+  @ViewChild('diskdetails', { static: false }) details: ElementRef<HTMLElement>;
+  @ViewChild('domLabels', { static: false }) domLabels: ElementRef<HTMLElement>;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('system-profiler') system: SystemProfiler;
   // eslint-disable-next-line @angular-eslint/no-input-rename
@@ -630,7 +631,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   extractEnclosure(enclosure: ChassisView, profile: EnclosureMetadata): void {
-    const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
+    const canvas = (this.app.renderer.plugins.extract as CanvasExtract).canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
   }
@@ -715,8 +716,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   update(className: string): void { // stage-left or stage-right or expanders
-    const sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
-    const html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
+    const sideStage: HTMLElement = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
+    const html: HTMLElement = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
     const el = popmotion.styler(html, {});
 
     const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
@@ -737,8 +738,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     }
 
-    const sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
-    const html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
+    const sideStage: HTMLElement = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
+    const html: HTMLElement = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
     const el = popmotion.styler(html, {});
 
     const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
@@ -766,7 +767,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let duration = 360;
 
     // x is the position relative to it's starting point.
-    const width = el.get('width');
+    const width = el.get('width') as number;
     const startX = 0;
     let endX = className === 'stage-left' ? width * -1 : width;
     if (className === 'full-stage') {
@@ -1049,7 +1050,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.identifyBtnRef = null;
     } else if (!this.identifyBtnRef && !kill) {
       const btn = popmotion.styler(this.details.nativeElement.querySelector('#identify-btn'), {});
-      const startShadow = btn.get('box-shadow');
+      const startShadow = btn.get('box-shadow') as string;
 
       const elementBorder = popmotion.value(
         { borderColor: '', borderWidth: 0 },

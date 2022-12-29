@@ -4,6 +4,7 @@ $standard-height: 40px;
 @import '@angular/material/theming';
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
+@import 'angular15';
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
@@ -283,9 +284,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.38;
   }
 
-  .mat-button:disabled {
+  .mat-mdc-button:disabled {
     cursor: not-allowed;
     opacity: 0.38;
+    pointer-events: all;
   }
 
   .mat-form-field-ripple {
@@ -429,7 +431,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-width: 960px;
   }
 
-  .mat-card-actions .mat-button {
+  .mat-card-actions .mat-mdc-button {
     margin-left: 1px !important;
     margin-right: 3px !important;
   }
@@ -632,13 +634,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // style nav chevrons on datatable pager w/regard to theme
-  .mat-button-wrapper .mat-paginator-decrement,
-  .mat-button-wrapper .mat-paginator-increment {
+  .mdc-button__label .mat-paginator-decrement,
+  .mdc-button__label .mat-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
   }
 
-  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
-  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
+  .mat-icon-button:disabled .mdc-button__label .mat-paginator-decrement,
+  .mat-icon-button:disabled .mdc-button__label .mat-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
     opacity: 0.38;
   }
@@ -761,61 +763,63 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg2);
   }
 
-  .mat-button {
+  .mat-mdc-button,
+  .mdc-button {
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
     font-weight: 700 !important;
     text-transform: capitalize !important;
   }
 
-  .mat-stroked-button {
+  .mdc-button--outlined {
     background-color: transparent !important;
     border: 1px solid currentColor !important;
-    border-radius: 25px;
-    line-height: 28px;
+    border-radius: 25px !important;
+    height: 30px;
+    line-height: 30px;
 
     &.fn-theme-primary {
-      @include variable(color, --primary, $primary);
+      @include variable(color, --primary, $primary, !important);
     }
 
     &.fn-theme-grey {
-      @include variable(color, --grey, #4d4d4d);
+      @include variable(color, --grey, #4d4d4d, !important);
     }
 
     &.fn-theme-red {
-      @include variable(color, --red, $red);
+      @include variable(color, --red, $red, !important);
     }
 
     &.fn-theme-blue {
-      @include variable(color, --blue, $blue);
+      @include variable(color, --blue, $blue, !important);
     }
 
     &.fn-theme-green {
-      @include variable(color, --green, $green);
+      @include variable(color, --green, $green, !important);
     }
 
     &.fn-theme-cyan {
-      @include variable(color, --cyan, $cyan);
+      @include variable(color, --cyan, $cyan, !important);
     }
 
     &.fn-theme-orange {
-      @include variable(color, --orange, $orange);
+      @include variable(color, --orange, $orange, !important);
     }
 
     &.fn-theme-magenta {
-      @include variable(color, --magenta, $magenta);
+      @include variable(color, --magenta, $magenta, !important);
     }
 
     &.fn-theme-violet {
-      @include variable(color, --violet, $violet);
+      @include variable(color, --violet, $violet, !important);
     }
 
     &.fn-theme-yellow {
-      @include variable(color, --yellow, $yellow);
+      @include variable(color, --yellow, $yellow, !important);
     }
   }
 
-  .mat-button[color='default'] {
+  .mat-mdc-button[color='default'] {
     @include variable(color, --fg2, $fg2, !important);
   }
 
@@ -887,13 +891,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring theme colors to rollover effect for standard primary buttons
-  .mat-button.mat-primary .mat-button-focus-overlay {
+  .mat-mdc-button.mat-primary .mat-mdc-button-focus-overlay {
     @include variable(background-color, --primary, $primary);
     opacity: 0.12;
   }
 
   // Bring theme colors to rollover effect for standard accent buttons
-  .mat-button.mat-accent .mat-button-focus-overlay {
+  .mat-mdc-button.mat-accent .mat-mdc-button-focus-overlay {
     @include variable(background-color, --accent, $accent);
     opacity: 0.12;
   }
@@ -951,6 +955,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    position: absolute;
+    right: 0;
+    top: -4px;
+
+    i {
+      font-size: 17px;
+    }
   }
 
   datatable-selection > .empty-row {
@@ -1220,7 +1231,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .sidenav-link:hover,
   .slide-in-nav-item:hover,
-  .mat-button.mat-default:hover {
+  .mat-mdc-button.mat-default:hover {
     background: var(--hover-bg) !important;
   }
 
@@ -1311,7 +1322,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   button.menu-toggle {
-    .mat-button-wrapper {
+    .mdc-button__label {
       align-items: center;
       display: inline-flex;
     }
@@ -1379,3 +1390,4 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     outline: 1px solid var(--primary);
   }
 } // end of ix theme
+

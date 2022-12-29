@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TemplateRef } from '@angular/core';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {

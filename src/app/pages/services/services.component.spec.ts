@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
 import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
 import { Router } from '@angular/router';

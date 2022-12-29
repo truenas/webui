@@ -43,6 +43,7 @@ export class EntityWizardComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private formBuilder: UntypedFormBuilder,
     private entityFormService: EntityFormService,
     public loader: AppLoaderService,

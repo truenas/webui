@@ -10,6 +10,7 @@ import helptext from 'app/helptext/storage/vmware-snapshot/vm-ware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -128,7 +129,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -26,7 +26,7 @@ export class CatalogEditFormComponent implements OnInit {
     preferred_trains: [[] as string[]],
   });
 
-  trainOptions$: Observable<Option[]> = of([]);
+  trainOptions$ = of<Option[]>([]);
 
   readonly tooltips = {
     label: helptext.catalogForm.name.tooltip,
