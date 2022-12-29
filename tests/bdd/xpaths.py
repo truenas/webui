@@ -76,6 +76,8 @@ class advanced:
 class button:
     add = '//button[contains(.,"Add")]'
     cancel = '//button[normalize-space(span/text())="Cancel"]'
+    delete = '//button[contains(.,"Delete")]'
+    edit = '//button[contains(.,"Edit")]'
     save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
@@ -135,6 +137,11 @@ class dataset:
 
     def permissionUser(user_name):
         return f'//div[text()="User - {user_name}"]'
+
+
+class deleteGroup:
+    title = '//h1[text()="Delete Group"]'
+    delete_button = '//mat-dialog-container//button[normalize-space(*/text())="Delete"]'
 
 
 class directoryServices:
@@ -228,9 +235,11 @@ class groups:
     title = '//h1[contains(text(),"Groups")]'
     qetest_name = '//div[contains(.,"qetest")]'
     qetest_expemnd = '//tr[contains(.,"qetest")]/td'
-    edit_button = '//button[contains(.,"Edit")]'
     qatest_name = '//div[contains(.,"qatest")]'
     qatest_expemnd = '//tr[contains(.,"qatest")]/td'
+    gidtest_name = '//div[contains(.,"gidtest")]'
+    gidtestdupe_name = '//div[contains(.,"gidtestdupe")]'
+    gidtestdupe_expemnd = '//tr[contains(.,"gidtestdupe")]/td'
 
 
 class interface:

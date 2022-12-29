@@ -25,7 +25,7 @@ def test_verify_that_you_can_delete_a_group():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Set_Group'], scope='session')
+    #depends(request, ['Set_Group'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -44,37 +44,36 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 @when('on the dashboard click on Credentials and Local Groups')
 def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     """on the dashboard click on Credentials and Local Groups."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
+    assert wait_on_element(driver, 5, xpaths.dashboard.title)
+    assert wait_on_element(driver, 5, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
+    assert wait_on_element(driver, 5, xpaths.sideMenu.local_group, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.local_group).click()
 
 
 @then('on the Groups page click to expand the gidtestdupe entry')
 def on_the_groups_page_click_to_expand_the_gidtestdupe_entry(driver):
     """on the Groups page click to expand the gidtestdupe entry."""
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__gidtestdupe"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__gidtestdupe"]/td').click()
+    assert wait_on_element(driver, 5, xpaths.groups.title)
+    assert wait_on_element(driver, 5, xpaths.groups.gidtestdupe_name)
+    assert wait_on_element(driver, 5, xpaths.groups.gidtestdupe_expemnd, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.gidtestdupe_expemnd).click()
 
 
 @then('click delete, click the confirm checkbox, and click delete')
 def click_delete_click_the_confirm_checkbox_and_click_delete(driver):
     """click delete, click the confirm checkbox, and click delete."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE_gidtestdupe_gidtestdupe"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE_gidtestdupe_gidtestdupe"]').click()
+    assert wait_on_element(driver, 7, xpaths.button.delete, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.delete).click()
 
-    assert wait_on_element(driver, 10, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
-
-    assert wait_on_element(driver, 7, '//span[contains(text(),"DELETE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"DELETE")]').click()
+    assert wait_on_element(driver, 5, xpaths.deleteGroup.title)
+    assert wait_on_element(driver, 7, xpaths.deleteGroup.delete_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.deleteGroup.delete_button).click()
 
 
 @then('verify the group was deleted')
 def verify_the_group_was_deleted(driver):
     """verify the group was deleted."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"gidtestdupe")]')
+    assert wait_on_element(driver, 5, xpaths.groups.title)
+    assert wait_on_element_disappear(driver, 5, xpaths.groups.gidtestdupe_name)
