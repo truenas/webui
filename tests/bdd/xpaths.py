@@ -67,6 +67,7 @@ class advanced:
 
 class button:
     add = '//button[contains(.,"Add")]'
+    cancel = '//button[normalize-space(span/text())="Cancel"]'
     save = '//button[normalize-space(span/text())="Save"]'
     settings = '//button[contains(.,"Settings")]'
     Continue = '//button[contains(*/text(),"Continue")]'
@@ -75,6 +76,7 @@ class button:
     CLOSE = '//button[contains(.,"CLOSE")]'
     close_icon = '//mat-icon[@id="ix-close-icon"]'
     advanced_option = '//button[contains(*/text(),"Advanced Options")]'
+    advanced_settings = '//button[contains(*/text(),"Advanced Settings")]'
 
 
 class checkbox:
@@ -274,6 +276,8 @@ class progress:
 class services:
     title = '//h1[text()="Services"]'
     smbtoggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
+    smbService_name = '//td[contains(text(),"SMB")]'
+    smbService_button = '//tr[contains(.,"SMB")]//button'
 
 
 class sideMenu:
@@ -283,7 +287,7 @@ class sideMenu:
     shares = '//mat-list-item[@ix-auto="option__Shares"]'
     systemSetting = '//mat-list-item[@ix-auto="option__System Settings"]'
     advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
-    Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
+    services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
@@ -306,6 +310,11 @@ class smb:
     description_input = '//ix-input[@formcontrolname="comment"]//input'
     path_input = '//ix-explorer[@formcontrolname="path"]//input'
     name_input = '//ix-input[@formcontrolname="name"]//input'
+
+
+class smbService:
+    title = '//h1[contains(text(),"SMB")]'
+    auxiliaryParameters_textarea = '//ix-textarea[@formcontrolname="smb_options"]//textarea'
 
 
 class storage:

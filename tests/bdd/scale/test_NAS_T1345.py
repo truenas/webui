@@ -66,8 +66,8 @@ def click_install(driver):
     time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
     assert wait_on_element(driver, 20, '//mat-card[contains(.,"plex")]//span[contains(.,"Install")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"plex")]//span[contains(.,"Install")]').click()
-    if is_element_present(driver, '//*[contains(.,"Please wait")]'):
-        assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+    if is_element_present(driver, xpaths.popup.pleaseWait):
+        assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 
 @then('set application name')
@@ -152,8 +152,8 @@ def confirm_installation_is_successful(driver):
         assert wait_on_element(driver, 20, '//strong[contains(.,"plex-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"plex-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"plex-test")]').click()
-        if wait_on_element(driver, 5, '//*[contains(.,"Please wait")]'):
-            assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+        if wait_on_element(driver, 5, xpaths.popup.pleaseWait):
+            assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
         assert wait_on_element(driver, 10, '//div[@class="logo-container" and contains(.,"plex-test")]')
         assert wait_on_element(driver, 10, '//mat-panel-title[contains(.,"Application Events")]', 'clickable')
         driver.find_element_by_xpath('//mat-panel-title[contains(.,"Application Events")]').click()
@@ -162,8 +162,8 @@ def confirm_installation_is_successful(driver):
             assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
             # make sure Please wait pop up is gone before continuing.
-            if wait_on_element(driver, 3, '//*[contains(.,"Please wait")]'):
-                assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
+            if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
+                assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()

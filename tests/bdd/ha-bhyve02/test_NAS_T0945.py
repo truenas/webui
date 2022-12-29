@@ -73,8 +73,8 @@ def go_to_system_settings_click_services(driver):
     """go to System Settings, click Services."""
     assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
 
 
 @then('the service page should open')
