@@ -19,6 +19,8 @@ class addGroup:
     title = '//h3[contains(.,"Add Group")]'
     edit_title = '//h3[contains(.,"Edit Group")]'
     name_input = '//ix-input[@formcontrolname="name"]//input'
+    gid_input = '//ix-input[@formcontrolname="gid"]//input'
+    allowDuplicateGid_checkbox = '//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox'
 
 
 class addKerberosKeytab:
