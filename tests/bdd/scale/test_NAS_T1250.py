@@ -47,35 +47,32 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.local_group).click()
 
 
-@then('on the Groups page, close the note and click Add')
-def on_the_groups_page_close_the_note_and_click_add(driver):
-    """on the Groups page, close the note and click Add."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
+@then('on the Groups page, click Add')
+def on_the_groups_page_click_add(driver):
+    """on the Groups page, click Add."""
+    assert wait_on_element(driver, 10, xpaths.groups.title)
+    assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.add).click()
 
 
-@then('input the group name and click save')
-def input_the_group_name_and_click_save(driver):
-    """input the group name and click save."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Add Group")]')
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="name"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').send_keys('qetest')
+@then('on the Add Group side box input the group name')
+def on_the_add_group_side_box_input_the_group_name(driver):
+    """on the Add Group side box input the group name."""
+    assert wait_on_element(driver, 7, xpaths.addGroup.title)
+    assert wait_on_element(driver, 7, xpaths.addGroup.name_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addGroup.name_input).clear()
+    driver.find_element_by_xpath(xpaths.addGroup.name_input).send_keys('qetest')
+
+
+@then('click save and verify the group was added')
+def click_save_and_verify_the_group_was_added(driver):
+    """click save and verify the group was added."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-
-
-@then('verify the group was added')
-def verify_the_group_was_added(driver):
-    """verify the group was added."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"qetest")]')
+    assert wait_on_element(driver, 10, xpaths.groups.title)
+    assert wait_on_element(driver, 10, xpaths.groups.qetest_name)
