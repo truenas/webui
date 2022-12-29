@@ -1,17 +1,20 @@
 import { DataSource, CollectionViewer } from '@angular/cdk/collections';
-import { TreeControl } from '@angular/cdk/tree';
+import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   BehaviorSubject, Subject, Observable, map, filter,
-  debounceTime, distinctUntilChanged, takeUntil, mergeWith,
+  debounceTime, distinctUntilChanged, takeUntil, merge,
 } from 'rxjs';
+import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 
-export class IxTreeDataSource<T> extends DataSource<T> {
+export class IxTreeDataSource<T, F, K = F> extends DataSource<F> {
   filterPredicate: (data: T[], query: string) => T[];
   private filterValue: string;
   private readonly _data = new BehaviorSubject<T[]>([]);
   private readonly _filteredData = new BehaviorSubject<T[]>([]);
   private readonly filterChanged$ = new BehaviorSubject<string>('');
   private readonly disconnect$ = new Subject<void>();
+  private readonly _flattenedData = new BehaviorSubject<F[]>([]);
+  private readonly _expandedData = new BehaviorSubject<F[]>([]);
 
   get data(): T[] {
     return this._data.value;
@@ -19,11 +22,19 @@ export class IxTreeDataSource<T> extends DataSource<T> {
 
   set data(value: T[]) {
     this._data.next(value);
-    this.treeControl.dataNodes = value;
+    this.flatNodes();
+  }
+
+  private flatNodes(): void {
+    this._flattenedData.next(this.treeFlattener.flattenNodes(
+      this.filterValue ? this._filteredData.value : this.data,
+    ));
+    this.treeControl.dataNodes = this._flattenedData.value;
   }
 
   constructor(
-    private treeControl: TreeControl<T>,
+    private treeControl: FlatTreeControl<F, K>,
+    private treeFlattener: IxTreeFlattener<T, F, K>,
     private initialData: T[] = [],
   ) {
     super();
@@ -33,11 +44,19 @@ export class IxTreeDataSource<T> extends DataSource<T> {
     this.detectFilterChanges();
   }
 
-  override connect(collectionViewer: CollectionViewer): Observable<readonly T[]> {
-    return collectionViewer.viewChange.pipe(
-      mergeWith(this._data, this._filteredData),
-      map(() => (this.filterValue ? this._filteredData.value : this.data)),
-    );
+  override connect(collectionViewer: CollectionViewer): Observable<readonly F[]> {
+    return merge(
+      collectionViewer.viewChange,
+      this.treeControl.expansionModel.changed,
+      this._filteredData,
+      this._flattenedData,
+    )
+      .pipe(
+        map(() => {
+          this._expandedData.next(this.treeFlattener.expandFlattenedNodes(this._flattenedData.value, this.treeControl));
+          return this._expandedData.value;
+        }),
+      );
   }
 
   disconnect(): void {
@@ -67,6 +86,7 @@ export class IxTreeDataSource<T> extends DataSource<T> {
         }
         this.filterValue = changedValue;
         this._filteredData.next(this.filterPredicate(this.data, changedValue));
+        this.flatNodes();
       });
   }
 }

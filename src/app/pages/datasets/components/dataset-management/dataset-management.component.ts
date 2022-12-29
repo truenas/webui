@@ -39,7 +39,9 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
 import { IxTreeDataSource } from 'app/modules/ix-tree/tree-datasource';
+import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
@@ -97,11 +99,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private readonly scrollSubject = new Subject<number>();
 
   // Flat API
-  dataSource: IxTreeDataSource<DatasetDetails>;
   treeControl = new FlatTreeControl<DatasetDetails>(
     (dataset) => dataset.name.split('/').length - 1,
     (dataset) => dataset?.children?.length > 0,
   );
+  treeFlattener = new IxTreeFlattener<DatasetDetails, DatasetDetails>(
+    (dataset) => dataset,
+    (dataset) => dataset.name.split('/').length - 1,
+    (dataset) => dataset?.children?.length > 0,
+    (dataset) => dataset.children,
+  );
+  dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener);
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
   constructor(
@@ -176,9 +184,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new IxTreeDataSource(this.treeControl, datasets);
+    this.dataSource.data = datasets;
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      return datasetsToFilter.filter((dataset) => {
+      return flattenTreeWithFilter(datasetsToFilter, (dataset) => {
         return dataset.name.toLowerCase().includes(query.toLowerCase());
       });
     };
