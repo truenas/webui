@@ -64,8 +64,8 @@ def on_the_service_page_press_on_configurepencil_ssh(driver):
     """on the service page, press on configure(pencil) SSH."""
     assert wait_on_element(driver, 5, xpaths.services.title)
     assert wait_on_element(driver, 5, '//td[contains(text(),"SSH")]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
+    assert wait_on_element(driver, 5, xpaths.services.sshService_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.services.sshService_button).click()
 
 
 @then('the SSH General Options page should open')
@@ -105,7 +105,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
-    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.sshService_toggle, 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
     time.sleep(1)
@@ -115,7 +115,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
     wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
-    assert wait_for_attribute_value(driver, 20, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.sshService_toggle, 'class', 'mat-checked')
 
 
 @then('ssh to a NAS with root and the root password should work')

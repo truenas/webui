@@ -87,6 +87,9 @@ class button:
     close_icon = '//mat-icon[@id="ix-close-icon"]'
     advanced_option = '//button[contains(*/text(),"Advanced Options")]'
     advanced_settings = '//button[contains(*/text(),"Advanced Settings")]'
+    ok = '//button[@name="ok_button"]'
+    power = '//button[@name="Power"]'
+    restart = '//button[@name="power-restart"]'
 
 
 class checkbox:
@@ -313,6 +316,9 @@ class services:
     smbtoggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
     smbService_name = '//td[contains(text(),"SMB")]'
     smbService_button = '//tr[contains(.,"SMB")]//button'
+    sshService_toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
+    sshService_button = '//tr[contains(.,"SSH")]//button'
+    sshService_name = '//td[contains(text(),"SSH")]'
 
 
 class sideMenu:

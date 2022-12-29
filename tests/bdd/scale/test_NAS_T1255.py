@@ -119,4 +119,4 @@ def verify_the_duplicate_group_was_added(driver):
     """verify the duplicate group was added."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, '//div[contains(.,"gidtestdupe")]')
+    assert wait_on_element(driver, 10, xpaths.groups.gidtestdupe_name)
