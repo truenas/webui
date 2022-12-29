@@ -92,6 +92,14 @@ class button:
     restart = '//button[@name="power-restart"]'
 
 
+class certificates:
+    title = '//h1[text()="Certificates"]'
+    csrCard_title = '//h3[contains(text(),"Certificate Signing Requests")]'
+    csrAdd_button = '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]'
+    csr_title = ''
+    email_input = '//input[@ix-auto="input__Email"]'
+
+
 class checkbox:
     enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
@@ -332,6 +340,7 @@ class sideMenu:
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
     local_group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
+    certificates = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]'
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
     storage = '//mat-list-item[@ix-auto="option__Storage"]'

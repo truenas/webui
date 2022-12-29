@@ -48,13 +48,14 @@ def on_the_dashboard_click_on_credentials_and_certificates(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.local_user, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.certificates, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.certificates).click()
 
 
 @then('click on CSR add')
 def click_on_csr_add(driver):
     """click on CSR add."""
+    assert wait_on_element(driver, 7, xpaths.certificates.title)
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificate Signing Requests")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]').click()
@@ -94,17 +95,14 @@ def set_company_info_and_click_next(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Locality"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Locality"]').send_keys('Maryville')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Organization"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Organization"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organization"]').send_keys('iXsystems')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Organizational Unit"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').send_keys('QE')
 
-    assert wait_on_element(driver, 5, xpaths.addUser.email_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.addUser.email_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.email_input).send_keys('qa@ixsystems.com')
+    driver.find_element_by_xpath(xpaths.certificates.email_input).clear()
+    driver.find_element_by_xpath(xpaths.certificates.email_input).send_keys('qa@ixsystems.com')
 
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Common Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').clear()
