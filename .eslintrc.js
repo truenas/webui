@@ -219,6 +219,7 @@ module.exports = {
         "@typescript-eslint/prefer-includes": ["error"],
         "@typescript-eslint/prefer-for-of": ["error"],
         "@typescript-eslint/prefer-as-const": ["error"],
+        "@typescript-eslint/consistent-generic-constructors": ["error"],
         "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",

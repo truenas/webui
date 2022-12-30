@@ -237,7 +237,7 @@ export class ChartFormComponent implements OnDestroy {
 
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
-    const deleteField$: Subject<string> = new Subject();
+    const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldTobeDeleted) => {
         this.deleteFieldFromData(data, fieldTobeDeleted);

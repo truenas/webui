@@ -21,7 +21,7 @@ export class WebSocketService2 implements OnDestroy {
   ws$: WebSocketSubject<unknown>;
   pingTimeout: Timeout;
   private readonly pingTimeoutMillis = 20 * 1000;
-  private readonly eventSubscriptions: Map<string, Observable<unknown>> = new Map();
+  private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
     @Inject(WINDOW) protected window: Window,
