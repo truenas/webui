@@ -17,7 +17,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './authorized-access-form.component.html',
-  styleUrls: ['./authorized-access-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorizedAccessFormComponent {

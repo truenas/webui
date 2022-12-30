@@ -7,7 +7,11 @@
   [label]="'Send initial debug' | translate"
 ></ix-checkbox>
 
-<div class="form-actions">
+<ix-form-actions>
+  <button mat-button type="button" matDialogClose>
+    {{ 'Cancel' | translate }}
+  </button>
+
   <button
     mat-button
     type="submit"
@@ -16,8 +20,4 @@
   >
     {{ 'Proceed' | translate }}
   </button>
-
-  <button mat-button type="button" matDialogClose>
-    {{ 'Cancel' | translate }}
-  </button>
-</div>
+</ix-form-actions>

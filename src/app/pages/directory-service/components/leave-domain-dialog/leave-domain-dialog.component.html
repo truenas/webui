@@ -17,12 +17,12 @@
     [type]="'password'"
   ></ix-input>
 
-  <div class="form-actions">
+  <ix-form-actions>
     <button mat-button type="button" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
     <button mat-button type="submit" color="primary" [disabled]="form.invalid">
       {{ 'Leave Domain' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>

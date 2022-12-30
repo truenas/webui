@@ -22,7 +22,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 @UntilDestroy()
 @Component({
   templateUrl: './import-data.component.html',
-  styleUrls: ['./import-data.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportDataComponent implements OnInit {

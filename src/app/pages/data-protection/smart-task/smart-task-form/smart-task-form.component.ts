@@ -19,7 +19,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './smart-task-form.component.html',
-  styleUrls: ['./smart-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartTaskFormComponent {

@@ -10,12 +10,12 @@ form {
   padding-right: 7px;
 }
 
-.form-actions {
-  margin-left: 12px;
-}
-
 .saved-message {
   font-size: 12px;
   margin-left: 12px;
   margin-top: 6px;
+}
+
+.form-actions {
+  justify-content: flex-start;
 }

@@ -20,7 +20,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './console-form.component.html',
-  styleUrls: ['./console-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleFormComponent implements OnInit {

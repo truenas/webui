@@ -13,7 +13,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './associated-target-form.component.html',
-  styleUrls: ['./associated-target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AssociatedTargetFormComponent {

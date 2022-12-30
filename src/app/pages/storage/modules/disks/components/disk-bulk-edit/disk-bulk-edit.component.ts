@@ -18,7 +18,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: 'disk-bulk-edit.component.html',
-  styleUrls: ['disk-bulk-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskBulkEditComponent {

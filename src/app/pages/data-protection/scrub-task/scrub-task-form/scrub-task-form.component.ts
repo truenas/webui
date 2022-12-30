@@ -17,7 +17,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './scrub-task-form.component.html',
-  styleUrls: ['./scrub-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskFormComponent {
