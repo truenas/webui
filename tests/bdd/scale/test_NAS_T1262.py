@@ -24,7 +24,7 @@ def test_verify_an_internal_certificate_can_be_deleted():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    #depends(request, ['Internal_Certificate'], scope='session')
+    depends(request, ['Internal_Certificate'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -64,8 +64,8 @@ def click_on_the_trash_icon_for_cert1(driver):
 def click_the_confirm_checkbox_and_click_delete(driver):
     """click the confirm checkbox and click delete."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
+    assert wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.delete).click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Deleteing")]')
 
