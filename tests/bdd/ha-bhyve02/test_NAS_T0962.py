@@ -51,6 +51,7 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
         assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
