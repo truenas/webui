@@ -43,6 +43,7 @@ def login_appear_enter_root_and_password(driver, password):
         assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
