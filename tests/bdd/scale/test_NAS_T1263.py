@@ -55,7 +55,8 @@ def on_the_dashboard_click_on_credentials_and_certificates(driver):
 @then('click on Certificate add')
 def click_on_certificate_add(driver):
     """click on Certificate add."""
-    assert wait_on_element(driver, 7, '//h1[contains(text(),"Certificates")]')
+    assert wait_on_element(driver, 7, xpaths.certificates.title)
+    assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificates")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"Certificates")]//button[contains(.,"Add")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"Certificates")]//button[contains(.,"Add")]').click()
 
