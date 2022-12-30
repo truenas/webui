@@ -48,8 +48,8 @@ def on_the_dashboard_click_on_apps(driver):
     """on the Dashboard, click on apps."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
     assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 

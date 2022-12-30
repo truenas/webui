@@ -49,15 +49,15 @@ def on_the_dashboard_click_on_apps(driver):
     """on the Dashboard, click on apps."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
     assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
 @then('Stop nextcloud from running')
 def stop_nextcloud_from_running(driver):
     """Stop nextcloud from running."""
-    assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
+    assert wait_on_element(driver, 10, xpaths.applications.title)
     assert wait_on_element_disappear(driver, 120, '//mat-spinner[@role="progressbar"]')
     assert wait_on_element(driver, 60, '//strong[text()="nextcloud-test"]')
     assert wait_on_element(driver, 45, '//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]', 'clickable')
