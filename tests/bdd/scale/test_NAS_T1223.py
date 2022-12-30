@@ -26,7 +26,7 @@ def test_verify_core_file_alert_works(driver):
 @given('the browser is open on the TrueNAS URL and logged in')
 def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open on the TrueNAS URL and logged in."""
-    #depends(request, ['Set_Interface'], scope='session')
+    depends(request, ['Set_Interface'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)

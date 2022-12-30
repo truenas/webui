@@ -9,6 +9,7 @@ import xpaths
 from function import (
     wait_on_element,
     is_element_present,
+    wait_on_element_disappear,
     word_xor
 )
 from pytest_bdd import (
@@ -114,6 +115,8 @@ def on_the_add_kerberos_keytab_input_name_and_upload_the_file(driver):
 @then('click save and verify that the file was accepted and utilized')
 def click_save_and_verify_that_the_file_was_accepted_and_utilized(driver):
     """click save and verify that the file was accepted and utilized."""
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickabl')
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 7, xpaths.directoryServices.title)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Kerberos Keytab")]//div[contains(text(),"keytab_test")]')
