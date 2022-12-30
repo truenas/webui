@@ -16,6 +16,7 @@ import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/disk-info/disk-info.component';
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
+import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-selection-vdev/manual-selection-vdev.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/general-wizard-step/general-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -42,6 +43,7 @@ import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.rout
     PoolManagerWizardComponent,
     DiskIconComponent,
     DiskInfoComponent,
+    ManualSelectionVdevComponent,
     GeneralWizardStepComponent,
     ManualDiskSelectionComponent,
   ],

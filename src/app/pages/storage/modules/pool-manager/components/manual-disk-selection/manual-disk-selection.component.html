@@ -38,7 +38,7 @@
                   <ix-disk-icon 
                     class="disk-icon"
                     [identifier]="disk.identifier"
-                    [size]="'4 Tib'"
+                    [size]="getDiskSizeStr(disk)"
                   ></ix-disk-icon>
 
                   <ix-disk-info
@@ -84,6 +84,9 @@
             </div>
           </div>
           <mat-divider class="header-divider"></mat-divider>
+          <div class="vdevs-container">
+            <ix-manual-selection-vdev></ix-manual-selection-vdev>
+          </div>
         </div>
       </div>
     </form>

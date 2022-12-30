@@ -91,4 +91,8 @@ export class ManualDiskSelectionComponent {
   getDiskSerial(disk: unknown): string {
     return (disk as Disk).serial;
   }
+
+  getDiskSizeStr(disk: unknown): string {
+    return this.storage.convertBytesToHumanReadable((disk as Disk).size);
+  }
 }
