@@ -2,23 +2,22 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import {
   CertificateDigestAlgorithm,
   certificateDigestAlgorithmLabels,
-  certificateKeyLengths
+  certificateKeyLengths,
 } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType, certificateKeyTypeLabels } from 'app/enums/certificate-key-type.enum';
 import { EcCurve } from 'app/enums/ec-curve.enum';
 import { choicesToOptions, idNameArrayToOptions, mapToOptions } from 'app/helpers/options.helper';
-import { SystemGeneralService, WebSocketService } from 'app/services';
-import { of } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-certificate-options',
   templateUrl: './certificate-options.component.html',
-  styleUrls: ['./certificate-options.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateOptionsComponent {

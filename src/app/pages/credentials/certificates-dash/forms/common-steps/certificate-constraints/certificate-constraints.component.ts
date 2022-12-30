@@ -12,7 +12,6 @@ import { WebSocketService } from 'app/services';
 @Component({
   selector: 'ix-certificate-constraints',
   templateUrl: './certificate-constraints.component.html',
-  styleUrls: ['./certificate-constraints.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateConstraintsComponent {

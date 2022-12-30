@@ -6,7 +6,6 @@ import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/p
 @Component({
   selector: 'ix-certificate-import',
   templateUrl: './certificate-import.component.html',
-  styleUrls: ['./certificate-import.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateImportComponent {
