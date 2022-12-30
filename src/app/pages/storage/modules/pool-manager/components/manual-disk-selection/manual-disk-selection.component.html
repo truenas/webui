@@ -14,10 +14,12 @@
             <ix-select
               formControlName="diskType"
               [label]="'Filter by Disk Type'"
+              [options]="typeOptions$"
             ></ix-select>
             <ix-select
               formControlName="diskSize"
               [label]="'Filter by Disk Size'"
+              [options]="sizeOptions$"
             ></ix-select>
           </div>
           <div class="tree-container">
@@ -41,10 +43,10 @@
 
                   <ix-disk-info
                     class="disk-info"
-                    [slot]="'1'"
-                    [type]="'HDD'"
-                    [model]="'Western Digital'"
-                    [serial]="'a1b2c3d4xxxx'"
+                    [slot]="getDiskSlot(disk)"
+                    [type]="getDiskType(disk)"
+                    [model]="getDiskModel(disk)"
+                    [serial]="getDiskSerial(disk)"
                   ></ix-disk-info>
                 </div>
               </ix-tree-node>

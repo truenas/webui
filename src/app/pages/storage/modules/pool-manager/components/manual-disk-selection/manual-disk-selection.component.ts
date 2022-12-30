@@ -1,8 +1,13 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
+import { Observable, of } from 'rxjs';
+import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
+import { StorageService } from 'app/services';
 
 interface EnclosureDisk extends Disk {
   children: [];
@@ -23,7 +28,6 @@ type NestedEnclosureDiskNode = EnclosureDisk | EnclosureGroup;
 })
 export class ManualDiskSelectionComponent {
   search: string;
-
   selectedNode: EnclosureDisk;
   dataSource: IxNestedTreeDataSource<NestedEnclosureDiskNode>;
   treeControl = new NestedTreeControl<NestedEnclosureDiskNode, string>((vdev) => vdev.children, {
@@ -35,142 +39,56 @@ export class ManualDiskSelectionComponent {
     diskSize: [''],
   });
 
-  data: NestedEnclosureDiskNode = {
-    group: 'enclosure0',
-    identifier: 'enclosure0',
-    children: [
-      {
-        identifier: 'sda',
-        children: [],
-      } as unknown as EnclosureDisk,
-    ],
-  };
+  typeOptions$: Observable<Option[]>;
+  sizeOptions$: Observable<Option[]>;
 
   constructor(
     private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: SystemProfiler,
+    private storage: StorageService,
   ) {
-    this.dataSource = new IxNestedTreeDataSource([
-      this.data,
-      {
-        ...this.data,
-        group: 'enclosure2',
-        identifier: 'enclosure2',
-        children: [
-          {
-            identifier: 'sdb',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdc',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdd',
-            children: [],
-          } as unknown as EnclosureDisk,
-        ],
-      },
-      {
-        ...this.data,
-        group: 'enclosure3',
-        identifier: 'enclosure3',
-        children: [
-          {
-            identifier: 'sdb',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdc',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdd',
-            children: [],
-          } as unknown as EnclosureDisk,
-        ],
-      },
-      {
-        ...this.data,
-        group: 'enclosure4',
-        identifier: 'enclosure4',
-        children: [
-          {
-            identifier: 'sdb',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdc',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdd',
-            children: [],
-          } as unknown as EnclosureDisk,
-        ],
-      },
-      {
-        ...this.data,
-        group: 'enclosure5',
-        identifier: 'enclosure5',
-        children: [
-          {
-            identifier: 'sdb',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdc',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdd',
-            children: [],
-          } as unknown as EnclosureDisk,
-        ],
-      },
-      {
-        ...this.data,
-        group: 'enclosure6',
-        identifier: 'enclosure6',
-        children: [
-          {
-            identifier: 'sdb',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdc',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdd',
-            children: [],
-          } as unknown as EnclosureDisk,
-        ],
-      },
-      {
-        ...this.data,
-        group: 'enclosure7',
-        identifier: 'enclosure7',
-        children: [
-          {
-            identifier: 'sdb',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdc',
-            children: [],
-          } as unknown as EnclosureDisk,
-          {
-            identifier: 'sdd',
-            children: [],
-          } as unknown as EnclosureDisk,
-        ],
-      },
-    ]);
+    const disksData: NestedEnclosureDiskNode[] = this.data.profile.map((enclosure, index) => {
+      return {
+        group: `Enclosure ${index}`,
+        identifier: `Enclosure ${index}`,
+        children: enclosure.disks.sort((first, second) => {
+          return first.enclosure.slot > second.enclosure.slot ? 1 : -1;
+        }).map((disk) => ({ ...disk, children: [], identifier: disk.name })) as EnclosureDisk[],
+      };
+    });
+    this.dataSource = new IxNestedTreeDataSource(disksData);
+    const typeOptions: Option[] = this.data.diskData
+      .map((disk) => disk.type)
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .map((type) => ({ label: type, value: type }));
+    this.typeOptions$ = of(typeOptions);
+    const sizeOptions: Option[] = this.data.diskData
+      .map((disk) => this.storage.convertBytesToHumanReadable(disk.size))
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .map((size) => ({ label: size, value: size }));
+
+    this.sizeOptions$ = of(sizeOptions);
   }
 
   readonly isGroup = (_: number, node: NestedEnclosureDiskNode): boolean => 'group' in node;
 
   isExpanded(group: any): boolean {
     return this.treeControl.isExpanded(group);
+  }
+
+  getDiskType(disk: unknown): string {
+    return (disk as Disk).type;
+  }
+
+  getDiskModel(disk: unknown): string {
+    return (disk as Disk).model;
+  }
+
+  getDiskSlot(disk: unknown): number {
+    return (disk as Disk).enclosure.slot;
+  }
+
+  getDiskSerial(disk: unknown): string {
+    return (disk as Disk).serial;
   }
 }

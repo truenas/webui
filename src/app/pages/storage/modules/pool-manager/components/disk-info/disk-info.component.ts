@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./disk-info.component.scss'],
 })
 export class DiskInfoComponent {
-    @Input() slot: string;
+    @Input() slot: number;
     @Input() type: string;
     @Input() model: string;
     @Input() serial: string;
