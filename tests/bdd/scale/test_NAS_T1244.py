@@ -44,6 +44,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_datasets_on_the_side_menu(driver):
     """on the dashboard, click Datasets on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
 

@@ -22,7 +22,6 @@ from pytest_dependency import depends
 @scenario('features/NAS-T1257.feature', 'Verify the ssh host key stay the same after reboot')
 def test_verify_the_ssh_host_key_stay_the_same_after_reboot(driver):
     """Verify the ssh host key stay the same after reboot."""
-    pass
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -55,6 +54,7 @@ def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
     """on the Dashboard, get the ssh host key."""
     global hostkey_before
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     results = ssh_cmd('ssh-keyscan 127.0.0.1', 'root', root_password, nas_ip)
     assert results['result'], results['output']
     hostkey_before = results['output']

@@ -44,6 +44,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_storage_on_the_side_menu(driver):
     """on the Dashboard click on Storage on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 

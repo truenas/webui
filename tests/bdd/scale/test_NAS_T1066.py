@@ -50,6 +50,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_see_the_dashboard_click_network_on_the_side_menu(driver):
     """you see the dashboard click Network on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.network).click()
 

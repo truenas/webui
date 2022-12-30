@@ -2,7 +2,6 @@
 """SCALE UI: feature tests."""
 
 import pytest
-import time
 import xpaths
 from function import (
     wait_on_element,
@@ -45,12 +44,10 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click on credentials and local accounts')
 def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts(driver):
     """you should be on the dashboard, click on credentials and local accounts."""
-    time.sleep(1)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    """click on the Credentials on the side menu, click on Local Users."""
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    time.sleep(2)
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
 
@@ -58,11 +55,9 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts(drive
 @then('the users page should open, click add and the add page will open.')
 def the_users_page_should_open_click_add_and_the_add_page_will_open(driver):
     """the users page should open, click add and the add page will open.."""
-    time.sleep(3)
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
     driver.find_element_by_xpath(xpaths.button.add).click()
-    time.sleep(1)
 
 
 @then('Input fullname, username, password, confirmpassword, and click save')
@@ -84,10 +79,6 @@ def input_fullname_username_password_confirmpassword_and_click_save(driver):
 @then('the new user should be created and added to the user list.')
 def the_new_user_should_be_created_and_added_to_the_user_list(driver):
     """the new user should be created and added to the user list.."""
-    time.sleep(4)
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, '//div[contains(.,"foo")]')
-    # return to dashboard
-    time.sleep(2)
-    assert wait_on_element(driver, 7, xpaths.users.title)
