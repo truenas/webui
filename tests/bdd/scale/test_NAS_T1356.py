@@ -83,9 +83,9 @@ def click_launch_docker_image(driver):
 def set_application_name(driver):
     """set Application Names."""
     assert wait_on_element(driver, 30, '//h3[contains(.,"Launch Docker Image")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Application Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('truecommand-test')
+    assert wait_on_element(driver, 7, xpaths.appSetup.appName_input)
+    driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
+    driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('truecommand-test')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
 
