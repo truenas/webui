@@ -1,6 +1,7 @@
 {
   "": "",
   "Available version: {version}": "",
+  "Connect": "",
   "Enable Serial Console": "",
   "Error authenticating with token, please try again.": "",
   "Error generating token, please try again.": "",
@@ -8,6 +9,7 @@
   "Log In": "",
   "Login error. Please try again.": "",
   "Sign In": "",
+  "Signup": "",
   "{app} Application Summary": "",
   "{app} Catalog Summary": "",
   " Please click the button below to add {item}.": " 请点击下面的按钮来添加 {item}。",
