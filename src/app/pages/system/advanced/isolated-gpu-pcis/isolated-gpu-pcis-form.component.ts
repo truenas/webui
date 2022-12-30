@@ -16,7 +16,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy()
 @Component({
   templateUrl: './isolated-gpu-pcis-form.component.html',
-  styleUrls: ['./isolated-gpu-pcis-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpuPcisFormComponent implements OnInit {

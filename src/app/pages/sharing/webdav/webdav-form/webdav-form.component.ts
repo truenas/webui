@@ -23,7 +23,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './webdav-form.component.html',
-  styleUrls: ['./webdav-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WebdavFormComponent {

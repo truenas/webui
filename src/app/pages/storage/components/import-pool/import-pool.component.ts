@@ -21,7 +21,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './import-pool.component.html',
-  styleUrls: ['./import-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportPoolComponent implements OnInit {

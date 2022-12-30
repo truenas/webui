@@ -13,7 +13,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './static-route-form.component.html',
-  styleUrls: ['./static-route-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StaticRouteFormComponent {

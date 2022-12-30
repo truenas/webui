@@ -15,7 +15,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy()
 @Component({
   templateUrl: 'kernel-form.component.html',
-  styleUrls: ['./kernel-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KernelFormComponent {

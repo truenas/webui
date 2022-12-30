@@ -14,7 +14,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './license.component.html',
-  styleUrls: ['./license.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LicenseComponent {

@@ -12,7 +12,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: 'replication-settings.component.html',
-  styleUrls: ['./replication-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsComponent implements OnInit {
