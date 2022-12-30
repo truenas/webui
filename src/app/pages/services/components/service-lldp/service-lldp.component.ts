@@ -1,11 +1,12 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-lldp';
+import { LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -64,7 +65,7 @@ export class ServiceLldpComponent implements OnInit {
     protected ws: WebSocketService,
     protected services: ServicesService,
     private cdr: ChangeDetectorRef,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
   ) { }
@@ -88,7 +89,7 @@ export class ServiceLldpComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.value as LldpConfigUpdate;
 
     this.isFormLoading = true;
 

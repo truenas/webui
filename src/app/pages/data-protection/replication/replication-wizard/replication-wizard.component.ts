@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -829,6 +829,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   setSchemaOrRegexForObject(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any,
     schemaOrRegex: SnapshotNamingOption,
     schema: string = null,
@@ -960,6 +961,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadReplicationTask(task: any): void {
     // TODO: Update logic to use ReplicationTask as a type
     // Add something similar to resourceTransformIncomingRestData for EntityWizard
@@ -1053,6 +1055,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async customSubmit(value: any): Promise<void> {
     if (typeof (value.source_datasets) === 'string') {
       value.source_datasets = _.filter(value.source_datasets.split(',').map(_.trim));

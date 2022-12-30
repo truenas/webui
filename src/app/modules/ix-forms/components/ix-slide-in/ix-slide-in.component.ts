@@ -9,8 +9,11 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription, timer } from 'rxjs';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-slide-in',
   templateUrl: './ix-slide-in.component.html',
@@ -29,6 +32,8 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   isSlideInOpen = false;
   wide = false;
   private element: HTMLElement;
+  timeOutOfClear: Subscription;
+  wasBodyCleared = false;
 
   constructor(
     private el: ElementRef,
@@ -60,28 +65,34 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInService.setModal(this);
   }
 
-  ngOnDestroy(): void {
-    this.element.remove();
-    this.slideInService.close();
-  }
-
   closeSlideIn(): void {
     this.isSlideInOpen = false;
+    this.wasBodyCleared = true;
 
-    setTimeout(() => {
+    this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
       // Destroying child component later improves performance a little bit.
       // 200ms matches transition duration
       this.slideInBody.clear();
-    }, 200);
+      this.wasBodyCleared = false;
+    });
   }
 
   openSlideIn<T>(componentType: Type<T>, params?: { wide: boolean }): T {
     this.isSlideInOpen = true;
     this.wide = !!params?.wide;
 
+    if (this.wasBodyCleared) {
+      this.timeOutOfClear.unsubscribe();
+    }
     this.slideInBody.clear();
+    this.wasBodyCleared = false;
 
     const componentRef = this.slideInBody.createComponent<T>(componentType);
     return componentRef.instance;
+  }
+
+  ngOnDestroy(): void {
+    this.element.remove();
+    this.slideInService.close();
   }
 }

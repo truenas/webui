@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MatLegacyDialogState as MatDialogState } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';

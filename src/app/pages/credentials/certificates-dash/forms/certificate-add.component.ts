@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -953,6 +953,7 @@ export class OldCertificateAddComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   beforeSubmit(data: any): CertificateCreate {
     if (data.san) {
       for (let i = 0; i < data.san.length; i++) {

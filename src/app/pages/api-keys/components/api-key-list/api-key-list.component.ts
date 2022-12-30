@@ -1,7 +1,7 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -31,7 +31,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['name', 'created_at', 'actions'];
-  dataSource: MatTableDataSource<ApiKey> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ApiKey>([]);
   defaultSort: Sort = { active: 'name', direction: 'asc' };
   filterValue = '';
   loadingConfig: EmptyConfig = {

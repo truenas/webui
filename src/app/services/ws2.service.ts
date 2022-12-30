@@ -116,6 +116,8 @@ export class WebSocketService2 implements OnDestroy {
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
+    // TODO: Rework to use common base method instead.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
   }
 

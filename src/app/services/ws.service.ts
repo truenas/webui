@@ -221,6 +221,7 @@ export class WebSocketService {
    * method
    * @returns
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sub<T = any>(api: string, subscriptionId?: string): Observable<T> {
     const nom = api.replace('.', '_'); // Avoid weird behavior
     if (!this.pendingSubs[nom]) {

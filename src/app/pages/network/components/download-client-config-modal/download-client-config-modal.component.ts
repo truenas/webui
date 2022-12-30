@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';

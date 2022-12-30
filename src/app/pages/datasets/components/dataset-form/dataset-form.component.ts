@@ -1584,6 +1584,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   addSubmit(body: Record<string, unknown>): Observable<Dataset> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.quota_warning_inherit) {

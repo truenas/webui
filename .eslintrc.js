@@ -42,6 +42,7 @@ module.exports = {
         "prefer-template": "off",
 
         // Consciously altered
+        "no-underscore-dangle": "off",
         "class-methods-use-this": "off",
         "import/prefer-default-export": "off",
         "no-continue": "off",
@@ -132,9 +133,9 @@ module.exports = {
           },
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
+        "@typescript-eslint/no-explicit-any": "error",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
-        "no-underscore-dangle": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": ["error",
@@ -168,15 +169,13 @@ module.exports = {
         }],
         "default-case": "off",
         "@typescript-eslint/member-ordering": "off",
+
+        // Other temporary disables
         "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/prefer-regexp-exec": "off",
-
-        // Other temporary disables
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
@@ -229,7 +228,12 @@ module.exports = {
           argsIgnorePattern: "^_$",
           ignoreRestSiblings: true,
         }],
-        "@typescript-eslint/ban-types": ["error"],
+        "@typescript-eslint/ban-types": ["error", {
+          extendDefaults: true,
+          types: {
+            UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
+          }
+        }],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
         "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-selector": ["error", {

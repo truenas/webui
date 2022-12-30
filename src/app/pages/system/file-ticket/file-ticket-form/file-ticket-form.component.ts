@@ -63,7 +63,7 @@ export class FileTicketFormComponent implements OnInit {
     screenshot: helptext.screenshot.tooltip,
   };
   private screenshots: File[] = [];
-  jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
+  jobs$ = new BehaviorSubject<Observable<Job>[]>([]);
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
   );
