@@ -47,6 +47,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_apps(driver):
     """on the Dashboard, click on apps."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
     assert wait_on_element_disappear(driver, 30, '//mat-spinner')

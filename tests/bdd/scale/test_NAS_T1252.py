@@ -44,6 +44,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     """on the dashboard click on Credentials and Local Groups."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
