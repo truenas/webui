@@ -1,6 +1,8 @@
-:host {
+:host,
+:host-context(mat-dialog-container .ix-form-container) :host {
   display: flex;
   justify-content: flex-end;
+  margin: 0;
 
   ::ng-deep > {
     button,
@@ -10,7 +12,7 @@
   }
 }
 
-:host-context(ix-slide-in) :host {
+:host-context(.ix-form-container) :host {
   justify-content: flex-start;
   margin: 8px 11px;
 
