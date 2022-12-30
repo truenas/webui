@@ -55,6 +55,7 @@ def on_the_dashboard_click_on_credentials_and_certificates(driver):
 @then('click on the trash icon for csr1')
 def click_on_the_trash_icon_for_csr1(driver):
     """click on the trash icon for csr1."""
+    assert wait_on_element(driver, 7, xpaths.certificates.title)
     assert wait_on_element(driver, 7, '//h3[contains(text(),"Certificate Signing Requests")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"csr1")]//mat-icon[contains(text(),"delete")]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"csr1")]//mat-icon[contains(text(),"delete")]').click()
