@@ -37,6 +37,7 @@ import {
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
+import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -95,6 +96,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     UpdateDialogComponent,
     ResilverProgressDialogComponent,
     ShowLogsDialogComponent,
+    SummaryComponent,
   ],
   providers: [
     LanguageService,
@@ -104,6 +106,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
   exports: [
     SearchInputComponent,
     ShowLogsDialogComponent,
+    SummaryComponent,
   ],
 })
 export class AppCommonModule {}

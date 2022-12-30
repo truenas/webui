@@ -1,9 +1,10 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { helptextSystemCa } from 'app/helptext/system/ca';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
+// TODO: Clear
 export const helptextSystemCertificates = {
   add: {
     title: T('Add Certificate'),

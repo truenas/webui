@@ -1,34 +1,32 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker/lib/ngx-translate-extract-marker';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+} from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
-import { CertificateCreate, CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
+import { Summary } from 'app/modules/common/summary/summary.component';
 import {
-  CertificateCsrExistsComponent
+  CertificateCsrExistsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-csr-exists/certificate-csr-exists.component';
 import {
-  CertificateIdentifierAndTypeComponent
+  CertificateIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
 import {
-  CertificateOptionsComponent
+  CertificateOptionsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
 import {
-  CertificateConstraintsComponent
+  CertificateConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import {
-  CertificateImportComponent
+  CertificateImportComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-import/certificate-import.component';
 import {
-  CertificateSubjectComponent
+  CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { Observable, of } from 'rxjs';
-import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 
 @UntilDestroy()
 @Component({
@@ -45,6 +43,9 @@ export class CertificateAddComponent {
   @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
 
   isLoading = false;
+  summary: Summary;
+
+  private summaryBySection = new Map<string, Summary>();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -79,6 +80,17 @@ export class CertificateAddComponent {
 
   onProfileSelected(_: CertificateProfile): void {
 
+  }
+
+  onSummaryUpdated(section: string, value: Summary): void {
+    this.summaryBySection.set(section, value);
+    // TODO: Move somewhere?
+    this.summary = Array.from(this.summaryBySection.entries()).reduce((summary, [_, sectionSummary]) => {
+      return {
+        ...summary,
+        ...sectionSummary,
+      };
+    }, {});
   }
 
   private preparePayload(): CertificateCreate {

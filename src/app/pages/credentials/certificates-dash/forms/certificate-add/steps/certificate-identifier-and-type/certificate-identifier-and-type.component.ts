@@ -1,32 +1,34 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { Observable, of } from 'rxjs';
-import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-certificate-identifier-and-type',
   templateUrl: './certificate-identifier-and-type.component.html',
-  styleUrls: ['./certificate-identifier-and-type.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateIdentifierAndTypeComponent implements OnInit {
   @Output() profileSelected = new EventEmitter<CertificateProfile>();
+  @Output() summaryUpdated = new EventEmitter<Record<string, string>>();
 
   form = this.formBuilder.group({
     name: ['', [
       Validators.required,
       this.validators.withMessage(
         Validators.pattern('[A-Za-z0-9_-]+$'),
-        this.translate.instant(helptextSystemCertificates.add.name.errors)
+        this.translate.instant(helptextSystemCertificates.add.name.errors),
       ),
     ]],
     create_type: [CertificateCreateType.CreateInternal],
@@ -59,6 +61,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit {
   ngOnInit(): void {
     this.loadProfiles();
     this.emitEventOnProfileChange();
+    this.updateSummaryOnChange();
   }
 
   private loadProfiles(): void {
@@ -83,6 +86,16 @@ export class CertificateIdentifierAndTypeComponent implements OnInit {
       .subscribe((profileName) => {
         const profile = this.profiles[profileName];
         this.profileSelected.emit(profile);
+      });
+  }
+
+  private updateSummaryOnChange(): void {
+    this.form.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.summaryUpdated.emit({
+          name: value.name,
+        });
       });
   }
 }

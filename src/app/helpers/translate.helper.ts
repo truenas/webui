@@ -1,17 +1,14 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
 
-/**
- * @deprecated Prefer keeping options as a map and using mapToOptions instead.
- */
-export function translateOptions(
+export function translateOptions<T extends Option>(
   translate: TranslateService,
-  options: Option[],
-): Option[] {
+  options: T[],
+): T[] {
   return options.map((option) => {
     return {
+      ...option,
       label: translate.instant(option.label),
-      value: option.value,
     };
   });
 }

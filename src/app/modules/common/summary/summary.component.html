@@ -1,0 +1,6 @@
+<dl>
+  <ng-container *ngFor="let item of (summary | keyvalue)">
+    <dt>{{ item.key }}:</dt>
+    <dd>{{ item.value }}</dd>
+  </ng-container>
+</dl>

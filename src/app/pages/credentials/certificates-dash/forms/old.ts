@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Component } from '@angular/core';
 import { AbstractControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
@@ -311,203 +312,203 @@ export class OldCertificateAddComponent implements WizardConfiguration {
     {
       label: helptextSystemCertificates.add.fieldset_extra,
       fieldConfig: [
-        {
-          type: 'checkbox',
-          name: 'BasicConstraints-enabled',
-          placeholder: helptextSystemCertificates.add.basic_constraints.enabled.placeholder,
-          tooltip: helptextSystemCertificates.add.basic_constraints.enabled.tooltip,
-        },
-        {
-          type: 'input',
-          inputType: 'number',
-          name: 'BasicConstraints-path_length',
-          placeholder: helptextSystemCertificates.add.basic_constraints.path_length.placeholder,
-          tooltip: helptextSystemCertificates.add.basic_constraints.path_length.tooltip,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'BasicConstraints-enabled',
-                value: true,
-              }],
-            },
-          ],
-        },
-        {
-          type: 'select',
-          multiple: true,
-          name: 'BasicConstraints',
-          placeholder: helptextSystemCertificates.add.basic_constraints.config.placeholder,
-          tooltip: helptextSystemCertificates.add.basic_constraints.config.tooltip,
-          options: [
-            {
-              value: 'ca',
-              label: helptextSystemCertificates.add.basic_constraints.ca.placeholder,
-              tooltip: helptextSystemCertificates.add.basic_constraints.ca.tooltip,
-            },
-            {
-              value: 'extension_critical',
-              label: helptextSystemCertificates.add.basic_constraints.extension_critical.placeholder,
-              tooltip: helptextSystemCertificates.add.basic_constraints.extension_critical.tooltip,
-            },
-          ],
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'BasicConstraints-enabled',
-                value: true,
-              }],
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          name: 'AuthorityKeyIdentifier-enabled',
-          placeholder: helptextSystemCertificates.add.authority_key_identifier.enabled.placeholder,
-          tooltip: helptextSystemCertificates.add.authority_key_identifier.enabled.tooltip,
-        },
-        {
-          type: 'select',
-          multiple: true,
-          name: 'AuthorityKeyIdentifier',
-          placeholder: helptextSystemCertificates.add.authority_key_identifier.config.placeholder,
-          tooltip: helptextSystemCertificates.add.authority_key_identifier.config.tooltip,
-          options: [
-            {
-              value: 'authority_cert_issuer',
-              label: helptextSystemCertificates.add.authority_key_identifier.authority_cert_issuer.placeholder,
-              tooltip: helptextSystemCertificates.add.authority_key_identifier.authority_cert_issuer.tooltip,
-            },
-            {
-              value: 'extension_critical',
-              label: helptextSystemCertificates.add.authority_key_identifier.extension_critical.placeholder,
-              tooltip: helptextSystemCertificates.add.authority_key_identifier.extension_critical.tooltip,
-            },
-          ],
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'AuthorityKeyIdentifier-enabled',
-                value: true,
-              }],
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          name: 'ExtendedKeyUsage-enabled',
-          placeholder: helptextSystemCertificates.add.extended_key_usage.enabled.placeholder,
-          tooltip: helptextSystemCertificates.add.extended_key_usage.enabled.tooltip,
-        },
-        {
-          type: 'select',
-          multiple: true,
-          name: 'ExtendedKeyUsage-usages',
-          placeholder: helptextSystemCertificates.add.extended_key_usage.usages.placeholder,
-          tooltip: helptextSystemCertificates.add.extended_key_usage.usages.tooltip,
-          options: [],
-          required: false,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'ExtendedKeyUsage-enabled',
-                value: true,
-              }],
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          name: 'ExtendedKeyUsage-extension_critical',
-          placeholder: helptextSystemCertificates.add.extended_key_usage.extension_critical.placeholder,
-          tooltip: helptextSystemCertificates.add.extended_key_usage.extension_critical.tooltip,
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'ExtendedKeyUsage-enabled',
-                value: true,
-              }],
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          name: 'KeyUsage-enabled',
-          placeholder: helptextSystemCertificates.add.key_usage.enabled.placeholder,
-          tooltip: helptextSystemCertificates.add.key_usage.enabled.tooltip,
-        },
-        {
-          type: 'select',
-          multiple: true,
-          name: 'KeyUsage',
-          placeholder: helptextSystemCertificates.add.key_usage.config.placeholder,
-          tooltip: helptextSystemCertificates.add.key_usage.config.tooltip,
-          options: [
-            {
-              value: 'digital_signature',
-              label: helptextSystemCertificates.add.key_usage.digital_signature.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.digital_signature.tooltip,
-            },
-            {
-              value: 'content_commitment',
-              label: helptextSystemCertificates.add.key_usage.content_commitment.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.content_commitment.tooltip,
-            },
-            {
-              value: 'key_encipherment',
-              label: helptextSystemCertificates.add.key_usage.key_encipherment.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.key_encipherment.tooltip,
-            },
-            {
-              value: 'data_encipherment',
-              label: helptextSystemCertificates.add.key_usage.data_encipherment.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.data_encipherment.tooltip,
-            },
-            {
-              value: 'key_agreement',
-              label: helptextSystemCertificates.add.key_usage.key_agreement.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.key_agreement.tooltip,
-            },
-            {
-              value: 'key_cert_sign',
-              label: helptextSystemCertificates.add.key_usage.key_cert_sign.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.key_cert_sign.tooltip,
-            },
-            {
-              value: 'crl_sign',
-              label: helptextSystemCertificates.add.key_usage.crl_sign.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.crl_sign.tooltip,
-            },
-            {
-              value: 'encipher_only',
-              label: helptextSystemCertificates.add.key_usage.encipher_only.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.encipher_only.tooltip,
-            },
-            {
-              value: 'decipher_only',
-              label: helptextSystemCertificates.add.key_usage.decipher_only.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.decipher_only.tooltip,
-            },
-            {
-              value: 'extension_critical',
-              label: helptextSystemCertificates.add.key_usage.extension_critical.placeholder,
-              tooltip: helptextSystemCertificates.add.key_usage.extension_critical.tooltip,
-            },
-          ],
-          relation: [
-            {
-              action: RelationAction.Show,
-              when: [{
-                name: 'KeyUsage-enabled',
-                value: true,
-              }],
-            },
-          ],
-        },
+        // {
+        //   type: 'checkbox',
+        //   name: 'BasicConstraints-enabled',
+        //   placeholder: helptextSystemCertificates.add.basic_constraints.enabled.placeholder,
+        //   tooltip: helptextSystemCertificates.add.basic_constraints.enabled.tooltip,
+        // },
+        // {
+        //   type: 'input',
+        //   inputType: 'number',
+        //   name: 'BasicConstraints-path_length',
+        //   placeholder: helptextSystemCertificates.add.basic_constraints.path_length.placeholder,
+        //   tooltip: helptextSystemCertificates.add.basic_constraints.path_length.tooltip,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [{
+        //         name: 'BasicConstraints-enabled',
+        //         value: true,
+        //       }],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'select',
+        //   multiple: true,
+        //   name: 'BasicConstraints',
+        //   placeholder: helptextSystemCertificates.add.basic_constraints.config.placeholder,
+        //   tooltip: helptextSystemCertificates.add.basic_constraints.config.tooltip,
+        //   options: [
+        //     {
+        //       value: 'ca',
+        //       label: helptextSystemCertificates.add.basic_constraints.ca.placeholder,
+        //       tooltip: helptextSystemCertificates.add.basic_constraints.ca.tooltip,
+        //     },
+        //     {
+        //       value: 'extension_critical',
+        //       label: helptextSystemCertificates.add.basic_constraints.extension_critical.placeholder,
+        //       tooltip: helptextSystemCertificates.add.basic_constraints.extension_critical.tooltip,
+        //     },
+        //   ],
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [{
+        //         name: 'BasicConstraints-enabled',
+        //         value: true,
+        //       }],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'checkbox',
+        //   name: 'AuthorityKeyIdentifier-enabled',
+        //   placeholder: helptextSystemCertificates.add.authority_key_identifier.enabled.placeholder,
+        //   tooltip: helptextSystemCertificates.add.authority_key_identifier.enabled.tooltip,
+        // },
+        // {
+        //   type: 'select',
+        //   multiple: true,
+        //   name: 'AuthorityKeyIdentifier',
+        //   placeholder: helptextSystemCertificates.add.authority_key_identifier.config.placeholder,
+        //   tooltip: helptextSystemCertificates.add.authority_key_identifier.config.tooltip,
+        //   options: [
+        //     {
+        //       value: 'authority_cert_issuer',
+        //       label: helptextSystemCertificates.add.authority_key_identifier.authority_cert_issuer.placeholder,
+        //       tooltip: helptextSystemCertificates.add.authority_key_identifier.authority_cert_issuer.tooltip,
+        //     },
+        //     {
+        //       value: 'extension_critical',
+        //       label: helptextSystemCertificates.add.authority_key_identifier.extension_critical.placeholder,
+        //       tooltip: helptextSystemCertificates.add.authority_key_identifier.extension_critical.tooltip,
+        //     },
+        //   ],
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [{
+        //         name: 'AuthorityKeyIdentifier-enabled',
+        //         value: true,
+        //       }],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'checkbox',
+        //   name: 'ExtendedKeyUsage-enabled',
+        //   placeholder: helptextSystemCertificates.add.extended_key_usage.enabled.placeholder,
+        //   tooltip: helptextSystemCertificates.add.extended_key_usage.enabled.tooltip,
+        // },
+        // {
+        //   type: 'select',
+        //   multiple: true,
+        //   name: 'ExtendedKeyUsage-usages',
+        //   placeholder: helptextSystemCertificates.add.extended_key_usage.usages.placeholder,
+        //   tooltip: helptextSystemCertificates.add.extended_key_usage.usages.tooltip,
+        //   options: [],
+        //   required: false,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [{
+        //         name: 'ExtendedKeyUsage-enabled',
+        //         value: true,
+        //       }],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'checkbox',
+        //   name: 'ExtendedKeyUsage-extension_critical',
+        //   placeholder: helptextSystemCertificates.add.extended_key_usage.extension_critical.placeholder,
+        //   tooltip: helptextSystemCertificates.add.extended_key_usage.extension_critical.tooltip,
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [{
+        //         name: 'ExtendedKeyUsage-enabled',
+        //         value: true,
+        //       }],
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'checkbox',
+        //   name: 'KeyUsage-enabled',
+        //   placeholder: helptextSystemCertificates.add.key_usage.enabled.placeholder,
+        //   tooltip: helptextSystemCertificates.add.key_usage.enabled.tooltip,
+        // },
+        // {
+        //   type: 'select',
+        //   multiple: true,
+        //   name: 'KeyUsage',
+        //   placeholder: helptextSystemCertificates.add.key_usage.config.placeholder,
+        //   tooltip: helptextSystemCertificates.add.key_usage.config.tooltip,
+        //   options: [
+        //     {
+        //       value: 'digital_signature',
+        //       label: helptextSystemCertificates.add.key_usage.digital_signature.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.digital_signature.tooltip,
+        //     },
+        //     {
+        //       value: 'content_commitment',
+        //       label: helptextSystemCertificates.add.key_usage.content_commitment.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.content_commitment.tooltip,
+        //     },
+        //     {
+        //       value: 'key_encipherment',
+        //       label: helptextSystemCertificates.add.key_usage.key_encipherment.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.key_encipherment.tooltip,
+        //     },
+        //     {
+        //       value: 'data_encipherment',
+        //       label: helptextSystemCertificates.add.key_usage.data_encipherment.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.data_encipherment.tooltip,
+        //     },
+        //     {
+        //       value: 'key_agreement',
+        //       label: helptextSystemCertificates.add.key_usage.key_agreement.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.key_agreement.tooltip,
+        //     },
+        //     {
+        //       value: 'key_cert_sign',
+        //       label: helptextSystemCertificates.add.key_usage.key_cert_sign.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.key_cert_sign.tooltip,
+        //     },
+        //     {
+        //       value: 'crl_sign',
+        //       label: helptextSystemCertificates.add.key_usage.crl_sign.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.crl_sign.tooltip,
+        //     },
+        //     {
+        //       value: 'encipher_only',
+        //       label: helptextSystemCertificates.add.key_usage.encipher_only.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.encipher_only.tooltip,
+        //     },
+        //     {
+        //       value: 'decipher_only',
+        //       label: helptextSystemCertificates.add.key_usage.decipher_only.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.decipher_only.tooltip,
+        //     },
+        //     {
+        //       value: 'extension_critical',
+        //       label: helptextSystemCertificates.add.key_usage.extension_critical.placeholder,
+        //       tooltip: helptextSystemCertificates.add.key_usage.extension_critical.tooltip,
+        //     },
+        //   ],
+        //   relation: [
+        //     {
+        //       action: RelationAction.Show,
+        //       when: [{
+        //         name: 'KeyUsage-enabled',
+        //         value: true,
+        //       }],
+        //     },
+        //   ],
+        // },
         // {
         //   type: 'textarea',
         //   name: 'certificate',
@@ -694,12 +695,12 @@ export class OldCertificateAddComponent implements WizardConfiguration {
       });
     });
 
-    this.usageField = this.getTarget('ExtendedKeyUsage-usages') as FormSelectConfig;
-    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      Object.keys(choices).forEach((key) => {
-        this.usageField.options.push({ label: choices[key], value: key });
-      });
-    });
+    // this.usageField = this.getTarget('ExtendedKeyUsage-usages') as FormSelectConfig;
+    // this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+    //   Object.keys(choices).forEach((key) => {
+    //     this.usageField.options.push({ label: choices[key], value: key });
+    //   });
+    // });
 
     // const profilesField = this.getTarget('profiles') as FormSelectConfig;
     // this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((profiles) => {
@@ -822,30 +823,30 @@ export class OldCertificateAddComponent implements WizardConfiguration {
 
       this.setSummary();
     });
+    //
+    // this.getField('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
+    //   this.identifier = name;
+    //   this.setSummary();
+    // });
 
-    this.getField('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
-      this.identifier = name;
-      this.setSummary();
-    });
-
-    this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
-      if (this.identifier && status === 'INVALID') {
-        this.getTarget('name')['hasErrors'] = true;
-      } else {
-        this.getTarget('name')['hasErrors'] = false;
-      }
-      this.setSummary();
-    });
+    // this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+    //   if (this.identifier && status === 'INVALID') {
+    //     this.getTarget('name')['hasErrors'] = true;
+    //   } else {
+    //     this.getTarget('name')['hasErrors'] = false;
+    //   }
+    //   this.setSummary();
+    // });
 
     this.getField('ExtendedKeyUsage-enabled').valueChanges.pipe(untilDestroyed(this)).subscribe((enabled) => {
-      const usagesRequired = enabled !== undefined ? enabled : false;
-      this.usageField.required = usagesRequired;
-      if (usagesRequired) {
-        this.getField('ExtendedKeyUsage-usages').setValidators([Validators.required]);
-      } else {
-        this.getField('ExtendedKeyUsage-usages').clearValidators();
-      }
-      this.getField('ExtendedKeyUsage-usages').updateValueAndValidity();
+      // const usagesRequired = enabled !== undefined ? enabled : false;
+      // this.usageField.required = usagesRequired;
+      // if (usagesRequired) {
+      //   this.getField('ExtendedKeyUsage-usages').setValidators([Validators.required]);
+      // } else {
+      //   this.getField('ExtendedKeyUsage-usages').clearValidators();
+      // }
+      // this.getField('ExtendedKeyUsage-usages').updateValueAndValidity();
       this.setSummary();
     });
 

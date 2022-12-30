@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -66,7 +67,6 @@ import { OldCertificateAddComponent } from './certificates-dash/forms/certificat
 import { CertificateCsrExistsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-csr-exists/certificate-csr-exists.component';
 import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
 import { CertificateOptionsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
-import { CertificateSummaryComponent } from './certificates-dash/forms/certificate-add/steps/certificate-summary/certificate-summary.component';
 import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import { CertificateImportComponent } from './certificates-dash/forms/common-steps/certificate-import/certificate-import.component';
 import { CertificateSubjectComponent } from './certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
@@ -110,7 +110,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateAddComponent,
     CertificateIdentifierAndTypeComponent,
     CertificateConstraintsComponent,
-    CertificateSummaryComponent,
     CertificateImportComponent,
     CertificateCsrExistsComponent,
   ],
@@ -133,6 +132,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     MatProgressBarModule,
     RouterModule,
     MatStepperModule,
+    AppCommonModule,
   ],
 })
 export class CredentialsModule { }
