@@ -95,6 +95,9 @@ class button:
     ok = '//button[@name="ok_button"]'
     power = '//button[@name="Power"]'
     restart = '//button[@name="power-restart"]'
+    unsetPool = '//button[contains(.,"Unset Pool")]'
+    unset = '//button[contains(.,"Unset")]'
+    chossePool = '//button[contains(.,"Choose Pool")]'
 
 
 class certificates:
@@ -325,6 +328,7 @@ class popup:
     warning = '//h1[contains(.,"Warning")]'
     updatingAcl = '//h1[text()="Updating ACL"]'
     settingLdap = '//h1[text()="Setting up LDAP"]'
+    configuring = '//h1[contains(.,"Configuring...")]'
 
 
 class progress:

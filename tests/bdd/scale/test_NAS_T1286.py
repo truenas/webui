@@ -1,7 +1,6 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
 import xpaths
 from function import (
     wait_on_element,
@@ -53,13 +52,6 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
     assert wait_on_element(driver, 10, xpaths.applications.title)
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    # Wait for Available Applications UI to load
-    assert wait_on_element(driver, 60, '//h3[text()="plex"]')
-    assert wait_on_element(driver, 30, '//button[@ix-auto="button__plex-install"]', 'clickable')
-    # Sleep to make sure that the drop does not disappear
-    time.sleep(3)
 
 
 @then('the Apps page load, click settings, unset pool')
@@ -67,19 +59,17 @@ def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
     assert wait_on_element(driver, 20, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Unset Pool")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Unset Pool")]').click()
-    assert wait_on_element(driver, 20, '//h1[contains(.,"Unset Pool")]')
+    assert wait_on_element(driver, 5, xpaths.button.unsetPool, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.unsetPool).click()
 
 
 @then('confirm unset pool and wait')
 def confirm_unset_pool_and_wait(driver):
     """confirm unset pool and wait."""
-    assert wait_on_element(driver, 10, '//span[contains(text(),"UNSET")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"UNSET")]').click()
-    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
-    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close).click()
+    assert wait_on_element(driver, 20, '//h1[contains(.,"Unset Pool")]')
+    assert wait_on_element(driver, 10, xpaths.button.unset, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.unset).click()
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.configuring)
 
 
 @then('click setting, reset pool')
@@ -87,8 +77,8 @@ def click_setting_reset_pool(driver):
     """click setting, reset pool."""
     assert wait_on_element(driver, 10, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
-    assert wait_on_element(driver, 10, '//span[contains(text(),"Choose Pool")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Choose Pool")]').click()
+    assert wait_on_element(driver, 10, xpaths.button.chossePool, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.chossePool).click()
     assert wait_on_element(driver, 7, xpaths.chossePoolForApp.title)
     assert wait_on_element(driver, 5, xpaths.chossePoolForApp.pool_select, 'clickable')
     driver.find_element_by_xpath(xpaths.chossePoolForApp.pool_select).click()
@@ -96,7 +86,7 @@ def click_setting_reset_pool(driver):
     driver.find_element_by_xpath(xpaths.chossePoolForApp.tankPool_option).click()
     assert wait_on_element(driver, 7, xpaths.button.choose, 'clickable')
     driver.find_element_by_xpath(xpaths.button.choose).click()
-    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.configuring)
     assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
