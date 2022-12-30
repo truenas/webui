@@ -28,7 +28,7 @@ def test_apps_page__validate_collabora():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['App_readd_pool'], scope='session')
+    #depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -54,80 +54,56 @@ def on_the_dashboard_click_on_apps(driver):
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
 
 
-@then('the Apps page load, open available applications')
-def the_apps_page_load_open_available_applications(driver):
-    """the Apps page load, open available applications."""
+@then('on Application page click on the Available Applications tab')
+def on_application_page_click_on_the_available_applications_tab(driver):
+    """on Application page click on the Available Applications tab."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
 
 
-@then('click install')
-def click_install(driver):
-    """click install."""
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
+@then('on the collabora card click the Install button')
+def on_the_collabora_card_click_the_install_button(driver):
+    """on the collabora card click the Install button."""
+    assert wait_on_element(driver, 7, '//h3[contains(.,"collabora")]')
     assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]').click()
     assert wait_on_element(driver, 5, xpaths.popup.pleaseWait)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 
-@then('set application name')
-def set_application_name(driver):
-    """set application name."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"collabora")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Application Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Application Name"]').send_keys('collabora-test')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
+@then('Enter an application name')
+def enter_an_application_name(driver):
+    """Enter an application name."""
+    assert wait_on_element(driver, 7, xpaths.appSetup.title("collabora"))
+    assert wait_on_element(driver, 7, xpaths.appSetup.appName_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
+    driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('collabora-test')
 
 
-@then('set collabora configuration')
-def set_collabora_configuration(driver):
-    """set collabora configuration."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password for WebUI"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Password for WebUI"]').send_keys('testingpass')
-
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Certificate"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Certificate"]').click()
-    # made the next xpath backward compatible
-    assert wait_on_element(driver, 7, '//span[contains(.,"freenas_default") or contains(.,"truenas_default")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"freenas_default") or contains(.,"truenas_default")]').click()
-
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Collabora Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Collabora Configuration"]').click()
+@then('under Collabora configuration set a password for WebUI')
+def under_collabora_configuration_set_a_password_for_webui(driver):
+    """under Collabora configuration set a password for WebUI."""
+    driver.find_element_by_xpath(xpaths.appSetup.password_input).clear()
+    driver.find_element_by_xpath(xpaths.appSetup.password_input).send_keys('testingpass')
 
 
-@then('set collabora environment variables')
-def set_collabora_environment_variables(driver):
-    """set collabora environment variables."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Collabora Environment Variables"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Collabora Environment Variables"]').click()
+@then('select trunas_default certificate')
+def select_trunas_default_certificate(driver):
+    """select trunas_default certificate."""
+    element = driver.find_element_by_xpath('//span[text()="Certificate"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+
+    assert wait_on_element(driver, 5, xpaths.appSetup.certificate_select, 'clickable')
+    driver.find_element_by_xpath(xpaths.appSetup.certificate_select).click()
+    assert wait_on_element(driver, 7, xpaths.appSetup.truenasCertificate_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.appSetup.truenasCertificate_option).click()
 
 
-@then('set networking')
-def set_networking(driver):
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
-
-
-@then('set storage')
-def set_storage(driver):
-    """set storage."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
-
-@then('set Resource Limits')
-def set_resource_limits(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
-
-
-@then('confirm options')
-def confirm_options(driver):
+@then('click save and wait for the installation to finish')
+def click_save_and_wait_for_the_installation_to_finish(driver):
+    """click save and wait for the installation to finish."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -135,9 +111,9 @@ def confirm_options(driver):
     assert wait_on_element_disappear(driver, 45, '//*[contains(.,"Installing")]')
 
 
-@then('confirm installation is successful')
-def confirm_installation_is_successful(driver):
-    """confirm installation is successful."""
+@then('confirm installation is successful and the App is active')
+def confirm_installation_is_successful_and_the_app_is_active(driver):
+    """confirm installation is successful and the App is active."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element_disappear(driver, 30, '//mat-spinner')
@@ -160,12 +136,6 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(1)  # wait for popup to close
-            # we have to change tab for UI to refresh
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
             assert wait_on_element_disappear(driver, 30, '//mat-spinner')
             assert wait_on_element(driver, 500, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
     else:

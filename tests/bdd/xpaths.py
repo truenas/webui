@@ -77,6 +77,16 @@ class applications:
     title = '//h1[text()="Applications"]'
 
 
+class appSetup:
+    appName_input = '//ix-input[contains(.,"Application Name")]//input'
+    password_input = '//ix-input[contains(.,"Password for WebUI")]//input'
+    certificate_select = '//ix-select[contains(.,"Certificate")]//mat-select//div'
+    truenasCertificate_option = '//mat-option[contains(.,"truenas_default")]'
+
+    def title(app_name):
+        return f'//h3[contains(.,"{app_name}") and @class="ix-formtitle"]'
+
+
 class button:
     add = '//button[contains(.,"Add")]'
     cancel = '//button[normalize-space(span/text())="Cancel"]'
