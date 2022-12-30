@@ -83,7 +83,7 @@ def input_the_group_name_gid_enable_duplicate_gids_and_click_save(driver):
 @then('verify the group was added')
 def verify_the_group_was_added(driver):
     """verify the group was added."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.groups.title)
     assert wait_on_element(driver, 10, '//div[contains(.,"gidtest")]')
 
@@ -118,6 +118,6 @@ def input_the_duplicate_group_name_gid_enable_duplicate_gids_and_click_save(driv
 @then('verify the duplicate group was added')
 def verify_the_duplicate_group_was_added(driver):
     """verify the duplicate group was added."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.groups.title)
     assert wait_on_element(driver, 10, xpaths.groups.gidtestdupe_name)

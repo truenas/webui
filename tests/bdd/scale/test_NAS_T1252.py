@@ -75,6 +75,6 @@ def change_the_group_name_from_qetest_to_qatest_and_click_save(driver):
 @then('verify that the group name shows as qatest')
 def verify_that_the_group_name_shows_as_qatest(driver):
     """verify that the group name shows as qatest."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, xpaths.groups.qatest_name)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 7, xpaths.groups.title)
+    assert wait_on_element(driver, 5, xpaths.groups.qatest_name)
