@@ -84,7 +84,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, '//div[contains(.,"qetestuser")]')
 
