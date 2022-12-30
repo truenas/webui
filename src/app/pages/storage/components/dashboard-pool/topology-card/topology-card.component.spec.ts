@@ -35,31 +35,39 @@ describe('TopologyCardComponent', () => {
             data: [
               {
                 type: CreateVdevLayout.Raidz1,
-                children: [{ type: 'DISK', disk: 'sda' }, { type: 'DISK', disk: 'sdb' }, { type: 'DISK', disk: 'sdc' }],
+                children: [
+                  { type: 'DISK', disk: 'sda' },
+                  { type: 'DISK', disk: 'sdb' },
+                  { type: 'DISK', disk: 'sdc' },
+                ],
               },
               {
                 type: CreateVdevLayout.Raidz1,
-                children: [{ type: 'DISK', disk: 'sdd' }, { type: 'DISK', disk: 'sde' }],
+                children: [
+                  { type: 'DISK', disk: 'sdd' },
+                  { type: 'DISK', disk: 'sde' },
+                  { type: 'DISK', disk: 'sdf' },
+                ],
               },
             ],
             log: [
               {
                 type: CreateVdevLayout.Mirror,
-                children: [{ type: 'DISK', disk: 'sdf' }, { type: 'DISK', disk: 'sdg' }],
+                children: [{ type: 'DISK', disk: 'sdg' }, { type: 'DISK', disk: 'sdh' }],
               },
             ],
             cache: [
-              { type: 'DISK', disk: 'sdh', children: [] },
               { type: 'DISK', disk: 'sdi', children: [] },
+              { type: 'DISK', disk: 'sdj', children: [] },
             ],
             spare: [
-              { type: 'DISK', disk: 'sdj', children: [] },
               { type: 'DISK', disk: 'sdk', children: [] },
+              { type: 'DISK', disk: 'sdl', children: [] },
             ],
             special: [
               {
                 type: CreateVdevLayout.Mirror,
-                children: [{ type: 'DISK', disk: 'sdl' }, { type: 'DISK', disk: 'sdm' }],
+                children: [{ type: 'DISK', disk: 'sdm' }, { type: 'DISK', disk: 'sdn' }],
               },
             ],
             dedup: [],
@@ -71,14 +79,15 @@ describe('TopologyCardComponent', () => {
           { name: 'sdc', devname: 'sdc', size: 1073741824 * 2 },
           { name: 'sdd', devname: 'sdd', size: 1073741824 * 2 },
           { name: 'sde', devname: 'sde', size: 1073741824 * 2 },
-          { name: 'sdf', devname: 'sdf', size: 1048576 * 5 },
+          { name: 'sdf', devname: 'sdf', size: 1073741824 * 2 },
           { name: 'sdg', devname: 'sdg', size: 1048576 * 5 },
-          { name: 'sdh', devname: 'sdh', size: 1048576 * 6 },
+          { name: 'sdh', devname: 'sdh', size: 1048576 * 5 },
           { name: 'sdi', devname: 'sdi', size: 1048576 * 6 },
-          { name: 'sdj', devname: 'sdj', size: 1048576 * 4 },
-          { name: 'sdk', devname: 'sdk', size: 1048576 * 3 },
-          { name: 'sdl', devname: 'sdl', size: 1073741824 * 2 },
-          { name: 'sdm', devname: 'sdm', size: 1073741824 * 1 },
+          { name: 'sdj', devname: 'sdj', size: 1048576 * 6 },
+          { name: 'sdk', devname: 'sdk', size: 1048576 * 4 },
+          { name: 'sdl', devname: 'sdl', size: 1048576 * 3 },
+          { name: 'sdm', devname: 'sdm', size: 1073741824 * 2 },
+          { name: 'sdn', devname: 'sdn', size: 1073741824 * 1 },
         ] as StorageDashboardDisk[],
       },
     });
@@ -92,7 +101,7 @@ describe('TopologyCardComponent', () => {
     expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('2 x RAIDZ1 | 5 wide | 2 GiB');
+    expect(values[0]).toHaveText('2 x RAIDZ1 | 3 wide | 2 GiB');
     expect(captions[1]).toHaveText('Metadata');
     expect(values[1]).toHaveText('Mixed Capacity VDEVs');
     expect(captions[2]).toHaveText('Log VDEVs');

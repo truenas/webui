@@ -20,7 +20,8 @@ interface TopologyState {
 }
 
 const notAssignedDev = 'VDEVs not assigned';
-const mixedDev = 'Mixed Capacity VDEVs';
+const mixedCapacity = 'Mixed Capacity VDEVs';
+const mixedWidth = 'Mixed Width VDEVs';
 
 @UntilDestroy()
 @Component({
@@ -41,8 +42,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     dedup: notAssignedDev,
   };
 
-  get mixedDev(): string {
-    return mixedDev;
+  get mixedCapacity(): string {
+    return mixedCapacity;
   }
 
   get iconType(): PoolCardIconType {
@@ -93,8 +94,11 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
   private parseDevs(devs: TopologyItem[]): string {
     let outputString = notAssignedDev;
-    let isMix = false;
-    let wide = 0;
+    let isMixedCapacity = false;
+    let isMixedWidth = false;
+    let vdevWidth = 0;
+    // let allVdevWidths: number[] = []; // There should only be one value
+    const allVdevWidths = new Set<number>(); // There should only be one value
     const type = devs[0]?.type;
     const size = devs[0]?.children.length
       ? this.disks?.find((disk) => disk.name === devs[0]?.children[0]?.disk)?.size
@@ -102,25 +106,36 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
     devs.forEach((dev) => {
       if (dev.type && dev.type !== type) {
-        isMix = true;
+        isMixedCapacity = true;
       }
       if (!dev.children.length && this.disks?.find((disk) => disk.name === (dev as TopologyDisk).disk)?.size !== size) {
-        isMix = true;
+        isMixedCapacity = true;
       }
+
+      let vdevWidthCounter = 0;
       dev.children.forEach((child) => {
-        wide += 1;
+        vdevWidthCounter += 1;
         if (this.disks?.find((disk) => disk.name === child.disk)?.size !== size) {
-          isMix = true;
+          isMixedCapacity = true;
         }
       });
+      allVdevWidths.add(vdevWidthCounter);
     });
 
+    if (allVdevWidths.size > 1) {
+      isMixedWidth = true;
+    } else {
+      vdevWidth = allVdevWidths.values().next().value;
+    }
+
     if (devs.length) {
-      if (isMix) {
-        outputString = mixedDev;
+      if (isMixedCapacity) {
+        outputString = mixedCapacity;
+      } else if (isMixedWidth) {
+        outputString = mixedWidth;
       } else {
         outputString = `${devs.length} x `;
-        outputString += wide ? `${type} | ${wide} wide | ` : '';
+        outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
         if (size) {
           outputString += filesize(size, { standard: 'iec' });
         } else {
