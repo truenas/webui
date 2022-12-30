@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, TrackByFunction,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';

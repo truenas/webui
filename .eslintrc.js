@@ -133,6 +133,7 @@ module.exports = {
           },
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
+        "@typescript-eslint/no-explicit-any": "error",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "consistent-return": "off",
@@ -171,7 +172,6 @@ module.exports = {
 
         // Other temporary disables
         "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",

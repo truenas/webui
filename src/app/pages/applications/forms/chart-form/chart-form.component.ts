@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators,
 } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';

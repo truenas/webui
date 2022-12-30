@@ -13,8 +13,8 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
@@ -579,6 +579,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleData(res: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
@@ -694,6 +695,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return hasHorizontalScrollbar;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generateRows(res: any): Row[] {
     let rows: Row[];
     if (this.loaderOpen) {
