@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import time
 import xpaths
 from function import (
     wait_on_element,
@@ -49,39 +50,28 @@ def on_the_dashboard_click_on_apps(driver):
     """on the Dashboard, click on apps."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Apps"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Apps"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
 
 
-@then('on the page click on View Catalog')
-def on_the_page_click_on_view_catalog(driver):
-    """on the page click on View Catalog."""
-    assert wait_on_element(driver, 10, '//h1[text()="Applications"]')
-    assert wait_on_element(driver, 10, '//h3[text()="Applications not configured"]')
-    assert wait_on_element(driver, 10, '//button[contains(.,"View Catalog")]')
-    driver.find_element_by_xpath('//button[contains(.,"View Catalog")]').click()
-
-
-@then('when Choose a pool for Apps appear, select pool')
+@then('when Choose a pool for Apps appear, select a pool')
 def when_choose_a_pool_for_apps_appear_select_pool(driver):
     """when Choose a pool for Apps appear, select pool."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Choose a pool for Apps")]')
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Pools"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Pools"]').click()
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Pools_tank"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Pools_tank"]').click()
-    assert wait_on_element(driver, 7, '//button[@name="Choose_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
+    assert wait_on_element(driver, 10, xpaths.applications.title)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 7, xpaths.chossePoolForApp.title)
+    assert wait_on_element(driver, 5, xpaths.chossePoolForApp.pool_select, 'clickable')
+    driver.find_element_by_xpath(xpaths.chossePoolForApp.pool_select).click()
+    assert wait_on_element(driver, 7, xpaths.chossePoolForApp.tankPool_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.chossePoolForApp.tankPool_option).click()
+    assert wait_on_element(driver, 7, xpaths.button.choose, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.choose).click()
     assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Configuring...")]')
-    assert wait_on_element(driver, 7, xpaths.button.close, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close).click()
 
 
 @then('the Available Applications Tab loads')
 def the_available_applications_tab_loads(driver):
     """the Available Applications Tab loads."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
     assert wait_on_element(driver, 7, '//h3[contains(.,"minio")]')
 
@@ -89,10 +79,10 @@ def the_available_applications_tab_loads(driver):
 @then('verify the setting slide out works')
 def verify_the_setting_slide_out_works(driver):
     """verify the setting slide out works."""
-    assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
-    assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Settings")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Advanced Settings")]').click()
+    assert wait_on_element(driver, 10, xpaths.button.settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.settings).click()
+    assert wait_on_element(driver, 10, xpaths.button.advanced_settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_settings).click()
     assert wait_on_element(driver, 7, '//h3[contains(.,"Kubernetes Settings")]')
     assert wait_on_element(driver, 10, '//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]', 'clickable')
     driver.find_element_by_xpath('//div[@class="ix-slidein-title-bar"]//mat-icon[contains(.,"cancel")]').click()

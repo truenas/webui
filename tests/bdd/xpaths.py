@@ -73,9 +73,14 @@ class advanced:
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
 
 
+class applications:
+    title = '//h1[text()="Applications"]'
+
+
 class button:
     add = '//button[contains(.,"Add")]'
     cancel = '//button[normalize-space(span/text())="Cancel"]'
+    choose = '//button[normalize-space(span/text())="Choose"]'
     delete = '//button[contains(.,"Delete")]'
     edit = '//button[contains(.,"Edit")]'
     save = '//button[normalize-space(span/text())="Save"]'
@@ -86,7 +91,7 @@ class button:
     CLOSE = '//button[contains(.,"CLOSE")]'
     close_icon = '//mat-icon[@id="ix-close-icon"]'
     advanced_option = '//button[contains(*/text(),"Advanced Options")]'
-    advanced_settings = '//button[contains(*/text(),"Advanced Settings")]'
+    advanced_settings = '//button[contains(.,"Advanced Settings")]'
     ok = '//button[@name="ok_button"]'
     power = '//button[@name="Power"]'
     restart = '//button[@name="power-restart"]'
@@ -105,6 +110,12 @@ class checkbox:
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
     sudo = '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox'
+
+
+class chossePoolForApp:
+    title = '//h1[contains(.,"Choose a pool for Apps")]'
+    pool_select = '//ix-select[@formcontrolname="pool"]//mat-select'
+    tankPool_option = '//mat-option[contains(.,"tank")]'
 
 
 class dashboard:
@@ -345,6 +356,7 @@ class sideMenu:
     directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
     storage = '//mat-list-item[@ix-auto="option__Storage"]'
+    apps = '//mat-list-item[@ix-auto="option__Apps"]'
 
 
 class sharing:
