@@ -142,8 +142,8 @@ def confirm_installation_is_successful(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+    assert wait_on_element(driver, 20, '//strong[contains(.,"nextcloud-test")]')
     if is_element_present(driver, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]') is False:
-        assert wait_on_element(driver, 20, '//strong[contains(.,"nextcloud-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"nextcloud-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"nextcloud-test")]').click()
         if wait_on_element(driver, 5, xpaths.popup.pleaseWait):
@@ -161,12 +161,6 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(1)  # wait for popup to close
-            # we have to change tab for UI to refresh
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
             assert wait_on_element_disappear(driver, 30, '//mat-spinner')
             assert wait_on_element(driver, 500, '//mat-card[contains(.,"nextcloud-test")]//span[@class="status active"]')
     else:

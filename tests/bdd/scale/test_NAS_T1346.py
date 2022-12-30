@@ -156,9 +156,9 @@ def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
+    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+    assert wait_on_element(driver, 20, '//strong[contains(.,"machinaris-test")]')
     if is_element_present(driver, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]') is False:
-        assert wait_on_element(driver, 20, '//strong[contains(.,"machinaris-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"machinaris-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"machinaris-test")]').click()
         if wait_on_element(driver, 5, xpaths.popup.pleaseWait):
@@ -176,11 +176,7 @@ def confirm_installation_is_successful(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            time.sleep(45)  # Because of slow start up times, this takes another 10-20 second to switch from "Deploying to Active"  So we can either flip the page constantly or just wait and give it time.
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-            assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-            driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
+            assert wait_on_element_disappear(driver, 40, '//mat-spinner')
             assert wait_on_element(driver, 300, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
     else:
         assert wait_on_element(driver, 300, '//mat-card[contains(.,"machinaris-test")]//span[@class="status active"]')
