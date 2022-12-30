@@ -63,8 +63,6 @@ def click_on_the_trash_icon_for_cert1(driver):
 def click_the_confirm_checkbox_and_click_delete(driver):
     """click the confirm checkbox and click delete."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
-    assert wait_on_element(driver, 10, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting")]')
