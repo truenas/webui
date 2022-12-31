@@ -53,7 +53,10 @@ describe('TopologyCardComponent', () => {
             log: [
               {
                 type: CreateVdevLayout.Mirror,
-                children: [{ type: 'DISK', disk: 'sdg' }, { type: 'DISK', disk: 'sdh' }],
+                children: [
+                  { type: 'DISK', disk: 'sdg' },
+                  { type: 'DISK', disk: 'sdh' },
+                ],
               },
             ],
             cache: [
@@ -67,7 +70,10 @@ describe('TopologyCardComponent', () => {
             special: [
               {
                 type: CreateVdevLayout.Mirror,
-                children: [{ type: 'DISK', disk: 'sdm' }, { type: 'DISK', disk: 'sdn' }],
+                children: [
+                  { type: 'DISK', disk: 'sdm' },
+                  { type: 'DISK', disk: 'sdn' },
+                ],
               },
             ],
             dedup: [],
