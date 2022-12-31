@@ -30,7 +30,7 @@ export class IxTreeNodeComponent<T, K = T> extends ixTreeNodeBase<T, K>
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    tree: IxTree<T>,
+    tree: IxTree<T, K>,
     @Attribute('tabindex') tabIndex: string,
   ) {
     super(elementRef, tree);

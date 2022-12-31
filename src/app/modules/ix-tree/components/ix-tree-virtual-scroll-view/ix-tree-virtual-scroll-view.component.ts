@@ -52,7 +52,7 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
   private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
 
   get isScrollTopButtonVisible(): boolean {
-    return this.virtualScrollViewport.measureScrollOffset('top') > this.ixItemSize;
+    return this.virtualScrollViewport.measureScrollOffset('top') > this.ixItemSize * 8;
   }
 
   constructor(

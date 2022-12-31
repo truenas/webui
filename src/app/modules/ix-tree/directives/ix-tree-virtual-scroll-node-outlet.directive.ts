@@ -1,4 +1,4 @@
-import { CdkTreeNode } from '@angular/cdk/tree';
+import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
 import {
   Directive, OnChanges, EmbeddedViewRef, Input, ViewContainerRef, SimpleChanges, SimpleChange,
 } from '@angular/core';
@@ -54,9 +54,10 @@ export class IxTreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
     return true;
   }
 
-  private updateExistingContext(ctx: unknown): void {
+  private updateExistingContext(ctx: CdkTreeNodeOutletContext<T>): void {
     for (const propName of Object.keys(ctx)) {
-      (this._viewRef.context as any)[propName] = (this.data.context as any)[propName];
+      // eslint-disable-next-line max-len
+      (this._viewRef.context as Record<string, unknown>)[propName] = (this.data.context as unknown as Record<string, unknown>)[propName];
     }
   }
 }
