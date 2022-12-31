@@ -25,8 +25,8 @@ export class IxTree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy
   @ViewChild(IxTreeNodeOutletDirective, { static: true }) override _nodeOutlet: IxTreeNodeOutletDirective<T>;
   private destroy$ = new Subject<void>();
 
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('ixTreeControl') override treeControl!: TreeControl<T, K>;
+  // eslint-disable-next-line @angular-eslint/no-input-rename, @typescript-eslint/no-explicit-any
+  @Input('ixTreeControl') override treeControl!: TreeControl<T, any>;
   @Input('ixDataSource')
   override get dataSource(): DataSource<T> | Observable<T[]> | T[] {
     return super.dataSource;
