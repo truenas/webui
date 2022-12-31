@@ -60,7 +60,7 @@ describe('ConsoleFormComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('system.advanced.config');
     expect(values).toEqual({
       'Show Text Console without Password Prompt': true,
-      'Configure Serial Console': true,
+      'Enable Serial Console': true,
       'Serial Port': 'ttyS0',
       'Serial Speed': '9600',
       'MOTD Banner': 'Welcome back, commander',
@@ -69,7 +69,7 @@ describe('ConsoleFormComponent', () => {
 
   it('disables Serial Port and Serial Speed controls when Serial Console is disabled', async () => {
     const serialConsoleCheckbox = await loader.getHarness(IxCheckboxHarness.with({
-      label: 'Configure Serial Console',
+      label: 'Enable Serial Console',
     }));
 
     await serialConsoleCheckbox.setValue(false);

@@ -45,7 +45,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   datasetId: string;
-  dataSource: MatTableDataSource<DatasetQuota> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<DatasetQuota>([]);
   invalidQuotas: DatasetQuota[] = [];
   displayedColumns: string[] = ['name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions'];
   defaultSort: Sort = { active: 'id', direction: 'asc' };

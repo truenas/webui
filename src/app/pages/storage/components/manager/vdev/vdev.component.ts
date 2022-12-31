@@ -32,7 +32,7 @@ export class VdevComponent implements OnInit {
   @Input() group: UpdatePoolTopologyGroup;
   @Input() manager: ManagerComponent;
   @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
-  @Output() vdevChanged: EventEmitter<ManagerVdev> = new EventEmitter();
+  @Output() vdevChanged = new EventEmitter<ManagerVdev>();
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;

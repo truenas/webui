@@ -40,7 +40,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   }
 
   onNetmaskChange($event: MatSelectChange): void {
-    this.netmask = $event.value;
+    this.netmask = $event.value as string;
     this.onValueChanged();
   }
 

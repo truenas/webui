@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import helptext from 'app/helptext/topbar';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import {

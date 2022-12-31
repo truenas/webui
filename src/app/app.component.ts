@@ -22,7 +22,7 @@ export class AppComponent {
     this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
     const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
-    const savedProductType = this.window.localStorage.product_type;
+    const savedProductType = this.window.localStorage.product_type as string;
     if (savedProductType) {
       const cachedType = savedProductType.toLowerCase();
       path = `assets/images/truenas_${cachedType}_favicon.png`;

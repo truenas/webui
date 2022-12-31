@@ -43,6 +43,7 @@ export class EntityWizardComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private formBuilder: UntypedFormBuilder,
     private entityFormService: EntityFormService,
     public loader: AppLoaderService,
@@ -184,6 +185,7 @@ export class EntityWizardComponent implements OnInit {
         next: (res) => {
           this.loader.close();
           if (res.error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.dialog.errorReport(res.error, (res as any).reason, res.exception);
           } else if (this.conf.routeSuccess) {
             this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
