@@ -11,26 +11,17 @@
   flex-grow: 1;
 }
 
-.enclosure {
-  align-items: center;
-  border: 1px solid var(--alt-bg2);
-  display: flex;
-  flex-direction: row;
-  margin: 0 16px;
-  padding: 8px;
-}
-
 .vdev-container {
   display: flex;
   flex-direction: row;
+  margin: 0 10px;
 }
 
-.legend {
-  position: absolute;
-  top: 10px;
-}
-
-.vdev {
+.disk-icons {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+
+  ix-disk-icon {
+    margin: 0 2.5px;
+  }
 }

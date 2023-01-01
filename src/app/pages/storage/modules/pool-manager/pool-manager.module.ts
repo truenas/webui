@@ -20,6 +20,7 @@ import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-man
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/general-wizard-step/general-wizard-step.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
+import { VdevWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/vdev-wrapper/vdev-wrapper.component';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
 
 @NgModule({
@@ -42,6 +43,7 @@ import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.rout
     PoolManagerComponent,
     PoolManagerWizardComponent,
     DiskIconComponent,
+    VdevWrapperComponent,
     DiskInfoComponent,
     ManualSelectionVdevComponent,
     GeneralWizardStepComponent,

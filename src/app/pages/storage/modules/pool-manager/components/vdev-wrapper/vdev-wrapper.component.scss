@@ -1,0 +1,54 @@
+.outer-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-border {
+  border: 0.5px solid var(--alt-bg2);
+  height: 1px;
+}
+
+.vertical-border {
+  border: 0.5px solid var(--alt-bg2);
+  width: 1px;
+}
+
+.left-border {
+  margin-right: 5px;
+}
+
+.right-border {
+  margin-left: 5px;
+}
+
+
+.vdev-container {
+  display: flex;
+
+  .content-container {
+    flex-grow: 1;
+    margin: 0 2.5px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+}
+
+.bottom-border-container {
+  display: flex;
+  flex-direction: row;
+
+  .horizontal-border {
+    flex-grow: 1;
+  }
+}
+
+.enclosure-container {
+  display: flex;
+  margin: 0 5px;
+  position: relative;
+  top: -10px;
+
+  ix-icon {
+    margin-right: 5px;
+  }
+}
