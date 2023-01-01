@@ -23,9 +23,9 @@
             ></ix-select>
           </div>
           <div class="tree-container">
-            <ix-tree
-              [dataSource]="dataSource"
-              [treeControl]="treeControl"
+            <ix-tree-view
+              [ixDataSource]="dataSource"
+              [ixTreeControl]="treeControl"
             >
               <ix-tree-node
                 *ixTreeNodeDef="let disk; dataSource: dataSource"
@@ -68,7 +68,7 @@
                 ></ng-container>
               </ix-nested-tree-node>
 
-            </ix-tree>
+            </ix-tree-view>
           </div>
         </div>
         <mat-divider class="divider" [vertical]="true"></mat-divider>
