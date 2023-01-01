@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { combineLatest } from 'rxjs';
@@ -57,6 +57,6 @@ export class PoolManagerWizardComponent implements OnInit {
   }
 
   openManualDiskSelection(): void {
-    this.dialog.open(ManualDiskSelectionComponent, { data: this.system });
+    this.dialog.open(ManualDiskSelectionComponent, { data: this.system, panelClass: 'manual-selection-dialog' });
   }
 }

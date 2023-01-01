@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Inject } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -72,7 +72,7 @@ export class ManualDiskSelectionComponent {
 
   readonly isGroup = (_: number, node: NestedEnclosureDiskNode): boolean => 'group' in node;
 
-  isExpanded(group: any): boolean {
+  isExpanded(group: NestedEnclosureDiskNode): boolean {
     return this.treeControl.isExpanded(group);
   }
 
