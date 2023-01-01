@@ -4,7 +4,7 @@
       class="catalog-name"
       textLimiter
       threshold="40"
-      content="{{ catalogApp.name }} {{ 'Application Summary' | translate }}"
+      [content]="'{app} Application Summary' | translate: { app: catalogApp.name }"
     ></strong>
     <span *ngIf="catalogApp.healthy" class="status active">
       {{ 'Healthy' | translate }}
@@ -112,7 +112,7 @@
 <div class="button-bar" mat-dialog-actions align="end">
   <button
     mat-button
-    class="mat-button mat-secondary"
+    class="mat-mdc-button mat-button mat-secondary"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="CLOSE"

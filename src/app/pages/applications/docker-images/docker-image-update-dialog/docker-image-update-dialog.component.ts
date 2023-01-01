@@ -2,7 +2,7 @@ import { KeyValue } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, TrackByFunction,
 } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -75,7 +75,7 @@ export class DockerImageUpdateDialogComponent {
   onSubmit(): void {
     this.wasSubmitted = true;
 
-    const payload = Object.entries(this.form.value).map(([key, value]) => {
+    const payload = Object.entries(this.form.value).map(([key, value]: [key: string, value: string]) => {
       this.bulkItems.set(key, { ...this.bulkItems.get(key), state: BulkListItemState.Running });
       const params = value.split(':');
       return [{

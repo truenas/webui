@@ -40,10 +40,10 @@
       <div>{{ 'Errors' | translate }}</div>
     </div>
 
-    <ix-tree
+    <ix-tree-view
       class="tree"
-      [dataSource]="dataSource"
-      [treeControl]="treeControl"
+      [ixDataSource]="dataSource"
+      [ixTreeControl]="treeControl"
     >
       <ix-tree-node
         *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
@@ -87,6 +87,6 @@
           ixTreeNodeOutlet
         ></ng-container>
       </ix-nested-tree-node>
-    </ix-tree>
+    </ix-tree-view>
   </div>
 </div>

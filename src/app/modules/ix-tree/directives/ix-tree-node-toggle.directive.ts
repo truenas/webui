@@ -1,5 +1,6 @@
-import { CdkTree, CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
+import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
 import { Directive } from '@angular/core';
+import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
 
 @Directive({
   selector: '[ixTreeNodeToggle]',
@@ -9,10 +10,15 @@ import { Directive } from '@angular/core';
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'ix-tree-node-toggle',
+    '[class.isExpanded]': 'isExpanded',
+    '[class.isCollapsed]': '!isExpanded',
   },
 })
-export class IxTreeNodeToggleDirective<T, K = T> extends CdkTreeNodeToggle<T, K> {
-  constructor(protected _tree: CdkTree<T, K>, protected _treeNode: CdkTreeNode<T, K>) {
+export class IxTreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
+  constructor(
+    protected _tree: IxTree<T>,
+    protected _treeNode: CdkTreeNode<T>,
+  ) {
     super(_tree, _treeNode);
   }
 
@@ -30,5 +36,13 @@ export class IxTreeNodeToggleDirective<T, K = T> extends CdkTreeNodeToggle<T, K>
     }
 
     event.stopPropagation();
+  }
+
+  get isExpanded(): boolean {
+    return this._treeNode.isExpanded;
+  }
+
+  get level(): number {
+    return this._treeNode.level;
   }
 }

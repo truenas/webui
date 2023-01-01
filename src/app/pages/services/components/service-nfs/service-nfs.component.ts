@@ -5,7 +5,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { of } from 'rxjs';
+import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
+import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -25,7 +27,7 @@ export class ServiceNfsComponent implements OnInit {
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers: [4, [Validators.required, rangeValidator(1, 256)]],
-    v4: [false],
+    protocols: [[NfsProtocol.V3], Validators.required],
     v4_v3owner: [false],
     v4_krb: [false],
     mountd_port: [null as number, portRangeValidator()],
@@ -39,7 +41,6 @@ export class ServiceNfsComponent implements OnInit {
     allow_nonroot: helptext.nfs_srv_allow_nonroot_tooltip,
     bindip: helptext.nfs_srv_bindip_tooltip,
     servers: helptext.nfs_srv_servers_tooltip,
-    v4: helptext.nfs_srv_v4_tooltip,
     v4_v3owner: helptext.nfs_srv_v4_v3owner_tooltip,
     v4_krb: helptext.nfs_srv_v4_krb_tooltip,
     mountd_port: helptext.nfs_srv_mountd_port_tooltip,
@@ -50,6 +51,7 @@ export class ServiceNfsComponent implements OnInit {
   };
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
+  readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
 
   constructor(
     private ws: WebSocketService,
@@ -109,7 +111,8 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private setFieldDependencies(): void {
-    this.form.controls['v4'].valueChanges.pipe(untilDestroyed(this)).subscribe((nsf4Enabled) => {
+    this.form.controls['protocols'].valueChanges.pipe(untilDestroyed(this)).subscribe((protocols) => {
+      const nsf4Enabled = protocols.includes(NfsProtocol.V4);
       if (!nsf4Enabled) {
         this.form.patchValue({ v4_v3owner: false });
       }

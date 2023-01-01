@@ -908,6 +908,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
   customSubmit(value: VmFormValues): void {
     let hdd;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const vmPayload: any = {};
 
     if (value.datastore) {

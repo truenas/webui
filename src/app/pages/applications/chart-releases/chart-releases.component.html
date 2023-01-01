@@ -81,7 +81,10 @@
             ></span>
           </div>
           <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
-            <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">
+            <span
+              class="update-label"
+              [matTooltip]="'Available version: {version}' | translate: { version: item.human_latest_version }"
+            >
               {{ 'Update available' | translate }}
             </span>
           </div>

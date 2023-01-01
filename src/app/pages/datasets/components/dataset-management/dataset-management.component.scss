@@ -183,7 +183,6 @@ ix-dataset-details-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-bottom: 1.5rem;
   overflow: auto;
 }
 
@@ -283,7 +282,7 @@ ix-dataset-details-panel {
 
   @media (max-width: $breakpoint-hidden) {
     display: flex;
-    margin: 12px;
+    margin: 8px 12px;
     position: relative;
     right: 8px;
   }
@@ -297,20 +296,11 @@ ix-dataset-details-panel {
   }
 }
 
-$level-offset: 40px;
-$padding-left: 8px;
+ix-tree-virtual-scroll-view {
+  background-color: var(--bg2);
+  min-height: calc(100vh - 320px);
+}
 
-:host ::ng-deep {
-  @for $i from 1 through 10 {
-    ix-tree-node[aria-level="#{$i}"],
-    ix-nested-tree-node[aria-level="#{$i}"] {
-      .mat-icon-button:first-child {
-        left: $padding-left + $level-offset * ($i - 1);
-      }
-
-      ix-dataset-node {
-        padding-left: $padding-left + $level-offset * ($i - 1);
-      }
-    }
-  }
+ix-tree-node {
+  color: var(--fg1);
 }

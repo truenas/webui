@@ -3,6 +3,7 @@ $level-offset: 40px;
 :host {
   align-items: center;
   border-bottom: 1px solid var(--lines);
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   min-height: 48px;

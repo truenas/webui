@@ -36,9 +36,11 @@
             fxLayoutGap.gt-sm="24px"
             fxLayoutAlign="start start"
             fxFlex="100%"
-            class="entity-form fieldset divider-{{ fieldSet.divider }}"
-            fxFlex.gt-xs="calc({{ fieldSets[i].width ? fieldSets[i].width : '100%' }} - 16px)"
+            [fxFlex.gt-xs]="'calc(' + (fieldSets[i].width ? fieldSets[i].width : '100%') + ' - 16px)'"
             [ngClass]="[
+              'entity-form',
+              'fieldset',
+              fieldSet.divider ? 'divider-' + fieldSet.divider : '',
               fieldSet.class ? fieldSet.class : '',
               isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
             ]"
@@ -53,7 +55,7 @@
             <div
               *ngFor="let field of fieldSet.config; let ii = index"
               fxFlex="100%"
-              fxFlex.gt-xs="calc({{field.width ? field.width : '100%'}} - 16px)"
+              [fxFlex.gt-xs]="'calc(' + (field.width ? field.width : '100%') + ' - 16px)'"
               [id]="fieldSet.name + '-' + ii"
               [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
             >

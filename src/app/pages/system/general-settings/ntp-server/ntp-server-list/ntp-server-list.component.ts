@@ -20,7 +20,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerListComponent implements OnInit {
-  dataSource: MatTableDataSource<NtpServer> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<NtpServer>([]);
   displayedColumns = [
     'address',
     'burst',

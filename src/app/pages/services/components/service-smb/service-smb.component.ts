@@ -40,7 +40,7 @@ export class ServiceSmbComponent implements OnInit {
     netbiosname_b: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
-        (control: AbstractControl) => {
+        (control: AbstractControl<string[]>) => {
           return control.value?.every((alias: string) => alias.length <= 15);
         },
         this.translate.instant('Aliases must be 15 characters or less.'),

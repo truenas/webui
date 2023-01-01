@@ -48,6 +48,7 @@ export class EntityFormService {
     duration: 'MINUTE',
   };
   constructor(
+    // eslint-disable-next-line @typescript-eslint/ban-types
     @Inject(UntypedFormBuilder) private formBuilder: UntypedFormBuilder,
     protected ws: WebSocketService,
   ) {}

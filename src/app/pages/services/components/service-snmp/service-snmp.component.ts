@@ -55,7 +55,6 @@ export class ServiceSnmpComponent implements OnInit {
     v3_privproto: helptext.v3_privproto_tooltip,
     v3_privpassphrase: helptext.v3_privpassphrase_tooltip,
     options: helptext.options_tooltip,
-    zilstat: helptext.zilstat_tooltip,
     loglevel: helptext.loglevel_tooltip,
   };
 

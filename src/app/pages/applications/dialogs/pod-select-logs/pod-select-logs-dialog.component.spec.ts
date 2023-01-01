@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
@@ -105,7 +105,7 @@ describe('PodSelectLogsDialogComponent', () => {
     ws.mockCall('chart.release.pod_logs_choices', {});
     spectator.component.ngOnInit();
     spectator.detectChanges();
-    const dialogContent = spectator.query('.mat-dialog-content');
+    const dialogContent = spectator.query('.mat-mdc-dialog-content');
     expect(dialogContent).toHaveText('At least one pool must be available to use apps');
   });
 });
