@@ -34,7 +34,10 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
       template: '',
     })(class {
       provider: CloudsyncProvider;
-      setValues = jest.fn() as BaseProviderFormComponent['setValues'];
+      formPatcher$ = {
+        next: jest.fn(),
+      };
+      getFormSetter$ = jest.fn(() => this.formPatcher$);
       getSubmitAttributes = jest.fn(() => ({
         s3attribute: 's3 value',
       })) as BaseProviderFormComponent['getSubmitAttributes'];
@@ -202,7 +205,7 @@ describe('CloudCredentialsFormComponent', () => {
 
       const providerForm = spectator.query(S3ProviderFormComponent);
       expect(providerForm).toBeTruthy();
-      expect(providerForm.setValues).toHaveBeenCalledWith({
+      expect(providerForm.getFormSetter$().next).toHaveBeenCalledWith({
         hostname: 'backup.com',
       });
     });
