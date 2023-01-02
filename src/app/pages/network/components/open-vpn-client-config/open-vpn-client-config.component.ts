@@ -11,8 +11,9 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 import { OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, ServicesService, WebSocketService } from 'app/services';
+import { DialogService, ServicesService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +90,7 @@ export class OpenVpnClientConfigComponent implements OnInit {
   readonly deviceTypes$ = of(helptext.device_type.enum);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,

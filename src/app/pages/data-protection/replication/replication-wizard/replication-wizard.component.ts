@@ -55,9 +55,9 @@ import {
   KeychainCredentialService,
   ReplicationService,
   TaskService,
-  WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface CreatedPayloads {
   periodic_snapshot_tasks?: PeriodicSnapshotTask[];
@@ -666,7 +666,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private replicationService: ReplicationService,
     private datePipe: DatePipe,
     private entityFormService: EntityFormService,
@@ -674,7 +674,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private translate: TranslateService,
     protected matDialog: MatDialog,
   ) {
-    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {
+    this.ws2.call('replication.query').pipe(untilDestroyed(this)).subscribe((replications) => {
       this.namesInUse.push(...replications.map((replication) => replication.name));
     });
     this.modalService.getRow$.pipe(
@@ -1105,7 +1105,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication']) {
-      await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
+      await this.ws2.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
           this.dialogService.info(
             this.translate.instant('Task started'),
@@ -1131,7 +1131,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           continue;
         }
         for (const task of items[key]) {
-          await this.ws.call('pool.snapshottask.delete', [task]).toPromise();
+          await this.ws2.call('pool.snapshottask.delete', [task]).toPromise();
         }
 
         continue;
@@ -1143,7 +1143,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
       if (items[key] !== null && items[key] !== undefined) {
         const deleteMethod = this.deleteCalls[key];
-        await this.ws.call(deleteMethod, [items[key]]).toPromise().then(
+        await this.ws2.call(deleteMethod, [items[key]]).toPromise().then(
           () => {},
         );
       }
@@ -1218,7 +1218,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     if (payload[0].datasets.length > 0) {
-      this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe({
+      this.ws2.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe({
         next: (res) => {
           this.eligibleSnapshots = res.eligible;
           const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
@@ -1251,7 +1251,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     naming_schema?: string;
   }): Promise<PeriodicSnapshotTask[]> {
     return lastValueFrom(
-      this.ws.call('pool.snapshottask.query', [[
+      this.ws2.call('pool.snapshottask.query', [[
         ['dataset', '=', payload['dataset']],
         ['schedule.minute', '=', payload['schedule']['minute']],
         ['schedule.hour', '=', payload['schedule']['hour']],
@@ -1320,7 +1320,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       await this.isSnapshotTaskExist(payload).then((tasks) => {
         if (tasks.length === 0) {
           snapshotPromises.push(
-            lastValueFrom(this.ws.call('pool.snapshottask.create', [payload])),
+            lastValueFrom(this.ws2.call('pool.snapshottask.create', [payload])),
           );
         } else {
           this.existSnapshotTasks.push(...tasks.map((task) => task.id));
@@ -1339,7 +1339,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         recursive: data['recursive'] ? data['recursive'] : false,
       };
       snapshotPromises.push(
-        lastValueFrom(this.ws.call('zfs.snapshot.create', [payload])),
+        lastValueFrom(this.ws2.call('zfs.snapshot.create', [payload])),
       );
     }
     return Promise.all(snapshotPromises);
@@ -1403,7 +1403,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ? ReadOnlyMode.Set
       : ReadOnlyMode.Ignore;
 
-    return lastValueFrom(this.ws.call('replication.target_unmatched_snapshots', [
+    return lastValueFrom(this.ws2.call('replication.target_unmatched_snapshots', [
       payload['direction'],
       payload['source_datasets'],
       payload['target_dataset'],
@@ -1419,15 +1419,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           })).then(
             (dialogResult) => {
               payload['allow_from_scratch'] = dialogResult;
-              return lastValueFrom(this.ws.call('replication.create', [payload]));
+              return lastValueFrom(this.ws2.call('replication.create', [payload]));
             },
           );
         }
-        return lastValueFrom(this.ws.call('replication.create', [payload]));
+        return lastValueFrom(this.ws2.call('replication.create', [payload]));
       },
       () => {
         // show error ?
-        return lastValueFrom(this.ws.call('replication.create', [payload]));
+        return lastValueFrom(this.ws2.call('replication.create', [payload]));
       },
     );
   }

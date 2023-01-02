@@ -21,9 +21,10 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { KeychainCredentialService, UserService, WebSocketService } from 'app/services';
+import { KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -111,7 +112,7 @@ export class RsyncTaskFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -197,9 +198,9 @@ export class RsyncTaskFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('rsynctask.create', [values as RsyncTaskUpdate]);
+      request$ = this.ws2.call('rsynctask.create', [values as RsyncTaskUpdate]);
     } else {
-      request$ = this.ws.call('rsynctask.update', [
+      request$ = this.ws2.call('rsynctask.update', [
         this.editingTask.id,
         values as RsyncTaskUpdate,
       ]);

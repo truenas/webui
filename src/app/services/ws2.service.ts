@@ -2,6 +2,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
+import { LocalStorage } from 'ngx-webstorage';
 import {
   EMPTY, Observable, of,
 } from 'rxjs';
@@ -20,6 +21,7 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 export class WebSocketService2 implements OnDestroy {
   ws$: WebSocketSubject<unknown>;
   pingTimeout: Timeout;
+  @LocalStorage() token2: string;
   private readonly pingTimeoutMillis = 20 * 1000;
   private readonly eventSubscriptions: Map<string, Observable<unknown>> = new Map();
   constructor(

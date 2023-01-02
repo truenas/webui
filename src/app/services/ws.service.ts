@@ -6,9 +6,12 @@ import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
+  combineLatest,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
-import { filter, share, switchMap } from 'rxjs/operators';
+import {
+  filter, map, share, switchMap,
+} from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -17,6 +20,7 @@ import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface'
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Injectable()
@@ -51,6 +55,7 @@ export class WebSocketService {
 
   constructor(
     protected router: Router,
+    private ws2: WebSocketService2,
     @Inject(WINDOW) protected window: Window,
   ) {
     this.protocol = this.window.location.protocol;
@@ -286,7 +291,13 @@ export class WebSocketService {
     const params: LoginParams = otpToken ? [username, password, otpToken] : [username, password];
 
     return new Observable((observer: Subscriber<boolean>) => {
-      this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
+      combineLatest([
+        this.call('auth.login', params),
+        this.ws2.call('auth.login', params),
+      ]).pipe(
+        map(([wsResponse]) => wsResponse),
+        untilDestroyed(this),
+      ).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });
     });
@@ -317,7 +328,10 @@ export class WebSocketService {
   loginWithToken(token: string): Observable<boolean> {
     return new Observable((observer: Subscriber<boolean>) => {
       if (token) {
-        this.call('auth.login_with_token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
+        combineLatest([
+          this.call('auth.login_with_token', [token]),
+          this.ws2.call('auth.login_with_token', [this.ws2.token2]),
+        ]).pipe(map(([wsResponse]) => wsResponse), untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);
         });
       }

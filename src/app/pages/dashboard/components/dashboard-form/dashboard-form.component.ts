@@ -8,8 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { rootUserId } from 'app/constants/root-user-id.constant';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +32,7 @@ export class DashboardFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private slideInService: IxSlideInService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
@@ -94,7 +94,7 @@ export class DashboardFormComponent {
     this.dashState = clone;
 
     // Save to backend
-    this.ws.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
+    this.ws2.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (res) => {
