@@ -1,16 +1,15 @@
 .container {
   border: 1px solid var(--alt-bg2);
   border-radius: 5px;
-  height: 88px;
-  width: 56px;
+  height: 78px;
+  min-width: 60px;
 }
 
 .icon-container {
   background: var(--bg1);
   display: flex;
   justify-content: center;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  padding: 5px 0;
 }
 
 .identifier-container,
@@ -20,3 +19,11 @@
   display: flex;
   justify-content: center;
 }
+
+// .identifier-container {
+//   padding: 0 2px;
+// }
+
+// .size-container {
+//   margin: 0 2px;
+// }
