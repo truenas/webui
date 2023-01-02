@@ -5,23 +5,26 @@
         class="inner-container" 
       >
 
-        <div class="filter-container">
+        <div class="left-pane">
           <div class="header header-top"><h3>{{ 'Manual Selection' | translate }}</h3></div>
 
-          <ix-search-input
-          ></ix-search-input>
-          <div class="select-container">
-            <ix-select
-              formControlName="diskType"
-              [label]="'Filter by Disk Type'"
-              [options]="typeOptions$"
-            ></ix-select>
-            <ix-select
-              formControlName="diskSize"
-              [label]="'Filter by Disk Size'"
-              [options]="sizeOptions$"
-            ></ix-select>
+          <div class="filter-container">
+            <ix-search-input
+            ></ix-search-input>
+            <div class="select-container">
+              <ix-select
+                formControlName="diskType"
+                [label]="'Filter by Disk Type'"
+                [options]="typeOptions$"
+              ></ix-select>
+              <ix-select
+                formControlName="diskSize"
+                [label]="'Filter by Disk Size'"
+                [options]="sizeOptions$"
+              ></ix-select>
+            </div>
           </div>
+          
           <div class="tree-container">
             <ix-tree-view
               [ixDataSource]="dataSource"
@@ -56,6 +59,7 @@
                 [ixTreeNodeDefDataSource]="dataSource"
               >
                 <div class="group-row" ixTreeNodeToggle>
+                  <ix-icon name="ix:enclosure"></ix-icon>
                   <span class="group-name">{{ group.identifier }}</span>
                   <mat-icon>
                     {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}

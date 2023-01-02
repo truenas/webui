@@ -1,12 +1,38 @@
-<div class="horizontal">
-  <div class="vertical">
+<!-- <div class="horizontal">
+  <div class="vertical left">
     <div class="item"><strong class="title">Slot:</strong> {{ slot }}</div>
     <div class="item"><strong class="title">Type:</strong> {{ type }}</div>
   </div>
-  <div class="vertical">
+  <div class="vertical right">
     <div class="item">
       <strong class="title">Model:</strong> <div>{{ model }}</div>
     </div>
     <div class="item"><strong class="title">Serial:</strong> {{ serial }}</div>
+  </div>
+</div> -->
+<div class="container">
+  <div class="row">
+    <div class="left">
+      <div class="item">
+        <strong class="title">Slot:</strong> {{ slot }}
+      </div>
+    </div>
+    <div class="right">
+      <div class="item">
+        <strong class="title">Model:</strong> {{ model }}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="left">
+      <div class="item">
+        <strong class="title">Type:</strong> {{ type }}
+      </div>
+    </div>
+    <div class="right">
+      <div class="item">
+        <strong class="title">Serial:</strong> {{ serial }}
+      </div>
+    </div>
   </div>
 </div>

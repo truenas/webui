@@ -1,26 +1,30 @@
-.horizontal {
+.container {
+  align-items: center;
   display: flex;
-  flex: 1;
-  flex-direction: row;
+  flex-direction: column;
   height: 100%;
-  justify-content: space-between;
-  padding: 10px;
+  padding: 24px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  height: 50%;
   width: 100%;
 }
 
-.vertical {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  width: 50%;
-}
-
-.item {
+.left {
   align-items: center;
   display: flex;
-  height: 50%;
+  flex-direction: row;
+  justify-content: left;
+  width: 40%;
 }
 
-.title {
-  margin-right: 5px;
+.right {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  width: 60%;
 }
