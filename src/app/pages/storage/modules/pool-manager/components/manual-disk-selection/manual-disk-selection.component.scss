@@ -20,7 +20,9 @@
 }
 
 .enclosure-container {
+  display: flex;
   flex: 13;
+  flex-direction: column;
 }
 
 .select-container {
@@ -115,6 +117,20 @@
 .vdevs-container {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
   padding: 0 24px;
   padding-bottom: 16px;
+  row-gap: 8px;
+}
+
+.actions-divider {
+  margin-top: 8px;
+}
+
+.actions {
+  column-gap: 8px;
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 16px 24px;
 }
