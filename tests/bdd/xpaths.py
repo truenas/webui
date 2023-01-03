@@ -91,6 +91,7 @@ class appSetup:
     truenasCertificate_option = '//mat-option[contains(.,"truenas_default")]'
     rootUser_input = '//ix-input[contains(.,"Root User")]//input'
     rootPassword_input = '//ix-input[contains(.,"Root Password")]//input'
+    enableFlax_checkbox = '//ix-checkbox[contains(.,"Enable Flax")]//mat-checkbox'
 
     def title(app_name):
         return f'//h3[contains(.,"{app_name}") and @class="ix-formtitle"]'

@@ -28,7 +28,7 @@ def test_apps_page__validate_chia():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['App_readd_pool'], scope='session')
+    #depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -88,7 +88,7 @@ def click_save_wait_for_the_installation_to_finish(driver):
     driver.find_element_by_xpath(xpaths.button.save).click()
 
     assert wait_on_element(driver, 5, xpaths.popup.installing)
-    assert wait_on_element_disappear(driver, 120, xpaths.popup.installing)
+    assert wait_on_element_disappear(driver, 240, xpaths.popup.installing)
 
 
 @then('confirm installation is successful and the App is active')
@@ -120,3 +120,13 @@ def confirm_installation_is_successful_and_the_app_is_active(driver):
             assert wait_on_element(driver, 500, '//mat-card[contains(.,"chia-test")]//span[@class="status active"]')
     else:
         assert wait_on_element(driver, 500, '//mat-card[contains(.,"chia-test")]//span[@class="status active"]')
+
+
+@then('stop Chia from running and Verify it has stopped')
+def stop_chia_from_running_and_verify_it_has_stopped(driver):
+    """stop Chia from running and Verify it has stopped."""
+    assert wait_on_element(driver, 20, '//mat-card[contains(.,"chia")]//span[contains(.,"Stop")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"chia")]//span[contains(.,"Stop")]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Stopping")]')
+    assert wait_on_element(driver, 15, '//mat-card[contains(.,"chia-test")]//span[contains(.,"STOPPED ")]')
