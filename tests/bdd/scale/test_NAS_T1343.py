@@ -44,9 +44,9 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click on apps')
-def on_the_dashboard_click_on_apps(driver):
-    """on the Dashboard, click on apps."""
+@when('on the Dashboard, click Apps on the side menu')
+def on_the_dashboard_click_apps_on_the_side_menu(driver):
+    """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
@@ -54,81 +54,36 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
-@then('the Apps page load, open available applications')
-def the_apps_page_load_open_available_applications(driver):
-    """the Apps page load, open available applications."""
+@then('on Application page click on the Available Applications tab')
+def on_application_page_click_on_the_available_applications_tab(driver):
+    """on Application page click on the Available Applications tab."""
     assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
     driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
-@then('click install')
-def click_install(driver):
-    """click install."""
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"nextcloud")]//span[contains(.,"Install")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"nextcloud")]//span[contains(.,"Install")]').click()
+@then('on the Nextcloud card click the Install button')
+def on_the_nextcloud_card_click_the_install_button(driver):
+    """on the Nextcloud card click the Install button."""
+    assert wait_on_element(driver, 7, xpaths.applications.card('nextcloud'))
+    assert wait_on_element(driver, 20, xpaths.applications.install_button('nextcloud'), 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.install_button('nextcloud')).click()
     if is_element_present(driver, xpaths.popup.pleaseWait):
         assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 
-@then('set application name')
-def set_application_name(driver):
-    """set application name."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"nextcloud")]')
+@then('Enter an application name')
+def enter_an_application_name(driver):
+    """Enter an application name."""
+    assert wait_on_element(driver, 7, xpaths.appSetup.title('nextcloud'))
     assert wait_on_element(driver, 7, xpaths.appSetup.appName_input)
     driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
     driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('nextcloud-test')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
 
 
-@then('set nexcloud configuration')
-def set_nexcloud_configuration(driver):
-    """set nexcloud configuration."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Nextcloud Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Nextcloud Configuration"]').click()
-
-
-@then('set storage')
-def set_storage(driver):
-    """set storage."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
-
-@then('on CronJob configuration click next')
-def on_cronjob_configuration_click_next(driver):
-    """on CronJob configuration click next."""
-    wait_on_element(driver, 5, '//mat-step-header[contains(.,"CronJob configuration") and @tabindex="0"]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_CronJob configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_CronJob configuration"]').click()
-
-
-@then('set Scaling Upgrade Policy')
-def set_scaling_upgrade_policy(driver):
-    """set Scaling Upgrade Policy."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]').click()
-
-
-@then('Advanced DNS Settings')
-def advanced_dns_settings(driver):
-    """Advanced DNS Settings."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Advanced DNS Settings"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Advanced DNS Settings"]').click()
-
-
-@then('set Resource Limits')
-def set_resource_limits(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
-
-
-@then('confirm options')
-def confirm_options(driver):
-    """confirm options."""
+@then('click save, wait for the installation to finish')
+def click_save_wait_for_the_installation_to_finish(driver):
+    """click save, wait for the installation to finish."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -136,9 +91,9 @@ def confirm_options(driver):
     assert wait_on_element_disappear(driver, 60, xpaths.popup.installing)
 
 
-@then('confirm installation is successful')
-def confirm_installation_is_successful(driver):
-    """confirm installation is successful."""
+@then('confirm installation is successful and the App is active')
+def confirm_installation_is_successful_and_the_app_is_active(driver):
+    """confirm installation is successful and the App is active."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
