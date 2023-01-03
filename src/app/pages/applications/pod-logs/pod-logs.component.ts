@@ -43,6 +43,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   protected tailLines = 500;
   podLogSubscriptionId: string = null;
   podLogSubName = '';
+  areLoadingPodLogs = false;
 
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
@@ -82,6 +83,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
     this.podLogs = [];
+    this.areLoadingPodLogs = true;
 
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
@@ -91,11 +93,18 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
-      .pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
-        if (res) {
-          this.podLogs.push(res);
-          this.scrollToBottom();
-        }
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (res: PodLogEvent) => {
+          this.areLoadingPodLogs = false;
+
+          if (res) {
+            this.podLogs.push(res);
+            this.scrollToBottom();
+          }
+        },
+        error: (error) => {
+          this.dialogService.errorReport('Error', error.reason);
+        },
       });
   }
 

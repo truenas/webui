@@ -88,6 +88,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     ReactiveFormsModule,
     TerminalModule,
     TranslateModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     ApplicationsComponent,
