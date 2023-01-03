@@ -35,7 +35,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   ) {}
 
   get datasetName(): string {
-    return this.form.value['dataset_dst'];
+    return this.form.value.dataset_dst;
   }
 
   ngOnInit(): void {

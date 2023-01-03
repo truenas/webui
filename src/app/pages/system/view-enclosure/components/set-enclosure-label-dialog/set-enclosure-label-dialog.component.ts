@@ -63,11 +63,11 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
   }
 
   private setFormRelationship(): void {
-    this.form.controls['resetToDefault'].valueChanges.pipe(untilDestroyed(this)).subscribe((resetToDefault) => {
+    this.form.controls.resetToDefault.valueChanges.pipe(untilDestroyed(this)).subscribe((resetToDefault) => {
       if (resetToDefault) {
-        this.form.controls['label'].disable();
+        this.form.controls.label.disable();
       } else {
-        this.form.controls['label'].enable();
+        this.form.controls.label.enable();
       }
     });
   }

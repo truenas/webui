@@ -26,7 +26,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
   }
 
   ngOnInit(): void {
-    this.form.controls['upload_credentials'].valueChanges.pipe(
+    this.form.controls.upload_credentials.valueChanges.pipe(
       switchMap((files: File[]) => {
         if (!files.length) {
           return of('');
@@ -36,7 +36,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
       }),
       untilDestroyed(this),
     ).subscribe((credentials) => {
-      this.form.controls['service_account_credentials'].setValue(credentials);
+      this.form.controls.service_account_credentials.setValue(credentials);
     });
   }
 

@@ -225,11 +225,11 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.form.controls.algorithm.disable();
 
     if (this.hasPassphraseParent || this.hasKeyChild) {
-      this.form.controls['encryption_type'].disable();
+      this.form.controls.encryption_type.disable();
     }
 
     this.subscriptions.push(
-      this.form.controls['key'].disabledWhile(combineLatestIsAny([
+      this.form.controls.key.disabledWhile(combineLatestIsAny([
         this.isSetToGenerateKey$,
         this.isKey$.pipe(map((value) => !value)),
         this.isInheriting$,
@@ -238,9 +238,9 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
     const arePassphraseFieldsDisabled$ = combineLatestIsAny([this.isKey$, this.isInheriting$]);
     this.subscriptions.push(
-      this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
-      this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
-      this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.passphrase.disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.confirm_passphrase.disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.pbkdf2iters.disabledWhile(arePassphraseFieldsDisabled$),
     );
   }
 }

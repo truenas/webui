@@ -111,28 +111,28 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private setFieldDependencies(): void {
-    this.form.controls['protocols'].valueChanges.pipe(untilDestroyed(this)).subscribe((protocols) => {
+    this.form.controls.protocols.valueChanges.pipe(untilDestroyed(this)).subscribe((protocols) => {
       const nsf4Enabled = protocols.includes(NfsProtocol.V4);
       if (!nsf4Enabled) {
         this.form.patchValue({ v4_v3owner: false });
       }
 
       if (nsf4Enabled) {
-        this.form.controls['v4_v3owner'].enable();
+        this.form.controls.v4_v3owner.enable();
       } else {
-        this.form.controls['v4_v3owner'].disable();
+        this.form.controls.v4_v3owner.disable();
       }
     });
 
-    this.form.controls['v4_v3owner'].valueChanges.pipe(untilDestroyed(this)).subscribe((v3Owner) => {
+    this.form.controls.v4_v3owner.valueChanges.pipe(untilDestroyed(this)).subscribe((v3Owner) => {
       if (v3Owner) {
         this.form.patchValue({ userd_manage_gids: false });
       }
 
       if (v3Owner) {
-        this.form.controls['userd_manage_gids'].disable();
+        this.form.controls.userd_manage_gids.disable();
       } else {
-        this.form.controls['userd_manage_gids'].enable();
+        this.form.controls.userd_manage_gids.enable();
       }
     });
   }

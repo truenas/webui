@@ -63,7 +63,7 @@ export class ServiceSnmpComponent implements OnInit {
   readonly logLevelOptions$ = of(helptext.loglevel_options);
 
   get isV3SupportEnabled(): boolean {
-    return this.form?.value?.['v3'];
+    return this.form?.value?.v3;
   }
 
   constructor(

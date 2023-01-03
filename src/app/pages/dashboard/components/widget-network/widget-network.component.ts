@@ -341,7 +341,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   fetchReportData(): void {
     const endDate = this.reportsService.serverTime;
     const subOptions: Duration = {};
-    subOptions['hours'] = 1;
+    subOptions.hours = 1;
     const startDate = sub(endDate, subOptions);
 
     const timeFrame = {
