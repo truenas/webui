@@ -51,7 +51,7 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
-    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
 @then('Stop nextcloud from running')
@@ -77,14 +77,14 @@ def verify_the_application_has_stopped(driver):
 @then('open available applications')
 def open_available_applications(driver):
     """open available applications."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
+    assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
 
 
 @then('when the Apps page loads, open Manager Docker Images')
 def when_the_apps_page_loads_open_manager_docker_images(driver):
     """when the Apps page loads, open Manager Docker Images."""
-    assert wait_on_element_disappear(driver, 60, '//mat-spinner')
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.spinner)
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
     time.sleep(1)
