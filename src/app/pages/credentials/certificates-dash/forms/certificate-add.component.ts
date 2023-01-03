@@ -890,7 +890,7 @@ export class CertificateAddComponent implements WizardConfiguration {
                 }
               } else {
                 ctrl = this.getField(type);
-                const config = ctrl.value || [];
+                const config: unknown[] = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
                 if (reset && extension[prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);

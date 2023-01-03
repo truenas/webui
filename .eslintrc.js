@@ -134,6 +134,7 @@ module.exports = {
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
         "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-floating-promises": "error",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "consistent-return": "off",

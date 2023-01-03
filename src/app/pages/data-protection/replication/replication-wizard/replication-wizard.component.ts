@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl, UntypedFormArray, UntypedFormGroup, Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -1058,7 +1060,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async customSubmit(value: any): Promise<void> {
     if (typeof (value.source_datasets) === 'string') {
-      value.source_datasets = _.filter(value.source_datasets.split(',').map(_.trim));
+      value.source_datasets = _.filter((value.source_datasets as string).split(',').map(_.trim));
     }
     this.loader.open();
     let toStop = false;
@@ -1178,7 +1180,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   genTaskName(): void {
-    const source = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
+    const source: string[] = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
     const target = this.entityWizard.formArray.get([0]).get('target_dataset').value;
     let suggestName = '';
     if (source.length > 3) {
@@ -1197,9 +1199,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value) {
       transport = TransportMode.Local;
     }
-    const namingSchemaFormControl = this.entityWizard.formArray.get([0]).get('naming_schema');
+    const namingSchemaFormControl: AbstractControl<string> = this.entityWizard.formArray.get([0]).get('naming_schema');
     const namingSchema = namingSchemaFormControl.enabled && namingSchemaFormControl.value
-      ? namingSchemaFormControl.value.split(' ') : [this.defaultNamingSchema];
+      ? namingSchemaFormControl.value.split(' ')
+      : [this.defaultNamingSchema];
 
     const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
 

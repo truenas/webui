@@ -207,11 +207,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.datasetId),
+        map((params) => params.datasetId as string),
         filter(Boolean),
         untilDestroyed(this),
       )
-      .subscribe((datasetId: string) => {
+      .subscribe((datasetId) => {
         this.datasetStore.selectDatasetById(datasetId);
       });
   }

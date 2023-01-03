@@ -1082,7 +1082,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
 
     if (this.entityForm.formGroup.controls['speed_limit'].value) {
-      const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
+      const presetSpeed = String(this.entityForm.formGroup.controls['speed_limit'].value);
       this.storageService.humanReadable = presetSpeed;
     }
 
@@ -1189,7 +1189,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['properties_override'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    entityForm.formGroup.controls['properties_override'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
       if (value) {
         for (const item of value) {
           if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {
