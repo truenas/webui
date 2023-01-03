@@ -92,10 +92,10 @@ export class TableService {
       });
     } else {
       this.dialog.confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog.title : T('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : T('Delete'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doDelete(table, item);
       });

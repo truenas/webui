@@ -728,9 +728,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
     this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
       if (this.identifier && status === 'INVALID') {
-        this.getTarget('name')['hasErrors'] = true;
+        this.getTarget('name').hasErrors = true;
       } else {
-        this.getTarget('name')['hasErrors'] = false;
+        this.getTarget('name').hasErrors = false;
       }
       this.setSummary();
     });
@@ -770,9 +770,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
-            Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
-              const extension = value['cert_extensions'][type] as CertificateExtension;
+          Object.keys(value.cert_extensions).forEach((type: keyof CertificateExtensions) => {
+            Object.keys(value.cert_extensions[type]).forEach((prop: CertificationExtensionAttribute) => {
+              const extension = value.cert_extensions[type] as CertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === extension[prop]) {
@@ -880,12 +880,12 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         }
         delete data[key];
       });
-      data['cert_extensions'] = certExtensions;
+      data.cert_extensions = certExtensions;
 
-      delete data['profiles'];
+      delete data.profiles;
     }
     if (data.create_type === CaCreateType.CaCreateIntermediate) {
-      delete data['add_to_trusted_store'];
+      delete data.add_to_trusted_store;
     }
 
     return data;

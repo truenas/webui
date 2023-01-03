@@ -829,9 +829,9 @@ export class CertificateAddComponent implements WizardConfiguration {
 
     this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
       if (this.identifier && status === 'INVALID') {
-        this.getTarget('name')['hasErrors'] = true;
+        this.getTarget('name').hasErrors = true;
       } else {
-        this.getTarget('name')['hasErrors'] = false;
+        this.getTarget('name').hasErrors = false;
       }
       this.setSummary();
     });
@@ -878,9 +878,9 @@ export class CertificateAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
-            Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
-              const extension = value['cert_extensions'][type] as CertificateExtension;
+          Object.keys(value.cert_extensions).forEach((type: keyof CertificateExtensions) => {
+            Object.keys(value.cert_extensions[type]).forEach((prop: CertificationExtensionAttribute) => {
+              const extension = value.cert_extensions[type] as CertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === extension[prop]) {
@@ -1012,11 +1012,11 @@ export class CertificateAddComponent implements WizardConfiguration {
         delete data[key];
       });
       if (data.create_type === CertificateCreateType.CreateCsr) {
-        delete certExtensions['AuthorityKeyIdentifier'];
+        delete certExtensions.AuthorityKeyIdentifier;
       }
-      data['cert_extensions'] = certExtensions;
+      data.cert_extensions = certExtensions;
 
-      delete data['profiles'];
+      delete data.profiles;
     }
     return data;
   }
