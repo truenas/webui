@@ -52,8 +52,8 @@ enum Path {
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() stats: Subject<CoreEvent>;
   @Input() nicState: DashboardNicState;
-  @ViewChild('carousel', { static: true }) carousel: ElementRef;
-  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
+  @ViewChild('carousel', { static: true }) carousel: ElementRef<HTMLElement>;
+  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   traffic: NetTraffic;
   currentSlide = '0';
   private utils: WidgetUtils;

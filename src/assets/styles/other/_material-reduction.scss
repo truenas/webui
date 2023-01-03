@@ -109,7 +109,7 @@ ix-entity-table .mat-card > * {
   margin: 0 !important;
 }
 
-.mat-toolbar .mat-button {
+.mat-toolbar .mat-mdc-button {
   height: 36px !important;
   margin: 0 4px;
 }
@@ -343,55 +343,6 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   padding: 1px 16px 0 !important;
 }
 
-/* Login Form */
-.login-form .form-element .mat-form-field-wrapper {
-  max-height: 33px;
-  min-height: unset;
-  width: 100% !important;
-}
-
-
-.login-form .form-element .mat-form-field-wrapper input {
-  background: none;
-  border: none;
-  margin: 0;
-  padding: 0 0 2px;
-}
-
-.login-form .form-element .mat-form-field-prefix .mat-icon {
-  font-size: 16px;
-}
-
-.login-form .form-element .mat-form-field-prefix {
-  margin-bottom: 2px;
-}
-
-.login-form .form-element.username .mat-form-field-prefix {
-  top: -6px;
-}
-
-.login-form .form-element.username .mat-form-field-flex {
-  align-items: flex-start;
-  position: relative;
-  top: -2px;
-}
-
-.login-form .form-element.password .mat-form-field-prefix {
-  top: -11px;
-}
-
-.login-form .form-element input[type = 'password'],
-.login-form .form-element .has_toggle_pw input {
-  padding: 2px 0 0;
-  top: -10px;
-}
-
-.login-form .form-element button.toggle_pw {
-  bottom: 2px;
-  position: absolute;
-  right: 4px;
-}
-
 .form-element .mat-form-field-suffix {
   top: -2px;
 }
@@ -478,79 +429,80 @@ ix-tooltip button i {
 }
 
 /* Buttons */
-.mat-button,
+.mat-mdc-button,
 .mat-raised-button {
   font-weight: 400 !important;
 }
 
+.mat-mdc-button,
 .mat-button,
 .mat-flat-button {
   border-radius: 0 !important;
   text-transform: capitalize !important;
 }
 
-.mat-button[disabled] span.mat-button-wrapper,
-.mat-flat-button[disabled] span.mat-button-wrapper {
+.mat-mdc-button[disabled] span.mdc-button__label,
+.mat-flat-button[disabled] span.mdc-button__label {
   opacity: 0.5;
 }
 
-.mat-card-actions .mat-button,
+.mat-card-actions .mat-mdc-button,
 .mat-card-actions .mat-flat-button {
   background: var(--btn-default-bg) !important;
   background-color: var(--btn-default-bg) !important;
   color: var(--fg2) !important;
 }
 
-.mat-button,
+.mat-mdc-button,
 .mat-flat-button,
-button.mat-button.btn-default,
-button.mat-button.mat-default,
+button.mat-mdc-button.btn-default,
+button.mat-mdc-button.mat-default,
 .mat-card-actions button.mat-default,
 button.mat-default,
-button.mat-button.mat-accent.btn-default,
-button.mat-button[type='button']:not(button.mat-primary) {
+button.mat-mdc-button.mat-accent.btn-default,
+button.mat-mdc-button[type='button']:not(button.mat-primary) {
   background: var(--btn-default-bg);
   background-color: var(--btn-default-bg);
   color: var(--fg2) !important;
 }
 
-button.mat-button[type='button']:hover,
-button.mat-button.mat-accent[type='button']:hover {
+button.mat-mdc-button[type='button']:hover,
+button.mat-mdc-button.mat-accent[type='button']:hover {
   background-color: var(--alt-bg1) !important;
   color: var(--fg2) !important;
 }
 
-a.mat-button.mat-primary,
-button.mat-button.mat-primary {
+a.mat-mdc-button.mat-primary,
+button.mat-mdc-button.mat-primary {
   background-color: var(--primary) !important;
   color: var(--primary-txt) !important;
   opacity: 1 !important;
 }
 
-a.mat-button.mat-primary:focus-visible,
-button.mat-button.mat-primary:focus-visible {
+a.mat-mdc-button.mat-primary:focus-visible,
+button.mat-mdc-button.mat-primary:focus-visible {
   background: var(--primary-lighter) !important;
   box-shadow: none !important;
   outline: 1px solid var(--grey);
   outline-offset: 0;
 }
 
-button.mat-button.mat-accent {
+button.mat-mdc-button.mat-accent {
   background-color: var(--accent) !important;
   color: var(--accent-txt) !important;
   opacity: 1 !important;
 }
 
-button.mat-button.mat-error,
-button.mat-button.mat-red,
-button.mat-button.mat-warn {
+button.mat-mdc-button.mat-error,
+button.mat-mdc-button.mat-red,
+button.mat-mdc-button.mat-warn {
   background-color: var(--red) !important;
   color: #efefef !important;
   opacity: 1 !important;
 }
 
-button.mat-button.mat-finished,
-button.mat-button.mat-green {
+button.mat-mdc-button.mat-finished,
+button.mat-mdc-button.mat-green {
   background-color: var(--green) !important;
   color: #efefef !important;
   opacity: 1 !important;
@@ -558,7 +510,7 @@ button.mat-button.mat-green {
 
 /* Menus */
 
-button.mat-menu-trigger.menu-toggle.mat-button {
+button.mat-menu-trigger.menu-toggle.mat-mdc-button {
   max-height: 36px;
 }
 
@@ -566,7 +518,7 @@ button.mat-menu-trigger.menu-toggle.mat-button {
 .sidenav-link:hover,
 .slide-in-nav-item:hover,
 .mat-menu-item:hover,
-.mat-button:hover {
+.mat-mdc-button:hover {
   background-color: var(--hover-bg) !important;
 }
 
@@ -911,7 +863,7 @@ ul.nested-list li {
 }
 
 @media #{$media-lt-sm} {
-  .mat-button {
+  .mat-mdc-button {
     font-size: 12px;
     min-width: auto;
     padding: 0 8px;

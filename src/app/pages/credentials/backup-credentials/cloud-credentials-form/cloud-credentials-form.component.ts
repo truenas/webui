@@ -10,7 +10,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -87,7 +87,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   isLoading = false;
   existingCredential: CloudsyncCredential;
   providers: CloudsyncProvider[] = [];
-  providerOptions: Observable<Option[]> = of([]);
+  providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
 
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;

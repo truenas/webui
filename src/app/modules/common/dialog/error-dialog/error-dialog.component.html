@@ -1,9 +1,9 @@
-<h1 mat-dialog-title id="err-title">
+<h1 #errorTitle mat-dialog-title id="err-title">
   <mat-icon class="warning-icon">error</mat-icon>
   {{ title | translate }}
 </h1>
-<div mat-dialog-content id="err-md-content">
-  <div id="err-message-wrapper"><span [innerHTML]="message"></span></div>
+<div #errorMdContent mat-dialog-content id="err-md-content">
+  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
   <div
     *ngIf="backtrace"
     class="more-info"
@@ -18,11 +18,12 @@
   </div>
   <div
     *ngIf="backtrace"
+    #errorBtPanel
     id="err-bt-panel"
     class="backtrace-panel"
     [class.open]="!isCloseMoreInfo"
   >
-    <div class="textarea scrolled-down" id="err-bt-text" readonly matInput>
+    <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
       {{ 'Error' | translate }}: {{ backtrace }}
     </div>
   </div>
@@ -30,7 +31,7 @@
 <div mat-dialog-actions>
   <button
     mat-button
-    class="mat-button mat-accent"
+    class="mat-mdc-button mat-button mat-accent"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="CLOSE"
@@ -41,7 +42,7 @@
   <button
     *ngIf="logs"
     mat-button
-    class="mat-button mat-primary"
+    class="mat-mdc-button mat-button mat-primary"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="DOWNLOAD LOGS"

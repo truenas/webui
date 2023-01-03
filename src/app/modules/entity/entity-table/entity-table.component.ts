@@ -13,8 +13,8 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
@@ -22,6 +22,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import {
   Observable, of, Subscription, EMPTY, Subject, BehaviorSubject,
@@ -151,7 +152,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   };
   asyncView = false; // default table view is not async
   showDefaults = false;
-  showSpinner = false;
+  showSpinner = true;
   cardHeaderReady = false;
   showActions = true;
   hasActions = true;
@@ -285,11 +286,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
             if (this.conf.afterInit) {
               this.conf.afterInit(this);
             }
-          } else {
-            this.showSpinner = false;
-            if (this.conf.prerequisiteFailedHandler) {
-              this.conf.prerequisiteFailedHandler(this);
-            }
+          } else if (this.conf.prerequisiteFailedHandler) {
+            this.conf.prerequisiteFailedHandler(this);
           }
         },
       );
@@ -338,11 +336,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (typeof (this.conf.hideTopActions) !== 'undefined') {
       this.hideTopActions = this.conf.hideTopActions;
     }
-
-    // Delay spinner 500ms so it won't show up on a fast-loading page
-    setTimeout(() => {
-      this.setShowSpinner();
-    }, 500);
   }
 
   ngAfterViewInit(): void {
@@ -360,7 +353,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         if (data.length === 0) this.isTableEmpty = true;
 
         this.dataSource.data = data;
-
         this.changeDetectorRef.detectChanges();
       });
 
@@ -383,8 +375,13 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      let emptyType: EmptyType = this.firstUse ? EmptyType.FirstUse : EmptyType.NoPageData;
-      if (this.dataSource.filter) {
+      let emptyType: EmptyType = EmptyType.NoPageData;
+
+      if (this.firstUse && !this.showSpinner) {
+        emptyType = EmptyType.FirstUse;
+      } else if (this.showSpinner) {
+        emptyType = EmptyType.Loading;
+      } else if (this.dataSource.filter) {
         emptyType = EmptyType.NoSearchResults;
       }
 
@@ -525,11 +522,9 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     }
   }
 
-  setShowSpinner(): void {
-    this.showSpinner = true;
-  }
-
   getData(): void {
+    this.showSpinner = true;
+
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
         if (this.conf.queryCallOption) {
@@ -584,6 +579,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleData(res: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
@@ -662,6 +658,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     this.dataSourceStreamer$.next(this.currentRows);
 
+    this.showSpinner = false;
+
     return res;
   }
 
@@ -697,6 +695,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return hasHorizontalScrollbar;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generateRows(res: any): Row[] {
     let rows: Row[];
     if (this.loaderOpen) {
@@ -974,7 +973,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getRowIdentifier(row: Row): string {
-    return row.name || row.path || row.id;
+    if (row) {
+      return row.id || row.identifier || row.uuid || row.name || row.path || row.num || UUID.UUID();
+    }
+    return UUID.UUID();
   }
 
   getDisabled(column: string): boolean {

@@ -844,6 +844,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   beforeSubmit(data: any): CertificateAuthorityUpdate {
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase === '') {
