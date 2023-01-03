@@ -75,6 +75,13 @@ class advanced:
 
 class applications:
     title = '//h1[text()="Applications"]'
+    availableApplications_tab = '//div[contains(text(),"Available Applications")]'
+
+    def card(app_name):
+        return f'//mat-card[contains(.,"{app_name}")]'
+
+    def install_button(app_name):
+        return f'//mat-card[contains(.,"{app_name}")]//span[contains(.,"Install")]'
 
 
 class appSetup:
@@ -82,6 +89,8 @@ class appSetup:
     password_input = '//ix-input[contains(.,"Password for WebUI")]//input'
     certificate_select = '//ix-select[contains(.,"Certificate")]//mat-select//div'
     truenasCertificate_option = '//mat-option[contains(.,"truenas_default")]'
+    rootUser_input = '//ix-input[contains(.,"Root User")]//input'
+    rootPassword_input = '//ix-input[contains(.,"Root Password")]//input'
 
     def title(app_name):
         return f'//h3[contains(.,"{app_name}") and @class="ix-formtitle"]'
@@ -339,10 +348,12 @@ class popup:
     updatingAcl = '//h1[text()="Updating ACL"]'
     settingLdap = '//h1[text()="Setting up LDAP"]'
     configuring = '//h1[contains(.,"Configuring...")]'
+    installing = '//h1[contains(.,"Installing")]'
 
 
 class progress:
     progressbar = '//mat-progress-bar'
+    spinner = '//mat-spinner'
 
 
 class services:

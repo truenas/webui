@@ -44,22 +44,22 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click on apps')
-def on_the_dashboard_click_on_apps(driver):
-    """on the Dashboard, click on apps."""
+@when('on the Dashboard, click Apps on the side menu')
+def on_the_dashboard_click_apps_on_the_side_menu():
+    """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
-    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
 @then('on Application page click on the Available Applications tab')
 def on_application_page_click_on_the_available_applications_tab(driver):
     """on Application page click on the Available Applications tab."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Available Applications")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Available Applications")]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
+    assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
 @then('on the ipfs card click the Install button')
@@ -87,8 +87,8 @@ def click_save_wait_for_the_installation_to_finish(driver):
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
-    assert wait_on_element(driver, 5, '//*[contains(.,"Installing")]')
-    assert wait_on_element_disappear(driver, 45, '//*[contains(.,"Installing")]')
+    assert wait_on_element(driver, 5, xpaths.popup.installing)
+    assert wait_on_element_disappear(driver, 45, xpaths.popup.installing)
 
 
 @then('confirm installation is successful and the App is active')
@@ -96,7 +96,7 @@ def confirm_installation_is_successful_and_the_app_is_active(driver):
     """confirm installation is successful and the App is active."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
     assert wait_on_element(driver, 20, '//strong[contains(.,"ipfs-test")]')
     if is_element_present(driver, '//mat-card[contains(.,"ipfs-test")]//span[@class="status active"]') is False:
         assert wait_on_element(driver, 20, '//strong[contains(.,"ipfs-test")]', 'clickable')
@@ -117,7 +117,7 @@ def confirm_installation_is_successful_and_the_app_is_active(driver):
         else:
             assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-            assert wait_on_element_disappear(driver, 30, '//mat-spinner')
+            assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
             assert wait_on_element(driver, 500, '//mat-card[contains(.,"ipfs-test")]//span[@class="status active"]')
     else:
         assert wait_on_element(driver, 500, '//mat-card[contains(.,"ipfs-test")]//span[@class="status active"]')

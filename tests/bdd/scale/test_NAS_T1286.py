@@ -87,4 +87,4 @@ def click_setting_reset_pool(driver):
     assert wait_on_element(driver, 7, xpaths.button.choose, 'clickable')
     driver.find_element_by_xpath(xpaths.button.choose).click()
     assert wait_on_element_disappear(driver, 60, xpaths.popup.configuring)
-    assert wait_on_element(driver, 7, '//div[contains(.,"Available Applications")]')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
