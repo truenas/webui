@@ -14,6 +14,7 @@ from pytest_bdd import (
     then,
     when
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1346.feature', 'Apps Page - Validate machinaris')
@@ -22,8 +23,9 @@ def test_apps_page__validate_machinaris():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -40,120 +42,62 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click on apps')
-def on_the_dashboard_click_on_apps(driver):
-    """on the Dashboard, click on apps."""
+@when('on the Dashboard, click Apps on the side menu')
+def on_the_dashboard_click_apps_on_the_side_menu(driver):
+    """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
 
 
-@then('Stop Chia from running')
-def stop_chia_from_running(driver):
-    """Stop Chia from running."""
-    if is_element_present(driver, '//mat-ink-bar[@style="visibility: visible; left: 0px; width: 183px;"]') is False:
-        assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
-        driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-        assert wait_on_element(driver, 7, '//h3[contains(.,"No Applications Installed")]')
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"chia")]//span[contains(.,"Stop")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"chia")]//span[contains(.,"Stop")]').click()
-
-
-@then('Verify the application has stopped')
-def verify_the_application_has_stopped(driver):
-    """Verify the application has stopped."""
-    assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
-    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Stopping")]')
-    assert wait_on_element(driver, 15, '//mat-card[contains(.,"chia-test")]//span[contains(.,"STOPPED ")]')
-
-
-@then('open available applications')
-def open_available_applications(driver):
-    """open available applications."""
+@then('on Application page click on the Available Applications tab')
+def on_application_page_click_on_the_available_applications_tab(driver):
+    """on Application page click on the Available Applications tab."""
     assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
     driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
-@then('click install')
-def click_install(driver):
-    """click install."""
-    time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
-    assert wait_on_element(driver, 20, '//mat-card[contains(.,"machinaris")]//span[contains(.,"Install")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"machinaris")]//span[contains(.,"Install")]').click()
+@then('on the Machinaris card click the Install button')
+def on_the_machinaris_card_click_the_install_button(driver):
+    """on the Machinaris card click the Install button."""
+    assert wait_on_element(driver, 7, xpaths.applications.card('machinaris'))
+    assert wait_on_element(driver, 20, xpaths.applications.install_button('machinaris'), 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.install_button('machinaris')).click()
     assert wait_on_element(driver, 5, xpaths.popup.pleaseWait)
     assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
 
 
-@then('set application name')
-def set_application_name(driver):
-    """set application name."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"machinaris")]')
+@then('Enter an application name')
+def enter_an_application_name(driver):
+    """Enter an application name."""
+    assert wait_on_element(driver, 7, xpaths.appSetup.title('machinaris'))
     assert wait_on_element(driver, 7, xpaths.appSetup.appName_input)
     driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
     driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('machinaris-test')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
 
 
-@then('set networking')
-def set_networking(driver):
-    """set networking."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
+@then('under Configure Coins click Enable Flax checkbox')
+def under_configure_coins_click_enable_flax_checkbox(driver):
+    """under Configure Coins click Enable Flax checkbox."""
+    assert wait_on_element(driver, 10, xpaths.appSetup.enableFlax_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.appSetup.enableFlax_checkbox).click()
 
 
-@then('set machinaris configuration')
-def set_machinaris_configuration(driver):
-    """set machinaris configuration."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Machinaris Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Machinaris Configuration"]').click()
-
-
-@then('set storage')
-def set_storage(driver):
-    """set storage."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
-
-@then('set Machinaris Environment Variables')
-def set_machinaris_environment_variables(driver):
-    """set Machinaris Environment Variables."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Machinaris Environment Variables"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Machinaris Environment Variables"]').click()
-
-
-@then('set Resource Limits')
-def set_resource_limits(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
-
-
-@then('set Configure Coins')
-def set_configure_coins(driver):
-    """set Configure Coins."""
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Enable Flax"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable Flax"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Configure Coins"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Configure Coins"]').click()
-
-
-@then('confirm options')
-def confirm_options(driver):
-    """confirm options."""
+@then('click save, wait for the installation to finish')
+def click_save_wait_for_the_installation_to_finish(driver):
+    """click save, wait for the installation to finish."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
     assert wait_on_element(driver, 5, xpaths.popup.installing)
-    assert wait_on_element_disappear(driver, 45, xpaths.popup.installing)
+    assert wait_on_element_disappear(driver, 240, xpaths.popup.installing)
 
 
-@then('confirm installation is successful')
-def confirm_installation_is_successful(driver):
-    """confirm installation is successful."""
+@then('confirm installation is successful and the App is active')
+def confirm_installation_is_successful_and_the_app_is_active(driver):
+    """confirm installation is successful and the App is active."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
