@@ -11,6 +11,7 @@
 
 .vdev-container {
   flex-grow: 1;
+  flex-wrap: wrap;
 }
 
 .vdev-container {
@@ -30,4 +31,11 @@
 
 p {
   margin: 5px 0;
+}
+
+.type-container {
+  h2,
+  p {
+    width: 155px;
+  }
 }
