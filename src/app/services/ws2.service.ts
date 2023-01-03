@@ -15,6 +15,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
 
 @Injectable()
@@ -76,6 +77,19 @@ export class WebSocketService2 implements OnDestroy {
       }),
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
+    );
+  }
+
+  job<K extends ApiMethod>(
+    method: K,
+    params?: ApiDirectory[K]['params'],
+  ): Observable<ApiEvent<Job<ApiDirectory[K]['response']>>> {
+    return this.call(method, params).pipe(
+      switchMap((jobId) => {
+        return this.subscribe('core.get_jobs').pipe(
+          filter((apiEvent) => apiEvent.id === jobId),
+        );
+      }),
     );
   }
 

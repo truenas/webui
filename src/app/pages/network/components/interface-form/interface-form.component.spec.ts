@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -24,16 +24,17 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { NetworkService, SystemGeneralService, WebSocketService } from 'app/services';
+import { NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   let form: IxFormHarness;
   let aliasesList: IxListHarness;
   const existingInterface = {
@@ -72,7 +73,7 @@ describe('InterfaceFormComponent', () => {
       DefaultGatewayDialogComponent,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,
@@ -114,6 +115,7 @@ describe('InterfaceFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
+      mockWebsocket(),
     ],
   });
 
@@ -122,7 +124,7 @@ describe('InterfaceFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   describe('creation', () => {
@@ -330,7 +332,7 @@ describe('InterfaceFormComponent', () => {
 
   describe('failover fields', () => {
     beforeEach(() => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebsocketService2);
       websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });
