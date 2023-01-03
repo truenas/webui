@@ -2,7 +2,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
-import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -36,17 +36,17 @@ describe('TopologyCardComponent', () => {
               {
                 type: CreateVdevLayout.Raidz1,
                 children: [
-                  { type: 'DISK', disk: 'sda' },
-                  { type: 'DISK', disk: 'sdb' },
-                  { type: 'DISK', disk: 'sdc' },
+                  { type: TopologyItemType.Disk, disk: 'sda' },
+                  { type: TopologyItemType.Disk, disk: 'sdb' },
+                  { type: TopologyItemType.Disk, disk: 'sdc' },
                 ],
               },
               {
                 type: CreateVdevLayout.Raidz1,
                 children: [
-                  { type: 'DISK', disk: 'sdd' },
-                  { type: 'DISK', disk: 'sde' },
-                  { type: 'DISK', disk: 'sdf' },
+                  { type: TopologyItemType.Disk, disk: 'sdd' },
+                  { type: TopologyItemType.Disk, disk: 'sde' },
+                  { type: TopologyItemType.Disk, disk: 'sdf' },
                 ],
               },
             ],
@@ -54,25 +54,25 @@ describe('TopologyCardComponent', () => {
               {
                 type: CreateVdevLayout.Mirror,
                 children: [
-                  { type: 'DISK', disk: 'sdg' },
-                  { type: 'DISK', disk: 'sdh' },
+                  { type: TopologyItemType.Disk, disk: 'sdg' },
+                  { type: TopologyItemType.Disk, disk: 'sdh' },
                 ],
               },
             ],
             cache: [
-              { type: 'DISK', disk: 'sdi', children: [] },
-              { type: 'DISK', disk: 'sdj', children: [] },
+              { type: TopologyItemType.Disk, disk: 'sdi', children: [] },
+              { type: TopologyItemType.Disk, disk: 'sdj', children: [] },
             ],
             spare: [
-              { type: 'DISK', disk: 'sdk', children: [] },
-              { type: 'DISK', disk: 'sdl', children: [] },
+              { type: TopologyItemType.Disk, disk: 'sdk', children: [] },
+              { type: TopologyItemType.Disk, disk: 'sdl', children: [] },
             ],
             special: [
               {
                 type: CreateVdevLayout.Mirror,
                 children: [
-                  { type: 'DISK', disk: 'sdm' },
-                  { type: 'DISK', disk: 'sdn' },
+                  { type: TopologyItemType.Disk, disk: 'sdm' },
+                  { type: TopologyItemType.Disk, disk: 'sdn' },
                 ],
               },
             ],
