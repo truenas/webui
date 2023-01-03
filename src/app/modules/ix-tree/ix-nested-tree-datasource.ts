@@ -11,6 +11,7 @@ import {
  */
 export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSource<T> {
   filterPredicate: (data: T[], query: string) => T[];
+  sortComparer: (a: T, b: T) => number;
   private filterValue: string;
   private readonly filterChanged$ = new BehaviorSubject<string>('');
   private readonly _data = new BehaviorSubject<T[]>([]);
@@ -20,33 +21,34 @@ export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSo
   get data(): T[] {
     return this._data.value;
   }
+
   set data(value: T[]) {
-    this._data.next(value);
+    this._data.next(this.sortComparer ? this.sort(value) : value);
   }
 
-  get filteredData(): T[] {
-    return this._filteredData.value;
-  }
-  set filteredData(value: T[]) {
-    this._filteredData.next(value);
+  constructor(private initialData?: T[]) {
+    super();
+
+    if (initialData) {
+      this.data = this.initialData;
+    }
+
+    this.detectFilterChanges();
   }
 
   override connect(collectionViewer: CollectionViewer): Observable<T[]> {
-    return merge(...([collectionViewer.viewChange, this._data, this._filteredData] as Observable<unknown>[])).pipe(
-      map(() => (this.filterValue ? this.filteredData : this.data)),
+    return merge(
+      collectionViewer.viewChange,
+      this._data,
+      this._filteredData,
+    ).pipe(
+      map(() => (this.filterValue ? this._filteredData.value : this.data)),
     );
   }
 
   disconnect(): void {
     this.disconnect$.next();
     this.disconnect$.complete();
-  }
-
-  constructor(private initialData: T[]) {
-    super();
-    this.data = this.initialData;
-
-    this.detectFilterChanges();
   }
 
   /**
@@ -68,7 +70,17 @@ export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSo
         return;
       }
       this.filterValue = changedValue;
-      this.filteredData = this.filterPredicate(this.data, changedValue);
+      this._filteredData.next(this.filterPredicate(this.data, changedValue));
+    });
+  }
+
+  private sort(value: T[]): T[] {
+    return value.map((item) => {
+      if (item.children.length) {
+        item.children.sort(this.sortComparer);
+      }
+      this.sort(item.children);
+      return item;
     });
   }
 }
