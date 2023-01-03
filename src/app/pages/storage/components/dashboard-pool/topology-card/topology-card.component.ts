@@ -97,7 +97,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     let isMixedCapacity = false;
     let isMixedWidth = false;
     let vdevWidth = 0;
-    // let allVdevWidths: number[] = []; // There should only be one value
+
     const allVdevWidths = new Set<number>(); // There should only be one value
     const type = devs[0]?.type;
     const size = devs[0]?.children.length
