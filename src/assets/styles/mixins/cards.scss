@@ -40,7 +40,7 @@
     border-bottom: 1px solid var(--lines);
     justify-content: space-between;
     min-height: 40px;
-    padding: 8px 16px;
+    padding: 8px 8px 8px 16px;
 
     .mat-mdc-button {
       flex-shrink: 0;
@@ -62,7 +62,7 @@
 
   mat-card-content {
     margin: 0;
-    padding: 16px;
+    padding: 16px !important;
 
     > div {
       padding: 0;
@@ -128,7 +128,7 @@
     display: flex;
     justify-content: flex-end;
     margin: 0;
-    padding: 8px 16px;
+    padding: 8px 8px 8px 16px;
 
     .mdc-button--outlined {
       @include stroked-button();

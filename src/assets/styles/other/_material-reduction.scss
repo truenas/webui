@@ -76,11 +76,6 @@ span.code {
 
 
 /* Cards */
-
-.mat-mdc-card {
-  border: solid var(--highlights) rgba(255, 255, 255, 0.025);
-}
-
 .mat-mdc-card.mat-mdc-card-padded {
   padding: 16px 32px !important;
 }
@@ -535,7 +530,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
 }
 
 /* Material Cards*/
-.mat-mdc-card {
+body .mat-mdc-card {
   border: solid 1px var(--contrast-lighter);
   padding: 0 !important;
   position: relative;
@@ -553,9 +548,14 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
 }
 
 .mat-mdc-card .mat-toolbar-row,
+body .mdc-card__actions,
 .mat-mdc-card .mat-mdc-card-content > div,
 .mat-mdc-card .mat-mdc-card-footer {
   padding: 16px;
+}
+
+.mat-mdc-card-content {
+  padding: 0 !important;
 }
 
 .mat-mdc-card .mat-toolbar-row {
