@@ -4,11 +4,11 @@ import {
 } from '@angular/core';
 
 /**
- * Outlet for nested CdkNode. Put `[ixTreeNodeOutlet]` on a tag to place children dataNodes
+ * Outlet for nested CdkNode. Put `[treeNodeOutlet]` on a tag to place children dataNodes
  * inside the outlet.
  */
 @Directive({
-  selector: '[ixTreeNodeOutlet]',
+  selector: '[treeNodeOutlet]',
   providers: [{ provide: CdkTreeNodeOutlet, useExisting: TreeNodeOutletDirective }],
 })
 export class TreeNodeOutletDirective<T> implements CdkTreeNodeOutlet {

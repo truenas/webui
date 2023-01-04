@@ -8,7 +8,7 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 @Component({
   selector: 'ix-tree-view',
   exportAs: 'ixTreeView',
-  template: '<ng-container ixTreeNodeOutlet></ng-container>',
+  template: '<ng-container treeNodeOutlet></ng-container>',
   styleUrls: ['./tree-view.component.scss'],
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
