@@ -120,7 +120,9 @@ export class SigninStore extends ComponentStore<SigninState> {
         }
         this.router.navigateByUrl(this.getRedirectUrl());
       },
-      (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
+      (error: WebsocketError) => {
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+      },
     ),
   ));
 
@@ -157,20 +159,20 @@ export class SigninStore extends ComponentStore<SigninState> {
   }));
 
   private reLoginWithToken(): Observable<unknown> {
-    return this.ws.loginWithToken(this.ws.token).pipe(
-      tap(
-        (wasLoggedIn) => {
+    return combineLatest([
+      this.ws.loginWithToken(this.ws.token).pipe(
+        tap((wasLoggedIn) => {
           if (!wasLoggedIn) {
             this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
             this.ws.token = null;
             this.setLoadingState(false);
             return;
           }
-
           this.handleSuccessfulLogin();
-        },
+        }),
       ),
-    );
+      this.ws2.call('auth.login_with_token', [this.ws2.token2]),
+    ]);
   }
 
   private authenticateWithTokenWs2(): Observable<unknown> {

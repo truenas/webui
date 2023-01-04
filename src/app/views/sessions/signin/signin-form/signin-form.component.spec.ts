@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
@@ -23,6 +23,9 @@ describe('SigninFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockWebsocket2([
+        mockCall('auth.login', true),
+      ]),
       mockWebsocket([
         mockCall('auth.two_factor_auth', false),
       ]),

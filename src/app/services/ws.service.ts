@@ -20,7 +20,6 @@ import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface'
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Injectable()
@@ -55,7 +54,6 @@ export class WebSocketService {
 
   constructor(
     protected router: Router,
-    private ws2: WebSocketService2,
     @Inject(WINDOW) protected window: Window,
   ) {
     this.protocol = this.window.location.protocol;
@@ -293,7 +291,6 @@ export class WebSocketService {
     return new Observable((observer: Subscriber<boolean>) => {
       combineLatest([
         this.call('auth.login', params),
-        this.ws2.call('auth.login', params),
       ]).pipe(
         map(([wsResponse]) => wsResponse),
         untilDestroyed(this),
@@ -328,10 +325,7 @@ export class WebSocketService {
   loginWithToken(token: string): Observable<boolean> {
     return new Observable((observer: Subscriber<boolean>) => {
       if (token) {
-        combineLatest([
-          this.call('auth.login_with_token', [token]),
-          this.ws2.call('auth.login_with_token', [this.ws2.token2]),
-        ]).pipe(map(([wsResponse]) => wsResponse), untilDestroyed(this)).subscribe((result) => {
+        this.call('auth.login_with_token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);
         });
       }

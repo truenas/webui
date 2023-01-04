@@ -44,8 +44,8 @@ export function mockWebsocket(
   return [
     {
       provide: WebSocketService,
-      useFactory: (router: Router, window: Window, ws2: WebSocketService2) => {
-        const mockWebsocketService = new MockWebsocketService(router, ws2, window);
+      useFactory: (router: Router, window: Window) => {
+        const mockWebsocketService = new MockWebsocketService(router, window);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -56,35 +56,11 @@ export function mockWebsocket(
 
         return mockWebsocketService;
       },
-      deps: [Router, WINDOW, WebSocketService2],
+      deps: [Router, WINDOW],
     },
     {
       provide: MockWebsocketService,
       useExisting: forwardRef(() => WebSocketService),
-    },
-    // {
-    //   provide: WebSocketService2,
-    //   useFactory: (router: Router, window: Window) => {
-    //     const mockWebsocketService = new MockWebsocketService2(router, window);
-    //     (mockResponses || []).forEach((mockResponse) => {
-    //       if (mockResponse.type === MockWebsocketResponseType.Call) {
-    //         mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
-    //       } else if (mockResponse.type === MockWebsocketResponseType.Job) {
-    //         mockWebsocketService.mockJob(mockResponse.method, {
-    //           collection: mockResponse.method,
-    //           id: 1,
-    //           msg: IncomingApiMessageType.Changed,
-    //           fields: mockResponse.response
-    //         });
-    //       }
-    //     });
-    //     return mockWebsocketService;
-    //   },
-    //   deps: [Router, WINDOW],
-    // },
-    {
-      provide: MockWebsocketService2,
-      useExisting: forwardRef(() => WebSocketService2),
     },
   ];
 }
