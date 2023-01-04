@@ -1,22 +1,18 @@
 import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
-import { Directive } from '@angular/core';
-import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
+import { Directive, HostBinding } from '@angular/core';
+import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 
 @Directive({
-  selector: '[ixTreeNodeToggle]',
-  providers: [{ provide: CdkTreeNodeToggle, useExisting: IxTreeNodeToggleDirective }],
+  selector: '[treeNodeToggle]',
+  providers: [{ provide: CdkTreeNodeToggle, useExisting: TreeNodeToggleDirective }],
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['recursive: ixTreeNodeToggleRecursive'],
-  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
-  host: {
-    class: 'ix-tree-node-toggle',
-    '[class.isExpanded]': 'isExpanded',
-    '[class.isCollapsed]': '!isExpanded',
-  },
+  inputs: ['recursive: treeNodeToggleRecursive'],
 })
-export class IxTreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
+export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
+  @HostBinding('class.ix-tree-node-toggle') get hostClass(): boolean { return true; }
+
   constructor(
-    protected _tree: IxTree<T>,
+    protected _tree: Tree<T>,
     protected _treeNode: CdkTreeNode<T>,
   ) {
     super(_tree, _treeNode);

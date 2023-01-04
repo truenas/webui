@@ -1,7 +1,7 @@
 import { TreeControl } from '@angular/cdk/tree';
 import { Observable, take } from 'rxjs';
 
-export class IxTreeFlattener<T, F, K = F> {
+export class TreeFlattener<T, F, K = F> {
   constructor(
     public transformFunction: (node: T, level: number) => F,
     public getLevel: (node: F) => number,

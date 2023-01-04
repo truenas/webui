@@ -2,14 +2,14 @@ import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
 import {
   Directive, OnChanges, EmbeddedViewRef, Input, ViewContainerRef, SimpleChanges, SimpleChange,
 } from '@angular/core';
-import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
+import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
 
 @Directive({
   selector: '[ixTreeVirtualScrollNodeOutlet]',
 })
-export class IxTreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
+export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
   private _viewRef: EmbeddedViewRef<unknown> | null = null;
-  @Input() data!: IxTreeVirtualNodeData<T>;
+  @Input() data!: TreeVirtualNodeData<T>;
 
   constructor(private _viewContainerRef: ViewContainerRef) {}
 

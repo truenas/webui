@@ -3,13 +3,13 @@ import { CdkTreeNodePadding } from '@angular/cdk/tree';
 import { Directive, Input } from '@angular/core';
 
 @Directive({
-  selector: '[ixTreeNodePadding]',
-  providers: [{ provide: CdkTreeNodePadding, useExisting: IxTreeNodePaddingDirective }],
+  selector: '[treeNodePadding]',
+  providers: [{ provide: CdkTreeNodePadding, useExisting: TreeNodePaddingDirective }],
 })
-export class IxTreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
+export class TreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
   override _indent = 24;
 
-  @Input('ixTreeNodePadding')
+  @Input('treeNodePadding')
   override get level(): number {
     return this._level;
   }
@@ -17,7 +17,7 @@ export class IxTreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
     this._setLevelInput(value);
   }
 
-  @Input('ixTreeNodePaddingIndent')
+  @Input('treeNodePaddingIndent')
   override get indent(): number | string {
     return this._indent;
   }
