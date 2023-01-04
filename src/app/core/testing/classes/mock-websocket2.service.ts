@@ -60,4 +60,16 @@ export class MockWebsocketService2 extends WebSocketService2 {
   emitSubscribeEvent(event: ApiEvent<unknown>): void {
     this.subscribeStream$.next(event);
   }
+
+  onclose(): void {
+    // Noop to avoid calling redirect.
+  }
+
+  connect(): void {
+    // Noop
+  }
+
+  reconnect(): void {
+    // Noop
+  }
 }

@@ -84,4 +84,8 @@ export class MockWebsocketService extends WebSocketService {
   connect(): void {
     // Noop
   }
+
+  reconnect(): void {
+    // Noop
+  }
 }
