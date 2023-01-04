@@ -14,7 +14,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
+import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 
 @Component({ template: '' })
 // eslint-disable-next-line @angular-eslint/component-class-suffix

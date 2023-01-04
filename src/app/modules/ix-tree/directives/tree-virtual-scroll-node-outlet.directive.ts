@@ -2,7 +2,7 @@ import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
 import {
   Directive, OnChanges, EmbeddedViewRef, Input, ViewContainerRef, SimpleChanges, SimpleChange,
 } from '@angular/core';
-import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
+import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
 
 @Directive({
   selector: '[ixTreeVirtualScrollNodeOutlet]',

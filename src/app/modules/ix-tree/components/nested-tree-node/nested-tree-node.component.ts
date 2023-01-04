@@ -1,11 +1,11 @@
 import { CdkNestedTreeNode, CdkTreeNode, CDK_TREE_NODE_OUTLET_NODE } from '@angular/cdk/tree';
 import { Component, Input } from '@angular/core';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { IxNestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 
 @Component({
   selector: 'ix-nested-tree-node',
-  templateUrl: './ix-nested-tree-node.component.html',
-  styleUrls: ['./ix-nested-tree-node.component.scss'],
+  templateUrl: './nested-tree-node.component.html',
+  styleUrls: ['./nested-tree-node.component.scss'],
   exportAs: 'ixNestedTreeNode',
   providers: [
     { provide: CdkNestedTreeNode, useExisting: IxNestedTreeNodeComponent },

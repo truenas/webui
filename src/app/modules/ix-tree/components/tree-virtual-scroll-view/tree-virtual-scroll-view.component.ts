@@ -18,9 +18,9 @@ import {
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
-import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
-import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-node-outlet.directive';
-import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/ix-tree-virtual-node-data.interface';
+import { IxTree } from 'app/modules/ix-tree/components/tree/tree.component';
+import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
 
 export const defaultSize = 48;
 export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
@@ -29,8 +29,8 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
 @Component({
   selector: 'ix-tree-virtual-scroll-view',
   exportAs: 'ixTreeVirtualScrollView',
-  templateUrl: './ix-tree-virtual-scroll-view.component.html',
-  styleUrls: ['./ix-tree-virtual-scroll-view.component.scss'],
+  templateUrl: './tree-virtual-scroll-view.component.html',
+  styleUrls: ['./tree-virtual-scroll-view.component.scss'],
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

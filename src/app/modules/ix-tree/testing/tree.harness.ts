@@ -2,7 +2,7 @@ import { HarnessPredicate } from '@angular/cdk/testing';
 import {
   MatTreeHarness, TreeHarnessFilters, TreeNodeHarnessFilters,
 } from '@angular/material/tree/testing';
-import { IxTreeNodeHarness } from 'app/modules/ix-tree/testing/ix-tree-node.harness';
+import { IxTreeNodeHarness } from 'app/modules/ix-tree/testing/tree-node.harness';
 
 export class IxTreeHarness extends MatTreeHarness {
   static override hostSelector = '.ix-tree';

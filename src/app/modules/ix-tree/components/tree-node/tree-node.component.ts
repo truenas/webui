@@ -6,7 +6,7 @@ import {
 import {
   mixinTabIndex, mixinDisabled, CanDisable, HasTabIndex,
 } from '@angular/material/core';
-import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
+import { IxTree } from 'app/modules/ix-tree/components/tree/tree.component';
 
 const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
 
@@ -14,7 +14,7 @@ const ixTreeNodeBase = mixinTabIndex(mixinDisabled(CdkTreeNode));
   selector: 'ix-tree-node',
   template: '<ng-content></ng-content>',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./ix-tree-node.component.scss'],
+  styleUrls: ['./tree-node.component.scss'],
   exportAs: 'ixTreeNode',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['role', 'disabled', 'tabIndex'],

@@ -7,15 +7,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTreeNodeComponent } from 'app/modules/ix-tree/components/ix-tree-node/ix-tree-node.component';
-import { IxTreeViewComponent } from 'app/modules/ix-tree/components/ix-tree-view/ix-tree-view.component';
-import { IxTreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/ix-tree-virtual-scroll-view/ix-tree-virtual-scroll-view.component';
-import { IxTreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/ix-tree-virtual-scroll-node-outlet.directive';
-import { IxNestedTreeNodeComponent } from './components/ix-nested-tree-node/ix-nested-tree-node.component';
-import { IxTreeNodeDefDirective } from './directives/ix-tree-node-def.directive';
-import { IxTreeNodeOutletDirective } from './directives/ix-tree-node-outlet.directive';
-import { IxTreeNodePaddingDirective } from './directives/ix-tree-node-padding-def.directive';
-import { IxTreeNodeToggleDirective } from './directives/ix-tree-node-toggle.directive';
+import { IxNestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
+import { IxTreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
+import { IxTreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
+import { IxTreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
+import { IxTreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
+import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { IxTreeNodePaddingDirective } from 'app/modules/ix-tree/directives/tree-node-padding-def.directive';
+import { IxTreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
+import { IxTreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
 
 @NgModule({
   imports: [
@@ -23,32 +23,32 @@ import { IxTreeNodeToggleDirective } from './directives/ix-tree-node-toggle.dire
     CommonModule,
     IxIconModule,
     MatButtonModule,
-    MatTreeModule,
     MatTooltipModule,
-    TranslateModule,
+    MatTreeModule,
     ScrollingModule,
+    TranslateModule,
   ],
   declarations: [
-    IxTreeNodeComponent,
     IxNestedTreeNodeComponent,
+    IxTreeNodeComponent,
     IxTreeNodeDefDirective,
     IxTreeNodeOutletDirective,
-    IxTreeNodeToggleDirective,
-    IxTreeVirtualScrollViewComponent,
-    IxTreeVirtualScrollNodeOutletDirective,
     IxTreeNodePaddingDirective,
+    IxTreeNodeToggleDirective,
     IxTreeViewComponent,
+    IxTreeVirtualScrollNodeOutletDirective,
+    IxTreeVirtualScrollViewComponent,
   ],
   exports: [
-    IxTreeNodeComponent,
     IxNestedTreeNodeComponent,
+    IxTreeNodeComponent,
     IxTreeNodeDefDirective,
     IxTreeNodeOutletDirective,
-    IxTreeNodeToggleDirective,
-    IxTreeVirtualScrollViewComponent,
-    IxTreeVirtualScrollNodeOutletDirective,
     IxTreeNodePaddingDirective,
+    IxTreeNodeToggleDirective,
     IxTreeViewComponent,
+    IxTreeVirtualScrollNodeOutletDirective,
+    IxTreeVirtualScrollViewComponent,
   ],
 })
 export class IxTreeModule { }

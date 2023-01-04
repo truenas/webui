@@ -4,7 +4,7 @@ import {
   BehaviorSubject, Subject, Observable, map, filter,
   debounceTime, distinctUntilChanged, takeUntil, merge,
 } from 'rxjs';
-import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
+import { IxTreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 
 export class IxTreeDataSource<T, F, K = F> extends DataSource<F> {
   filterPredicate: (data: T[], query: string) => T[];

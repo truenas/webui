@@ -16,7 +16,7 @@ import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
-import { IxTreeHarness } from 'app/modules/ix-tree/testing/ix-tree.harness';
+import { IxTreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';

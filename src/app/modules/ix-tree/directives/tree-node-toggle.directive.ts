@@ -1,6 +1,6 @@
 import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
 import { Directive } from '@angular/core';
-import { IxTree } from 'app/modules/ix-tree/components/ix-tree/ix-tree.component';
+import { IxTree } from 'app/modules/ix-tree/components/tree/tree.component';
 
 @Directive({
   selector: '[ixTreeNodeToggle]',

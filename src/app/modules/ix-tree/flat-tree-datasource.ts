@@ -4,7 +4,7 @@ import {
   BehaviorSubject, Subject, Observable, debounceTime,
   distinctUntilChanged, takeUntil, filter, map, mergeWith,
 } from 'rxjs';
-import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
+import { IxTreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 
 /**
  * Data source for flat tree.
