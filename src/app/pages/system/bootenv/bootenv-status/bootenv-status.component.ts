@@ -13,7 +13,7 @@ import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.int
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
@@ -38,7 +38,7 @@ export interface BootPoolActionEvent {
 })
 export class BootStatusListComponent implements OnInit {
   isLoading$ = new BehaviorSubject(false);
-  dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
+  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
@@ -145,7 +145,7 @@ export class BootStatusListComponent implements OnInit {
       children: poolInstance.topology.data,
     } as DeviceNestedDataNode];
 
-    this.dataSource = new IxNestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
+    this.dataSource = new NestedTreeDataSource<DeviceNestedDataNode>(dataNodes);
     this.treeControl.dataNodes = dataNodes;
   }
 

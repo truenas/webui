@@ -18,9 +18,9 @@ import {
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
-import { IxTree } from 'app/modules/ix-tree/components/tree/tree.component';
-import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
-import { IxTreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
+import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
+import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
 
 export const defaultSize = 48;
 export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
@@ -36,19 +36,19 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: CdkTree, useExisting: this },
-    { provide: IxTree, useExisting: this },
+    { provide: Tree, useExisting: this },
   ],
 })
-export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements OnChanges {
-  @ViewChild(IxTreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: IxTreeNodeOutletDirective<T>;
+export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges {
+  @ViewChild(TreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: TreeNodeOutletDirective<T>;
   @ViewChild(CdkVirtualScrollViewport, { static: true }) readonly virtualScrollViewport!: CdkVirtualScrollViewport;
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
   @Input() ixItemSize = defaultSize;
   @Input() ixMinBufferPx = defaultSize * 4;
   @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
-  nodes$ = new BehaviorSubject<IxTreeVirtualNodeData<T>[]>([]);
-  innerTrackBy: TrackByFunction<IxTreeVirtualNodeData<T>> = (index: number) => index;
+  nodes$ = new BehaviorSubject<TreeVirtualNodeData<T>[]>([]);
+  innerTrackBy: TrackByFunction<TreeVirtualNodeData<T>> = (index: number) => index;
   private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
 
   get isScrollTopButtonVisible(): boolean {
@@ -82,7 +82,7 @@ export class IxTreeVirtualScrollViewComponent<T> extends IxTree<T> implements On
     this.renderNodeChanges$.next(data);
   }
 
-  private createNode(nodeData: T, index: number): IxTreeVirtualNodeData<T> {
+  private createNode(nodeData: T, index: number): TreeVirtualNodeData<T> {
     const node = this._getNodeDef(nodeData, index);
     const context = new CdkTreeNodeOutletContext<T>(nodeData);
     if (this.treeControl.getLevel) {

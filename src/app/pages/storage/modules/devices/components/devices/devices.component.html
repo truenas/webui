@@ -46,11 +46,10 @@
           [ixTreeControl]="treeControl"
         >
           <ix-tree-node
-            *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
-            ixTreeNodeToggle
+            *treeNodeDef="let topologyItem; dataSource: dataSource"
+            treeNodeToggle
             routerLinkActive="selected"
-            [ixTreeNodeToggleRecursive]="false"
-            [ixTreeNodeDefDataSource]="dataSource"
+            [treeNodeDefDataSource]="dataSource"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId, 'devices', topologyItem.guid]"
             (click)="viewDetails(poolId, topologyItem.guid)"
@@ -68,8 +67,8 @@
           </ix-tree-node>
 
           <ix-nested-tree-node
-            *ixTreeNodeDef="let group; dataSource: dataSource; when: isVdevGroup"
-            [ixTreeNodeDefDataSource]="dataSource"
+            *treeNodeDef="let group; dataSource: dataSource; when: isVdevGroup"
+            [treeNodeDefDataSource]="dataSource"
           >
             <div
               class="disk-nested-tree-root-node"
@@ -78,7 +77,7 @@
               <ix-vdev-group-node [vdevGroup]="group | cast">
                 <button
                   mat-icon-button
-                  ixTreeNodeToggle
+                  treeNodeToggle
                   class="vdev-group-toggle"
                   [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
                   (click)="$event.preventDefault()"
@@ -97,8 +96,8 @@
           </ix-nested-tree-node>
 
           <ix-nested-tree-node
-            *ixTreeNodeDef="let vdev; dataSource: dataSource; when: hasNestedChild"
-            [ixTreeNodeDefDataSource]="dataSource"
+            *treeNodeDef="let vdev; dataSource: dataSource; when: hasNestedChild"
+            [treeNodeDefDataSource]="dataSource"
           >
             <div
               class="disk-nested-tree-root-node"
@@ -110,7 +109,7 @@
             >
               <button
                 mat-icon-button
-                ixTreeNodeToggle
+                treeNodeToggle
                 [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
                 (click)="$event.preventDefault()"
                 (keydown.enter)="$event.stopPropagation()"

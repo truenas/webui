@@ -2,9 +2,9 @@ import { HarnessPredicate } from '@angular/cdk/testing';
 import {
   MatTreeHarness, TreeHarnessFilters, TreeNodeHarnessFilters,
 } from '@angular/material/tree/testing';
-import { IxTreeNodeHarness } from 'app/modules/ix-tree/testing/tree-node.harness';
+import { TreeNodeHarness } from 'app/modules/ix-tree/testing/tree-node.harness';
 
-export class IxTreeHarness extends MatTreeHarness {
+export class TreeHarness extends MatTreeHarness {
   static override hostSelector = '.ix-tree';
 
   /**
@@ -12,11 +12,11 @@ export class IxTreeHarness extends MatTreeHarness {
    * @param options Options for narrowing the search
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: TreeHarnessFilters = {}): HarnessPredicate<IxTreeHarness> {
-    return new HarnessPredicate(IxTreeHarness, options);
+  static with(options: TreeHarnessFilters = {}): HarnessPredicate<TreeHarness> {
+    return new HarnessPredicate(TreeHarness, options);
   }
 
-  async getNodes(filter: TreeNodeHarnessFilters = {}): Promise<IxTreeNodeHarness[]> {
-    return this.locatorForAll(IxTreeNodeHarness.with(filter))();
+  async getNodes(filter: TreeNodeHarnessFilters = {}): Promise<TreeNodeHarness[]> {
+    return this.locatorForAll(TreeNodeHarness.with(filter))();
   }
 }

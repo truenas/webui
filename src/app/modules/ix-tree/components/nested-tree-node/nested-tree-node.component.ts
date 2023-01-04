@@ -1,24 +1,21 @@
 import { CdkNestedTreeNode, CdkTreeNode, CDK_TREE_NODE_OUTLET_NODE } from '@angular/cdk/tree';
-import { Component, Input } from '@angular/core';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { Component, HostBinding, Input } from '@angular/core';
+import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 
 @Component({
   selector: 'ix-nested-tree-node',
-  templateUrl: './nested-tree-node.component.html',
+  template: '<ng-content></ng-content>',
   styleUrls: ['./nested-tree-node.component.scss'],
   exportAs: 'ixNestedTreeNode',
   providers: [
-    { provide: CdkNestedTreeNode, useExisting: IxNestedTreeNodeComponent },
-    { provide: CdkTreeNode, useExisting: IxNestedTreeNodeComponent },
-    { provide: CDK_TREE_NODE_OUTLET_NODE, useExisting: IxNestedTreeNodeComponent },
+    { provide: CdkNestedTreeNode, useExisting: NestedTreeNodeComponent },
+    { provide: CdkTreeNode, useExisting: NestedTreeNodeComponent },
+    { provide: CDK_TREE_NODE_OUTLET_NODE, useExisting: NestedTreeNodeComponent },
   ],
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['role', 'disabled', 'tabIndex'],
-  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
-  host: {
-    class: 'ix-nested-tree-node',
-  },
 })
-export class IxNestedTreeNodeComponent<T, K = T> extends CdkNestedTreeNode<T, K> {
-  @Input() ixTreeNodeDefDataSource: IxNestedTreeDataSource<T>;
+export class NestedTreeNodeComponent<T, K = T> extends CdkNestedTreeNode<T, K> {
+  @HostBinding('class.ix-nested-tree-node') get hostClass(): boolean { return true; }
+  @Input() treeNodeDefDataSource: NestedTreeDataSource<T>;
 }

@@ -9,9 +9,9 @@ import {
  */
 @Directive({
   selector: '[ixTreeNodeOutlet]',
-  providers: [{ provide: CdkTreeNodeOutlet, useExisting: IxTreeNodeOutletDirective }],
+  providers: [{ provide: CdkTreeNodeOutlet, useExisting: TreeNodeOutletDirective }],
 })
-export class IxTreeNodeOutletDirective<T> implements CdkTreeNodeOutlet {
+export class TreeNodeOutletDirective<T> implements CdkTreeNodeOutlet {
   constructor(
     public viewContainer: ViewContainerRef,
     @Inject(CDK_TREE_NODE_OUTLET_NODE) @Optional() public _node?: T,

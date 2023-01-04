@@ -2,8 +2,8 @@ import { CdkTree } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy, Component, HostBinding, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { IxTree } from 'app/modules/ix-tree/components/tree/tree.component';
-import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
+import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 
 @Component({
   selector: 'ix-tree-view',
@@ -14,11 +14,11 @@ import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-n
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: CdkTree, useExisting: IxTreeViewComponent },
-    { provide: IxTree, useExisting: IxTreeViewComponent },
+    { provide: CdkTree, useExisting: TreeViewComponent },
+    { provide: Tree, useExisting: TreeViewComponent },
   ],
 })
-export class IxTreeViewComponent<T> extends IxTree<T> {
+export class TreeViewComponent<T> extends Tree<T> {
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
-  @ViewChild(IxTreeNodeOutletDirective, { static: true }) nodeOutlet!: IxTreeNodeOutletDirective<T>;
+  @ViewChild(TreeNodeOutletDirective, { static: true }) nodeOutlet!: TreeNodeOutletDirective<T>;
 }

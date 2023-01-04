@@ -14,15 +14,15 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { IxTreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 
 @Component({ template: '' })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class IxTree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
+export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
   dir: Direction = 'ltr';
   _dataSourceChanged = new Subject<void>();
   // Outlets within the tree's template where the dataNodes will be inserted.
-  @ViewChild(IxTreeNodeOutletDirective, { static: true }) override _nodeOutlet: IxTreeNodeOutletDirective<T>;
+  @ViewChild(TreeNodeOutletDirective, { static: true }) override _nodeOutlet: TreeNodeOutletDirective<T>;
   private destroy$ = new Subject<void>();
 
   // eslint-disable-next-line @angular-eslint/no-input-rename, @typescript-eslint/no-explicit-any

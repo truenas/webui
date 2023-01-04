@@ -38,8 +38,8 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxTreeDataSource } from 'app/modules/ix-tree/tree-datasource';
-import { IxTreeFlattener } from 'app/modules/ix-tree/tree-flattener';
+import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
+import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
@@ -102,13 +102,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.getLevel,
     this.isExpandable,
   );
-  treeFlattener = new IxTreeFlattener<DatasetDetails, DatasetDetails>(
+  treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
     () => ([]),
   );
-  dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener);
+  dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
@@ -185,7 +185,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener, datasets);
+    this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
       datasetsToFilter,
       (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
