@@ -151,7 +151,7 @@ export class EntityWizardComponent implements OnInit {
       config.fieldConfig = config.fieldConfig.map((item) => {
         if (item.name === name) {
           item.disabled = disable;
-          item['isHidden'] = hide;
+          item.isHidden = hide;
         }
         return item;
       });
@@ -232,8 +232,8 @@ export class EntityWizardComponent implements OnInit {
   clearErrors(): void {
     this.conf.wizardConfig.forEach((wizardConfig) => {
       wizardConfig.fieldConfig.forEach((config) => {
-        config['errors'] = '';
-        config['hasErrors'] = false;
+        config.errors = '';
+        config.hasErrors = false;
       });
     });
   }

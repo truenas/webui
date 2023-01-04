@@ -171,10 +171,10 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   private listenForRouteChanges(): void {
     this.route.params.pipe(
-      map((params) => params.guid),
+      map((params) => params.guid as string),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((guid: string) => {
+    ).subscribe((guid) => {
       this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
     });

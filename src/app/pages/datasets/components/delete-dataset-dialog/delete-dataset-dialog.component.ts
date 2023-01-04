@@ -149,7 +149,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private setConfirmValidator(): void {
-    this.form.controls['confirmDatasetName'].setValidators(
+    this.form.controls.confirmDatasetName.setValidators(
       this.validators.confirmValidator(
         this.dataset.name,
         this.translate.instant('Enter dataset name to continue.'),

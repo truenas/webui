@@ -71,15 +71,15 @@ export class VdevComponent implements OnInit {
     } else {
       this.typeControl.setValue('stripe');
     }
-    if (this.initialValues['disks']) {
-      this.initialValues['disks'].forEach((disk: ManagerDisk) => {
+    if (this.initialValues.disks) {
+      this.initialValues.disks.forEach((disk: ManagerDisk) => {
         this.addDisk(disk);
         this.manager.removeDisk(disk);
       });
-      this.initialValues['disks'] = [];
+      this.initialValues.disks = [];
     }
-    if (this.initialValues['type']) {
-      this.typeControl.setValue(this.initialValues['type']);
+    if (this.initialValues.type) {
+      this.typeControl.setValue(this.initialValues.type);
     }
     this.estimateSize();
 

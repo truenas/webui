@@ -414,13 +414,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   onSubmit(event: Event): void {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
       this.dialog.confirm({
-        title: this.conf.confirmSubmitDialog['title'],
-        message: this.conf.confirmSubmitDialog['message'],
+        title: this.conf.confirmSubmitDialog.title,
+        message: this.conf.confirmSubmitDialog.message,
         hideCheckBox: this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
-          ? this.conf.confirmSubmitDialog['hideCheckbox']
+          ? this.conf.confirmSubmitDialog.hideCheckbox
           : false,
         buttonMsg: this.conf.confirmSubmitDialog.hasOwnProperty('button')
-          ? this.conf.confirmSubmitDialog['button']
+          ? this.conf.confirmSubmitDialog.button
           : this.translate.instant('Ok'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit(event);
@@ -439,7 +439,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     let value = _.cloneDeep(this.formGroup.value);
 
     if ('id' in value) {
-      delete value['id'];
+      delete value.id;
     }
 
     if (this.conf.clean) {
@@ -517,8 +517,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   clearErrors(): void {
     this.fieldConfig.forEach((fieldConfig) => {
-      fieldConfig['errors'] = '';
-      fieldConfig['hasErrors'] = false;
+      fieldConfig.errors = '';
+      fieldConfig.hasErrors = false;
     });
   }
 
