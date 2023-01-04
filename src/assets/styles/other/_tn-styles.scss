@@ -1370,7 +1370,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       overflow: auto !important;
     }
 
-    .mat-mdc-dialogactions {
+    .mat-mdc-dialog-actions {
       padding-bottom: 24px;
     }
   }
@@ -1427,5 +1427,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 }
 
 body .mat-mdc-menu-item {
+  height: inherit !important;
   min-height: inherit;
 }
