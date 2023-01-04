@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -56,7 +56,7 @@ export class SelectPoolDialogComponent implements OnInit {
     };
 
     if (this.form.value.migrateApplications) {
-      params['migrate_applications'] = true;
+      params.migrate_applications = true;
     }
 
     const dialogRef = this.matDialog.open(EntityJobComponent, {

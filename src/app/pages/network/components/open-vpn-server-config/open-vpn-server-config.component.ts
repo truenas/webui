@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -176,7 +176,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    const topologySubscription = this.form.controls['topology'].disabledWhile(
+    const topologySubscription = this.form.controls.topology.disabledWhile(
       this.form.select((values) => values.device_type === OpenVpnDeviceType.Tap),
     );
 

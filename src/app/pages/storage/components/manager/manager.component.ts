@@ -2,7 +2,7 @@ import {
   AfterViewInit, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -646,7 +646,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
     let warnings: string = helptext.force_warning;
     if (this.hasVdevDiskSizeError) {
-      warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+      warnings = warnings + '<br/><br/>' + helptext.force_warnings.diskSizeWarning;
     }
     if (this.stripeVdevTypeError) {
       warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
@@ -714,14 +714,17 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           } as CreatePool;
 
           if (this.isEncryptedControl.value) {
-            (body as CreatePool)['encryption_options'] = { generate_key: true, algorithm: this.encryptionAlgorithmControl.value };
+            (body as CreatePool).encryption_options = {
+              generate_key: true,
+              algorithm: this.encryptionAlgorithmControl.value,
+            };
           }
         } else {
           body = { topology: layout } as UpdatePool;
         }
 
         if (allowDuplicateSerials) {
-          body['allow_duplicate_serials'] = true;
+          body.allow_duplicate_serials = true;
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -919,7 +922,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       if (disk.exported_zpool) {
         exportedPoolsDisks.push(disk);
       }
-      this.vdevs['data'][0].disks.push(disk);
+      this.vdevs.data[0].disks.push(disk);
     });
     while (this.suggestableDisks.length > 0) {
       this.removeDisk(this.suggestableDisks[0]);

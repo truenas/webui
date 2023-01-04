@@ -1,7 +1,7 @@
 import {
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -338,8 +338,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (systemService) {
               this.affectedServices.push(systemService);
             }
-            if (item['service']) {
-              this.affectedServices.push(item['service']);
+            if (item.service) {
+              this.affectedServices.push(item.service);
             }
             item.ips.forEach((ip) => {
               ips.push(ip);
@@ -521,7 +521,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   interfaceDataSourceHelper(nic: NetworkInterface[]): NetworkInterfaceUi[] {
     return nic.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      transformed['link_state'] = networkInterface['state']['link_state'];
+      transformed.link_state = networkInterface.state.link_state;
       const addresses = new Set([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
@@ -530,7 +530,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         }
       });
 
-      if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
+      if (transformed.ipv4_dhcp || transformed.ipv6_auto) {
         transformed.state.aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(`${alias.address}/${alias.netmask}`);
@@ -544,15 +544,15 @@ export class NetworkComponent implements OnInit, OnDestroy {
           }
         });
       }
-      transformed['addresses'] = Array.from(addresses);
+      transformed.addresses = Array.from(addresses);
       if (networkInterface.type === NetworkInterfaceType.Physical) {
-        transformed.active_media_type = networkInterface['state']['active_media_type'];
-        transformed.active_media_subtype = networkInterface['state']['active_media_subtype'];
+        transformed.active_media_type = networkInterface.state.active_media_type;
+        transformed.active_media_subtype = networkInterface.state.active_media_subtype;
       } else if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
-        transformed.lagg_ports = networkInterface['lag_ports'];
-        transformed.lagg_protocol = networkInterface['lag_protocol'];
+        transformed.lagg_ports = networkInterface.lag_ports;
+        transformed.lagg_protocol = networkInterface.lag_protocol;
       }
-      transformed.mac_address = networkInterface['state']['link_address'];
+      transformed.mac_address = networkInterface.state.link_address;
 
       return transformed;
     });

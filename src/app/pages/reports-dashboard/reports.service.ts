@@ -38,8 +38,8 @@ export enum ReportingDatabaseError {
 export class ReportsService implements OnDestroy {
   serverTime: Date;
   showTimeDiffWarning = false;
-  private reportingGraphs$ = new BehaviorSubject([]);
-  private diskMetrics$ = new BehaviorSubject([]);
+  private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
+  private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private reportsUtils: Worker;
   private hasUps = false;
   private hasDiskTemperature = false;

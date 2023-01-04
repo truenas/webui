@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MAT_LEGACY_SLIDE_TOGGLE_DEFAULT_OPTIONS as MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/legacy-slide-toggle';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';

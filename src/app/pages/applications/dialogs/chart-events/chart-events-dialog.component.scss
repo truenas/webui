@@ -2,7 +2,7 @@
 
   font-size: 14px !important;
 
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     max-width: unset;
     overflow: auto !important;
   }
@@ -101,9 +101,5 @@
 
   .detail-row {
     padding: 5px;
-  }
-
-  .button-bar {
-    margin-bottom: -8px;
   }
 }

@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
@@ -116,6 +116,6 @@ export class DashboardPoolComponent {
   }
 
   counter(i: number): number[] {
-    return new Array(i);
+    return new Array<number>(i);
   }
 }

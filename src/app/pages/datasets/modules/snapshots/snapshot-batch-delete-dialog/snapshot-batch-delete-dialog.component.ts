@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs/operators';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';

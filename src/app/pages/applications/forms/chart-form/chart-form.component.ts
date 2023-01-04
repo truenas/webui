@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators,
 } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -110,7 +110,7 @@ export class ChartFormComponent implements OnDestroy {
 
     this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
     this.form.addControl('release_name', new FormControl('', [Validators.required]));
-    this.form.controls['release_name'].setValidators(
+    this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
         this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),

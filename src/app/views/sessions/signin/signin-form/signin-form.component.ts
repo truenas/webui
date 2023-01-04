@@ -1,5 +1,6 @@
+import { AutofillMonitor } from '@angular/cdk/text-field';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,6 +17,8 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninFormComponent implements OnInit {
+  @ViewChild('usernameField', { static: true, read: ElementRef }) usernameField: ElementRef<HTMLElement>;
+
   isLoading$ = this.signinStore.isLoading$;
 
   form = this.formBuilder.group({
@@ -25,6 +28,7 @@ export class SigninFormComponent implements OnInit {
   });
 
   hasTwoFactor = false;
+  wasFormAutofilled = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,10 +37,12 @@ export class SigninFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
     private translate: TranslateService,
+    private autofillMonitor: AutofillMonitor,
   ) { }
 
   ngOnInit(): void {
     this.checkForTwoFactor();
+    this.updateFormValidationOnAutofill();
   }
 
   onSubmit(): void {
@@ -89,5 +95,19 @@ export class SigninFormComponent implements OnInit {
     this.form.patchValue({ password: '', otp: '' });
     this.form.controls.password.setErrors(null);
     this.form.controls.otp.setErrors(null);
+  }
+
+  /**
+   * When form is autofilled by browser, Angular form is still empty until user clicks somewhere.
+   * Do not disable Log In button in this case.
+   * https://github.com/angular/angular/issues/30616
+   */
+  private updateFormValidationOnAutofill(): void {
+    this.autofillMonitor.monitor(this.usernameField.nativeElement.querySelector('input'))
+      .pipe(untilDestroyed(this))
+      .subscribe((event) => {
+        this.wasFormAutofilled = event.isAutofilled;
+        this.cdr.markForCheck();
+      });
   }
 }

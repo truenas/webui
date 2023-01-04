@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  AbstractControl, FormBuilder, Validators,
-} from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { VmDeviceType } from 'app/enums/vm.enum';
@@ -58,7 +56,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       this.translate.instant('Name of the zvol must be correct'),
     );
 
-    this.form.controls['zvolConfirm'].setValidators([
+    this.form.controls.zvolConfirm.setValidators([
       this.validatorsService.validateOnCondition(
         (control: AbstractControl) => control.parent.get('zvol').value,
         Validators.compose([
@@ -74,7 +72,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls['zvol'].valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.zvol.valueChanges.pipe(untilDestroyed(this)).subscribe(
       ($event) => this.onDestroyCheckedStateChanged($event),
     );
   }

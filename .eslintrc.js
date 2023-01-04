@@ -134,6 +134,7 @@ module.exports = {
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
         "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-floating-promises": "error",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "consistent-return": "off",
@@ -177,7 +178,7 @@ module.exports = {
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
+        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/no-duplicate-string": ["off"],

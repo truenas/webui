@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
