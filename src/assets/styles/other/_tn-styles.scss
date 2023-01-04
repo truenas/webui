@@ -235,14 +235,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.7;
   }
 
-  .menu-toggle {
-    .mat-icon {
-      position: relative;
-      right: -10px;
-      vertical-align: middle;
-    }
-  }
-
   .mat-mdc-menu-panel,
   .mat-option.mat-active,
   .mat-nav-list a {
@@ -1350,11 +1342,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     .mdc-button__label {
       align-items: center;
       display: inline-flex;
-    }
-
-    .mat-icon {
-      position: relative;
-      right: -10px;
     }
   }
 
