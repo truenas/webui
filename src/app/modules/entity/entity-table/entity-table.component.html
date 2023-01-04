@@ -166,7 +166,7 @@
               (mouseout)="onHover($event, false)"
             >
               <ng-container *ngIf="hasDetails() === true">
-                <ng-container *ngIf="element?.id === expandedElement?.id">
+                <ng-container *ngIf="getRowIdentifier(element) === getRowIdentifier(expandedElement)">
                   <button
                     class="transparent-btn"
                     [attr.aria-label]="'Close expanded row' | translate"
@@ -179,7 +179,7 @@
                     ></mat-icon>
                   </button>
                 </ng-container>
-                <ng-container *ngIf="element?.id !== expandedElement?.id">
+                <ng-container *ngIf="getRowIdentifier(element) !== getRowIdentifier(expandedElement)">
                   <button
                     class="transparent-btn"
                     [attr.aria-label]="'Expand row' | translate"
@@ -427,7 +427,7 @@
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="element?.id === expandedElement?.id ? 'expanded' : 'collapsed'"
+              [@detailExpand]="getRowIdentifier(element) === getRowIdentifier(expandedElement) ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
@@ -446,7 +446,7 @@
           ix-auto-type="expander"
           [id]="element[getFirstKey()]"
           [ix-auto-identifier]="element[getFirstKey()]"
-          [ngClass]="{ 'expanded-row': expandedElement?.id === element?.id }"
+          [ngClass]="{ 'expanded-row': getRowIdentifier(expandedElement) === getRowIdentifier(element) }"
           (click)="doRowClick(element)"
         ></tr>
 

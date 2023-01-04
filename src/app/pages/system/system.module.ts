@@ -29,7 +29,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -116,7 +116,7 @@ import { routing } from './system.routing';
     FormsModule,
     IxFormsModule,
     IxTableModule,
-    IxTreeModule,
+    TreeModule,
     SchedulerModule,
     JobsModule,
     MarkdownModule.forRoot(),

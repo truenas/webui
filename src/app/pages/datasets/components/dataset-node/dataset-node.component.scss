@@ -3,10 +3,11 @@
 
 :host {
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   flex: 1;
   font-weight: 500;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0;
 }
 
@@ -25,8 +26,9 @@
 
   .cell {
     align-items: center;
+    box-sizing: border-box;
     display: inline-flex;
-    min-height: 48px;
+    min-height: 44px;
 
     @media (max-width: $breakpoint-tablet) {
       display: none;

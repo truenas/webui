@@ -76,8 +76,8 @@ export class EntityUtils {
         }
         let errors = '';
         field.forEach((item: string) => { errors += item + ' '; });
-        fc['hasErrors'] = true;
-        fc['errors'] = errors;
+        fc.hasErrors = true;
+        fc.errors = errors;
       } else if (typeof field === 'string') {
         entity.error = field;
       } else {
@@ -126,7 +126,7 @@ export class EntityUtils {
             fc = _.find(targetFieldConfig, { name: field });
           }
 
-          if (fc && !fc['isHidden']) {
+          if (fc && !fc.isHidden) {
             const element = document.getElementById(field);
             if (element) {
               if (
@@ -141,8 +141,8 @@ export class EntityUtils {
                 scroll = true;
               }
             }
-            fc['hasErrors'] = true;
-            fc['errors'] = error;
+            fc.hasErrors = true;
+            fc.errors = error;
             if (entity.wizardConfig && entity.entityWizard) {
               entity.entityWizard.stepper.selectedIndex = stepIndex;
             }

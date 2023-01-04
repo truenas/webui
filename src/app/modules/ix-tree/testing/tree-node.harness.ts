@@ -2,7 +2,7 @@ import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coerci
 import { ComponentHarnessConstructor, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { TreeNodeHarnessFilters } from '@angular/material/tree/testing';
 
-function getNodePredicate<T extends IxTreeNodeHarness>(
+function getNodePredicate<T extends TreeNodeHarness>(
   type: ComponentHarnessConstructor<T>,
   options: TreeNodeHarnessFilters,
 ): HarnessPredicate<T> {
@@ -25,17 +25,17 @@ function getNodePredicate<T extends IxTreeNodeHarness>(
     );
 }
 
-export class IxTreeNodeHarness extends ContentContainerComponentHarness<string> {
+export class TreeNodeHarness extends ContentContainerComponentHarness<string> {
   static hostSelector = '.ix-tree-node, .ix-nested-tree-node';
-  _toggle = this.locatorForOptional('[ixTreeNodeToggle]');
+  _toggle = this.locatorForOptional('[treeNodeToggle]');
 
   /**
    * Gets a `HarnessPredicate` that can be used to search for a tree node with specific attributes.
    * @param options Options for narrowing the search
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: TreeNodeHarnessFilters = {}): HarnessPredicate<IxTreeNodeHarness> {
-    return getNodePredicate(IxTreeNodeHarness, options);
+  static with(options: TreeNodeHarnessFilters = {}): HarnessPredicate<TreeNodeHarness> {
+    return getNodePredicate(TreeNodeHarness, options);
   }
 
   async isExpanded(): Promise<boolean> {

@@ -109,9 +109,11 @@
                 {{ usageMax }}% &nbsp;
                 <span class="subtext">
                   ({{
-                    usageMaxThreads.length < 2
-                      ? 'Thread #' + usageMaxThreads.toString()
-                      : usageMaxThreads.length + ' threads at ' + usageMax + '%'
+                    usageMaxThreads.length === 0
+                      ? ('All Threads' | translate)
+                      : usageMaxThreads.length < 2
+                        ? ('Thread #' | translate) + usageMaxThreads.toString()
+                        : usageMaxThreads.length + (' threads at ' | translate) + usageMax + '%'
                   }})
                 </span>
               </mat-list-item>
@@ -130,9 +132,11 @@
                   <span>{{ tempMax }}°C &nbsp;</span>
                   <span class="subtext">
                     ({{
-                      tempMaxThreads.length < 2
-                        ? 'Core #' + tempMaxThreads.toString()
-                        : tempMaxThreads.length + ' cores at ' + tempMax + '°C'
+                      tempMaxThreads.length === 0
+                        ? ('All Cores' | translate)
+                        : tempMaxThreads.length < 2
+                          ? ('Core #' | translate) + tempMaxThreads.toString()
+                          : tempMaxThreads.length + (' cores at ' | translate) + tempMax + '°C'
                     }})
                   </span>
                 </ng-container>
@@ -184,9 +188,11 @@
                   {{ tempMax }}°C &nbsp;&nbsp;
                   <span class="subtext">
                     ({{
-                      tempMaxThreads.length < 2
-                        ? 'Cores #' + tempMaxThreads.toString()
-                        : tempMaxThreads.length + ' cores at ' + tempMax + '°C'
+                      tempMaxThreads.length === 0
+                        ? ('All Cores' | translate)
+                        : tempMaxThreads.length < 2
+                          ? ('Core #' | translate) + tempMaxThreads.toString()
+                          : tempMaxThreads.length + (' cores at ' | translate) + tempMax + '°C'
                     }})
                   </span>
                 </mat-list-item>
@@ -195,9 +201,11 @@
                   {{ tempMin }}°C &nbsp;&nbsp;
                   <span class="subtext">
                     ({{
-                      tempMinThreads.length < 2
-                        ? 'Cores #' + tempMinThreads.toString()
-                        : tempMinThreads.length + ' cores at ' + tempMin + '°C'
+                      tempMinThreads.length === 0
+                        ? ('All Cores' | translate)
+                        : tempMinThreads.length < 2
+                          ? ('Core #' | translate) + tempMinThreads.toString()
+                          : tempMinThreads.length + (' cores at ' | translate) + tempMin + '°C'
                     }})
                   </span>
                 </mat-list-item>
@@ -207,9 +215,11 @@
                 {{ usageMax }}% &nbsp;&nbsp;
                 <span class="subtext">
                   ({{
-                    usageMaxThreads.length < 2
-                      ? 'Thread #' + usageMaxThreads.toString()
-                      : usageMaxThreads.length + ' threads at ' + usageMax + '%'
+                    usageMaxThreads.length === 0
+                      ? ('All Threads' | translate)
+                      : usageMaxThreads.length < 2
+                        ? ('Thread #' | translate) + usageMaxThreads.toString()
+                        : usageMaxThreads.length + (' threads at ' | translate) + usageMax + '%'
                   }})
                 </span>
               </mat-list-item>
@@ -218,9 +228,11 @@
                 {{ usageMin }}% &nbsp;&nbsp;
                 <span class="subtext">
                   ({{
-                    usageMinThreads.length < 2
-                      ? 'Thread #' + usageMinThreads.toString()
-                      : usageMinThreads.length + ' threads at ' + usageMin + '%'
+                    usageMinThreads.length === 0
+                      ? ('All Threads' | translate)
+                      : usageMinThreads.length < 2
+                        ? ('Thread #' | translate) + usageMinThreads.toString()
+                        : usageMinThreads.length + ' threads at ' + usageMin + '%'
                   }})
                 </span>
               </mat-list-item>

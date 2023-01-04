@@ -56,7 +56,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       this.translate.instant('Name of the zvol must be correct'),
     );
 
-    this.form.controls['zvolConfirm'].setValidators([
+    this.form.controls.zvolConfirm.setValidators([
       this.validatorsService.validateOnCondition(
         (control: AbstractControl) => control.parent.get('zvol').value,
         Validators.compose([
@@ -72,7 +72,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls['zvol'].valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.zvol.valueChanges.pipe(untilDestroyed(this)).subscribe(
       ($event) => this.onDestroyCheckedStateChanged($event),
     );
   }
