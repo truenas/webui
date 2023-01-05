@@ -45,7 +45,7 @@ export class AcmednsFormComponent implements OnInit {
   });
 
   get formGroup(): UntypedFormGroup {
-    return this.form.controls['attributes'] as UntypedFormGroup;
+    return this.form.controls.attributes as UntypedFormGroup;
   }
 
   isLoading = false;

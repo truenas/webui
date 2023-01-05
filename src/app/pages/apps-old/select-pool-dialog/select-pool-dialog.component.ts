@@ -56,7 +56,7 @@ export class SelectPoolDialogComponent implements OnInit {
     };
 
     if (this.form.value.migrateApplications) {
-      params['migrate_applications'] = true;
+      params.migrate_applications = true;
     }
 
     const dialogRef = this.matDialog.open(EntityJobComponent, {

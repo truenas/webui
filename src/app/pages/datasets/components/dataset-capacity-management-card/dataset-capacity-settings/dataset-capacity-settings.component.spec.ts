@@ -121,8 +121,8 @@ describe('DatasetCapacitySettingsComponent', () => {
 
   it('disables quota fields when inherit is checked', async () => {
     const controls = await getControls();
-    await controls['quotaWarningInherit'].setValue(true);
-    expect(await controls['quotaWarning'].isDisabled()).toBe(true);
+    await controls.quotaWarningInherit.setValue(true);
+    expect(await controls.quotaWarning.isDisabled()).toBe(true);
   });
 
   it('saves updated capacity settings when form is submitted', async () => {

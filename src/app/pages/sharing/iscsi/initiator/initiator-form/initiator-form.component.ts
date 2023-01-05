@@ -88,7 +88,7 @@ export class InitiatorFormComponent implements OnInit {
   getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
       next: (res) => {
-        this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
+        this.connectedInitiators = _.unionBy(res, (item) => item.initiator && item.initiator_addr);
       },
       error: (err) => {
         new EntityUtils().handleWsError(this, err);
@@ -133,7 +133,7 @@ export class InitiatorFormComponent implements OnInit {
                 }
               }
             });
-            if (groups[0]['initiators'].length === 0) {
+            if (groups[0].initiators.length === 0) {
               this.formGroup.controls['all'].setValue(true);
             }
           },
@@ -148,10 +148,10 @@ export class InitiatorFormComponent implements OnInit {
     this.error = null;
     const value = _.cloneDeep(this.formGroup.value);
 
-    value['initiators'] = value['all'] ? [] : Array.from(value['initiators']);
-    delete value['initiators_input'];
-    delete value['auth_network_input'];
-    delete value['all'];
+    value.initiators = value.all ? [] : Array.from(value.initiators);
+    delete value.initiators_input;
+    delete value.auth_network_input;
+    delete value.all;
 
     let submitFunction;
     if (this.pk === undefined) {
@@ -220,7 +220,7 @@ export class InitiatorFormComponent implements OnInit {
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
-        item['isHidden'] = hide;
+        item.isHidden = hide;
       }
       return item;
     });
