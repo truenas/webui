@@ -29,7 +29,7 @@ def test_setup_ad_and_verify_it_is_working():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['system_pool'], scope='session')
+    #depends(request, ['system_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -70,6 +70,13 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
     assert wait_on_element(driver, 5, xpaths.globalConfiguration.nameserver1_input, 'inputable')
     driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver1_input).clear()
     driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver1_input).send_keys(nameserver1)
+
+
+@then('delete nameserver 2 and nameserver 3 IPs in there input')
+def delete_nameserver_2_and_nameserver_3_ips_in_there_input(driver):
+    """delete nameserver 2 and nameserver 3 IPs in there input."""
+    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver2_delete).click()
+    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver3_delete).click()
 
 
 @then('click Save, the progress bar should appear while settings are being applied')
