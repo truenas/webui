@@ -22,7 +22,7 @@ import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-
 import {
   Disk, isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -42,7 +42,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
 
   diskDictionary: { [guid: string]: Disk } = {};
-  dataSource: IxNestedTreeDataSource<DeviceNestedDataNode>;
+  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
@@ -142,7 +142,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
-    this.dataSource = new IxNestedTreeDataSource();
+    this.dataSource = new NestedTreeDataSource();
     this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
       return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
         if (isVdevGroup(dataNode)) {
@@ -183,10 +183,10 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   private listenForRouteChanges(): void {
     this.route.params.pipe(
-      map((params) => params.guid),
+      map((params) => params.guid as string),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((guid: string) => {
+    ).subscribe((guid) => {
       this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
     });

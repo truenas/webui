@@ -9,7 +9,7 @@ import {
 /**
  * Data source for nested tree.
  */
-export class IxNestedTreeDataSource<T extends { children?: T[] }> extends DataSource<T> {
+export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSource<T> {
   filterPredicate: (data: T[], query: string) => T[];
   sortComparer: (a: T, b: T) => number;
   private filterValue: string;

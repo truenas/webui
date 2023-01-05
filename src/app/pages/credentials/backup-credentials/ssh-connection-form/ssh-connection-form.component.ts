@@ -139,9 +139,9 @@ export class SshConnectionFormComponent {
   ) {}
 
   get isManualAuthFormValid(): boolean {
-    return this.form.controls['host'].valid
-      && this.form.controls['private_key'].valid
-      && this.form.controls['username'].valid;
+    return this.form.controls.host.valid
+      && this.form.controls.private_key.valid
+      && this.form.controls.username.valid;
   }
 
   setConnectionForEdit(connection: KeychainSshCredentials): void {

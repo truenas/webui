@@ -39,7 +39,7 @@ describe('IxDropGridDirective', () => {
 
     viewContainerRefMock = spectator.inject(ViewContainerRef);
     jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as ComponentRef<unknown>);
-    spectator.directive['viewContainerRef'] = viewContainerRefMock;
+    spectator.directive.viewContainerRef = viewContainerRefMock;
 
     spectator.detectChanges();
   }

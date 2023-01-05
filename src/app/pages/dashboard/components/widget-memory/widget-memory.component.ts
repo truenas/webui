@@ -119,11 +119,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnChanges 
      * zfs_cache?
      * */
 
-    const services = data['total'] - data['free'] - data['arc_size'];
+    const services = data.total - data.free - data.arc_size;
 
     return [
-      ['Free', this.bytesToGigabytes(data['free']).toFixed(1)],
-      ['ZFS Cache', this.bytesToGigabytes(data['arc_size']).toFixed(1)],
+      ['Free', this.bytesToGigabytes(data.free).toFixed(1)],
+      ['ZFS Cache', this.bytesToGigabytes(data.arc_size).toFixed(1)],
       ['Services', this.bytesToGigabytes(services).toFixed(1)],
     ];
   }

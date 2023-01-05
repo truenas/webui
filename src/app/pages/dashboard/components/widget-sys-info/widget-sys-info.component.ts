@@ -218,7 +218,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.nasDateTime = addSeconds(this.nasDateTime, 1);
     }, 1000);
 
-    const build = new Date(this.data.buildtime['$date']);
+    const build = new Date(this.data.buildtime.$date);
     const year = build.getUTCFullYear();
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const month = months[build.getUTCMonth()];

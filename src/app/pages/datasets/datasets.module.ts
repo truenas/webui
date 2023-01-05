@@ -21,7 +21,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
@@ -71,7 +71,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTableModule,
     ReactiveFormsModule,
     IxFormsModule,
-    IxTreeModule,
+    TreeModule,
     IxTableModule,
     EntityModule,
     MatDialogModule,

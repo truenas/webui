@@ -4,12 +4,12 @@ import {
   BehaviorSubject, Subject, Observable, debounceTime,
   distinctUntilChanged, takeUntil, filter, map, mergeWith,
 } from 'rxjs';
-import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
+import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 
 /**
  * Data source for flat tree.
  */
-export class IxFlatTreeDataSource<T, F> extends DataSource<F> {
+export class FlatTreeDataSource<T, F> extends DataSource<F> {
   filterPredicate: (data: T[], query: string) => T[];
   sortComparer: (a: T, b: T) => number;
   private filterValue: string;
@@ -22,7 +22,7 @@ export class IxFlatTreeDataSource<T, F> extends DataSource<F> {
 
   constructor(
     private treeControl: FlatTreeControl<F>,
-    private treeFlattener: IxTreeFlattener<T, F>,
+    private treeFlattener: TreeFlattener<T, F>,
     private initialData: T[] = [],
   ) {
     super();
