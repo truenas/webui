@@ -272,6 +272,9 @@ class globalConfiguration:
     nameserver1_input = '//ix-input[contains(.,"Nameserver 1")]//input'
     nameserver2_input = '//ix-input[contains(.,"Nameserver 2")]//input'
     nameserver3_input = '//ix-input[contains(.,"Nameserver 3")]//input'
+    nameserver1_delete = '//ix-input[contains(.,"Nameserver 1")]//mat-icon[@fonticon="mdi-close-circle"]'
+    nameserver2_delete = '//ix-input[contains(.,"Nameserver 2")]//mat-icon[@fonticon="mdi-close-circle"]'
+    nameserver3_delete = '//ix-input[contains(.,"Nameserver 3")]//mat-icon[@fonticon="mdi-close-circle"]'
     ipv4_defaultGateway_input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
     hostname_input = '//ix-input[contains(.,"Hostname")]//input'
 
