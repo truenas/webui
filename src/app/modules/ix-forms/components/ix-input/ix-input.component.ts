@@ -34,7 +34,7 @@ export class IxInputComponent implements ControlValueAccessor {
   /**
    * @deprecated Avoid using. Use valueChanges.
    */
-  @Output() inputBlur: EventEmitter<unknown> = new EventEmitter();
+  @Output() inputBlur = new EventEmitter<unknown>();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
