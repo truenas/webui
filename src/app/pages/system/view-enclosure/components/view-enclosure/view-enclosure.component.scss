@@ -1,16 +1,16 @@
-.mat-card.error {
+.mat-mdc-card.error {
   margin: 16px auto 0;
   top: 0;
   width: 600px;
 }
 
-.mat-card.error .error-message {
+.mat-mdc-card.error .error-message {
   text-align: left;
 }
 
-.mat-card.error .error-message,
-.mat-card.error .error-header,
-.mat-card.error .error-footer {
+.mat-mdc-card.error .error-message,
+.mat-mdc-card.error .error-header,
+.mat-mdc-card.error .error-footer {
   padding: 16px;
 }
 
