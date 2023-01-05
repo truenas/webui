@@ -639,7 +639,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 36px;
   }
 
-  ix-dual-listbox .chosen .mat-list-item-content {
+  ix-dual-listbox .chosen .mat-mdc-list-item-content {
     color: var(--fg2);
   }
 
@@ -879,7 +879,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       }
     }
 
-    .mat-list-text {
+    .mat-mdc-list-text {
       opacity: 0.75;
     }
   }
@@ -1304,7 +1304,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding: 0;
   }
 
-  .slidein-nav .mat-list-item {
+  .slidein-nav .mat-mdc-list-item {
     border-bottom: solid 1px var(--lines);
   }
 

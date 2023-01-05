@@ -697,17 +697,17 @@ thead.ui-treetable-thead tr {
 }
 
 /* Material Lists */
-.mat-list-item {
+.mat-mdc-list-item {
   border-bottom: solid 1px var(--lines) !important;
 }
 
 .value,
-.mat-list-item .value {
+.mat-mdc-list-item .value {
   font-weight: 500;
 }
 
 .label,
-.mat-list-item .label {
+.mat-mdc-list-item .label {
   margin-right: 8px;
 }
 
@@ -715,7 +715,7 @@ thead.ui-treetable-thead tr {
   opacity: 0.65;
 }
 
-mat-card.mat-mdc-card .mat-list-base {
+mat-card.mat-mdc-card .mat-mdc-list-base {
   padding-top: 0;
 }
 
@@ -840,8 +840,8 @@ ul.nested-list li {
   display: flex;
 }
 
-.form-selection-list.mat-list-base .mat-list-item .mat-list-item-content,
-.form-selection-list.mat-list-base .mat-list-option .mat-list-item-content {
+.form-selection-list.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-list-item-content,
+.form-selection-list.mat-mdc-list-base .mat-mdc-list-option .mat-mdc-list-item-content {
   padding: 0;
 }
 
