@@ -11,6 +11,7 @@ import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
  */
 export class FlatTreeDataSource<T, F> extends DataSource<F> {
   filterPredicate: (data: T[], query: string) => T[];
+  sortComparer: (a: T, b: T) => number;
   private filterValue: string;
   private readonly _flattenedData = new BehaviorSubject<F[]>([]);
   private readonly _expandedData = new BehaviorSubject<F[]>([]);
@@ -35,7 +36,7 @@ export class FlatTreeDataSource<T, F> extends DataSource<F> {
     return this._data.value;
   }
   set data(value: T[]) {
-    this._data.next(value);
+    this._data.next(this.sortComparer ? value.sort(this.sortComparer) : value);
     this.flatNodes();
   }
 

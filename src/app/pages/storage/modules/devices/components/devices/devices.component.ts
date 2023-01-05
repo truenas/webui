@@ -142,10 +142,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
-    dataNodes.forEach((dataNode) => {
-      this.sortDataNodesByDiskName(dataNode.children);
-    });
-    this.dataSource = new NestedTreeDataSource(dataNodes);
+    this.dataSource = new NestedTreeDataSource();
     this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
       return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
         if (isVdevGroup(dataNode)) {
@@ -163,6 +160,21 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         return false;
       });
     };
+    this.dataSource.sortComparer = (nodeA, nodeB) => {
+      const topologyDiskA = nodeA as TopologyDisk;
+      const topologyDiskB = nodeB as TopologyDisk;
+      const collator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'accent',
+      });
+
+      if (topologyDiskA?.disk && topologyDiskB.disk) {
+        return collator.compare(topologyDiskA.disk, topologyDiskB.disk);
+      }
+
+      return collator.compare(topologyDiskA.name, topologyDiskB.name);
+    };
+    this.dataSource.data = dataNodes;
   }
 
   private openGroupNodes(): void {
@@ -193,25 +205,5 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
-  }
-
-  // TODO: Likely belongs to DevicesStore
-  private sortDataNodesByDiskName(dataNodes: DeviceNestedDataNode[]): void {
-    dataNodes.forEach((node) => {
-      if (node.children.length === 0) {
-        return;
-      }
-
-      node.children.sort((a: TopologyDisk, b: TopologyDisk) => {
-        if (a.disk && b.disk) {
-          const nameA = a.disk.toLowerCase();
-          const nameB = b.disk.toLowerCase();
-
-          return nameA.localeCompare(nameB);
-        }
-        return undefined;
-      });
-      this.sortDataNodesByDiskName(node.children);
-    });
   }
 }

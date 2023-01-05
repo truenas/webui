@@ -149,7 +149,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private setupTree(): void {
     this.datasetStore.datasets$.pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
-        this.sortDatasetsByName(datasets);
         this.createDataSource(datasets);
         this.expandDatasetBranch();
         this.cdr.markForCheck();
@@ -167,29 +166,19 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  private sortDatasetsByName(datasets: DatasetDetails[]): void {
-    datasets.forEach((dataset) => {
-      if (dataset.children.length > 0) {
-        dataset.children.sort((a, b) => {
-          const na = a.name.toLowerCase();
-          const nb = b.name.toLowerCase();
-
-          if (na < nb) return -1;
-          if (na > nb) return 1;
-
-          return 0;
-        });
-        this.sortDatasetsByName(dataset.children);
-      }
-    });
-  }
-
   private createDataSource(datasets: DatasetDetails[]): void {
     this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
       datasetsToFilter,
       (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
     );
+    this.dataSource.sortComparer = (a, b) => {
+      return new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'accent',
+      }).compare(a.name, b.name);
+    };
+    this.dataSource.data = datasets;
   }
 
   private expandDatasetBranch(): void {
