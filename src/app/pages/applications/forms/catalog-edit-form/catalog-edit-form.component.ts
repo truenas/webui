@@ -41,7 +41,7 @@ export class CatalogEditFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form.controls['label'].disable();
+    this.form.controls.label.disable();
   }
 
   setCatalogForEdit(catalog: Catalog): void {

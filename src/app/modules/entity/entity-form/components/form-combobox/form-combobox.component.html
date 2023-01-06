@@ -78,7 +78,7 @@
       [matMenuTriggerFor]="options"
       (menuOpened)="onOpenMenu()"
     >
-      <mat-icon>arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </span>
     <mat-menu #options [class]="'combo-box-menu'">
       <ng-container *ngFor="let option of config.options">

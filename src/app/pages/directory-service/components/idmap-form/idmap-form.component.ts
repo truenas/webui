@@ -165,7 +165,7 @@ export class IdmapFormComponent implements OnInit {
   setIdmapForEdit(idmap: Idmap): void {
     this.existingIdmap = idmap;
     this.setEditingIdmapFormValues();
-    this.form.controls['name'].disable();
+    this.form.controls.name.disable();
   }
 
   isOptionVisible(option: keyof IdmapFormComponent['form']['value']): boolean {
@@ -336,15 +336,15 @@ export class IdmapFormComponent implements OnInit {
     } as IdmapUpdate;
 
     if (values.dns_domain_name) {
-      params['dns_domain_name'] = values.dns_domain_name;
+      params.dns_domain_name = values.dns_domain_name;
     }
 
     if (this.isCustomName) {
-      params['name'] = values.custom_name;
+      params.name = values.custom_name;
     }
 
     if (values.certificate) {
-      params['certificate'] = values.certificate;
+      params.certificate = values.certificate;
     }
 
     Object.keys(this.currentBackend.parameters).forEach((option) => {

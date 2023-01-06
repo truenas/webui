@@ -38,7 +38,7 @@ describe('UnusedDiskCardComponent', () => {
   });
 
   it('shows a title', () => {
-    expect(spectator.query('.mat-card-title')).toHaveText('Unassigned Disks');
+    expect(spectator.query('.mat-mdc-card-title')).toHaveText('Unassigned Disks');
   });
 
   it('shows a value', () => {

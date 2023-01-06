@@ -109,7 +109,7 @@ export class ChartFormComponent implements OnDestroy {
 
     this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
     this.form.addControl('release_name', new FormControl('', [Validators.required]));
-    this.form.controls['release_name'].setValidators(
+    this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
         this.translate.instant('Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.'),
@@ -236,7 +236,7 @@ export class ChartFormComponent implements OnDestroy {
 
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
-    const deleteField$: Subject<string> = new Subject();
+    const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldTobeDeleted) => {
         this.deleteFieldFromData(data, fieldTobeDeleted);

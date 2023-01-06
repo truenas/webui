@@ -111,7 +111,7 @@ export class ImportDataComponent implements OnInit {
   }
 
   private detectTypeOnVolumeSelection(): void {
-    this.form.controls['volume'].valueChanges
+    this.form.controls.volume.valueChanges
       .pipe(
         filter((volume) => Boolean(volume)),
         switchMap((volume) => {
