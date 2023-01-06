@@ -181,6 +181,8 @@ def click_on_credentials_then_directory_services_and_disable_ad(driver):
 @then('click on network and click on Global Configuration')
 def click_on_network_and_click_on_global_configuration(driver):
     """click on network and click on Global Configuration."""
+    assert wait_on_element(driver, 10, xpaths.sideMenu.network, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.network).click()
     assert wait_on_element(driver, 7, xpaths.network.title)
     assert wait_on_element(driver, 5, xpaths.button.settings)
     driver.find_element_by_xpath(xpaths.button.settings).click()
