@@ -532,6 +532,7 @@ button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
 /* Material Cards*/
 body .mat-mdc-card {
   border: solid 1px var(--contrast-lighter);
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   padding: 0 !important;
   position: relative;
 }
@@ -562,6 +563,10 @@ body .mdc-card__actions,
   border-bottom: solid 1px var(--lines);
   height: 56px;
   min-height: 48px !important;
+
+  .mat-card-title-text {
+    margin: 0;
+  }
 }
 
 .mat-mdc-card .mat-toolbar-row .actions {

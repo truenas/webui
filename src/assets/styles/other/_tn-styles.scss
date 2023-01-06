@@ -1417,3 +1417,15 @@ body .mat-mdc-menu-item {
   height: inherit !important;
   min-height: inherit;
 }
+
+.mat-list-item {
+  border-bottom: solid 1px var(--lines);
+}
+
+ix-tree-node[aria-level='2'],
+ix-nested-tree-node[aria-level='2'] {
+  ix-bootenv-node-item {
+    padding-left: 33px;
+  }
+}
+
