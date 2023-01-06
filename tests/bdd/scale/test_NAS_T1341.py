@@ -45,7 +45,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 
 
 @when('on the Dashboard, click Apps on the side menu')
-def on_the_dashboard_click_apps_on_the_side_menu():
+def on_the_dashboard_click_apps_on_the_side_menu(driver):
     """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)

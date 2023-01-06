@@ -23,7 +23,6 @@ from pytest_bdd import (
 @scenario('features/NAS-T1125.feature', 'Setting up LDAP and verify that it is setup on the NAS')
 def test_scale_ui_setting_up_ldap_and_verify_that_it_is_setup_on_the_nas():
     """Setting up LDAP and verify that it is setup on the NAS."""
-    pass
 
 
 @given('the browser is open, the TrueNAS URL and logged in')
