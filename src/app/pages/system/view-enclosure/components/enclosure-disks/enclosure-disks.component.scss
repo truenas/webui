@@ -270,10 +270,11 @@ div.vdev-disk {
 
 .view-card mat-card-content#Disks-content.Disks {
   display: block;
+  padding: 0 !important;
 }
 
 
-.view-card#Disks .mat-card-content#Disks-content {
+.view-card#Disks .mat-mdc-card-content#Disks-content {
   background: var(--contrast-darkest);
   opacity: 1;
   position: static;
@@ -505,13 +506,13 @@ div.vdev-disk {
   padding: 0 6px;
 }
 
-.mini .mat-card-content {
+.mini .mat-mdc-card-content {
   background-color: var(--contrast-color-darker);
   background-color: var(--contrast-darker);
   min-height: 600px;
 }
 
-.mini .mat-card-content #chassis {
+.mini .mat-mdc-card-content #chassis {
   padding-left: 8px;
   padding-top: 0;
 }

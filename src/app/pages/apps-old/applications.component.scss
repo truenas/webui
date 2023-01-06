@@ -236,7 +236,7 @@ mat-tab-group {
 
 ix-manage-catalogs {
   ix-entity-table {
-    #entity-table-component.mat-card {
+    #entity-table-component.mat-mdc-card {
       margin: 0;
     }
   }
@@ -252,7 +252,7 @@ ix-manage-catalogs {
 
 ix-docker-images {
   ix-entity-table {
-    #entity-table-component.mat-card {
+    #entity-table-component.mat-mdc-card {
       margin: 0;
     }
   }
