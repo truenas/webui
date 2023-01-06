@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
-import {
-  EMPTY, Observable, of,
-} from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   filter, map, share, switchMap, take,
 } from 'rxjs/operators';
-import { WebSocketSubject } from 'rxjs/webSocket';
-import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -27,28 +26,17 @@ export class WebSocketService2 {
     private wsManager: WebsocketManagerService,
   ) { }
 
-  get ws$(): WebSocketSubject<unknown> {
+  private get ws$(): Observable<unknown> {
     return this.wsManager.websocketSubject$;
-  }
-
-  get isConnected(): boolean {
-    return !this.ws$.closed;
   }
 
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
-    this.ws$.next({
+    this.wsManager.send({
       id: uuid, msg: IncomingApiMessageType.Method, method, params,
     });
     return this.ws$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebsocketMessage) => {
-        if (this.hasAuthError(data)) {
-          this.ws$.complete();
-          return EMPTY;
-        }
-        return of(data);
-      }),
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );
@@ -67,38 +55,15 @@ export class WebSocketService2 {
     );
   }
 
-  private hasAuthError(data: IncomingWebsocketMessage): boolean {
-    return 'error' in data && data.error.error === 207;
-  }
-
   subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    const endpoint = name.replace('.', '_'); // Avoid weird behavior
-    const uuid = UUID.UUID();
-    const oldObservable$ = this.eventSubscriptions.get(endpoint);
+    const oldObservable$ = this.eventSubscriptions.get(name);
     if (oldObservable$) {
       return oldObservable$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
     }
 
-    const subObs$ = this.ws$.multiplex(
-      () => {
-        return {
-          id: uuid,
-          name,
-          msg: OutgoingApiMessageType.Sub,
-        };
-      },
-      () => {
-        return {
-          id: uuid,
-          msg: OutgoingApiMessageType.UnSub,
-        };
-      },
-      (message) => {
-        return (message as ApiEvent).collection === name;
-      },
-    ).pipe(share()) as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
-    this.eventSubscriptions.set(endpoint, subObs$);
-    return subObs$;
+    const subObs$ = this.wsManager.buildSubscriber(name).pipe(share());
+    this.eventSubscriptions.set(name, subObs$);
+    return subObs$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
