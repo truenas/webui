@@ -55,8 +55,8 @@ def on_the_dashboard_click_on_apps(driver):
 @then('when the Apps page loads, open manage catalogs')
 def when_the_apps_page_loads_open_manage_catalogs(driver):
     """when the Apps page loads, open manage catalogs."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
+    assert wait_on_element(driver, 10, xpaths.applications.manageCatalogs_tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.manageCatalogs_tab).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Manage Catalogs")]')
 
 

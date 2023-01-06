@@ -8,6 +8,14 @@ class activeDirectory:
     ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
 
 
+class addCatalog:
+    title = '//h3[text()="Add Catalog"]'
+    catalogName_input = '//ix-input[@formcontrolname="label"]//input'
+    repository_input = '//ix-input[@formcontrolname="repository"]//input'
+    train_input = '//ix-chips[@formcontrolname="preferred_trains"]//input'
+    branch_input = '//ix-input[@formcontrolname="branch"]//input'
+
+
 class addDataset:
     title = '//h3[text()="Add Dataset"]'
     name_textarea = '//div[@id="name"]//textarea'
@@ -76,6 +84,7 @@ class advanced:
 class applications:
     title = '//h1[text()="Applications"]'
     availableApplications_tab = '//div[contains(text(),"Available Applications")]'
+    manageCatalogs_tab = '//div[contains(text(),"Manage Catalogs")]'
 
     def card(app_name):
         return f'//mat-card[contains(.,"{app_name}")]'
@@ -118,6 +127,7 @@ class button:
     unsetPool = '//button[contains(.,"Unset Pool")]'
     unset = '//button[contains(.,"Unset")]'
     chossePool = '//button[contains(.,"Choose Pool")]'
+    addCatalog = '//button[contains(.,"Add Catalog")]'
 
 
 class certificates:

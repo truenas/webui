@@ -43,9 +43,9 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click on apps')
-def on_the_dashboard_click_on_apps(driver):
-    """on the Dashboard, click on apps."""
+@when('on the Dashboard, click Apps on the side menu')
+def on_the_dashboard_click_apps_on_the_side_menu(driver):
+    """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
@@ -53,55 +53,47 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element_disappear(driver, 30, '//mat-spinner')
 
 
-@then('when the Apps page loads, open manage catalogs')
-def when_the_apps_page_loads_open_manage_catalogs(driver):
-    """when the Apps page loads, open manage catalogs."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
+@then('on Application page, click on the Manage Catalogs tab')
+def on_application_page_click_on_the_manage_catalogs_tab(driver):
+    """on Application page, click on the Manage Catalogs tab."""
+    assert wait_on_element(driver, 10, xpaths.applications.manageCatalogs_tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.manageCatalogs_tab).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Manage Catalogs") and @tabindex="0"]')
 
 
-@then('click add catalog and confirm warning')
-def click_add_catalog(driver):
-    """click add catalog."""
-    assert wait_on_element(driver, 10, '//div[text()="OFFICIAL"]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"Add Catalog")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Add Catalog")]').click()
-    assert wait_on_element(driver, 7, '//h1[text()="Warning"]')
-    assert wait_on_element(driver, 10, '//button[contains(.,"CONTINUE")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"CONTINUE")]').click()
+@then('click the Add Catalog button and confirm the warning')
+def click_add_catalog_and_confirm_the_warning(driver):
+    """click Add Catalog and confirm the warning."""
+    assert wait_on_element(driver, 10, '//div[text()=" OFFICIAL "]')
+    assert wait_on_element(driver, 10, xpaths.button.addCatalog, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.addCatalog).click()
+    assert wait_on_element(driver, 7, xpaths.popup.warning)
+    assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
-@then('fill out the form')
-def fill_out_the_form(driver):
-    """fill out the form."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Add Catalog")]')
-    assert wait_on_element(driver, 7, '//div[contains(., "Catalog Name")]/following-sibling::div//input', 'inputable')
-    driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., "Catalog Name")]/following-sibling::div//input').send_keys('customchart')
-    assert wait_on_element(driver, 7, '//div[contains(., "Repository")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., "Repository")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., "Repository")]/following-sibling::div//input').send_keys('https://github.com/ericbsd/charts-1')
-    assert wait_on_element(driver, 7, '//div[contains(., "Preferred Trains")]/following-sibling::div//input')
+@then('on the Add Catalog box input the name, the repository, the train and branch')
+def on_the_add_catalog_box_input_the_name_the_repository_the_train_and_branch(driver):
+    """on the Add Catalog box input the name, the repository, the train and branch."""
+    assert wait_on_element(driver, 7, xpaths.addCatalog.title)
+    assert wait_on_element(driver, 7, xpaths.addCatalog.catalogName_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.addCatalog.catalogName_input).clear()
+    driver.find_element_by_xpath(xpaths.addCatalog.catalogName_input).send_keys('customchart')
+    assert wait_on_element(driver, 7, xpaths.addCatalog.repository_input)
+    driver.find_element_by_xpath(xpaths.addCatalog.repository_input).clear()
+    driver.find_element_by_xpath(xpaths.addCatalog.repository_input).send_keys('https://github.com/ericbsd/charts-1')
+    assert wait_on_element(driver, 7, xpaths.addCatalog.train_input)
     assert wait_on_element(driver, 10, '//mat-chip[contains(text(),"stable")]//mat-icon[text()="cancel"]', 'clickable')
     driver.find_element_by_xpath('//mat-chip[contains(text(),"stable")]//mat-icon[text()="cancel"]').click()
-    driver.find_element_by_xpath('//div[contains(., "Preferred Trains")]/following-sibling::div//input').send_keys('charts')
-    assert wait_on_element(driver, 7, '//div[contains(., "Branch")]/following-sibling::div//input')
-    driver.find_element_by_xpath('//div[contains(., "Branch")]/following-sibling::div//input').clear()
-    driver.find_element_by_xpath('//div[contains(., "Branch")]/following-sibling::div//input').send_keys('master')
-    assert wait_on_element(driver, 10, '//span[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Save")]').click()
+    driver.find_element_by_xpath(xpaths.addCatalog.train_input).send_keys('charts')
+    assert wait_on_element(driver, 7, xpaths.addCatalog.branch_input)
+    driver.find_element_by_xpath(xpaths.addCatalog.branch_input).clear()
+    driver.find_element_by_xpath(xpaths.addCatalog.branch_input).send_keys('master')
+    assert wait_on_element(driver, 10, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
-@then('close confirmation dialog')
-def close_confirmation_dialog(driver):
-    """close confirmation dialog."""
-    assert wait_on_element(driver, 30, '//span[contains(.,"Success")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-
-
-@then('confirm installation is successful')
+@then('confirm that the new catalog is in the catalog list')
 def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
-    assert wait_on_element(driver, 120, '//div[text()="CUSTOMCHART"]')
+    assert wait_on_element(driver, 120, '//div[text()=" CUSTOMCHART "]')
