@@ -97,8 +97,8 @@ export class AuthorizedAccessFormComponent {
 
   onSubmit(): void {
     const values = this.form.value;
-    delete values['secret_confirm'];
-    delete values['peersecret_confirm'];
+    delete values.secret_confirm;
+    delete values.peersecret_confirm;
 
     this.isLoading = true;
     let request$: Observable<unknown>;

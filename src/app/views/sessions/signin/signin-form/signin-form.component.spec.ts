@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { AutofillMonitor } from '@angular/cdk/text-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -32,6 +33,9 @@ describe('SigninFormComponent', () => {
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
         handleSuccessfulLogin: jest.fn(),
+      }),
+      mockProvider(AutofillMonitor, {
+        monitor: jest.fn(() => of({ isAutofilled: true })),
       }),
     ],
   });
@@ -76,5 +80,12 @@ describe('SigninFormComponent', () => {
 
     expect(spectator.inject(WebSocketService).login).toHaveBeenCalledWith('root', '12345678', '212484');
     expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
+  });
+
+  it('does not disabled Log In button when form has been autofilled', async () => {
+    expect(spectator.inject(AutofillMonitor).monitor).toHaveBeenCalled();
+
+    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+    expect(await loginButton.isDisabled()).toBe(false);
   });
 });

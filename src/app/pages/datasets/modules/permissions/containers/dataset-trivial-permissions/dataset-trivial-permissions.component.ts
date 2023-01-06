@@ -167,16 +167,16 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       },
     } as DatasetPermissionsUpdate[1];
     if (values.applyUser) {
-      update['user'] = values.user;
+      update.user = values.user;
     }
 
     if (values.applyGroup) {
-      update['group'] = values.group;
+      update.group = values.group;
     }
 
     if (this.oldDatasetMode !== values.mode) {
-      update['mode'] = values.mode;
-      update.options['stripacl'] = true;
+      update.mode = values.mode;
+      update.options.stripacl = true;
     }
 
     return [this.datasetId, update];

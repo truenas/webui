@@ -224,7 +224,7 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
 
     const existingTaskWithoutModule = { ...existingTask };
-    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule.remotemodule;
 
     expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
@@ -258,7 +258,7 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
 
     const existingTaskWithoutModule = { ...existingTask };
-    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule.remotemodule;
 
     expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('rsynctask.update', [
       1,

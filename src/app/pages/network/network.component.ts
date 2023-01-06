@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -54,7 +55,7 @@ import { IpmiFormComponent } from './components/forms/ipmi-form.component';
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
-export class NetworkComponent implements OnInit, OnDestroy {
+export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   protected summaryCall = 'network.general.summary' as const;
   formEvent$: Subject<CoreEvent>;
 
@@ -249,7 +250,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
 
     this.openInterfaceForEditFromRoute();
+  }
 
+  ngAfterViewInit(): void {
     this.ws2.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
     });
@@ -337,8 +340,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (systemService) {
               this.affectedServices.push(systemService);
             }
-            if (item['service']) {
-              this.affectedServices.push(item['service']);
+            if (item.service) {
+              this.affectedServices.push(item.service);
             }
             item.ips.forEach((ip) => {
               ips.push(ip);
@@ -527,7 +530,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   interfaceDataSourceHelper(nic: NetworkInterface[]): NetworkInterfaceUi[] {
     return nic.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      transformed['link_state'] = networkInterface['state']['link_state'];
+      transformed.link_state = networkInterface.state.link_state;
       const addresses = new Set([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
@@ -536,7 +539,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         }
       });
 
-      if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
+      if (transformed.ipv4_dhcp || transformed.ipv6_auto) {
         transformed.state.aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(`${alias.address}/${alias.netmask}`);
@@ -550,15 +553,15 @@ export class NetworkComponent implements OnInit, OnDestroy {
           }
         });
       }
-      transformed['addresses'] = Array.from(addresses);
+      transformed.addresses = Array.from(addresses);
       if (networkInterface.type === NetworkInterfaceType.Physical) {
-        transformed.active_media_type = networkInterface['state']['active_media_type'];
-        transformed.active_media_subtype = networkInterface['state']['active_media_subtype'];
+        transformed.active_media_type = networkInterface.state.active_media_type;
+        transformed.active_media_subtype = networkInterface.state.active_media_subtype;
       } else if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
-        transformed.lagg_ports = networkInterface['lag_ports'];
-        transformed.lagg_protocol = networkInterface['lag_protocol'];
+        transformed.lagg_ports = networkInterface.lag_ports;
+        transformed.lagg_protocol = networkInterface.lag_protocol;
       }
-      transformed.mac_address = networkInterface['state']['link_address'];
+      transformed.mac_address = networkInterface.state.link_address;
 
       return transformed;
     });

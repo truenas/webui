@@ -116,6 +116,6 @@ export class DashboardPoolComponent {
   }
 
   counter(i: number): number[] {
-    return new Array(i);
+    return new Array<number>(i);
   }
 }

@@ -38,8 +38,8 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxTreeFlattener } from 'app/modules/ix-tree/ix-tree-flattener';
-import { IxTreeDataSource } from 'app/modules/ix-tree/tree-datasource';
+import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
+import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
@@ -102,13 +102,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.getLevel,
     this.isExpandable,
   );
-  treeFlattener = new IxTreeFlattener<DatasetDetails, DatasetDetails>(
+  treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
     () => ([]),
   );
-  dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener);
+  dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
@@ -149,7 +149,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private setupTree(): void {
     this.datasetStore.datasets$.pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
-        this.sortDatasetsByName(datasets);
         this.createDataSource(datasets);
         this.expandDatasetBranch();
         this.cdr.markForCheck();
@@ -167,29 +166,19 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  private sortDatasetsByName(datasets: DatasetDetails[]): void {
-    datasets.forEach((dataset) => {
-      if (dataset.children.length > 0) {
-        dataset.children.sort((a, b) => {
-          const na = a.name.toLowerCase();
-          const nb = b.name.toLowerCase();
-
-          if (na < nb) return -1;
-          if (na > nb) return 1;
-
-          return 0;
-        });
-        this.sortDatasetsByName(dataset.children);
-      }
-    });
-  }
-
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new IxTreeDataSource(this.treeControl, this.treeFlattener, datasets);
+    this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
     this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
       datasetsToFilter,
       (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
     );
+    this.dataSource.sortComparer = (a, b) => {
+      return new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'accent',
+      }).compare(a.name, b.name);
+    };
+    this.dataSource.data = datasets;
   }
 
   private expandDatasetBranch(): void {
@@ -207,11 +196,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.datasetId),
+        map((params) => params.datasetId as string),
         filter(Boolean),
         untilDestroyed(this),
       )
-      .subscribe((datasetId: string) => {
+      .subscribe((datasetId) => {
         this.datasetStore.selectDatasetById(datasetId);
       });
   }

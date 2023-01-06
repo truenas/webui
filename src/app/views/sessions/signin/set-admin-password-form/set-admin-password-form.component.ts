@@ -94,9 +94,9 @@ export class SetAdminPasswordFormComponent implements OnInit {
     this.ws.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
       this.hasInstanceId = env === SystemEnvironment.Ec2;
       if (this.hasInstanceId) {
-        this.form.controls['instanceId'].enable();
+        this.form.controls.instanceId.enable();
       } else {
-        this.form.controls['instanceId'].disable();
+        this.form.controls.instanceId.disable();
       }
 
       this.cdr.markForCheck();

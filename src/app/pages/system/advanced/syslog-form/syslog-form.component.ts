@@ -73,7 +73,7 @@ export class SyslogFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.form.controls['syslog_tls_certificate'].enabledWhile(this.isTlsTransport$),
+      this.form.controls.syslog_tls_certificate.enabledWhile(this.isTlsTransport$),
     );
 
     this.loadForm();

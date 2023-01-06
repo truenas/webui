@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl, UntypedFormArray, UntypedFormGroup, Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -952,7 +954,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   setDisable(field: string, disabled: boolean, isHidden: boolean, stepIndex: number): void {
     const control: FieldConfig = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
-    control['isHidden'] = isHidden;
+    control.isHidden = isHidden;
     control.disabled = disabled;
     if (disabled) {
       this.entityWizard.formArray.get([stepIndex]).get(field).disable();
@@ -968,15 +970,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     // 'task.periodic_snapshot_tasks' should be type of number[] currently PeriodicSnapshotTask[]
     // 'task.ssh_credentials' should be type of number[], currently SshCredentials[]
     if (task.direction === Direction.Push) {
-      task['source_datasets_from'] = DatasetSource.Local;
-      task['target_dataset_from'] = task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local;
+      task.source_datasets_from = DatasetSource.Local;
+      task.target_dataset_from = task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local;
       if (task.ssh_credentials) {
-        task['ssh_credentials_target'] = task.ssh_credentials.id;
+        task.ssh_credentials_target = task.ssh_credentials.id;
       }
     } else {
-      task['source_datasets_from'] = DatasetSource.Remote;
-      task['target_dataset_from'] = DatasetSource.Local;
-      task['ssh_credentials_source'] = task.ssh_credentials.id;
+      task.source_datasets_from = DatasetSource.Remote;
+      task.target_dataset_from = DatasetSource.Local;
+      task.ssh_credentials_source = task.ssh_credentials.id;
     }
 
     const controls = [
@@ -997,18 +999,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
       const taskData = task.periodic_snapshot_tasks[0] || task;
-      task['schedule_method'] = ScheduleMethod.Cron;
-      task['schedule_picker'] = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
+      task.schedule_method = ScheduleMethod.Cron;
+      task.schedule_picker = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
 
-      if (taskData['lifetime_value'] === null && taskData['lifetime_unit'] === null) {
-        task['retention_policy'] = RetentionPolicy.None;
+      if (taskData.lifetime_value === null && taskData.lifetime_unit === null) {
+        task.retention_policy = RetentionPolicy.None;
       } else {
-        task['lifetime_value'] = taskData['lifetime_value'];
-        task['lifetime_unit'] = taskData['lifetime_unit'];
-        task['retention_policy'] = task.schedule !== null ? RetentionPolicy.Custom : RetentionPolicy.Source;
+        task.lifetime_value = taskData.lifetime_value;
+        task.lifetime_unit = taskData.lifetime_unit;
+        task.retention_policy = task.schedule !== null ? RetentionPolicy.Custom : RetentionPolicy.Source;
       }
     } else {
-      task['schedule_method'] = ScheduleMethod.Once;
+      task.schedule_method = ScheduleMethod.Once;
     }
     // periodic_snapshot_tasks
     for (const i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
@@ -1058,7 +1060,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async customSubmit(value: any): Promise<void> {
     if (typeof (value.source_datasets) === 'string') {
-      value.source_datasets = _.filter(value.source_datasets.split(',').map(_.trim));
+      value.source_datasets = _.filter((value.source_datasets as string).split(',').map(_.trim));
     }
     this.loader.open();
     let toStop = false;
@@ -1073,8 +1075,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       const item = createdItem as 'periodic_snapshot_tasks' | 'snapshot' | 'replication';
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
-        if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local))
-                && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {
+        if (!(item === 'periodic_snapshot_tasks' && (value.schedule_method !== ScheduleMethod.Cron || value.source_datasets_from !== DatasetSource.Local))
+                && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value.source_datasets_from !== DatasetSource.Local))) {
           await this.doCreate(value, item).then(
             (res) => {
               if (item === 'snapshot') {
@@ -1104,12 +1106,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }
     }
 
-    if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication']) {
-      await this.ws2.call('replication.run', [createdItems['replication']]).toPromise().then(
+    if (value.schedule_method === ScheduleMethod.Once && createdItems.replication) {
+      await this.ws2.call('replication.run', [createdItems.replication]).toPromise().then(
         () => {
           this.dialogService.info(
             this.translate.instant('Task started'),
-            this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
+            this.translate.instant('Replication <i>{name}</i> has started.', { name: value.name }),
             true,
           );
         },
@@ -1178,7 +1180,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   genTaskName(): void {
-    const source = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
+    const source: string[] = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
     const target = this.entityWizard.formArray.get([0]).get('target_dataset').value;
     let suggestName = '';
     if (source.length > 3) {
@@ -1197,9 +1199,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value) {
       transport = TransportMode.Local;
     }
-    const namingSchemaFormControl = this.entityWizard.formArray.get([0]).get('naming_schema');
+    const namingSchemaFormControl: AbstractControl<string> = this.entityWizard.formArray.get([0]).get('naming_schema');
     const namingSchema = namingSchemaFormControl.enabled && namingSchemaFormControl.value
-      ? namingSchemaFormControl.value.split(' ') : [this.defaultNamingSchema];
+      ? namingSchemaFormControl.value.split(' ')
+      : [this.defaultNamingSchema];
 
     const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
 
@@ -1252,13 +1255,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }): Promise<PeriodicSnapshotTask[]> {
     return lastValueFrom(
       this.ws2.call('pool.snapshottask.query', [[
-        ['dataset', '=', payload['dataset']],
-        ['schedule.minute', '=', payload['schedule']['minute']],
-        ['schedule.hour', '=', payload['schedule']['hour']],
-        ['schedule.dom', '=', payload['schedule']['dom']],
-        ['schedule.month', '=', payload['schedule']['month']],
-        ['schedule.dow', '=', payload['schedule']['dow']],
-        ['naming_schema', '=', payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema],
+        ['dataset', '=', payload.dataset],
+        ['schedule.minute', '=', payload.schedule.minute],
+        ['schedule.hour', '=', payload.schedule.hour],
+        ['schedule.dom', '=', payload.schedule.dom],
+        ['schedule.month', '=', payload.schedule.month],
+        ['schedule.dow', '=', payload.schedule.dow],
+        ['naming_schema', '=', payload.naming_schema ? payload.naming_schema : this.defaultNamingSchema],
       ]]),
     );
   }
@@ -1307,14 +1310,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     let payload: PeriodicSnapshotTaskCreate;
     this.existSnapshotTasks = [];
     const snapshotPromises: Promise<PeriodicSnapshotTask>[] = [];
-    for (const dataset of data['source_datasets']) {
+    for (const dataset of data.source_datasets) {
       payload = {
         dataset,
-        recursive: data['recursive'],
-        schedule: this.parsePickerTime(data['schedule_picker']),
+        recursive: data.recursive,
+        schedule: this.parsePickerTime(data.schedule_picker),
         lifetime_value: 2,
         lifetime_unit: LifetimeUnit.Week,
-        naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
+        naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
         enabled: true,
       };
       await this.isSnapshotTaskExist(payload).then((tasks) => {
@@ -1332,11 +1335,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   private createSnapshots(data: ReplicationWizardData): Promise<ZfsSnapshot[]> {
     const snapshotPromises = [];
-    for (const dataset of data['source_datasets']) {
+    for (const dataset of data.source_datasets) {
       const payload = {
         dataset,
-        naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
-        recursive: data['recursive'] ? data['recursive'] : false,
+        naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
+        recursive: data.recursive ? data.recursive : false,
       };
       snapshotPromises.push(
         lastValueFrom(this.ws2.call('zfs.snapshot.create', [payload])),
@@ -1347,68 +1350,70 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   private createReplicationTask(data: ReplicationWizardData): Promise<ReplicationTask> {
     let payload = {
-      name: data['name'],
-      direction: data['source_datasets_from'] === DatasetSource.Remote ? Direction.Pull : Direction.Push,
-      source_datasets: data['source_datasets'],
-      target_dataset: data['target_dataset'],
-      ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
-      transport: data['transport'] ? data['transport'] : TransportMode.Local,
-      retention_policy: data['retention_policy'],
-      recursive: data['recursive'],
-      encryption: data['encryption'],
+      name: data.name,
+      direction: data.source_datasets_from === DatasetSource.Remote ? Direction.Pull : Direction.Push,
+      source_datasets: data.source_datasets,
+      target_dataset: data.target_dataset,
+      ssh_credentials: data.ssh_credentials_source || data.ssh_credentials_target,
+      transport: data.transport ? data.transport : TransportMode.Local,
+      retention_policy: data.retention_policy,
+      recursive: data.recursive,
+      encryption: data.encryption,
     } as ReplicationCreate;
     if (payload.encryption) {
-      payload['encryption_key_format'] = data['encryption_key_format'];
-      if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
-        payload['encryption_key'] = data['encryption_key_passphrase'];
+      payload.encryption_key_format = data.encryption_key_format;
+      if (data.encryption_key_format === EncryptionKeyFormat.Passphrase) {
+        payload.encryption_key = data.encryption_key_passphrase;
       } else {
-        payload['encryption_key'] = data['encryption_key_generate']
+        payload.encryption_key = data.encryption_key_generate
           ? this.replicationService.generateEncryptionHexKey(64)
-          : data['encryption_key_hex'];
+          : data.encryption_key_hex;
       }
 
-      payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? truenasDbKeyLocation : data['encryption_key_location'];
+      payload.encryption_key_location = data.encryption_key_location_truenasdb
+        ? truenasDbKeyLocation
+        : data.encryption_key_location;
     }
 
     // schedule option
-    if (data['schedule_method'] === ScheduleMethod.Cron) {
-      payload['auto'] = true;
-      if (payload['direction'] === Direction.Pull) {
-        payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-        payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
+    if (data.schedule_method === ScheduleMethod.Cron) {
+      payload.auto = true;
+      if (payload.direction === Direction.Pull) {
+        payload.schedule = this.parsePickerTime(data.schedule_picker);
+        payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
       } else {
-        payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
+        payload.periodic_snapshot_tasks = data.periodic_snapshot_tasks;
       }
     } else {
-      payload['auto'] = false;
-      if (payload['direction'] === Direction.Pull) {
-        payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
-      } else if (data['schema_or_regex'] === SnapshotNamingOption.NamingSchema) {
-        payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
+      payload.auto = false;
+      if (payload.direction === Direction.Pull) {
+        payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
+      } else if (data.schema_or_regex === SnapshotNamingOption.NamingSchema) {
+        payload.also_include_naming_schema = data.naming_schema ? [data.naming_schema] : [this.defaultNamingSchema];
       } else {
-        payload.name_regex = data['name_regex'];
+        payload.name_regex = data.name_regex;
       }
     }
 
-    if (data['retention_policy'] === RetentionPolicy.Custom) {
-      payload['lifetime_value'] = data['lifetime_value'];
-      payload['lifetime_unit'] = data['lifetime_unit'];
+    if (data.retention_policy === RetentionPolicy.Custom) {
+      payload.lifetime_value = data.lifetime_value;
+      payload.lifetime_unit = data.lifetime_unit;
     }
 
-    if (payload['transport'] === TransportMode.Netcat) {
-      payload['netcat_active_side'] = NetcatMode.Remote; // default?
+    if (payload.transport === TransportMode.Netcat) {
+      payload.netcat_active_side = NetcatMode.Remote; // default?
     }
 
-    payload['readonly'] = data['schedule_method'] === ScheduleMethod.Cron || data['readonly']
+    payload.readonly = data.schedule_method === ScheduleMethod.Cron || data.readonly
       ? ReadOnlyMode.Set
       : ReadOnlyMode.Ignore;
 
     return lastValueFrom(this.ws2.call('replication.target_unmatched_snapshots', [
-      payload['direction'],
-      payload['source_datasets'],
-      payload['target_dataset'],
-      payload['transport'],
-      payload['ssh_credentials'],
+      payload.direction,
+      payload.source_datasets,
+      payload.target_dataset,
+      payload.transport,
+      payload.ssh_credentials,
     ])).then(
       (res) => {
         const hasBadSnapshots = Object.values(res).some((snapshots) => snapshots.length > 0);
@@ -1418,7 +1423,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             message: helptext.clearSnapshotDialog_content,
           })).then(
             (dialogResult) => {
-              payload['allow_from_scratch'] = dialogResult;
+              payload.allow_from_scratch = dialogResult;
               return lastValueFrom(this.ws2.call('replication.create', [payload]));
             },
           );
