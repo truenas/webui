@@ -115,8 +115,8 @@ def confirm_installation_is_successful_and_the_app_is_active(driver):
             if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
                 assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
         else:
-            assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
-            driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
+            assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
+            driver.find_element_by_xpath(xpaths.button.close).click()
             assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
             assert wait_on_element(driver, 500, '//mat-card[contains(.,"ipfs-test")]//span[@class="status active"]')
     else:

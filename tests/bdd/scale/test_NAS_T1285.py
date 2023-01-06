@@ -108,6 +108,6 @@ def open_the_manage_docker_images_page(driver):
 @then('open the Manage Catalogs Page')
 def open_the_manage_catalogs_page(driver):
     """open the Manage Catalogs Page."""
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Catalogs")]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(text(),"Manage Catalogs")]').click()
+    assert wait_on_element(driver, 10, xpaths.applications.manageCatalogs_tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.manageCatalogs_tab).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"https://github.com/truenas/charts.git")]')
