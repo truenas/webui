@@ -29,7 +29,7 @@ def test_apps_page__validate_adding_truecommand_as_a_custom_app():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['App_readd_pool'], scope='session')
+    #depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -46,9 +46,9 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click on apps')
-def on_the_dashboard_click_on_apps(driver):
-    """on the Dashboard, click on apps."""
+@when('on the Dashboard, click Apps on the side menu')
+def on_the_dashboard_click_apps_on_the_side_menu(driver):
+    """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
@@ -56,74 +56,36 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
-@then('when the Apps page loads, open available applications')
-def when_the_apps_page_loads_open_available_applications(driver):
-    """when the Apps page loads, open available applications."""
-    assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
-    driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-
-
-@then('click Launch Docker Image')
-def click_launch_docker_image(driver):
-    """click Launch Docker Image."""
-    # Wait for Available Applications UI to load
-    assert wait_on_element(driver, 120, '//h3[text()="plex"]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"plex") and @class="content"]//button', 'clickable')
-    # Sleep to make sure that the drop does not disappear
-    time.sleep(1)
-
+@then('on the Application page click the Launch Docker Image button')
+def on_the_application_page_click_the_launch_docker_image_button(driver):
+    """on the Application page click the Launch Docker Image button."""
+    assert wait_on_element(driver, 10, xpaths.applications.title)
     assert wait_on_element(driver, 10, '//span[contains(.,"Launch Docker Image")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Launch Docker Image")]').click()
     if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
         assert wait_on_element_disappear(driver, 120, xpaths.popup.pleaseWait)
 
 
-@then('set Application Name')
-def set_application_name(driver):
-    """set Application Names."""
+@then('on the Launch Docker Image box input an Application Name')
+def on_the_launch_docker_image_box_input_an_application_name(driver):
+    """on the Launch Docker Image box input an Application Name."""
     assert wait_on_element(driver, 30, '//h3[contains(.,"Launch Docker Image")]')
     assert wait_on_element(driver, 7, xpaths.appSetup.appName_input)
     driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
     driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('truecommand-test')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Application Name"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Application Name"]').click()
 
 
-@then('set Container Images')
-def set_container_images(driver):
-    """set Container Images."""
+@then('under the Container Images input the Image repository And Image Tag')
+def under_the_container_images_input_the_image_repository_and_image_tag(driver):
+    """under the Container Images input the Image repository And Image Tag."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Image repository"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Image repository"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Image repository"]').send_keys('ixsystems/truecommand')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Images"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Images"]').click()
 
 
-@then('set Container Entrypoint')
-def set_container_entrypoint(driver):
-    """set Container Entrypoint."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Entrypoint"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Entrypoint"]').click()
-
-
-@then('set Container Environment Variables')
-def set_container_environment_variables(driver):
-    """set Container Environment Variables."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Container Environment Variables"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Container Environment Variables"]').click()
-
-
-@then('set Networking')
-def set_networking(driver):
-    """set Networking."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Networking"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Networking"]').click()
-
-
-@then('set Port Forwarding List')
-def set_port_forwarding_list(driver):
-    """set Port Forwarding List."""
+@then('under Port Forwarding click Add input 80 in Container Port and 9004 in Node Port')
+def under_port_forwarding_click_add_input_80_in_container_port_and_9004_in_node_port(driver):
+    """under Port Forwarding click Add input 80 in Container Port and 9004 in Node Port."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__add-box_portForwardingList"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__add-box_portForwardingList"]').click()
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Container Port"]')
@@ -133,6 +95,10 @@ def set_port_forwarding_list(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Node Port"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Node Port"]').send_keys('9004')
 
+
+@then('click Add again input 443 in Container Port and 9005 in Node Port')
+def click_add_again_input_443_in_container_port_and_9005_in_node_port(driver):
+    """click Add again input 443 in Container Port and 9005 in Node Port."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__add-box_portForwardingList"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__add-box_portForwardingList"]').click()
     assert wait_on_element(driver, 7, '(//input[@ix-auto="input__Container Port"])[2]')
@@ -142,55 +108,10 @@ def set_port_forwarding_list(driver):
     driver.find_element_by_xpath('(//input[@ix-auto="input__Node Port"])[2]').clear()
     driver.find_element_by_xpath('(//input[@ix-auto="input__Node Port"])[2]').send_keys('9005')
 
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Port Forwarding"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Port Forwarding"]').click()
 
-
-@then('set Storage')
-def set_storage(driver):
-    """set Storage."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Storage"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Storage"]').click()
-
-
-@then('set Workload Details')
-def set_workload_details(driver):
-    """set Workload Details."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Workload Details"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Workload Details"]').click()
-
-
-@then('set Scaling/Upgrade Policy')
-def set_scalingupgrade_policy(driver):
-    """set Scaling/Upgrade Policy."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Scaling/Upgrade Policy"]').click()
-
-
-@then('set Resource Reservation')
-def set_resource_reservation(driver):
-    """set Resource Reservation."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Reservation"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Reservation"]').click()
-
-
-@then('set Resource Limits')
-def set_resource_limits(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Resource Limits"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Resource Limits"]').click()
-
-
-@then('set Portal Configuration')
-def set_portal_configuration(driver):
-    """set Resource Limits."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Portal Configuration"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Portal Configuration"]').click()
-
-
-@then('Confirm Options')
-def confirm_options(driver):
-    """Confirm Options."""
+@then('click save, wait for the installation to finish')
+def click_save_wait_for_the_installation_to_finish(driver):
+    """click save, wait for the installation to finish."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -198,9 +119,9 @@ def confirm_options(driver):
     assert wait_on_element_disappear(driver, 120, xpaths.popup.installing)
 
 
-@then('confirm installation is successful')
-def confirm_installation_is_successful(driver):
-    """confirm installation is successful."""
+@then('confirm installation is successful and the Docker image is active')
+def confirm_installation_is_successful_and_the_app_is_active(driver):
+    """confirm installation is successful and the App is active."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
