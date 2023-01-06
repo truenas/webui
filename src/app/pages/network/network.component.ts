@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -55,7 +56,7 @@ import { IpmiFormComponent } from './components/forms/ipmi-form.component';
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
-export class NetworkComponent implements OnInit, OnDestroy {
+export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   protected summaryCall = 'network.general.summary' as const;
   formEvent$: Subject<CoreEvent>;
 
@@ -250,7 +251,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
 
     this.openInterfaceForEditFromRoute();
+  }
 
+  ngAfterViewInit(): void {
     this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
     });
