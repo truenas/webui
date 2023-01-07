@@ -11,6 +11,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 /**
@@ -71,8 +72,8 @@ export function mockWebsocket2(
   return [
     {
       provide: WebSocketService2,
-      useFactory: (router: Router, window: Window) => {
-        const mockWebsocketService = new MockWebsocketService2(router, window);
+      useFactory: (router: Router, wsManager: WebsocketManagerService) => {
+        const mockWebsocketService = new MockWebsocketService2(router, wsManager);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -87,7 +88,7 @@ export function mockWebsocket2(
         });
         return mockWebsocketService;
       },
-      deps: [Router, WINDOW],
+      deps: [Router, WebsocketManagerService],
     },
     {
       provide: MockWebsocketService2,

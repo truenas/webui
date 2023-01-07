@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
 import { ValuesType } from 'utility-types';
-import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable()
@@ -17,9 +17,9 @@ export class MockWebsocketService2 extends WebSocketService2 {
 
   constructor(
     protected router: Router,
-    @Inject(WINDOW) protected window: Window,
+    protected wsManager: WebsocketManagerService,
   ) {
-    super(router, window);
+    super(router, wsManager);
 
     this.call = jest.fn();
     this.job = jest.fn();

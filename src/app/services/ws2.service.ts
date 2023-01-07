@@ -20,10 +20,10 @@ import { WebsocketManagerService } from 'app/services/ws-manager.service';
 })
 export class WebSocketService2 {
   @LocalStorage() token2: string;
-  private readonly eventSubscriptions: Map<string, Observable<unknown>> = new Map();
+  private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
-    private wsManager: WebsocketManagerService,
+    protected wsManager: WebsocketManagerService,
   ) { }
 
   private get ws$(): Observable<unknown> {
