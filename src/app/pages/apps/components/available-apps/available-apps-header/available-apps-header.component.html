@@ -1,0 +1,31 @@
+<ix-input
+  prefixIcon="search"
+  [formControl]="searchControl"
+  [placeholder]="'Search' | translate"
+></ix-input>
+
+<div class="header-numbers">
+  <div class="header-number">
+    <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
+    <h2>584</h2>
+    <a class="header-link">
+      {{ 'Refresh Charts' | translate }}
+    </a>
+  </div>
+
+  <div class="header-number">
+    <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
+    <h2>24</h2>
+    <a class="header-link" [routerLink]="['/apps/installed']">
+      {{ 'Manage Installed Apps' | translate }}
+    </a>
+  </div>
+
+  <div class="header-number">
+    <div class="header-number-title">{{ 'Installed Catalogs' | translate }}</div>
+    <h2>2</h2>
+    <a class="header-link" [routerLink]="['/apps/catalogs']">
+      {{ 'Manage Catalogs' | translate }}
+    </a>
+  </div>
+</div>
