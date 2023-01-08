@@ -18,9 +18,8 @@
 
   .content-container {
     flex-grow: 1;
-    margin: 0 2.5px;
-    margin-bottom: 20px;
-    margin-top: 10px;
+    margin: 5px 3px;
+    padding-bottom: 5px;  
   }
 }
 
@@ -41,5 +40,10 @@
 
   ix-icon {
     margin-right: 5px;
+    width: 16px;
+  }
+
+  strong {
+    font-size: 14px;
   }
 }

@@ -1,8 +1,16 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
 .container {
   border: 1px solid var(--alt-bg2);
   border-radius: 5px;
-  height: 78px;
-  min-width: 60px;
+  font-size: 8px;
+  height: 63px;
+  min-width: 42px;
 }
 
 .icon-container {
@@ -16,14 +24,7 @@
 .size-container {
   align-items: center;
   background: var(--alt-bg1);
+  border-radius: 5px;
   display: flex;
   justify-content: center;
 }
-
-// .identifier-container {
-//   padding: 0 2px;
-// }
-
-// .size-container {
-//   margin: 0 2px;
-// }
