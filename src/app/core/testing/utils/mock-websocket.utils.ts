@@ -1,4 +1,6 @@
-import { ExistingProvider, FactoryProvider, forwardRef } from '@angular/core';
+import {
+  ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
@@ -68,7 +70,7 @@ export function mockWebsocket(
 
 export function mockWebsocket2(
   mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
-): (FactoryProvider | ExistingProvider)[] {
+): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
       provide: WebSocketService2,
@@ -93,6 +95,10 @@ export function mockWebsocket2(
     {
       provide: MockWebsocketService2,
       useExisting: forwardRef(() => WebSocketService2),
+    },
+    {
+      provide: WebsocketManagerService,
+      useValue: ({ send: jest.fn() } as unknown as WebsocketManagerService),
     },
   ];
 }

@@ -39,7 +39,7 @@ export class WebsocketManagerService {
 
   constructor(
     @Inject(WINDOW) protected window: Window,
-    private router: Router,
+    protected router: Router,
   ) {
     this.initializeWebsocket();
   }
