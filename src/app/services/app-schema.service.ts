@@ -216,6 +216,7 @@ export class AppSchemaService {
         type: DynamicFormSchemaType.Dict,
         title: chartSchemaNode.label,
         attrs,
+        tooltip: chartSchemaNode.description,
         editable: schema.editable,
       };
       if (!isNew && (!!schema.immutable || isParentImmutable)) {
