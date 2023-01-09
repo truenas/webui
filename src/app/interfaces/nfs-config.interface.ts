@@ -1,3 +1,5 @@
+import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
+
 export interface NfsConfig {
   allow_nonroot: boolean;
   bindip: string[];
@@ -10,7 +12,7 @@ export interface NfsConfig {
   statd_lockd_log: boolean;
   udp: boolean;
   userd_manage_gids: boolean;
-  v4: boolean;
+  protocols: NfsProtocol[];
   v4_domain: string;
   v4_krb: boolean;
   v4_krb_enabled: boolean;

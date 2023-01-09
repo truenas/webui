@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -141,11 +141,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       });
 
     this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
-      if (message['action'] === 'open' && message['component'] === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, message['row']);
+      if (message.action === 'open' && message.component === 'replicationForm') {
+        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
       }
-      if (message['action'] === 'open' && message['component'] === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, message['row']);
+      if (message.action === 'open' && message.component === 'replicationWizard') {
+        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
       }
     });
   }

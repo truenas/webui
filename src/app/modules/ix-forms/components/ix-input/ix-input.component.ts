@@ -34,7 +34,7 @@ export class IxInputComponent implements ControlValueAccessor {
   /**
    * @deprecated Avoid using. Use valueChanges.
    */
-  @Output() inputBlur: EventEmitter<unknown> = new EventEmitter();
+  @Output() inputBlur = new EventEmitter<unknown>();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
@@ -115,7 +115,9 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   getType(): string {
-    return this.type === 'password' ? 'search' : this.type;
+    // Mimicking a password field to prevent browsers from remembering passwords.
+    const isFakePassword = this.type === 'password' && (this.autocomplete === 'off' || this.showPassword);
+    return isFakePassword ? 'search' : this.type;
   }
 
   isPasswordField(): boolean {

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -222,7 +222,7 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
 
     const existingTaskWithoutModule = { ...existingTask };
-    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule.remotemodule;
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,
@@ -256,7 +256,7 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
 
     const existingTaskWithoutModule = { ...existingTask };
-    delete existingTaskWithoutModule['remotemodule'];
+    delete existingTaskWithoutModule.remotemodule;
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
       1,

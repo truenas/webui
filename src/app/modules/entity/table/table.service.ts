@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -92,10 +92,10 @@ export class TableService {
       });
     } else {
       this.dialog.confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog.title : T('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : T('Delete'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doDelete(table, item);
       });

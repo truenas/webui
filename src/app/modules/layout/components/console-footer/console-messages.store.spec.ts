@@ -50,7 +50,7 @@ describe('ConsoleMessagesStore', () => {
 
   it('unsubscribes from updates when component is destroyed', () => {
     spectator.service.subscribeToMessageUpdates();
-    const subscriptionId = spectator.inject(WebSocketService).sub.mock.lastCall[1];
+    const subscriptionId = spectator.inject(WebSocketService).sub.mock.lastCall[1] as string;
 
     spectator.service.ngOnDestroy();
     expect(spectator.inject(WebSocketService).unsub).toHaveBeenCalledWith(

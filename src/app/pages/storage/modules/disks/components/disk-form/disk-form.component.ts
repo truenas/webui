@@ -68,11 +68,11 @@ export class DiskFormComponent implements OnInit {
   }
 
   private clearPasswordField(): void {
-    this.form.controls['clear_pw'].valueChanges
+    this.form.controls.clear_pw.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(
         (state) => {
-          const controlPasswd = this.form.controls['passwd'];
+          const controlPasswd = this.form.controls.passwd;
           if (state) {
             controlPasswd.disable();
           } else {

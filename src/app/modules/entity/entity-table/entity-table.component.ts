@@ -13,8 +13,8 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy, ElementRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
@@ -22,6 +22,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import {
   Observable, of, Subscription, EMPTY, Subject, BehaviorSubject,
@@ -84,7 +85,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSourceStreamer$: Subject<Row[]> = new Subject();
+  dataSourceStreamer$ = new Subject<Row[]>();
   dataSource$: Observable<Row[]> = this.dataSourceStreamer$.asObservable();
 
   // MdPaginator Inputs
@@ -164,7 +165,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   excuteDeletion = false;
   needRefreshTable = false;
   private routeSub: Subscription;
-  checkboxLoaders: Map<string, BehaviorSubject<boolean>> = new Map();
+  checkboxLoaders = new Map<string, BehaviorSubject<boolean>>();
 
   get currentColumns(): EntityTableColumn[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns);
@@ -244,7 +245,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     const showingRows = currentlyShowingRows;
     return this.currentRows.filter((row) => {
       const index = showingRows.findIndex((showingRow) => {
-        return showingRow['multiselect_id'] === row['multiselect_id'];
+        return showingRow.multiselect_id === row.multiselect_id;
       });
       return index >= 0;
     });
@@ -352,7 +353,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         if (data.length === 0) this.isTableEmpty = true;
 
         this.dataSource.data = data;
-
         this.changeDetectorRef.detectChanges();
       });
 
@@ -472,7 +472,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+            this.emptyTableConf.message += this.translate.instant(' Please click the button below to add {item}.', {
               item: this.title,
             });
           }
@@ -480,7 +480,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
             buttonText = this.conf.emptyTableConfigMessages.buttonText;
           }
-          this.emptyTableConf['button'] = {
+          this.emptyTableConf.button = {
             label: buttonText,
             action: this.doAdd.bind(this),
           };
@@ -505,7 +505,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+            this.emptyTableConf.message += this.translate.instant(' Please click the button below to add {item}.', {
               item: this.title,
             });
           }
@@ -513,7 +513,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
             buttonText = this.conf.emptyTableConfigMessages.buttonText;
           }
-          this.emptyTableConf['button'] = {
+          this.emptyTableConf.button = {
             label: buttonText,
             action: this.doAdd.bind(this),
           };
@@ -579,6 +579,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleData(res: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
@@ -694,6 +695,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return hasHorizontalScrollbar;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generateRows(res: any): Row[] {
     let rows: Row[];
     if (this.loaderOpen) {
@@ -856,10 +858,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         });
     } else {
       this.dialogService.confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : this.translate.instant('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
       }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.toDeleteRow = item;
@@ -905,10 +907,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     return this.dialogService
       .confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : this.translate.instant('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
-        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
+        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
+        hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
+        buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
       })
       .pipe(
         filter(Boolean),
@@ -971,7 +973,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   getRowIdentifier(row: Row): string {
-    return row.name || row.path || row.id;
+    if (row) {
+      return row.id || row.identifier || row.uuid || row.name || row.path || row.num || UUID.UUID();
+    }
+    return UUID.UUID();
   }
 
   getDisabled(column: string): boolean {

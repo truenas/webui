@@ -311,12 +311,12 @@ export type ApiDirectory = {
 
   // Auth
   'auth.generate_token': { params: [number]; response: string };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.login': {
     params: LoginParams;
     response: boolean;
   };
-  'auth.token': { params: [token: string]; response: boolean };
   'auth.logout': { params: void; response: void };
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
@@ -969,7 +969,7 @@ export type ApiDirectory = {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
-  'user.shell_choices': { params: [userId?: number]; response: Choices };
+  'user.shell_choices': { params: void; response: Choices };
   'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };

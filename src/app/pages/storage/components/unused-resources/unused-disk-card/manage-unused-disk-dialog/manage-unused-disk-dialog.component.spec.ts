@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -51,7 +51,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('shows a title', () => {
-    expect(spectator.query('.mat-dialog-title')).toHaveText('Add To Pool');
+    expect(spectator.query('.mat-mdc-dialog-title')).toHaveText('Add To Pool');
   });
 
   it('shows the list of unused disks', () => {

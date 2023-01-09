@@ -1,7 +1,7 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,6 +36,7 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
@@ -122,6 +123,7 @@ import { WebSocketService } from './services/ws.service';
     NavigationService,
     AuthService,
     WebSocketService,
+    WebSocketService2,
     AppLoaderService,
     EntityTableService,
     IxSlideInService,

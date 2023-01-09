@@ -71,7 +71,7 @@ div {
   box-sizing: border-box;
 }
 
-.mat-card {
+.mat-mdc-card {
   font-size: 0.875rem;
 }
 
@@ -82,7 +82,7 @@ a:hover {
 }
 
 a:focus-visible,
-button.mat-button.mat-accent:focus-visible,
+button.mat-mdc-button.mat-accent:focus-visible,
 .ix-dark button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
@@ -242,85 +242,85 @@ samp {
   width: 13px;
 }
 
-.mat-card.default {
+.mat-mdc-card.default {
   padding: 0;
 }
 
-.mat-card.default .mat-card-title {
+.mat-mdc-card.default .mat-mdc-card-title {
   font-weight: 600;
   line-height: 1;
   padding: 1rem;
 }
 
-.mat-card.default>:first-child {
+.mat-mdc-card.default>:first-child {
   border-radius: 2px 2px 0 0;
 }
 
-.mat-card.default .mat-card-subtitle:first-child {
+.mat-mdc-card.default .mat-mdc-card-subtitle:first-child {
   padding-top: 1rem;
 }
 
-.mat-card.default .mat-card-subtitle {
+.mat-mdc-card.default .mat-mdc-card-subtitle {
   line-height: 1;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-.mat-card.default .mat-card-content {
+.mat-mdc-card.default .mat-mdc-card-content {
   margin-bottom: 0;
   padding: 1rem;
   position: relative;
 }
 
-.mat-card.default .mat-card-actions,
-.mat-card.default .mat-card-actions:last-child {
+.mat-mdc-card.default .mat-mdc-card-actions,
+.mat-mdc-card.default .mat-mdc-card-actions:last-child {
   margin: 0;
   padding: 0.5rem;
 }
 
-.mat-card.default>:last-child {
+.mat-mdc-card.default>:last-child {
   border-radius: 0 0 2px 2px;
 }
 
-.mat-card {
+.mat-mdc-card {
   margin: 0.333333rem;
 }
 
-.mat-card .mat-card-title .mat-divider,
+.mat-mdc-card .mat-mdc-card-title .mat-divider,
 .mat-divider.full-width {
   margin-left: -24px;
   margin-right: -24px;
 }
 
-.mat-card.p-0 .mat-card-title .card-title-text {
+.mat-mdc-card.p-0 .mat-mdc-card-title .card-title-text {
   padding: 1rem 1.5rem;
 }
 
-.mat-card.p-0 .mat-card-title .card-title-text .card-control {
+.mat-mdc-card.p-0 .mat-mdc-card-title .card-title-text .card-control {
   height: 24px;
   line-height: 24px;
   width: 24px;
 }
 
-.mat-card.p-0 .mat-card-title .card-title-text .mat-card-subtitle {
+.mat-mdc-card.p-0 .mat-mdc-card-title .card-title-text .mat-mdc-card-subtitle {
   margin: 0;
 }
 
-.mat-card.p-0 .mat-card-title .mat-divider {
+.mat-mdc-card.p-0 .mat-mdc-card-title .mat-divider {
   border-top-color: rgba(0, 0, 0, 0.04);
   margin-left: 0;
   margin-right: 0;
 }
 
-.mat-card.p-0 .mat-card-image {
+.mat-mdc-card.p-0 .mat-mdc-card-image {
   margin: 0 0 1rem !important;
 }
 
-.mat-card.p-0 .mat-card-content {
+.mat-mdc-card.p-0 .mat-mdc-card-content {
   padding: 0 1.5rem 1.5rem;
 }
 
-.mat-button,
+.mat-mdc-button,
 .mat-raised-button {
   font-weight: 400 !important;
 }
@@ -329,7 +329,7 @@ samp {
   width: 100%;
 }
 
-.mat-card-header .mat-card-title {
+.mat-mdc-card-header .mat-mdc-card-title {
   font-size: 1rem;
 }
 
@@ -741,7 +741,7 @@ body .mat-select-trigger {
   width: 100%;
 }
 
-.session-form-hold > .mat-card {
+.session-form-hold > .mat-mdc-card {
   border: 0;
   margin: 0;
 }
@@ -818,13 +818,13 @@ input:-webkit-autofill {
   top: 0;
 }
 
-.mat-menu-panel.mat-menu-after.mat-menu-below {
+.mat-mdc-menu-panel.mat-mdc-menu-after.mat-mdc-menu-below {
   min-width: 140px !important;
 }
 
 /*---- Media queries -----*/
 @media (max-width: 767px) {
-  .mat-card-title .mat-divider {
+  .mat-mdc-card-title .mat-divider {
     margin-left: 0;
     margin-right: 0;
   }

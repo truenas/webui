@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -38,7 +38,7 @@ describe('UnusedDiskCardComponent', () => {
   });
 
   it('shows a title', () => {
-    expect(spectator.query('.mat-card-title')).toHaveText('Unassigned Disks');
+    expect(spectator.query('.mat-mdc-card-title')).toHaveText('Unassigned Disks');
   });
 
   it('shows a value', () => {

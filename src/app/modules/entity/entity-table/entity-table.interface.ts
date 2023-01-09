@@ -9,6 +9,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 export interface SomeRow {
   id?: string | number;
   multiselect_id?: string | number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 

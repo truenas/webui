@@ -127,7 +127,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected ws: WebSocketService,
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
@@ -668,8 +668,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const viewport = styler(viewportElement);
     const carouselElement = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
     const carousel = styler(carouselElement);
-    const vpw = viewport.get('width');
-    const startX = viewport.get('x');
+    const vpw = viewport.get('width') as number;
+    const startX = viewport.get('x') as number;
 
     return { carousel, vpw, startX };
   }
