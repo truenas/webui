@@ -77,9 +77,9 @@ export class AppComponent {
 
   private setFavicon(str: string): void {
     const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link['rel'] = 'icon';
-    link['type'] = 'image/png';
-    link['href'] = str;
+    link.rel = 'icon';
+    link.type = 'image/png';
+    link.href = str;
     document.getElementsByTagName('head')[0].appendChild(link);
   }
 

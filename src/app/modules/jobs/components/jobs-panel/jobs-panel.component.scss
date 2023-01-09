@@ -1,11 +1,17 @@
 $component-header: 42px;
 
 :host {
-  .mat-mdc-dialogactions {
+  .mat-mdc-dialog-actions {
+    padding: 14px 24px;
+
     button {
-      display: block;
+      display: flex;
       width: 100%;
     }
+  }
+
+  mat-dialog-content {
+    padding-top: 0;
   }
 }
 

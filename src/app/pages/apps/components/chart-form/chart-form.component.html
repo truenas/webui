@@ -1,0 +1,24 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-dynamic-form
+        [dynamicSection]="dynamicSection"
+        [dynamicForm]="form"
+        (addListItem)="addItem($event)"
+        (deleteListItem)="deleteItem($event)"
+      ></ix-dynamic-form>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -4,6 +4,10 @@
   margin: 0 auto;
   max-width: 480px;
   width: 100%;
+
+  .mat-mdc-card-content {
+    padding: 0 !important;
+  }
 }
 
 .page-wrap {
@@ -19,13 +23,13 @@
   text-align: center;
 }
 
-.mat-card {
+.mat-mdc-card {
   background-color: var(--bg2);
   color: var(--fg2);
   padding: 0 0 32px !important;
 }
 
-.mat-card .mat-card-content > div {
+.mat-mdc-card .mat-mdc-card-content > div {
   padding: 0;
 }
 
@@ -76,7 +80,7 @@
     width: 100vw;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     min-height: 100vh;
     top: 0;
   }

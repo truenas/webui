@@ -141,11 +141,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       });
 
     this.modalService.message$.pipe(untilDestroyed(this)).subscribe((message: ModalServiceMessage) => {
-      if (message['action'] === 'open' && message['component'] === 'replicationForm') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, message['row']);
+      if (message.action === 'open' && message.component === 'replicationForm') {
+        this.modalService.openInSlideIn(ReplicationFormComponent, message.row);
       }
-      if (message['action'] === 'open' && message['component'] === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationWizardComponent, message['row']);
+      if (message.action === 'open' && message.component === 'replicationWizard') {
+        this.modalService.openInSlideIn(ReplicationWizardComponent, message.row);
       }
     });
   }
