@@ -74,7 +74,6 @@
   "Username on the remote system to log in <b>via Web UI</b> to setup connection.": "",
   "Username on the remote system which will be used to login <b>via SSH</b>.": "",
   "Validate Host Path": "",
-  "Waiting for logs ...": "",
   "Would you like to add a Service Principal Name (SPN) now?": "",
   "You have successfully added credentials.": "",
   " Please click the button below to add {item}.": " 请点击下面的按钮来添加 {item}。",

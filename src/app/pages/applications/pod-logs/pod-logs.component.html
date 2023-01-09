@@ -26,15 +26,16 @@
     <span class="name">{{ podName }}</span>
     <label>{{ 'Container Name' | translate }}:</label>
     <span class="name">{{ containerName }}</span>
-    <br>
-    <label *ngIf="areLoadingPodLogs">{{ 'Waiting for logs ...' | translate }}</label>
   </div>
   <div
     #logContainer
     class="pod-logs"
     [ngStyle]="{ 'font-size': fontSize + 'px' }"
   >
-    <mat-spinner *ngIf="areLoadingPodLogs" class="spinner" [diameter]="40"></mat-spinner>
+    <div *ngIf="areLoadingPodLogs" class="log-row">
+      <span  class="no-logs">{{ 'No logs' }}</span>
+    </div>
+
     <div *ngFor="let podLog of podLogs" class="log-row">
       <span class="timestamp">{{ podLog.timestamp }}</span>
       <span class="log-data">{{ podLog.data }}</span>

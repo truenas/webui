@@ -94,15 +94,16 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
       .pipe(untilDestroyed(this)).subscribe({
-        next: (res: PodLogEvent) => {
+        next: (podLog: PodLogEvent) => {
           this.areLoadingPodLogs = false;
 
-          if (res) {
-            this.podLogs.push(res);
+          if (podLog) {
+            this.podLogs.push(podLog);
             this.scrollToBottom();
           }
         },
         error: (error) => {
+          this.areLoadingPodLogs = true;
           this.dialogService.errorReport('Error', error.reason);
         },
       });
