@@ -242,6 +242,7 @@ export class AppSchemaService {
         type: DynamicFormSchemaType.List,
         title: chartSchemaNode.label,
         items,
+        tooltip: chartSchemaNode.description,
         itemsSchema,
         editable: schema.editable,
         dependsOn: schema.show_if?.map((conditional) => conditional[0]),
