@@ -23,8 +23,8 @@ export class AssociatedTargetFormComponent {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant('Add Authorized Target')
-      : this.translate.instant('Edit Authorized Target');
+      ? this.translate.instant('Add Associated Target')
+      : this.translate.instant('Edit Associated Target');
   }
 
   form = this.formBuilder.group({
