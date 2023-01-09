@@ -1086,7 +1086,6 @@
   "WARNING: Only the key for the dataset in question will be downloaded.": "",
   "WARNING: These unknown processes will be terminated while exporting the pool.": "",
   "Waiting": "",
-  "Waiting for logs ...": "",
   "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
   "Warning: {n} of {total} boot environments could not be deleted.": "",

@@ -29,6 +29,7 @@
   opacity: 0.5;
 }
 
+.no-logs,
 .timestamp {
   display: inline-block;
   margin-right: 10px;
@@ -42,6 +43,7 @@
   word-break: break-all;
 }
 
-.spinner {
-  margin: 23px auto 0;
+.no-logs {
+  margin: 5px 10px;
 }
+
