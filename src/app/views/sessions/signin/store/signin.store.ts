@@ -159,20 +159,21 @@ export class SigninStore extends ComponentStore<SigninState> {
   }));
 
   private reLoginWithToken(): Observable<unknown> {
+    this.ws2.token2 = this.ws.token;
     return combineLatest([
-      this.ws.loginWithToken(this.ws.token).pipe(
-        tap((wasLoggedIn) => {
-          if (!wasLoggedIn) {
-            this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
-            this.ws.token = null;
-            this.setLoadingState(false);
-            return;
-          }
-          this.handleSuccessfulLogin();
-        }),
-      ),
+      this.ws.loginWithToken(this.ws.token),
       this.ws2.call('auth.login_with_token', [this.ws2.token2]),
-    ]);
+    ]).pipe(
+      tap(([wasLoggedIn]) => {
+        if (!wasLoggedIn) {
+          this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
+          this.ws.token = null;
+          this.setLoadingState(false);
+          return;
+        }
+        this.handleSuccessfulLogin();
+      }),
+    );
   }
 
   private authenticateWithTokenWs2(): Observable<unknown> {
