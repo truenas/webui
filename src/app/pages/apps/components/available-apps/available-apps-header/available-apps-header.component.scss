@@ -1,0 +1,33 @@
+:host {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+  padding: 0 10px 25px;
+}
+
+.header-numbers {
+  column-gap: 25px;
+  display: flex;
+  margin-left: auto;
+}
+
+.header-number {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+
+  .header-number-title {
+    color: var(--primary-txt);
+  }
+
+  h2 {
+    color: var(--primary-txt);
+  }
+
+  .header-link {
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+  }
+}
