@@ -1,12 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { EMPTY, Observable, of } from 'rxjs';
+import {
+  combineLatest, EMPTY, Observable, of,
+} from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -14,8 +16,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -24,15 +26,16 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 
 @UntilDestroy()
 @Component({
-  templateUrl: './system-dataset-pool.component.html',
-  styleUrls: ['./system-dataset-pool.component.scss'],
+  templateUrl: './storage-settings.component.html',
+  styleUrls: ['./storage-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SystemDatasetPoolComponent implements OnInit {
+export class StorageSettingsComponent {
   isFormLoading = false;
 
   form = this.fb.group({
     pool: ['', Validators.required],
+    swapondrive: ['', Validators.required],
   });
 
   readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
@@ -47,37 +50,24 @@ export class SystemDatasetPoolComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
+    public ixFormatter: IxFormatterService,
   ) {}
-
-  ngOnInit(): void {
-    this.isFormLoading = true;
-
-    this.ws.call('systemdataset.config')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (config) => {
-          this.isFormLoading = false;
-          this.form.patchValue(config);
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
-          this.cdr.markForCheck();
-        },
-      });
-  }
 
   onSubmit(): void {
     const values = this.form.value;
 
+    const { pool } = values;
+    const { swapondrive } = values;
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
         this.cdr.markForCheck();
-        return this.ws.job('systemdataset.update', [values]).pipe(
-          tap((job) => {
+        return combineLatest([
+          this.ws.job('systemdataset.update', [{ pool }]),
+          this.ws.call('system.advanced.update', [{ swapondrive: +swapondrive }]),
+        ]).pipe(
+          tap(([job]) => {
             if (job.state !== JobState.Success) {
               return;
             }
@@ -97,6 +87,10 @@ export class SystemDatasetPoolComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  setFormForEdit(data: { swapondrive: string; pool: string }): void {
+    this.form.patchValue(data);
   }
 
   /**
