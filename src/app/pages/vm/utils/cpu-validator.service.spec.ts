@@ -1,7 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { WebSocketService } from 'app/services';
 
@@ -13,6 +13,7 @@ describe('CpuValidatorService', () => {
       mockWebsocket([
         mockCall('vm.maximum_supported_vcpus', 7),
       ]),
+      mockWebsocket2(),
     ],
   });
 

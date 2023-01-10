@@ -1,50 +1,35 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
 import { ValuesType } from 'utility-types';
-import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
-/**
- * MockWebsocketService can be used to update websocket mocks on the fly.
- * For initial setup prefer mockWebsocket();
- *
- * To update on the fly:
- * @example
- * ```
- * // In test case:
- * const websocketService = spectator.inject(MockWebsocketService);
- * websocketService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
- * ```
- */
 @Injectable()
-export class MockWebsocketService extends WebSocketService {
-  private jobIdCounter = 1;
-
+export class MockWebsocketService2 extends WebSocketService2 {
   private subscribeStream$ = new Subject<ApiEvent<unknown>>();
+  private jobIdCounter = 1;
 
   constructor(
     protected router: Router,
-    @Inject(WINDOW) protected window: Window,
+    protected wsManager: WebsocketManagerService,
   ) {
-    super(router, window);
+    super(router, wsManager);
 
     this.call = jest.fn();
     this.job = jest.fn();
-    this.logout = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
-    this.sub = jest.fn(() => of());
-    this.unsub = jest.fn();
+    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable() as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
+
     when(this.call).mockImplementation((method: ApiMethod, args: unknown) => {
-      throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`2 Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiMethod, args: unknown) => {
-      throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`2 Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
     });
   }
 
@@ -56,8 +41,7 @@ export class MockWebsocketService extends WebSocketService {
   mockCallOnce<K extends ApiMethod>(method: K, response: ApiDirectory[K]['response']): void {
     when(this.call).calledWith(method, expect.anything()).mockReturnValueOnce(of(response));
   }
-
-  mockJob<K extends ApiMethod>(method: K, response: Job<ApiDirectory[K]['response']>): void {
+  mockJob<K extends ApiMethod>(method: K, response: ApiEvent<Job<ApiDirectory[K]['response']>>): void {
     const responseWithJobId = {
       ...response,
       id: this.jobIdCounter,
