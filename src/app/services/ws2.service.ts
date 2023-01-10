@@ -21,7 +21,7 @@ export class WebSocketService2 implements OnDestroy {
   ws$: WebSocketSubject<unknown>;
   pingTimeout: Timeout;
   private readonly pingTimeoutMillis = 20 * 1000;
-  private readonly eventSubscriptions: Map<string, Observable<unknown>> = new Map();
+  private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
     @Inject(WINDOW) protected window: Window,
@@ -116,6 +116,8 @@ export class WebSocketService2 implements OnDestroy {
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
+    // TODO: Rework to use common base method instead.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
   }
 

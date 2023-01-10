@@ -1,4 +1,4 @@
-::ng-deep .scheduler-modal .mat-dialog-container {
+::ng-deep .scheduler-modal .mat-mdc-dialog-container {
   padding: 0;
 }
 
@@ -20,8 +20,6 @@
   section {
     border-bottom: 1px solid var(--lines);
     margin-bottom: 16px;
-    padding-left: 20px;
-    padding-right: 24px;
 
     h4 {
       margin-bottom: 4px;

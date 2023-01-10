@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -165,7 +165,7 @@ export class IdmapFormComponent implements OnInit {
   setIdmapForEdit(idmap: Idmap): void {
     this.existingIdmap = idmap;
     this.setEditingIdmapFormValues();
-    this.form.controls['name'].disable();
+    this.form.controls.name.disable();
   }
 
   isOptionVisible(option: keyof IdmapFormComponent['form']['value']): boolean {
@@ -336,15 +336,15 @@ export class IdmapFormComponent implements OnInit {
     } as IdmapUpdate;
 
     if (values.dns_domain_name) {
-      params['dns_domain_name'] = values.dns_domain_name;
+      params.dns_domain_name = values.dns_domain_name;
     }
 
     if (this.isCustomName) {
-      params['name'] = values.custom_name;
+      params.name = values.custom_name;
     }
 
     if (values.certificate) {
-      params['certificate'] = values.certificate;
+      params.certificate = values.certificate;
     }
 
     Object.keys(this.currentBackend.parameters).forEach((option) => {

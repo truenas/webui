@@ -24,6 +24,7 @@
   place-content: center space-between;
 
   .controls {
+    display: flex;
     opacity: 0.55;
   }
 }

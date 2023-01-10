@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -39,7 +39,7 @@ export class KerberosKeytabsFormComponent {
 
   constructor(
     private translate: TranslateService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -48,13 +48,13 @@ export class KerberosKeytabsFormComponent {
 
   setKerberosKeytabsForEdit(kerberosKeytab: KerberosKeytab): void {
     this.editingKerberosKeytab = kerberosKeytab;
-    this.form.patchValue(kerberosKeytab);
+    this.form.patchValue({
+      name: kerberosKeytab.name,
+    });
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-    };
+    const values = this.form.value;
 
     const fReader: FileReader = new FileReader();
     if (values.file.length) {
@@ -62,15 +62,19 @@ export class KerberosKeytabsFormComponent {
     }
 
     fReader.onloadend = () => {
-      values.file = btoa(fReader.result as string);
+      const file = btoa(fReader.result as string);
+      const payload = {
+        name: values.name,
+        file,
+      };
       this.isLoading = true;
       let request$: Observable<unknown>;
       if (this.isNew) {
-        request$ = this.ws.call('kerberos.keytab.create', [values]);
+        request$ = this.ws.call('kerberos.keytab.create', [payload]);
       } else {
         request$ = this.ws.call('kerberos.keytab.update', [
           this.editingKerberosKeytab.id,
-          values,
+          payload,
         ]);
       }
 

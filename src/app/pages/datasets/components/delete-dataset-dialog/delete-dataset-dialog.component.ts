@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -149,7 +149,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private setConfirmValidator(): void {
-    this.form.controls['confirmDatasetName'].setValidators(
+    this.form.controls.confirmDatasetName.setValidators(
       this.validators.confirmValidator(
         this.dataset.name,
         this.translate.instant('Enter dataset name to continue.'),

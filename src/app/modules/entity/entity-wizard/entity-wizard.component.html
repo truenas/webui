@@ -30,9 +30,10 @@
                 fxLayout="row wrap"
                 fxLayoutAlign="start start"
                 fxFlex="100%"
-                class="fieldset divider-{{ fieldSet.divider }}"
-                fxFlex.gt-xs="calc({{ fieldSet.width ? fieldSet.width : '100%' }} - 16px)"
+                [fxFlex.gt-xs]="'calc(' + (fieldSet.width ? fieldSet.width : '100%') + ' - 16px)'"
                 [ngClass]="[
+                  'fieldset',
+                  fieldSet.divider ? 'divider-' + fieldSet.divider : '',
                   fieldSet.class ? fieldSet.class : '',
                   isFieldsetAvailable(fieldSet) ? '' : 'empty-fieldset'
                 ]"
@@ -46,7 +47,7 @@
                 <div
                   *ngFor="let field of fieldSet.config; let k = index"
                   fxFlex="100%"
-                  fxFlex.gt-xs="calc({{ field.width ? field.width : '100%'}} - 16px)"
+                  [fxFlex.gt-xs]="'calc(' + (field.width ? field.width : '100%') + ' - 16px)'"
                   [id]="k"
                   [ngClass]="field.class === 'inline' ? 'form-inline' : 'form-line'"
                 >
