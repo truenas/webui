@@ -18,6 +18,7 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
 })
 export class InventoryComponent implements OnInit {
   sizeDisksMap: SizeDisksMap = { hdd: {}, ssd: {} };
+  inventory: SizeDisksMap = { hdd: {}, ssd: {} };
   formValue: PoolManagerWizardFormValue;
 
   constructor(
@@ -37,26 +38,28 @@ export class InventoryComponent implements OnInit {
     this.poolManagerStore.formValue$.pipe(untilDestroyed(this)).subscribe((formValue) => {
       this.formValue = formValue;
       this.cdr.markForCheck();
+      if (formValue) {
+        this.updateInventory();
+      }
     });
   }
 
-  get inventory(): SizeDisksMap {
+  updateInventory(): void {
     const isHdd = this.formValue.data.size_and_type[1] === DiskType.Hdd;
     const selectedSize = this.formValue.data.size_and_type[0];
 
-    const filterdSizeDisksMap: SizeDisksMap = {
+    this.inventory = {
       hdd: !isHdd ? this.sizeDisksMap.hdd : {},
       ssd: isHdd ? this.sizeDisksMap.ssd : {},
     };
 
     Object.entries(isHdd ? this.sizeDisksMap.hdd : this.sizeDisksMap.ssd).forEach(([size, number]) => {
       if (isHdd) {
-        filterdSizeDisksMap.hdd[size] = size === selectedSize ? number - this.formValue.data.number : number;
+        this.inventory.hdd[size] = size === selectedSize ? number - this.formValue.data.number : number;
       } else {
-        filterdSizeDisksMap.ssd[size] = size === selectedSize ? number - this.formValue.data.number : number;
+        this.inventory.ssd[size] = size === selectedSize ? number - this.formValue.data.number : number;
       }
     });
-    return filterdSizeDisksMap;
   }
 
   getFilesize(size: string): string {

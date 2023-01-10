@@ -1,20 +1,3 @@
-import { DiskType } from 'app/enums/disk-type.enum';
-import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 
-export interface PoolManagerWizardFormValue {
-  general?: {
-    name?: string;
-    encryption?: boolean;
-  };
-  data?: {
-    type?: CreateVdevLayout;
-    size_and_type?: (string | DiskType)[];
-    width?: number;
-    number?: number;
-  };
-  log?: unknown;
-  spare?: unknown;
-  cache?: unknown;
-  metadata?: unknown;
-  review?: unknown;
-}
+export type PoolManagerWizardFormValue = PoolManagerWizardComponent['form']['value'];

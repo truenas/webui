@@ -65,6 +65,6 @@ export class ConfigurationPreviewComponent implements OnInit {
   }
 
   get encryption(): string {
-    return this.unknownProp;
+    return this.formValue.general?.encryption_standard || this.unknownProp;
   }
 }

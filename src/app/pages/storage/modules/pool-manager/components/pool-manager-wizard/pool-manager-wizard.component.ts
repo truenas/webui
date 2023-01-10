@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { PoolManagerWizardForm } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 
 @UntilDestroy()
@@ -14,10 +13,11 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
-  form = this.fb.group<PoolManagerWizardForm>({
+  form = this.fb.group({
     general: this.fb.group({
       name: ['', Validators.required],
-      encryption: [false, Validators.required],
+      encryption: [false],
+      encryption_standard: [null as string, Validators.required],
     }),
     data: this.fb.group({
       type: [CreateVdevLayout.Stripe, Validators.required],

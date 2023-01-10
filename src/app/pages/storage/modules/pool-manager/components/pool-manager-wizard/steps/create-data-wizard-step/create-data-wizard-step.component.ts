@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { PoolManagerWizardForm } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form';
+import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { SizeDisksMap } from 'app/pages/storage/modules/pool-manager/interfaces/size-disks-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/pool-manager.utils';
@@ -21,7 +21,7 @@ import { getSizeDisksMap } from 'app/pages/storage/modules/pool-manager/utils/po
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateDataWizardStepComponent implements OnInit {
-  @Input() form: PoolManagerWizardForm['data'];
+  @Input() form: PoolManagerWizardComponent['form']['controls']['data'];
 
   unusedDisks: UnusedDisk[] = [];
   sizeDisksMap: SizeDisksMap = { hdd: {}, ssd: {} };

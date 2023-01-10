@@ -9,4 +9,11 @@
     formControlName="encryption"
     [label]="'Encryption' | translate"
   ></ix-checkbox>
+  <ix-select
+    *ngIf="form.controls.encryption_standard.enabled"
+    formControlName="encryption_standard"
+    [label]="'Encryption Standard' | translate"
+    [options]="encryptionAlgorithmOptions$"
+    [required]="true"
+  ></ix-select>
 </ng-container>
