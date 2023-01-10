@@ -92,6 +92,8 @@ export class AppSchemaService {
       newSchema.push(transformDictSchemaType(transformPayload, this.transformNode.bind(this)));
     } else if (schema.type === ChartSchemaType.List) {
       newSchema.push(transformListSchemaType(transformPayload, this.transformNode.bind(this)));
+    } else if (schema.type === ChartSchemaType.Cron) {
+      newSchema.push(transformStringSchemaType(transformPayload));
     } else {
       console.error('Unsupported type = ', schema.type);
     }

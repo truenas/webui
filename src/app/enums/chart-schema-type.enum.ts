@@ -7,4 +7,5 @@ export enum ChartSchemaType {
   List = 'list',
   Dict = 'dict',
   Ipaddr = 'ipaddr',
+  Cron = 'cron',
 }

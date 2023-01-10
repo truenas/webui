@@ -4,17 +4,6 @@
   [class.indent]="dynamicSchema?.indent"
 >
   <ng-container *ngIf="!(isHidden$ | async)">
-    <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
-      <div class="label">{{ dynamicSchema.title }}</div>
-      <ix-dynamic-form-item
-        *ngFor="let attr of dynamicSchema.attrs"
-        [dynamicSchema]="attr"
-        [dynamicForm]="dynamicForm.controls[dynamicSchema.controlName] | cast"
-        (addListItem)="addControlNext($event)"
-        (deleteListItem)="removeControlNext($event)"
-      ></ix-dynamic-form-item>
-    </ng-container>
-
     <ix-list
       *ngIf="dynamicSchema.type === DynamicFormSchemaType.List"
       [label]="dynamicSchema.title | translate"

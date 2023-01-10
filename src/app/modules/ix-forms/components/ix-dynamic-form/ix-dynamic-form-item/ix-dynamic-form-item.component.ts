@@ -53,7 +53,7 @@ export class IxDynamicFormItemComponent implements OnInit {
     }
 
     if (this.dynamicSchema?.hidden) {
-      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$.next(true);
+      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
   }
 
