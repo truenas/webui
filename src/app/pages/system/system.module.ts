@@ -46,8 +46,8 @@ import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kerne
 import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
+import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
-import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -180,7 +180,7 @@ import { routing } from './system.routing';
     SupportComponent,
     SysInfoComponent,
     SyslogFormComponent,
-    SystemDatasetPoolComponent,
+    StorageSettingsComponent,
     SedFormComponent,
     TunableFormComponent,
     TunableListComponent,

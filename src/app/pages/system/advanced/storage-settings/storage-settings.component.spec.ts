@@ -17,14 +17,14 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { SystemDatasetPoolComponent } from './system-dataset-pool.component';
+import { StorageSettingsComponent } from './storage-settings.component';
 
 describe('SystemDatasetPoolComponent', () => {
-  let spectator: Spectator<SystemDatasetPoolComponent>;
+  let spectator: Spectator<StorageSettingsComponent>;
   let loader: HarnessLoader;
   let ws: MockWebsocketService;
   const createComponent = createComponentFactory({
-    component: SystemDatasetPoolComponent,
+    component: StorageSettingsComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
