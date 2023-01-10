@@ -102,6 +102,14 @@ class appSetup:
     rootPassword_input = '//ix-input[contains(.,"Root Password")]//input'
     enableFlax_checkbox = '//ix-checkbox[contains(.,"Enable Flax")]//mat-checkbox'
 
+    imageRepository_input = '//ix-input[contains(.,"Image repository")]//input'
+    imageTag_input = '//ix-input[contains(.,"Image Tag")]//input'
+    addPortForwading_button = '//ix-fieldset[contains(.,"Port Forwarding")]//button'
+    containerPort_input = '//ix-input[contains(.,"Container Port")]//input'
+    nodePort_input = '//ix-input[contains(.,"Node Port")]//input'
+    containerPort2_input = '(//ix-input[contains(.,"Container Port")]//input)[2]'
+    nodePort2_input = '(//ix-input[contains(.,"Node Port")]//input)[2]'
+
     def title(app_name):
         return f'//h3[contains(.,"{app_name}") and @class="ix-formtitle"]'
 
@@ -128,6 +136,7 @@ class button:
     unset = '//button[contains(.,"Unset")]'
     chossePool = '//button[contains(.,"Choose Pool")]'
     addCatalog = '//button[contains(.,"Add Catalog")]'
+    launchDockerImage = '//span[contains(.,"Launch Docker Image")]'
 
 
 class certificates:
