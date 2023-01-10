@@ -7,20 +7,28 @@ import {
 import { switchMap } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 
 export interface PoolsManagerState {
   arePoolsLoading: boolean;
+  areUnusedDisksLoading: boolean;
   pools: Pool[];
+  unusedDisks: UnusedDisk[];
   rootDatasets: { [id: string]: Dataset };
+  formValue: PoolManagerWizardFormValue;
 }
 
 const initialState: PoolsManagerState = {
   arePoolsLoading: false,
+  areUnusedDisksLoading: false,
   pools: [],
   rootDatasets: {},
+  unusedDisks: [],
+  formValue: null,
 };
 
 interface ManagerPools {
@@ -29,10 +37,13 @@ interface ManagerPools {
 }
 
 @Injectable()
-export class PoolsManagerStore extends ComponentStore<PoolsManagerState> {
+export class PoolManagerStore extends ComponentStore<PoolsManagerState> {
   readonly pools$ = this.select((state) => state.pools);
   readonly arePoolsLoading$ = this.select((state) => state.arePoolsLoading);
+  readonly areUnusedDisksLoading$ = this.select((state) => state.areUnusedDisksLoading);
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
+  readonly unusedDisks$ = this.select((state) => state.unusedDisks);
+  readonly formValue$ = this.select((state) => state.formValue);
 
   constructor(
     private ws: WebSocketService,
@@ -42,24 +53,29 @@ export class PoolsManagerStore extends ComponentStore<PoolsManagerState> {
     super(initialState);
   }
 
-  readonly loadDashboard = this.effect((triggers$: Observable<void>) => {
+  readonly loadPoolsData = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
         this.patchState({
           ...initialState,
           arePoolsLoading: true,
+          areUnusedDisksLoading: true,
         });
       }),
-      switchMap(() => this.updatePoolsAndDisksState()),
+      switchMap(() => this.updateState()),
     );
   });
 
-  updatePoolsAndDisksState(): Observable<{
+  updateState(): Observable<{
     dashboardPools: ManagerPools;
+    unusedDisks: UnusedDisk[];
   }> {
     return forkJoin({
       dashboardPools: this.getPoolsAndRootDatasets().pipe(
         this.patchStateWithPoolData(),
+      ),
+      unusedDisks: this.getUnusedDisks().pipe(
+        this.patchStateWithUnusedDisksData(),
       ),
     });
   }
@@ -69,6 +85,10 @@ export class PoolsManagerStore extends ComponentStore<PoolsManagerState> {
       pools: this.getPools(),
       rootDatasets: this.getRootDatasets(),
     });
+  }
+
+  getUnusedDisks(): Observable<UnusedDisk[]> {
+    return this.ws.call('disk.get_unused', []);
   }
 
   patchStateWithPoolData(): (source: Observable<ManagerPools>) => Observable<ManagerPools> {
@@ -89,6 +109,23 @@ export class PoolsManagerStore extends ComponentStore<PoolsManagerState> {
     );
   }
 
+  patchStateWithUnusedDisksData(): (source: Observable<UnusedDisk[]>) => Observable<UnusedDisk[]> {
+    return tapResponse<UnusedDisk[]>(
+      (unusedDisks) => {
+        this.patchState({
+          areUnusedDisksLoading: false,
+          unusedDisks,
+        });
+      },
+      (error: WebsocketError) => {
+        this.patchState({
+          areUnusedDisksLoading: false,
+        });
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+      },
+    );
+  }
+
   getPools(): Observable<Pool[]> {
     return this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]);
   }
@@ -96,4 +133,11 @@ export class PoolsManagerStore extends ComponentStore<PoolsManagerState> {
   getRootDatasets(): Observable<Dataset[]> {
     return this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]);
   }
+
+  updateFormValue = this.updater((state: PoolsManagerState, updatedFormValue: PoolManagerWizardFormValue) => {
+    return {
+      ...state,
+      formValue: updatedFormValue,
+    };
+  });
 }
