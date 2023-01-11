@@ -60,10 +60,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.chartReleaseName = params['rname'];
-      this.podName = params['pname'];
-      this.containerName = params['cname'];
-      this.tailLines = params['tail_lines'];
+      this.chartReleaseName = params.rname;
+      this.podName = params.pname;
+      this.containerName = params.cname;
+      this.tailLines = params.tail_lines;
 
       this.reconnect();
     });
@@ -104,7 +104,9 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: (error) => {
           this.areLoadingPodLogs = true;
-          this.dialogService.errorReport('Error', error.reason);
+          if (error.reason) {
+            this.dialogService.errorReport('Error', error.reason);
+          }
         },
       });
   }
@@ -167,7 +169,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     ).pipe(untilDestroyed(this)).subscribe({
       next: (res) => {
         this.loader.close();
-        const url = res[1];
+        const [, url] = res;
         this.storageService.streamDownloadFile(url, fileName, mimetype)
           .pipe(untilDestroyed(this))
           .subscribe((file: Blob) => {
