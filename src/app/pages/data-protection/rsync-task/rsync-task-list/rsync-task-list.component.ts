@@ -19,9 +19,10 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import {
-  WebSocketService, DialogService, TaskService, UserService,
+  DialogService, TaskService, UserService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -78,7 +79,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
   };
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
     protected taskService: TaskService,
     protected dialog: DialogService,
     private matDialog: MatDialog,
@@ -113,7 +114,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         }).pipe(
           filter(Boolean),
           tap(() => row.state = { state: JobState.Running }),
-          switchMap(() => this.ws.call('rsynctask.run', [row.id])),
+          switchMap(() => this.ws2.call('rsynctask.run', [row.id])),
           tap(() => this.snackbar.success(
             this.translate.instant('Rsync task «{name}» has started.', {
               name: `${row.remotehost} - ${row.remotemodule}`,

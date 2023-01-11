@@ -13,10 +13,6 @@
           mat-menu-item
           (click)="onCategoryChanged(category)"
         >
-          <span>
-            <mat-icon *ngIf="category === selectedCategory">check_circle</mat-icon>
-            <mat-icon *ngIf="category !== selectedCategory">remove</mat-icon>
-          </span>
           <span>{{ category.title }}</span>
         </button>
       </mat-menu>

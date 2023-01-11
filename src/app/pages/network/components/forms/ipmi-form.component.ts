@@ -21,8 +21,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import { RedirectService, SystemGeneralService, WebSocketService } from 'app/services';
+import { RedirectService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
@@ -78,7 +79,7 @@ export class IpmiFormComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private redirect: RedirectService,

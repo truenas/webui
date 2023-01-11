@@ -73,6 +73,11 @@ div {
 
 .mat-mdc-card {
   font-size: 0.875rem;
+
+  .mat-mdc-card-subtitle,
+  .mat-mdc-card-content {
+    font-size: 14px;
+  }
 }
 
 a,

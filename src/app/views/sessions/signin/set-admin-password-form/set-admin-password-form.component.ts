@@ -11,6 +11,7 @@ import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/p
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 const adminUsername = 'admin';
@@ -48,6 +49,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
@@ -68,6 +70,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
       : this.ws.call('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
+      switchMap(() => this.ws2.call('auth.login', [username, password])),
       switchMap(() => this.ws.login(username, password)),
       untilDestroyed(this),
     ).subscribe({

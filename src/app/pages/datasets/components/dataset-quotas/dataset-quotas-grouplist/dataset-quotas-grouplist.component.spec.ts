@@ -27,7 +27,6 @@ const fakeGroupQuotas: DatasetQuota[] = [{
   name: 'daemon',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.Group,
   used_bytes: 0,
@@ -37,7 +36,6 @@ const fakeGroupQuotas: DatasetQuota[] = [{
   name: 'bin',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.Group,
   used_bytes: 0,
@@ -91,7 +89,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
   it('should show table rows', async () => {
     expect(ws.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.Group, [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]]],
+      ['Test', DatasetQuotaType.Group, []],
     );
 
     expect(ws.call).toHaveBeenCalledWith(
@@ -103,8 +101,8 @@ describe('DatasetQuotasGrouplistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
+      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
     ];
 
     expect(cells).toEqual(expectedRows);

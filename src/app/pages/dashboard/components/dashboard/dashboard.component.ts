@@ -6,7 +6,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -22,14 +22,13 @@ import {
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { dashboardStateLoaded } from 'app/store/preferences/preferences.actions';
@@ -126,7 +125,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   initialLoading = true;
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
     private el: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
@@ -257,7 +256,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
 
-    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
+    this.ws2.subscribe('reporting.realtime').pipe(
+      map((event) => event.fields),
+      untilDestroyed(this),
+    ).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
@@ -547,7 +549,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveState(state: DashConfigItem[]): void {
-    this.ws.call('user.set_attribute', [1, 'dashState', state])
+    this.ws2.call('user.set_attribute', [1, 'dashState', state])
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (!res) {
@@ -557,7 +559,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadPoolData(): void {
-    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.ws2.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       this.pools = pools;
 
       if (this.pools.length > 0) {
@@ -570,7 +572,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadVolumeData(): void {
-    this.ws
+    this.ws2
       .call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])
       .pipe(untilDestroyed(this))
       .subscribe((dataset) => {
@@ -600,7 +602,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getNetworkInterfaces(): void {
-    this.ws.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
+    this.ws2.call('interface.query').pipe(untilDestroyed(this)).subscribe((interfaces) => {
       const clone = [...interfaces] as DashboardNetworkInterface[];
       const removeNics: { [nic: string]: number | string } = {};
 

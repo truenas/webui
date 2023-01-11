@@ -10,8 +10,9 @@ import helptext from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, TaskService, WebSocketService } from 'app/services';
+import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +49,7 @@ export class ResilverConfigComponent implements OnInit {
   timeOptions$ = of(this.taskService.getTimeOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -61,7 +62,7 @@ export class ResilverConfigComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('pool.resilver.config')
+    this.ws2.call('pool.resilver.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -81,7 +82,7 @@ export class ResilverConfigComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('pool.resilver.update', [values as ResilverConfigUpdate])
+    this.ws2.call('pool.resilver.update', [values as ResilverConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

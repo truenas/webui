@@ -50,7 +50,7 @@ describe('SftpProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       host: 'fbi.gov',
       port: 22,
       user: 'mulder',

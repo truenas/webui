@@ -35,13 +35,13 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
-  WebSocketService,
   TaskService,
   KeychainCredentialService,
   ReplicationService,
   StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -980,7 +980,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   ]);
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
     protected taskService: TaskService,
     protected storageService: StorageService,
     protected keychainCredentialService: KeychainCredentialService,
@@ -999,7 +999,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }));
     });
     const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+    this.ws2.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
       tasks.forEach((task) => {
         const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
           task.lifetime_unit
@@ -1049,7 +1049,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       payload.name_regex = nameRegex;
     }
 
-    this.ws
+    this.ws2
       .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe({
         next: (res) => {

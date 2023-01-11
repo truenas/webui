@@ -13,8 +13,8 @@ import {
   crontabToScheduleWithoutMinutes,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -51,14 +51,14 @@ export class SmartTaskFormComponent {
     schedule: helptext.smarttest_picker_tooltip,
   };
 
-  readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());
+  readonly diskOptions$ = this.ws2.call('smart.test.disk_choices').pipe(choicesToOptions());
   readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels, this.translate));
 
   private editingTest: SmartTestTask;
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
@@ -83,9 +83,9 @@ export class SmartTaskFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('smart.test.create', [values]);
+      request$ = this.ws2.call('smart.test.create', [values]);
     } else {
-      request$ = this.ws.call('smart.test.update', [
+      request$ = this.ws2.call('smart.test.update', [
         this.editingTest.id,
         values,
       ]);
