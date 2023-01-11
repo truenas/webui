@@ -106,7 +106,6 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
           schema: catalogApp.versions[catalogApp.latest_version].schema,
         } as CatalogApp;
 
-        // console.log(catalogAppInfo, 'catalogAppInfo');
         const chartWizard = this.slideInService.open(ChartFormComponent, { wide: true });
         chartWizard.setChartCreate(catalogAppInfo);
       });

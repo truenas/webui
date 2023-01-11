@@ -121,6 +121,9 @@ export class AppSchemaService {
       case schema.type === ChartSchemaType.List:
         this.addListSchemaTypeControl(addControlPayload);
         break;
+      case schema.type === ChartSchemaType.Cron:
+        this.addCommonSchemaTypeControl(addControlPayload);
+        break;
       default:
         console.error('Unsupported type = ', schema.type);
         break;
