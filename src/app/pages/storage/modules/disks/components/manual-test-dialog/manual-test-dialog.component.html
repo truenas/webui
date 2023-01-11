@@ -34,7 +34,11 @@
     [options]="testTypes$"
   ></ix-select>
 
-  <div class="form-actions">
+  <ix-form-actions>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
     <button
       mat-button
       type="submit"
@@ -43,11 +47,7 @@
     >
       {{ 'Start' | translate }}
     </button>
-
-    <button mat-button type="button" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
+  </ix-form-actions>
 </form>
 <ng-template #showResults>
   <div class="started-tests">
@@ -63,9 +63,9 @@
     </div>
   </div>
 
-  <div class="form-actions">
+  <ix-form-actions>
     <button mat-button type="button" [matDialogClose]="true">
       {{ 'Close' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </ng-template>

@@ -11,13 +11,13 @@
     [options]="wipeMethods$"
   ></ix-select>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
-      {{ 'Wipe' | translate }}
-    </button>
-
+  <ix-form-actions>
     <button mat-button type="button" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Wipe' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

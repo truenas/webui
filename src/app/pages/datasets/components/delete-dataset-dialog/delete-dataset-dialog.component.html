@@ -62,7 +62,11 @@
     [label]="'Confirm' | translate"
   ></ix-checkbox>
 
-  <div class="form-actions">
+  <ix-form-actions>
+    <button mat-button type="button" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
     <button
       class="delete-button"
       mat-button
@@ -72,9 +76,5 @@
     >
       {{ 'Delete Dataset' | translate }}
     </button>
-
-    <button mat-button type="button" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
+  </ix-form-actions>
 </form>

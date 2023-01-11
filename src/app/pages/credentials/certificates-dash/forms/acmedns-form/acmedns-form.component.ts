@@ -24,7 +24,6 @@ interface DnsAuthenticatorList {
 @UntilDestroy()
 @Component({
   templateUrl: './acmedns-form.component.html',
-  styleUrls: ['./acmedns-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcmednsFormComponent implements OnInit {

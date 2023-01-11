@@ -14,7 +14,6 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 @UntilDestroy()
 @Component({
   templateUrl: './dashboard-form.component.html',
-  styleUrls: ['./dashboard-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardFormComponent {

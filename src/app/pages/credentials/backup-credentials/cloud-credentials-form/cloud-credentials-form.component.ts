@@ -75,7 +75,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './cloud-credentials-form.component.html',
-  styleUrls: ['./cloud-credentials-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudCredentialsFormComponent implements OnInit {

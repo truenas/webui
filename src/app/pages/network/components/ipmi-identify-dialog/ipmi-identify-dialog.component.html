@@ -7,13 +7,13 @@
     [options]="durationOptions$"
   ></ix-select>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
-      {{ 'OK' | translate }}
-    </button>
-
+  <ix-form-actions>
     <button mat-button type="button" matDialogClose>
       {{ 'Close' | translate }}
     </button>
-  </div>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'OK' | translate }}
+    </button>
+  </ix-form-actions>
 </form>
