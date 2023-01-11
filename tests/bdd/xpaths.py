@@ -193,7 +193,7 @@ class dataset:
         return f'//span[contains(text(),"{dataset_name}")]'
 
     def dataset_tree(dataset_name):
-        return f'//ix-tree-node[contains(.,"{dataset_name}")]'
+        return f'//ix-dataset-node[contains(.,"{dataset_name}")]/div'
 
     def permissionAtOwner(user_name):
         return f'//div[text()="owner@ - {user_name}"]'
@@ -258,6 +258,8 @@ class editAcl:
     user_combobox = '//ix-combobox[@formcontrolname="user"]//input'
     builtinUsers_cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
     builtinAdministrators_cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
+    recursive_checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
+    traverse_checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
 
     def combobox_option(option):
         return f'//mat-option[contains(.,"{option}")]'
