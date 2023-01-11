@@ -8,6 +8,7 @@
   "Configuration Preview": "",
   "Core #": "",
   "Create Data VDEVs": "",
+  "Cron": "",
   "Custom App": "",
   "Enter a number of degrees in Celsius. S.M.A.R.T. reports if the temperature of a drive has changed by N degrees Celsius since the last report.": "",
   "Enter a threshold temperature in Celsius. S.M.A.R.T. will message with a log level of LOG_CRIT and send an email if the temperature is higher than the threshold.": "",

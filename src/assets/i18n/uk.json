@@ -41,6 +41,7 @@
   "Controller Type": "",
   "Core #": "",
   "Create Data VDEVs": "",
+  "Cron": "",
   "Custom App": "",
   "DHCP": "",
   "Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.": "",
