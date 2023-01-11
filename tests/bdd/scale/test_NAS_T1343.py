@@ -19,6 +19,7 @@ from pytest_dependency import depends
 pytestmark = [pytest.mark.debug_test]
 
 
+@pytest.mark.dependency(name='App_Nextcloud')
 @scenario('features/NAS-T1343.feature', 'Apps Page - Validate nextcloud')
 def test__apps_page__validate_nextcloud():
     """SCALE UI: Apps Page - Validate nextcloud."""

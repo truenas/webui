@@ -74,8 +74,8 @@ def click_three_dots_icon_for_chia_and_select_delete(driver):
 def confirm_the_delete_confirmation(driver):
     """confirm the delete confirmation."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Delete")]')
-    assert wait_on_element(driver, 2, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 2, xpaths.checkbox.old_confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
     assert wait_on_element(driver, 10, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Deleting...")]')

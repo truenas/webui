@@ -27,7 +27,7 @@ def test_apps_page__validate_deleting_a_container_image():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['App_Container'], scope='session')
+    #depends(request, ['App_Nextcloud'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -44,9 +44,9 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the Dashboard, click on apps')
-def on_the_dashboard_click_on_apps(driver):
-    """on the Dashboard, click on apps."""
+@when('on the Dashboard, click on Apps on the side menu')
+def on_the_dashboard_click_on_apps_on_the_side_menu(driver):
+    """on the Dashboard, click on Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
@@ -54,19 +54,19 @@ def on_the_dashboard_click_on_apps(driver):
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
-@then('Stop nextcloud from running')
-def stop_nextcloud_from_running(driver):
-    """Stop nextcloud from running."""
+@then('on the Application page stop nextcloud from running')
+def on_the_application_page_stop_nextcloud_from_running(driver):
+    """on the Application page stop nextcloud from running."""
     assert wait_on_element(driver, 10, xpaths.applications.title)
-    assert wait_on_element_disappear(driver, 120, '//mat-spinner[@role="progressbar"]')
+    assert wait_on_element_disappear(driver, 120, xpaths.progress.spinner)
     assert wait_on_element(driver, 60, '//strong[text()="nextcloud-test"]')
     assert wait_on_element(driver, 45, '//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"nextcloud")]//span[contains(.,"Stop")]').click()
 
 
-@then('Verify the application has stopped')
-def verify_the_application_has_stopped(driver):
-    """Verify the application has stopped."""
+@then('verify the nextcloud has stopped')
+def verify_the_nextcloud_has_stopped(driver):
+    """verify the nextcloud has stopped."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Stopping")]')
     assert wait_on_element_disappear(driver, 180, '//h1[contains(.,"Stopping")]')
     assert wait_on_element(driver, 15, '//mat-card[contains(.,"nextcloud-test")]//span[contains(.,"STOPPED ")]')
@@ -74,58 +74,41 @@ def verify_the_application_has_stopped(driver):
     time.sleep(5)
 
 
-@then('open available applications')
-def open_available_applications(driver):
-    """open available applications."""
-    assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
-    driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
-
-
-@then('when the Apps page loads, open Manager Docker Images')
-def when_the_apps_page_loads_open_manager_docker_images(driver):
-    """when the Apps page loads, open Manager Docker Images."""
-    assert wait_on_element_disappear(driver, 60, xpaths.progress.spinner)
+@then('click on Manager Docker Images tap')
+def click_on_manager_docker_images_tap(driver):
+    """click on Manager Docker Images tap."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
     time.sleep(1)
 
 
-@then('click the three dots icon for nextcloud')
-def click_the_three_dots_icon_for_nextcloud(driver):
-    """click the three dots icon for nextcloud."""
-    assert wait_on_element(driver, 10, '//th[text()="Tags"]')
-    assert wait_on_element(driver, 10, '//div[contains(text(),"Items per page:")]')
-    if wait_on_element(driver, 3, '//div[contains(text(),"nextcloud")]'):
-        assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-        driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
-    else:
-        assert wait_on_element(driver, 20, '//button[@aria-label="Next page"]', 'clickable')
-        driver.find_element_by_xpath('//button[@aria-label="Next page"]').click()
-        assert wait_on_element(driver, 5, '//div[contains(text(),"nextcloud")]')
-        assert wait_on_element(driver, 5, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
-        driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+@then('click on the three dots icon for nextcloud, then click delete')
+def click_on_the_three_dots_icon_for_nextcloud_then_click_delete(driver):
+    """click on the three dots icon for nextcloud, then click delete."""
+    assert wait_on_element(driver, 10, '//th[contains(.,"Tags")]')
+
+    assert wait_on_element(driver, 5, '//td[contains(text(),"nextcloud")]')
+    assert wait_on_element(driver, 20, '//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"nextcloud")]//mat-icon[contains(.,"more_vert")]').click()
+
+    assert wait_on_element(driver, 20, '//a[contains(.,"Delete")]', 'clickable')
+    driver.find_element_by_xpath('//a[contains(.,"Delete")]').click()
 
 
-@then('click delete')
-def click_delete(driver):
-    """click delete."""
-    assert wait_on_element(driver, 20, '//button//span[contains(.,"Delete")]', 'clickable')
-    driver.find_element_by_xpath('//button//span[contains(.,"Delete")]').click()
-
-
-@then('confirm')
-def confirm(driver):
-    """confirm."""
-
+@then('on the Delete box check confirm and Force delete then click Delete')
+def on_the_delete_box_check_confirm_and_force_delete_then_click_delete(driver):
+    """on the Delete box check confirm and Force delete then click Delete."""
+    assert wait_on_element(driver, 20, '//h1[text()="Delete"]')
     assert wait_on_element(driver, 2, xpaths.checkbox.confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
-    wait_on_element(driver, 10, '//button[@ix-auto="button__DELETE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
+    assert wait_on_element(driver, 2, xpaths.checkbox.force, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.force).click()
+    wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.delete).click()
 
 
-@then('confirm image is deleted')
-def confirm_image_is_deleted(driver):
-    """confirm image is deleted."""
-    assert wait_on_element(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element_disappear(driver, 35, xpaths.popup.pleaseWait)
+@then('verify the nextcloud image is deleted')
+def verify_the_nextcloud_image_is_deleted(driver):
+    """verify the nextcloud image is deleted."""
+    assert wait_on_element_disappear(driver, 35, '//h1[text()="Delete"]')
     assert wait_on_element_disappear(driver, 15, '//tr[contains(.,"nextcloud")]')
