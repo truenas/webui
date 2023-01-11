@@ -11,10 +11,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import {
-  waitForSystemFeatures,
-  waitForSystemInfo,
-} from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Injectable()
@@ -83,10 +80,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: of(
-            this.systemGeneralService.getProductType()
-              === ProductType.ScaleEnterprise,
-          ),
+          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise),
         },
       ],
     },
@@ -164,40 +158,31 @@ export class NavigationService {
   }
 
   private checkForFailoverSupport(): void {
-    this.store$
-      .select(selectIsHaLicensed)
-      .pipe(untilDestroyed(this))
-      .subscribe((hasFailover) => {
-        this.hasFailover$.next(hasFailover);
-      });
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((hasFailover) => {
+      this.hasFailover$.next(hasFailover);
+    });
   }
 
   private checkForEnclosureSupport(): void {
-    this.store$
-      .pipe(waitForSystemFeatures, untilDestroyed(this))
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this))
       .subscribe((features: SystemFeatures) => {
         this.hasEnclosure$.next(features.enclosure);
       });
   }
 
   private checkForEnterpriseLicenses(): void {
-    if (
-      this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise
-    ) {
+    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
       this.hasVms$.next(true);
       this.hasApps$.next(true);
       return;
     }
 
-    this.store$
-      .pipe(waitForSystemInfo, untilDestroyed(this))
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
       .subscribe((systemInfo) => {
-        const hasVms = systemInfo.license
-          && Boolean(systemInfo.license.features.includes(LicenseFeature.Vm));
+        const hasVms = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Vm));
         this.hasVms$.next(hasVms);
 
-        const hasApps = systemInfo.license
-          && Boolean(systemInfo.license.features.includes(LicenseFeature.Jails));
+        const hasApps = systemInfo.license && Boolean(systemInfo.license.features.includes(LicenseFeature.Jails));
         this.hasApps$.next(hasApps);
       });
   }
