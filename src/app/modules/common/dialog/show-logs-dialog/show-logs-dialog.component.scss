@@ -13,10 +13,12 @@
 
     pre {
       max-height: 300px;
+      overflow: auto;
 
       code {
         display: flex;
         overflow: auto;
+        white-space: pre-line;
       }
     }
 
@@ -30,7 +32,7 @@
   }
 }
 
-.mat-mdc-dialogactions {
+.mat-mdc-dialog-actions {
   display: flex;
   justify-content: flex-end;
 }

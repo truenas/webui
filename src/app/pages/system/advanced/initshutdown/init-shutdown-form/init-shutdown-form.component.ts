@@ -82,8 +82,8 @@ export class InitShutdownFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.form.controls['command'].enabledWhile(this.isCommand$),
-      this.form.controls['script'].disabledWhile(this.isCommand$),
+      this.form.controls.command.enabledWhile(this.isCommand$),
+      this.form.controls.script.disabledWhile(this.isCommand$),
     );
   }
 

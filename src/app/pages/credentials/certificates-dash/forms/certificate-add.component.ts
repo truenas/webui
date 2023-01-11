@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -830,9 +830,9 @@ export class OldCertificateAddComponent implements WizardConfiguration {
 
     this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
       if (this.identifier && status === 'INVALID') {
-        this.getTarget('name')['hasErrors'] = true;
+        this.getTarget('name').hasErrors = true;
       } else {
-        this.getTarget('name')['hasErrors'] = false;
+        this.getTarget('name').hasErrors = false;
       }
       this.setSummary();
     });
@@ -879,9 +879,9 @@ export class OldCertificateAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type: CertificateExtension) => {
-            Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
-              const extension = value['cert_extensions'][type] as SomeCertificateExtension;
+          Object.keys(value.cert_extensions).forEach((type: CertificateExtension) => {
+            Object.keys(value.cert_extensions[type]).forEach((prop: CertificationExtensionAttribute) => {
+              const extension = value.cert_extensions[type] as SomeCertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === extension[prop]) {
@@ -891,7 +891,7 @@ export class OldCertificateAddComponent implements WizardConfiguration {
                 }
               } else {
                 ctrl = this.getField(type);
-                const config = ctrl.value || [];
+                const config: unknown[] = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
                 if (reset && extension[prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);
@@ -1013,11 +1013,11 @@ export class OldCertificateAddComponent implements WizardConfiguration {
         delete data[key];
       });
       if (data.create_type === CertificateCreateType.CreateCsr) {
-        delete certExtensions['AuthorityKeyIdentifier'];
+        delete certExtensions.AuthorityKeyIdentifier;
       }
-      data['cert_extensions'] = certExtensions;
+      data.cert_extensions = certExtensions;
 
-      delete data['profiles'];
+      delete data.profiles;
     }
     return data;
   }

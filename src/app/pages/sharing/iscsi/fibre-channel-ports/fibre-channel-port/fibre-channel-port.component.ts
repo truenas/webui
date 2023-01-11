@@ -142,10 +142,10 @@ export class FibreChannelPortComponent implements OnInit {
 
   onSubmit(): void {
     const value = _.cloneDeep(this.formGroup.value);
-    delete value['initiators'];
+    delete value.initiators;
 
-    if (value['mode'] !== FibreChannelPortMode.Target) {
-      value['target'] = null;
+    if (value.mode !== FibreChannelPortMode.Target) {
+      value.target = null;
     }
     this.loader.open();
     this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe({

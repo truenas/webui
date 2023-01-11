@@ -137,7 +137,7 @@ export class VmEditFormComponent {
       const vmGpus = allGpus.filter(byVmPciSlots(vmPciSlots));
 
       const vmGpuPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.form.controls['gpus'].setValue(vmGpuPciSlots, { emitEvent: false });
+      this.form.controls.gpus.setValue(vmGpuPciSlots, { emitEvent: false });
     });
   }
 }

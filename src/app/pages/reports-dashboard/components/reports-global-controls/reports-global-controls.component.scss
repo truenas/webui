@@ -35,7 +35,7 @@
 }
 
 .reports-menu ::ng-deep {
-  .mat-menu-item {
+  .mat-mdc-menu-item {
     &.selected {
       background-color: var(--primary);
     }

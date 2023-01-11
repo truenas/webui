@@ -580,8 +580,8 @@ export class VmWizardComponent implements WizardConfiguration {
     const osSectionFields = this.wizardConfig[0].fieldConfig;
     const disksSectionFields = this.wizardConfig[2].fieldConfig;
 
-    _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
-    _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
+    _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' }).isHidden = true;
+    _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' }).isHidden = false;
     const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
     cpuModel.isHidden = false;
 
@@ -675,8 +675,8 @@ export class VmWizardComponent implements WizardConfiguration {
           const volsize = this.storageService.convertHumanStringToNum(this.getFormControlFromFieldName('volsize').value as string);
           this.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).pipe(untilDestroyed(this)).subscribe((stat) => {
             this.statSize = stat;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).hasErrors = false;
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).errors = '';
             if (stat.free_bytes < volsize) {
               const volsizeInGbs = Math.floor(stat.free_bytes / (1024 ** 3));
               this.getFormControlFromFieldName('volsize').setValue(`${volsizeInGbs} GiB`);
@@ -745,8 +745,8 @@ export class VmWizardComponent implements WizardConfiguration {
       }
     });
     this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.pipe(untilDestroyed(this)).subscribe((willUpload) => {
-      _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })['isHidden'] = !willUpload;
-      _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = !willUpload;
+      _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }).isHidden = !willUpload;
+      _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' }).isHidden = !willUpload;
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
@@ -875,8 +875,8 @@ export class VmWizardComponent implements WizardConfiguration {
         .setValue(this.storageService.convertBytesToHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
       this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
-      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
-      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['errors'] = '';
+      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).hasErrors = false;
+      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).errors = '';
     }
   }
 
@@ -885,8 +885,8 @@ export class VmWizardComponent implements WizardConfiguration {
     const volsize = this.storageService.convertHumanStringToNum(enteredVal as string, false, 'mgtp');
     if (volsize >= 1048576) {
       this.entityWizard.formArray.get([2]).get('volsize').setValue(this.storageService.humanReadable);
-      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
-      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
+      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).hasErrors = false;
+      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).errors = '';
     } else if (Number.isNaN(volsize)) {
       console.error(volsize); // leaves form in previous error state
     } else {
@@ -923,26 +923,26 @@ export class VmWizardComponent implements WizardConfiguration {
     };
 
     if (this.productType.includes(ProductType.Scale)) {
-      vmPayload['cpu_mode'] = value.cpu_mode;
-      vmPayload['cpu_model'] = (value.cpu_model === '' || value.cpu_mode !== VmCpuMode.Custom) ? null : value.cpu_model;
+      vmPayload.cpu_mode = value.cpu_mode;
+      vmPayload.cpu_model = (value.cpu_model === '' || value.cpu_mode !== VmCpuMode.Custom) ? null : value.cpu_model;
     }
 
-    vmPayload['name'] = value.name;
-    vmPayload['description'] = value.description;
-    vmPayload['time'] = value.time;
-    vmPayload['vcpus'] = value.vcpus;
-    vmPayload['cores'] = value.cores;
-    vmPayload['threads'] = value.threads;
-    vmPayload['cpuset'] = value.cpuset;
-    vmPayload['nodeset'] = value.nodeset;
-    vmPayload['pin_vcpus'] = value.pin_vcpus;
-    vmPayload['memory'] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
-    vmPayload['hyperv_enlightenments'] = value.hyperv_enlightenments;
-    vmPayload['bootloader'] = value.bootloader;
-    vmPayload['shutdown_timeout'] = value.shutdown_timeout;
-    vmPayload['autostart'] = value.autostart;
+    vmPayload.name = value.name;
+    vmPayload.description = value.description;
+    vmPayload.time = value.time;
+    vmPayload.vcpus = value.vcpus;
+    vmPayload.cores = value.cores;
+    vmPayload.threads = value.threads;
+    vmPayload.cpuset = value.cpuset;
+    vmPayload.nodeset = value.nodeset;
+    vmPayload.pin_vcpus = value.pin_vcpus;
+    vmPayload.memory = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024 ** 2); // bytes -> mb
+    vmPayload.hyperv_enlightenments = value.hyperv_enlightenments;
+    vmPayload.bootloader = value.bootloader;
+    vmPayload.shutdown_timeout = value.shutdown_timeout;
+    vmPayload.autostart = value.autostart;
     if (value.iso_path) {
-      vmPayload['devices'] = [
+      vmPayload.devices = [
         {
           dtype: VmDeviceType.Nic,
           attributes: {
@@ -961,7 +961,7 @@ export class VmWizardComponent implements WizardConfiguration {
         { dtype: VmDeviceType.Cdrom, attributes: { path: value.iso_path } },
       ];
     } else {
-      vmPayload['devices'] = [
+      vmPayload.devices = [
         {
           dtype: VmDeviceType.Nic,
           attributes: {
@@ -983,7 +983,7 @@ export class VmWizardComponent implements WizardConfiguration {
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
         const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot === gpuPciSlot);
-        vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
+        vmPayload.devices.push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
           dtype: VmDeviceType.Pci,
           attributes: {
             pptdev: gpuDevice.vm_pci_slot,
@@ -994,7 +994,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
     if (value.enable_display) {
       if (this.productType.includes(ProductType.Scale)) {
-        vmPayload['devices'].push({
+        vmPayload.devices.push({
           dtype: VmDeviceType.Display,
           attributes: {
             port: this.displayPort,
@@ -1005,7 +1005,7 @@ export class VmWizardComponent implements WizardConfiguration {
           },
         });
       } else if (value.bootloader === VmBootloader.Uefi) {
-        vmPayload['devices'].push({
+        vmPayload.devices.push({
           dtype: VmDeviceType.Display,
           attributes: {
             wait: value.wait,
@@ -1030,7 +1030,7 @@ export class VmWizardComponent implements WizardConfiguration {
         });
     }
     if (value.hdd_path) {
-      for (const device of vmPayload['devices']) {
+      for (const device of vmPayload.devices) {
         if (device.dtype === VmDeviceType.Disk) {
           if (device.attributes.create_zvol) {
             delete device.attributes.path;
@@ -1040,8 +1040,8 @@ export class VmWizardComponent implements WizardConfiguration {
         }
       }
 
-      const devices: VmDeviceUpdate[] = [...vmPayload['devices']];
-      delete vmPayload['devices'];
+      const devices: VmDeviceUpdate[] = [...vmPayload.devices];
+      delete vmPayload.devices;
       this.ws.call('vm.create', [vmPayload as VirtualMachineUpdate]).pipe(untilDestroyed(this)).subscribe({
         next: (newVm) => {
           const observables: Observable<unknown>[] = [];
@@ -1075,12 +1075,12 @@ export class VmWizardComponent implements WizardConfiguration {
         },
       });
     } else {
-      for (const device of vmPayload['devices']) {
+      for (const device of vmPayload.devices) {
         if (device.dtype === VmDeviceType.Disk) {
           const origHdd = device.attributes.path;
-          const createZvol = zvolPayload['create_zvol'];
-          const zvolName = zvolPayload['zvol_name'];
-          const zvolVolsize = zvolPayload['zvol_volsize'];
+          const createZvol = zvolPayload.create_zvol;
+          const zvolName = zvolPayload.zvol_name;
+          const zvolVolsize = zvolPayload.zvol_volsize;
 
           if (createZvol) {
             delete device.attributes.path;
@@ -1094,8 +1094,8 @@ export class VmWizardComponent implements WizardConfiguration {
         }
       }
 
-      const devices: VmDeviceUpdate[] = [...vmPayload['devices']];
-      delete vmPayload['devices'];
+      const devices: VmDeviceUpdate[] = [...vmPayload.devices];
+      delete vmPayload.devices;
       this.ws.call('vm.create', [vmPayload as VirtualMachineUpdate]).pipe(untilDestroyed(this)).subscribe({
         next: (newVm) => {
           const observables: Observable<unknown>[] = [];

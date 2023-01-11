@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
@@ -158,7 +159,7 @@ export class NfsFormComponent implements OnInit {
     this.ws.call('nfs.config')
       .pipe(untilDestroyed(this))
       .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.v4;
+        this.hasNfsSecurityField = nfsConfig.protocols.includes(NfsProtocol.V4);
       });
   }
 

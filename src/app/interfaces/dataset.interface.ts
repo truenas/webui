@@ -173,6 +173,7 @@ export interface DatasetDetails {
   key_format: ZfsProperty<string>;
   key_loaded: boolean;
   locked: boolean;
+  readonly: boolean;
   mountpoint: string;
   name: string;
   pool: string;

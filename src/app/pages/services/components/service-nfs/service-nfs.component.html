@@ -26,11 +26,13 @@
 
       <div class="two-columns">
         <ix-fieldset [title]="'NFSv4' | translate">
-          <ix-checkbox
-            formControlName="v4"
-            [label]="'Enable NFSv4' | translate"
-            [tooltip]="tooltips.v4"
-          ></ix-checkbox>
+          <ix-select
+            formControlName="protocols"
+            [label]="'Enabled Protocols' | translate"
+            [options]="protocolOptions$"
+            [multiple]="true"
+            [required]="true"
+          ></ix-select>
 
           <ix-checkbox
             formControlName="v4_v3owner"

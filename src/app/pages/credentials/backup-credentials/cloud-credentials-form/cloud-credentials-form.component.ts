@@ -132,7 +132,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.commonForm.patchValue(credential);
 
     if (this.providerForm) {
-      this.providerForm.setValues(this.existingCredential.attributes);
+      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
     }
   }
 
@@ -230,7 +230,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           );
           this.renderProviderForm();
           if (this.existingCredential) {
-            this.providerForm.setValues(this.existingCredential.attributes);
+            this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
           }
           this.isLoading = false;
           this.cdr.markForCheck();

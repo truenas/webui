@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { AutofillMonitor } from '@angular/cdk/text-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
@@ -23,12 +24,18 @@ describe('SigninFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockWebsocket2([
+        mockCall('auth.login', true),
+      ]),
       mockWebsocket([
         mockCall('auth.two_factor_auth', false),
       ]),
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
         handleSuccessfulLogin: jest.fn(),
+      }),
+      mockProvider(AutofillMonitor, {
+        monitor: jest.fn(() => of({ isAutofilled: true })),
       }),
     ],
   });
@@ -73,5 +80,12 @@ describe('SigninFormComponent', () => {
 
     expect(spectator.inject(WebSocketService).login).toHaveBeenCalledWith('root', '12345678', '212484');
     expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
+  });
+
+  it('does not disabled Log In button when form has been autofilled', async () => {
+    expect(spectator.inject(AutofillMonitor).monitor).toHaveBeenCalled();
+
+    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+    expect(await loginButton.isDisabled()).toBe(false);
   });
 });

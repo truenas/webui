@@ -6,9 +6,12 @@ import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
+  combineLatest,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
-import { filter, share, switchMap } from 'rxjs/operators';
+import {
+  filter, map, share, switchMap,
+} from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -286,7 +289,12 @@ export class WebSocketService {
     const params: LoginParams = otpToken ? [username, password, otpToken] : [username, password];
 
     return new Observable((observer: Subscriber<boolean>) => {
-      this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
+      combineLatest([
+        this.call('auth.login', params),
+      ]).pipe(
+        map(([wsResponse]) => wsResponse),
+        untilDestroyed(this),
+      ).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });
     });

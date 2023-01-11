@@ -1,0 +1,39 @@
+
+<ng-container [formGroup]="form">
+  <ix-select
+    formControlName="type"
+    [label]="'Type' | translate"
+    [tooltip]="'Select a VDEV layout' | translate"
+    [options]="vdevLayoutOptions$"
+    [required]="true"
+  ></ix-select>
+  <div class="content-container">
+    <div class="automated-disk-selection-container">
+      <h3>{{'Automated Disk Selection' | translate}}</h3>
+      <ix-select
+        formControlName="size_and_type"
+        [label]="'Disk Size' | translate"
+        [tooltip]="'Select a disk size from inventory' | translate"
+        [options]="diskSizeOptions$"
+        [required]="true"
+      ></ix-select>
+      <ix-select
+        formControlName="width"
+        [label]="'Width' | translate"
+        [tooltip]="'Select VDEV width' | translate"
+        [options]="widthOptions$"
+        [required]="true"
+      ></ix-select>
+      <ix-select
+        formControlName="number"
+        [label]="'Number of VDEVs' | translate"
+        [tooltip]="'Number of VDEVs to create' | translate"
+        [options]="numberOptions$"
+        [required]="true"
+      ></ix-select>
+    </div>
+    <div class="advanced-options-container">
+      <h3>{{'Advanced Options' | translate}}</h3>
+    </div>
+  </div>
+</ng-container>

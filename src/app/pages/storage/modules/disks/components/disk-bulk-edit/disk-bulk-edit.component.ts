@@ -88,7 +88,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls['disknames'].disable();
+    this.form.controls.disknames.disable();
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {

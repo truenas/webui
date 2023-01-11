@@ -40,15 +40,15 @@
       <div>{{ 'Errors' | translate }}</div>
     </div>
 
-    <ix-tree
+    <ix-tree-view
       class="tree"
-      [dataSource]="dataSource"
-      [treeControl]="treeControl"
+      [ixDataSource]="dataSource"
+      [ixTreeControl]="treeControl"
     >
       <ix-tree-node
-        *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
-        ixTreeNodeToggle
-        [ixTreeNodeDefDataSource]="dataSource"
+        *treeNodeDef="let topologyItem; dataSource: dataSource"
+        treeNodeToggle
+        [treeNodeDefDataSource]="dataSource"
       >
         <button mat-icon-button disabled></button>
         <ix-bootenv-node-item
@@ -60,13 +60,13 @@
       </ix-tree-node>
 
       <ix-nested-tree-node
-        *ixTreeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
-        [ixTreeNodeDefDataSource]="dataSource"
+        *treeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
+        [treeNodeDefDataSource]="dataSource"
       >
         <div class="nested-tree-root-node">
           <button
             mat-icon-button
-            ixTreeNodeToggle
+            treeNodeToggle
             [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
             (click)="$event.preventDefault()"
           >
@@ -84,9 +84,9 @@
 
         <ng-container
           *ngIf="treeControl.isExpanded(topologyItem)"
-          ixTreeNodeOutlet
+          treeNodeOutlet
         ></ng-container>
       </ix-nested-tree-node>
-    </ix-tree>
+    </ix-tree-view>
   </div>
 </div>
