@@ -84,15 +84,15 @@ def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
 def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
     """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_button).click()
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
     assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
 

@@ -86,8 +86,8 @@ def click_on_the_force_checkbox_on_the_warning_box(driver):
 def click_confirm_checkbox_and_click_continue(driver):
     """click Confirm checkbox and click CONTINUE."""
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 
@@ -98,8 +98,8 @@ def click_create_click_on_confirm_checkbox_and_click_create_pool(driver):
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_button).click()
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
     assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
 

@@ -137,7 +137,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    assert wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
     assert wait_for_attribute_value(driver, 20, xpaths.services.sshService_toggle, 'class', 'mat-checked')
 
 

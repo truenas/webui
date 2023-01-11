@@ -150,8 +150,10 @@ class certificates:
 class checkbox:
     enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
-    confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
+    old_confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
+    confirm = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
     sudo = '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox'
+    force = '//ix-checkbox[@formcontrolname="force"]//mat-checkbox'
 
 
 class chossePoolForApp:

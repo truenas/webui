@@ -74,8 +74,8 @@ def click_the_three_dots_icon_and_select_delete(driver):
 @then('confirm that you want to delete')
 def confirm_that_you_want_to_delete(driver):
     """confirm that you want to delete."""
-    assert wait_on_element(driver, 2, xpaths.checkbox.confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
+    assert wait_on_element(driver, 2, xpaths.checkbox.old_confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
     wait_on_element(driver, 10, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 
