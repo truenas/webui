@@ -68,8 +68,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   emptyOrErrorConfig: EmptyConfig = this.emptyConfig;
 
   useFullFilter = true;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
-  protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected invalidFilter: QueryParams<DatasetQuota> = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
 
   constructor(
@@ -105,6 +103,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
+    if (row[field as keyof DatasetQuota] === undefined) {
+      return '—';
+    }
     switch (field) {
       case 'name':
         if (!row[field]) {
@@ -145,14 +146,16 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   getUserQuotas(): void {
-    const filterParam = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.User, filterParam],
+      [this.datasetId, DatasetQuotaType.User, []],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;
+        if (this.useFullFilter) {
+          quotas = quotas.filter((quota) => quota.quota > 0 || quota.obj_quota > 0);
+        }
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },
