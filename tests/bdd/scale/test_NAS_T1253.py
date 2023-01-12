@@ -71,8 +71,16 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.find_element_by_xpath(xpaths.addUser.password_input).send_keys('testing')
     driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).clear()
     driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).send_keys('testing')
+
+    # Home directory is needed
     driver.find_element_by_xpath(xpaths.addUser.home_input).clear()
     driver.find_element_by_xpath(xpaths.addUser.home_input).send_keys('/mnt/tank/qetestuser')
+
+    # The default shell is nologin this test will fail with nologin
+    assert wait_on_element(driver, 5, xpaths.addUser.select_shell, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.select_shell).click()
+    assert wait_on_element(driver, 10, xpaths.addUser.shell_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.shell_option).click()
 
     assert wait_on_element(driver, 7, xpaths.addUser.auxiliaryGroups_select, 'clickable')
     # scroll down to Auxiliary Groups
