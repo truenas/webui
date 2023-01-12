@@ -233,7 +233,7 @@ class directoryServices:
 class disks:
     title = '//h1[text()="Disks"]'
     all_disk = '//div[contains(text(),"sd")]'
-    wipe_button = '//div[@class="form-actions"]//button[contains(.,"Wipe")]'
+    wipe_button = '//mat-dialog-container//button[contains(.,"Wipe")]'
 
     def disk_expander(disk):
         return f'//tr[@ix-auto="expander__{disk}"]/td[2]'
