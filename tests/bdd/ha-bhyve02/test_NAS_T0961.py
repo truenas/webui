@@ -199,7 +199,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     # assert need to be added after the UI get fix.
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 20, xpaths.advanced.systemDatasetPool_pool('tank'))
-    assert wait_on_element(driver, 5, xpaths.advanced.systemDatasetPool_pool('system'))
+    assert wait_on_element(driver, 5, xpaths.advanced.systemDatasetPool_pool('dozer'))
 
 
 @then('navigate to the dashboard')
