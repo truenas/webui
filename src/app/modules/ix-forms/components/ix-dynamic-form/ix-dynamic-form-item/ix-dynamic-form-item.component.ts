@@ -65,11 +65,11 @@ export class IxDynamicFormItemComponent implements OnInit {
     return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$;
   }
 
-  addControl(): void {
+  addControl(schema?: unknown[]): void {
     if (this.dynamicSchema.type === DynamicFormSchemaType.List) {
       this.addListItem.emit({
         array: this.getFormArray,
-        schema: this.dynamicSchema.itemsSchema,
+        schema: schema || this.dynamicSchema.itemsSchema,
       });
     }
   }
