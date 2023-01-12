@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
-import { Summary } from 'app/modules/common/summary/summary.component';
+import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import {
   CertificateCsrExistsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-csr-exists/certificate-csr-exists.component';
@@ -36,16 +36,18 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class CertificateAddComponent {
   @ViewChild(CertificateIdentifierAndTypeComponent) identifierAndType: CertificateIdentifierAndTypeComponent;
+
+  // Adding new certificate
   @ViewChild(CertificateOptionsComponent) options: CertificateOptionsComponent;
   @ViewChild(CertificateSubjectComponent) subject: CertificateSubjectComponent;
-  @ViewChild(CertificateCsrExistsComponent) csr: CertificateCsrExistsComponent;
-  @ViewChild(CertificateImportComponent) import: CertificateImportComponent;
   @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
 
-  isLoading = false;
-  summary: Summary;
+  // Importing existing certificate
+  @ViewChild(CertificateCsrExistsComponent) csr: CertificateCsrExistsComponent;
+  @ViewChild(CertificateImportComponent) import: CertificateImportComponent;
 
-  private summaryBySection = new Map<string, Summary>();
+  isLoading = false;
+  summary: SummarySection[];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -58,6 +60,23 @@ export class CertificateAddComponent {
 
   get isImport(): boolean {
     return this.identifierAndType?.form?.value.create_type === CertificateCreateType.CreateImported;
+  }
+
+  getNewCertificateSteps(): [
+    CertificateIdentifierAndTypeComponent,
+    CertificateOptionsComponent,
+    CertificateSubjectComponent,
+    CertificateConstraintsComponent,
+  ] {
+    return [this.identifierAndType, this.options, this.subject, this.constraints];
+  }
+
+  getImportCertificateSteps(): [
+    CertificateIdentifierAndTypeComponent,
+    CertificateCsrExistsComponent,
+    CertificateImportComponent,
+  ] {
+    return [this.identifierAndType, this.csr, this.import];
   }
 
   onSubmit(): void {
@@ -78,19 +97,19 @@ export class CertificateAddComponent {
       });
   }
 
-  onProfileSelected(_: CertificateProfile): void {
+  onProfileSelected(profile: CertificateProfile): void {
+    const { cert_extensions: extensions, ...otherFields } = profile;
 
+    this.getNewCertificateSteps().forEach((step) => {
+      step.form.patchValue(otherFields);
+    });
+
+    this.constraints.setFromProfile(extensions);
   }
 
-  onSummaryUpdated(section: string, value: Summary): void {
-    this.summaryBySection.set(section, value);
-    // TODO: Move somewhere?
-    this.summary = Array.from(this.summaryBySection.entries()).reduce((summary, [_, sectionSummary]) => {
-      return {
-        ...summary,
-        ...sectionSummary,
-      };
-    }, {});
+  updateSummary(): void {
+    const stepsWithSummary = this.isImport ? this.getImportCertificateSteps() : this.getNewCertificateSteps();
+    this.summary = stepsWithSummary.map((form) => form.getSummary());
   }
 
   private preparePayload(): CertificateCreate {

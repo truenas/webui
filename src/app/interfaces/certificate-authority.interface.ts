@@ -18,7 +18,7 @@ export interface AuthorityKeyIdentifier {
 }
 
 export interface ExtendedKeyUsage {
-  usages: ExtendedKeyUsageFlag;
+  usages: ExtendedKeyUsageFlag[];
   enabled: boolean;
   extension_critical: boolean;
 }

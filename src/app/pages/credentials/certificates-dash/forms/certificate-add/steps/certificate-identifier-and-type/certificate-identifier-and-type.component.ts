@@ -6,9 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -19,9 +21,8 @@ import { DialogService, WebSocketService } from 'app/services';
   templateUrl: './certificate-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateIdentifierAndTypeComponent implements OnInit {
+export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   @Output() profileSelected = new EventEmitter<CertificateProfile>();
-  @Output() summaryUpdated = new EventEmitter<Record<string, string>>();
 
   form = this.formBuilder.group({
     name: ['', [
@@ -40,10 +41,11 @@ export class CertificateIdentifierAndTypeComponent implements OnInit {
 
   readonly helptext = helptextSystemCertificates;
 
-  readonly createTypes$ = of([
-    { label: this.translate.instant('Internal Certificate'), value: CertificateCreateType.CreateInternal },
-    { label: this.translate.instant('Import Certificate'), value: CertificateCreateType.CreateImported },
+  readonly createTypes = new Map<CertificateCreateType, string>([
+    [CertificateCreateType.CreateInternal, this.translate.instant('Internal Certificate')],
+    [CertificateCreateType.CreateImported, this.translate.instant('Import Certificate')],
   ]);
+  readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(
     private formBuilder: FormBuilder,
@@ -61,7 +63,6 @@ export class CertificateIdentifierAndTypeComponent implements OnInit {
   ngOnInit(): void {
     this.loadProfiles();
     this.emitEventOnProfileChange();
-    this.updateSummaryOnChange();
   }
 
   private loadProfiles(): void {
@@ -80,22 +81,27 @@ export class CertificateIdentifierAndTypeComponent implements OnInit {
       });
   }
 
+  getSummary(): SummarySection {
+    const values = this.form.value;
+
+    const summary = [
+      { label: this.translate.instant('Name'), value: values.name },
+      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) },
+    ];
+
+    if (values.profile) {
+      summary.push({ label: this.translate.instant('Profile'), value: values.profile });
+    }
+
+    return summary;
+  }
+
   private emitEventOnProfileChange(): void {
     this.form.controls.profile.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((profileName) => {
         const profile = this.profiles[profileName];
         this.profileSelected.emit(profile);
-      });
-  }
-
-  private updateSummaryOnChange(): void {
-    this.form.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        this.summaryUpdated.emit({
-          name: value.name,
-        });
       });
   }
 }

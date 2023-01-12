@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-
-export type Summary = Record<string, string>;
+import { SummarySection } from 'app/modules/common/summary/summary.interface';
 
 @Component({
   selector: 'ix-summary',
@@ -9,5 +8,5 @@ export type Summary = Record<string, string>;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummaryComponent {
-  @Input() summary: Summary;
+  @Input() summary: SummarySection[];
 }

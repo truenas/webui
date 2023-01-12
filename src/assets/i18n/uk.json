@@ -237,6 +237,7 @@
   "Width": "",
   "Will be automatically destroyed at {datetime} by periodic snapshot task": "",
   "Will not be destroyed automatically": "",
+  "Yes, {csr}": "",
   "ZFS": "",
   "ZFS Health": "",
   "Zoom In": "",

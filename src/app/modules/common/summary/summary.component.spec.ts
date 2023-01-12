@@ -10,23 +10,66 @@ describe('SummaryComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        summary: {
-          'First Name': 'John',
-          'Last Name': 'Smith',
-        },
+        summary: [
+          [
+            {
+              label: 'First Name',
+              value: 'John',
+            },
+            {
+              label: 'Last Name',
+              value: 'Smith',
+            },
+          ],
+          [
+            {
+              label: 'Age',
+              value: '27',
+            },
+          ],
+        ],
       },
     });
   });
 
-  it('shows summary as list items', () => {
-    const items = spectator.query('dl');
-    const terms = items.querySelectorAll('dt');
-    const values = items.querySelectorAll('dd');
+  it('shows summary items', () => {
+    const items = spectator.queryAll('.summary-line');
 
-    expect(terms[0]).toHaveExactText('First Name:');
-    expect(values[0]).toHaveExactText('John');
+    expect(items).toHaveLength(3);
 
-    expect(terms[1]).toHaveExactText('Last Name:');
-    expect(values[1]).toHaveExactText('Smith');
+    expect(items[0]).toHaveDescendantWithText({
+      selector: '.summary-line-label',
+      text: 'First Name:',
+    });
+    expect(items[0]).toHaveDescendantWithText({
+      selector: '.summary-line-value',
+      text: 'John',
+    });
+
+    expect(items[1]).toHaveDescendantWithText({
+      selector: '.summary-line-label',
+      text: 'Last Name:',
+    });
+    expect(items[1]).toHaveDescendantWithText({
+      selector: '.summary-line-value',
+      text: 'Smith',
+    });
+
+    expect(items[2]).toHaveDescendantWithText({
+      selector: '.summary-line-label',
+      text: 'Age:',
+    });
+    expect(items[2]).toHaveDescendantWithText({
+      selector: '.summary-line-value',
+      text: '27',
+    });
+  });
+
+  it('shows summary sections separately', () => {
+    const items = spectator.queryAll('.summary-line');
+
+    expect(items[0]).toHaveClass('section-start');
+    expect(items[1]).not.toHaveClass('section-start');
+    expect(items[2]).toHaveClass('section-start');
   });
 });
