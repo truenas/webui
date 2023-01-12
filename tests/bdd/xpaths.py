@@ -341,9 +341,9 @@ class lockDataset:
 
 
 class login:
-    user_input = '//input[@data-placeholder="Username"]'
-    password_input = '//input[@data-placeholder="Password"]'
-    signin_button = '//button[@name="signin_button"]'
+    user_input = '//ix-input[@formcontrolname="username"]//input'
+    password_input = '//ix-input[@formcontrolname="password"]//input'
+    signin_button = '//button[contains(.,"Log In")]'
 
 
 class network:
