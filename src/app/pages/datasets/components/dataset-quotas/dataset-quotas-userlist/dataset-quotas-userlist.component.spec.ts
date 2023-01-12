@@ -91,7 +91,7 @@ describe('DatasetQuotasUserlistComponent', () => {
   it('should show table rows', async () => {
     expect(ws.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.User, [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]]],
+      ['Test', DatasetQuotaType.User, []],
     );
 
     expect(ws.call).toHaveBeenCalledWith(
