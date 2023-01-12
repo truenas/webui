@@ -45,7 +45,7 @@ class addUser:
     password_input = '//ix-input[@formcontrolname="password"]//input'
     confirm_password_input = '//ix-input[@formcontrolname="password_conf"]//input'
     select_shell = '//ix-combobox[@formcontrolname="shell"]//input'
-    shell_option = '//mat-option[contains(.,"zsh")]'
+    shell_option = '//mat-option[contains(.,"bash")]'
     sudo_checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
     email_input = '//ix-input[@formcontrolname="email"]//input'
     auxiliaryGroups_select = '//ix-select[@formcontrolname="groups"]//mat-select'
