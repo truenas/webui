@@ -149,3 +149,19 @@ export interface PosixAclTemplateByPath {
   acltype: AclType.Posix1e;
   acl: PosixAclItem[];
 }
+
+export interface AclTemplateСreateParams {
+  name: string;
+  acltype: AclType.Nfs4 | AclType.Posix1e;
+  acl: NfsAclItem[] | PosixAclItem[];
+  comment?: string;
+}
+
+export interface AclTemplateСreateResponse {
+  name: string;
+  acltype: AclType.Nfs4 | AclType.Posix1e;
+  acl: NfsAclItem[] | PosixAclItem[];
+  comment: string;
+  id: number;
+  builtin: boolean;
+}
