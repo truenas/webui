@@ -373,7 +373,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
                 pointRadius: 0.2,
               },
               {
-                label: `outcoming [${networkInterfaceName}]`,
+                label: `outgoing [${networkInterfaceName}]`,
                 data: (response.data as number[][]).map((item, index) => ({ t: labels[index], y: -item[1] })),
                 borderColor: this.themeService.currentTheme().orange,
                 backgroundColor: this.themeService.currentTheme().orange,
