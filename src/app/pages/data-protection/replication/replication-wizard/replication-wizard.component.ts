@@ -1058,9 +1058,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async customSubmit(value: any): Promise<void> {
+  async customSubmit(value: Record<string, any>): Promise<void> {
     if (typeof (value.source_datasets) === 'string') {
-      value.source_datasets = _.filter((value.source_datasets as string).split(',').map(_.trim));
+      value.source_datasets = _.filter((value.source_datasets).split(',').map(_.trim));
     }
     this.loader.open();
     let toStop = false;
@@ -1077,7 +1077,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       if (!toStop) {
         if (!(item === 'periodic_snapshot_tasks' && (value.schedule_method !== ScheduleMethod.Cron || value.source_datasets_from !== DatasetSource.Local))
                 && !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value.source_datasets_from !== DatasetSource.Local))) {
-          await this.doCreate(value, item).then(
+          await this.doCreate(value as ReplicationWizardData, item).then(
             (res) => {
               if (item === 'snapshot') {
                 createdItems[item] = res as ZfsSnapshot[];
@@ -1086,7 +1086,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   ? res.map((resItem) => resItem.id)
                   : res?.id;
                 if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
-                  value[item].push(...this.existSnapshotTasks);
+                  (value[item] as number[]).push(...this.existSnapshotTasks);
                 }
                 if (Array.isArray(res)) {
                   createdItems[item as 'periodic_snapshot_tasks'] = (res as PeriodicSnapshotTask[])

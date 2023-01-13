@@ -27,7 +27,7 @@ export interface FormConfiguration {
   fieldConfig?: FieldConfig[];
   routeCancel?: string[];
   routeSuccess?: string[];
-  // TODO: Broken
+  // Broken
   routeDelete?: string[];
   customActions?: FormCustomAction[];
   compactCustomActions?: FormCompactCustomAction[];
