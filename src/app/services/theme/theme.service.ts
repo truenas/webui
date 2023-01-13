@@ -40,10 +40,8 @@ export class ThemeService {
       filter((theme) => theme !== this.activeTheme),
       untilDestroyed(this),
     ).subscribe((theme: string) => {
-      if (theme) {
-        this.window.sessionStorage.setItem('theme', theme);
-        this.onThemeChanged(theme);
-      }
+      this.window.sessionStorage.setItem('theme', theme);
+      this.onThemeChanged(theme);
     });
   }
 
