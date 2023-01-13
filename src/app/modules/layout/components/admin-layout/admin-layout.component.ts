@@ -19,7 +19,6 @@ import { productTypeLabels } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { Theme } from 'app/interfaces/theme.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService, SystemGeneralService, LanguageService } from 'app/services';
@@ -44,7 +43,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
   isSidenavCollapsed = false;
   sidenavMode: MatDrawerMode = 'over';
   hostname: string;
-  currentTheme = '';
   isOpen = false;
   menuName: string;
   subs: SubMenuItem[];
@@ -58,7 +56,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
   hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
-  themes: Theme[];
   productType$ = this.sysGeneralService.getProductType$;
 
   constructor(
@@ -109,8 +106,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.themes = this.themeService.allThemes;
-    this.currentTheme = this.themeService.currentTheme().name;
+    this.themeService.loadTheme$.next('');
     const navigationHold = document.getElementById('scroll-area');
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
@@ -196,12 +192,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
 
   // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
-    if ((this.isOpen && !menuInfo) || (this.isOpen && menuInfo[0] === this.menuName)) {
+    const [state, subItems] = menuInfo;
+    if ((this.isOpen && !menuInfo) || (this.isOpen && state === this.menuName)) {
       this.isOpen = false;
       this.subs = [];
     } else if (menuInfo) {
-      this.menuName = menuInfo[0];
-      this.subs = menuInfo[1];
+      this.menuName = state;
+      this.subs = subItems;
       this.isOpen = true;
     }
   }
