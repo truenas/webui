@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -18,28 +19,31 @@ export class ThemeService {
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
   allThemes: Theme[] = allThemes;
-
   private utils: ThemeUtils;
+  loadTheme$ = new Subject<string>();
 
   constructor(
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.utils = new ThemeUtils();
-    this.onThemeChanged(this.activeTheme);
 
-    const savedTheme = this.window.sessionStorage.getItem('theme');
-    if (savedTheme) {
-      this.onThemeChanged(savedTheme);
-    }
+    this.loadTheme$.subscribe(() => {
+      const savedTheme = this.window.sessionStorage.getItem('theme');
+      if (savedTheme) {
+        this.onThemeChanged(savedTheme);
+      }
+    });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
       filter((theme) => theme !== this.activeTheme),
       untilDestroyed(this),
     ).subscribe((theme: string) => {
-      this.window.sessionStorage.setItem('theme', theme);
-      this.onThemeChanged(theme);
+      if (theme) {
+        this.window.sessionStorage.setItem('theme', theme);
+        this.onThemeChanged(theme);
+      }
     });
   }
 

@@ -8,7 +8,7 @@ import {
   builtinGroupsToggled,
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted,
   localizationFormSubmitted, noPreferencesFound,
-  preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
+  preferencesLoaded, preferredColumnsUpdated, clearPreferencesState, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -36,6 +36,7 @@ export const preferencesReducer = createReducer(
   on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),
   on(noPreferencesFound, (state) => ({ ...state, preferences: defaultPreferences, areLoaded: true })),
+  on(clearPreferencesState, (state) => ({ ...state, ...initialState })),
   on(sidenavUpdated, (state, sidenavStatus) => updatePreferences(state, { sidenavStatus })),
   on(preferredColumnsUpdated, (state, { columns }) => updatePreferences(state, {
     tableDisplayedColumns: columns,

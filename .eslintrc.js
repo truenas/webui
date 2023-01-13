@@ -176,7 +176,7 @@ module.exports = {
 
         // Other temporary disables
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
+        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: false }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
 
