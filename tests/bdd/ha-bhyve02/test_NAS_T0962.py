@@ -148,7 +148,7 @@ def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_
     driver.find_element_by_xpath(xpaths.activeDirectory.ca_ou_input).send_keys(ca_ou)
 
 
-@then(parsers('change netbios to "{hostname}" and check the Enable box then click SAVE'))
+@then(parsers.parse('change netbios to "{hostname}" and check the Enable box then click SAVE'))
 def change_netbios_to_hostname_and_check_the_enable_box_then_click_save(driver, hostname):
     """change netbios to "{hostname}" and check the Enable box then click SAVE."""
     driver.find_element_by_xpath(xpaths.activeDirectory.netbiosname_input).clear()
