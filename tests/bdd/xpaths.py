@@ -6,6 +6,7 @@ class activeDirectory:
     account_input = '//ix-input[@formcontrolname="bindname"]//input'
     password_input = '//ix-input[@formcontrolname="bindpw"]//input'
     ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
+    netbiosname_input = '//ix-input[@formcontrolname="netbiosname"]//input'
 
 
 class addCatalog:
