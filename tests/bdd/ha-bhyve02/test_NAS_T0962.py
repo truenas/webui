@@ -124,33 +124,35 @@ def on_the_active_directory_page_input_the_domain_name_ad_domain(driver, ad_doma
     global domain
     domain = ad_domain
     assert wait_on_element(driver, 5, xpaths.activeDirectory.title)
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="domainname"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="domainname"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="domainname"]//input').send_keys(ad_domain)
+    assert wait_on_element(driver, 7, xpaths.activeDirectory.domain_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.activeDirectory.domain_input).clear()
+    driver.find_element_by_xpath(xpaths.activeDirectory.domain_input).send_keys(ad_domain)
 
 
 @then(parsers.parse('input the Account name "{ad_user}", the Password "{ad_password}"'))
 def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_password):
     """input the Account name "ad_user", the Password "ad_password"."""
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindname"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindname"]//input').send_keys(ad_user)
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindpw"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="bindpw"]//input').send_keys(ad_password)
+    driver.find_element_by_xpath(xpaths.activeDirectory.account_input).clear()
+    driver.find_element_by_xpath(xpaths.activeDirectory.account_input).send_keys(ad_user)
+    driver.find_element_by_xpath(xpaths.activeDirectory.password_input).clear()
+    driver.find_element_by_xpath(xpaths.activeDirectory.password_input).send_keys(ad_password)
 
 
 @then(parsers.parse('click advanced, and input the Computer Account OU "{ca_ou}"'))
 def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_ou):
     """click advanced, and input the Computer Account OU "ca_ou"."""
-    if is_element_present(driver, '//button[contains(*/text(),"Advanced Options")]'):
-        driver.find_element_by_xpath('//button[contains(*/text(),"Advanced Options")]').click()
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="createcomputer"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="createcomputer"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="createcomputer"]//input').send_keys(ca_ou)
+    if is_element_present(driver, xpaths.button.advanced_option):
+        driver.find_element_by_xpath(xpaths.button.advanced_option).click()
+    assert wait_on_element(driver, 7, xpaths.activeDirectory.ca_ou_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.activeDirectory.ca_ou_input).clear()
+    driver.find_element_by_xpath(xpaths.activeDirectory.ca_ou_input).send_keys(ca_ou)
 
 
-@then('check the Enable box and click SAVE')
-def check_the_enable_box_and_click_save(driver):
-    """check the Enable box and click SAVE."""
+@then(parsers('change netbios to "{hostname}" and check the Enable box then click SAVE'))
+def change_netbios_to_hostname_and_check_the_enable_box_then_click_save(driver, hostname):
+    """change netbios to "{hostname}" and check the Enable box then click SAVE."""
+    driver.find_element_by_xpath(xpaths.activeDirectory.netbiosname_input).clear()
+    driver.find_element_by_xpath(xpaths.activeDirectory.netbiosname_input).send_keys(hostname)
     assert wait_on_element(driver, 7, xpaths.activeDirectory.enableCheckbox, 'clickable')
     driver.find_element_by_xpath(xpaths.activeDirectory.enableCheckbox).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
