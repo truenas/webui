@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -36,6 +36,9 @@ describe('SetAdminPasswordFormComponent', () => {
         setLoadingState: jest.fn(),
         handleSuccessfulLogin: jest.fn(),
       }),
+      mockWebsocket2([
+        mockCall('auth.login', true),
+      ]),
     ],
   });
 

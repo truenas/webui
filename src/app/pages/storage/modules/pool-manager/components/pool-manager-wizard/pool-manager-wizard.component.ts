@@ -4,7 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { combineLatest } from 'rxjs';
+import { DiskType } from 'app/enums/disk-type.enum';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pools-manager-store.service';
 import { SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { AppLoaderService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
@@ -22,9 +25,15 @@ export class PoolManagerWizardComponent implements OnInit {
   form = this.fb.group({
     general: this.fb.group({
       name: ['', Validators.required],
-      encryption: [false, Validators.required],
+      encryption: [false],
+      encryption_standard: [null as string, Validators.required],
     }),
-    data: this.fb.group({}),
+    data: this.fb.group({
+      type: [CreateVdevLayout.Stripe, Validators.required],
+      size_and_type: [[null, null] as (string | DiskType)[], Validators.required],
+      width: [null as number, Validators.required],
+      number: [null as number, Validators.required],
+    }),
     log: this.fb.group({}),
     spare: this.fb.group({}),
     cache: this.fb.group({}),
@@ -38,10 +47,16 @@ export class PoolManagerWizardComponent implements OnInit {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private appLoader: AppLoaderService,
+    private poolManagerStore: PoolManagerStore,
   ) {}
 
   ngOnInit(): void {
     this.appLoader.open();
+    this.poolManagerStore.loadPoolsData();
+
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((formValue) => {
+      this.poolManagerStore.updateFormValue(formValue);
+    });
     combineLatest([
       this.ws.call('enclosure.query'),
       this.ws.call('disk.query'),

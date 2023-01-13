@@ -70,11 +70,11 @@
             [trackBy]="trackById"
           >
             <ix-tree-node
-              *ixTreeNodeDef="let dataset; dataSource: dataSource"
+              *treeNodeDef="let dataset; dataSource: dataSource"
               routerLinkActive="selected"
-              ixTreeNodePadding
-              [ixTreeNodePaddingIndent]="40"
-              [ixTreeNodeDefDataSource]="dataSource"
+              treeNodePadding
+              [treeNodePaddingIndent]="40"
+              [treeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
@@ -88,18 +88,18 @@
             </ix-tree-node>
 
             <ix-tree-node
-              *ixTreeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
+              *treeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
               routerLinkActive="selected"
-              ixTreeNodePadding
-              [ixTreeNodePaddingIndent]="40"
-              [ixTreeNodeDefDataSource]="dataSource"
+              treeNodePadding
+              [treeNodePaddingIndent]="40"
+              [treeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
               (keydown.enter)="viewDetails(dataset)"
             >
               <button
                 mat-icon-button
-                ixTreeNodeToggle
+                treeNodeToggle
                 [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
                 (keydown.enter)="$event.stopPropagation()"
               >

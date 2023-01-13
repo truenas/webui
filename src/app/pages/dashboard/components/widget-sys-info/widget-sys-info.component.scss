@@ -202,7 +202,7 @@ img.clickable,
 }
 
 .mat-list-base .mat-list-item {
-  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+  border-bottom: solid 1px var(--lines);
 }
 
 .mat-list-item strong {
@@ -401,7 +401,7 @@ div.generic.alert .mat-icon {
   overflow-x: hidden;
 }
 
-.xs.widget .mat-card {
+.xs.widget .mat-mdc-card {
   border-radius: 0;
 }
 

@@ -15,8 +15,9 @@ import {
 import { ipv4Validator, ipv6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -200,7 +201,7 @@ export class NetworkConfigurationComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

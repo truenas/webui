@@ -9,9 +9,10 @@ import { switchMap } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  AppLoaderService, DialogService, ServicesService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +25,7 @@ export class DownloadClientConfigModalComponent {
   serverCertificates$ = this.services.getCerts().pipe(idNameArrayToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<DownloadClientConfigModalComponent>,

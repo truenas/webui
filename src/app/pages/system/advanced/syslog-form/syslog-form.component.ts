@@ -25,7 +25,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: 'syslog-form.component.html',
-  styleUrls: ['./syslog-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyslogFormComponent implements OnInit {
@@ -73,7 +72,7 @@ export class SyslogFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.form.controls['syslog_tls_certificate'].enabledWhile(this.isTlsTransport$),
+      this.form.controls.syslog_tls_certificate.enabledWhile(this.isTlsTransport$),
     );
 
     this.loadForm();

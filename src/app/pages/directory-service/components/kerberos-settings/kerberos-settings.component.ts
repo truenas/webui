@@ -13,7 +13,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-settings.component.html',
-  styleUrls: ['./kerberos-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosSettingsComponent implements OnInit {

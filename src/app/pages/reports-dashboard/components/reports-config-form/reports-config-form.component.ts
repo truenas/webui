@@ -18,7 +18,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './reports-config-form.component.html',
-  styleUrls: ['./reports-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsConfigFormComponent implements OnInit {

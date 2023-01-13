@@ -12,7 +12,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './ntp-server-form.component.html',
-  styleUrls: ['./ntp-server-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerFormComponent {

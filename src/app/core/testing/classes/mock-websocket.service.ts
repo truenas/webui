@@ -40,10 +40,6 @@ export class MockWebsocketService extends WebSocketService {
     this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
     this.sub = jest.fn(() => of());
     this.unsub = jest.fn();
-    this.socket = {
-      send: jest.fn(),
-      close: jest.fn(),
-    } as unknown as WebSocket;
     when(this.call).mockImplementation((method: ApiMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
@@ -86,6 +82,10 @@ export class MockWebsocketService extends WebSocketService {
   }
 
   connect(): void {
+    // Noop
+  }
+
+  reconnect(): void {
     // Noop
   }
 }
