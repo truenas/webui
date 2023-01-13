@@ -6,6 +6,7 @@ class activeDirectory:
     account_input = '//ix-input[@formcontrolname="bindname"]//input'
     password_input = '//ix-input[@formcontrolname="bindpw"]//input'
     ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
+    netbiosname_input = '//ix-input[@formcontrolname="netbiosname"]//input'
 
 
 class addCatalog:
@@ -74,7 +75,7 @@ class addZvol:
 
 class advanced:
     title = '//h1[contains(.,"Advanced")]'
-    systemDatasetPool_card = '//h3[text()="System Dataset Pool"]'
+    systemDatasetPool_card = '//h3[text()="Storage"]'
     systemDatasetPool_configure_button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
     def systemDatasetPool_pool(pool_name):
@@ -444,9 +445,9 @@ class storage:
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
 
 
-class system_dataset:
-    title = '//h3[text()="System Dataset Pool" and @class="ix-formtitle"]'
-    select_pool = '//mat-select'
+class systemDataset:
+    title = '//h3[text()="Storage Settings" and @class="ix-formtitle"]'
+    select_pool = '//ix-select[@formcontrolname="pool"]//mat-select'
 
     def pool_option(pool_name):
         return f'//mat-option[contains(.,"{pool_name}")]'
