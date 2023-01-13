@@ -63,7 +63,7 @@ export class ManualDiskSelectionComponent {
       .map((type) => ({ label: type, value: type }));
     this.typeOptions$ = of(typeOptions);
     const sizeOptions: Option[] = this.data.diskData
-      .map((disk) => this.storage.convertBytesToHumanReadable(disk.size))
+      .map((disk) => this.storage.convertBytesToHumanReadable(disk.size, 1))
       .filter((value, index, self) => self.indexOf(value) === index)
       .map((size) => ({ label: size, value: size }));
 
@@ -93,6 +93,6 @@ export class ManualDiskSelectionComponent {
   }
 
   getDiskSizeStr(disk: unknown): string {
-    return this.storage.convertBytesToHumanReadable((disk as Disk).size);
+    return this.storage.convertBytesToHumanReadable((disk as Disk).size, 1);
   }
 }

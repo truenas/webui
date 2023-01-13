@@ -26,8 +26,8 @@
       <path id="harddisk-2" data-name="harddisk" d="M6.856,2H23.989a2.856,2.856,0,0,1,2.856,2.856V27.7a2.856,2.856,0,0,1-2.856,2.856H6.856A2.856,2.856,0,0,1,4,27.7V4.856A2.856,2.856,0,0,1,6.856,2Zm8.567,2.856a8.567,8.567,0,0,0-8.567,8.567,8.474,8.474,0,0,0,8.567,8.567l-1.428-2.856c-.394-.683.745-2.461,1.428-2.856h0c.683-.394,2.461-.683,2.856,0l2.856,4.283c1.963-1.57,2.856-4.43,2.856-7.139A8.567,8.567,0,0,0,15.422,4.856Zm0,7.139a1.428,1.428,0,1,1-1.428,1.428A1.428,1.428,0,0,1,15.422,11.995ZM8.283,24.845a1.428,1.428,0,1,0,1.428,1.428A1.428,1.428,0,0,0,8.283,24.845Zm7.139-7.139L19.706,27.7l2.856-2.856L16.85,17.706Z" transform="translate(0.098 3.322)" fill="#fff"/>
     </g>
     <g id="Labels" transform="translate(11.451 1.857)" opacity="0.998">
-      <text id="disk-size" data-name="size" transform="translate(13 62.714)" fill="#fff" font-size="11" font-family="Inter"><tspan x="-13.492" y="0">{{ size }}</tspan></text>
-      <text id="disk-identifier" transform="translate(11.647 10)" fill="#fff" font-size="11" font-family="Inter"><tspan x="-8" y="0">{{ identifier }}</tspan></text>
+      <text id="disk-size" data-name="size" transform="translate(13 62.714)" fill="#fff" font-size="11" font-family="Inter" style="text-anchor: middle"><tspan x="0" y="0">{{ size }}</tspan></text>
+      <text id="disk-identifier" transform="translate(11.647 10)" fill="#fff" font-size="11" font-family="Inter" style="text-anchor: middle"><tspan x="0" y="0">{{ identifier }}</tspan></text>
     </g>
   </g>
 </svg>
