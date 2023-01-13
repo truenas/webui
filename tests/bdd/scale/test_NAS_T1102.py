@@ -133,14 +133,14 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
 
 
 @then('click on System Dataset Pool select system, click Save')
-def click_on_system_dataset_pool_select_system_click_save(driver):
+def click_on_systemDataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
-    assert wait_on_element(driver, 5, xpaths.system_dataset.title)
+    assert wait_on_element(driver, 5, xpaths.systemDataset.title)
     time.sleep(1)
-    assert wait_on_element(driver, 5, xpaths.system_dataset.select_pool, 'clickable')
-    driver.find_element_by_xpath(xpaths.system_dataset.select_pool).click()
-    assert wait_on_element(driver, 5, xpaths.system_dataset.pool_option('system'))
-    driver.find_element_by_xpath(xpaths.system_dataset.pool_option('system')).click()
+    assert wait_on_element(driver, 5, xpaths.systemDataset.select_pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.systemDataset.select_pool).click()
+    assert wait_on_element(driver, 5, xpaths.systemDataset.pool_option('system'))
+    driver.find_element_by_xpath(xpaths.systemDataset.pool_option('system')).click()
     assert wait_on_element(driver, 30, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
