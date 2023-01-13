@@ -23,7 +23,6 @@ import {
   Disk, isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -113,7 +112,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       .subscribe(
         (nodes) => {
           this.createDataSource(nodes);
-          this.treeControl.dataNodes = nodes;
           this.openGroupNodes();
           this.cdr.markForCheck();
 
@@ -143,22 +141,20 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
     this.dataSource = new NestedTreeDataSource();
-    this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
-      return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
-        if (isVdevGroup(dataNode)) {
-          return false;
-        }
+    this.dataSource.filterPredicate = (dataNode, query = '') => {
+      if (isVdevGroup(dataNode)) {
+        return dataNode?.guid.toLowerCase().includes(query.toLowerCase());
+      }
 
-        if (isVdev(dataNode)) {
-          return dataNode.name?.toLowerCase().includes(query.toLowerCase());
-        }
+      if (isVdev(dataNode)) {
+        return dataNode?.name.toLowerCase().includes(query.toLowerCase());
+      }
 
-        if (isTopologyDisk(dataNode)) {
-          return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
-        }
+      if (isTopologyDisk(dataNode)) {
+        return dataNode?.disk.toLowerCase().includes(query.toLowerCase());
+      }
 
-        return false;
-      });
+      return false;
     };
     this.dataSource.sortComparer = (nodeA, nodeB) => {
       const topologyDiskA = nodeA as TopologyDisk;
@@ -175,6 +171,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       return collator.compare(topologyDiskA.name, topologyDiskB.name);
     };
     this.dataSource.data = dataNodes;
+    this.treeControl.dataNodes = dataNodes;
   }
 
   private openGroupNodes(): void {

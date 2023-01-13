@@ -42,7 +42,6 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -96,21 +95,21 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private readonly scrollSubject = new Subject<number>();
 
   // Flat API
-  getLevel = (dataset: DatasetDetails): number => dataset?.name?.split('/')?.length - 1;
-  isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
+  getLevel = (dataset: DatasetDetails): number => dataset.name.split('/').length - 1;
+  isExpandable = (dataset: DatasetDetails): boolean => dataset.children.length > 0;
   treeControl = new FlatTreeControl<DatasetDetails>(
     this.getLevel,
     this.isExpandable,
   );
   treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
-    (dataset) => dataset,
+    (dataset, level) => ({ ...dataset, level }),
     this.getLevel,
     this.isExpandable,
     () => ([]),
   );
-  dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
-  trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
-  readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
+  dataSource: TreeDataSource<DatasetDetails, DatasetDetails>;
+  trackById: TrackByFunction<DatasetDetails> = (_: number, dataset: DatasetDetails): string => dataset.name;
+  readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset.children.length > 0;
 
   constructor(
     private ws: WebSocketService,
@@ -167,11 +166,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
-    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
-      datasetsToFilter,
-      (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
-    );
+    this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
+    this.dataSource.filterPredicate = (dataset, query) => {
+      return dataset.name.toLocaleLowerCase().includes(query.toLocaleLowerCase());
+    };
     this.dataSource.sortComparer = (a, b) => {
       return new Intl.Collator(undefined, {
         numeric: true,

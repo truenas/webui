@@ -71,12 +71,12 @@ export class FlatTreeDataSource<T, F> extends DataSource<F> {
         distinctUntilChanged(),
         takeUntil(this.disconnect$),
       )
-      .subscribe((changedValue: string) => {
-        if (this.filterValue === changedValue) {
+      .subscribe((filterValue) => {
+        if (this.filterValue === filterValue) {
           return;
         }
-        this.filterValue = changedValue;
-        this._filteredData.next(this.filterPredicate(this.data, changedValue));
+        this.filterValue = filterValue;
+        this._filteredData.next(this.filterPredicate(this.data, filterValue));
         this.flatNodes();
       });
   }

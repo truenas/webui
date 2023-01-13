@@ -10,7 +10,7 @@ import {
  * Data source for nested tree.
  */
 export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSource<T> {
-  filterPredicate: (data: T[], query: string) => T[];
+  filterPredicate: (node: T, query: string) => boolean;
   sortComparer: (a: T, b: T) => number;
   private filterValue: string;
   private readonly filterChanged$ = new BehaviorSubject<string>('');
@@ -65,12 +65,12 @@ export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSour
       debounceTime(200),
       distinctUntilChanged(),
       takeUntil(this.disconnect$),
-    ).subscribe((changedValue: string) => {
-      if (this.filterValue === changedValue) {
+    ).subscribe((filterValue) => {
+      if (this.filterValue === filterValue) {
         return;
       }
-      this.filterValue = changedValue;
-      this._filteredData.next(this.filterPredicate(this.data, changedValue));
+      this.filterValue = filterValue;
+      this._filteredData.next(this.filterData(this.data, filterValue));
     });
   }
 
@@ -81,6 +81,15 @@ export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSour
       }
       this.sort(item.children);
       return item;
+    });
+  }
+
+  private filterData(value: T[], query = ''): T[] {
+    return value.filter((item) => {
+      if (item.children.length) {
+        item.children = this.filterData(item.children, query);
+      }
+      return this.filterPredicate(item, query);
     });
   }
 }

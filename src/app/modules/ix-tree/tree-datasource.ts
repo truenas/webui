@@ -7,7 +7,7 @@ import {
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 
 export class TreeDataSource<T, F, K = F> extends DataSource<F> {
-  filterPredicate: (data: T[], query: string) => T[];
+  filterPredicate: (node: T, query: string) => boolean;
   sortComparer: (a: T, b: T) => number;
   private filterValue: string;
   private readonly _data = new BehaviorSubject<T[]>([]);
@@ -81,13 +81,17 @@ export class TreeDataSource<T, F, K = F> extends DataSource<F> {
         distinctUntilChanged(),
         takeUntil(this.disconnect$),
       )
-      .subscribe((changedValue: string) => {
-        if (this.filterValue === changedValue) {
+      .subscribe((filterValue) => {
+        if (this.filterValue === filterValue) {
           return;
         }
-        this.filterValue = changedValue;
-        this._filteredData.next(this.filterPredicate(this.data, changedValue));
+        this.filterValue = filterValue;
+        this._filteredData.next(this.filterData(this.data, filterValue));
         this.flatNodes();
       });
+  }
+
+  filterData(value: T[], query = ''): T[] {
+    return value.filter((node) => this.filterPredicate(node, query));
   }
 }
