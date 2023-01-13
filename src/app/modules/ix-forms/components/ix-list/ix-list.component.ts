@@ -20,7 +20,7 @@ export class IxListComponent implements OnInit {
   @Output() add = new EventEmitter<unknown[]>();
 
   ngOnInit(): void {
-    this.handleListDefaults();
+    setTimeout(() => this.handleListDefaults());
   }
 
   addItem(schema?: unknown[]): void {

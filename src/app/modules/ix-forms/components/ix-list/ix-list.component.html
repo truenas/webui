@@ -21,7 +21,7 @@
   <div class="input-container" [class.disabled]="isDisabled">
     <ng-content></ng-content>
 
-    <span *ngIf="empty && !default.length" class="empty">
+    <span *ngIf="empty" class="empty">
       {{ 'No items have been added yet.' | translate }}
     </span>
   </div>
