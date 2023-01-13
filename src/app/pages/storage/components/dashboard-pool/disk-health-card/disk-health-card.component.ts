@@ -4,6 +4,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
@@ -29,6 +30,8 @@ interface DiskState {
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[] = [];
+
+  SmartTestResultPageType = SmartTestResultPageType;
 
   get disksNames(): string[] {
     return getPoolDisks(this.poolState);
@@ -81,7 +84,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
 
   get iconTooltip(): string {
     if (this.diskState.alerts || this.diskState.smartTests) {
-      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed SMART tests', {
+      return this.translate.instant('Pool Disks have {alerts} alerts and {smartTests} failed S.M.A.R.T. tests', {
         alerts: this.diskState.alerts,
         smartTests: this.diskState.smartTests,
       });

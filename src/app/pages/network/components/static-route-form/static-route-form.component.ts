@@ -13,7 +13,6 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 @UntilDestroy()
 @Component({
   templateUrl: './static-route-form.component.html',
-  styleUrls: ['./static-route-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StaticRouteFormComponent {

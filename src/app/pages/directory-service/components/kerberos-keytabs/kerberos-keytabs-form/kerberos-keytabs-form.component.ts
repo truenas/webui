@@ -12,7 +12,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-keytabs-form.component.html',
-  styleUrls: ['./kerberos-keytabs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosKeytabsFormComponent {

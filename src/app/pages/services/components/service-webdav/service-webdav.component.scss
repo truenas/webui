@@ -1,11 +1,3 @@
-.form-actions {
-  margin: 8px 10px;
-
-  button:not(:first-of-type) {
-    margin-left: 0.5rem;
-  }
-}
-
 .linked-select {
   position: relative;
 
@@ -26,5 +18,13 @@
 
   ix-select {
     width: 100%;
+  }
+}
+
+.form-actions {
+  justify-content: flex-start;
+
+  button:first-child {
+    margin-left: 0;
   }
 }

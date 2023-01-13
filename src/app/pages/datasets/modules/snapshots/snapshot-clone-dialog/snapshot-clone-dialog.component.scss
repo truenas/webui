@@ -2,13 +2,3 @@
   display: block;
   width: 400px;
 }
-
-.form-actions {
-  display: flex;
-  flex-direction: row-reverse;
-
-  > a,
-  button {
-    margin-left: 10px;
-  }
-}

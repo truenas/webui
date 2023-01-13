@@ -30,7 +30,6 @@ const mbs = 1024 * 1024;
 @UntilDestroy()
 @Component({
   templateUrl: './vm-edit-form.component.html',
-  styleUrls: ['./vm-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService, VmGpuService],
 })

@@ -11,7 +11,7 @@
     [tooltip]="helptext.dialogFormFields.new_disk.tooltip | translate"
   ></ix-select>
 
-  <div class="form-actions">
+  <ix-form-actions>
     <button mat-button type="button" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
@@ -23,5 +23,5 @@
     >
       {{ 'Extend' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>
