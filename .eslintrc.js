@@ -178,7 +178,7 @@ module.exports = {
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: false }],
+        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/no-duplicate-string": ["off"],
