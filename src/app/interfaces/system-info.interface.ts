@@ -29,7 +29,7 @@ export interface SystemLicense {
   addhw_detail: unknown[];
   contract_end: ApiDate;
   contract_start: ApiDate;
-  contract_type: string; // TODO: Enum? 'GOLD'
+  contract_type: string;
   customer_name: string;
   expired: boolean;
   features: LicenseFeature[];

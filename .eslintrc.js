@@ -134,11 +134,13 @@ module.exports = {
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
         "@typescript-eslint/no-explicit-any": "error",
-        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
+        "sonarjs/prefer-single-boolean-return": ["off"],
+        "no-plusplus": "off",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "consistent-return": "off",
-        "no-plusplus": "off",
         "no-restricted-syntax": ["error",
           // TODO: Partially implemented. ForOfStatement is allowed for now.
           {
@@ -174,18 +176,13 @@ module.exports = {
         // Other temporary disables
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-return": "off",
-        "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/no-duplicate-string": ["off"],
-        "sonarjs/prefer-single-boolean-return": ["off"],
+        "sonarjs/cognitive-complexity": ["error", 60],
 
         // Other overwrites
-        "sonarjs/cognitive-complexity": ["error", 60],
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
           ...airbnbSharedRules['@typescript-eslint/indent'][2],
@@ -203,6 +200,7 @@ module.exports = {
             "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
           }
         ],
+        "sonarjs/no-duplicate-string": ["off"],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
