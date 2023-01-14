@@ -134,3 +134,12 @@
   flex-direction: row-reverse;
   padding: 16px 24px;
 }
+
+.icon-wrapper {
+  align-items: center;
+  display: flex;
+}
+
+.details-wrapper {
+  flex-grow: 1;
+}

@@ -31,34 +31,37 @@
               [ixTreeControl]="treeControl"
             >
               <ix-tree-node
-                *ixTreeNodeDef="let disk; dataSource: dataSource"
-                ixTreeNodeToggle
+                *treeNodeDef="let disk; dataSource: dataSource"
+                treeNodeToggle
                 routerLinkActive="selected"
-                [ixTreeNodeToggleRecursive]="false"
-                [ixTreeNodeDefDataSource]="dataSource"
               >
                 <div class="info-wrapper">
-                  <ix-disk-icon 
-                    class="disk-icon"
-                    [identifier]="disk.identifier"
-                    [size]="getDiskSizeStr(disk)"
-                  ></ix-disk-icon>
-
-                  <ix-disk-info
-                    class="disk-info"
-                    [slot]="getDiskSlot(disk)"
-                    [type]="getDiskType(disk)"
-                    [model]="getDiskModel(disk)"
-                    [serial]="getDiskSerial(disk)"
-                  ></ix-disk-info>
+                  <div class="icon-wrapper">
+                    <ix-disk-icon 
+                      class="disk-icon"
+                      [identifier]="disk.identifier"
+                      [size]="getDiskSizeStr(disk)"
+                    ></ix-disk-icon>
+                  </div>
+                  
+                  <div class="details-wrapper">
+                    <ix-disk-info
+                      class="disk-info"
+                      [slot]="getDiskSlot(disk)"
+                      [type]="getDiskType(disk)"
+                      [model]="getDiskModel(disk)"
+                      [serial]="getDiskSerial(disk)"
+                    ></ix-disk-info>
+                  </div>
+                  
                 </div>
               </ix-tree-node>
 
               <ix-nested-tree-node
-                *ixTreeNodeDef="let group; dataSource: dataSource; when: isGroup"
-                [ixTreeNodeDefDataSource]="dataSource"
+                *treeNodeDef="let group; dataSource: dataSource; when: isGroup"
+                [treeNodeDefDataSource]="dataSource"
               >
-                <div class="group-row" ixTreeNodeToggle>
+                <div class="group-row" treeNodeToggle>
                   <ix-icon name="ix:enclosure"></ix-icon>
                   <span class="group-name">{{ group.identifier }}</span>
                   <mat-icon>
@@ -68,7 +71,7 @@
 
                 <ng-container
                   *ngIf="isExpanded(group)"
-                  ixTreeNodeOutlet
+                  treeNodeOutlet
                 ></ng-container>
               </ix-nested-tree-node>
 

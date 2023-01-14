@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
+import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { StorageService } from 'app/services';
 
@@ -29,7 +29,7 @@ type NestedEnclosureDiskNode = EnclosureDisk | EnclosureGroup;
 export class ManualDiskSelectionComponent {
   search: string;
   selectedNode: EnclosureDisk;
-  dataSource: IxNestedTreeDataSource<NestedEnclosureDiskNode>;
+  dataSource: NestedTreeDataSource<NestedEnclosureDiskNode>;
   treeControl = new NestedTreeControl<NestedEnclosureDiskNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.identifier,
   });
@@ -56,7 +56,7 @@ export class ManualDiskSelectionComponent {
         }).map((disk) => ({ ...disk, children: [], identifier: disk.name })) as EnclosureDisk[],
       };
     });
-    this.dataSource = new IxNestedTreeDataSource(disksData);
+    this.dataSource = new NestedTreeDataSource(disksData);
     const typeOptions: Option[] = this.data.diskData
       .map((disk) => disk.type)
       .filter((value, index, self) => self.indexOf(value) === index)

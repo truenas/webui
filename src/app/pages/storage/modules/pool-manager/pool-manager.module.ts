@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/disk-info/disk-info.component';
@@ -37,7 +37,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
     MatDialogModule,
     MatStepperModule,
     MatDividerModule,
-    IxTreeModule,
+    TreeModule,
     IxIconModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),

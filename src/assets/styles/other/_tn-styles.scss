@@ -1409,23 +1409,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 } // end of ix theme
 
 
-.manual-selection-dialog {
-  .mat-mdc-dialog-container {
-    max-width: 80vw;
-  }
-
-  mat-card {
-    border-radius: 0;
-  }
-
-  .mat-mdc-card-content,
-  form {
-    height: 100%;
-    overflow: auto;
-    padding: 0 !important;
-  }
-}
-
 .mdc-list-item__primary-text {
   align-items: center;
   display: flex;
@@ -1452,3 +1435,25 @@ ix-nested-tree-node[aria-level='2'] {
   }
 }
 
+.manual-selection-dialog {
+  .mat-mdc-card {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .mat-mdc-dialog-container {
+    max-width: 80vw;
+  }
+
+  mat-card {
+    border-radius: 0;
+  }
+
+  .mat-mdc-card-content,
+  form {
+    height: 100%;
+    overflow: auto;
+    padding: 0 !important;
+  }
+}
