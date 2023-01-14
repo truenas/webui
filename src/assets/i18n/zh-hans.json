@@ -4108,7 +4108,7 @@
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "{n, plural, =0 {No Errors} 1 {# Error} other {# Errors}}",
   "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "{n, plural, =0 {No Tasks} 1 {# Task} other {# Tasks}} 配置",
   "{n, plural, one {# boot environment} other {# boot environments}} has been deleted.": "{n, plural, 1 {# boot environment} other {# boot environments}} 已被删除",
-  "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "{n, plural, 1 {# docker image} other {# docker images}} 已补删除。",
+  "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "{n, plural, 1 {# docker image} other {# docker images}} 已被删除。",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "{n, plural, 1 {# docker image} other {# docker images}} 已更新。",
   "{n}": "{n}",
   "{n} (applies to descendants)": "{n} (适用于子集)",
