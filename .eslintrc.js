@@ -317,6 +317,7 @@ module.exports = {
       "rules": {
         "@angular-eslint/template/attributes-order": ["error"],
         "@angular-eslint/template/no-duplicate-attributes": ['error'],
+        "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
 
         // TODO: To be enabled later
         '@angular-eslint/template/use-track-by-function': ['off'],
