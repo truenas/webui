@@ -123,27 +123,27 @@ def on_the_add_smb_slide_box_set_the_path_to_mntdozermy_ad_dataset(driver, datas
     global dataset
     dataset = dataset_path
     assert wait_on_element(driver, 7, xpaths.smb.addTitle)
-    assert wait_on_element(driver, 5, xpaths.smb.description)
-    assert wait_on_element(driver, 5, xpaths.smb.path, 'inputable')
-    driver.find_element_by_xpath(xpaths.smb.path).send_keys(dataset_path)
+    assert wait_on_element(driver, 5, xpaths.smb.description_input)
+    assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(dataset_path)
 
 
 @then(parsers.parse('input "{share_name}" as name, then click to enable'))
 def input_myadsmbshare_as_name_then_click_to_enable(driver, share_name):
     """input "myadsmbshare" as name, then click to enable."""
-    assert wait_on_element(driver, 5, xpaths.smb.name, 'inputable')
-    driver.find_element_by_xpath(xpaths.smb.name).click()
-    driver.find_element_by_xpath(xpaths.smb.name).clear()
-    driver.find_element_by_xpath(xpaths.smb.name).send_keys(share_name)
-    assert wait_on_element(driver, 5, xpaths.checkbox.enable, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enable, 'class', 'mat-checkbox-checked'):
+    assert wait_on_element(driver, 5, xpaths.smb.name_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.name_input).click()
+    driver.find_element_by_xpath(xpaths.smb.name_input).clear()
+    driver.find_element_by_xpath(xpaths.smb.name_input).send_keys(share_name)
+    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
+    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.checkbox.enable).click()
 
 
 @then(parsers.parse('input "{description}" as the description, click Save'))
 def input_my_active_directory_smb_share_as_the_description_click_save(driver, description):
     """input "My Active Directory SMB share" as the description, click Save."""
-    driver.find_element_by_xpath(xpaths.smb.description).send_keys(description)
+    driver.find_element_by_xpath(xpaths.smb.description_input).send_keys(description)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -151,9 +151,9 @@ def input_my_active_directory_smb_share_as_the_description_click_save(driver, de
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smbRestartTitle)
-    assert wait_on_element(driver, 5, xpaths.popup.smbRestartButton, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smbRestartButton).click()
+    assert wait_on_element(driver, 7, xpaths.popup.smbRestart_title)
+    assert wait_on_element(driver, 5, xpaths.popup.smbRestart_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smbRestart_button).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
@@ -175,8 +175,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
     """click on System Settings on the left sidebar, and click Services."""
     assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.Services).click()
+    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
 
 
 @then('on the Service page, verify SMB service is started')

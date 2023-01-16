@@ -2,12 +2,12 @@
 """SCALE UI: feature tests."""
 
 import pytest
-import xpaths
 import time
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -19,16 +19,16 @@ from pytest_bdd import (
 from pytest_dependency import depends
 
 
-@pytest.mark.dependency(name='LDAP_Dataset')
-@scenario('features/NAS-T1126.feature', 'Create a new dataset with the LDAP user and group permissions')
-def test_create_a_new_dataset_with_the_ldap_user_and_group_permissions():
-    """Create a new dataset with the LDAP user and group permissions."""
+@pytest.mark.dependency(name='AD_Dataset')
+@scenario('features/NAS-T1108.feature', 'Create an Active Directory dataset on a system dataset pool')
+def test_create_an_active_directory_dataset_on_a_system_dataset_pool():
+    """Create an Active Directory dataset on a system dataset pool."""
 
 
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['LDAP_SETUP', 'tank_pool'], scope='session')
+    depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)

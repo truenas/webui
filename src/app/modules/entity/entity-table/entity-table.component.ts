@@ -595,7 +595,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
+          if (res.data.length > 0 && Object.hasOwnProperty.call(res.data[0], prop) && typeof res.data[0][prop] === 'string') {
             (res.data as Record<string, string>[]).forEach((row) => {
               row[prop] = new EntityUtils().parseDow(row[prop]);
             });
@@ -605,7 +605,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     } else if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-        if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
+        if (res.length > 0 && Object.hasOwnProperty.call(res[0], prop) && typeof res[0][prop] === 'string') {
           (res as Record<string, string>[]).forEach((row) => {
             row[prop] = new EntityUtils().parseDow(row[prop]);
           });

@@ -1,19 +1,13 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import os
-import pytest
 import time
 import xpaths
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    setup_ssh_agent,
     wait_on_element_disappear,
-    create_key,
-    add_ssh_key,
-    ssh_cmd
+    attribute_value_exist,
 )
 from pytest_bdd import (
     given,
@@ -23,33 +17,16 @@ from pytest_bdd import (
 )
 from pytest_dependency import depends
 
-localHome = os.path.expanduser('~')
-dotsshPath = localHome + '/.ssh'
-keyPath = localHome + '/.ssh/ui_test_id_rsa'
 
-setup_ssh_agent()
-if os.path.isdir(dotsshPath) is False:
-    os.makedirs(dotsshPath)
-if os.path.exists(keyPath) is False:
-    create_key(keyPath)
-add_ssh_key(keyPath)
-
-
-@pytest.fixture(scope='module')
-def ssh_key():
-    ssh_key_file = open(f'{keyPath}.pub', 'r')
-    return ssh_key_file.read().strip()
-
-
-@scenario('features/NAS-T1099.feature', 'Add a ssh key to a user and verify it works')
-def test_add_a_ssh_key_to_a_user_and_verify_it_works():
-    """Add a ssh key to a user and verify it works."""
+@scenario('features/NAS-T1098.feature', 'Change the permissions of a user home directory')
+def test_change_the_permissions_of_a_user_home_directory():
+    """Change the permissions of a user home directory."""
 
 
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['First_User', 'Setup_SSH'], scope='session')
+    depends(request, ['First_User', 'First_User_Home'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -92,22 +69,26 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
 
 
-@then('the User Edit Page should open, input the SSH key and click save')
-def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_key):
-    """the User Edit Page should open, input the SSH key and click save."""
+@then('the User Edit Page should open, change some permissions for the Home Directory and click save')
+def the_user_edit_page_should_open_change_some_permissions_for_the_home_directory_and_click_save(driver):
+    """the User Edit Page should open, change some permissions for the Home Directory and click save."""
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 5, xpaths.addUser.sshpubkey_textarea, 'inputable')
-    driver.find_element_by_xpath(xpaths.addUser.sshpubkey_textarea).clear()
-    driver.find_element_by_xpath(xpaths.addUser.sshpubkey_textarea).send_keys(ssh_key)
-    assert wait_on_element(driver, 2, xpaths.button.save)
+    time.sleep(1)
+    assert wait_on_element(driver, 2, xpaths.addUser.home_mode_groupWrite_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupWrite_checkbox).click()
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupExec_checkbox).click()
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherWrite_checkbox).click()
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherExec_checkbox).click()
+    time.sleep(0.5)
+    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
-@then('reopen the user edit page and verify sshkey was saved.')
-def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
-    """reopen the user edit page and verify sshkey was saved.."""
+@then('reopen the user edit page and verify all permissions are save properly')
+def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(driver):
+    """reopen the user edit page and verify all permissions are save properly."""
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
@@ -115,18 +96,29 @@ def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
     assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 5, xpaths.addUser.sshpubkey_textarea, 'inputable')
-    assert attribute_value_exist(driver, xpaths.addUser.sshpubkey_textarea, 'value', ssh_key)
+    time.sleep(1)
+    assert wait_on_element(driver, 2, xpaths.addUser.home_mode_groupWrite_checkbox)
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_ownerWrite_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_ownerRead_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_ownerExec_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_groupRead_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_groupWrite_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_groupExec_checkbox, 'class', 'mat-checkbox-checked') is False
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_otherRead_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_otherWrite_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.addUser.home_mode_otherExec_checkbox, 'class', 'mat-checkbox-checked') is False
+
+
+@then('revert your changes, click save, and return to dashboard')
+def revert_your_changes_click_save_and_return_to_dashboard(driver):
+    """revert your changes, click save, and return to dashboard."""
+    assert wait_on_element(driver, 2, xpaths.addUser.home_mode_groupWrite_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupWrite_checkbox).click()
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupExec_checkbox).click()
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherWrite_checkbox).click()
+    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherExec_checkbox).click()
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close_icon).click()
-
-
-@then('Verify that you can ssh with the sshkey')
-def verify_that_you_can_ssh_with_the_sshkey(driver, nas_ip):
-    """Verify that you can ssh with the sshkey."""
-    global results
-    cmd = 'ls -al'
-    results = ssh_cmd(cmd, 'ericbsd', None, nas_ip)
-    assert results['result'], results['output']
-    assert 'ssh' in results['output'], results['output']
+    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 7, xpaths.users.title)
