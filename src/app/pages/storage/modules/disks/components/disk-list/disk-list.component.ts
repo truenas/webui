@@ -9,6 +9,7 @@ import {
   forkJoin, lastValueFrom, of, Subject,
 } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -142,9 +143,9 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         id: parentRow.name,
         icon: 'format_list_bulleted',
         name: 'smartresults',
-        label: this.translate.instant('S.M.A.R.T Test Results'),
+        label: this.translate.instant('S.M.A.R.T. Test Results'),
         onClick: (row) => {
-          this.router.navigate(['/storage', 'disks', 'smartresults', row.name]);
+          this.router.navigate(['/storage', 'disks', 'smartresults', SmartTestResultPageType.Disk, row.name]);
         },
       });
     }

@@ -91,7 +91,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
   it('should show table rows', async () => {
     expect(ws.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.Group, [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]]],
+      ['Test', DatasetQuotaType.Group, []],
     );
 
     expect(ws.call).toHaveBeenCalledWith(

@@ -120,7 +120,7 @@ export class CertificatesDashComponent implements OnInit {
                 if (!result) {
                   return;
                 }
-                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') } });
+                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') }, disableClose: true });
                 this.dialogRef.componentInstance.setCall(
                   table.tableConf.deleteCall,
                   [item.id, (result as { force: boolean }).force],

@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
@@ -150,10 +150,19 @@ export class SupportComponent implements OnInit {
   }
 
   updateProductionStatus(event: MatCheckboxChange): void {
-    let request$: Observable<boolean | SetProductionStatusDialogResult> = of(true);
+    let request$: Observable<boolean | SetProductionStatusDialogResult> = of(false);
     if (event.checked) {
       request$ = request$.pipe(
-        switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed()),
+        switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
+          tap((confirmed) => {
+            if (confirmed) {
+              return true;
+            }
+            this.isProduction = false;
+            this.cdr.markForCheck();
+            return false;
+          }),
+        )),
         filter(Boolean),
       );
     }
