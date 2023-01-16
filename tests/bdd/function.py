@@ -5,8 +5,9 @@ import os
 import pexpect
 import re
 import requests
+import sys
 import time
-import xpaths
+from collections.abc import Iterable
 from selenium.common.exceptions import (
     NoSuchElementException,
     TimeoutException
@@ -14,8 +15,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-
-from subprocess import run, PIPE
+from subprocess import run, PIPE, TimeoutExpired
 
 header = {'Content-Type': 'application/json', 'Vary': 'accept'}
 
@@ -120,13 +120,17 @@ def ssh_cmd(command, username, password, host):
         f"{username}@{host}",
         command
     ]
-    process = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-    output = process.stdout
-    stderr = process.stderr
-    if process.returncode != 0:
-        return {'result': False, 'output': output, 'stderr': stderr}
-    else:
-        return {'result': True, 'output': output, 'stderr': stderr}
+    try:
+        process = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True,
+                      timeout=5)
+        output = process.stdout
+        stderr = process.stderr
+        if process.returncode != 0:
+            return {'result': False, 'output': output, 'stderr': stderr}
+        else:
+            return {'result': True, 'output': output, 'stderr': stderr}
+    except TimeoutExpired:
+        return {'result': False, 'output': 'Timeout', 'stderr': 'Timeout'}
 
 
 def start_ssh_agent():
@@ -155,7 +159,7 @@ def setup_ssh_agent():
 
 
 def create_key(keyPath):
-    process = run('ssh-keygen -t rsa -f %s -q -N ""' % keyPath, shell=True)
+    process = run(f'ssh-keygen -t rsa -f {keyPath} -q -N ""', shell=True)
     if process.returncode != 0:
         return False
     else:
@@ -181,12 +185,12 @@ def add_ssh_key(keyPath):
 def run_cmd(command):
     process = run(command, shell=True, stdout=PIPE, stderr=PIPE,
                   universal_newlines=True)
-    output = process.stdout
+    stdout = process.stdout
     stderr = process.stderr
     if process.returncode != 0:
-        return {'result': False, 'output': output, 'stderr': stderr}
+        return {'result': False, 'output': stderr}
     else:
-        return {'result': True, 'output': output, 'stderr': stderr}
+        return {'result': True, 'output': stdout}
 
 
 def get(url, api_path, auth):
@@ -233,7 +237,7 @@ def ssh_sudo(cmd, host, user, password):
         "-o VerifyHostKeyDNS=no"
     command = f'ssh {options} {user}@{host} "sudo -S {cmd}"'
     child = pexpect.spawn(command, encoding='utf-8')
-    # child.logfile = sys.stdout
+    child.logfile = sys.stdout
     child.expect('ssword:')
     child.sendline(password)
     child.expect(f'ssword for {user}:')
@@ -251,3 +255,35 @@ def interactive_ssh(cmd, host, user, password):
     child.expect('ssword:')
     child.sendline(password)
     return child
+
+
+def make_bytes(item):
+    '''Cast the item to a bytes data type.'''
+
+    if isinstance(item, bytes) or isinstance(item, bytearray):
+        return item
+    if isinstance(item, str):
+        return bytes(item, 'UTF-8')
+    if isinstance(item, int):
+        return bytes([item])
+    if isinstance(item, Iterable):
+        return b''.join([make_bytes(i) for i in item])
+
+    # We should get here, but if we do we need a better solution
+    raise TypeError('Cannot easily cast type {} to bytes'.format(type(item)))
+
+
+def word_xor(data, key):
+    '''Apply xor operation to data by breaking it up into len(key)-sized blocks'''
+    # Data should be a bytes or byte array, key should be 64 bits.
+    # Iterate through the bytes array and
+
+    data = make_bytes(data)
+    key = make_bytes(key)
+    length = len(key)
+    result = bytearray()
+    cycles = len(data)
+    for i in range(cycles):
+        result += (data[i] ^ key[i % length]).to_bytes(1, 'little')
+
+    return result
