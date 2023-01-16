@@ -13,7 +13,7 @@ export default {
  into the system serial port. The UPS will remain the\
  last item to shut down. Choose <i>Slave</i> to have\
  this system shut down before <i>Master</i>. See the\
- <a href="http://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client"\
+ <a href="https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client"\
  target="_blank">Network UPS Tools Overview</a>.'),
   ups_mode_options: [
     { label: 'Master', value: UpsMode.Master },

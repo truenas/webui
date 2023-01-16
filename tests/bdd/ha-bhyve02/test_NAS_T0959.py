@@ -72,6 +72,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
@@ -172,8 +173,8 @@ def public_key_should_be_on_user_page(driver, ssh_key):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'inputable')
     assert attribute_value_exist(driver, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'value', ssh_key)
-    assert wait_on_element(driver, 5, '//mat-icon[@id="ix-close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
+    assert wait_on_element(driver, 5, xpaths.button.close_icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_icon).click()
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
     assert wait_on_element(driver, 10, '//td[contains(.,"ericbsd")]')
 
