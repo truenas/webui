@@ -3173,10 +3173,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@ngneat/spectator@~13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-13.0.0.tgz#de85ce9f5b3b7b64d68c7645a7038dfe5806dd09"
-  integrity sha512-oDTBF6vWJjtXyEQcaqOFZWg9oRSqd3XKa6o5jpVFKNbb1sYvuLQzWwiilxvutHrsWPxtz7hf4AwuSNo+jXskCw==
+"@ngneat/spectator@~14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-14.0.0.tgz#6ed2411b1dbdaaa2f407159b354065c6d620b3af"
+  integrity sha512-lGdh9a3FAsIdvhAGD58go4J4ooslF5L2v7w8GECAlBTz7UxFx4wowRoALlTknakqtbpHmJ7RHPBSDd/3ub5XWw==
   dependencies:
     "@testing-library/dom" "^8.11.0"
     jquery "3.6.0"
