@@ -19,7 +19,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -119,7 +118,6 @@ import { routing } from './system.routing';
     TreeModule,
     SchedulerModule,
     JobsModule,
-    MarkdownModule.forRoot(),
     MatCardModule,
     IxIconModule,
     MatSelectModule,

@@ -15,7 +15,6 @@ import {
 } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
-import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -81,7 +80,6 @@ import { WebSocketService } from './services/ws.service';
       preloadingStrategy: PreloadAllModules,
     }),
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
-    MarkdownModule.forRoot(),
     CoreComponents,
     MatSnackBarModule,
     TerminalModule,
