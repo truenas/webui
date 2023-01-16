@@ -13,7 +13,7 @@ import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
-  preferencesLoaded, preferredColumnsUpdated, clearPreferencesState,
+  preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -28,7 +28,6 @@ export class PreferencesEffects {
   loadPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      this.store$.dispatch(clearPreferencesState());
       return this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
         map(([user]) => {
           const preferences = user.attributes.preferences;

@@ -2,13 +2,14 @@ import { createReducer, on } from '@ngrx/store';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { defaultTheme } from 'app/services/theme/theme.constants';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted,
   localizationFormSubmitted, noPreferencesFound,
-  preferencesLoaded, preferredColumnsUpdated, clearPreferencesState, themeChangedInGuiForm,
+  preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -34,9 +35,9 @@ export const preferencesReducer = createReducer(
 
   on(dashboardStateLoaded, (state, { dashboardState }) => ({ ...state, dashboardState })),
   on(noDashboardStateFound, (state) => ({ ...state, dashboardState: null })),
+  on(adminUiInitialized, () => ({ ...initialState, areLoaded: false })),
   on(preferencesLoaded, (state, { preferences }) => ({ ...state, preferences, areLoaded: true })),
   on(noPreferencesFound, (state) => ({ ...state, preferences: defaultPreferences, areLoaded: true })),
-  on(clearPreferencesState, (state) => ({ ...state, ...initialState })),
   on(sidenavUpdated, (state, sidenavStatus) => updatePreferences(state, { sidenavStatus })),
   on(preferredColumnsUpdated, (state, { columns }) => updatePreferences(state, {
     tableDisplayedColumns: columns,
