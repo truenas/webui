@@ -7,8 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { StorageService } from 'app/services';
 
 interface TopologyState {
   data: string;
@@ -20,8 +23,7 @@ interface TopologyState {
 }
 
 const notAssignedDev = 'VDEVs not assigned';
-const mixedCapacity = 'Mixed Capacity VDEVs';
-const mixedWidth = 'Mixed Width VDEVs';
+const multiWarning = 'warnings';
 
 @UntilDestroy()
 @Component({
@@ -41,10 +43,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     spare: notAssignedDev,
     dedup: notAssignedDev,
   };
-
-  get mixedCapacity(): string {
-    return mixedCapacity;
-  }
 
   get iconType(): PoolCardIconType {
     if (this.isStatusError(this.poolState)) {
@@ -69,6 +67,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   constructor(
     public router: Router,
     public translate: TranslateService,
+    public storageService: StorageService,
   ) {}
 
   ngOnInit(): void {
@@ -84,64 +83,52 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.topologyState.data = this.parseDevs(topology.data);
-    this.topologyState.metadata = this.parseDevs(topology.special);
-    this.topologyState.log = this.parseDevs(topology.log);
-    this.topologyState.cache = this.parseDevs(topology.cache);
-    this.topologyState.spare = this.parseDevs(topology.spare);
-    this.topologyState.dedup = this.parseDevs(topology.dedup);
+    this.topologyState.data = this.parseDevs(topology.data, PoolTopologyCategory.Data);
+    this.topologyState.metadata = this.parseDevs(topology.special, PoolTopologyCategory.Special, topology.data[0].type);
+    this.topologyState.log = this.parseDevs(topology.log, PoolTopologyCategory.Log);
+    this.topologyState.cache = this.parseDevs(topology.cache, PoolTopologyCategory.Cache);
+    this.topologyState.spare = this.parseDevs(topology.spare, PoolTopologyCategory.Spare);
+    this.topologyState.dedup = this.parseDevs(topology.dedup, PoolTopologyCategory.Dedup, topology.data[0].type);
   }
 
-  private parseDevs(devs: TopologyItem[]): string {
-    let outputString = notAssignedDev;
-    let isMixedCapacity = false;
-    let isMixedWidth = false;
+  private parseDevs(vdevs: TopologyItem[], category: PoolTopologyCategory, dataLayout?: TopologyItemType): string {
+    const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataLayout);
+    let outputString = vdevs.length ? '' : notAssignedDev;
+
+    // Check VDEV Widths
     let vdevWidth = 0;
 
-    const allVdevWidths = new Set<number>(); // There should only be one value
-    const type = devs[0]?.type;
-    const size = devs[0]?.children.length
-      ? this.disks?.find((disk) => disk.name === devs[0]?.children[0]?.disk)?.size
-      : this.disks?.find((disk) => disk.name === (devs[0] as TopologyDisk)?.disk)?.size;
+    // There should only be one value
+    const allVdevWidths: Set<number> = this.storageService.getVdevWidths(vdevs);
 
-    devs.forEach((dev) => {
-      if (dev.type && dev.type !== type) {
-        isMixedCapacity = true;
-      }
-      if (!dev.children.length && this.disks?.find((disk) => disk.name === (dev as TopologyDisk).disk)?.size !== size) {
-        isMixedCapacity = true;
-      }
-
-      let vdevWidthCounter = 0;
-      dev.children.forEach((child) => {
-        vdevWidthCounter += 1;
-        if (this.disks?.find((disk) => disk.name === child.disk)?.size !== size) {
-          isMixedCapacity = true;
-        }
-      });
-      allVdevWidths.add(vdevWidthCounter);
-    });
-
-    if (allVdevWidths.size > 1) {
-      isMixedWidth = true;
-    } else {
+    const isMixedWidth = this.storageService.isMixedWidth(allVdevWidths);
+    if (!isMixedWidth) {
       vdevWidth = allVdevWidths.values().next().value;
     }
 
-    if (devs.length) {
-      if (isMixedCapacity) {
-        outputString = mixedCapacity;
-      } else if (isMixedWidth) {
-        outputString = mixedWidth;
-      } else {
-        outputString = `${devs.length} x `;
-        outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
-        if (size) {
-          outputString += filesize(size, { standard: 'iec' });
-        } else {
-          outputString += '?';
-        }
-      }
+    if (warnings.length === 1) {
+      return warnings[0];
+    }
+
+    if (warnings.length > 1) {
+      return warnings.length.toString() + ' ' + multiWarning;
+    }
+
+    if (!warnings.length && outputString && outputString === notAssignedDev) {
+      return outputString;
+    }
+    const type = vdevs[0]?.type;
+    const size = vdevs[0]?.children.length
+      ? this.disks?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
+      : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
+
+    outputString = `${vdevs.length} x `;
+    outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
+
+    if (size) {
+      outputString += filesize(size, { standard: 'iec' });
+    } else {
+      outputString += '?';
     }
     return outputString;
   }
@@ -161,5 +148,22 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       PoolStatus.Offline,
       PoolStatus.Degraded,
     ].includes(poolState.status);
+  }
+
+  isTopologyWarning(topologyState: string): boolean {
+    if (topologyState.includes(multiWarning)) {
+      return true;
+    }
+
+    switch (topologyState) {
+      case TopologyWarning.NoRedundancy:
+      case TopologyWarning.MixedVdevLayout:
+      case TopologyWarning.MixedVdevCapacity:
+      case TopologyWarning.MixedDiskCapacity:
+      case TopologyWarning.MixedVdevWidth:
+        return true;
+      default:
+        return false;
+    }
   }
 }
