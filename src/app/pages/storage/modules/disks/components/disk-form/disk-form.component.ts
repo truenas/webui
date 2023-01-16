@@ -15,7 +15,7 @@ import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -50,7 +50,6 @@ export class DiskFormComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private fb: FormBuilder,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private slideInService: IxSlideInService,
@@ -64,7 +63,11 @@ export class DiskFormComponent implements OnInit {
 
   setFormDisk(disk: Disk): void {
     this.existingDisk = disk;
-    this.form.patchValue({ ...disk });
+    this.form.patchValue({
+      ...disk,
+      togglesmart: disk.togglesmart || false,
+      smartoptions: disk.smartoptions || '',
+    });
   }
 
   private clearPasswordField(): void {
