@@ -1,3 +1,4 @@
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -47,7 +48,7 @@ export class MockStorageGenerator {
       id: 1,
       name: 'MOCK_POOL',
       healthy: true,
-      status: 'ONLINE',
+      status: PoolStatus.Online,
       topology: {
         data: [],
         special: [],
@@ -56,7 +57,7 @@ export class MockStorageGenerator {
         cache: [],
         dedup: [],
       },
-    } as unknown as PoolInstance;
+    } as PoolInstance;
 
     const disks: StorageDashboardDisk[] = [];
 
