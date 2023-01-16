@@ -262,19 +262,17 @@ export class MockStorageGenerator {
       case TopologyItemType.Mirror: {
         const vdevDisks: TopologyDisk[] = [];
         for (let i = 0; i < width; i++) {
-          const topologyDisk: unknown = this.generateTopologyDisk();
-          vdevDisks.push(topologyDisk as TopologyDisk);
+          const topologyDisk: TopologyDisk = this.generateTopologyDisk();
+          vdevDisks.push(topologyDisk);
         }
 
-        const vdev: unknown = {
+        return {
           type: layout,
           children: vdevDisks,
           guid: Number(12345).toString(),
           unavail_disk: null,
           stats: { size: null } as TopologyItemStats,
-        };
-
-        return vdev as VDev;
+        } as VDev;
       }
       default:
         console.error('Invalid TopologyItemType. Please use STRIPE, MIRROR, RAIDZ etc');
@@ -282,7 +280,7 @@ export class MockStorageGenerator {
   }
 
   private generateTopologyDisk(): TopologyDisk {
-    const device: unknown = {
+    return {
       type: TopologyItemType.Disk,
       children: [],
       disk: null,
@@ -290,20 +288,13 @@ export class MockStorageGenerator {
       device: null,
       guid: Number(12345).toString(),
       unavail_disk: null,
-    };
-
-    return device as TopologyDisk;
+    } as TopologyDisk;
   }
 
   private calculateVdevCapacity(vdev: VDev): number {
-    const sizes: unknown[] = vdev.children.map((child) => child.stats.size);
+    const sizes: number[] = vdev.children.map((child) => child.stats.size);
     const uniqueDiskSizes = new Set(sizes);
     const smallestSize: number = Math.min.apply(this, [...uniqueDiskSizes]);
-    /* console.log({
-      sizes: sizes,
-      unique: uniqueDiskSizes,
-      smallest: smallestSize,
-    }); */
 
     switch (vdev.type) {
       case TopologyItemType.Mirror:
