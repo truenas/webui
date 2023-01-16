@@ -192,7 +192,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit {
 
   // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
-    const [state, subItems] = menuInfo;
+    const [state, subItems] = menuInfo || [];
     if ((this.isOpen && !menuInfo) || (this.isOpen && state === this.menuName)) {
       this.isOpen = false;
       this.subs = [];

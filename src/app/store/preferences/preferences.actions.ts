@@ -4,7 +4,6 @@ import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller
 
 export const preferencesLoaded = createAction('[Preferences API] Loaded', props<{ preferences: Preferences }>());
 export const noPreferencesFound = createAction('[Preferences API] No Preferences Found');
-export const clearPreferencesState = createAction('[Preferences] Clear Preferences');
 
 // TODO: These actions will be moved elsewhere in the future
 export const themeNotFound = createAction('[Preferences] Theme Not Found');
