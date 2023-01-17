@@ -5,9 +5,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
-import { rootUserId } from 'app/constants/root-user-id.constant';
+import { filter, Subject } from 'rxjs';
+import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
+import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
@@ -26,15 +27,21 @@ export class DashboardFormComponent {
   systemWidgets: DashConfigItem[] = [];
   storageWidgets: DashConfigItem[] = [];
   networkWidgets: DashConfigItem[] = [];
+  private loggedInUser: DsUncachedUser;
 
   onSubmit$ = new Subject<DashConfigItem[]>();
 
   constructor(
     private formBuilder: FormBuilder,
     private ws2: WebSocketService2,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.ws.loggedInUser$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
+      this.loggedInUser = user;
+    });
+  }
 
   extractName(widget: DashConfigItem): string {
     const name = widget.name;
@@ -93,7 +100,7 @@ export class DashboardFormComponent {
     this.dashState = clone;
 
     // Save to backend
-    this.ws2.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
+    this.ws2.call('user.set_attribute', [this.loggedInUser.pw_uid, 'dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (res) => {

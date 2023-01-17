@@ -3,9 +3,9 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, throwError } from 'rxjs';
 import {
-  catchError, map, mergeMap, switchMap, withLatestFrom,
+  catchError, filter, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { rootUserId } from 'app/constants/root-user-id.constant';
+import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
@@ -27,8 +27,9 @@ import {
 export class PreferencesEffects {
   loadPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    mergeMap(() => {
-      return this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
+    switchMap(() => this.ws.loggedInUser$.pipe(filter(Boolean))),
+    mergeMap((loggedInUser: DsUncachedUser) => {
+      return this.ws.call('user.query', [[['id', '=', loggedInUser.pw_uid]]]).pipe(
         map(([user]) => {
           const preferences = user.attributes.preferences;
           const dashboardState = user.attributes.dashState;
@@ -67,13 +68,13 @@ export class PreferencesEffects {
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
     ),
-    withLatestFrom(this.store$.select(selectPreferencesState)),
-    switchMap(([, state]) => {
+    withLatestFrom(this.store$.select(selectPreferencesState), this.ws.loggedInUser$.pipe(filter(Boolean))),
+    switchMap(([, state, loggedInUser]) => {
       if (!state.areLoaded) {
         return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
-      return this.ws.call('user.set_attribute', [rootUserId, 'preferences', state.preferences]);
+      return this.ws.call('user.set_attribute', [loggedInUser.pw_uid, 'preferences', state.preferences]);
     }),
   ), { dispatch: false });
 

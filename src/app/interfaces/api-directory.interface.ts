@@ -321,6 +321,7 @@ export type ApiDirectory = {
   'auth.generate_token': { params: [number]; response: string };
   'auth.login_with_token': { params: [token: string]; response: boolean };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
+  'auth.me': { response: DsUncachedUser };
   'auth.login': {
     params: LoginParams;
     response: boolean;
