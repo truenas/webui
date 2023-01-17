@@ -31,6 +31,14 @@ export interface MockTopology {
   disks: StorageDashboardDisk[];
 }
 
+export interface AddTopologyOptions {
+  scenario: MockStorageScenario;
+  layout: TopologyItemType;
+  diskSize: number;
+  width: number;
+  repeats: number;
+}
+
 export class MockStorageGenerator {
   poolState: PoolInstance;
   disks: StorageDashboardDisk[];
@@ -64,66 +72,76 @@ export class MockStorageGenerator {
     return { poolState: pool, disks };
   }
 
-  addDataTopology(scenario: MockStorageScenario,
-    layout: TopologyItemType = TopologyItemType.Stripe,
-    diskSize = 4,
-    width = 1,
-    repeats = 1): MockStorageGenerator {
-    // The redundancy of this device should match the redundancy of the other normal devices in the pool
-    this.addRaidzCapableTopology(PoolTopologyCategory.Data, scenario, layout, diskSize, width, repeats);
+  addDataTopology(options: AddTopologyOptions = {
+    scenario: MockStorageScenario.NoRedundancy,
+    layout: TopologyItemType.Stripe,
+    diskSize: 4,
+    width: 1,
+    repeats: 1,
+  }): MockStorageGenerator {
+    this.addRaidzCapableTopology(PoolTopologyCategory.Data, options);
     return this;
   }
 
-  addSpecialTopology(scenario: MockStorageScenario,
-    layout: TopologyItemType = TopologyItemType.Stripe,
-    diskSize = 4,
-    width = 1,
-    repeats = 1): MockStorageGenerator {
+  addSpecialTopology(options: AddTopologyOptions = {
+    scenario: MockStorageScenario.NoRedundancy,
+    layout: TopologyItemType.Stripe,
+    diskSize: 4,
+    width: 1,
+    repeats: 1,
+  }): MockStorageGenerator {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
-    this.addRaidzCapableTopology(PoolTopologyCategory.Special, scenario, layout, diskSize, width, repeats);
+    this.addRaidzCapableTopology(PoolTopologyCategory.Special, options);
     return this;
   }
 
-  addDedupTopology(scenario: MockStorageScenario,
-    layout: TopologyItemType = TopologyItemType.Stripe,
-    diskSize = 4,
-    width = 1,
-    repeats = 1): MockStorageGenerator {
+  addDedupTopology(options: AddTopologyOptions = {
+    scenario: MockStorageScenario.NoRedundancy,
+    layout: TopologyItemType.Stripe,
+    diskSize: 4,
+    width: 1,
+    repeats: 1,
+  }): MockStorageGenerator {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
-    this.addRaidzCapableTopology(PoolTopologyCategory.Dedup, scenario, layout, diskSize, width, repeats);
+    this.addRaidzCapableTopology(PoolTopologyCategory.Dedup, options);
     return this;
   }
 
-  private addRaidzCapableTopology(category: PoolTopologyCategory,
-    scenario: MockStorageScenario,
-    layout: TopologyItemType = TopologyItemType.Stripe,
-    diskSize = 4,
-    width = 1,
-    repeats = 1): void {
-    switch (scenario) {
+  private addRaidzCapableTopology(category: PoolTopologyCategory, options: AddTopologyOptions = {
+    scenario: MockStorageScenario.NoRedundancy,
+    layout: TopologyItemType.Stripe,
+    diskSize: 4,
+    width: 1,
+    repeats: 1,
+  }): void {
+    switch (options.scenario) {
       case MockStorageScenario.NoRedundancy: {
-        const noRedundancy: MockTopology = this.generateNoRedundancyTopology(4, diskSize, width);
+        const noRedundancy: MockTopology = this.generateNoRedundancyTopology(4, options.diskSize, options.width);
         this.disks = this.disks.concat(noRedundancy.disks);
         this.poolState.topology[category] = this.poolState.topology[category]
           .concat(noRedundancy.topologyItems);
         break;
       }
       case MockStorageScenario.Uniform: {
-        if (layout === TopologyItemType.Stripe || layout === TopologyItemType.Disk) {
-          layout = TopologyItemType.Mirror;
+        if (options.layout === TopologyItemType.Stripe || options.layout === TopologyItemType.Disk) {
+          options.layout = TopologyItemType.Mirror;
         }
 
-        const uniform = this.generateUniformTopology(layout, repeats, diskSize, width);
+        const uniform = this.generateUniformTopology(options.layout, options.repeats, options.diskSize, options.width);
         this.disks = this.disks.concat(uniform.disks);
         this.poolState.topology[category] = this.poolState.topology[category].concat(uniform.topologyItems);
         break;
       }
       case MockStorageScenario.MixedDiskCapacity: {
-        if (layout === TopologyItemType.Stripe || layout === TopologyItemType.Disk) {
-          layout = TopologyItemType.Mirror;
+        if (options.layout === TopologyItemType.Stripe || options.layout === TopologyItemType.Disk) {
+          options.layout = TopologyItemType.Mirror;
         }
 
-        const mixedDisk = this.generateMixedDiskCapacityTopology(layout, repeats, diskSize, width);
+        const mixedDisk = this.generateMixedDiskCapacityTopology(options.layout,
+          options.repeats,
+          options.diskSize,
+          options.width);
+
         this.disks = this.disks.concat(mixedDisk.disks);
         this.poolState.topology[category] = this.poolState.topology[category]
           .concat(mixedDisk.topologyItems);
@@ -135,12 +153,13 @@ export class MockStorageGenerator {
   addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): MockStorageGenerator {
     // Only DISK or MIRROR devices. ZFS does not support RAIDZ
     if (isMirror) {
-      this.addRaidzCapableTopology(PoolTopologyCategory.Log,
-        MockStorageScenario.Uniform,
-        TopologyItemType.Mirror,
+      this.addRaidzCapableTopology(PoolTopologyCategory.Log, {
+        scenario: MockStorageScenario.Uniform,
+        layout: TopologyItemType.Mirror,
         diskSize,
-        2,
-        deviceCount);
+        width: 2,
+        repeats: deviceCount,
+      });
     } else {
       this.addSingleDeviceTopology(PoolTopologyCategory.Log, deviceCount, diskSize);
     }

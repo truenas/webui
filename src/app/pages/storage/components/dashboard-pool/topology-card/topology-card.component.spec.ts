@@ -34,14 +34,21 @@ describe('TopologyCardComponent', () => {
     const storage = new MockStorageGenerator();
 
     // Add Topologies to Storage
-    // storage.addDataTopology(MockStorageScenario.NoRedundancy)
-    // storage.addDataTopology(MockStorageScenario.Uniform, TopologyItemType.Raidz1,6,3,400)
-    storage.addDataTopology(MockStorageScenario.MixedDiskCapacity, TopologyItemType.Raidz1, 8, 12, 1)
-      .addSpecialTopology(MockStorageScenario.Uniform, TopologyItemType.Mirror, 8, 3, 2)
-      .addLogTopology(2, true, 2)
+    storage.addDataTopology({
+      scenario: MockStorageScenario.MixedDiskCapacity,
+      layout: TopologyItemType.Raidz1,
+      diskSize: 8,
+      width: 12,
+      repeats: 1,
+    }).addSpecialTopology({
+      scenario: MockStorageScenario.Uniform,
+      layout: TopologyItemType.Mirror,
+      diskSize: 8,
+      width: 3,
+      repeats: 2,
+    }).addLogTopology(2, true, 2)
       .addCacheTopology(2, 2)
       .addSpareTopology(3, 8);
-    // .addDedupTopology(MockStorageScenario.Uniform, TopologyItemType.Raidz3,12,4,2)
 
     spectator = createComponent({
       props: {
