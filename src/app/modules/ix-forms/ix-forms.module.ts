@@ -18,7 +18,6 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { MarkdownModule } from 'ngx-markdown';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
@@ -55,7 +54,6 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MarkdownModule.forRoot(),
     FlexLayoutModule,
     MatFormFieldModule,
     MatInputModule,

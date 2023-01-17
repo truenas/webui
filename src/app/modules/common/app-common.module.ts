@@ -19,7 +19,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ChartistModule } from 'ng-chartist';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
@@ -51,7 +50,6 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
 @NgModule({
   imports: [
     CastModule,
-    ChartistModule,
     CommonDirectivesModule,
     CommonModule,
     CoreComponents,

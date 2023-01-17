@@ -1,4 +1,4 @@
-<div cdkScrollable class={{id}} [ngClass]="id !== slideInModalId ? 'jw-modal' : ''">
+<div cdkScrollable [ngClass]="[id, id !== slideInModalId ? 'jw-modal' : '']">
   <div class="jw-modal-body">
     <div class="slidein-title-bar" fxLayout="row">
       <div fxFlex="90%" fxLayout="row" fxLayoutAlign="start center">

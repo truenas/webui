@@ -33,5 +33,6 @@ export class AuthLayoutComponent implements OnInit {
     adminLayoutElement.style.setProperty('--accent', theme.accent);
     document.documentElement.style.setProperty('--primary', theme.primary);
     document.documentElement.style.setProperty('--accent', theme.accent);
+    document.documentElement.style.setProperty('--lines', theme['alt-bg1']);
   }
 }
