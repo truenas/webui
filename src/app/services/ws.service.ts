@@ -19,6 +19,7 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 @UntilDestroy()
@@ -27,8 +28,9 @@ export class WebSocketService {
   onClose$ = new Subject<boolean>();
 
   socket: WebSocket;
-  isConnected$ = new BehaviorSubject(false);
+  isConnected$ = new BehaviorSubject<boolean>(false);
   loggedIn = false;
+  loggedInUser$ = new BehaviorSubject<DsUncachedUser | null>(null);
   @LocalStorage() token: string;
   shuttingdown = false;
 
@@ -307,6 +309,10 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
+
+      this.call('auth.me').pipe(untilDestroyed(this)).subscribe((user: DsUncachedUser) => {
+        this.loggedInUser$.next(user);
+      });
 
       // Subscribe to all events by default
       this.send({

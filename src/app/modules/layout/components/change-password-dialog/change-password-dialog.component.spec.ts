@@ -37,6 +37,14 @@ describe('ChangePasswordDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     websocket = spectator.inject(WebSocketService);
+    websocket.loggedInUser$.next({
+      pw_name: 'root',
+      pw_uid: 0,
+      pw_gid: 0,
+      pw_gecos: 'root',
+      pw_dir: '/root',
+      pw_shell: '/usr/bin/zsh',
+    });
   });
 
   it('checks current user password and shows an error if it is not correct', async () => {
@@ -69,7 +77,7 @@ describe('ChangePasswordDialogComponent', () => {
     await saveButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('auth.check_user', ['root', 'correct']);
-    expect(websocket.call).toHaveBeenCalledWith('user.update', [1, { password: '123456' }]);
+    expect(websocket.call).toHaveBeenCalledWith('user.update', [0, { password: '123456' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });
