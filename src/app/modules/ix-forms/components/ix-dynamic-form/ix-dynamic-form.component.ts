@@ -16,6 +16,7 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
 export class IxDynamicFormComponent {
   @Input() dynamicForm: UntypedFormGroup;
   @Input() dynamicSection: DynamicFormSchema[];
+  @Input() isEditMode = false;
 
   @Output() addListItem = new EventEmitter<AddListItemEvent>();
   @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();

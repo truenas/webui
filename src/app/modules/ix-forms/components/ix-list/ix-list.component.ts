@@ -16,11 +16,14 @@ export class IxListComponent implements OnInit {
   @Input() canAdd = true;
   @Input() default: unknown[];
   @Input() itemsSchema: ChartSchemaNode[];
+  @Input() isEditMode: boolean;
 
   @Output() add = new EventEmitter<unknown[]>();
 
   ngOnInit(): void {
-    setTimeout(() => this.handleListDefaults());
+    if (!this.isEditMode && this.default?.length > 0) {
+      this.handleListDefaults();
+    }
   }
 
   addItem(schema?: unknown[]): void {
@@ -34,7 +37,7 @@ export class IxListComponent implements OnInit {
   }
 
   private handleListDefaults(): void {
-    if (this.default?.length > 0) {
+    setTimeout(() => {
       this.default.forEach((defaultValue: never) => {
         this.addItem(
           this.itemsSchema.map((item: ChartSchemaNode) => {
@@ -48,6 +51,6 @@ export class IxListComponent implements OnInit {
           }),
         );
       });
-    }
+    });
   }
 }
