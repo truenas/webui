@@ -2,16 +2,19 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -22,6 +25,8 @@ import { DialogService, WebSocketService } from 'app/services';
 })
 export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
+  hasNfsStatus: boolean;
+  adHealth: DirectoryServiceState;
 
   form = this.fb.group({
     allow_nonroot: [false],
@@ -61,6 +66,7 @@ export class ServiceNfsComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -135,5 +141,38 @@ export class ServiceNfsComponent implements OnInit {
         this.form.controls.userd_manage_gids.enable();
       }
     });
+
+    this.ws.call('kerberos.keytab.has_nfs_principal').pipe(untilDestroyed(this)).subscribe((nfsStatus) => {
+      this.hasNfsStatus = nfsStatus;
+      if (!this.hasNfsStatus) {
+        this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe(({ activedirectory }) => {
+          this.adHealth = activedirectory;
+        });
+      }
+    });
+  }
+
+  get isAddSpnVisible(): boolean {
+    if (!this.hasNfsStatus && this.form.value.v4_krb && this.adHealth === DirectoryServiceState.Healthy) {
+      return true;
+    }
+    return false;
+  }
+
+  addSpn(): void {
+    if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
+      this.dialogService.confirm({
+        title: this.translate.instant('Add Kerberos SPN Entry'),
+        message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Yes'),
+        cancelMsg: this.translate.instant('No'),
+      }).pipe(untilDestroyed(this)).subscribe((res) => {
+        if (!res) {
+          return;
+        }
+        this.matDialog.open(AddSpnDialogComponent);
+      });
+    }
   }
 }

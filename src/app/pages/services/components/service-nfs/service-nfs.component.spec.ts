@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -46,6 +47,11 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
+        mockCall('kerberos.keytab.has_nfs_principal', false),
+        mockCall('directoryservices.get_state', {
+          activedirectory: DirectoryServiceState.Healthy,
+          ldap: DirectoryServiceState.Disabled,
+        }),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
