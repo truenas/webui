@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -98,7 +98,7 @@ describe('SmartInfoCardComponent', () => {
   it('shows a link to view all smart tests for a disk', () => {
     const link = spectator.query(byText('View All Test Results'));
     expect(link).toBeTruthy();
-    expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/sdc');
+    expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/disk/sdc');
   });
 
   it('shows a dialog to run a manual SMART test when Run Manual Test is pressed', async () => {

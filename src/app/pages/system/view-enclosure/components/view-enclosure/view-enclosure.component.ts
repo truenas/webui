@@ -30,7 +30,7 @@ import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/
 export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent>;
-  @ViewChild('navigation', { static: false }) nav: ElementRef;
+  @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   private disksUpdateSubscriptionId: string;
 

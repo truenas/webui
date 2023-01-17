@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
@@ -18,7 +18,6 @@ import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/mat
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { MarkdownModule } from 'ngx-markdown';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
@@ -47,6 +46,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { FormActionsComponent } from './components/form-actions/form-actions.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
 
 @NgModule({
@@ -54,7 +54,6 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MarkdownModule.forRoot(),
     FlexLayoutModule,
     MatFormFieldModule,
     MatInputModule,
@@ -101,6 +100,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxDynamicFormComponent,
     IxDynamicFormItemComponent,
     IxLabelComponent,
+    FormActionsComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -126,6 +126,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxDynamicFormComponent,
     IxDynamicFormItemComponent,
     IxLabelComponent,
+    FormActionsComponent,
   ],
   providers: [
     IxFormatterService,

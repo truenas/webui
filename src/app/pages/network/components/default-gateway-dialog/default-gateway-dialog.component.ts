@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
@@ -10,7 +10,8 @@ import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +36,7 @@ export class DefaultGatewayDialogComponent {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,

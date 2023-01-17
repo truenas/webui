@@ -33,6 +33,7 @@ interface HttpError {
 
 export class EntityUtils {
   // TODO: error is probably of type HttpError
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError(entity: any, error: any): void {
     if (error.code === 409) {
       this.handleObjError(entity, error);
@@ -75,8 +76,8 @@ export class EntityUtils {
         }
         let errors = '';
         field.forEach((item: string) => { errors += item + ' '; });
-        fc['hasErrors'] = true;
-        fc['errors'] = errors;
+        fc.hasErrors = true;
+        fc.errors = errors;
       } else if (typeof field === 'string') {
         entity.error = field;
       } else {
@@ -85,7 +86,9 @@ export class EntityUtils {
     });
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   handleWsError(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     entity: any,
     res: WebsocketError | Job,
     dialogService?: DialogService,
@@ -98,7 +101,7 @@ export class EntityUtils {
       dialog = entity.dialog;
     }
     if ('exc_info' in res && res.exc_info?.extra) {
-      (res as any).extra = res.exc_info.extra;
+      res.extra = res.exc_info.extra as Record<string, unknown>;
     }
 
     if ('extra' in res && res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
@@ -110,8 +113,7 @@ export class EntityUtils {
           const field = extraItem[0].split('.')[1];
           const error = extraItem[1];
 
-          let fc = _.find(entity.fieldConfig, { name: field })
-            || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          let fc = _.find(entity.fieldConfig, { name: field });
           let stepIndex;
           if (entity.wizardConfig) {
             _.find(entity.wizardConfig, (step, index) => {
@@ -121,11 +123,10 @@ export class EntityUtils {
             });
           }
           if (targetFieldConfig) {
-            fc = _.find(targetFieldConfig, { name: field })
-              || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+            fc = _.find(targetFieldConfig, { name: field });
           }
 
-          if (fc && !fc['isHidden']) {
+          if (fc && !fc.isHidden) {
             const element = document.getElementById(field);
             if (element) {
               if (
@@ -140,8 +141,8 @@ export class EntityUtils {
                 scroll = true;
               }
             }
-            fc['hasErrors'] = true;
-            fc['errors'] = error;
+            fc.hasErrors = true;
+            fc.errors = error;
             if (entity.wizardConfig && entity.entityWizard) {
               entity.entityWizard.stepper.selectedIndex = stepIndex;
             }

@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
@@ -34,7 +34,10 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
       template: '',
     })(class {
       provider: CloudsyncProvider;
-      setValues = jest.fn() as BaseProviderFormComponent['setValues'];
+      formPatcher$ = {
+        next: jest.fn(),
+      };
+      getFormSetter$ = jest.fn(() => this.formPatcher$);
       getSubmitAttributes = jest.fn(() => ({
         s3attribute: 's3 value',
       })) as BaseProviderFormComponent['getSubmitAttributes'];
@@ -202,7 +205,7 @@ describe('CloudCredentialsFormComponent', () => {
 
       const providerForm = spectator.query(S3ProviderFormComponent);
       expect(providerForm).toBeTruthy();
-      expect(providerForm.setValues).toHaveBeenCalledWith({
+      expect(providerForm.getFormSetter$().next).toHaveBeenCalledWith({
         hostname: 'backup.com',
       });
     });

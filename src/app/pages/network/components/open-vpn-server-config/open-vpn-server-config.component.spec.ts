@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -17,9 +17,10 @@ import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import {
-  DialogService, ServicesService, StorageService, WebSocketService,
+  DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { OpenVpnServerConfigComponent } from './open-vpn-server-config.component';
 
 describe('OpenVpnServerConfigComponent', () => {
@@ -34,7 +35,7 @@ describe('OpenVpnServerConfigComponent', () => {
     ],
     providers: [
       DialogService,
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('openvpn.server.update'),
         mockCall('openvpn.server.config', {
           server_certificate: 1,
@@ -53,6 +54,7 @@ describe('OpenVpnServerConfigComponent', () => {
           tls_crypt_auth: 'Key 1',
         } as OpenvpnServerConfig),
       ]),
+      mockWebsocket(),
       mockProvider(IxSlideInService),
       mockProvider(ServicesService, {
         getCerts: () => of([
@@ -95,7 +97,7 @@ describe('OpenVpnServerConfigComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('openvpn.server.config');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('openvpn.server.config');
     expect(values).toEqual({
       'Server Certificate': 'Certificate 1',
       'Root CA': 'Main CA',
@@ -135,7 +137,7 @@ describe('OpenVpnServerConfigComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('openvpn.server.update', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('openvpn.server.update', [{
       server_certificate: 2,
       root_ca: 2,
       server: '198.51.100.0',

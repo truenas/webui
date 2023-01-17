@@ -10,9 +10,9 @@ import { NetworkConfiguration } from 'app/interfaces/network-configuration.inter
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   isLoading = false;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,

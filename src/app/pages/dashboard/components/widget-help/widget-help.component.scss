@@ -1,4 +1,4 @@
-.widget .mat-card .mat-card-content > div {
+.widget .mat-mdc-card .mat-mdc-card-content > div {
   padding: 8px 16px !important;
 }
 
@@ -55,7 +55,7 @@
   width: 100vw;
 }
 
-.xs.widget .mat-card {
+.xs.widget .mat-mdc-card {
   overflow-y: scroll;
 }
 

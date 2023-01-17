@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServicesComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ServiceRow> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ServiceRow>([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
   loading = true;

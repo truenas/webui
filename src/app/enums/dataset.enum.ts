@@ -17,6 +17,7 @@ export enum DatasetEncryptionType {
 
 export enum DatasetQuotaType {
   Dataset = 'DATASET',
+  Project = 'PROJECT',
   User = 'USER',
   Group = 'GROUP',
   UserObj = 'USEROBJ',

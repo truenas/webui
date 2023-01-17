@@ -24,7 +24,6 @@ interface DnsAuthenticatorList {
 @UntilDestroy()
 @Component({
   templateUrl: './acmedns-form.component.html',
-  styleUrls: ['./acmedns-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcmednsFormComponent implements OnInit {
@@ -45,7 +44,7 @@ export class AcmednsFormComponent implements OnInit {
   });
 
   get formGroup(): UntypedFormGroup {
-    return this.form.controls['attributes'] as UntypedFormGroup;
+    return this.form.controls.attributes as UntypedFormGroup;
   }
 
   isLoading = false;

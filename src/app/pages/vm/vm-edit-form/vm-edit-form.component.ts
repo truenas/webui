@@ -30,7 +30,6 @@ const mbs = 1024 * 1024;
 @UntilDestroy()
 @Component({
   templateUrl: './vm-edit-form.component.html',
-  styleUrls: ['./vm-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService, VmGpuService],
 })
@@ -138,7 +137,7 @@ export class VmEditFormComponent {
       const vmGpus = allGpus.filter(byVmPciSlots(vmPciSlots));
 
       const vmGpuPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
-      this.form.controls['gpus'].setValue(vmGpuPciSlots, { emitEvent: false });
+      this.form.controls.gpus.setValue(vmGpuPciSlots, { emitEvent: false });
     });
   }
 }

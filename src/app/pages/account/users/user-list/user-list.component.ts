@@ -40,7 +40,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   filterString = '';
-  dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<User>([]);
   defaultSort: Sort = { active: 'uid', direction: 'asc' };
 
   expandedRow: User;

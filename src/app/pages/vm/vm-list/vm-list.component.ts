@@ -1,7 +1,7 @@
 import {
   AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -60,22 +60,22 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
-    { name: this.translate.instant('Name') as string, prop: 'name', always_display: true },
+    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
     {
-      name: this.translate.instant('State') as string, prop: 'state', always_display: true, toggle: true,
+      name: this.translate.instant('State'), prop: 'state', always_display: true, toggle: true,
     },
     {
-      name: this.translate.instant('Autostart') as string, prop: 'autostart', checkbox: true, always_display: true,
+      name: this.translate.instant('Autostart'), prop: 'autostart', checkbox: true, always_display: true,
     },
-    { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
-    { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
-    { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },
-    { name: this.translate.instant('Memory Size') as string, prop: 'memoryString', hidden: true },
-    { name: this.translate.instant('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
-    { name: this.translate.instant('System Clock') as string, prop: 'time', hidden: true },
-    { name: this.translate.instant('Display Port') as string, prop: 'port', hidden: true },
-    { name: this.translate.instant('Description') as string, prop: 'description', hidden: true },
-    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdownTimeoutString', hidden: true },
+    { name: this.translate.instant('Virtual CPUs'), prop: 'vcpus', hidden: true },
+    { name: this.translate.instant('Cores'), prop: 'cores', hidden: true },
+    { name: this.translate.instant('Threads'), prop: 'threads', hidden: true },
+    { name: this.translate.instant('Memory Size'), prop: 'memoryString', hidden: true },
+    { name: this.translate.instant('Boot Loader Type'), prop: 'bootloader', hidden: true },
+    { name: this.translate.instant('System Clock'), prop: 'time', hidden: true },
+    { name: this.translate.instant('Display Port'), prop: 'port', hidden: true },
+    { name: this.translate.instant('Description'), prop: 'description', hidden: true },
+    { name: this.translate.instant('Shutdown Timeout'), prop: 'shutdownTimeoutString', hidden: true },
   ];
   config = {
     paging: true,

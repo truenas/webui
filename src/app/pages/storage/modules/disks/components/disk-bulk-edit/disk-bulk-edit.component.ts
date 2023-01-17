@@ -18,7 +18,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: 'disk-bulk-edit.component.html',
-  styleUrls: ['disk-bulk-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskBulkEditComponent {
@@ -89,7 +88,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls['disknames'].disable();
+    this.form.controls.disknames.disable();
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {

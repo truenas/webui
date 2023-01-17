@@ -37,4 +37,5 @@ export const ixSvgIcons = {
   truenas_scale_logotype_color: 'assets/customicons/truenas_scale_logotype_rgb.svg',
   truenas_scale_logotype: 'assets/customicons/truenas_scale_logotype.svg',
   webdav_share: 'assets/customicons/webdav-share.svg',
+  enclosure: 'assets/customicons/enclosure.svg',
 };

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
@@ -121,8 +121,8 @@ describe('DatasetCapacitySettingsComponent', () => {
 
   it('disables quota fields when inherit is checked', async () => {
     const controls = await getControls();
-    await controls['quotaWarningInherit'].setValue(true);
-    expect(await controls['quotaWarning'].isDisabled()).toBe(true);
+    await controls.quotaWarningInherit.setValue(true);
+    expect(await controls.quotaWarning.isDisabled()).toBe(true);
   });
 
   it('saves updated capacity settings when form is submitted', async () => {

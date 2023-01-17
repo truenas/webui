@@ -15,8 +15,8 @@ export class NavigationComponent {
   menuItems = this.navService.menuItems;
   isHighlighted: string;
 
-  @Output() menuToggled: EventEmitter<[string, SubMenuItem[]]> = new EventEmitter();
-  @Output() menuClosed: EventEmitter<void> = new EventEmitter();
+  @Output() menuToggled = new EventEmitter<[string, SubMenuItem[]]>();
+  @Output() menuClosed = new EventEmitter<void>();
 
   readonly MenuItemType = MenuItemType;
 

@@ -32,7 +32,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
   sourceIndex: number;
 
   constructor(
-    private viewContainerRef: ViewContainerRef,
+    public viewContainerRef: ViewContainerRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
     super();

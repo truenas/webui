@@ -20,12 +20,13 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+  AppLoaderService, DialogService, SystemGeneralService,
 } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
@@ -80,7 +81,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   constructor(
     public router: Router,
     public translate: TranslateService,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     public sysGenService: SystemGeneralService,
     public mediaObserver: MediaObserver,
     private locale: LocaleService,
@@ -115,7 +116,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         if (haStatus.hasHa) {
           this.data = null;
 
-          this.ws.call('failover.call_remote', ['system.info'])
+          this.ws2.call('failover.call_remote', ['system.info'])
             .pipe(untilDestroyed(this))
             .subscribe((systemInfo: SystemInfo) => {
               this.processSysInfo(systemInfo);
@@ -149,7 +150,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
+    this.ws2.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
       next: (jobs) => {
         if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
@@ -218,7 +219,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.nasDateTime = addSeconds(this.nasDateTime, 1);
     }, 1000);
 
-    const build = new Date(this.data.buildtime['$date']);
+    const build = new Date(this.data.buildtime.$date);
     const year = build.getUTCFullYear();
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const month = months[build.getUTCMonth()];
@@ -258,11 +259,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       pmin = '0' + pmin;
     }
 
+    // TODO: Replace with ICU strings
     if (days > 0) {
       if (days === 1) {
-        this.uptimeString += days + this.translate.instant(' day, ');
+        this.uptimeString += `${days}${this.translate.instant(' day, ')}`;
       } else {
-        this.uptimeString += days + this.translate.instant(' days, ') + `${hrs}:${pmin}`;
+        this.uptimeString += `${days}${this.translate.instant(' days, ')}${hrs}:${pmin}`;
       }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
@@ -314,7 +316,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.serverTimeService.setSystemTime(currentTime).pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.loader.close();
-          sessionStorage.setItem('systemInfoLoaded', currentTime.toString());
           this.store$.dispatch(
             systemInfoDatetimeUpdated({ datetime: { $date: currentTime } }),
           );
@@ -347,7 +348,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     sessionStorage.updateLastChecked = Date.now();
     sessionStorage.updateAvailable = 'false';
 
-    this.ws.call('update.check_available').pipe(
+    this.ws2.call('update.check_available').pipe(
       take(1),
       untilDestroyed(this),
     ).subscribe((update) => {

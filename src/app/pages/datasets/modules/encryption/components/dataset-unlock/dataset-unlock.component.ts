@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,6 +17,11 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { DatasetUnlockFormValues } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock-form-values.interface';
 import { UnlockDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
+
+export interface Subs {
+  apiEndPoint: string;
+  file: File;
+}
 
 @UntilDestroy()
 @Component({
@@ -152,7 +157,6 @@ export class DatasetUnlockComponent implements OnInit {
   unlockSubmit(payload: DatasetUnlockParams): void {
     const values = this.form.value as DatasetUnlockFormValues;
     payload.recursive = !values.use_file || values.unlock_children;
-
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.unlocking_datasets_title },
       disableClose: true,

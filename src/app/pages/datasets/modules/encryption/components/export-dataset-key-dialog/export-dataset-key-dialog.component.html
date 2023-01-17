@@ -4,12 +4,12 @@
   {{ 'WARNING: Only the key for the dataset in question will be downloaded.' | translate }}
 </p>
 
-<div class="form-actions">
-  <button mat-button type="submit" color="primary" (click)="onDownload()">
-    {{ 'Download Key' | translate }}
-  </button>
-
+<ix-form-actions>
   <button mat-button type="button" [matDialogClose]="false">
     {{ 'Close' | translate }}
   </button>
-</div>
+
+  <button mat-button type="submit" color="primary" (click)="onDownload()">
+    {{ 'Download Key' | translate }}
+  </button>
+</ix-form-actions>

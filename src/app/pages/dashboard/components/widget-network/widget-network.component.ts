@@ -23,10 +23,11 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface NicInfo {
   ip: string;
@@ -155,7 +156,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private reportsService: ReportsService,
     private tableService: TableService,
     public translate: TranslateService,
@@ -204,8 +205,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (evt.data.link_state) {
             nicInfo.state = evt.data.link_state;
           }
-          nicInfo.in = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
-          nicInfo.out = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.in = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.out = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
 
           if (
             evt.data.sent_bytes !== undefined
@@ -341,7 +342,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   fetchReportData(): void {
     const endDate = this.reportsService.serverTime;
     const subOptions: Duration = {};
-    subOptions['hours'] = 1;
+    subOptions.hours = 1;
     const startDate = sub(endDate, subOptions);
 
     const timeFrame = {
@@ -355,7 +356,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         identifier: networkInterfaceName,
         name: 'interface',
       } as ReportingParams;
-      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
+      this.ws2.call('reporting.get_data', [[params], timeFrame]).pipe(
         map((response) => response[0]),
         untilDestroyed(this),
       ).subscribe({
@@ -374,7 +375,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
                 pointRadius: 0.2,
               },
               {
-                label: `outcoming [${networkInterfaceName}]`,
+                label: `outgoing [${networkInterfaceName}]`,
                 data: (response.data as number[][]).map((item, index) => ({ t: labels[index], y: -item[1] })),
                 borderColor: this.themeService.currentTheme().orange,
                 backgroundColor: this.themeService.currentTheme().orange,
@@ -410,7 +411,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               buttonMsg: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
-              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
+              this.ws2.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
             });
           },
         },

@@ -18,7 +18,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './init-shutdown-form.component.html',
-  styleUrls: ['./init-shutdown-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownFormComponent implements OnInit {
@@ -83,8 +82,8 @@ export class InitShutdownFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.form.controls['command'].enabledWhile(this.isCommand$),
-      this.form.controls['script'].disabledWhile(this.isCommand$),
+      this.form.controls.command.enabledWhile(this.isCommand$),
+      this.form.controls.script.disabledWhile(this.isCommand$),
     );
   }
 

@@ -19,6 +19,7 @@ import { filter } from 'rxjs/operators';
 import { ApiDirectory, ApiParams } from 'app/interfaces/api-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import {
   FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
@@ -83,6 +84,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private fb: UntypedFormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
@@ -343,7 +345,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           }
 
           if (this.conf.initial) {
-            this.conf.initial.bind(this.conf)(this);
+            this.conf.initial.call(this.conf, this);
           }
           if (!this.keepLoaderOpen) {
             this.loader.close();
@@ -412,13 +414,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   onSubmit(event: Event): void {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
       this.dialog.confirm({
-        title: this.conf.confirmSubmitDialog['title'],
-        message: this.conf.confirmSubmitDialog['message'],
+        title: this.conf.confirmSubmitDialog.title,
+        message: this.conf.confirmSubmitDialog.message,
         hideCheckBox: this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
-          ? this.conf.confirmSubmitDialog['hideCheckbox']
+          ? this.conf.confirmSubmitDialog.hideCheckbox
           : false,
         buttonMsg: this.conf.confirmSubmitDialog.hasOwnProperty('button')
-          ? this.conf.confirmSubmitDialog['button']
+          ? this.conf.confirmSubmitDialog.button
           : this.translate.instant('Ok'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit(event);
@@ -437,11 +439,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     let value = _.cloneDeep(this.formGroup.value);
 
     if ('id' in value) {
-      delete value['id'];
+      delete value.id;
     }
 
     if (this.conf.clean) {
-      value = this.conf.clean.bind(this.conf)(value);
+      value = this.conf.clean.call(this.conf, value);
     }
 
     value = new EntityUtils().changeNullString2Null(value);
@@ -498,7 +500,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               });
             }
           },
-          error: (res) => {
+          error: (res: WebsocketError) => {
             this.loader.close();
             this.loaderOpen = false;
             if (this.conf.errorReport) {
@@ -515,8 +517,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   clearErrors(): void {
     this.fieldConfig.forEach((fieldConfig) => {
-      fieldConfig['errors'] = '';
-      fieldConfig['hasErrors'] = false;
+      fieldConfig.errors = '';
+      fieldConfig.hasErrors = false;
     });
   }
 

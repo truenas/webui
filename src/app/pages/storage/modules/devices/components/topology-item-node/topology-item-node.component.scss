@@ -84,7 +84,7 @@
 $level-offset: 25px;
 $padding-left: 8px;
 
-::ng-deep {
+::ng-deep :host {
   @for $i from 2 through 10 {
     ix-tree-node[aria-level="#{$i}"],
     ix-nested-tree-node[aria-level="#{$i}"] {
