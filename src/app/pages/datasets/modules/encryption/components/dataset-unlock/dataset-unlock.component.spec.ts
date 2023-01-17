@@ -82,7 +82,6 @@ describe('DatasetUnlockComponent', () => {
 
     const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Upload Key file' }));
     await fileInput.setValue([file]);
-    // expect(spectator.component.form.value).toBe('');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

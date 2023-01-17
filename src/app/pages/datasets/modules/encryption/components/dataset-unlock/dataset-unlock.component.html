@@ -1,6 +1,6 @@
 <mat-card class="form-card">
   <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSave()">
       <ix-radio-group
         formControlName="use_file"
         [label]="helptext.unlock_key_file_placeholder | translate"
@@ -12,7 +12,7 @@
         <ix-checkbox
           formControlName="unlock_children"
           [label]="helptext.unlock_children_placeholder | translate"
-          [tooltip]="helptext.unlock_children_tooltip"
+          [tooltip]="helptext.unlock_children_tooltip | translate"
         ></ix-checkbox>
         <ix-file-input
           formControlName="file"

@@ -14,8 +14,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DatasetUnlockFormValues } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock-form-values.interface';
-import { UnlockDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
+import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { DialogService, WebSocketService } from 'app/services';
 
 export interface Subs {
@@ -23,9 +22,16 @@ export interface Subs {
   file: File;
 }
 
+interface DatasetFormValue {
+  key?: string;
+  passphrase?: string;
+  name: string;
+  is_passphrase: boolean;
+  file?: File[];
+}
+
 @UntilDestroy()
 @Component({
-  selector: 'ix-dataset-unlock',
   templateUrl: './dataset-unlock.component.html',
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -155,7 +161,7 @@ export class DatasetUnlockComponent implements OnInit {
   };
 
   unlockSubmit(payload: DatasetUnlockParams): void {
-    const values = this.form.value as DatasetUnlockFormValues;
+    const values = this.form.value;
     payload.recursive = !values.use_file || values.unlock_children;
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.unlocking_datasets_title },
@@ -178,33 +184,7 @@ export class DatasetUnlockComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: (job: Job<DatasetUnlockResult>) => {
         dialogRef.close();
-        const errors: { name: string; unlock_error: string }[] = [];
-        let skipped: { name: string }[] = [];
-        const unlock: { name: string }[] = [];
-        if (job && job.result) {
-          if (job.result.failed) {
-            const failed = job.result.failed;
-            Object.entries(failed).forEach(([errorDataset, fail]) => {
-              const error = fail.error;
-              const skip = fail.skipped;
-              errors.push({ name: errorDataset, unlock_error: error });
-              skipped = skip.map((dataset) => ({ name: dataset }));
-            });
-          }
-          job.result.unlocked.forEach((name) => {
-            unlock.push({ name });
-          });
-          if (!this.dialogOpen) { // prevent dialog from opening more than once
-            this.dialogOpen = true;
-            const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
-            unlockDialogRef.componentInstance.parent = this;
-            unlockDialogRef.componentInstance.showFinalResults();
-            unlockDialogRef.componentInstance.unlockDatasets = unlock;
-            unlockDialogRef.componentInstance.errorDatasets = errors;
-            unlockDialogRef.componentInstance.skippedDatasets = skipped;
-            unlockDialogRef.componentInstance.data = payload;
-          }
-        }
+        this.openUnlockDialog(payload, job);
       },
       error: this.handleError,
     });
@@ -217,12 +197,12 @@ export class DatasetUnlockComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    const values = this.form.value as DatasetUnlockFormValues;
+  onSave(): void {
+    const values = this.form.value;
     const datasets: DatasetEncryptionSummaryQueryParamsDataset[] = [];
 
     if (!values.use_file) {
-      values.datasets.forEach((dataset) => {
+      values.datasets.forEach((dataset: DatasetFormValue) => {
         if (values.unlock_children || dataset.name === this.pk) {
           if (dataset.is_passphrase) {
             datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
@@ -263,26 +243,7 @@ export class DatasetUnlockComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: (job: Job<DatasetEncryptionSummary[]>) => {
         dialogRef.close();
-        // show summary dialog;
-        const errors: DatasetEncryptionSummary[] = [];
-        const unlock: DatasetEncryptionSummary[] = [];
-        if (job && job.result) {
-          job.result.forEach((result) => {
-            if (result.unlock_successful) {
-              unlock.push(result);
-            } else {
-              errors.push(result);
-            }
-          });
-        }
-        if (!this.dialogOpen) { // prevent dialog from opening more than once
-          this.dialogOpen = true;
-          const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
-          unlockDialogRef.componentInstance.parent = this;
-          unlockDialogRef.componentInstance.unlockDatasets = unlock;
-          unlockDialogRef.componentInstance.errorDatasets = errors;
-          unlockDialogRef.componentInstance.data = payload as DatasetUnlockParams;
-        }
+        this.openSummaryDialog(payload as DatasetUnlockParams, job);
       },
       error: this.handleError,
     });
@@ -293,6 +254,58 @@ export class DatasetUnlockComponent implements OnInit {
       },
       error: this.handleError,
     });
+  }
+
+  openUnlockDialog(payload: DatasetUnlockParams, job: Job<DatasetUnlockResult>): void {
+    const errors: { name: string; unlock_error: string }[] = [];
+    let skipped: { name: string }[] = [];
+    const unlock: { name: string }[] = [];
+    if (job && job.result) {
+      if (job.result.failed) {
+        const failed = job.result.failed;
+        Object.entries(failed).forEach(([errorDataset, fail]) => {
+          const error = fail.error;
+          const skip = fail.skipped;
+          errors.push({ name: errorDataset, unlock_error: error });
+          skipped = skip.map((dataset) => ({ name: dataset }));
+        });
+      }
+      job.result.unlocked.forEach((name) => {
+        unlock.push({ name });
+      });
+      if (!this.dialogOpen) {
+        this.dialogOpen = true;
+        const unlockDialogRef = this.dialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+        unlockDialogRef.componentInstance.parent = this;
+        unlockDialogRef.componentInstance.showFinalResults();
+        unlockDialogRef.componentInstance.unlockDatasets = unlock;
+        unlockDialogRef.componentInstance.errorDatasets = errors;
+        unlockDialogRef.componentInstance.skippedDatasets = skipped;
+        unlockDialogRef.componentInstance.data = payload;
+      }
+    }
+  }
+
+  openSummaryDialog(payload: DatasetUnlockParams, job: Job<DatasetEncryptionSummary[]>): void {
+    const errors: DatasetEncryptionSummary[] = [];
+    const unlock: DatasetEncryptionSummary[] = [];
+    if (job && job.result) {
+      job.result.forEach((result) => {
+        if (result.unlock_successful) {
+          unlock.push(result);
+        } else {
+          errors.push(result);
+        }
+      });
+    }
+    if (!this.dialogOpen) { // prevent dialog from opening more than once
+      this.dialogOpen = true;
+      const unlockDialogRef = this.dialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+      unlockDialogRef.componentInstance.parent = this;
+      unlockDialogRef.componentInstance.unlockDatasets = unlock;
+      unlockDialogRef.componentInstance.errorDatasets = errors;
+      unlockDialogRef.componentInstance.data = payload;
+    }
   }
 
   goBack(): void {
