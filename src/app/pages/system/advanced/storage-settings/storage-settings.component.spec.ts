@@ -11,31 +11,29 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { SystemDatasetPoolComponent } from './system-dataset-pool.component';
+import { StorageSettingsComponent } from './storage-settings.component';
 
 describe('SystemDatasetPoolComponent', () => {
-  let spectator: Spectator<SystemDatasetPoolComponent>;
+  let spectator: Spectator<StorageSettingsComponent>;
   let loader: HarnessLoader;
   let ws: MockWebsocketService;
   const createComponent = createComponentFactory({
-    component: SystemDatasetPoolComponent,
+    component: StorageSettingsComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [
       mockWebsocket([
-        mockCall('systemdataset.config', { pool: 'current-pool' } as SystemDatasetConfig),
         mockCall('service.query', [
           {
             service: ServiceName.Cifs,
-            state: ServiceStatus.Stopped,
+            state: ServiceStatus.Running,
           },
         ] as Service[]),
         mockCall('systemdataset.pool_choices', {
@@ -43,6 +41,7 @@ describe('SystemDatasetPoolComponent', () => {
           'new-pool': 'new-pool',
         }),
         mockJob('systemdataset.update', fakeSuccessfulJob()),
+        mockCall('system.advanced.update'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
@@ -60,12 +59,17 @@ describe('SystemDatasetPoolComponent', () => {
   });
 
   it('loads and shows current system dataset pool', async () => {
+    spectator.component.setFormForEdit({
+      pool: 'current-pool',
+      swapondrive: '5368709120',
+    });
+    spectator.detectChanges();
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('systemdataset.config');
     expect(values).toEqual({
       'Select Pool': 'current-pool',
+      'Swap Size': '5 GiB',
     });
   });
 
@@ -73,7 +77,9 @@ describe('SystemDatasetPoolComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Select Pool': 'new-pool',
+      'Swap Size': '4 GiB',
     });
+    spectator.detectChanges();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -81,16 +87,11 @@ describe('SystemDatasetPoolComponent', () => {
     expect(ws.job).toHaveBeenCalledWith('systemdataset.update', [{
       pool: 'new-pool',
     }]);
+    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [{ swapondrive: 4294967296 }]);
   });
 
   it('should warns user about restarting an SMB service when it is running and form is saved', async () => {
-    ws.mockCall('service.query', [
-      {
-        service: ServiceName.Cifs,
-        state: ServiceStatus.Running,
-      },
-    ] as Service[]);
-
+    spectator.detectChanges();
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 

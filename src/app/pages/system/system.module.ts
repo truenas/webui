@@ -9,17 +9,16 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -46,8 +45,8 @@ import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kerne
 import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
+import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
-import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -119,7 +118,6 @@ import { routing } from './system.routing';
     TreeModule,
     SchedulerModule,
     JobsModule,
-    MarkdownModule.forRoot(),
     MatCardModule,
     IxIconModule,
     MatSelectModule,
@@ -180,7 +178,7 @@ import { routing } from './system.routing';
     SupportComponent,
     SysInfoComponent,
     SyslogFormComponent,
-    SystemDatasetPoolComponent,
+    StorageSettingsComponent,
     SedFormComponent,
     TunableFormComponent,
     TunableListComponent,
