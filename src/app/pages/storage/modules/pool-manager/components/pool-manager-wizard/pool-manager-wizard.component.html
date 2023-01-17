@@ -8,6 +8,9 @@
           <button mat-button matStepperNext color="primary" type="button" [disabled]="form.controls.general.invalid">
             {{ 'Next' | translate }}
           </button>
+          <button mat-button color="primary" type="button" (click)="openManualDiskSelection()">
+            {{ 'Manual' | translate }}
+          </button>
         </div>
       </mat-step>
       <mat-step #matStepInstance>

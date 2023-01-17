@@ -139,9 +139,7 @@
             <div>
               <mat-checkbox
                 color="primary"
-                id="vdev__disks-{{
-                  disks[rowIndex] ? disks[rowIndex].devname : rowIndex
-                }}"
+                [id]="'vdev__disks-' + (disks[rowIndex] ? disks[rowIndex].devname : rowIndex)"
                 [checked]="isSelected"
                 (change)="onCheckboxChangeFn($event)"
                 >&nbsp;</mat-checkbox
