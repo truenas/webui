@@ -1,11 +1,11 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
-    wait_on_element,
-    is_element_present,
+    wait_on_element
 )
 from pytest_bdd import (
     given,
@@ -35,17 +35,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 5, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 30, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
-    else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
 @then('You should see the dashboard')
@@ -118,11 +108,11 @@ def change_the_password_in_both_fields_but_make_sure_they_are_different_and_try_
 @then('You should not be able to save the changes')
 def you_should_not_be_able_to_save_the_changes(driver):
     """You should not be able to save the changes."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]')
-    element = driver.find_element_by_xpath('//button[contains(.,"Save")]')
+    assert wait_on_element(driver, 7, xpaths.button.save)
+    element = driver.find_element_by_xpath(xpaths.button.save)
     class_attribute = element.get_attribute('disabled')
     assert class_attribute == 'true'
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 30, '//h3[text()="Edit User"]')
     assert wait_on_element(driver, 30, '//mat-error[contains(.,"New password and confirmation should match.")]')
     driver.find_element_by_xpath(xpaths.button.close_icon).click()

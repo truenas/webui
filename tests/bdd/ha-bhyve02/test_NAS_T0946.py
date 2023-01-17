@@ -2,6 +2,7 @@
 """High Availability (tn-bhyve01) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -33,18 +34,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 
 @when(parsers.parse('login appear enter "root" and "{password}"'))
 def login_appear_enter_root_and_password(driver, password):
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        """login appear enter "root" and "password"."""
-        assert wait_on_element(driver, 7, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
-    else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    """login appear enter "root" and "password"."""
+    rsc.Login_If_Not_On_Dashboard(driver, 'root', password)
 
 
 @then(parsers.parse('you should see the dashboard and "{information}"'))
@@ -84,8 +75,8 @@ def input_the_license_and_click_save(driver, license):
     assert wait_on_element(driver, 7, '//textarea', 'inputable')
     driver.find_element_by_xpath('//textarea').clear()
     driver.find_element_by_xpath('//textarea').send_keys(license)
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
 
 
@@ -166,8 +157,8 @@ def enter_domain_nameserver1_nameserver2_nameserver3(driver, domain, nameserver1
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('"Please wait" should appear while settings are being applied and You should be returned to Network page')
@@ -202,8 +193,8 @@ def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
     if 'mat-checkbox-checked' not in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('after settings are applied you should see "Settings applied"')
@@ -260,8 +251,8 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_thi
 @then('click Apply and "Please wait" should appear while settings are being applied.')
 def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(driver):
     """click Apply and "Please wait" should appear while settings are being applied."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
 
 
@@ -379,17 +370,10 @@ def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_crea
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
-    assert wait_on_element(driver, 7, xpaths.popup.warning)
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
-    assert wait_on_element(driver, 7, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+    rsc.Confirm_Creating_Pool(driver)
 
 
 @then('Create Pool should appear while pool is being created. You should be returned to the Storage page')
@@ -412,8 +396,8 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
     if 'mat-checkbox-checked' in class_attribute:
         driver.find_element_by_xpath('//mat-checkbox[contains(.,"Disable Failover")]').click()
 
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 15, '//div[text()="Settings saved."]')
 
 

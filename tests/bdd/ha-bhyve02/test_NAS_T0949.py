@@ -120,8 +120,8 @@ def enable_permit_sudo_and_click_save(driver):
     time.sleep(0.5)
     assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Permit Sudo")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(.,"Permit Sudo")]').click()
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('Change should be saved')

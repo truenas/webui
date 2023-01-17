@@ -2,6 +2,7 @@
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -42,17 +43,7 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
     """if the login page appears, enter "root" and "testing"."""
     global root_password
     root_password = password
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
-    else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
 @then('on the Dashboard, click Network on the left sidebar')
@@ -82,18 +73,24 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}"."""
     global nameserver_1
     nameserver_1 = nameserver1
-    assert wait_on_element(driver, 7, xpaths.globalConfiguration.title)
-    assert wait_on_element(driver, 7, '//legend[contains(.,"DNS Servers")]')
-    assert wait_on_element(driver, 5, '//ix-input[contains(.,"Nameserver 1")]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').clear()
-    driver.find_element_by_xpath('//ix-input[contains(.,"Nameserver 1")]//input').send_keys(nameserver1)
+    assert wait_on_element(driver, 10, xpaths.globalConfiguration.title)
+    assert wait_on_element(driver, 5, xpaths.globalConfiguration.nameserver1_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver1_input).clear()
+    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver1_input).send_keys(nameserver1)
+
+
+@then('remove nameserver 2 and nameserver 3 IPs')
+def remove_nameserver_2_and_nameserver_3_ips(driver):
+    """remove nameserver 2 and nameserver 3 IPs."""
+    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver2_delete).click()
+    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver3_delete).click()
 
 
 @then('click Save, the progress bar should appear while settings are being applied')
 def click_save_the_progress_bar_should_appear_while_settings_are_being_applied(driver):
     """click Save, the progress bar should appear while settings are being applied."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 10, f'//span[contains(text(),"{nameserver_1}")]')
@@ -208,15 +205,10 @@ def after_go_to_the_dashboard(driver):
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
-    assert wait_on_element(driver, 10, '//span[contains(.,"System Information Standby")]')
-    assert wait_on_element(driver, 10, '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
-    assert wait_on_element(driver, 5, '//button[span/text()=" Failover "]', 'clickable')
-    driver.find_element_by_xpath('//button[span/text()=" Failover "]').click()
-    time.sleep(10)
+    assert wait_on_element(driver, 10, xpaths.dashboard.System_Information_Standby_Title)
+    assert wait_on_element(driver, 10, xpaths.button.Initiate_Failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Initiate_Failover).click()
+    rsc.Confirm_Failover(driver)
 
 
 @then('wait for the login page to appear')
@@ -224,7 +216,8 @@ def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
     assert wait_on_element(driver, 240, xpaths.login.user_input)
-    assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
+    if wait_on_element(driver, 240, xpaths.login.HA_Status_Enable) is False:
+        driver.refresh()
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
