@@ -63,11 +63,7 @@ export class DiskFormComponent implements OnInit {
 
   setFormDisk(disk: Disk): void {
     this.existingDisk = disk;
-    this.form.patchValue({
-      ...disk,
-      togglesmart: disk.togglesmart || false,
-      smartoptions: disk.smartoptions || '',
-    });
+    this.form.patchValue({ ...disk });
   }
 
   private clearPasswordField(): void {

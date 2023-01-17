@@ -210,8 +210,8 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       ...disk,
       pool: this.getPoolColumn(disk),
       readable_size: filesize(disk.size, { standard: 'iec' }),
-      togglesmart: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.togglesmart : null,
-      smartoptions: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.smartoptions : null,
+      togglesmart: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.togglesmart : false,
+      smartoptions: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.smartoptions : '',
     }));
   }
 
