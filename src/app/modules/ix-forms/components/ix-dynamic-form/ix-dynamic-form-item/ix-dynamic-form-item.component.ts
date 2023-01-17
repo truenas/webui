@@ -19,6 +19,7 @@ import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynam
 export class IxDynamicFormItemComponent implements OnInit {
   @Input() dynamicForm: UntypedFormGroup;
   @Input() dynamicSchema: DynamicFormSchemaNode;
+  @Input() isEditMode: boolean;
 
   @Output() addListItem = new EventEmitter<AddListItemEvent>();
   @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();
@@ -65,11 +66,11 @@ export class IxDynamicFormItemComponent implements OnInit {
     return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$;
   }
 
-  addControl(): void {
+  addControl(schema?: unknown[]): void {
     if (this.dynamicSchema.type === DynamicFormSchemaType.List) {
       this.addListItem.emit({
         array: this.getFormArray,
-        schema: this.dynamicSchema.itemsSchema,
+        schema: schema || this.dynamicSchema.itemsSchema,
       });
     }
   }
