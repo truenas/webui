@@ -8,7 +8,7 @@ import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { StorageService } from 'app/services';
@@ -84,15 +84,26 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     }
 
     this.topologyState.data = this.parseDevs(topology.data, PoolTopologyCategory.Data);
-    this.topologyState.metadata = this.parseDevs(topology.special, PoolTopologyCategory.Special, topology.data[0].type);
     this.topologyState.log = this.parseDevs(topology.log, PoolTopologyCategory.Log);
     this.topologyState.cache = this.parseDevs(topology.cache, PoolTopologyCategory.Cache);
     this.topologyState.spare = this.parseDevs(topology.spare, PoolTopologyCategory.Spare);
-    this.topologyState.dedup = this.parseDevs(topology.dedup, PoolTopologyCategory.Dedup, topology.data[0].type);
+
+    this.topologyState.metadata = this.parseDevs(
+      topology.special,
+      PoolTopologyCategory.Special,
+      topology.data,
+    );
+    this.topologyState.dedup = this.parseDevs(
+      topology.dedup,
+      PoolTopologyCategory.Dedup,
+      topology.data,
+    );
   }
 
-  private parseDevs(vdevs: TopologyItem[], category: PoolTopologyCategory, dataLayout?: TopologyItemType): string {
-    const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataLayout);
+  private parseDevs(vdevs: TopologyItem[],
+    category: PoolTopologyCategory,
+    dataVdevs?: TopologyItem[]): string {
+    const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataVdevs);
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths

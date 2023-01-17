@@ -484,10 +484,28 @@ export class StorageService {
     return vdevTypes.size > 1;
   }
 
+  isValidatable(layout: TopologyItemType): boolean {
+    switch (layout) {
+      case TopologyItemType.Disk:
+      case TopologyItemType.Stripe:
+      case TopologyItemType.Mirror:
+      case TopologyItemType.Spare:
+      case TopologyItemType.Log:
+      case TopologyItemType.Raidz:
+      case TopologyItemType.Raidz1:
+      case TopologyItemType.Raidz2:
+      case TopologyItemType.Raidz3:
+        return true;
+        break;
+      default:
+        return false;
+    }
+  }
+
   validateVdevs(category: PoolTopologyCategory,
     vdevs: TopologyItem[],
     disks: StorageDashboardDisk[],
-    dataVdevsLayout?: TopologyItemType): string[] {
+    dataVdevs?: TopologyItem[]): string[] {
     const warnings: string[] = [];
     let isMixedVdevCapacity = false;
     let isMixedDiskCapacity = false;
@@ -534,12 +552,42 @@ export class StorageService {
         warnings.push(TopologyWarning.NoRedundancy);
       }
 
+      // Check that special & dedup VDEVs have same redundancy level as data VDEVs
       const isMismatchCategory = (category === PoolTopologyCategory.Dedup || category === PoolTopologyCategory.Special);
-      if (isMismatchCategory && dataVdevsLayout && (dataVdevsLayout !== vdevs[0].type)) {
-        warnings.push(TopologyWarning.RedundancyMismatch);
+      if (isMismatchCategory) {
+        const isMismatch: boolean = this.isRedundancyMismatch(vdevs, dataVdevs);
+        if (isMismatch) {
+          warnings.push(TopologyWarning.RedundancyMismatch);
+        }
       }
     }
 
     return warnings;
+  }
+
+  private isRedundancyMismatch(vdevs: TopologyItem[], dataVdevs: TopologyItem[]): boolean {
+    let isMismatch = false;
+
+    const vdevTypes: Set<string> = this.getVdevTypes(vdevs);
+    const dataTypes: Set<string> = this.getVdevTypes(dataVdevs);
+
+    // Make sure there is only one layout
+    if (this.isMixedVdevType(vdevTypes) || this.isMixedVdevType(dataTypes)) {
+      return true;
+    }
+
+    const vdevLayout = vdevTypes.values().next().value as TopologyItemType;
+    const dataLayout = dataTypes.values().next().value as TopologyItemType;
+
+    if (vdevLayout === dataLayout) {
+      const vdevRedundancy = this.getRedundancyLevel(vdevs[0]);
+      const dataRedundancy = this.getRedundancyLevel(dataVdevs[0]);
+
+      isMismatch = vdevRedundancy !== dataRedundancy;
+    } else {
+      isMismatch = true;
+    }
+
+    return isMismatch;
   }
 }

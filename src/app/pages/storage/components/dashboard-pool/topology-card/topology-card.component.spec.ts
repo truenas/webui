@@ -36,10 +36,10 @@ describe('TopologyCardComponent', () => {
     // Add Topologies to Storage
     storage.addDataTopology({
       scenario: MockStorageScenario.Uniform,
-      layout: TopologyItemType.Raidz2,
+      layout: TopologyItemType.Mirror,
       diskSize: 8,
-      width: 12,
-      repeats: 1,
+      width: 2,
+      repeats: 6,
     }).addSpecialTopology({
       scenario: MockStorageScenario.Uniform,
       layout: TopologyItemType.Mirror,
@@ -66,8 +66,7 @@ describe('TopologyCardComponent', () => {
     expect(values).toHaveLength(6);
 
     expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('1 x RAIDZ2 | 12 wide | 8 TiB');
-    // expect(values[0]).toHaveText('Mixed Disk Capacities');
+    expect(values[0]).toHaveText('6 x MIRROR | 2 wide | 8 TiB');
 
     // Can be Disk or MIRROR
     expect(captions[2]).toHaveText('Log VDEVs');

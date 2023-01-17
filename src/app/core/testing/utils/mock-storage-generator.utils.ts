@@ -147,11 +147,36 @@ export class MockStorageGenerator {
           .concat(mixedDisk.topologyItems);
         break;
       }
+      case MockStorageScenario.MixedVdevCapacity: {
+        const mixedVdevs = this.generateMixedVdevCapacityTopology(options.layout,
+          options.repeats,
+          options.diskSize,
+          options.width);
+
+        this.disks = this.disks.concat(mixedVdevs.disks);
+        this.poolState.topology[category] = this.poolState.topology[category]
+          .concat(mixedVdevs.topologyItems);
+        break;
+      }
+      case MockStorageScenario.MixedVdevWidth: {
+        const mixedWidths = this.generateMixedWidthTopology(options.layout,
+          options.repeats,
+          options.diskSize,
+          options.width);
+
+        this.disks = this.disks.concat(mixedWidths.disks);
+        this.poolState.topology[category] = this.poolState.topology[category]
+          .concat(mixedWidths.topologyItems);
+        break;
+      }
+      default:
+        console.error('ERROR: Unsupported scenario ' + options.scenario + '. Scenario is either invalid or has not been added yet to storage generator.');
+        break;
     }
   }
 
+  // Can create DISK or MIRROR devices. ZFS does not support RAIDZ for log devices
   addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): MockStorageGenerator {
-    // Only DISK or MIRROR devices. ZFS does not support RAIDZ
     if (isMirror) {
       this.addRaidzCapableTopology(PoolTopologyCategory.Log, {
         scenario: MockStorageScenario.Uniform,
@@ -166,14 +191,14 @@ export class MockStorageGenerator {
     return this;
   }
 
+  // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for cache devices
   addCacheTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
-    // Only DISK devices allowed. ZFS does not support MIRROR or RAIDZ
     this.addSingleDeviceTopology(PoolTopologyCategory.Cache, deviceCount, diskSize);
     return this;
   }
 
+  // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for spares
   addSpareTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
-    // Only DISK devices allowed. ZFS does not support MIRROR or RAIDZ
     this.addSingleDeviceTopology(PoolTopologyCategory.Spare, deviceCount, diskSize);
     return this;
   }
@@ -247,6 +272,71 @@ export class MockStorageGenerator {
       vdev.children.forEach((child: TopologyDisk, index) => {
         const childDiskSize = index === 0 ? diskSize + 1 : diskSize;
         const disk = this.generateDisk(childDiskSize, (disks.length + allDisks.length));
+        child.disk = disk.name;
+        child.stats = { size: disk.size } as TopologyItemStats;
+        disks.push(disk);
+      });
+
+      vdev.stats.size = this.calculateVdevCapacity(vdev);
+      vdevs.push(vdev);
+    }
+
+    return {
+      topologyItems: vdevs,
+      disks,
+    };
+  }
+
+  private generateMixedVdevCapacityTopology(layout: TopologyItemType,
+    repeats: number,
+    diskSize: number,
+    width: number,
+    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    if (repeats < 2) {
+      console.error('ERROR: Minimum 2 VDEVs must be configured to generate mixed VDEV capacity scenario');
+    }
+
+    const vdevs: TopologyItem[] = [];
+    const disks: StorageDashboardDisk[] = [];
+
+    for (let i = 0; i < repeats; i++) {
+      const vdev: VDev = this.generateVdev(layout, width) as VDev;
+      const childDiskSize = i === 0 ? diskSize + 2 : diskSize;
+      vdev.children.forEach((child: TopologyDisk) => {
+        const disk = this.generateDisk(childDiskSize, (disks.length + allDisks.length));
+        child.disk = disk.name;
+        child.stats = { size: disk.size } as TopologyItemStats;
+        disks.push(disk);
+      });
+
+      vdev.stats.size = this.calculateVdevCapacity(vdev);
+      vdevs.push(vdev);
+    }
+
+    return {
+      topologyItems: vdevs,
+      disks,
+    };
+  }
+
+  private generateMixedWidthTopology(layout: TopologyItemType,
+    repeats: number,
+    diskSize: number,
+    width: number,
+    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    if (repeats < 2) {
+      console.error('ERROR: Minimum 2 VDEVs must be configured to generate mixed VDEV width scenario');
+    }
+
+    const vdevs: TopologyItem[] = [];
+    const disks: StorageDashboardDisk[] = [];
+
+    for (let i = 0; i < repeats; i++) {
+      const vdevWidth: number = i === 0 ? width + 1 : width;
+      const vdev: VDev = this.generateVdev(layout, vdevWidth) as VDev;
+
+      vdev.children.forEach((child: TopologyDisk) => {
+        const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
         child.disk = disk.name;
         child.stats = { size: disk.size } as TopologyItemStats;
         disks.push(disk);
