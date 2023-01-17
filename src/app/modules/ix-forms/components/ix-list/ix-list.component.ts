@@ -1,5 +1,6 @@
 import {
-  Component, EventEmitter, Input, OnInit, Output,
+  AfterViewInit,
+  Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 
@@ -8,7 +9,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
   templateUrl: './ix-list.component.html',
   styleUrls: ['./ix-list.component.scss'],
 })
-export class IxListComponent implements OnInit {
+export class IxListComponent implements AfterViewInit {
   @Input() label: string;
   @Input() tooltip: string;
   @Input() empty: boolean;
@@ -20,7 +21,7 @@ export class IxListComponent implements OnInit {
 
   @Output() add = new EventEmitter<unknown[]>();
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if (!this.isEditMode && this.default?.length > 0) {
       this.handleListDefaults();
     }

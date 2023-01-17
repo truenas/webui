@@ -10,6 +10,7 @@
         *ngFor="let attr of dynamicSchema.attrs"
         [dynamicSchema]="attr"
         [dynamicForm]="dynamicForm.controls[dynamicSchema.controlName] | cast"
+        [isEditMode]="isEditMode"
         (addListItem)="addControlNext($event)"
         (deleteListItem)="removeControlNext($event)"
       ></ix-dynamic-form-item>
@@ -34,6 +35,7 @@
           class="list"
           [dynamicSchema]="item"
           [dynamicForm]="element | cast"
+          [isEditMode]="isEditMode"
           (addListItem)="addControlNext($event)"
           (deleteListItem)="removeControlNext($event)"
         ></ix-dynamic-form-item>
