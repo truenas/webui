@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -123,10 +124,7 @@ def verify_the_smb_service_status_is_running_under_windows_smb_shares(driver):
 @then('click on System Settings on the left sidebar, and click Services')
 def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
     """click on System Settings on the left sidebar, and click Services."""
-    assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
+    rsc.Go_To_Service(driver)
 
 
 @then('on the Service page, verify SMB service is started')

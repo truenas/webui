@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -97,18 +98,10 @@ def click_a_drive_checkbox_and_press_the_right_arrow(driver):
 @then('click create confirm the warning checkbox and click CREATE POOL')
 def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     """click create confirm the warning checkbox and click CREATE POOL."""
-    assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
-    assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Continue).click()
+    rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_button).click()
-    assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
-    assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
+    rsc.Confirm_Creating_Pool(driver)
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 30, '//button[contains(text(),"Done")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Done")]').click()

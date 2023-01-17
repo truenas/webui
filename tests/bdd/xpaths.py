@@ -138,6 +138,7 @@ class button:
     chossePool = '//button[contains(.,"Choose Pool")]'
     addCatalog = '//button[contains(.,"Add Catalog")]'
     launchDockerImage = '//span[contains(.,"Launch Docker Image")]'
+    Initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
 
 
 class certificates:
@@ -166,6 +167,7 @@ class chossePoolForApp:
 class dashboard:
     title = '//h1[contains(.,"Dashboard")]'
     systemInfoCardTitle = '//span[text()="System Information"]'
+    System_Information_Standby_Title = '//span[contains(.,"System Information Standby")]'
 
 
 class dataset:
@@ -345,6 +347,7 @@ class login:
     user_input = '//input[@data-placeholder="Username"]'
     password_input = '//input[@data-placeholder="Password"]'
     signin_button = '//button[@name="signin_button"]'
+    HA_Status_Enable = '//p[text()="HA is enabled."]'
 
 
 class network:

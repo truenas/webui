@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -24,7 +25,6 @@ pytestmark = [pytest.mark.debug_test]
 @scenario('features/NAS-T1062.feature', 'Verify SSH Access with root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with root works."""
-    pass
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -53,10 +53,7 @@ def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
 @then('on the dashboard click on the System Settings side menu, then click services')
 def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(driver):
     """on the dashboard click on the System Settings side menu, then click services."""
-    assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
+    rsc.Go_To_Service(driver)
 
 
 @then('on the service page, press on configure(pencil) SSH')

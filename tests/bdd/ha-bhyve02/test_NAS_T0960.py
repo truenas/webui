@@ -1,13 +1,13 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-import time
 import os
 import pytest
+import reusableSeleniumCode as rsc
+import time
 import xpaths
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear,
     setup_ssh_agent,
     create_key,
@@ -45,7 +45,6 @@ def ssh_key():
 @scenario('features/NAS-T960.feature', 'Adding sshkey to the root user and verify it works')
 def test_adding_sshkey_to_the_root_user_and_verify_it_works(driver):
     """Adding sshkey to the root user and verify it works."""
-    pass
 
 
 @given(parsers.parse('The browser is open, navigate to "{nas_url}"'))
@@ -63,17 +62,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
 @when(parsers.parse('If the login page appears, enter "{user}" and "{password}"'))
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If the login page appears, enter "{user}" and "{password}"."""
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 5, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
-    else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
 @then('You should see the dashboard')
@@ -142,8 +131,8 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
     assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'inputable')
     driver.find_element_by_xpath('//ix-textarea[@formcontrolname="sshpubkey"]//textarea').clear()
     driver.find_element_by_xpath('//ix-textarea[@formcontrolname="sshpubkey"]//textarea').send_keys(ssh_key)
-    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('Change should be saved')

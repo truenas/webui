@@ -2,11 +2,11 @@
 """High Availability (tn09) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
-    is_element_present,
     wait_on_element,
     wait_for_attribute_value,
     attribute_value_exist,
@@ -26,7 +26,6 @@ from pytest_bdd import (
 @scenario('features/NAS-T945.feature', 'Verify SSH Access with Root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with Root works."""
-    pass
 
 
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
@@ -34,20 +33,18 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
         driver.get(f"{nas_url}/ui/sessions/signin")
-        time.sleep(1)
 
 
 @when(parsers.parse('login appear enter "{user}" and "{password}"'))
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 10, xpaths.login.user_input)
+    driver.find_element_by_xpath(xpaths.login.user_input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+    driver.find_element_by_xpath(xpaths.login.password_input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+    assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
 
 @then('you should see the dashboard')
@@ -71,10 +68,7 @@ def you_should_see_the_dashboard(driver):
 @then('go to System Settings, click Services')
 def go_to_system_settings_click_services(driver):
     """go to System Settings, click Services."""
-    assert wait_on_element(driver, 5, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
+    rsc.Go_To_Service(driver)
 
 
 @then('the service page should open')
@@ -113,8 +107,8 @@ def click_the_checkbox_log_in_as_root_with_password(driver):
 @then('click Save')
 def click_save(driver):
     """click Save."""
-    assert wait_on_element(driver, 5, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
 

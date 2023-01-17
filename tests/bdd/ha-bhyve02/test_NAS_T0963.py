@@ -2,12 +2,12 @@
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import xpaths
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from function import (
     wait_on_element,
-    is_element_present,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -38,17 +38,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
 @when(parsers.parse('if the login page appears, enter "{user}" and "{password}"'))
 def if_the_login_page_appears_enter__user_and_password(driver, user, password):
     """if the login page appears, enter "{user}" and "{password}."""
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
-    else:
-        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
 @then('on the Dashboard, click Dataset on the left sidebar')

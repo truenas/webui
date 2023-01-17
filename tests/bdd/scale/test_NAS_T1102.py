@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -83,18 +84,10 @@ def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
 @then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
 def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
     """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
-    assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
-    assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Continue).click()
+    rsc.Confirm_Single_Disk(driver)
     assert wait_on_element(driver, 5, xpaths.pool_manager.create_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_button).click()
-    assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
-    assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
+    rsc.Confirm_Creating_Pool(driver)
 
 
 @then('Create pool should appear while pool is being created')
@@ -127,9 +120,7 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_card)
     assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_configure_button, 'clickable')
     driver.find_element_by_xpath(xpaths.advanced.systemDatasetPool_configure_button).click()
-    assert wait_on_element(driver, 5, xpaths.popup.warning)
-    assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close).click()
+    rsc.Close_Common_Warning(driver)
 
 
 @then('click on System Dataset Pool select system, click Save')
