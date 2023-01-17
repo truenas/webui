@@ -70,7 +70,7 @@ export class ChangePasswordDialogComponent {
         this.loader.close();
       }),
       filter(Boolean),
-      switchMap(() => this.ws.call('user.update', [this.loggedInUser.pw_uid, { password }])),
+      switchMap(() => this.ws.call('user.update', [1, { password }])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

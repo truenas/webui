@@ -77,7 +77,7 @@ describe('ChangePasswordDialogComponent', () => {
     await saveButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('auth.check_user', ['root', 'correct']);
-    expect(websocket.call).toHaveBeenCalledWith('user.update', [0, { password: '123456' }]);
+    expect(websocket.call).toHaveBeenCalledWith('user.update', [1, { password: '123456' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });
