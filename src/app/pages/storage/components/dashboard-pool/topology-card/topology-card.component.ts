@@ -157,6 +157,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
     switch (topologyState) {
       case TopologyWarning.NoRedundancy:
+      case TopologyWarning.RedundancyMismatch:
       case TopologyWarning.MixedVdevLayout:
       case TopologyWarning.MixedVdevCapacity:
       case TopologyWarning.MixedDiskCapacity:
