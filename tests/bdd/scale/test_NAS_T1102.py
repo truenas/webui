@@ -117,21 +117,21 @@ def navigate_to_system_setting_and_click_advanced_to_open_the_advanced_page_shou
 def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     """click on System Dataset Configure button and close the popup."""
     assert wait_on_element(driver, 7, xpaths.advanced.title)
-    assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_card)
-    assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_configure_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.advanced.systemDatasetPool_configure_button).click()
+    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_card)
+    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_configure_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.advanced.system_datasetPool_configure_button).click()
     rsc.Close_Common_Warning(driver)
 
 
 @then('click on System Dataset Pool select system, click Save')
 def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
-    assert wait_on_element(driver, 5, xpaths.systemDataset.title)
+    assert wait_on_element(driver, 5, xpaths.system_dataset.title)
     time.sleep(1)
-    assert wait_on_element(driver, 5, xpaths.systemDataset.select_pool, 'clickable')
-    driver.find_element_by_xpath(xpaths.systemDataset.select_pool).click()
-    assert wait_on_element(driver, 5, xpaths.systemDataset.pool_option('system'))
-    driver.find_element_by_xpath(xpaths.systemDataset.pool_option('system')).click()
+    assert wait_on_element(driver, 5, xpaths.system_dataset.select_pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.system_dataset.select_pool).click()
+    assert wait_on_element(driver, 5, xpaths.system_dataset.pool_option('system'))
+    driver.find_element_by_xpath(xpaths.system_dataset.pool_option('system')).click()
     assert wait_on_element(driver, 30, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -140,5 +140,5 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 20, xpaths.advanced.systemDatasetPool_pool('tank'))
-    assert wait_on_element(driver, 5, xpaths.advanced.systemDatasetPool_pool('system'))
+    assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_datasetPool_pool('tank'))
+    assert wait_on_element(driver, 5, xpaths.advanced.system_datasetPool_pool('system'))

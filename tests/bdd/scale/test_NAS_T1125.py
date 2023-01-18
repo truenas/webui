@@ -51,18 +51,18 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_servi
     assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
 
 
 @then('the Directory Services page should open, then click LDAP settings button')
 def the_directory_services_page_should_open_then_click_ldap_settings_button(driver):
     """the Directory Services page should open, then click LDAP settings button."""
     # Verify the page is starting to load
-    assert wait_on_element(driver, 5, xpaths.directoryServices.title)
-    assert wait_on_element(driver, 10, xpaths.directoryServices.directory_disable_title)
-    assert wait_on_element(driver, 7, xpaths.directoryServices.configureLdap_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.directoryServices.configureLdap_button).click()
+    assert wait_on_element(driver, 5, xpaths.directory_services.title)
+    assert wait_on_element(driver, 10, xpaths.directory_services.directory_disable_title)
+    assert wait_on_element(driver, 7, xpaths.directory_services.configureLdap_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.directory_services.configureLdap_button).click()
 
 
 @then(parsers.parse('input "{hostname}" for Hostname'))
@@ -70,7 +70,7 @@ def input_hostname_for_hostname(driver, hostname):
     """input "{hostname}" for Hostname."""
     # Verify the LDAP box is starting to load
     assert wait_on_element(driver, 5, xpaths.ldap.title)
-    assert wait_on_element(driver, 5, xpaths.directoryServices.configureLdap_button, 'clickable')
+    assert wait_on_element(driver, 5, xpaths.directory_services.configureLdap_button, 'clickable')
     assert wait_on_element(driver, 5, xpaths.ldap.hostname_input, 'inputable')
     driver.find_element_by_xpath(xpaths.ldap.hostname_input).clear()
     driver.find_element_by_xpath(xpaths.ldap.hostname_input).send_keys(hostname)
@@ -122,9 +122,9 @@ def wait_for_please_wait_should_appear_while_settings_are_applied_then_after_set
     """wait for Please wait should appear while settings are applied, then after settings are applied, you should see "{hostname}" Settings saved."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 30, xpaths.popup.settingLdap)
-    assert wait_on_element(driver, 5, xpaths.directoryServices.ldapCard_title)
-    assert wait_on_element(driver, 5, xpaths.directoryServices.ldapStatus)
-    assert wait_on_element(driver, 20, xpaths.directoryServices.ldapHostname(hostname))
+    assert wait_on_element(driver, 5, xpaths.directory_services.ldapCard_title)
+    assert wait_on_element(driver, 5, xpaths.directory_services.ldapStatus)
+    assert wait_on_element(driver, 20, xpaths.directory_services.ldapHostname(hostname))
 
 
 @then(parsers.parse('run {command} trough ssh, the ssh result should pass and return {user} info'))

@@ -57,16 +57,16 @@ def on_the_dashboard_click_on_credentials_on_the_left_sidebar(driver):
 @then('click on Directory Services')
 def click_on_directory_services(driver):
     """click on Directory Services."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directoryServices, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
 
 
 @then('on the Directory Services page, click Show Advanced')
 def on_the_directory_services_page_click_show_advanced(driver):
     """on the Directory Services page, click Show Advanced."""
-    assert wait_on_element(driver, 7, xpaths.directoryServices.title)
-    assert wait_on_element(driver, 7, xpaths.directoryServices.showButton, 'clickable')
-    driver.find_element_by_xpath(xpaths.directoryServices.showButton).click()
+    assert wait_on_element(driver, 7, xpaths.directory_services.title)
+    assert wait_on_element(driver, 7, xpaths.directory_services.showButton, 'clickable')
+    driver.find_element_by_xpath(xpaths.directory_services.showButton).click()
 
 
 @then('on the Waring box click Continue')
@@ -80,8 +80,8 @@ def on_the_waring_box_click_continue(driver):
 @then('on the Kerberos Keytab card click Add')
 def on_the_kerberos_keytab_card_click_add(driver):
     """on the Kerberos Keytab card click Add."""
-    assert wait_on_element(driver, 7, xpaths.directoryServices.kerberosKeytabAdd_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.directoryServices.kerberosKeytabAdd_button).click()
+    assert wait_on_element(driver, 7, xpaths.directory_services.kerberosKeytabAdd_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.directory_services.kerberosKeytabAdd_button).click()
 
 
 @then(parsers.parse('decode the tabfile with "{tabfile_string}"'))
@@ -120,5 +120,5 @@ def click_save_and_verify_that_the_file_was_accepted_and_utilized(driver):
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 7, xpaths.directoryServices.title)
+    assert wait_on_element(driver, 7, xpaths.directory_services.title)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Kerberos Keytab")]//div[contains(text(),"keytab_test")]')

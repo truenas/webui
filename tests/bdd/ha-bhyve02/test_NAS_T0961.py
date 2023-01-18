@@ -146,30 +146,30 @@ def navigate_to_system_setting_and_click_misc(driver):
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
     assert wait_on_element(driver, 7, xpaths.advanced.title)
-    assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_card)
+    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_card)
 
 
 @then('click on System Dataset')
 def click_on_system_dataset(driver):
     """click on System Dataset."""
-    assert wait_on_element(driver, 7, xpaths.advanced.systemDatasetPool_configure_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.advanced.systemDatasetPool_configure_button).click()
+    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_configure_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.advanced.system_datasetPool_configure_button).click()
     rsc.Close_Common_Warning(driver)
 
 
 @then('the System Dataset page should open')
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
-    assert wait_on_element(driver, 5, xpaths.systemDataset.title)
+    assert wait_on_element(driver, 5, xpaths.system_dataset.title)
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
-    assert wait_on_element(driver, 5, xpaths.systemDataset.select_pool, 'clickable')
-    driver.find_element_by_xpath(xpaths.systemDataset.select_pool).click()
-    assert wait_on_element(driver, 5, xpaths.systemDataset.pool_option(pool_name))
-    driver.find_element_by_xpath(xpaths.systemDataset.pool_option(pool_name)).click()
+    assert wait_on_element(driver, 5, xpaths.system_dataset.select_pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.system_dataset.select_pool).click()
+    assert wait_on_element(driver, 5, xpaths.system_dataset.pool_option(pool_name))
+    driver.find_element_by_xpath(xpaths.system_dataset.pool_option(pool_name)).click()
     assert wait_on_element(driver, 30, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -179,8 +179,8 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 20, xpaths.advanced.systemDatasetPool_pool('tank'))
-    assert wait_on_element(driver, 5, xpaths.advanced.systemDatasetPool_pool('dozer'))
+    assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_datasetPool_pool('tank'))
+    assert wait_on_element(driver, 5, xpaths.advanced.system_datasetPool_pool('dozer'))
 
 
 @then('navigate to the dashboard')

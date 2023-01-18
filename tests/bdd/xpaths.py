@@ -1,5 +1,5 @@
 
-class activeDirectory:
+class active_directory:
     title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
     enableCheckbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     domain_input = '//ix-input[@formcontrolname="domainname"]//input'
@@ -78,7 +78,7 @@ class advanced:
     systemDatasetPool_card = '//h3[text()="System Dataset Pool"]'
     systemDatasetPool_configure_button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
-    def systemDatasetPool_pool(pool_name):
+    def system_datasetPool_pool(pool_name):
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
 
 
@@ -214,7 +214,7 @@ class deleteGroup:
     delete_button = '//mat-dialog-container//button[normalize-space(*/text())="Delete"]'
 
 
-class directoryServices:
+class directory_services:
     title = '//h1[text()="Directory Services"]'
     directory_disable_title = '//h3[text()="Active Directory and LDAP are disabled."]'
     configureAD_button = '//button[contains(.,"Configure Active Directory")]'
@@ -294,7 +294,7 @@ class exportDisconnectPool:
     exportDisconnect_button = '//mat-dialog-container//button[contains(.,"Export/Disconnect")]'
 
 
-class globalConfiguration:
+class global_configuration:
     title = '//h3[text()="Edit Global Configuration"]'
     nameserver1_input = '//ix-input[contains(.,"Nameserver 1")]//input'
     nameserver2_input = '//ix-input[contains(.,"Nameserver 2")]//input'
@@ -353,7 +353,7 @@ class login:
 
 class network:
     title = '//h1[contains(.,"Network")]'
-    globalConfigurationTitle = '//h3[text()="Global Configuration"]'
+    global_configurationTitle = '//h3[text()="Global Configuration"]'
     interface = '//mat-icon[@id="enp0s8"]'
 
 
@@ -375,7 +375,7 @@ class popup:
     smbStart_title = '//h1[text()="Start SMB Service"]'
     enableService_button = '//button[contains(*/text(),"Enable Service")]'
     pleaseWait = '//h6[contains(.,"Please wait")]'
-    activeDirectory = '//h1[text()="Active Directory"]'
+    active_directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
     updatingAcl = '//h1[text()="Updating ACL"]'
     settingLdap = '//h1[text()="Setting up LDAP"]'
@@ -391,8 +391,8 @@ class progress:
 class services:
     title = '//h1[text()="Services"]'
     smbtoggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
-    smbService_name = '//td[contains(text(),"SMB")]'
-    smbService_button = '//tr[contains(.,"SMB")]//button'
+    smb_service_name = '//td[contains(text(),"SMB")]'
+    smb_service_button = '//tr[contains(.,"SMB")]//button'
     sshService_toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
     sshService_button = '//tr[contains(.,"SSH")]//button'
     sshService_name = '//td[contains(text(),"SSH")]'
@@ -410,7 +410,7 @@ class sideMenu:
     local_group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     certificates = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]'
-    directoryServices = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
+    directory_services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
     storage = '//mat-list-item[@ix-auto="option__Storage"]'
     apps = '//mat-list-item[@ix-auto="option__Apps"]'
@@ -420,7 +420,7 @@ class sharing:
     title = '//h1[text()="Sharing"]'
     smbPanelTitle = '//a[contains(text(),"Windows (SMB) Shares")]'
     smbAddButton = '//span[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]'
-    smbServiceStatus = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
+    smb_serviceStatus = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
 
     def smbShareName(share_name):
         return f'//div[contains(text(),"{share_name}")]'
@@ -433,7 +433,7 @@ class smb:
     name_input = '//ix-input[@formcontrolname="name"]//input'
 
 
-class smbService:
+class smb_service:
     title = '//h1[contains(text(),"SMB")]'
     auxiliaryParameters_textarea = '//ix-textarea[@formcontrolname="smb_options"]//textarea'
 
