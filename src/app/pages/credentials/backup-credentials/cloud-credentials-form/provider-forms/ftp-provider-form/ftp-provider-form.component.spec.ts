@@ -24,7 +24,7 @@ describe('FtpProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       host: 'truenas.com',
       user: 'jerry',
       pass: '1234567',

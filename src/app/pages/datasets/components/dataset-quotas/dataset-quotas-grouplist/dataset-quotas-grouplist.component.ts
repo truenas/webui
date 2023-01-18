@@ -53,8 +53,6 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   emptyType: EmptyType = EmptyType.NoPageData;
 
   useFullFilter = true;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
-  protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected invalidFilter: QueryParams<DatasetQuota> = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
 
   get emptyConfigService(): EmptyService {
@@ -99,6 +97,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   };
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
+    if (row[field as keyof DatasetQuota] === undefined) {
+      return '—';
+    }
     switch (field) {
       case 'name':
         if (!row[field]) {
@@ -110,7 +111,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       case 'used_percent':
         return `${Math.round(row[field] * 100) / 100}%`;
       case 'obj_used_percent':
-        return `${Math.round(row[field] * 100) / 100}%`;
+        return row.obj_quota ? `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%` : '—';
+      case 'obj_quota':
+        return row.obj_quota ? row.obj_quota : '—';
       case 'used_bytes':
         if (row[field] !== 0) {
           return this.storageService.convertBytesToHumanReadable(row[field], 2);
@@ -139,14 +142,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   getGroupQuotas(): void {
-    const filterParam = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.Group, filterParam],
+      [this.datasetId, DatasetQuotaType.Group, []],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;
+        if (this.useFullFilter) {
+          quotas = quotas.filter((quota) => quota.quota > 0 || quota.obj_quota > 0);
+        }
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },

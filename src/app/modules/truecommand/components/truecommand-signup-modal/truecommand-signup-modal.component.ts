@@ -12,7 +12,6 @@ import helptext from 'app/helptext/topbar';
 })
 export class TruecommandSignupModalComponent {
   readonly helptext = helptext;
-
   constructor(
     private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,
     @Inject(WINDOW) private window: Window,

@@ -25,7 +25,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: 'syslog-form.component.html',
-  styleUrls: ['./syslog-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyslogFormComponent implements OnInit {

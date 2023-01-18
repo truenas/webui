@@ -30,7 +30,6 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 @UntilDestroy()
 @Component({
   templateUrl: './chart-form.component.html',
-  styleUrls: ['./chart-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartFormComponent implements OnDestroy {
@@ -225,22 +224,13 @@ export class ChartFormComponent implements OnDestroy {
     }
   }
 
-  deleteFieldFromData(
-    data: ChartFormValues,
-    fieldTobeDeleted: string,
-  ): void {
-    const keys = fieldTobeDeleted.split('.');
-    if (this.isNew || !_.get(this.config, keys)) {
-      _.unset(data, keys);
-    }
-  }
-
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
     const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
-      next: (fieldTobeDeleted) => {
-        this.deleteFieldFromData(data, fieldTobeDeleted);
+      next: (fieldToBeDeleted) => {
+        const keys = fieldToBeDeleted.split('.');
+        _.unset(data, keys);
       },
       complete: () => {
         this.saveData(data);

@@ -45,10 +45,10 @@ import {
   DialogService, ModalServiceMessage,
   StorageService,
   TaskService,
-  WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -86,7 +86,7 @@ export class DataProtectionDashboardComponent implements OnInit {
   jobStates = new Map<number, string>();
 
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
     private dialog: DialogService,
@@ -523,7 +523,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             this.refreshTable(TaskCardId.Replication);
           }
           this.jobStates.set(job.id, job.state);
-          console.info('replication', job.id, job.state, job);
         });
       }
       tasks.push(task);
@@ -617,7 +616,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state.state = JobState.Running),
-            switchMap(() => this.ws.call('replication.run', [row.id])),
+            switchMap(() => this.ws2.call('replication.run', [row.id])),
             tap(() => {
               this.snackbar.success(
                 this.translate.instant('Replication «{name}» has started.', { name: row.name }),
@@ -670,7 +669,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
+            switchMap(() => this.ws2.call('cloudsync.sync', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -703,7 +702,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             })
             .pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('cloudsync.abort', [row.id])),
+              switchMap(() => this.ws2.call('cloudsync.abort', [row.id])),
               untilDestroyed(this),
             )
             .subscribe({
@@ -731,7 +730,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             hideCheckBox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws2.call('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -782,7 +781,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('rsynctask.run', [row.id])),
+            switchMap(() => this.ws2.call('rsynctask.run', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Rsync task «{name}» has started.', {
                 name: `${row.remotehost} – ${row.remotemodule}`,
@@ -840,30 +839,19 @@ export class DataProtectionDashboardComponent implements OnInit {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
         dialogRef.componentInstance.jobId = row.job.id;
         dialogRef.componentInstance.job = row.job;
-        let subId: string = null;
         if (row.job.logs_path) {
           dialogRef.componentInstance.enableRealtimeLogs(true);
-          subId = dialogRef.componentInstance.getRealtimeLogs();
         }
         dialogRef.componentInstance.wsshow();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
@@ -905,7 +893,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         return;
     }
 
-    this.ws
+    this.ws2
       .call(updateCall, [row.id, { [param]: row[param] }])
       .pipe(untilDestroyed(this))
       .subscribe({

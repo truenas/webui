@@ -16,13 +16,13 @@
     [tooltip]="helptext.dialogFormFields.force.tooltip | translate"
   ></ix-checkbox>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
-      {{ 'Replace Disk' | translate }}
-    </button>
-
+  <ix-form-actions>
     <button mat-button type="button" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+
+    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ 'Replace Disk' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

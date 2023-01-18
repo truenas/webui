@@ -35,13 +35,13 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
-  WebSocketService,
   TaskService,
   KeychainCredentialService,
   ReplicationService,
   StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -980,7 +980,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   ]);
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
     protected taskService: TaskService,
     protected storageService: StorageService,
     protected keychainCredentialService: KeychainCredentialService,
@@ -999,7 +999,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }));
     });
     const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+    this.ws2.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
       tasks.forEach((task) => {
         const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
           task.lifetime_unit
@@ -1049,7 +1049,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       payload.name_regex = nameRegex;
     }
 
-    this.ws
+    this.ws2
       .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe({
         next: (res) => {
@@ -1309,7 +1309,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     const propertiesExcludeObj: Record<string, string> = {};
     if (data.properties_override) {
       for (let item of data.properties_override) {
-        item = item.split('=');
+        item = (item as string).split('=');
         propertiesExcludeObj[item[0]] = item[1];
       }
     }
@@ -1325,16 +1325,18 @@ export class ReplicationFormComponent implements FormConfiguration {
     if (data.direction === Direction.Push) {
       for (let i = 0; i < data.source_datasets_PUSH.length; i++) {
         if (_.startsWith(data.source_datasets_PUSH[i], '/mnt/')) {
-          data.source_datasets_PUSH[i] = data.source_datasets_PUSH[i].substring(5);
+          data.source_datasets_PUSH[i] = (data.source_datasets_PUSH[i] as string).substring(5);
         }
       }
       data.source_datasets = _.filter(
         Array.isArray(data.source_datasets_PUSH)
           ? _.cloneDeep(data.source_datasets_PUSH)
-          : _.cloneDeep(data.source_datasets_PUSH).split(',').map(_.trim),
+          : (_.cloneDeep(data.source_datasets_PUSH) as string).split(',').map(_.trim),
       );
 
-      data.target_dataset = typeof data.target_dataset_PUSH === 'string' ? data.target_dataset_PUSH : data.target_dataset_PUSH.toString();
+      data.target_dataset = typeof data.target_dataset_PUSH === 'string'
+        ? data.target_dataset_PUSH
+        : String(data.target_dataset_PUSH);
 
       delete data.source_datasets_PUSH;
       delete data.target_dataset_PUSH;
@@ -1342,13 +1344,13 @@ export class ReplicationFormComponent implements FormConfiguration {
       data.source_datasets = _.filter(
         Array.isArray(data.source_datasets_PULL)
           ? _.cloneDeep(data.source_datasets_PULL)
-          : _.cloneDeep(data.source_datasets_PULL).split(',').map(_.trim),
+          : (_.cloneDeep(data.source_datasets_PULL) as string).split(',').map(_.trim),
       );
       data.target_dataset = typeof data.target_dataset_PULL === 'string'
         ? _.cloneDeep(data.target_dataset_PULL)
-        : _.cloneDeep(data.target_dataset_PULL).toString();
+        : String(_.cloneDeep(data.target_dataset_PULL));
       if (_.startsWith(data.target_dataset, '/mnt/')) {
-        data.target_dataset = data.target_dataset.substring(5);
+        data.target_dataset = (data.target_dataset as string).substring(5);
       }
       delete data.source_datasets_PULL;
       delete data.target_dataset_PULL;

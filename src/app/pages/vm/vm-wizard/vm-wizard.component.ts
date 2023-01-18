@@ -984,7 +984,7 @@ export class VmWizardComponent implements WizardConfiguration {
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
         const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot === gpuPciSlot);
-        vmPayload.devices.push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
+        (vmPayload.devices as unknown[]).push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
           dtype: VmDeviceType.Pci,
           attributes: {
             pptdev: gpuDevice.vm_pci_slot,
@@ -995,7 +995,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
     if (value.enable_display) {
       if (this.productType.includes(ProductType.Scale)) {
-        vmPayload.devices.push({
+        (vmPayload.devices as unknown[]).push({
           dtype: VmDeviceType.Display,
           attributes: {
             port: this.displayPort,
@@ -1006,7 +1006,7 @@ export class VmWizardComponent implements WizardConfiguration {
           },
         });
       } else if (value.bootloader === VmBootloader.Uefi) {
-        vmPayload.devices.push({
+        (vmPayload.devices as unknown[]).push({
           dtype: VmDeviceType.Display,
           attributes: {
             wait: value.wait,
