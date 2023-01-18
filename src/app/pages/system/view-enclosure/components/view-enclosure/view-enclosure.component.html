@@ -2,7 +2,7 @@
   <ix-page-title-header>
     <button mat-button [matMenuTriggerFor]="elementsMenu">
       {{ 'Elements' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #elementsMenu="matMenu">
       <button
@@ -25,7 +25,7 @@
     <!-- Persistent Visualizer -->
     <div
       class="main-content"
-      fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )"
+      [fxFlex]="'calc(100% - ' + (system.enclosures.length * 240).toString() + 'px )'"
     >
       <div>
         <mat-spinner

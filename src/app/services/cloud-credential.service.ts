@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable()
 export class CloudCredentialService {
@@ -15,14 +15,14 @@ export class CloudCredentialService {
     B: 1024 ** 0,
   };
 
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected ws2: WebSocketService2) {}
 
   getProviders(): Observable<CloudsyncProvider[]> {
-    return this.ws.call(this.credentialProviders);
+    return this.ws2.call(this.credentialProviders);
   }
 
   getCloudsyncCredentials(): Observable<CloudsyncCredential[]> {
-    return this.ws.call('cloudsync.credentials.query');
+    return this.ws2.call('cloudsync.credentials.query');
   }
 
   getByte(data: string): number {

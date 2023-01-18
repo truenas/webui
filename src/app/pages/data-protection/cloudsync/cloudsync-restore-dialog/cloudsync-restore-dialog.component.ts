@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -11,8 +11,9 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +42,7 @@ export class CloudsyncRestoreDialogComponent {
   ]);
 
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,
@@ -54,7 +55,7 @@ export class CloudsyncRestoreDialogComponent {
   onSubmit(): void {
     this.loader.open();
 
-    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
+    this.ws2.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

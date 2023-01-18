@@ -726,19 +726,19 @@ export class IscsiWizardComponent implements WizardConfiguration {
       Target: this.summaryObj.target,
     };
     if (this.summaryObj.type === 'FILE') {
-      delete summary['Extent']['Device'];
-      delete summary['Extent']['New Device'];
+      delete summary.Extent.Device;
+      delete summary.Extent['New Device'];
     } else {
-      delete summary['Extent']['File'];
+      delete summary.Extent.File;
       if (this.summaryObj.disk === 'Create New') {
-        delete summary['Extent']['Device'];
+        delete summary.Extent.Device;
       } else {
-        delete summary['Extent']['New Device'];
+        delete summary.Extent['New Device'];
       }
     }
 
     if (this.summaryObj.portal === 'Create New') {
-      delete summary['Portal'];
+      delete summary.Portal;
     } else {
       delete summary['New Portal'];
     }
@@ -750,15 +750,15 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
 
     if (!this.summaryObj.initiators && !this.summaryObj.comment) {
-      delete summary['Initiator'];
+      delete summary.Initiator;
     } else if (!this.summaryObj.initiators) {
-      delete summary['Initiator']['Initiators'];
+      delete summary.Initiator.Initiators;
     } else if (!this.summaryObj.comment) {
-      delete summary['Initiator']['Comment'];
+      delete summary.Initiator.Comment;
     }
 
     if (this.summaryObj.target === 'Create New') {
-      delete summary['Target'];
+      delete summary.Target;
     }
     return summary;
   }
@@ -770,7 +770,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       }
 
       const control = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
-      control['isHidden'] = disabled;
+      control.isHidden = disabled;
       control.disabled = disabled;
       if (disabled) {
         this.entityWizard.formArray.get([stepIndex]).get(field).disable();
@@ -827,6 +827,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async customSubmit(value: any): Promise<void> {
     this.loader.open();
     let toStop = false;
@@ -846,17 +847,17 @@ export class IscsiWizardComponent implements WizardConfiguration {
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
         if (!(
-          (item === 'zvol' && value['disk'] !== 'NEW')
-                    || (item === 'auth' && value['discovery_authgroup'] !== 'NEW')
+          (item === 'zvol' && value.disk !== 'NEW')
+                    || (item === 'auth' && value.discovery_authgroup !== 'NEW')
                     || (item === 'portal' && value[item] !== 'NEW')
-                    || ((item === 'initiator' || item === 'portal' || item === 'target') && value['target'] !== 'NEW')
+                    || ((item === 'initiator' || item === 'portal' || item === 'target') && value.target !== 'NEW')
         )) {
           await this.doCreate(value, item).then(
             (res) => {
               if (item === 'zvol') {
-                value['disk'] = 'zvol/' + (res as Dataset).id.replace(' ', '+');
+                value.disk = 'zvol/' + (res as Dataset).id.replace(' ', '+');
               } else if (item === 'auth') {
-                value['discovery_authgroup'] = (res as IscsiAuthAccess).tag;
+                value.discovery_authgroup = (res as IscsiAuthAccess).tag;
               } else {
                 value[item] = res.id;
               }
@@ -884,17 +885,18 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   getRoundVolsize(value: { volsize: string; volsize_unit: string; volblocksize: string }): number {
-    const volsize = this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']);
-    const volblocksize = this.cloudcredentialService.getByte(value['volblocksize']);
+    const volsize = this.cloudcredentialService.getByte(value.volsize + value.volsize_unit);
+    const volblocksize = this.cloudcredentialService.getByte(value.volblocksize);
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   doCreate(value: any, item: keyof CreatedItems): Promise<CreatedItem> {
     if (item === 'zvol') {
       const payload = {
-        name: value['dataset'] + '/' + value['name'],
+        name: value.dataset + '/' + value.name,
         type: DatasetType.Volume,
-        volblocksize: value['volblocksize'],
+        volblocksize: value.volblocksize,
         volsize: this.getRoundVolsize(value),
       };
 
@@ -902,28 +904,28 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
     if (item === 'portal') {
       const payload = {
-        comment: value['name'],
-        discovery_authgroup: value['discovery_authgroup'],
-        discovery_authmethod: value['discovery_authmethod'],
-        listen: value['listen'],
+        comment: value.name,
+        discovery_authgroup: value.discovery_authgroup,
+        discovery_authmethod: value.discovery_authmethod,
+        listen: value.listen,
       };
-      if (payload['discovery_authgroup'] === '') {
-        delete payload['discovery_authgroup'];
+      if (payload.discovery_authgroup === '') {
+        delete payload.discovery_authgroup;
       }
       return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'auth') {
       const payload = {
-        tag: value['tag'],
-        user: value['user'],
-        secret: value['secret'],
+        tag: value.tag,
+        user: value.user,
+        secret: value.secret,
       } as IscsiAuthAccessUpdate;
       return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'extent') {
       let payload = {
-        name: value['name'],
-        type: value['type'],
+        name: value.name,
+        type: value.type,
       } as IscsiExtentUpdate;
       if (payload.type === IscsiExtentType.File) {
         this.fileFieldGroup.forEach((field: 'path' | 'filesize') => {
@@ -935,27 +937,27 @@ export class IscsiWizardComponent implements WizardConfiguration {
           }
         });
       } else if (payload.type === IscsiExtentType.Disk) {
-        payload['disk'] = value['disk'];
+        payload.disk = value.disk;
       }
-      payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value['usefor'] }).values);
+      payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value.usefor }).values);
 
       return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'initiator') {
       const payload = {
-        initiators: value['initiators'],
-        comment: value['name'],
+        initiators: value.initiators,
+        comment: value.name,
       };
 
       return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }
     if (item === 'target') {
       const payload = {
-        name: value['name'],
+        name: value.name,
         groups: [
           {
-            portal: value['portal'],
-            initiator: value['initiator'] ? value['initiator'] : null,
+            portal: value.portal,
+            initiator: value.initiator ? value.initiator : null,
             authmethod: IscsiAuthMethod.None, // default value for now
             auth: null, // default value for now
           },
@@ -966,8 +968,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
     if (item === 'associateTarget') {
       const payload = {
-        target: value['target'],
-        extent: value['extent'],
+        target: value.target,
+        extent: value.extent,
       } as IscsiTargetExtentUpdate;
       return lastValueFrom(this.ws.call(this.createCalls[item], [payload]));
     }

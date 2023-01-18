@@ -1,14 +1,20 @@
-import { ExistingProvider, FactoryProvider, forwardRef } from '@angular/core';
+import {
+  ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
@@ -58,6 +64,41 @@ export function mockWebsocket(
     {
       provide: MockWebsocketService,
       useExisting: forwardRef(() => WebSocketService),
+    },
+  ];
+}
+
+export function mockWebsocket2(
+  mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
+): (FactoryProvider | ExistingProvider | ValueProvider)[] {
+  return [
+    {
+      provide: WebSocketService2,
+      useFactory: (router: Router, wsManager: WebsocketManagerService) => {
+        const mockWebsocketService = new MockWebsocketService2(router, wsManager);
+        (mockResponses || []).forEach((mockResponse) => {
+          if (mockResponse.type === MockWebsocketResponseType.Call) {
+            mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
+          } else if (mockResponse.type === MockWebsocketResponseType.Job) {
+            mockWebsocketService.mockJob(mockResponse.method, {
+              collection: mockResponse.method,
+              id: mockResponse.id,
+              msg: IncomingApiMessageType.Changed,
+              fields: mockResponse.response,
+            });
+          }
+        });
+        return mockWebsocketService;
+      },
+      deps: [Router, WebsocketManagerService],
+    },
+    {
+      provide: MockWebsocketService2,
+      useExisting: forwardRef(() => WebSocketService2),
+    },
+    {
+      provide: WebsocketManagerService,
+      useValue: ({ send: jest.fn() } as unknown as WebsocketManagerService),
     },
   ];
 }

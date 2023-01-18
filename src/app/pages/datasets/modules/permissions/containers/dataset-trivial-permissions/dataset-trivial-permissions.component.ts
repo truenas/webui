@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -167,16 +167,16 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       },
     } as DatasetPermissionsUpdate[1];
     if (values.applyUser) {
-      update['user'] = values.user;
+      update.user = values.user;
     }
 
     if (values.applyGroup) {
-      update['group'] = values.group;
+      update.group = values.group;
     }
 
     if (this.oldDatasetMode !== values.mode) {
-      update['mode'] = values.mode;
-      update.options['stripacl'] = true;
+      update.mode = values.mode;
+      update.options.stripacl = true;
     }
 
     return [this.datasetId, update];

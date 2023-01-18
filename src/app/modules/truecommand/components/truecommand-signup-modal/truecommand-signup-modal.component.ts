@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 
@@ -12,7 +12,6 @@ import helptext from 'app/helptext/topbar';
 })
 export class TruecommandSignupModalComponent {
   readonly helptext = helptext;
-
   constructor(
     private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,
     @Inject(WINDOW) private window: Window,

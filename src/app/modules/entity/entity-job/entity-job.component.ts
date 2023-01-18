@@ -4,7 +4,7 @@ import {
 import {
   OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
 } from '@angular/core';
-import { MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';

@@ -5,9 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  map, of, Subscription,
-} from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -22,7 +20,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './console-form.component.html',
-  styleUrls: ['./console-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleFormComponent implements OnInit {
@@ -54,9 +51,7 @@ export class ConsoleFormComponent implements OnInit {
     { label: '115200', value: '115200' },
   ]);
 
-  readonly serialPortOptions$ = this.ws.call('system.advanced.serial_port_choices').pipe(choicesToOptions(), map((value) => {
-    return [...value, { label: this.translate.instant('Disabled'), value: 'disabled ' }];
-  }));
+  readonly serialPortOptions$ = this.ws.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
 
   constructor(
     private fb: FormBuilder,

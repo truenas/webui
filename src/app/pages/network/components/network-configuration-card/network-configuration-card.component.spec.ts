@@ -1,15 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('NetworkConfigurationCardComponent', () => {
   let spectator: Spectator<NetworkConfigurationCardComponent>;
@@ -18,7 +18,7 @@ describe('NetworkConfigurationCardComponent', () => {
     component: NetworkConfigurationCardComponent,
     imports: [],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('network.configuration.config', {
           hostname: 'truenas',
           domain: 'local',
@@ -53,7 +53,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('loads network summary and config when component is initialized', () => {
-    const ws = spectator.inject(WebSocketService);
+    const ws = spectator.inject(WebSocketService2);
 
     expect(ws.call).toHaveBeenCalledWith('network.general.summary');
     expect(ws.call).toHaveBeenCalledWith('network.configuration.config');

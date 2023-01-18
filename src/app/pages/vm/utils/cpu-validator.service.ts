@@ -32,9 +32,9 @@ export class CpuValidatorService {
       return maximumCpus$.pipe(
         map((maxVcpus) => {
           const form = control.parent;
-          const vcpus: number = form.get('vcpus').value;
-          const cores: number = form.get('cores').value;
-          const threads: number = form.get('threads').value;
+          const vcpus = form.get('vcpus').value as number;
+          const cores = form.get('cores').value as number;
+          const threads = form.get('threads').value as number;
 
           const hasError = vcpus * cores * threads > maxVcpus;
           if (!hasError) {

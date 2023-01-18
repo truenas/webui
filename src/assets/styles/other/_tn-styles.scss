@@ -4,6 +4,7 @@ $standard-height: 40px;
 @import '@angular/material/theming';
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
+@import 'angular15';
 
 // mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
@@ -105,9 +106,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg1, $fg1);
   }
 
-  .mat-menu-item .mat-icon:not([color]),
-  .mat-menu-item .theme-picker-swatch .mat-icon:not([color]),
-  .mat-menu-item-submenu-trigger::after {
+  .mat-mdc-menu-item .mat-icon:not([color]),
+  .mat-mdc-menu-item .theme-picker-swatch .mat-icon:not([color]),
+  .mat-mdc-menu-item-submenu-trigger::after {
     @include variable(color, --fg1, $fg1);
   }
 
@@ -166,13 +167,14 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-drawer,
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
-  .mat-card,
+  .mat-mdc-card,
   .mat-paginator,
   .mat-select-content,
   .mat-select-panel,
   .mat-select-panel-done-animating,
   .mat-expansion-panel,
-  .mat-dialog-container,
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface,
   .mat-stepper-horizontal,
   .mat-stepper-vertical,
   .dx-treelist-container {
@@ -185,11 +187,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: rgba(0, 0, 0, 0.1);
   }
 
-  .mat-card .mat-divider {
+  .mat-mdc-card .mat-divider {
     @include variable(background, --alt-fg1, $alt-fg1);
     opacity: 0.15;
   }
-
 
   .sidebar-panel .mat-nav-list .mat-list-item,
   .app-user .app-user-name,
@@ -198,8 +199,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-expansion-panel-header-description,
 
   .mat-list .mat-list-item,
-  .mat-menu-panel button,
-  .mat-menu-panel a,
+  .mat-mdc-menu-panel button,
+  .mat-mdc-menu-panel a,
   .mat-paginator-navigation-next,
   .mat-paginator-navigation-previous,
 
@@ -234,15 +235,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.7;
   }
 
-  .menu-toggle {
-    .mat-icon {
-      position: relative;
-      right: -10px;
-      vertical-align: middle;
-    }
-  }
-
-  .mat-menu-panel,
+  .mat-mdc-menu-panel,
   .mat-option.mat-active,
   .mat-nav-list a {
     @include variable(background, --bg2, $bg2);
@@ -283,9 +276,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.38;
   }
 
-  .mat-button:disabled {
+  .mat-mdc-button:disabled {
     cursor: not-allowed;
     opacity: 0.38;
+    pointer-events: all;
   }
 
   .mat-form-field-ripple {
@@ -353,7 +347,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     top: 5px;
   }
 
-  .mat-menu-item[disabled] {
+  .mat-mdc-menu-item[disabled] {
     @include variable(color, --primary-txt, $primary-txt);
     opacity: 0.38;
   }
@@ -370,13 +364,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
 
-  .mat-menu-content button.mat-menu-item:hover,
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
+  .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
+  .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
-  .mat-menu-content button.mat-menu-item:focus,
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
+  .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
+  .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     background-color: var(--hover-bg);
   }
@@ -423,18 +417,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   //Entity Module Overrides
 
-  ix-device-edit .form-card.mat-card,
-  ix-entity-form .form-card.mat-card {
+  ix-device-edit .form-card.mat-mdc-card,
+  ix-entity-form .form-card.mat-mdc-card {
     margin: 0 auto;
     max-width: 960px;
   }
 
-  .mat-card-actions .mat-button {
+  .mat-mdc-card-actions .mat-mdc-button {
     margin-left: 1px !important;
     margin-right: 3px !important;
   }
 
-  .form-card.mat-card {
+  .form-card.mat-mdc-card {
     font-size: 12px;
   }
 
@@ -443,7 +437,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     min-width: 100%;
   }
 
-  .combo-box-menu.mat-menu-panel {
+  .combo-box-menu.mat-mdc-menu-panel {
     max-height: 256px;
   }
 
@@ -472,21 +466,52 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   /////////////////// END SpecSelectors
 
   .mat-dialog-container {
-    max-width: 800px;
+    max-width: 80vw;
   }
 
-  .overflow-dialog .mat-dialog-container {
+  .mat-mdc-dialog-container {
+    border-radius: var(--mdc-dialog-container-shape);
+    max-width: 800px;
+
+    :not(.mat-mdc-dialog-content) {
+      > form {
+        padding: 0 24px 24px;
+
+        .mat-mdc-dialog-content,
+        .mat-mdc-dialog-actions {
+          padding: 0;
+        }
+      }
+    }
+
+    .mat-mdc-dialog-actions {
+      justify-content: end;
+    }
+  }
+
+  .mat-mdc-dialog-title {
+    display: flex;
+    margin: 0 0 15px;
+    padding: 24px 24px 0;
+  }
+
+  .mdc-dialog__actions {
+    min-height: inherit;
+    padding: 0 24px 20px;
+  }
+
+  .overflow-dialog .mat-mdc-dialog-container {
     max-height: calc(100vh - 100px);
     overflow: auto !important;
   }
 
-  .ix-overflow-dialog .mat-dialog-container {
+  .ix-overflow-dialog .mat-mdc-dialog-container {
     max-height: calc(100vh - 100px);
     overflow: auto !important;
     padding-top: 0;
   }
 
-  .mat-dialog-title {
+  .mat-mdc-dialog-title {
     .warning-icon {
       color: var(--orange);
       margin-right: 10px;
@@ -495,7 +520,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     overflow: hidden;
     padding-bottom: 0;
 
@@ -619,7 +644,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     width: 36px;
   }
 
-  ix-dual-listbox .chosen .mat-list-item-content {
+  ix-dual-listbox .chosen .mat-mdc-list-item-content {
     color: var(--fg2);
   }
 
@@ -632,13 +657,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // style nav chevrons on datatable pager w/regard to theme
-  .mat-button-wrapper .mat-paginator-decrement,
-  .mat-button-wrapper .mat-paginator-increment {
+  .mdc-button__label .mat-paginator-decrement,
+  .mdc-button__label .mat-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
   }
 
-  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
-  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
+  .mat-icon-button:disabled .mdc-button__label .mat-paginator-decrement,
+  .mat-icon-button:disabled .mdc-button__label .mat-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
     opacity: 0.38;
   }
@@ -761,61 +786,63 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg2);
   }
 
-  .mat-button {
+  .mat-mdc-button,
+  .mdc-button {
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
     font-weight: 700 !important;
     text-transform: capitalize !important;
   }
 
-  .mat-stroked-button {
+  .mdc-button--outlined {
     background-color: transparent !important;
     border: 1px solid currentColor !important;
-    border-radius: 25px;
-    line-height: 28px;
+    border-radius: 25px !important;
+    height: 30px;
+    line-height: 30px;
 
     &.fn-theme-primary {
-      @include variable(color, --primary, $primary);
+      @include variable(color, --primary, $primary, !important);
     }
 
     &.fn-theme-grey {
-      @include variable(color, --grey, #4d4d4d);
+      @include variable(color, --grey, #4d4d4d, !important);
     }
 
     &.fn-theme-red {
-      @include variable(color, --red, $red);
+      @include variable(color, --red, $red, !important);
     }
 
     &.fn-theme-blue {
-      @include variable(color, --blue, $blue);
+      @include variable(color, --blue, $blue, !important);
     }
 
     &.fn-theme-green {
-      @include variable(color, --green, $green);
+      @include variable(color, --green, $green, !important);
     }
 
     &.fn-theme-cyan {
-      @include variable(color, --cyan, $cyan);
+      @include variable(color, --cyan, $cyan, !important);
     }
 
     &.fn-theme-orange {
-      @include variable(color, --orange, $orange);
+      @include variable(color, --orange, $orange, !important);
     }
 
     &.fn-theme-magenta {
-      @include variable(color, --magenta, $magenta);
+      @include variable(color, --magenta, $magenta, !important);
     }
 
     &.fn-theme-violet {
-      @include variable(color, --violet, $violet);
+      @include variable(color, --violet, $violet, !important);
     }
 
     &.fn-theme-yellow {
-      @include variable(color, --yellow, $yellow);
+      @include variable(color, --yellow, $yellow, !important);
     }
   }
 
-  .mat-button[color='default'] {
+  .mat-mdc-button[color='default'] {
     @include variable(color, --fg2, $fg2, !important);
   }
 
@@ -857,7 +884,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       }
     }
 
-    .mat-list-text {
+    .mat-mdc-list-text {
       opacity: 0.75;
     }
   }
@@ -868,8 +895,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring tooltips to the front in dialogs
-  .mat-dialog-container,
-  .mat-dialog-content {
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-content {
     overflow: visible !important;
   }
 
@@ -887,13 +914,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring theme colors to rollover effect for standard primary buttons
-  .mat-button.mat-primary .mat-button-focus-overlay {
+  .mat-mdc-button.mat-primary .mat-mdc-button-focus-overlay {
     @include variable(background-color, --primary, $primary);
     opacity: 0.12;
   }
 
   // Bring theme colors to rollover effect for standard accent buttons
-  .mat-button.mat-accent .mat-button-focus-overlay {
+  .mat-mdc-button.mat-accent .mat-mdc-button-focus-overlay {
     @include variable(background-color, --accent, $accent);
     opacity: 0.12;
   }
@@ -931,16 +958,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-left: 15px;
   }
 
-  .mat-progress-bar-fill::after {
+  .mat-mdc-progress-bar-fill::after {
     @include variable(background-color, --primary, $primary);
   }
 
-  .mat-progress-bar-buffer {
+  .mat-mdc-progress-bar-buffer {
     @include variable(background-color, --primary, $primary);
     opacity: 0.5;
   }
 
-  .mat-progress-bar .mat-progress-bar-background {
+  .mat-mdc-progress-bar .mat-mdc-progress-bar-background {
     display: none;
   }
 
@@ -951,6 +978,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    position: absolute;
+    right: 0;
+    top: -4px;
+
+    i {
+      font-size: 17px;
+    }
   }
 
   datatable-selection > .empty-row {
@@ -1091,10 +1125,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     vertical-align: top;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     border-radius: 6px;
   }
-
 
   // Scrollbars need separate rules for firefox and webkit
   ix-confirm-dialog .warning-box {
@@ -1220,7 +1253,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .sidenav-link:hover,
   .slide-in-nav-item:hover,
-  .mat-button.mat-default:hover {
+  .mat-mdc-button.mat-default:hover {
     background: var(--hover-bg) !important;
   }
 
@@ -1276,7 +1309,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding: 0;
   }
 
-  .slidein-nav .mat-list-item {
+  .slidein-nav .mat-mdc-list-item {
     border-bottom: solid 1px var(--lines);
   }
 
@@ -1311,37 +1344,32 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   button.menu-toggle {
-    .mat-button-wrapper {
+    .mdc-button__label {
       align-items: center;
       display: inline-flex;
-    }
-
-    .mat-icon {
-      position: relative;
-      right: -10px;
     }
   }
 
   .topbar-panel {
-    .mat-dialog-container {
+    .mat-mdc-dialog-container {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       padding-bottom: 8px;
       padding-top: 8px;
     }
 
-    .mat-dialog-content {
+    .mat-mdc-dialog-content {
       overflow: auto !important;
     }
 
-    .mat-dialog-actions {
+    .mat-mdc-dialog-actions {
       padding-bottom: 24px;
     }
   }
 
   // Disabled form fields
   .form-element.form-combobox .mat-form-field[disabled],
-  .form-element.form-combobox .mat-menu-trigger[disabled]
+  .form-element.form-combobox .mat-mdc-menu-trigger[disabled]
   .form-element.form-ip-netmask .mat-form-field[disabled],
   .form-element .mat-form-field-wrapper[disabled],
   .form-element input[type=email][disabled],
@@ -1379,3 +1407,62 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     outline: 1px solid var(--primary);
   }
 } // end of ix theme
+
+
+.mdc-list-item__primary-text {
+  align-items: center;
+  display: flex;
+
+  > span {
+    align-items: center;
+    display: flex;
+  }
+}
+
+body .mat-mdc-menu-item {
+  height: inherit !important;
+  min-height: inherit;
+}
+
+.mat-list-item {
+  border-bottom: solid 1px var(--lines);
+}
+
+ix-tree-node[aria-level='2'],
+ix-nested-tree-node[aria-level='2'] {
+  ix-bootenv-node-item {
+    padding-left: 33px;
+  }
+}
+
+.manual-selection-dialog {
+  .mat-mdc-card {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .mat-mdc-dialog-container {
+    max-width: 80vw;
+  }
+
+  mat-card {
+    border-radius: 0;
+  }
+
+  .mat-mdc-card-content,
+  form {
+    height: 100%;
+    overflow: auto;
+    padding: 0 !important;
+  }
+}
+
+body .mdc-linear-progress__buffer-bar {
+  background-color: var(--primary);
+  opacity: 0.5;
+}
+
+body .mdc-linear-progress__bar-inner {
+  border-color: var(--primary);
+}

@@ -16,8 +16,9 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { StorageService, TaskService, WebSocketService } from 'app/services';
+import { StorageService, TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -88,7 +89,7 @@ export class SnapshotTaskComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
@@ -130,9 +131,9 @@ export class SnapshotTaskComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
+      request$ = this.ws2.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     } else {
-      request$ = this.ws.call('pool.snapshottask.update', [
+      request$ = this.ws2.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);

@@ -25,7 +25,7 @@ import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interfa
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface Slide {
   name: string;
@@ -59,8 +59,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
 
-  @ViewChild('carousel', { static: true }) carousel: ElementRef;
-  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
+  @ViewChild('carousel', { static: true }) carousel: ElementRef<HTMLElement>;
+  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   @ViewChild('overview', { static: false }) overview: TemplateRef<void>;
   @ViewChild('data', { static: false }) data: TemplateRef<void>;
   @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
@@ -146,7 +146,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     public router: Router,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
   ) {
     super(translate);
     this.configurable = false;
@@ -224,7 +224,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getDiskDetails(key: string, value: string): void {
-    this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.ws2.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
       const currentPath = this.path[this.currentSlideIndex];
       const currentName = (currentPath?.dataSource as TopologyDisk)?.disk || 'unknown';
 

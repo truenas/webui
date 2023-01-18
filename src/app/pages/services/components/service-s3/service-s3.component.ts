@@ -115,7 +115,7 @@ export class ServiceS3Component implements OnInit {
       },
     });
 
-    this.form.controls['storage_path'].valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
+    this.form.controls.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
       if (!newPath || newPath === this.initialPath || this.warned) {
         return;
       }

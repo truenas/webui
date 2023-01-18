@@ -10,7 +10,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -75,7 +75,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './cloud-credentials-form.component.html',
-  styleUrls: ['./cloud-credentials-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudCredentialsFormComponent implements OnInit {
@@ -87,7 +86,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   isLoading = false;
   existingCredential: CloudsyncCredential;
   providers: CloudsyncProvider[] = [];
-  providerOptions: Observable<Option[]> = of([]);
+  providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
 
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
@@ -133,7 +132,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.commonForm.patchValue(credential);
 
     if (this.providerForm) {
-      this.providerForm.setValues(this.existingCredential.attributes);
+      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
     }
   }
 
@@ -231,7 +230,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           );
           this.renderProviderForm();
           if (this.existingCredential) {
-            this.providerForm.setValues(this.existingCredential.attributes);
+            this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
           }
           this.isLoading = false;
           this.cdr.markForCheck();

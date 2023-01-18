@@ -91,8 +91,8 @@ export class ServiceDynamicDnsComponent implements OnInit {
       });
 
     this.subscriptions.push(
-      this.form.controls['custom_ddns_server'].enabledWhile(this.isCustomProvider$),
-      this.form.controls['custom_ddns_path'].enabledWhile(this.isCustomProvider$),
+      this.form.controls.custom_ddns_server.enabledWhile(this.isCustomProvider$),
+      this.form.controls.custom_ddns_path.enabledWhile(this.isCustomProvider$),
     );
   }
 

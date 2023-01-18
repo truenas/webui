@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,9 +17,10 @@ import {
   DownloadClientConfigModalComponent,
 } from 'app/pages/network/components/download-client-config-modal/download-client-config-modal.component';
 import {
-  AppLoaderService, DialogService, ServicesService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -82,7 +83,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
   subscriptions: Subscription[] = [];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private services: ServicesService,
@@ -176,7 +177,7 @@ export class OpenVpnServerConfigComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    const topologySubscription = this.form.controls['topology'].disabledWhile(
+    const topologySubscription = this.form.controls.topology.disabledWhile(
       this.form.select((values) => values.device_type === OpenVpnDeviceType.Tap),
     );
 

@@ -35,13 +35,13 @@ import { RelationConnection } from 'app/modules/entity/entity-form/models/relati
 import { EntityUtils } from 'app/modules/entity/utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import {
-  WebSocketService,
   TaskService,
   KeychainCredentialService,
   ReplicationService,
   StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -980,7 +980,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   ]);
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
     protected taskService: TaskService,
     protected storageService: StorageService,
     protected keychainCredentialService: KeychainCredentialService,
@@ -999,7 +999,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }));
     });
     const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+    this.ws2.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
       tasks.forEach((task) => {
         const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
           task.lifetime_unit
@@ -1049,7 +1049,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       payload.name_regex = nameRegex;
     }
 
-    this.ws
+    this.ws2
       .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe({
         next: (res) => {
@@ -1082,7 +1082,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
 
     if (this.entityForm.formGroup.controls['speed_limit'].value) {
-      const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
+      const presetSpeed = String(this.entityForm.formGroup.controls['speed_limit'].value);
       this.storageService.humanReadable = presetSpeed;
     }
 
@@ -1181,15 +1181,15 @@ export class ReplicationFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['speed_limit'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const speedLimitField = this.fieldSets.config('speed_limit');
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
-      speedLimitField['hasErrors'] = false;
-      speedLimitField['errors'] = '';
+      speedLimitField.hasErrors = false;
+      speedLimitField.errors = '';
       if (filteredValue !== undefined && Number.isNaN(filteredValue)) {
-        speedLimitField['hasErrors'] = true;
-        speedLimitField['errors'] = helptext.speed_limit_errors;
+        speedLimitField.hasErrors = true;
+        speedLimitField.errors = helptext.speed_limit_errors;
       }
     });
 
-    entityForm.formGroup.controls['properties_override'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    entityForm.formGroup.controls['properties_override'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
       if (value) {
         for (const item of value) {
           if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {
@@ -1211,18 +1211,18 @@ export class ReplicationFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(wsResponse: ReplicationTask): Record<string, unknown> {
     this.queryRes = _.cloneDeep(wsResponse);
     const formData = _.cloneDeep(wsResponse) as unknown as Record<string, unknown>;
-    formData['source_datasets_PUSH'] = wsResponse['source_datasets'];
-    formData['target_dataset_PUSH'] = wsResponse['target_dataset'];
-    formData['source_datasets_PULL'] = wsResponse['source_datasets'];
-    formData['target_dataset_PULL'] = wsResponse['target_dataset'];
+    formData['source_datasets_PUSH'] = wsResponse.source_datasets;
+    formData['target_dataset_PUSH'] = wsResponse.target_dataset;
+    formData['source_datasets_PULL'] = wsResponse.source_datasets;
+    formData['target_dataset_PULL'] = wsResponse.target_dataset;
 
-    if (wsResponse['ssh_credentials']) {
-      formData['ssh_credentials'] = wsResponse['ssh_credentials'].id;
+    if (wsResponse.ssh_credentials) {
+      formData['ssh_credentials'] = wsResponse.ssh_credentials.id;
     }
 
-    formData['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
-    formData['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
-    const snapshotTasks = wsResponse['periodic_snapshot_tasks'].map((item: PeriodicSnapshotTask) => item.id);
+    formData['compression'] = wsResponse.compression === null ? CompressionType.Disabled : wsResponse.compression;
+    formData['logging_level'] = wsResponse.logging_level === null ? LoggingLevel.Default : wsResponse.logging_level;
+    const snapshotTasks = wsResponse.periodic_snapshot_tasks.map((item: PeriodicSnapshotTask) => item.id);
     formData['periodic_snapshot_tasks'] = snapshotTasks;
 
     if (wsResponse.schedule) {
@@ -1238,8 +1238,8 @@ export class ReplicationFormComponent implements FormConfiguration {
       formData['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
       formData['restrict_schedule'] = true;
     }
-    formData['speed_limit'] = wsResponse['speed_limit']
-      ? this.storageService.convertBytesToHumanReadable(wsResponse['speed_limit'], 0)
+    formData['speed_limit'] = wsResponse.speed_limit
+      ? this.storageService.convertBytesToHumanReadable(wsResponse.speed_limit, 0)
       : undefined;
     // block large_block changes if it is enabled
     if (this.entityForm.wsResponse.large_block) {
@@ -1248,7 +1248,7 @@ export class ReplicationFormComponent implements FormConfiguration {
 
     if (wsResponse.properties_override) {
       const propertiesExcludeList = [];
-      for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+      for (const [key, value] of Object.entries(wsResponse.properties_override)) {
         propertiesExcludeList.push(`${key}=${String(value)}`);
       }
       formData['properties_override'] = propertiesExcludeList;
@@ -1292,114 +1292,117 @@ export class ReplicationFormComponent implements FormConfiguration {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   beforeSubmit(data: any): void {
-    if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
-      delete data['naming_schema'];
-      delete data['also_include_naming_schema'];
+    if (data.schema_or_regex === SnapshotNamingOption.NameRegex) {
+      delete data.naming_schema;
+      delete data.also_include_naming_schema;
     } else {
-      delete data['name_regex'];
+      delete data.name_regex;
     }
-    delete data['schema_or_regex'];
-    if (data['replicate']) {
-      data['recursive'] = true;
-      data['properties'] = true;
-      data['exclude'] = [];
+    delete data.schema_or_regex;
+    if (data.replicate) {
+      data.recursive = true;
+      data.properties = true;
+      data.exclude = [];
     }
     const propertiesExcludeObj: Record<string, string> = {};
-    if (data['properties_override']) {
-      for (let item of data['properties_override']) {
-        item = item.split('=');
+    if (data.properties_override) {
+      for (let item of data.properties_override) {
+        item = (item as string).split('=');
         propertiesExcludeObj[item[0]] = item[1];
       }
     }
-    data['properties_override'] = propertiesExcludeObj;
-    if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
-      data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+    data.properties_override = propertiesExcludeObj;
+    if (data.speed_limit !== undefined && data.speed_limit !== null) {
+      data.speed_limit = this.storageService.convertHumanStringToNum(data.speed_limit);
     }
-    if (data['transport'] === TransportMode.Local) {
-      data['direction'] = Direction.Push;
-      data['target_dataset_PUSH'] = _.cloneDeep(data['target_dataset_PULL']);
-      delete data['target_dataset_PULL'];
+    if (data.transport === TransportMode.Local) {
+      data.direction = Direction.Push;
+      data.target_dataset_PUSH = _.cloneDeep(data.target_dataset_PULL);
+      delete data.target_dataset_PULL;
     }
-    if (data['direction'] === Direction.Push) {
-      for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
-        if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
-          data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
+    if (data.direction === Direction.Push) {
+      for (let i = 0; i < data.source_datasets_PUSH.length; i++) {
+        if (_.startsWith(data.source_datasets_PUSH[i], '/mnt/')) {
+          data.source_datasets_PUSH[i] = (data.source_datasets_PUSH[i] as string).substring(5);
         }
       }
-      data['source_datasets'] = _.filter(
-        Array.isArray(data['source_datasets_PUSH'])
-          ? _.cloneDeep(data['source_datasets_PUSH'])
-          : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim),
+      data.source_datasets = _.filter(
+        Array.isArray(data.source_datasets_PUSH)
+          ? _.cloneDeep(data.source_datasets_PUSH)
+          : (_.cloneDeep(data.source_datasets_PUSH) as string).split(',').map(_.trim),
       );
 
-      data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? data['target_dataset_PUSH'] : data['target_dataset_PUSH'].toString();
+      data.target_dataset = typeof data.target_dataset_PUSH === 'string'
+        ? data.target_dataset_PUSH
+        : String(data.target_dataset_PUSH);
 
-      delete data['source_datasets_PUSH'];
-      delete data['target_dataset_PUSH'];
+      delete data.source_datasets_PUSH;
+      delete data.target_dataset_PUSH;
     } else {
-      data['source_datasets'] = _.filter(
-        Array.isArray(data['source_datasets_PULL'])
-          ? _.cloneDeep(data['source_datasets_PULL'])
-          : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim),
+      data.source_datasets = _.filter(
+        Array.isArray(data.source_datasets_PULL)
+          ? _.cloneDeep(data.source_datasets_PULL)
+          : (_.cloneDeep(data.source_datasets_PULL) as string).split(',').map(_.trim),
       );
-      data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string'
-        ? _.cloneDeep(data['target_dataset_PULL'])
-        : _.cloneDeep(data['target_dataset_PULL']).toString();
-      if (_.startsWith(data['target_dataset'], '/mnt/')) {
-        data['target_dataset'] = data['target_dataset'].substring(5);
+      data.target_dataset = typeof data.target_dataset_PULL === 'string'
+        ? _.cloneDeep(data.target_dataset_PULL)
+        : String(_.cloneDeep(data.target_dataset_PULL));
+      if (_.startsWith(data.target_dataset, '/mnt/')) {
+        data.target_dataset = (data.target_dataset as string).substring(5);
       }
-      delete data['source_datasets_PULL'];
-      delete data['target_dataset_PULL'];
+      delete data.source_datasets_PULL;
+      delete data.target_dataset_PULL;
     }
 
-    if (data['schedule']) {
-      data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
-      delete data['schedule_picker'];
-      delete data['schedule_begin'];
-      delete data['schedule_end'];
+    if (data.schedule) {
+      data.schedule = this.parsePickerTime(data.schedule_picker, data.schedule_begin, data.schedule_end);
+      delete data.schedule_picker;
+      delete data.schedule_begin;
+      delete data.schedule_end;
     }
-    if (data['restrict_schedule']) {
-      data['restrict_schedule'] = this.parsePickerTime(
-        data['restrict_schedule_picker'],
-        data['restrict_schedule_begin'],
-        data['restrict_schedule_end'],
+    if (data.restrict_schedule) {
+      data.restrict_schedule = this.parsePickerTime(
+        data.restrict_schedule_picker,
+        data.restrict_schedule_begin,
+        data.restrict_schedule_end,
       );
-      delete data['restrict_schedule_picker'];
-      delete data['restrict_schedule_begin'];
-      delete data['restrict_schedule_end'];
+      delete data.restrict_schedule_picker;
+      delete data.restrict_schedule_begin;
+      delete data.restrict_schedule_end;
     } else {
-      delete data['restrict_schedule'];
+      delete data.restrict_schedule;
     }
 
-    if (data['compression'] === CompressionType.Disabled) {
-      delete data['compression'];
+    if (data.compression === CompressionType.Disabled) {
+      delete data.compression;
     }
-    if (data['logging_level'] === LoggingLevel.Default) {
-      delete data['logging_level'];
+    if (data.logging_level === LoggingLevel.Default) {
+      delete data.logging_level;
     }
 
-    if (data['encryption_key_location_truenasdb']) {
-      data['encryption_key_location'] = truenasDbKeyLocation;
+    if (data.encryption_key_location_truenasdb) {
+      data.encryption_key_location = truenasDbKeyLocation;
     }
-    delete data['encryption_key_location_truenasdb'];
+    delete data.encryption_key_location_truenasdb;
 
-    if (data['encryption_key_format'] === EncryptionKeyFormat.Passphrase) {
-      data['encryption_key'] = data['encryption_key_passphrase'];
+    if (data.encryption_key_format === EncryptionKeyFormat.Passphrase) {
+      data.encryption_key = data.encryption_key_passphrase;
     } else {
-      data['encryption_key'] = data['encryption_key_generate']
+      data.encryption_key = data.encryption_key_generate
         ? this.replicationService.generateEncryptionHexKey(64)
-        : data['encryption_key_hex'];
+        : data.encryption_key_hex;
     }
 
-    delete data['encryption_key_passphrase'];
-    delete data['encryption_key_generate'];
-    delete data['encryption_key_hex'];
+    delete data.encryption_key_passphrase;
+    delete data.encryption_key_generate;
+    delete data.encryption_key_hex;
 
     // for edit replication task
     if (!this.entityForm.isNew) {
-      if (data['transport'] === TransportMode.Local) {
-        data['ssh_credentials'] = null;
+      if (data.transport === TransportMode.Local) {
+        data.ssh_credentials = null;
       }
 
       Object.keys(this.queryRes).forEach((prop) => {

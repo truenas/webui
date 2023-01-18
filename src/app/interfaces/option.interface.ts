@@ -16,4 +16,5 @@ export interface RadioOption {
 
 export interface SelectOption extends Option {
   disabled?: boolean;
+  tooltip?: string;
 }

@@ -1,21 +1,21 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('StaticRouteFormComponent', () => {
   let spectator: Spectator<StaticRouteFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: StaticRouteFormComponent,
     imports: [
@@ -23,7 +23,7 @@ describe('StaticRouteFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('staticroute.create'),
         mockCall('staticroute.update'),
       ]),
@@ -35,7 +35,7 @@ describe('StaticRouteFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   describe('adding a static route', () => {

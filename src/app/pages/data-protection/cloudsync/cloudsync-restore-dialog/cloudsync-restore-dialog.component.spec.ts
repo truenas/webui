@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -12,8 +12,8 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { CloudsyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
 
 describe('CloudsyncRestoreDialogComponent', () => {
@@ -30,7 +30,8 @@ describe('CloudsyncRestoreDialogComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket(),
+      mockWebsocket2([
         mockCall('cloudsync.restore'),
       ]),
       mockProvider(MatDialogRef),
@@ -59,7 +60,7 @@ describe('CloudsyncRestoreDialogComponent', () => {
     const save = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await save.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.restore', [
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cloudsync.restore', [
       23,
       {
         description: 'Reverse task',

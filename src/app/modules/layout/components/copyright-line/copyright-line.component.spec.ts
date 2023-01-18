@@ -14,7 +14,7 @@ describe('CopyrightLineComponent', () => {
     ],
     providers: [
       mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.Scale),
+        getProductType$: of(ProductType.Scale),
         getCopyrightYear$: of(2022),
       }),
     ],

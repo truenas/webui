@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { IpmiIdentify } from 'app/interfaces/ipmi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const indefinitelyOption = 'indefinitely' as const;
 
@@ -36,7 +37,7 @@ export class IpmiIdentifyDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private dialogService: DialogService,

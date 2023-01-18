@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -21,8 +21,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import { RedirectService, SystemGeneralService, WebSocketService } from 'app/services';
+import { RedirectService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
@@ -78,7 +79,7 @@ export class IpmiFormComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private redirect: RedirectService,
@@ -97,15 +98,15 @@ export class IpmiFormComponent implements OnInit {
     this.filterQuery = [[['id', '=', this.idIpmi]]];
     this.prepareDataForm();
 
-    const stateDhcp$ = this.form.controls['dhcp'].valueChanges;
-    this.form.controls['ipaddress'].disabledWhile(stateDhcp$);
-    this.form.controls['gateway'].disabledWhile(stateDhcp$);
-    this.form.controls['netmask'].disabledWhile(stateDhcp$);
+    const stateDhcp$ = this.form.controls.dhcp.valueChanges;
+    this.form.controls.ipaddress.disabledWhile(stateDhcp$);
+    this.form.controls.gateway.disabledWhile(stateDhcp$);
+    this.form.controls.netmask.disabledWhile(stateDhcp$);
 
-    this.form.controls['ipaddress'].valueChanges
+    this.form.controls.ipaddress.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
-        this.isDisabledManageBtn = (value === '0.0.0.0' || value === '' || this.form.controls['dhcp'].value || this.form.controls['ipaddress'].invalid);
+        this.isDisabledManageBtn = (value === '0.0.0.0' || value === '' || this.form.controls.dhcp.value || this.form.controls.ipaddress.invalid);
         this.managementIp = value;
       });
   }
@@ -139,7 +140,7 @@ export class IpmiFormComponent implements OnInit {
           if (typeof data === 'string') {
             this.createOptions(data);
             this.loadDataRemoteContr();
-            this.form.controls['remoteController'].setValue(0);
+            this.form.controls.remoteController.setValue(0);
             this.isLoading = false;
             this.cdr.markForCheck();
           } else if (typeof data[0] === 'object') {
@@ -175,17 +176,17 @@ export class IpmiFormComponent implements OnInit {
   }
 
   setFormValues(ipmi: Ipmi): void {
-    this.form.controls['dhcp'].setValue(ipmi.dhcp);
-    this.form.controls['ipaddress'].setValue(ipmi.ipaddress);
-    this.form.controls['netmask'].setValue(ipmi.netmask);
-    this.form.controls['gateway'].setValue(ipmi.gateway);
-    this.form.controls['vlan'].setValue(ipmi.vlan as number);
+    this.form.controls.dhcp.setValue(ipmi.dhcp);
+    this.form.controls.ipaddress.setValue(ipmi.ipaddress);
+    this.form.controls.netmask.setValue(ipmi.netmask);
+    this.form.controls.gateway.setValue(ipmi.gateway);
+    this.form.controls.vlan.setValue(ipmi.vlan as number);
   }
 
   loadDataRemoteContr(): void {
     let stateCtr: number;
 
-    this.form.controls['remoteController'].valueChanges
+    this.form.controls.remoteController.valueChanges
       .pipe(
         switchMap((state) => {
           this.isLoading = true;
@@ -223,7 +224,7 @@ export class IpmiFormComponent implements OnInit {
     const ipmiUpdate: IpmiUpdate = { ...value };
     let call$: Observable<Ipmi>;
 
-    if (this.form.controls['remoteController'].value) {
+    if (this.form.controls.remoteController.value) {
       call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.idIpmi, ipmiUpdate]]) as Observable<Ipmi>;
     } else {
       call$ = this.ws.call('ipmi.update', [this.idIpmi, ipmiUpdate]);

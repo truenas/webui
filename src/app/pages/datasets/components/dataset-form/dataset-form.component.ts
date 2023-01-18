@@ -839,25 +839,25 @@ export class DatasetFormComponent implements FormConfiguration {
 
   blurEventQuota(): void {
     if (this.entityForm) {
-      this.entityForm.formGroup.controls['quota'].setValue(this.humanReadable['quota']);
+      this.entityForm.formGroup.controls['quota'].setValue(this.humanReadable.quota);
     }
   }
 
   blurEventRefQuota(): void {
     if (this.entityForm) {
-      this.entityForm.formGroup.controls['refquota'].setValue(this.humanReadable['refquota']);
+      this.entityForm.formGroup.controls['refquota'].setValue(this.humanReadable.refquota);
     }
   }
 
   blurEventReservation(): void {
     if (this.entityForm) {
-      this.entityForm.formGroup.controls['reservation'].setValue(this.humanReadable['reservation']);
+      this.entityForm.formGroup.controls['reservation'].setValue(this.humanReadable.reservation);
     }
   }
 
   blurEventRefReservation(): void {
     if (this.entityForm) {
-      this.entityForm.formGroup.controls['refreservation'].setValue(this.humanReadable['refreservation']);
+      this.entityForm.formGroup.controls['refreservation'].setValue(this.humanReadable.refreservation);
     }
   }
 
@@ -1055,18 +1055,18 @@ export class DatasetFormComponent implements FormConfiguration {
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   preInit(entityForm: EntityFormComponent): void {
-    this.volid = this.paramMap['volid'];
+    this.volid = this.paramMap.volid;
 
-    if (this.paramMap['pk'] !== undefined) {
-      this.pk = this.paramMap['pk'];
+    if (this.paramMap.pk !== undefined) {
+      this.pk = this.paramMap.pk;
 
-      const pkParent = this.paramMap['pk'].split('/');
+      const pkParent = this.paramMap.pk.split('/');
       this.parent = pkParent.splice(0, pkParent.length - 1).join('/');
       this.customFilter = [[['id', '=', this.pk]]];
     }
     // add new dataset
-    if (this.paramMap['parent'] || this.paramMap['pk'] === undefined) {
-      this.parent = this.paramMap['parent'];
+    if (this.paramMap.parent || this.paramMap.pk === undefined) {
+      this.parent = this.paramMap.parent;
       this.pk = this.parent;
       this.isNew = true;
       entityForm.formGroup.controls['parent'].setValue(this.parent);
@@ -1328,9 +1328,9 @@ export class DatasetFormComponent implements FormConfiguration {
               next: (parentDataset) => {
                 this.parentDataset = parentDataset[0];
                 const currentDataset = _.find(this.parentDataset.children, { name: this.pk });
-                if (currentDataset.hasOwnProperty('recordsize') && currentDataset['recordsize'].value) {
+                if (currentDataset.hasOwnProperty('recordsize') && currentDataset.recordsize.value) {
                   const config = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
-                  _.find(config.options, { value: currentDataset['recordsize'].value })['hiddenFromDisplay'] = false;
+                  _.find(config.options, { value: currentDataset.recordsize.value }).hiddenFromDisplay = false;
                 }
 
                 const editSync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
@@ -1528,13 +1528,13 @@ export class DatasetFormComponent implements FormConfiguration {
       refquota_warning_inherit: refquotaWarningInherit,
       refquota_critical: refquotaCritical,
       refquota_critical_inherit: refquotaCriticalInherit,
-      quota: this.originalHumanSize['quota'] as number,
+      quota: this.originalHumanSize.quota as number,
       readonly: this.getFieldValueOrRaw(wsResponse.readonly) as WithInherit<OnOff>,
       exec: this.getFieldValueOrRaw(wsResponse.exec) as WithInherit<OnOff>,
       recordsize: this.getFieldValueOrRaw(wsResponse.recordsize) as WithInherit<DatasetRecordSize>,
-      refquota: this.originalHumanSize['refquota'] as number,
-      refreservation: this.originalHumanSize['refreservation'] as number,
-      reservation: this.originalHumanSize['reservation'] as number,
+      refquota: this.originalHumanSize.refquota as number,
+      refreservation: this.originalHumanSize.refreservation as number,
+      reservation: this.originalHumanSize.reservation as number,
       snapdev: this.getFieldValueOrRaw(wsResponse.snapdev) as DatasetSnapdev,
       snapdir: this.getFieldValueOrRaw(wsResponse.snapdir) as DatasetSnapdir,
       sync: this.getFieldValueOrRaw(wsResponse.sync) as DatasetSync,
@@ -1542,10 +1542,10 @@ export class DatasetFormComponent implements FormConfiguration {
     };
 
     if (
-      sizeValues['quota']
-      || sizeValues['refquota']
-      || sizeValues['refreservation']
-      || sizeValues['reservation']
+      sizeValues.quota
+      || sizeValues.refquota
+      || sizeValues.refreservation
+      || sizeValues.reservation
       || specialSmallBlockSize
       || !quotaWarningInherit
       || !quotaCriticalInherit
@@ -1584,6 +1584,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   addSubmit(body: Record<string, unknown>): Observable<Dataset> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.quota_warning_inherit) {
@@ -1631,7 +1632,7 @@ export class DatasetFormComponent implements FormConfiguration {
     if (data.inherit_encryption) {
       delete data.encryption;
     } else if (data.encryption) {
-      data['encryption_options'] = {};
+      data.encryption_options = {};
       if (data.encryption_type === 'key') {
         data.encryption_options.generate_key = data.generate_key;
         if (!data.generate_key) {

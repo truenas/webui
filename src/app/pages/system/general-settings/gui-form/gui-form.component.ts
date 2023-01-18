@@ -246,7 +246,7 @@ export class GuiFormComponent {
   }
 
   private setupThemePreview(): void {
-    this.formGroup.controls['theme'].valueChanges.pipe(
+    this.formGroup.controls.theme.valueChanges.pipe(
       takeUntil(this.slideInService.onClose$),
       untilDestroyed(this),
     ).subscribe((theme) => {

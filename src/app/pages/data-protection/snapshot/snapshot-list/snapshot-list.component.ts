@@ -14,10 +14,11 @@ import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
-  DialogService, StorageService, WebSocketService,
+  DialogService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -73,7 +74,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   constructor(
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private taskService: TaskService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
@@ -125,7 +126,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   onCheckboxChange(row: PeriodicSnapshotTaskUi): void {
     row.enabled = !row.enabled;
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
+    this.ws2.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (task) => {

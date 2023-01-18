@@ -42,6 +42,7 @@ module.exports = {
         "prefer-template": "off",
 
         // Consciously altered
+        "no-underscore-dangle": "off",
         "class-methods-use-this": "off",
         "import/prefer-default-export": "off",
         "no-continue": "off",
@@ -132,11 +133,14 @@ module.exports = {
           },
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
+        "sonarjs/prefer-single-boolean-return": ["off"],
+        "no-plusplus": "off",
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
-        "no-underscore-dangle": "off",
         "consistent-return": "off",
-        "no-plusplus": "off",
         "no-restricted-syntax": ["error",
           // TODO: Partially implemented. ForOfStatement is allowed for now.
           {
@@ -168,24 +172,17 @@ module.exports = {
         }],
         "default-case": "off",
         "@typescript-eslint/member-ordering": "off",
-        "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-unsafe-return": "off",
-        "@typescript-eslint/no-unsafe-call": "off",
-        "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/prefer-regexp-exec": "off",
 
         // Other temporary disables
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/no-duplicate-string": ["off"],
-        "sonarjs/prefer-single-boolean-return": ["off"],
+        "sonarjs/cognitive-complexity": ["error", 60],
 
         // Other overwrites
-        "sonarjs/cognitive-complexity": ["error", 60],
         "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/indent": ["error", 2, {
           ...airbnbSharedRules['@typescript-eslint/indent'][2],
@@ -203,6 +200,7 @@ module.exports = {
             "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
           }
         ],
+        "sonarjs/no-duplicate-string": ["off"],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
@@ -220,6 +218,7 @@ module.exports = {
         "@typescript-eslint/prefer-includes": ["error"],
         "@typescript-eslint/prefer-for-of": ["error"],
         "@typescript-eslint/prefer-as-const": ["error"],
+        "@typescript-eslint/consistent-generic-constructors": ["error"],
         "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
@@ -229,7 +228,12 @@ module.exports = {
           argsIgnorePattern: "^_$",
           ignoreRestSiblings: true,
         }],
-        "@typescript-eslint/ban-types": ["error"],
+        "@typescript-eslint/ban-types": ["error", {
+          extendDefaults: true,
+          types: {
+            UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
+          }
+        }],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
         "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-selector": ["error", {
@@ -313,6 +317,7 @@ module.exports = {
       "rules": {
         "@angular-eslint/template/attributes-order": ["error"],
         "@angular-eslint/template/no-duplicate-attributes": ['error'],
+        "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
 
         // TODO: To be enabled later
         '@angular-eslint/template/use-track-by-function': ['off'],

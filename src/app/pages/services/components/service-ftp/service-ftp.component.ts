@@ -159,7 +159,7 @@ export class ServiceFtpComponent implements OnInit {
   }
 
   private setRootLoginWarning(): void {
-    this.form.controls['rootlogin'].valueChanges.pipe(
+    this.form.controls.rootlogin.valueChanges.pipe(
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({
