@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
@@ -72,6 +72,7 @@ export class ServiceNfsComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     this.loadConfig();
+    this.loadState();
     this.setFieldDependencies();
   }
 
@@ -141,15 +142,18 @@ export class ServiceNfsComponent implements OnInit {
         this.form.controls.userd_manage_gids.enable();
       }
     });
+  }
 
-    this.ws.call('kerberos.keytab.has_nfs_principal').pipe(untilDestroyed(this)).subscribe((nfsStatus) => {
-      this.hasNfsStatus = nfsStatus;
-      if (!this.hasNfsStatus) {
-        this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe(({ activedirectory }) => {
-          this.adHealth = activedirectory;
-        });
-      }
-    });
+  private loadState(): void {
+    forkJoin([
+      this.ws.call('kerberos.keytab.has_nfs_principal'),
+      this.ws.call('directoryservices.get_state'),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([nfsStatus, { activedirectory }]) => {
+        this.hasNfsStatus = nfsStatus;
+        this.adHealth = activedirectory;
+      });
   }
 
   get isAddSpnVisible(): boolean {
@@ -160,19 +164,17 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   addSpn(): void {
-    if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
-      this.dialogService.confirm({
-        title: this.translate.instant('Add Kerberos SPN Entry'),
-        message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Yes'),
-        cancelMsg: this.translate.instant('No'),
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
-          return;
-        }
-        this.matDialog.open(AddSpnDialogComponent);
-      });
-    }
+    this.dialogService.confirm({
+      title: this.translate.instant('Add Kerberos SPN Entry'),
+      message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
+      hideCheckBox: true,
+      buttonMsg: this.translate.instant('Yes'),
+      cancelMsg: this.translate.instant('No'),
+    }).pipe(untilDestroyed(this)).subscribe((res) => {
+      if (!res) {
+        return;
+      }
+      this.matDialog.open(AddSpnDialogComponent);
+    });
   }
 }
