@@ -139,6 +139,7 @@ class button:
     addCatalog = '//button[contains(.,"Add Catalog")]'
     launchDockerImage = '//span[contains(.,"Launch Docker Image")]'
     Initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
+    Leave_Domain = '//button[contains(.,"Leave Domain")]'
 
 
 class certificates:

@@ -204,6 +204,9 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
 @then(parsers.parse('verify you can get the file from {share_name} and modify it on {nas_hostname} with {ad_user}%{ad_password}'))
 def verify_you_can_get_the_file_from_share_name_and_modify_it_on_nas_hostname_with_ad_userad_password(driver, nas_hostname, share_name, ad_user, ad_password):
     """verify you can get the file from <share_name> and modify it on <nas_hostname> with <ad_user>%<ad_password>."""
+    global aduser, adpassword
+    aduser = ad_user
+    adpassword = ad_password
     results1 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "get testfile.txt testfile.txt"')
     assert results1['result'], f'{results1["output"]}\n{results1["stderr"]}'
 
@@ -230,8 +233,10 @@ def click_on_credentials_then_directory_services_and_leave_ad(driver):
     assert wait_on_element(driver, 5, xpaths.activeDirectory.title)
     assert wait_on_element(driver, 7, xpaths.activeDirectory.enableCheckbox, 'clickable')
     driver.find_element_by_xpath(xpaths.activeDirectory.enableCheckbox).click()
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 7, xpaths.button.Leave_Domain, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Leave_Domain).click()
+
+    rsc.Leave_Domain(driver, aduser, adpassword)
 
     assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 120, xpaths.popup.activeDirectory)

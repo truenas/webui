@@ -138,6 +138,10 @@ def on_the_Service_page_verify_smb_service_is_started(driver):
 @then(parsers.parse('send a file to "{share_name}" with "{ad_user}"%"{ad_password}"'))
 def send_a_file_to_the_share(driver, nas_ip, share_name, ad_user, ad_password):
     """send a file to {share}" with "{ad_user}"%"{ad_password}"."""
+    global aduser, adpassword
+    aduser = ad_user
+    adpassword = ad_password
+
     run_cmd('touch testfile.txt')
     results = run_cmd(f'smbclient //{nas_ip}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
@@ -169,8 +173,10 @@ def click_on_credentials_then_directory_services_and_disable_ad(driver):
     assert wait_on_element(driver, 5, xpaths.activeDirectory.title)
     assert wait_on_element(driver, 7, xpaths.activeDirectory.enableCheckbox, 'clickable')
     driver.find_element_by_xpath(xpaths.activeDirectory.enableCheckbox).click()
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 7, xpaths.button.Leave_Domain, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.Leave_Domain).click()
+
+    rsc.Leave_Domain(driver, aduser, adpassword)
 
     assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 120, xpaths.popup.activeDirectory)
