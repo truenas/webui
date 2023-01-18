@@ -4,7 +4,8 @@ import time
 import xpaths
 from function import (
     is_element_present,
-    wait_on_element
+    wait_on_element,
+    wait_on_element_disappear
 )
 
 
@@ -57,3 +58,14 @@ def Login_If_Not_On_Dashboard(driver, user, password):
     else:
         assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+
+
+def Leave_Domain(driver, user, password):
+    assert wait_on_element(driver, 5, '//h1[text()="Leave Domain"]')
+    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="username"]//input', 'inputable')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys(user)
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys(password)
+
+    assert wait_on_element(driver, 7, '//mat-dialog-container//h1[contains(.,"Leave Domain")]' 'clickable')
+    driver.find_element_by_xpath('//mat-dialog-container//h1[contains(.,"Leave Domain")]').click()
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.pleaseWait)
