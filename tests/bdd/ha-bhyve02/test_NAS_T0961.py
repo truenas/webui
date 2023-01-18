@@ -65,8 +65,8 @@ def you_should_see_the_dashboard_and_the_system_information(driver):
 @then('navigate to Storage')
 def navigate_to_storage(driver):
     """navigate to Storage."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
 @then('when the storage page appears, click Create')
@@ -179,16 +179,16 @@ def click_on_system_dataset(driver):
 @then('the System Dataset page should open')
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
-    assert wait_on_element(driver, 5, xpaths.system_dataset.title)
+    assert wait_on_element(driver, 5, xpaths.systemDataset.title)
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
-    assert wait_on_element(driver, 5, xpaths.system_dataset.select_pool, 'clickable')
-    driver.find_element_by_xpath(xpaths.system_dataset.select_pool).click()
-    assert wait_on_element(driver, 5, xpaths.system_dataset.pool_option(pool_name))
-    driver.find_element_by_xpath(xpaths.system_dataset.pool_option(pool_name)).click()
+    assert wait_on_element(driver, 5, xpaths.systemDataset.select_pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.systemDataset.select_pool).click()
+    assert wait_on_element(driver, 5, xpaths.systemDataset.pool_option(pool_name))
+    driver.find_element_by_xpath(xpaths.systemDataset.pool_option(pool_name)).click()
     assert wait_on_element(driver, 30, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
