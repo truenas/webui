@@ -244,6 +244,7 @@ export class AppSchemaService {
         itemsSchema,
         editable: schema.editable,
         dependsOn: schema.show_if?.map((conditional) => conditional[0]),
+        default: schema.default as unknown[],
       };
       if (!isNew && (!!schema.immutable || isParentImmutable)) {
         inputSchema.editable = false;
