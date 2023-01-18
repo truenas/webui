@@ -129,18 +129,13 @@ def on_the_Service_page_verify_smb_service_is_started(driver):
     assert wait_for_attribute_value(driver, 20, xpaths.services.smbtoggle, 'class', 'mat-checked')
 
 
-@then(parsers.parse('send a file to the share with "{host}"/"{share_name}" and "{ad_user}"%"{ad_password}"'))
-def send_a_file_to_the_share(driver, nas_hostname, share_name, ad_user, ad_password):
-    """send a file to the share with "{host}"/"{share}" and "{ad_user}"%"{ad_password}"."""
-
-
 @then(parsers.parse('send a file on {share_name}on {nas_hostname} with {ad_user}%{ad_password}'))
 def send_a_file_on_share_name_on_nas_hostname_with_ad_userad_password(driver, nas_hostname, share_name, ad_user, ad_password):
     """send a file on <share_name> on <nas_hostname> with <ad_user>%<ad_password>."""
     run_cmd('touch testfile.txt')
     results = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
-    assert results['result'], results['output']
+    assert results['result'], f'{results["output"]}\n{results["stderr"]}'
     time.sleep(1)
 
 
@@ -201,18 +196,22 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
 
     rsc.Go_To_Service(driver)
 
+    assert wait_on_element(driver, 7, xpaths.services.title)
+    assert wait_on_element(driver, 5, xpaths.services.smbtoggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smbtoggle, 'class', 'mat-checked')
+
 
 @then(parsers.parse('verify you can get the file from {share_name} and modify it on {nas_hostname} with {ad_user}%{ad_password}'))
 def verify_you_can_get_the_file_from_share_name_and_modify_it_on_nas_hostname_with_ad_userad_password(driver, nas_hostname, share_name, ad_user, ad_password):
     """verify you can get the file from <share_name> and modify it on <nas_hostname> with <ad_user>%<ad_password>."""
     results1 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "get testfile.txt testfile.txt"')
-    assert results1['result'], results1['output']
+    assert results1['result'], f'{results1["output"]}\n{results1["stderr"]}'
 
     results2 = run_cmd('echo "test text in testfile" >> testfile.txt')
-    assert results2['result'], results2['output']
+    assert results2['result'], f'{results2["output"]}\n{results2["stderr"]}'
 
     results3 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
-    assert results3['result'], results3['output']
+    assert results3['result'], f'{results3["output"]}\n{results3["stderr"]}'
 
 
 @then('click on Credentials then Directory Services and Leave AD')
