@@ -613,8 +613,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe({
-            next: (res) => {
-              if (res) {
+            next: (wasStopped) => {
+              if (wasStopped) {
                 this.dialog.info(
                   this.translate.instant('Service failed to stop'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
@@ -651,8 +651,8 @@ export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
           .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe({
-            next: (res) => {
-              if (res) {
+            next: (hasStarted) => {
+              if (hasStarted) {
                 row.state = ServiceStatus.Running;
                 row.onChanging = false;
               } else {
