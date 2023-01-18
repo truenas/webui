@@ -40,6 +40,8 @@ import {
   transformStringSchemaType,
 } from 'app/services/schema/app-shema.transformer';
 
+const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
@@ -62,6 +64,7 @@ export class AppSchemaService {
           newSchema.push(transformIntSchemaType(transformPayload));
           break;
         case ChartSchemaType.String:
+        case ChartSchemaType.Uri:
           newSchema.push(transformStringSchemaType(transformPayload));
           break;
         case ChartSchemaType.Path:
@@ -314,6 +317,7 @@ export class AppSchemaService {
       schema.min ? Validators.min(schema.min) : Validators.nullValidator,
       schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
       schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
+      schema.type === ChartSchemaType.Uri ? Validators.pattern(urlRegex) : Validators.nullValidator,
     ]);
 
     this.handleSchemaSubQuestions(payload, newFormControl);

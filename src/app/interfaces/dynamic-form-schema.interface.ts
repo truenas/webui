@@ -30,7 +30,7 @@ export interface DynamicFormSchemaBase {
 }
 
 export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
-  type: DynamicFormSchemaType.Input;
+  type: DynamicFormSchemaType.Input | DynamicFormSchemaType.Uri;
   tooltip?: string;
   inputType?: 'password' | 'number';
   placeholder?: string;
