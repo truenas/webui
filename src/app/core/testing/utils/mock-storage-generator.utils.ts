@@ -169,6 +169,17 @@ export class MockStorageGenerator {
           .concat(mixedWidths.topologyItems);
         break;
       }
+      case MockStorageScenario.MixedVdevLayout: {
+        const mixedLayouts = this.generateMixedLayoutTopology(options.layout,
+          options.repeats,
+          options.diskSize,
+          options.width);
+
+        this.disks = this.disks.concat(mixedLayouts.disks);
+        this.poolState.topology[category] = this.poolState.topology[category]
+          .concat(mixedLayouts.topologyItems);
+        break;
+      }
       default:
         console.error('ERROR: Unsupported scenario ' + options.scenario + '. Scenario is either invalid or has not been added yet to storage generator.');
         break;
@@ -352,6 +363,47 @@ export class MockStorageGenerator {
     };
   }
 
+  private generateMixedLayoutTopology(layout: TopologyItemType,
+    repeats: number,
+    diskSize: number,
+    width: number,
+    allDisks: StorageDashboardDisk[] = this.disks): MockTopology {
+    const vdevs: TopologyItem[] = [];
+    const disks: StorageDashboardDisk[] = [];
+
+    let altLayout: TopologyItemType;
+    let altWidth: number;
+    if (layout === TopologyItemType.Mirror) {
+      altLayout = TopologyItemType.Raidz1;
+      altWidth = 4;
+    } else {
+      altWidth = 2;
+      altLayout = TopologyItemType.Mirror;
+    }
+
+    const vdevCount = repeats === 1 ? repeats + 1 : repeats;
+    for (let i = 0; i < vdevCount; i++) {
+      const targetLayout = i === 0 ? altLayout : layout;
+      const targetWidth = i === 0 ? altWidth : width;
+      const vdev: VDev = this.generateVdev(targetLayout, targetWidth) as VDev;
+
+      vdev.children.forEach((child: TopologyDisk) => {
+        const disk = this.generateDisk(diskSize, (disks.length + allDisks.length));
+        child.disk = disk.name;
+        child.stats = { size: disk.size } as TopologyItemStats;
+        disks.push(disk);
+      });
+
+      vdev.stats.size = this.calculateVdevCapacity(vdev);
+      vdevs.push(vdev);
+    }
+
+    return {
+      topologyItems: vdevs,
+      disks,
+    };
+  }
+
   // Generate VDEV
   private generateVdev(layout: TopologyItemType, width = 1): TopologyDisk | VDev {
     const minWidth = this.getMinLayoutWidth(layout);
@@ -476,7 +528,7 @@ export class MockStorageGenerator {
     } as StorageDashboardDisk;
   }
 
-  private terabytesToBytes(tb: number): number {
+  terabytesToBytes(tb: number): number {
     return tb * 1024 * 1024 * 1024 * 1024;
   }
 }

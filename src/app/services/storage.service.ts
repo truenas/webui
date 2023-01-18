@@ -401,6 +401,7 @@ export class StorageService {
   getRedundancyLevel(vdev: TopologyItem): number {
     switch (vdev.type) {
       case TopologyItemType.Disk:
+      case TopologyItemType.Stripe:
         return 0;
       case TopologyItemType.Mirror:
         return vdev.children.length - 1;
@@ -419,13 +420,21 @@ export class StorageService {
 
   getVdevWidths(vdevs: TopologyItem[]): Set<number> {
     const allVdevWidths = new Set<number>(); // There should only be one value
+
     vdevs.forEach((vdev) => {
       let vdevWidthCounter = 0;
-      vdev.children.forEach(() => {
-        vdevWidthCounter += 1;
-      });
-      allVdevWidths.add(vdevWidthCounter);
+
+      if (vdev.type === TopologyItemType.Disk || vdev.type === TopologyItemType.Stripe || vdev.children.length === 0) {
+        // Width of single disk VDEVs should be 1
+        allVdevWidths.add(1);
+      } else {
+        vdev.children.forEach(() => {
+          vdevWidthCounter += 1;
+        });
+        allVdevWidths.add(vdevWidthCounter);
+      }
     });
+
     return allVdevWidths;
   }
 
