@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   discardPeriodicTasks, fakeAsync, tick,
 } from '@angular/core/testing';
-import { MatLegacyProgressBarHarness as MatProgressBarHarness } from '@angular/material/legacy-progress-bar/testing';
+import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FakeProgressBarComponent } from './fake-progress-bar.component';
 

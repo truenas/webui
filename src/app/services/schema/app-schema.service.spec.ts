@@ -240,7 +240,9 @@ const beforeList = [{
   label: 'Label List',
   schema: {
     type: 'list',
-    default: [],
+    default: [
+      { item_list_1: 'prefilled_1', item_list_2: 2 },
+    ],
     items: [
       {
         variable: 'item_list_1',
@@ -286,6 +288,9 @@ const afterList = [[{
     { label: '', schema: { type: 'int' }, variable: 'item_list_2' },
   ],
   title: 'Label List',
+  default: [
+    { item_list_1: 'prefilled_1', item_list_2: 2 },
+  ],
   type: 'list',
 }]] as DynamicFormSchemaList[][];
 

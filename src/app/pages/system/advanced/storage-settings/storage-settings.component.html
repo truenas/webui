@@ -1,5 +1,5 @@
 <ix-modal-header
-  [title]="'System Dataset Pool' | translate"
+  [title]="'Storage Settings' | translate"
   [loading]="isFormLoading"
 ></ix-modal-header>
 <mat-card>
@@ -12,6 +12,14 @@
           [required]="true"
           [options]="poolOptions$"
         ></ix-select>
+        <ix-input
+          formControlName="swapondrive"
+          [label]="'Swap Size' | translate"
+          [required]="true"
+          [parse]="ixFormatter.memorySizeParsing"
+          [format]="ixFormatter.memorySizeFormatting"
+          [tooltip]="'By default, all data disks are created with the amount of swap specified. Changing the value does not affect the amount of swap on existing disks, only disks added after the change. Does not affect log or cache devices as they are created without swap.' | translate"
+        ></ix-input>
       </ix-fieldset>
 
       <ix-form-actions>
