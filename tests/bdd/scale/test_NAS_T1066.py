@@ -59,7 +59,7 @@ def you_see_the_dashboard_click_network_on_the_side_menu(driver):
 def the_network_page_will_open_click_global_configuration_settings(driver):
     """the Network page will open, click Global Configuration Settings."""
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, xpaths.network.globalConfigurationTitle)
+    assert wait_on_element(driver, 7, xpaths.network.global_configurationTitle)
     assert wait_on_element(driver, 10, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
 
@@ -67,23 +67,23 @@ def the_network_page_will_open_click_global_configuration_settings(driver):
 @then(parsers.parse('the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"'))
 def the_global_config_page_will_open_and_input_nameservers(driver, nameserver1, nameserver2, nameserver3):
     """the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"."""
-    assert wait_on_element(driver, 10, xpaths.globalConfiguration.title)
-    assert wait_on_element(driver, 7, xpaths.globalConfiguration.nameserver1_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver1_input).clear()
-    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver1_input).send_keys(nameserver1)
-    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver2_input).clear()
-    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver2_input).send_keys(nameserver2)
-    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver3_input).clear()
-    driver.find_element_by_xpath(xpaths.globalConfiguration.nameserver3_input).send_keys(nameserver3)
+    assert wait_on_element(driver, 10, xpaths.global_configuration.title)
+    assert wait_on_element(driver, 7, xpaths.global_configuration.nameserver1_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).clear()
+    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).send_keys(nameserver1)
+    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_input).clear()
+    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_input).send_keys(nameserver2)
+    driver.find_element_by_xpath(xpaths.global_configuration.nameserver3_input).clear()
+    driver.find_element_by_xpath(xpaths.global_configuration.nameserver3_input).send_keys(nameserver3)
 
 
 @then(parsers.parse('input gateway "{gateway}" and an hostname and click SAVE'))
 def input_gateway_and_a_hostname_and_click_save(driver, nas_hostname, gateway):
     """input gateway "{gateway}" and an hostname and click SAVE."""
-    driver.find_element_by_xpath(xpaths.globalConfiguration.ipv4_defaultGateway_input).clear()
-    driver.find_element_by_xpath(xpaths.globalConfiguration.ipv4_defaultGateway_input).send_keys(gateway)
-    driver.find_element_by_xpath(xpaths.globalConfiguration.hostname_input).clear()
-    driver.find_element_by_xpath(xpaths.globalConfiguration.hostname_input).send_keys(nas_hostname)
+    driver.find_element_by_xpath(xpaths.global_configuration.ipv4_defaultGateway_input).clear()
+    driver.find_element_by_xpath(xpaths.global_configuration.ipv4_defaultGateway_input).send_keys(gateway)
+    driver.find_element_by_xpath(xpaths.global_configuration.hostname_input).clear()
+    driver.find_element_by_xpath(xpaths.global_configuration.hostname_input).send_keys(nas_hostname)
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

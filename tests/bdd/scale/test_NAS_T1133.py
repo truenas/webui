@@ -111,7 +111,7 @@ def if_restart_smb_service_box_appears_click_restart_service(driver):
 def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
     """the ldapsmbshare should be added to the Shares list."""
     assert wait_on_element(driver, 5, xpaths.sharing.smbShareName(share_name))
-    assert wait_on_element(driver, 5, xpaths.sharing.smbServiceStatus)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_serviceStatus)
 
 
 @then(parsers.parse('send a file to the "{share_name}" and "{user}"%"{password}" should succeed'))

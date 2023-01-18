@@ -26,8 +26,8 @@ def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection(dri
     """Create an smb share with the LDAP dataset and verify the connection."""
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 10, xpaths.sideMenu.directoryServices, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directoryServices).click()
+    assert wait_on_element(driver, 10, xpaths.sideMenu.directory_services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
     assert wait_on_element(driver, 7, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
     assert wait_on_element(driver, 7, xpaths.checkbox.enable, 'clickable')
@@ -35,11 +35,11 @@ def test_create_an_smb_share_with_the_ldap_dataset_and_verify_the_connection(dri
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 60, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 10, xpaths.directoryServices.title)
+    assert wait_on_element(driver, 10, xpaths.directory_services.title)
     # Make sure Active Directory and LDAP are both disabled
-    assert wait_on_element(driver, 10, xpaths.directoryServices.directory_disable_title)
-    assert wait_on_element(driver, 7, xpaths.directoryServices.configureAD_button, 'clickable')
-    assert wait_on_element(driver, 7, xpaths.directoryServices.configureLdap_button, 'clickable')
+    assert wait_on_element(driver, 10, xpaths.directory_services.directory_disable_title)
+    assert wait_on_element(driver, 7, xpaths.directory_services.configureAD_button, 'clickable')
+    assert wait_on_element(driver, 7, xpaths.directory_services.configureLdap_button, 'clickable')
 
 
 @given('the browser is open, the TrueNAS URL and logged in')
@@ -129,7 +129,7 @@ def if_restart_smb_service_box_appears_click_restart_service(driver):
 def the_ldapsmbshare_should_be_added_to_the_shares_list(driver, share_name):
     """the ldapsmbshare should be added to the Shares list."""
     assert wait_on_element(driver, 5, xpaths.sharing.smbShareName(share_name))
-    assert wait_on_element(driver, 5, xpaths.sharing.smbServiceStatus)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_serviceStatus)
 
 
 @then(parsers.parse('send a file to the share with ip/"{smb_share}" and "{ldap_user}" and "{ldap_password}"'))

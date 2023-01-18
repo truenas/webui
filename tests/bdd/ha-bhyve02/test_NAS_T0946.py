@@ -126,7 +126,7 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
     assert wait_on_element(driver, 7, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
-    assert wait_on_element(driver, 7, xpaths.globalConfiguration.title)
+    assert wait_on_element(driver, 7, xpaths.global_configuration.title)
     time.sleep(1)
 
 

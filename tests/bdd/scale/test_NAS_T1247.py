@@ -54,9 +54,9 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 def on_the_service_page_press_on_configure_smb(driver):
     """on the service page, press on configure SMB."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smbService_name)
-    assert wait_on_element(driver, 5, xpaths.services.smbService_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.services.smbService_button).click()
+    assert wait_on_element(driver, 5, xpaths.services.smb_service_name)
+    assert wait_on_element(driver, 5, xpaths.services.smb_service_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.services.smb_service_button).click()
 
 
 @then('the SMB page loads click advanced')
@@ -64,7 +64,7 @@ def the_smb_page_loads_click_advanced(driver):
     """the SMB page loads click advanced."""
     if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
         assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 5, xpaths.smbService.title)
+    assert wait_on_element(driver, 5, xpaths.smb_service.title)
     assert wait_on_element(driver, 10, xpaths.button.advanced_settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.advanced_settings).click()
 
@@ -75,11 +75,11 @@ def enter_parameters_and_click_save(driver):
     element = driver.find_element_by_xpath(xpaths.button.cancel)
     # Scroll to SSH service
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 5, xpaths.smbService.auxiliaryParameters_textarea, 'inputable')
+    assert wait_on_element(driver, 5, xpaths.smb_service.auxiliaryParameters_textarea, 'inputable')
     auxvariable_str = "vfs objects = full_audit\nfull_audit:success = rename write pwrite unlinkat " \
         "linkat mkdirat\nfull_audit:failure = connect\nfull_audit:prefix = %I|%m|%S"
-    driver.find_element_by_xpath(xpaths.smbService.auxiliaryParameters_textarea).click()
-    driver.find_element_by_xpath(xpaths.smbService.auxiliaryParameters_textarea).send_keys(auxvariable_str)
+    driver.find_element_by_xpath(xpaths.smb_service.auxiliaryParameters_textarea).click()
+    driver.find_element_by_xpath(xpaths.smb_service.auxiliaryParameters_textarea).send_keys(auxvariable_str)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)

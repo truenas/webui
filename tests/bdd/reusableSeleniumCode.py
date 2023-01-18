@@ -66,6 +66,5 @@ def Leave_Domain(driver, user, password):
     driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys(user)
     driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys(password)
 
-    assert wait_on_element(driver, 7, '//mat-dialog-container//button[contains(.,"Leave Domain")]' 'clickable')
     driver.find_element_by_xpath('//mat-dialog-container//button[contains(.,"Leave Domain")]').click()
     assert wait_on_element_disappear(driver, 120, xpaths.popup.pleaseWait)
