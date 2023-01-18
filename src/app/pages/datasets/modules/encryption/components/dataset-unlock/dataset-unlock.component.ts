@@ -40,6 +40,7 @@ export class DatasetUnlockComponent implements OnInit {
   pk: string;
   dialogOpen = false;
   isFormLoading = false;
+  allPass = false;
 
   form = this.formBuilder.group({
     use_file: [true],
@@ -141,6 +142,8 @@ export class DatasetUnlockComponent implements OnInit {
             (this.form.controls.datasets.controls[i].controls.name as FormControl).setValue(result.name);
             (this.form.controls.datasets.controls[i].controls.is_passphrase as FormControl).setValue(isPassphrase);
           }
+          this.allPass = this.form.controls.datasets.value.every((dataset: DatasetFormValue) => dataset.is_passphrase);
+          this.form.controls.use_file.setValue(!this.allPass);
         }
       },
       error: this.handleError,

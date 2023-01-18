@@ -2,6 +2,7 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSave()">
       <ix-radio-group
+        *ngIf="!allPass"
         formControlName="use_file"
         [label]="helptext.unlock_key_file_placeholder | translate"
         [tooltip]="helptext.unlock_key_file_tooltip | translate"
