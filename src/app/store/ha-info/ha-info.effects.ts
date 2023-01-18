@@ -45,7 +45,7 @@ export class HaInfoEffects {
     mergeMap(({ haStatus }) => {
       if (
         (haStatus.hasHa && haStatus.reasons.length === 0)
-        || (haStatus.reasons?.includes(FailoverDisabledReason.MismatchVersions))
+        || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions)
       ) {
         return this.ws.call('failover.upgrade_pending').pipe(
           map((isUpgradePending) => {
