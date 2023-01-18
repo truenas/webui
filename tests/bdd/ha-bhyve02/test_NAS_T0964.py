@@ -172,9 +172,8 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 @then('wait for the login to appear and HA to be enable')
 def wait_for_the_login_to_appear_and_ha_to_be_enable(driver):
     """wait for the login to appear and HA to be enable."""
-    assert wait_on_element(driver, 240, xpaths.login.user_input)
-    if wait_on_element(driver, 240, xpaths.login.HA_Status_Enable) is False:
-        driver.refresh()
+    assert wait_on_element(driver, 180, xpaths.login.user_input)
+    assert wait_on_element(driver, 180, xpaths.login.HA_Status_Enable)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))

@@ -215,9 +215,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 240, xpaths.login.user_input)
-    if wait_on_element(driver, 240, xpaths.login.HA_Status_Enable) is False:
-        driver.refresh()
+    assert wait_on_element(driver, 180, xpaths.login.user_input)
+    assert wait_on_element(driver, 180, xpaths.login.HA_Status_Enable)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
