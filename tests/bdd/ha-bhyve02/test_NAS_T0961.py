@@ -195,8 +195,8 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 45, xpaths.toolbar.ha_disabled)
-    assert refresh_if_element_missing(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
-    assert wait_on_element(driver, 120, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -222,9 +222,9 @@ def press_Initiate_Failover_and_confirm(driver):
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
-    assert wait_on_element(driver, 240, xpaths.login.user_input)
-    if wait_on_element(driver, 240, xpaths.login.HA_Status_Enable) is False:
-        driver.refresh()
+    assert wait_on_element(driver, 180, xpaths.login.user_input)
+    assert wait_on_element(driver, 180, xpaths.login.HA_Status_Enable)
+
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
     driver.find_element_by_xpath(xpaths.login.password_input).clear()
