@@ -22,6 +22,7 @@ export type DynamicFormSchemaNode =
 
 export interface DynamicFormSchemaBase {
   controlName: string;
+  tooltip?: string;
   dependsOn?: string[];
   title?: string;
   required?: boolean;

@@ -216,6 +216,7 @@ export class AppSchemaService {
         type: DynamicFormSchemaType.Dict,
         title: chartSchemaNode.label,
         attrs,
+        tooltip: chartSchemaNode.description,
         editable: schema.editable,
       };
       if (!isNew && (!!schema.immutable || isParentImmutable)) {
@@ -241,6 +242,7 @@ export class AppSchemaService {
         type: DynamicFormSchemaType.List,
         title: chartSchemaNode.label,
         items,
+        tooltip: chartSchemaNode.description,
         itemsSchema,
         editable: schema.editable,
         dependsOn: schema.show_if?.map((conditional) => conditional[0]),
