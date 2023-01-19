@@ -221,24 +221,13 @@ export class ChartFormComponent implements OnDestroy {
     }
   }
 
-  deleteFieldFromData(
-    data: ChartFormValues,
-    fieldTobeDeleted: string,
-  ): void {
-    const keys = fieldTobeDeleted.split('.');
-    if (this.isNew) {
-      _.unset(data, keys);
-    } else if (!_.get(this.config, keys)) {
-      _.unset(data, keys);
-    }
-  }
-
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
     const deleteField$: Subject<string> = new Subject();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
-      next: (fieldTobeDeleted) => {
-        this.deleteFieldFromData(data, fieldTobeDeleted);
+      next: (fieldToBeDeleted) => {
+        const keys = fieldToBeDeleted.split('.');
+        _.unset(data, keys);
       },
       complete: () => {
         this.saveData(data);
