@@ -17,7 +17,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ModalService, WebSocketService2 } from 'app/services';
+import { DialogService, ModalService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const dataset = {
@@ -76,6 +76,7 @@ describe('DatasetDetailsCardComponent', () => {
         mockCall('pool.dataset.promote'),
       ]),
       mockProvider(Router),
+      mockProvider(DialogService),
     ],
   });
 

@@ -12,7 +12,7 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { KeychainCredentialService } from 'app/services';
+import { DialogService, KeychainCredentialService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
@@ -57,6 +57,7 @@ describe('SshConnectionFormComponent', () => {
         ]),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

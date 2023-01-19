@@ -13,7 +13,6 @@ describe('CpuValidatorService', () => {
       mockWebsocket2([
         mockCall('vm.maximum_supported_vcpus', 7),
       ]),
-      mockWebsocket2(),
     ],
   });
 

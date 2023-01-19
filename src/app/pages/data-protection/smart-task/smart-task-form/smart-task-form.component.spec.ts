@@ -52,8 +52,8 @@ describe('SmartTaskFormComponent', () => {
           sdc: 'sdc',
         }),
       ]),
-      mockWebsocket2(),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       provideMockStore({
         selectors: [
           {

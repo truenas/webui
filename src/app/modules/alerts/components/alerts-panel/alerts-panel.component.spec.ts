@@ -3,7 +3,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -13,7 +13,7 @@ import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-pane
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService, WebSocketService2 } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
@@ -52,7 +52,7 @@ const dismissedAlerts = [
 
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
-  let websocket: WebSocketService2;
+  let websocket: WebSocketService;
   let alertPanel: AlertsPanelPageObject;
 
   const createComponent = createComponentFactory({
@@ -76,7 +76,7 @@ describe('AlertsPanelComponent', () => {
       MockComponent(AlertComponent),
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
@@ -92,7 +92,7 @@ describe('AlertsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
 
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
     alertPanel = new AlertsPanelPageObject(spectator);
   });
 

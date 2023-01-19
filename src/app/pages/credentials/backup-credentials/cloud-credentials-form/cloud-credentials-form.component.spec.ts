@@ -6,7 +6,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -164,7 +164,7 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('shows an error when verification fails', async () => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebsocketService2);
       websocketMock.mockCall('cloudsync.credentials.verify', {
         valid: false,
         excerpt: 'Missing some important field',

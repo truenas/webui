@@ -12,8 +12,8 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebSocketService, WebSocketService2 } from 'app/services';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
@@ -45,7 +45,7 @@ export function mockWebsocket(
 ): (FactoryProvider | ExistingProvider)[] {
   return [
     {
-      provide: WebSocketService2,
+      provide: WebSocketService,
       useFactory: (router: Router, window: Window) => {
         const mockWebsocketService = new MockWebsocketService(router, window);
         (mockResponses || []).forEach((mockResponse) => {
@@ -62,7 +62,7 @@ export function mockWebsocket(
     },
     {
       provide: MockWebsocketService,
-      useExisting: forwardRef(() => WebSocketService2),
+      useExisting: forwardRef(() => WebSocketService),
     },
   ];
 }

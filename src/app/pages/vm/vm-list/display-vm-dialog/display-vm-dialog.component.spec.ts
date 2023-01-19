@@ -15,7 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 describe('DisplayVmDialogComponent', () => {
   let spectator: Spectator<DisplayVmDialogComponent>;
@@ -32,6 +32,7 @@ describe('DisplayVmDialogComponent', () => {
     providers: [
       { provide: MAT_DIALOG_DATA, useValue: {} },
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockWindow({
         location: {
           host: 'localhost',

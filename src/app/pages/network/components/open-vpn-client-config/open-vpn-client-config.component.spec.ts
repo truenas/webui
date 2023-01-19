@@ -77,7 +77,7 @@ describe('OpenVpnClientConfigComponent', () => {
       mockProvider(StorageService, {
         downloadBlob: jest.fn(),
       }),
-      mockWebsocket2(),
+      mockProvider(DialogService),
     ],
     declarations: [
       DownloadClientConfigModalComponent,

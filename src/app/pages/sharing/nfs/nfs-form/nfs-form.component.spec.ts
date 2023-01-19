@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -89,6 +89,7 @@ describe('NfsFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   it('shows Access fields when Advanced Options button is pressed', async () => {
@@ -104,7 +105,7 @@ describe('NfsFormComponent', () => {
   });
 
   it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebsocketService2);
     websocketMock.mockCallOnce('nfs.config', {
       protocols: [NfsProtocol.V4],
     } as NfsConfig);
@@ -223,7 +224,7 @@ describe('NfsFormComponent', () => {
   });
 
   it('checks if NFS service is not enabled and enables it after confirmation', async () => {
-    spectator.inject(MockWebsocketService).mockCall('service.query', [{
+    spectator.inject(MockWebsocketService2).mockCall('service.query', [{
       service: ServiceName.Nfs,
       enable: false,
     } as Service]);

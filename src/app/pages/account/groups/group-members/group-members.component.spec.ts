@@ -4,13 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatLegacyListHarness as MatListHarness } from '@angular/material/legacy-list/testing';
 import { Router } from '@angular/router';
-import { createRoutingFactory, SpectatorRouting } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { GroupMembersComponent } from 'app/pages/account/groups/group-members/group-members.component';
+import { DialogService } from 'app/services';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 const fakeGroupDataSource = [{
@@ -40,6 +41,7 @@ describe('GroupMembersComponent', () => {
         mockCall('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as User[]),
         mockCall('group.update'),
       ]),
+      mockProvider(DialogService),
     ],
     params: {
       pk: '1',

@@ -10,6 +10,7 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService } from 'app/services';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
 
@@ -35,6 +36,7 @@ describe('ManageDiskSedDialogComponent', () => {
         mockCall('disk.update'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(SnackbarService),
       {
         provide: MAT_DIALOG_DATA,

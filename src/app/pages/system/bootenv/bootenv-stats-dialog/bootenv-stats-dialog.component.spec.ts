@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -116,7 +116,7 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebsocketService2);
     websocketMock.mockCall('boot.get_state', {
       ...poolInstance,
       status: PoolStatus.Degraded,

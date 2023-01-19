@@ -35,7 +35,6 @@ describe('VmwareSnapshotFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket2(),
       mockWebsocket2([
         mockCall('vmware.match_datastores_with_datasets', {
           filesystems: [

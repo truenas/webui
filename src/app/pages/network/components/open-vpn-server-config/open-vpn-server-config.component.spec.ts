@@ -54,7 +54,6 @@ describe('OpenVpnServerConfigComponent', () => {
           tls_crypt_auth: 'Key 1',
         } as OpenvpnServerConfig),
       ]),
-      mockWebsocket2(),
       mockProvider(IxSlideInService),
       mockProvider(ServicesService, {
         getCerts: () => of([

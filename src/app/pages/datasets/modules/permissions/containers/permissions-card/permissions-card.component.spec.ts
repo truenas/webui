@@ -7,7 +7,7 @@ import {
   byTitle, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockWebsocket2, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
@@ -97,7 +97,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockWebsocketService2).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -115,7 +115,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockWebsocketService2).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,

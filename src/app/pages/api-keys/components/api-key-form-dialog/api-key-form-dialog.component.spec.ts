@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -104,7 +104,7 @@ describe('ApiKeyFormDialogComponent', () => {
       id: 1,
       name: 'existing key',
     });
-    spectator.inject(MockWebsocketService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
+    spectator.inject(MockWebsocketService2).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
 
     await form.fillForm({
       Name: 'My key',

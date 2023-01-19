@@ -18,6 +18,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { CertificateAuthorityEditComponent } from './certificate-authority-edit.component';
@@ -43,6 +44,7 @@ describe('CertificateAuthorityEditComponent', () => {
       ]),
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
     ],
     declarations: [
       MockComponent(ViewCertificateDialogComponent),

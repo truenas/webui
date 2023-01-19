@@ -11,7 +11,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ZvolFormComponent', () => {
@@ -107,6 +107,7 @@ describe('ZvolFormComponent', () => {
         }),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
     ],
   });
 

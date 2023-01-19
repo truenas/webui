@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -98,7 +98,7 @@ describe('EmailComponent', () => {
   });
 
   it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-    spectator.inject(MockWebsocketService).mockCall('mail.local_administrator_email', null);
+    spectator.inject(MockWebsocketService2).mockCall('mail.local_administrator_email', null);
 
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
     await button.click();
@@ -187,7 +187,7 @@ describe('EmailComponent', () => {
 
   describe('Gmail OAuth', () => {
     it('shows current Gmail config when Gmail is set', async () => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebsocketService2);
       websocketMock.mockCall('mail.config', {
         oauth: {
           client_id: 'client_id',

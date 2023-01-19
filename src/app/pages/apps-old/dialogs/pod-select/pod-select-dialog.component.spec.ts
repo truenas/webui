@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -111,7 +111,7 @@ describe('PodSelectDialogComponent', () => {
     });
 
     it('warning dialog should be displayed if there are no pods', () => {
-      const ws = spectator.inject(MockWebsocketService);
+      const ws = spectator.inject(MockWebsocketService2);
       ws.mockCall('chart.release.pod_console_choices', {});
       spectator.component.ngOnInit();
       spectator.detectChanges();

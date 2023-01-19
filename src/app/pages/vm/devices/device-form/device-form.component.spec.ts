@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
@@ -250,7 +250,7 @@ describe('DeviceFormComponent', () => {
       await form.fillForm({
         Type: 'NIC',
       });
-      spectator.inject(MockWebsocketService).call.mockClear();
+      spectator.inject(MockWebsocketService2).call.mockClear();
 
       const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
       await generateButton.click();
@@ -568,7 +568,7 @@ describe('DeviceFormComponent', () => {
     });
 
     it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-      spectator.inject(MockWebsocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+      spectator.inject(MockWebsocketService2).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
       spectator.component.setVirtualMachineId(46);
 
       const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));

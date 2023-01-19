@@ -13,6 +13,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { DataProtectionModule } from 'app/pages/data-protection/data-protection.module';
+import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -77,6 +78,7 @@ describe('CloudsyncFormComponent', () => {
       DataProtectionModule,
     ],
     providers: [
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
@@ -120,7 +122,6 @@ describe('CloudsyncFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
-      mockWebsocket2(),
     ],
   });
 

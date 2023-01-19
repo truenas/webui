@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -91,7 +91,7 @@ describe('BootEnvironmentListComponent', () => {
   });
 
   it('should show empty message when loaded and datasource is empty', async () => {
-    spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
+    spectator.inject(MockWebsocketService2).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
 
     spectator.detectChanges();
@@ -101,7 +101,7 @@ describe('BootEnvironmentListComponent', () => {
   });
 
   it('should show error message when can not retrieve response', async () => {
-    spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
+    spectator.inject(MockWebsocketService2).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
     spectator.component.isError$.next(true);
 

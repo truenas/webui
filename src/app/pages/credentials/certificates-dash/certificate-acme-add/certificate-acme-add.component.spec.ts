@@ -17,6 +17,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
@@ -50,6 +51,7 @@ describe('CertificateAcmeAddComponent', () => {
         mockCall('certificate.get_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,
       }),

@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
@@ -138,7 +138,7 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebsocketService2);
     jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => ({
       reason: 'Device busy',
     })));

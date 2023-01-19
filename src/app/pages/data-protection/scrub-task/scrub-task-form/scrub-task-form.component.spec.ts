@@ -43,8 +43,7 @@ describe('ScrubTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      DialogService,
-      mockWebsocket2(),
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('pool.scrub.create'),
         mockCall('pool.scrub.update'),

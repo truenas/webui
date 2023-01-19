@@ -44,7 +44,7 @@ describe('CronFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('cronjob.create'),
         mockCall('cronjob.update'),

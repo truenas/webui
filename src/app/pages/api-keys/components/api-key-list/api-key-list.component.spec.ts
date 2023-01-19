@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -102,7 +102,7 @@ describe('ApiKeyListComponent', () => {
 
   it('should open edit dialog form when Edit item is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    spectator.inject(MockWebsocketService).mockCallOnce('api_key.query', [{
+    spectator.inject(MockWebsocketService2).mockCallOnce('api_key.query', [{
       id: 1,
       name: 'first-api-key',
       key: 'strong-key',
@@ -129,7 +129,7 @@ describe('ApiKeyListComponent', () => {
 
   it('should open delete dialog when Delete item is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    spectator.inject(MockWebsocketService).mockCallOnce('api_key.query', [{
+    spectator.inject(MockWebsocketService2).mockCallOnce('api_key.query', [{
       id: 1,
       name: 'first-api-key',
       key: 'strong-key',

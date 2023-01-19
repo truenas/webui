@@ -14,7 +14,7 @@ import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {
@@ -30,6 +30,7 @@ describe('ManualTestDialogComponent', () => {
       MockPipe(FormatDateTimePipe, jest.fn(() => '2022-03-16 14:46:14')),
     ],
     providers: [
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },

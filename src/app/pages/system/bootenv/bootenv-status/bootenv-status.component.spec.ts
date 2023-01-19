@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -62,7 +62,7 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let websocket: MockWebsocketService;
+  let websocket: MockWebsocketService2;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
@@ -90,7 +90,7 @@ describe('BootStatusListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(MockWebsocketService);
+    websocket = spectator.inject(MockWebsocketService2);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {

@@ -7,7 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -120,7 +120,7 @@ describe('TwoFactorComponent', () => {
   });
 
   it('open QR dialog when click `Show QR` button', async () => {
-    spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+    spectator.inject(MockWebsocketService2).mockCall('auth.twofactor.config', {
       ...twoFactorConfig,
       enabled: true,
       secret: '123456',
@@ -141,7 +141,7 @@ describe('TwoFactorComponent', () => {
   });
 
   it('renew 2FA Secret when click `Renew Secret` button', async () => {
-    spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+    spectator.inject(MockWebsocketService2).mockCall('auth.twofactor.config', {
       ...twoFactorConfig,
       enabled: true,
     });
@@ -160,7 +160,7 @@ describe('TwoFactorComponent', () => {
   });
 
   it('disable 2FA when click `Disable Two-Factor Authentication` button', async () => {
-    spectator.inject(MockWebsocketService).mockCall('auth.twofactor.config', {
+    spectator.inject(MockWebsocketService2).mockCall('auth.twofactor.config', {
       ...twoFactorConfig,
       enabled: true,
     });

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { format } from 'date-fns-tz';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -24,7 +24,7 @@ const mockNamingSchema = ['%Y %H %d %M %m'];
 describe('SnapshotAddFormComponent', () => {
   let spectator: Spectator<SnapshotAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService;
+  let ws: MockWebsocketService2;
 
   const createComponent = createComponentFactory({
     component: SnapshotAddFormComponent,
@@ -48,7 +48,7 @@ describe('SnapshotAddFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService);
+    ws = spectator.inject(MockWebsocketService2);
   });
 
   it('presets name with current date and time', async () => {

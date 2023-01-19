@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { UserService } from 'app/services';
+import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { ServiceTftpComponent } from './service-tftp.component';
@@ -45,6 +45,7 @@ describe('ServiceTftpComponent', () => {
           return () => of([]);
         }),
       }),
+      mockProvider(DialogService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
           { username: 'root' },

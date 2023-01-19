@@ -13,7 +13,7 @@ import { User } from 'app/interfaces/user.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { KeychainCredentialService, UserService } from 'app/services';
+import { DialogService, KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -65,7 +65,6 @@ describe('RsyncTaskFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
-      mockWebsocket2(),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
           { username: 'root' },
@@ -78,6 +77,7 @@ describe('RsyncTaskFormComponent', () => {
           { id: 2, name: 'ssh02' },
         ]),
       }),
+      mockProvider(DialogService),
       provideMockStore({
         selectors: [
           {

@@ -15,7 +15,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -74,7 +74,7 @@ describe('VmEditFormComponent', () => {
         }),
         mockCall('vm.update'),
       ]),
-
+      mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
           { label: 'GeForce', value: '0000:02:00.0' },

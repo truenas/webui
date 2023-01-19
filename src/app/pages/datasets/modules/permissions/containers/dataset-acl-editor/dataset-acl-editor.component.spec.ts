@@ -9,7 +9,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -45,7 +45,7 @@ import { DialogService, StorageService, UserService } from 'app/services';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let websocket: MockWebsocketService;
+  let websocket: MockWebsocketService2;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -94,7 +94,7 @@ describe('DatasetAclEditorComponent', () => {
     providers: [
       StorageService,
       DatasetAclEditorStore,
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('filesystem.getacl', acl),
         mockCall('filesystem.stat', {
@@ -120,7 +120,7 @@ describe('DatasetAclEditorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(MockWebsocketService);
+    websocket = spectator.inject(MockWebsocketService2);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

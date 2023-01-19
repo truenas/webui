@@ -24,7 +24,7 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { NetworkService, SystemGeneralService } from 'app/services';
+import { DialogService, NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -111,11 +111,11 @@ describe('InterfaceFormComponent', () => {
         ],
       }),
       mockProvider(CoreService),
+      mockProvider(DialogService),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
-      mockWebsocket2(),
     ],
   });
 

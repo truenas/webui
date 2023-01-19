@@ -26,7 +26,7 @@ describe('DownloadClientConfigModalComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('interface.websocket_local_ip', '127.0.0.1'),
       ]),
@@ -41,7 +41,6 @@ describe('DownloadClientConfigModalComponent', () => {
         downloadText: jest.fn(),
       }),
       mockProvider(MatDialogRef),
-      mockWebsocket2(),
     ],
   });
 

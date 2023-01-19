@@ -23,7 +23,7 @@ describe('NtpServerFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('system.ntpserver.create'),
         mockCall('system.ntpserver.update'),
