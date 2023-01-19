@@ -1,9 +1,35 @@
 import { of } from 'rxjs';
+import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { CommonSchemaBase, CommonSchemaTransform, TransformNodeFunction } from 'app/interfaces/app-schema.interface';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
-import { DynamicFormSchemaInput, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  DynamicFormSchemaCheckbox,
+  DynamicFormSchemaCron,
+  DynamicFormSchemaDict,
+  DynamicFormSchemaExplorer,
+  DynamicFormSchemaInput,
+  DynamicFormSchemaIpaddr,
+  DynamicFormSchemaList,
+  DynamicFormSchemaNode,
+  DynamicFormSchemaSelect,
+  DynamicFormSchemaUri,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
+
+const commonSchemaTypes = [
+  ChartSchemaType.Int,
+  ChartSchemaType.String,
+  ChartSchemaType.Boolean,
+  ChartSchemaType.Path,
+  ChartSchemaType.Hostpath,
+  ChartSchemaType.Ipaddr,
+  ChartSchemaType.Uri,
+];
+
+export function isCommonSchemaType(type: ChartSchemaType): boolean {
+  return commonSchemaTypes.includes(type);
+}
 
 export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): CommonSchemaBase {
   const {
@@ -19,7 +45,7 @@ export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): 
   };
 }
 
-export function transformEnumSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaNode {
+export function transformEnumSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaSelect {
   const { schema } = payload;
 
   return {
@@ -33,12 +59,13 @@ export function transformEnumSchemaType(payload: CommonSchemaTransform): Dynamic
   };
 }
 
-export function transformIntSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaNode {
+export function transformIntSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaInput | DynamicFormSchemaSelect {
   const { schema } = payload;
 
-  if (schema.enum) {
-    return transformEnumSchemaType(payload);
-  }
+  if (schema.enum) { return transformEnumSchemaType(payload); }
+
   const inputSchema: DynamicFormSchemaInput = {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Input,
@@ -47,12 +74,36 @@ export function transformIntSchemaType(payload: CommonSchemaTransform): DynamicF
   return inputSchema;
 }
 
-export function transformStringSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaNode {
+export function transformUriSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaUri {
   const { schema, chartSchemaNode } = payload;
 
-  if (schema.enum) {
-    return transformEnumSchemaType(payload);
-  }
+  return {
+    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    type: DynamicFormSchemaType.Uri,
+    inputType: undefined,
+  };
+}
+
+export function transformCronSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaCron {
+  const { schema, chartSchemaNode } = payload;
+
+  return {
+    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    type: DynamicFormSchemaType.Cron,
+  };
+}
+
+export function transformStringSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaInput | DynamicFormSchemaSelect {
+  const { schema, chartSchemaNode } = payload;
+
+  if (schema.enum) { return transformEnumSchemaType(payload); }
+
   const inputSchema: DynamicFormSchemaInput = {
     ...buildCommonSchemaBase({ schema, chartSchemaNode }),
     type: DynamicFormSchemaType.Input,
@@ -61,7 +112,7 @@ export function transformStringSchemaType(payload: CommonSchemaTransform): Dynam
   return inputSchema;
 }
 
-export function transformPathSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaNode {
+export function transformPathSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaInput {
   return {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Input,
@@ -71,7 +122,7 @@ export function transformPathSchemaType(payload: CommonSchemaTransform): Dynamic
 export function transformHostPathSchemaType(
   payload: CommonSchemaTransform,
   filesystemService: FilesystemService,
-): DynamicFormSchemaNode {
+): DynamicFormSchemaExplorer {
   return {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Explorer,
@@ -79,14 +130,16 @@ export function transformHostPathSchemaType(
   };
 }
 
-export function transformBooleanSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaNode {
+export function transformBooleanSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaCheckbox {
   return {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Checkbox,
   };
 }
 
-export function transformIpaddrSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaNode {
+export function transformIpaddrSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaIpaddr | DynamicFormSchemaInput {
   const { schema } = payload;
 
   if (schema.cidr) {
@@ -95,6 +148,7 @@ export function transformIpaddrSchemaType(payload: CommonSchemaTransform): Dynam
       type: DynamicFormSchemaType.Ipaddr,
     };
   }
+
   return {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Input,
@@ -104,7 +158,7 @@ export function transformIpaddrSchemaType(payload: CommonSchemaTransform): Dynam
 export function transformDictSchemaType(
   payload: CommonSchemaTransform,
   transformNode: TransformNodeFunction,
-): DynamicFormSchemaNode {
+): DynamicFormSchemaDict {
   const {
     schema, isNew, isParentImmutable, chartSchemaNode,
   } = payload;
@@ -125,7 +179,7 @@ export function transformDictSchemaType(
 export function transformListSchemaType(
   payload: CommonSchemaTransform,
   transformNode: TransformNodeFunction,
-): DynamicFormSchemaNode {
+): DynamicFormSchemaList {
   const { schema, isNew, isParentImmutable } = payload;
 
   let items: DynamicFormSchemaNode[] = [];
@@ -146,6 +200,7 @@ export function transformListSchemaType(
     type: DynamicFormSchemaType.List,
     items,
     itemsSchema,
+    default: schema.default as unknown[],
     dependsOn: schema.show_if?.map((conditional) => conditional[0]),
   };
 }

@@ -1,69 +1,59 @@
 import { FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartFormValue, ChartSchemaNode, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
-import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
 
-export type FormControlAdder = {
+export interface FormControlPayload {
   chartSchemaNode: ChartSchemaNode;
   formGroup: CustomUntypedFormGroup | FormGroup;
   config: HierarchicalObjectMap<ChartFormValue>;
   isNew: boolean;
   isParentImmutable: boolean;
   path?: string;
-};
+}
 
-export type FormListItemAdder = {
+export interface FormListItemPayload {
   event: AddListItemEvent;
   isNew: boolean;
   isParentImmutable: boolean;
   config?: HierarchicalObjectMap<ChartFormValue>;
-};
+}
 
-export type CommonSchemaTransform = {
+export interface CommonSchemaTransform {
   schema: ChartSchemaNodeConf;
   chartSchemaNode: ChartSchemaNode;
   isNew: boolean;
   isParentImmutable: boolean;
   newSchema: DynamicFormSchemaNode[];
-};
+}
 
-export type CommonSchemaAddControl = {
+export interface CommonSchemaAddControl {
   schema: ChartSchemaNodeConf;
   isNew: boolean;
   subscription: Subscription;
-  formGroup: CustomUntypedFormGroup | FormGroup<any>;
+  formGroup: CustomUntypedFormGroup | FormGroup;
   config: HierarchicalObjectMap<ChartFormValue>;
   isParentImmutable: boolean;
   chartSchemaNode: ChartSchemaNode;
   path?: string;
-};
+}
 
-export type CommonSchemaBase = {
+export interface CommonSchemaBase {
   controlName: string;
   title: string;
   required: boolean;
   editable: boolean;
   tooltip: string;
-};
+}
 
-export const commonSchemaTypes = [
-  ChartSchemaType.Int,
-  ChartSchemaType.String,
-  ChartSchemaType.Boolean,
-  ChartSchemaType.Path,
-  ChartSchemaType.Hostpath,
-  ChartSchemaType.Ipaddr,
-];
-
-export type KeysRestoredFromFormGroup = {
+export interface KeysRestoredFromFormGroup {
   newConfig: HierarchicalObjectMap<ChartFormValue>;
   keyConfig: string;
   valueConfig: ChartFormValue | HierarchicalObjectMap<ChartFormValue>;
   formConfig: FormGroup;
-};
+}
 
 export type SerializeFormValue = HierarchicalObjectMap<ChartFormValue>
 | HierarchicalObjectMap<ChartFormValue>[]

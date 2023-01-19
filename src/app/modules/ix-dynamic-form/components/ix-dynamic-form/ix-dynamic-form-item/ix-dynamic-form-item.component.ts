@@ -6,8 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
-import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +55,7 @@ export class IxDynamicFormItemComponent implements OnInit {
     }
 
     if (this.dynamicSchema?.hidden) {
-      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$.next(true);
+      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
   }
 
@@ -66,7 +67,7 @@ export class IxDynamicFormItemComponent implements OnInit {
     return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField).hidden$;
   }
 
-  addControl(schema?: unknown[]): void {
+  addControl(schema?: ChartSchemaNode[]): void {
     if (this.dynamicSchema.type === DynamicFormSchemaType.List) {
       this.addListItem.emit({
         array: this.getFormArray,

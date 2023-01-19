@@ -8,24 +8,32 @@ import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import {
   CommonSchemaAddControl,
   CommonSchemaTransform,
-  commonSchemaTypes,
-  FormControlAdder,
-  FormListItemAdder,
+  FormControlPayload,
+  FormListItemPayload,
   KeysRestoredFromFormGroup,
   SerializeFormValue,
 } from 'app/interfaces/app-schema.interface';
 import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
-import { CustomUntypedFormArray } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
-import { CustomUntypedFormControl } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
+import {
+  CustomUntypedFormArray,
+} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
+import {
+  CustomUntypedFormControl,
+} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-control';
 import {
   CustomUntypedFormField,
-} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
+} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import {
+  isCommonSchemaType,
   transformBooleanSchemaType,
+  transformCronSchemaType,
   transformDictSchemaType,
   transformHostPathSchemaType,
   transformIntSchemaType,
@@ -33,8 +41,11 @@ import {
   transformListSchemaType,
   transformPathSchemaType,
   transformStringSchemaType,
+  transformUriSchemaType,
 } from 'app/services/app-shema.transformer';
 import { FilesystemService } from 'app/services/filesystem.service';
+
+const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
 @UntilDestroy()
 @Injectable({
@@ -52,10 +63,13 @@ export class AppSchemaService {
 
     if (schema.hidden) { return newSchema; }
 
-    if (this.isCommonSchemaType(schema.type)) {
+    if (isCommonSchemaType(schema.type)) {
       switch (schema.type) {
         case ChartSchemaType.Int:
           newSchema.push(transformIntSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.Uri:
+          newSchema.push(transformUriSchemaType(transformPayload));
           break;
         case ChartSchemaType.String:
           newSchema.push(transformStringSchemaType(transformPayload));
@@ -85,9 +99,11 @@ export class AppSchemaService {
         });
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      newSchema.push(transformDictSchemaType(transformPayload, this.transformNode));
+      newSchema.push(transformDictSchemaType(transformPayload, this.transformNode.bind(this)));
     } else if (schema.type === ChartSchemaType.List) {
-      newSchema.push(transformListSchemaType(transformPayload, this.transformNode));
+      newSchema.push(transformListSchemaType(transformPayload, this.transformNode.bind(this)));
+    } else if (schema.type === ChartSchemaType.Cron) {
+      newSchema.push(transformCronSchemaType(transformPayload));
     } else {
       console.error('Unsupported type = ', schema.type);
     }
@@ -95,7 +111,7 @@ export class AppSchemaService {
     return newSchema;
   }
 
-  addFormControls(payload: FormControlAdder): Subscription {
+  addFormControls(payload: FormControlPayload): Subscription {
     const { chartSchemaNode } = payload;
     const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
@@ -106,7 +122,7 @@ export class AppSchemaService {
     };
 
     switch (true) {
-      case this.isCommonSchemaType(schema.type):
+      case isCommonSchemaType(schema.type):
         this.addCommonSchemaTypeControl(addControlPayload);
         break;
       case schema.type === ChartSchemaType.Dict:
@@ -114,6 +130,9 @@ export class AppSchemaService {
         break;
       case schema.type === ChartSchemaType.List:
         this.addListSchemaTypeControl(addControlPayload);
+        break;
+      case schema.type === ChartSchemaType.Cron:
+        this.addCronSchemaTypeControl(addControlPayload);
         break;
       default:
         console.error('Unsupported type = ', schema.type);
@@ -158,7 +177,7 @@ export class AppSchemaService {
     return path;
   }
 
-  addFormListItem(payload: FormListItemAdder): Subscription {
+  addFormListItem(payload: FormListItemPayload): Subscription {
     const {
       event, isNew, isParentImmutable, config,
     } = payload;
@@ -185,9 +204,21 @@ export class AppSchemaService {
     event.array.removeAt(event.index);
   }
 
+  checkIsValidCronTab(crontab: string): boolean {
+    // invalid cron type example --> { minute: 5, hour: undefined }
+    return !Object.values(crontabToSchedule(crontab)).includes(undefined);
+  }
+
+  checkIsValidSchedule(schedule: Schedule): boolean {
+    return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
+  }
+
   serializeFormValue(data: SerializeFormValue): SerializeFormValue {
     if (data == null) {
       return data;
+    }
+    if (typeof data === 'string' && this.checkIsValidCronTab(data)) {
+      return crontabToSchedule(data) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
       return this.serializeFormList(data);
@@ -232,16 +263,18 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue> {
     let newConfig = {} as HierarchicalObjectMap<ChartFormValue>;
     for (const [keyConfig, valueConfig] of Object.entries(config)) {
-      const formConfig = form.controls[keyConfig] as FormGroup;
+      const formConfig = form.controls?.[keyConfig] as FormGroup;
       const restoreKeysPayload: KeysRestoredFromFormGroup = {
         newConfig, formConfig, keyConfig, valueConfig,
       };
 
       if (!formConfig) { continue; }
 
-      if (_.isArray(valueConfig)) {
+      if (this.checkIsValidSchedule(valueConfig as Schedule)) {
+        newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
+      } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
-      } else if (_.isPlainObject(valueConfig)) {
+      } else if (_.isPlainObject(valueConfig) && keyConfig !== 'cron_test') {
         newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;
@@ -285,10 +318,6 @@ export class AppSchemaService {
     return newConfig;
   }
 
-  private isCommonSchemaType(type: ChartSchemaType): boolean {
-    return commonSchemaTypes.includes(type);
-  }
-
   private addCommonSchemaTypeControl(payload: CommonSchemaAddControl): void {
     const {
       schema, isNew, formGroup, isParentImmutable, chartSchemaNode,
@@ -309,6 +338,7 @@ export class AppSchemaService {
       schema.min ? Validators.min(schema.min) : Validators.nullValidator,
       schema.max_length ? Validators.maxLength(schema.max_length) : Validators.nullValidator,
       schema.min_length ? Validators.minLength(schema.min_length) : Validators.nullValidator,
+      schema.type === ChartSchemaType.Uri ? Validators.pattern(urlRegex) : Validators.nullValidator,
     ]);
 
     this.handleSchemaSubQuestions(payload, newFormControl);
@@ -318,6 +348,20 @@ export class AppSchemaService {
     if (!isNew && (isParentImmutable || !!schema.immutable)) {
       newFormControl.disable();
     }
+  }
+  private addCronSchemaTypeControl(payload: CommonSchemaAddControl): void {
+    const { schema, formGroup, chartSchemaNode } = payload;
+
+    const defaultDaily = {
+      dom: '*',
+      dow: '*',
+      hour: '0',
+      minute: '0',
+      month: '*',
+    };
+
+    const newFormControl = new CustomUntypedFormControl(scheduleToCrontab(schema.default || defaultDaily));
+    formGroup.addControl(chartSchemaNode.variable, newFormControl);
   }
 
   private addDictSchemaTypeControl(payload: CommonSchemaAddControl): void {
