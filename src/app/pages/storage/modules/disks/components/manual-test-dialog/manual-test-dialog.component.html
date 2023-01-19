@@ -50,6 +50,25 @@
   </ix-form-actions>
 </form>
 <ng-template #showResults>
+  <div *ngIf="!endedTests" class="progress-bar-panel">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between baseline"
+      fxLayoutGap="8px"
+    >
+      <span>{{ subName }}</span>
+      <small>
+        {{ progressTotalPercent || 0 | number: '1.2-2' }}%
+      </small>
+    </div>
+
+    <mat-progress-bar
+      color="primary"
+      class="entity-job-progress"
+      [value]="progressTotalPercent"
+      [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
+    ></mat-progress-bar>
+  </div>
   <div class="started-tests">
     <div *ngFor="let test of startedTests" class="test">
       <h4 class="device-name">{{ test.disk }}</h4>
