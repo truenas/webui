@@ -62,10 +62,10 @@ export class SigninFormComponent implements OnInit {
       request$,
       this.ws2.call('auth.login', params),
     ]).pipe(untilDestroyed(this)).subscribe({
-      next: (wasLoggedIn) => {
+      next: ([wasLoggedIn, wasLoggedIn2]) => {
         this.signinStore.setLoadingState(false);
 
-        if (!wasLoggedIn) {
+        if (!wasLoggedIn || !wasLoggedIn2) {
           this.handleFailedLogin();
           return;
         }
