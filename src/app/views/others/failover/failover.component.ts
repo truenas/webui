@@ -44,8 +44,8 @@ export class FailoverComponent implements OnInit {
     this.location.replaceState('/session/signin');
     this.dialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
-      error: (res: WebsocketError) => { // error on reboot
-        this.dialogService.errorReport(String(res.error), res.reason, res.trace.formatted)
+      error: (error: WebsocketError) => { // error on reboot
+        this.dialogService.errorReport(String(error.error), error.reason, error.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/session/signin']);

@@ -182,20 +182,20 @@ export class EntityWizardComponent implements OnInit {
       this.loader.open();
 
       this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe({
-        next: (res) => {
+        next: (result) => {
           this.loader.close();
-          if (res.error) {
+          if (result.error) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.dialog.errorReport(res.error, (res as any).reason, res.exception);
+            this.dialog.errorReport(result.error, (result as any).reason, result.exception);
           } else if (this.conf.routeSuccess) {
             this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
           } else {
             this.snackbar.success(this.translate.instant('Settings saved.'));
           }
         },
-        error: (res) => {
+        error: (error) => {
           this.loader.close();
-          new EntityUtils().handleError(this, res);
+          new EntityUtils().handleError(this, error);
         },
       });
     }

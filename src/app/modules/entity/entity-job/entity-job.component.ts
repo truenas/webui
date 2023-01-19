@@ -187,10 +187,10 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
 
   wspost(path: string, options: unknown): void {
     this.http.post(path, options).pipe(untilDestroyed(this)).subscribe({
-      next: (res: Job | { job_id: number }) => {
-        this.job = res as Job; // Type is actually not a Job, but a { job_id: number }
-        if (res && 'job_id' in res) {
-          this.jobId = res.job_id;
+      next: (response: Job | { job_id: number }) => {
+        this.job = response as Job; // Type is actually not a Job, but a { job_id: number }
+        if (response && 'job_id' in response) {
+          this.jobId = response.job_id;
         }
         this.wsshow();
       },
@@ -257,9 +257,9 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     this.realtimeLogsSubscribed = true;
     const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.data && typeof res.data === 'string') {
-        this.realtimeLogs += res.data;
+    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((logs) => {
+      if (logs && logs.data && typeof logs.data === 'string') {
+        this.realtimeLogs += logs.data;
       }
     });
     return subscriptionId;
