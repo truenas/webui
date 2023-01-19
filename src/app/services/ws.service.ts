@@ -10,7 +10,7 @@ import {
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap,
+  filter, map, share, switchMap, tap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,8 +19,9 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
-import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
 @Injectable()
@@ -30,7 +31,7 @@ export class WebSocketService {
   socket: WebSocket;
   isConnected$ = new BehaviorSubject<boolean>(false);
   loggedIn = false;
-  loggedInUser$ = new BehaviorSubject<DsUncachedUser | null>(null);
+  loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
   @LocalStorage() token: string;
   shuttingdown = false;
 
@@ -309,10 +310,7 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
-
-      this.call('auth.me').pipe(untilDestroyed(this)).subscribe((user: DsUncachedUser) => {
-        this.loggedInUser$.next(user);
-      });
+      this.getLoggedInUserInformation();
 
       // Subscribe to all events by default
       this.send({
@@ -355,5 +353,20 @@ export class WebSocketService {
       this.router.navigate(['/sessions/signin']);
       this.window.location.reload();
     });
+  }
+
+  private getLoggedInUserInformation(): void {
+    let authMeUser: DsUncachedUser;
+
+    this.call('auth.me').pipe(
+      switchMap((loggedInUser: DsUncachedUser) => {
+        authMeUser = loggedInUser;
+        return this.call('user.query', [[['uid', '=', authMeUser.pw_uid]]]);
+      }),
+      tap((users: User[]) => {
+        this.loggedInUser$.next({ ...authMeUser, ...users[0] });
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

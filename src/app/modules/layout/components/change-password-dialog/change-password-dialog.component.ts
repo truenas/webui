@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
-import { DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -33,7 +33,7 @@ export class ChangePasswordDialogComponent {
     ]],
   });
 
-  private loggedInUser: DsUncachedUser;
+  private loggedInUser: LoggedInUser;
 
   readonly tooltips = {
     password: helptext.changePasswordDialog.pw_new_pw_tooltip,
@@ -70,7 +70,7 @@ export class ChangePasswordDialogComponent {
         this.loader.close();
       }),
       filter(Boolean),
-      switchMap(() => this.ws.call('user.update', [1, { password }])),
+      switchMap(() => this.ws.call('user.update', [this.loggedInUser.id, { password }])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
