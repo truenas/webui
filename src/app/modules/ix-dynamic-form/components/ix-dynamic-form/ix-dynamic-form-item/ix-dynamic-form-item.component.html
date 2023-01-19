@@ -4,6 +4,14 @@
   [class.indent]="dynamicSchema?.indent"
 >
   <ng-container *ngIf="!(isHidden$ | async)">
+    <ix-scheduler
+      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Cron"
+      [formControlName]="dynamicSchema.controlName"
+      [label]="dynamicSchema.title | translate"
+      [tooltip]="dynamicSchema.tooltip | translate"
+      [required]="dynamicSchema.required"
+    ></ix-scheduler>
+
     <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
       <div class="label">{{ dynamicSchema.title }}</div>
       <ix-dynamic-form-item
@@ -43,7 +51,7 @@
     </ix-list>
 
     <ix-input
-      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Input"
+      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Input || dynamicSchema.type === DynamicFormSchemaType.Uri"
       [formControlName]="dynamicSchema.controlName"
       [label]="dynamicSchema.title | translate"
       [placeholder]="dynamicSchema.placeholder | translate"

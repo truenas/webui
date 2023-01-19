@@ -37,6 +37,7 @@ import {
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -56,6 +57,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     FlexLayoutModule,
     HttpClientModule,
     IxFormsModule,
+    IxDynamicFormModule,
     JobsModule,
     MatBadgeModule,
     MatButtonModule,
