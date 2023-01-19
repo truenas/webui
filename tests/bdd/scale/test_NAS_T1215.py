@@ -31,18 +31,18 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     """the browser is open, the TrueNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the dashboard, click on Credentials on the left sidebar')
@@ -50,15 +50,15 @@ def on_the_dashboard_click_on_credentials_on_the_left_sidebar(driver):
     """on the dashboard, click on Credentials on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
 
 
 @then('click on Directory Services')
 def click_on_directory_services(driver):
     """click on Directory Services."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.directory_Services, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.directory_Services).click()
 
 
 @then('on the Directory Services page, click Show Advanced')
@@ -119,6 +119,6 @@ def click_save_and_verify_that_the_file_was_accepted_and_utilized(driver):
     """click save and verify that the file was accepted and utilized."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.directory_Services.title)
     assert wait_on_element(driver, 7, '//mat-card[contains(.,"Kerberos Keytab")]//div[contains(text(),"keytab_test")]')

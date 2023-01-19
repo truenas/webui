@@ -32,18 +32,18 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('you are on the dashboard click on Datasets in the side menu')
@@ -51,8 +51,8 @@ def you_are_on_the_dashboard_click_on_datasets_in_the_side_menu(driver):
     """you are on the dashboard click on Datasets in the side menu."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
     assert wait_on_element(driver, 5, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 5, xpaths.sideMenu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
 
 @then(parsers.parse('on the Datasets page create a SMB dataset {dataset1_name} with tank'))
@@ -73,7 +73,7 @@ def on_the_datasets_page_create_a_smb_dataset_rtacltest1_with_tank(driver, datas
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset1_name))
 
 
@@ -94,7 +94,7 @@ def create_a_second_smb_dataset_rtacltest2_under_rtacltest1(driver, dataset2_nam
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset2_name))
@@ -133,8 +133,8 @@ def apply_acl_with_both_recursive_and_transverse_set_to_rtacltest1(driver, datas
     driver.find_element_by_xpath(xpaths.edit_Acl.traverse_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatingAcl)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
+    assert wait_on_element(driver, 7, xpaths.popup.updatin_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
     assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 
@@ -176,7 +176,7 @@ def create_a_third_smb_dataset_rtacltest3(driver, dataset3_name, dataset1_name):
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 15, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 5, '//button[contains(.,"Return to pool list")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Return to pool list")]').click()
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset3_name))
@@ -185,17 +185,17 @@ def create_a_third_smb_dataset_rtacltest3(driver, dataset3_name, dataset1_name):
 @then(parsers.parse('create an SMB share with path {dataset1_path}'))
 def create_an_smb_share_with_path_mnttankrtacltest1share(driver, dataset1_path):
     """create an SMB share with path /mnt/tank/rt-acl-test-1/share."""
-    assert wait_on_element(driver, 10, xpaths.sideMenu.shares, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.shares, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
     assert wait_on_element(driver, 5, xpaths.sharing.title)
-    assert wait_on_element(driver, 7, xpaths.sharing.smbAddButton, 'clickable')
-    driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
+    assert wait_on_element(driver, 7, xpaths.sharing.smb_Add_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.smb_Add_Button).click()
     assert wait_on_element(driver, 5, xpaths.smb.addTitle)
     global smb_path
     smb_path = dataset1_path
-    assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.smb.path_input).clear()
-    driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(dataset1_path)
+    assert wait_on_element(driver, 5, xpaths.smb.path_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.path_Input).send_keys(dataset1_path)
     assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.name_Input).click()
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
@@ -206,23 +206,23 @@ def create_an_smb_share_with_path_mnttankrtacltest1share(driver, dataset1_path):
         driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
     assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked')
     time.sleep(1)
-    assert wait_on_element(driver, 5, xpaths.smb.description_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.smb.description_input).clear()
-    driver.find_element_by_xpath(xpaths.smb.description_input).send_keys('rt-test')
+    assert wait_on_element(driver, 5, xpaths.smb.description_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.description_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys('rt-test')
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element(driver, 7, xpaths.popup.smbRestart_title)
-    assert wait_on_element(driver, 5, xpaths.popup.smbRestart_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smbRestart_button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 5, xpaths.sharing.smbShareName('rt-test'))
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name('rt-test'))
 
 
 @then(parsers.parse('apply ACL to {dataset1_name} with recursive checked'))
 def apply_acl_to_rtacltest1_with_recusrive_checked(driver, dataset1_name):
     """apply ACL to rt-acl-test-1 with recursive checked."""
-    assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
     assert wait_on_element(driver, 10, xpaths.dataset.title)
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset1_name))
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset1_name))
@@ -249,8 +249,8 @@ def apply_acl_to_rtacltest1_with_recusrive_checked(driver, dataset1_name):
     driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatingAcl)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
+    assert wait_on_element(driver, 7, xpaths.popup.updatin_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
     assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 
@@ -267,11 +267,11 @@ def verify_that_the_acl_was_not_set_to_rtacltest3(driver, dataset3_name):
 @then('verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
 def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(driver):
     """verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1."""
-    driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
+    driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
     assert wait_on_element(driver, 5, xpaths.sharing.title)
-    assert wait_on_element(driver, 5, xpaths.sharing.smbPanelTitle)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Panel_Title)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    assert wait_on_element(driver, 5, xpaths.sharing.smbShareName('rt-test'))
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name('rt-test'))
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-test")]//button[contains(.,"security")]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"rt-test")]//button[contains(.,"security")]').click()
     assert wait_on_element(driver, 5, xpaths.edit_Acl.title)

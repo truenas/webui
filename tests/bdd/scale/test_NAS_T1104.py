@@ -32,18 +32,18 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['system_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the Dashboard, click Network on the left sidebar')
@@ -51,8 +51,8 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 5, xpaths.sideMenu.network, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.network).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.network, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.network).click()
 
 
 @then('on the network page, click on setting on the Global Configuration card')
@@ -90,10 +90,10 @@ def click_save_the_progress_bar_should_appear_while_settings_are_being_applied(d
 @then('after, click on Credentials on the left sidebar, then Directory Services')
 def after_click_on_credentials_on_the_left_sidebar_then_directory_services(driver):
     """after, click on Credentials on the left sidebar, then Directory Services."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.directory_Services, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.directory_Services).click()
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')

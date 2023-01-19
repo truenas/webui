@@ -33,7 +33,7 @@ def the_browser_is_open_and_to_nas_hostname(driver, nas_hostname, request):
     depends(request, ['Active_Directory'], scope='session')
     if nas_hostname not in driver.current_url:
         driver.get(f"http://{nas_hostname}/ui/sessions/signin")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -49,17 +49,17 @@ def on_the_dashboard_click_on_shares_on_the_left_sidebar(driver):
     """on the dashboard, click on Shares on the left sidebar."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 5, xpaths.sideMenu.shares, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.shares, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
 
 
 @then('on the Sharing page, click the Add button on Windows (SMB) Shares')
 def on_the_sharing_page_click_the_add_button_on_windows_smb_shares(driver):
     """on the Sharing page, click the Add button on Windows (SMB) Shares."""
     assert wait_on_element(driver, 7, xpaths.sharing.title)
-    assert wait_on_element(driver, 5, xpaths.sharing.smbPanelTitle)
-    assert wait_on_element(driver, 5, xpaths.sharing.smbAddButton, 'clickable')
-    driver.find_element_by_xpath(xpaths.sharing.smbAddButton).click()
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Panel_Title)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Add_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.smb_Add_Button).click()
 
 
 @then(parsers.parse('on the Add SMB slide box, set the Path to "{dataset_path}"'))
@@ -68,9 +68,9 @@ def on_the_add_smb_slide_box_set_the_path_to_mntdozermy_ad_dataset(driver, datas
     global dataset
     dataset = dataset_path
     assert wait_on_element(driver, 7, xpaths.smb.addTitle)
-    assert wait_on_element(driver, 5, xpaths.smb.description_input)
-    assert wait_on_element(driver, 5, xpaths.smb.path_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.smb.path_input).send_keys(dataset_path)
+    assert wait_on_element(driver, 5, xpaths.smb.description_Input)
+    assert wait_on_element(driver, 5, xpaths.smb.path_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path_Input).send_keys(dataset_path)
 
 
 @then(parsers.parse('input the {share_name}, then click to enable'))
@@ -88,7 +88,7 @@ def input_the_share_name_then_click_to_enable(driver, share_name):
 @then(parsers.parse('input "{description}" as the description, click Save'))
 def input_my_active_directory_smb_share_as_the_description_click_save(driver, description):
     """input "My Active Directory SMB share" as the description, click Save."""
-    driver.find_element_by_xpath(xpaths.smb.description_input).send_keys(description)
+    driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys(description)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -96,9 +96,9 @@ def input_my_active_directory_smb_share_as_the_description_click_save(driver, de
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smbRestart_title)
-    assert wait_on_element(driver, 5, xpaths.popup.smbRestart_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smbRestart_button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
@@ -106,13 +106,13 @@ def if_restart_smb_service_box_appears_click_restart_service(driver):
 def the_share_name_should_appear_on_the_sharing_page_under_smb(driver, share_name):
     """the <share_name> should appear on the Sharing page under SMB."""
     assert wait_on_element(driver, 5, xpaths.sharing.title)
-    assert wait_on_element(driver, 5, xpaths.sharing.smbShareName(share_name))
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name(share_name))
 
 
 @then('verify the SMB service status is RUNNING under Windows (SMB) Shares')
 def verify_the_smb_service_status_is_running_under_windows_smb_shares(driver):
     """verify the SMB service status is RUNNING under Windows (SMB) Shares."""
-    assert wait_on_element(driver, 5, xpaths.sharing.smb_serviceStatus)
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Service_Status)
 
 
 @then('click on System Settings on the left sidebar, and click Services')
@@ -125,8 +125,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_Service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smbtoggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smbtoggle, 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_Toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('send a file on {share_name}on {nas_hostname} with {ad_user}%{ad_password}'))
@@ -150,9 +150,9 @@ def verify_that_the_file_is_on_host(driver, nas_hostname):
 @then('go to the Dashboard and click Initiate Failover on the System Information standby controller')
 def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_standby_controller(driver):
     """go to the Dashboard and click Initiate Failover on the System Information standby controller."""
-    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
@@ -167,20 +167,20 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 @then('wait for the login to appear and HA to be enable')
 def wait_for_the_login_to_appear_and_ha_to_be_enable(driver):
     """wait for the login to appear and HA to be enable."""
-    assert wait_on_element(driver, 180, xpaths.login.user_input)
-    assert wait_on_element(driver, 180, xpaths.login.HA_Status_Enable)
+    assert wait_on_element(driver, 180, xpaths.login.user_Input)
+    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
 def at_the_login_page_enter_user_and_password(driver, user, password):
     """At the login page, enter "user" and "password"."""
-    assert wait_on_element(driver, 10, xpaths.login.user_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.login.user_input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+    assert wait_on_element(driver, 10, xpaths.login.user_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
     driver.find_element_by_xpath(xpaths.login.password_Input).clear()
     driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
 
 
 @then('once on the dashboard go to the Services page and verify SMB service is RUNNING')
@@ -188,7 +188,7 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
     """once on the dashboard go to the Services page and verify SMB service is RUNNING."""
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 180, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the directories service manager button
@@ -197,8 +197,8 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
     rsc.Go_To_Service(driver)
 
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smbtoggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smbtoggle, 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_Toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('verify you can get the file from {share_name} and modify it on {nas_hostname} with {ad_user}%{ad_password}'))
@@ -220,11 +220,11 @@ def verify_you_can_get_the_file_from_share_name_and_modify_it_on_nas_hostname_wi
 @then('click on Credentials then Directory Services and Leave AD')
 def click_on_credentials_then_directory_services_and_leave_ad(driver):
     """click on Credentials then Directory Services and Leave AD."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services)
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.directory_Services)
+    driver.find_element_by_xpath(xpaths.side_Menu.directory_Services).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.directory_Services.title)
 
     assert wait_on_element(driver, 5, xpaths.button.settings, 'clickable')
@@ -245,8 +245,8 @@ def click_on_credentials_then_directory_services_and_leave_ad(driver):
 @then('click on network and click on Global Configuration')
 def click_on_network_and_click_on_global_configuration(driver):
     """click on network and click on Global Configuration."""
-    assert wait_on_element(driver, 10, xpaths.sideMenu.network, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.network).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.network, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.network).click()
     assert wait_on_element(driver, 7, xpaths.network.title)
     assert wait_on_element(driver, 5, xpaths.button.settings)
     driver.find_element_by_xpath(xpaths.button.settings).click()

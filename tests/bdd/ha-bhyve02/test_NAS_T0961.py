@@ -34,7 +34,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        assert wait_on_element(driver, 5, xpaths.login.user_input)
+        assert wait_on_element(driver, 5, xpaths.login.user_Input)
 
 
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
@@ -55,8 +55,8 @@ def you_should_see_the_dashboard_and_the_system_information(driver):
 @then('navigate to Storage')
 def navigate_to_storage(driver):
     """navigate to Storage."""
-    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
 
 
 @then('when the storage page appears, click Create')
@@ -135,10 +135,10 @@ def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
 @then('navigate to System Setting and click Misc')
 def navigate_to_system_setting_and_click_misc(driver):
     """navigate to System Setting and click Misc."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.advanced, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.advanced).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.advanced, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.advanced).click()
 
 
 @then('the Advanced page should open')
@@ -159,16 +159,16 @@ def click_on_system_dataset(driver):
 @then('the System Dataset page should open')
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
-    assert wait_on_element(driver, 5, xpaths.system_dataset.title)
+    assert wait_on_element(driver, 5, xpaths.system_Dataset.title)
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
 def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
-    assert wait_on_element(driver, 5, xpaths.system_dataset.select_pool, 'clickable')
-    driver.find_element_by_xpath(xpaths.system_dataset.select_pool).click()
-    assert wait_on_element(driver, 5, xpaths.system_dataset.pool_option(pool_name))
-    driver.find_element_by_xpath(xpaths.system_dataset.pool_option(pool_name)).click()
+    assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.system_Dataset.pool_Select).click()
+    assert wait_on_element(driver, 5, xpaths.system_Dataset.pool_Option(pool_name))
+    driver.find_element_by_xpath(xpaths.system_Dataset.pool_Option(pool_name)).click()
     assert wait_on_element(driver, 30, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -185,16 +185,16 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
-    assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    assert wait_on_element(driver, 45, xpaths.toolbar.ha_disabled)
-    assert wait_on_element(driver, 180, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 45, xpaths.toolbar.ha_Disabled)
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
@@ -212,7 +212,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 def press_initiate_failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 20, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 20, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
     rsc.Confirm_Failover(driver)
@@ -221,22 +221,22 @@ def press_initiate_failover_and_confirm(driver):
 @then('wait for the login and the HA enabled status and login')
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
-    assert wait_on_element(driver, 180, xpaths.login.user_input)
-    assert wait_on_element(driver, 180, xpaths.login.HA_Status_Enable)
+    assert wait_on_element(driver, 180, xpaths.login.user_Input)
+    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
-    driver.find_element_by_xpath(xpaths.login.user_input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
     driver.find_element_by_xpath(xpaths.login.password_Input).clear()
     driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
     time.sleep(5)
 
 

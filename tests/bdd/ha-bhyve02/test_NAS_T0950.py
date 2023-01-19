@@ -48,7 +48,7 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Credentials item in the left side menu')
 def click_on_the_credentials_item_in_the_left_side_menu(driver):
     """Click on the Credentials item in the left side menu."""
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
 
 
 @then('The Credentials menu should expand to the right')
@@ -111,7 +111,7 @@ def change_the_users_email_and_click_save(driver, email):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
 
 

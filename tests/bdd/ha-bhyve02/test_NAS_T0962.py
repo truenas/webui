@@ -35,7 +35,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
 
 
 @when(parsers.parse('if the login page appears, enter "{user}" and "{password}"'))
@@ -55,7 +55,7 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
 
 
 @then('on the network page, click on setting on the Global Configuration card')
@@ -99,11 +99,11 @@ def click_save_the_progress_bar_should_appear_while_settings_are_being_applied(d
 @then('after, click on Credentials on the left sidebar, then Directory Services')
 def after_click_on_credentials_on_the_left_sidebar_then_directory_services(driver):
     """after, click on Credentials on the left sidebar, then Directory Services."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services)
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.directory_Services)
+    driver.find_element_by_xpath(xpaths.side_Menu.directory_Services).click()
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')
@@ -197,14 +197,14 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('after, go to the Dashboard')
 def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
-    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
 
 
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
@@ -215,20 +215,20 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 180, xpaths.login.user_input)
-    assert wait_on_element(driver, 180, xpaths.login.HA_Status_Enable)
+    assert wait_on_element(driver, 180, xpaths.login.user_Input)
+    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
 def at_the_login_page_enter_user_and_password(driver, user, password):
     """At the login page, enter "user" and "password"."""
-    assert wait_on_element(driver, 10, xpaths.login.user_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.login.user_input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+    assert wait_on_element(driver, 10, xpaths.login.user_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
     driver.find_element_by_xpath(xpaths.login.password_Input).clear()
     driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
 
 
 @then('on the Dashboard, wait for the Active Directory service')
@@ -237,21 +237,21 @@ def on_the_dashboard_wait_for_the_active_Directory_service(driver):
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 180, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
     # Verify HA enabled again
-    assert wait_on_element(driver, 120, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 120, xpaths.toolbar.ha_Enabled)
 
 
 @then('after click Dataset on the left sidebar')
 def after_click_dataset_on_the_left_sidebar(driver):
     """after click Dataset on the left sidebar."""
     assert wait_on_element(driver, 20, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
 
 @then('on the Dataset page, click on the dozer tree and click Add Dataset')
@@ -283,7 +283,7 @@ def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_Name):
     """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_Name))
 
 
@@ -328,7 +328,7 @@ def click_the_save_access_control_list_button(driver):
     assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
     time.sleep(1)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
 
 
 @then(parsers.parse('on the Dataset page click on the "{dataset_Name}" tree'))
