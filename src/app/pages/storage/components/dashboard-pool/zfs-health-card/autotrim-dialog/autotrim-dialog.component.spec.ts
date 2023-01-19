@@ -15,6 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+import { DialogService } from 'app/services';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('AutotrimDialogComponent', () => {
@@ -41,6 +42,7 @@ describe('AutotrimDialogComponent', () => {
         mockJob('pool.update', fakeSuccessfulJob()),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
     ],
   });

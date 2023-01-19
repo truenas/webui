@@ -9,7 +9,7 @@ import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-w
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
-import { StorageService, WebSocketService2 } from 'app/services';
+import { DialogService, StorageService, WebSocketService2 } from 'app/services';
 
 describe('ExportAllKeysDialogComponent', () => {
   let spectator: Spectator<ExportAllKeysDialogComponent>;
@@ -28,6 +28,7 @@ describe('ExportAllKeysDialogComponent', () => {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {

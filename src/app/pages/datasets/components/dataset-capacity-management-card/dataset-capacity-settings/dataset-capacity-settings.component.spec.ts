@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('DatasetCapacitySettingsComponent', () => {
@@ -33,6 +33,7 @@ describe('DatasetCapacitySettingsComponent', () => {
         mockCall('pool.dataset.update'),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(DialogService),
       mockProvider(IxSlideInService),
     ],
   });

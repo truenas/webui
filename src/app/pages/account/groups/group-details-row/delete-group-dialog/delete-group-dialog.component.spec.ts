@@ -13,6 +13,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
+import { DialogService } from 'app/services';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('DeleteGroupDialogComponent', () => {
@@ -30,6 +31,7 @@ describe('DeleteGroupDialogComponent', () => {
         mockCall('group.delete'),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

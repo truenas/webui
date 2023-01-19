@@ -9,7 +9,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockWebsocket2, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -18,7 +18,7 @@ import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
@@ -56,7 +56,7 @@ const failedJob = {
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
-  let websocket: WebSocketService2;
+  let websocket: WebSocketService;
   let loader: HarnessLoader;
   let jobPanel: JobsPanelPageObject;
 
@@ -78,7 +78,7 @@ describe('JobsPanelComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('core.get_jobs', [runningJob, waitingJob, failedJob]),
         mockCall('core.job_abort'),
       ]),
@@ -88,7 +88,7 @@ describe('JobsPanelComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     jobPanel = new JobsPanelPageObject(spectator);
   });

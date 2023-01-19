@@ -11,7 +11,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 describe('SetEnclosureLabelDialogComponent', () => {
   let spectator: Spectator<SetEnclosureLabelDialogComponent>;
@@ -26,6 +26,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
       mockWebsocket2([
         mockCall('enclosure.update'),
       ]),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

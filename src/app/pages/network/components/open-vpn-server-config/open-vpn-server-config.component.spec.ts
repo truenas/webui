@@ -34,7 +34,7 @@ describe('OpenVpnServerConfigComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('openvpn.server.update'),
         mockCall('openvpn.server.config', {

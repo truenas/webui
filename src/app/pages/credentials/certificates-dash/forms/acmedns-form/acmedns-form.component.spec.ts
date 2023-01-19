@@ -12,6 +12,7 @@ import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
@@ -39,6 +40,7 @@ describe('AcmednsFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),

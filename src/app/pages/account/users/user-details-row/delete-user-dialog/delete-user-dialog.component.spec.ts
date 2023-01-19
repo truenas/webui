@@ -15,6 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
+import { DialogService } from 'app/services';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('DeleteUserDialogComponent', () => {
@@ -37,6 +38,7 @@ describe('DeleteUserDialogComponent', () => {
         ] as Group[]),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

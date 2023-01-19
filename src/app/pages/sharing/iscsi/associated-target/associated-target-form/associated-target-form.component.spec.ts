@@ -8,7 +8,7 @@ import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { IscsiService } from 'app/services';
+import { DialogService, IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
@@ -43,6 +43,7 @@ describe('AssociatedTargetFormComponent', () => {
         ]),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('iscsi.targetextent.create'),
         mockCall('iscsi.targetextent.update'),

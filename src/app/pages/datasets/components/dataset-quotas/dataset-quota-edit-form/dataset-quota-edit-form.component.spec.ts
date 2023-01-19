@@ -10,7 +10,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('DatasetQuotaEditFormComponent', () => {
@@ -35,6 +35,7 @@ describe('DatasetQuotaEditFormComponent', () => {
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockProvider(IxFormatterService, {
         memorySizeFormatting: jest.fn(() => '500 KiB'),
         memorySizeParsing: jest.fn(() => 1024000),

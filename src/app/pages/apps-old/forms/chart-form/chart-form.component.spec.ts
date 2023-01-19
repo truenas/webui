@@ -10,6 +10,7 @@ import {
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ChartFormComponent', () => {
@@ -333,6 +334,7 @@ describe('ChartFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('chart.release.create'),
         mockCall('chart.release.update'),

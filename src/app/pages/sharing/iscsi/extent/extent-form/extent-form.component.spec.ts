@@ -12,7 +12,7 @@ import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { StorageService } from 'app/services';
+import { DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
@@ -50,6 +50,7 @@ describe('ExtentFormComponent', () => {
     providers: [
       mockProvider(IxSlideInService),
       mockProvider(StorageService),
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('iscsi.extent.create'),
         mockCall('iscsi.extent.update'),

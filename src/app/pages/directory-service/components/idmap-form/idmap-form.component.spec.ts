@@ -6,7 +6,9 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket, mockWebsocket2,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
@@ -15,7 +17,9 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
-import { DialogService, IdmapService, WebSocketService2 } from 'app/services';
+import {
+  DialogService, IdmapService, WebSocketService, WebSocketService2,
+} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('IdmapFormComponent', () => {
@@ -48,6 +52,8 @@ describe('IdmapFormComponent', () => {
       mockWebsocket2([
         mockCall('idmap.create'),
         mockCall('idmap.update'),
+      ]),
+      mockWebsocket([
         mockJob('idmap.clear_idmap_cache', fakeSuccessfulJob()),
       ]),
       mockProvider(IdmapService, {
@@ -238,6 +244,6 @@ describe('IdmapFormComponent', () => {
       message: helptext.idmap.clear_cache_dialog.message,
       hideCheckBox: true,
     });
-    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);
   });
 });

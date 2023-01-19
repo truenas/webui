@@ -9,7 +9,7 @@ import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import { RsyncModule } from 'app/interfaces/rsync-module.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { UserService } from 'app/services';
+import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -54,6 +54,7 @@ describe('RsyncModuleFormComponent', () => {
         }),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockProvider(UserService, {
         groupQueryDsCache: () => of([
           { group: 'kmem' },

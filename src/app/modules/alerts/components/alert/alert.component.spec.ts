@@ -5,7 +5,7 @@ import { MockPipe, ngMocks } from 'ng-mocks';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
@@ -13,7 +13,7 @@ import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService2 } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -30,7 +30,7 @@ const dummyAlert = {
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
-  let websocket: WebSocketService2;
+  let websocket: WebSocketService;
   let alert: AlertPageObject;
   const createComponent = createComponentFactory({
     component: AlertComponent,
@@ -54,7 +54,7 @@ describe('AlertComponent', () => {
       MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
     ],
     providers: [
-      mockWebsocket2([
+      mockWebsocket([
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
       ]),
@@ -68,7 +68,7 @@ describe('AlertComponent', () => {
       },
     });
 
-    websocket = spectator.inject(WebSocketService2);
+    websocket = spectator.inject(WebSocketService);
     alert = new AlertPageObject(spectator);
   });
 
