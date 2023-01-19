@@ -28,18 +28,18 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['encrypted_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the dashboard, click Datasets on the side menu')
@@ -47,8 +47,8 @@ def on_the_dashboard_click_datasets_on_the_side_menu(driver):
     """on the dashboard, click Datasets on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
 
 @then('on the Datasets page click on encrypted_pool')
@@ -111,7 +111,7 @@ def click_the_confirm_checkbox_and_click_the_save_button(driver):
     driver.find_element_by_xpath(xpaths.edit_Encryption.confirm_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
 
 
@@ -144,17 +144,17 @@ def unlock_the_pool_with_passphrase(driver, passphrase):
     assert wait_on_element(driver, 4, xpaths.dataset.unlock_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.dataset.unlock_Button).click()
     assert wait_on_element(driver, 10, xpaths.unlock_Dataset.title)
-    assert wait_on_element(driver, 5, xpaths.unlock_Dataset.datasetPassphrase_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.unlock_Dataset.datasetPassphrase_input).clear()
-    driver.find_element_by_xpath(xpaths.unlock_Dataset.datasetPassphrase_input).send_keys(passphrase)
+    assert wait_on_element(driver, 5, xpaths.unlock_Dataset.dataset_Passphrase_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.unlock_Dataset.dataset_Passphrase_Input).clear()
+    driver.find_element_by_xpath(xpaths.unlock_Dataset.dataset_Passphrase_Input).send_keys(passphrase)
     assert wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
-    assert wait_on_element(driver, 10, xpaths.unlock_Dataset.unlock_Datasets_message1)
+    assert wait_on_element(driver, 10, xpaths.unlock_Dataset.unlock_Datasets_Message1)
     assert wait_on_element(driver, 10, xpaths.button.CONTINUE, 'clickable')
     driver.find_element_by_xpath(xpaths.button.CONTINUE).click()
 
-    assert wait_on_element(driver, 10, xpaths.unlock_Dataset.unlock_Datasets_message2)
+    assert wait_on_element(driver, 10, xpaths.unlock_Dataset.unlock_Datasets_Message2)
     assert wait_on_element(driver, 10, xpaths.button.CLOSE, 'clickable')
     driver.find_element_by_xpath(xpaths.button.CLOSE).click()
 

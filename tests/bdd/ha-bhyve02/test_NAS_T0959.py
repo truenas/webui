@@ -56,7 +56,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        assert wait_on_element(driver, 5, xpaths.login.user_input)
+        assert wait_on_element(driver, 5, xpaths.login.user_Input)
         time.sleep(1)
 
 
@@ -76,7 +76,7 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Credentials item in the left side menu')
 def click_on_the_credentials_item_in_the_left_side_menu(driver):
     """Click on the Credentials item in the left side menu."""
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
 
 
 @then('The Credentials menu should expand to the right')
@@ -139,7 +139,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
     assert wait_on_element(driver, 10, '//td[contains(.,"ericbsd")]')
 

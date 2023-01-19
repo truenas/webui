@@ -48,8 +48,8 @@ def you_should_see_the_dashboard_and_information(driver, information):
 @then('navigate to System Settings and click General')
 def navigate_to_system_settings_and_click_general(driver):
     """navigate to System Settings and click General."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
     assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
     driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
 
@@ -77,7 +77,7 @@ def input_the_license_and_click_save(driver, license):
     driver.find_element_by_xpath('//textarea').send_keys(license)
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
 
 
 @then('the "Reload the page for the license to take effect" should appear')
@@ -103,8 +103,8 @@ def click_agree_we_should_be_returned_to_the_general_page(driver):
         assert wait_on_element(driver, 5, xpaths.button.close)
         driver.find_element_by_xpath(xpaths.button.close).click()
     if is_element_present(driver, xpaths.dashboard.title):
-        assert wait_on_element(driver, 7, xpaths.sideMenu.systemSetting, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+        assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
         assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
         driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
@@ -171,8 +171,8 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
 @then('navigate to System then click Failover')
 def navigate_to_system_then_click_failover(driver):
     """navigate to System then click Failover"""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.systemSetting, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.system_Setting, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
     assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]', 'clickable')
     driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]').click()
 
@@ -253,7 +253,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
@@ -264,20 +264,20 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
 def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_hostname):
     """switch to the virtual hostname "{virtual_hostname}" and login."""
     driver.get(f"http://{virtual_hostname}")
-    assert wait_on_element(driver, 7, xpaths.login.user_input)
-    driver.find_element_by_xpath(xpaths.login.user_input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+    assert wait_on_element(driver, 7, xpaths.login.user_Input)
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
     driver.find_element_by_xpath(xpaths.login.password_Input).clear()
     driver.find_element_by_xpath(xpaths.login.password_Input).send_keys('testing')
-    assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 7, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
 
 
 @then('on the virtual hostname Dashboard Save the network interface changes')
@@ -287,7 +287,7 @@ def on_the_virtual_hostname_dashboard_save_the_network_interface_changes(driver)
     assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
 
 
 @then('navigate to Storage then click the gear icon and click Disks')
@@ -404,12 +404,12 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
 @then('navigate to dashboard, wait for HA to be online')
 def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
     assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 30, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 30, xpaths.toolbar.ha_Enabled)
     time.sleep(5)
 
 
@@ -427,12 +427,12 @@ def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
 @then('navigate to dashboard, verify both contorler hostname')
 def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     """navigate to dashboard, verify both contorler hostname."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     driver.refresh()
     time.sleep(2)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 15, xpaths.toolbar.ha_enabled)
+    assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
 

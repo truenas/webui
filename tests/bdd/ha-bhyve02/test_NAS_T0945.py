@@ -38,13 +38,13 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('login appear enter "{user}" and "{password}"'))
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
-    assert wait_on_element(driver, 10, xpaths.login.user_input)
-    driver.find_element_by_xpath(xpaths.login.user_input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+    assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
     driver.find_element_by_xpath(xpaths.login.password_Input).clear()
     driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
 
 
 @then('you should see the dashboard')
@@ -81,8 +81,8 @@ def the_service_page_should_open(driver):
 @then('press on configure(pencil) SSH')
 def press_on_configure_ssh(driver):
     """press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, xpaths.services.sshService_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.services.sshService_button).click()
+    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.services.ssh_Service_Button).click()
 
 
 @then('the SSH General Options page should open')
@@ -109,7 +109,7 @@ def click_save(driver):
     """click Save."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
 
 
 @then('click Start Automatically SSH checkbox and enable the SSH service')
@@ -122,7 +122,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
-    value_exist = attribute_value_exist(driver, xpaths.services.sshService_toggle, 'class', 'mat-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
     time.sleep(1)
@@ -132,7 +132,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    assert wait_for_attribute_value(driver, 20, xpaths.services.sshService_toggle, 'class', 'mat-checked')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('run ssh root@"{host}" with root password "{password}"'))

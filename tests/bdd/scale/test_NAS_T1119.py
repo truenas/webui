@@ -30,18 +30,18 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['AD_Dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the Dashboard, click Dataset on the left sidebar')
@@ -49,8 +49,8 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     """on the Dashboard, click Dataset on the left sidebar."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 5, xpaths.sideMenu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
 
 @then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))
@@ -99,8 +99,8 @@ def in_user_input_enter_ericbsd_click_the_save_access_control_list(driver, usern
     assert wait_on_element(driver, 7, xpaths.edit_Acl.user_In_Acl(username))
     assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatingAcl)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
+    assert wait_on_element(driver, 7, xpaths.popup.updatin_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
 
 
 @then(parsers.parse('on the Permission card, verify the new ACL item "{username}" exist'))

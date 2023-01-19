@@ -32,7 +32,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     depends(request, ['Active_Directory'], scope='session')
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
 
 
 @when(parsers.parse('if the login page appears, enter "{user}" and "{password}"'))
@@ -48,8 +48,8 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     if wait_on_element(driver, 4, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 5, xpaths.sideMenu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.datasets, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
 
 @then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))
@@ -96,7 +96,7 @@ def in_user_input_enter_ericbsd_click_the_save_access_control_list(driver, usern
     assert wait_on_element(driver, 7, xpaths.edit_Acl.user_In_Acl(username))
     assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatingAcl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
 
 
 @then(parsers.parse('on the Permission card, verify the new ACL item "{username}" exist'))

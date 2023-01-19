@@ -19,8 +19,8 @@ def Confirm_Creating_Pool(driver):
     assert wait_on_element(driver, 10, xpaths.popup.warning)
     assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
-    assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
+    assert wait_on_element(driver, 7, xpaths.pool_manager.create_Pool_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.pool_manager.create_Pool_Button).click()
 
 
 def Confirm_Failover(driver):
@@ -41,23 +41,23 @@ def Confirm_Single_Disk(driver):
 
 
 def Go_To_Service(driver):
-    driver.find_element_by_xpath(xpaths.sideMenu.systemSetting).click()
-    assert wait_on_element(driver, 5, xpaths.sideMenu.services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.services).click()
+    driver.find_element_by_xpath(xpaths.side_Menu.system_Setting).click()
+    assert wait_on_element(driver, 5, xpaths.side_Menu.services, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.services).click()
 
 
 def Login_If_Not_On_Dashboard(driver, user, password):
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 def leave_domain(driver, user, password):
@@ -67,4 +67,4 @@ def leave_domain(driver, user, password):
     driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys(password)
 
     driver.find_element_by_xpath('//mat-dialog-container//button[contains(.,"Leave Domain")]').click()
-    assert wait_on_element_disappear(driver, 120, xpaths.popup.pleaseWait)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)

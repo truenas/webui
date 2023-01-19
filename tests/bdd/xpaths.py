@@ -193,11 +193,11 @@ class dataset:
     def pool_Tree(pool_name):
         return f'//ix-dataset-node[contains(.,"{pool_name}")]/div'
 
-    def dataset_Name(dataset_Name):
-        return f'//span[contains(text(),"{dataset_Name}")]'
+    def dataset_Name(dataset_name):
+        return f'//span[contains(text(),"{dataset_name}")]'
 
-    def dataset_Tree(dataset_Name):
-        return f'//ix-dataset-node[contains(.,"{dataset_Name}")]/div'
+    def dataset_Tree(dataset_name):
+        return f'//ix-dataset-node[contains(.,"{dataset_name}")]/div'
 
     def permission_At_Owner(user_name):
         return f'//div[text()="owner@ - {user_name}"]'
@@ -223,7 +223,7 @@ class directory_Services:
     warning_Dialog = '//h1[text()="Warning"]'
     delete_AD02_Realm_Button = '//tr[contains(.,"AD02")]//button'
     delete_Dialog = '//h1[text()="Delete"]'
-    delete_Confirm_Checkbox = '//mat-checkbox[@name="confirm_Checkbox"]'
+    delete_Confirm_Checkbox = '//mat-checkbox[@name="confirm_checkbox"]'
     delete_Confirm_Button = '//button[@id="confirm-dialog__action-button"]'
     delete_AD_Account_Button = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
     ldap_Card_Title = '//mat-card//h3[text()="LDAP"]'
@@ -345,40 +345,40 @@ class lock_Dataset:
 
 
 class login:
-    user_input = '//input[@data-placeholder="Username"]'
+    user_Input = '//input[@data-placeholder="Username"]'
     password_Input = '//input[@data-placeholder="Password"]'
-    signin_button = '//button[@name="signin_button"]'
-    HA_Status_Enable = '//p[text()="HA is enabled."]'
+    signin_Button = '//button[@name="signin_button"]'
+    ha_Status_Enable = '//p[text()="HA is enabled."]'
 
 
 class network:
     title = '//h1[contains(.,"Network")]'
-    global_ConfigurationTitle = '//h3[text()="Global Configuration"]'
+    global_Configuration_Title = '//h3[text()="Global Configuration"]'
     interface = '//mat-icon[@id="enp0s8"]'
 
 
 class pool_manager:
     title = '//div[contains(.,"Pool Manager")]'
     name_Input = '//input[@id="pool-manager__name-input-field"]'
-    firstDisk_checkbox = '(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]'
-    vdevAdd_button = '//button[@id="vdev__add-button"]'
-    force_checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
-    create_button = '//button[@name="create-button"]'
-    create_pool_button = '//button[@ix-auto="button__CREATE POOL"]'
-    create_pool_popup = '//h1[contains(.,"Create Pool")]'
-    encryption_checkbox = '//mat-checkbox[@id="pool-manager__encryption-checkbox"]'
+    first_Disk_Checkbox = '(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]'
+    vdev_Add_Button = '//button[@id="vdev__add-button"]'
+    force_Checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
+    create_Button = '//button[@name="create-button"]'
+    create_Pool_Button = '//button[@ix-auto="button__CREATE POOL"]'
+    create_Pool_Popup = '//h1[contains(.,"Create Pool")]'
+    encryption_Checkbox = '//mat-checkbox[@id="pool-manager__encryption-checkbox"]'
 
 
 class popup:
-    smbRestart_title = '//h3[text()="Restart SMB Service"]'
-    smbRestart_button = '//button[contains(*/text(),"Restart Service")]'
-    smbStart_title = '//h1[text()="Start SMB Service"]'
-    enableService_button = '//button[contains(*/text(),"Enable Service")]'
-    pleaseWait = '//h6[contains(.,"Please wait")]'
+    smb_Restart_Title = '//h3[text()="Restart SMB Service"]'
+    smb_Restart_Button = '//button[contains(*/text(),"Restart Service")]'
+    smb_Start_Title = '//h1[text()="Start SMB Service"]'
+    enable_Service_Button = '//button[contains(*/text(),"Enable Service")]'
+    please_Wait = '//h6[contains(.,"Please wait")]'
     active_Directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
-    updatingAcl = '//h1[text()="Updating ACL"]'
-    settingLdap = '//h1[text()="Setting up LDAP"]'
+    updatin_Acl = '//h1[text()="Updating ACL"]'
+    setting_Ldap = '//h1[text()="Setting up LDAP"]'
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
 
@@ -390,25 +390,25 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
-    smbtoggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
-    smb_service_name = '//td[contains(text(),"SMB")]'
-    smb_service_button = '//tr[contains(.,"SMB")]//button'
-    sshService_toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
-    sshService_button = '//tr[contains(.,"SSH")]//button'
-    sshService_name = '//td[contains(text(),"SSH")]'
+    smb_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
+    smb_Service_Name = '//td[contains(text(),"SMB")]'
+    smb_Service_Button = '//tr[contains(.,"SMB")]//button'
+    ssh_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
+    ssh_Service_Button = '//tr[contains(.,"SSH")]//button'
+    ssh_Service_Name = '//td[contains(text(),"SSH")]'
 
 
-class sideMenu:
+class side_Menu:
     """xpath for the menu on the left side"""
     dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
     datasets = '//mat-list-item[@ix-auto="option__Datasets"]'
     shares = '//mat-list-item[@ix-auto="option__Shares"]'
-    systemSetting = '//mat-list-item[@ix-auto="option__System Settings"]'
+    system_Setting = '//mat-list-item[@ix-auto="option__System Settings"]'
     advanced = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]'
     services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]'
     credentials = '//mat-list-item[@ix-auto="option__Credentials"]'
-    local_group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
-    local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
+    local_Group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
+    local_User = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     certificates = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]'
     directory_Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
@@ -418,60 +418,60 @@ class sideMenu:
 
 class sharing:
     title = '//h1[text()="Sharing"]'
-    smbPanelTitle = '//a[contains(text(),"Windows (SMB) Shares")]'
-    smbAddButton = '//span[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]'
-    smb_serviceStatus = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
+    smb_Panel_Title = '//a[contains(text(),"Windows (SMB) Shares")]'
+    smb_Add_Button = '//span[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]'
+    smb_Service_Status = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
 
-    def smbShareName(share_name):
+    def smb_Share_Name(share_name):
         return f'//div[contains(text(),"{share_name}")]'
 
 
 class smb:
     addTitle = '//h3[text()="Add SMB"]'
-    description_input = '//ix-input[@formcontrolname="comment"]//input'
-    path_input = '//ix-explorer[@formcontrolname="path"]//input'
+    description_Input = '//ix-input[@formcontrolname="comment"]//input'
+    path_Input = '//ix-explorer[@formcontrolname="path"]//input'
     name_Input = '//ix-input[@formcontrolname="name"]//input'
 
 
-class smb_service:
+class smb_Service:
     title = '//h1[contains(text(),"SMB")]'
-    auxiliaryParameters_textarea = '//ix-textarea[@formcontrolname="smb_options"]//textarea'
+    auxiliary_Parameters_Textarea = '//ix-textarea[@formcontrolname="smb_options"]//textarea'
 
 
 class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
-    create_pool_button = '//a[contains(.,"Create Pool")]'
-    disks_button = '//a[*/text()=" Disks "]'
-    encryptedPool = '//h2[text()="encrypted_pool"]'
+    create_Pool_Button = '//a[contains(.,"Create Pool")]'
+    disks_Button = '//a[*/text()=" Disks "]'
+    encrypted_Pool = '//h2[text()="encrypted_pool"]'
     export_Disconnect_Button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'
 
-    def manageDataset_button(pool_name):
+    def manage_Dataset_Button(pool_name):
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
 
 
-class system_dataset:
+class system_Dataset:
     title = '//h3[text()="Storage Settings" and @class="ix-formtitle"]'
-    select_pool = '//ix-select[@formcontrolname="pool"]//mat-select'
+    pool_Select = '//ix-select[@formcontrolname="pool"]//mat-select'
 
-    def pool_option(pool_name):
+    def pool_Option(pool_name):
         return f'//mat-option[contains(.,"{pool_name}")]'
 
 
 class toolbar:
-    ha_disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
-    ha_enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+    ha_Disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
+    ha_Enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
 
 
 class unlock_Dataset:
     title = '//h1[contains(.,"Unlock Datasets")]'
-    datasetPassphrase_input = '//input[@ix-auto="input__Dataset Passphrase"]'
-    unlock_Datasets_message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
-    unlock_Datasets_message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
+    dataset_Passphrase_Input = '//input[@ix-auto="input__Dataset Passphrase"]'
+    unlock_Datasets_Message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
+    unlock_Datasets_Message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
 
 
 class users:
     title = '//h1[text()="Users"]'
-    eric_user = '//tr[contains(.,"ericbsd")]/td'
-    eric_edit_Button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
-    root_user = '//tr[contains(.,"root")]/td'
-    root_edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    eric_User = '//tr[contains(.,"ericbsd")]/td'
+    eric_Edit_Button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    root_User = '//tr[contains(.,"root")]/td'
+    root_Edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'

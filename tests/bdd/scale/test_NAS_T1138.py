@@ -30,18 +30,18 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     depends(request, ['tank_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
         driver.find_element_by_xpath(xpaths.login.password_Input).clear()
         driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the dashboard, click on Storage in the side menu')
@@ -49,16 +49,16 @@ def on_the_dashboard_click_on_storage_in_the_side_menu(driver):
     """on the dashboard, click on Storage in the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
 
 
 @then('on the Storage click on the tank Manage Datasets button')
 def on_the_storage_click_on_the_tank_manage_datasets_button(driver):
     """on the Storage click on the tank Manage Datasets button."""
     assert wait_on_element(driver, 10, xpaths.storage.title)
-    assert wait_on_element(driver, 5, xpaths.storage.manageDataset_button('tank'), 'clickable')
-    driver.find_element_by_xpath(xpaths.storage.manageDataset_button('tank')).click()
+    assert wait_on_element(driver, 5, xpaths.storage.manage_Dataset_Button('tank'), 'clickable')
+    driver.find_element_by_xpath(xpaths.storage.manage_Dataset_Button('tank')).click()
 
 
 @then('on the Datasets page click on the tank tree and click Add Zvol')
