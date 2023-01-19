@@ -67,8 +67,8 @@ def click_the_down_caret_right_of_the_users(driver):
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then('click Enable Permit Sudo checkbox and click save')
@@ -106,8 +106,8 @@ def open_the_user_dropdown(driver):
     assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
     element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
     assert element_text == 'true'
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then('updated value should be visible')
@@ -119,8 +119,8 @@ def updated_value_should_be_visible(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     assert attribute_value_exist(driver, xpaths.add_User.sudo_Checkbox, 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close_icon).click()
+    assert wait_on_element(driver, 10, xpaths.button.close_Icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_Icon).click()
     time.sleep(0.5)
 
 

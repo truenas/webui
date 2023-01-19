@@ -76,4 +76,4 @@ def click_save_and_verify_the_group_was_added(driver):
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, xpaths.groups.qetest_name)
+    assert wait_on_element(driver, 10, xpaths.groups.qetest_Name)

@@ -65,8 +65,8 @@ def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driv
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
     # time.sleep(1)
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @when('the User Edit Page should open, change the user shell and click save')

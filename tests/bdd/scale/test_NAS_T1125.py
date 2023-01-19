@@ -51,18 +51,18 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_servi
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
 
 
 @then('the Directory Services page should open, then click LDAP settings button')
 def the_directory_services_page_should_open_then_click_ldap_settings_button(driver):
     """the Directory Services page should open, then click LDAP settings button."""
     # Verify the page is starting to load
-    assert wait_on_element(driver, 5, xpaths.directory_services.title)
-    assert wait_on_element(driver, 10, xpaths.directory_services.directory_disable_title)
-    assert wait_on_element(driver, 7, xpaths.directory_services.configureLdap_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.directory_services.configureLdap_button).click()
+    assert wait_on_element(driver, 5, xpaths.directory_Services.title)
+    assert wait_on_element(driver, 10, xpaths.directory_Services.directory_Disable_Title)
+    assert wait_on_element(driver, 7, xpaths.directory_Services.configure_Ldap_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.directory_Services.configure_Ldap_Button).click()
 
 
 @then(parsers.parse('input "{hostname}" for Hostname'))
@@ -70,7 +70,7 @@ def input_hostname_for_hostname(driver, hostname):
     """input "{hostname}" for Hostname."""
     # Verify the LDAP box is starting to load
     assert wait_on_element(driver, 5, xpaths.ldap.title)
-    assert wait_on_element(driver, 5, xpaths.directory_services.configureLdap_button, 'clickable')
+    assert wait_on_element(driver, 5, xpaths.directory_Services.configure_Ldap_Button, 'clickable')
     assert wait_on_element(driver, 5, xpaths.ldap.hostname_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.ldap.hostname_Input).clear()
     driver.find_element_by_xpath(xpaths.ldap.hostname_Input).send_keys(hostname)
@@ -79,22 +79,22 @@ def input_hostname_for_hostname(driver, hostname):
 @then(parsers.parse('input "{base_DN}" Base DN'))
 def input__base_DN_base_dn(driver, base_DN):
     """input "{base_DN}" Base DN."""
-    driver.find_element_by_xpath(xpaths.ldap.basedn_input).clear()
-    driver.find_element_by_xpath(xpaths.ldap.basedn_input).send_keys(base_DN)
+    driver.find_element_by_xpath(xpaths.ldap.basedn_Input).clear()
+    driver.find_element_by_xpath(xpaths.ldap.basedn_Input).send_keys(base_DN)
 
 
 @then(parsers.parse('input "{bind_DN}" for Bind DN'))
 def input__bind_DN_for_bind_dn(driver, bind_DN):
     """input "{bind_DN}" for Bind DN."""
-    driver.find_element_by_xpath(xpaths.ldap.binddn_input).clear()
-    driver.find_element_by_xpath(xpaths.ldap.binddn_input).send_keys(bind_DN)
+    driver.find_element_by_xpath(xpaths.ldap.binddn_Input).clear()
+    driver.find_element_by_xpath(xpaths.ldap.binddn_Input).send_keys(bind_DN)
 
 
 @then(parsers.parse('input "{bind_password}" for Bind Password'))
 def input_bind_password_for_bind_password(driver, bind_password):
     """input "{bind_password}" for Bind Password."""
-    driver.find_element_by_xpath(xpaths.ldap.bindpw_input).clear()
-    driver.find_element_by_xpath(xpaths.ldap.bindpw_input).send_keys(bind_password)
+    driver.find_element_by_xpath(xpaths.ldap.bindpw_Input).clear()
+    driver.find_element_by_xpath(xpaths.ldap.bindpw_Input).send_keys(bind_password)
 
 
 @then('click Advanced Options, then click Enable checkbox, then check Samba Schema, select ON for Encryption Mode, then click save')
@@ -102,16 +102,16 @@ def click_advanced_options_then_click_enable_checkbox_then_check_samba_schema_se
     """click Advanced Options, then click Enable checkbox, then check Samba Schema, select ON for Encryption Mode, then click save."""
     assert wait_on_element(driver, 10, xpaths.checkbox.enable, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.enable).click()
-    assert wait_on_element(driver, 10, xpaths.button.advanced_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.advanced_option).click()
-    assert wait_on_element(driver, 5, xpaths.ldap.sambaSchema_checkbox, 'clickable')
-    checkbox_checked = attribute_value_exist(driver, xpaths.ldap.sambaSchema_checkbox, 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 10, xpaths.button.advanced_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_Option).click()
+    assert wait_on_element(driver, 5, xpaths.ldap.samba_Schema_Checkbox, 'clickable')
+    checkbox_checked = attribute_value_exist(driver, xpaths.ldap.samba_Schema_Checkbox, 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath(xpaths.ldap.sambaSchema_checkbox).click()
-    assert wait_on_element(driver, 10, xpaths.ldap.encryptionMode_select, 'clickable')
-    driver.find_element_by_xpath(xpaths.ldap.encryptionMode_select).click()
-    assert wait_on_element(driver, 10, xpaths.ldap.encryptionModeOn_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.ldap.encryptionModeOn_option).click()
+        driver.find_element_by_xpath(xpaths.ldap.samba_Schema_Checkbox).click()
+    assert wait_on_element(driver, 10, xpaths.ldap.encryption_Mode_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.ldap.encryption_Mode_Select).click()
+    assert wait_on_element(driver, 10, xpaths.ldap.encryption_Mode_On_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.ldap.encryption_Mode_On_Option).click()
 
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
@@ -122,9 +122,9 @@ def wait_for_please_wait_should_appear_while_settings_are_applied_then_after_set
     """wait for Please wait should appear while settings are applied, then after settings are applied, you should see "{hostname}" Settings saved."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 30, xpaths.popup.settingLdap)
-    assert wait_on_element(driver, 5, xpaths.directory_services.ldapCard_title)
-    assert wait_on_element(driver, 5, xpaths.directory_services.ldapStatus)
-    assert wait_on_element(driver, 20, xpaths.directory_services.ldapHostname(hostname))
+    assert wait_on_element(driver, 5, xpaths.directory_Services.ldap_Card_Title)
+    assert wait_on_element(driver, 5, xpaths.directory_Services.ldap_Status)
+    assert wait_on_element(driver, 20, xpaths.directory_Services.ldap_Hostname(hostname))
 
 
 @then(parsers.parse('run {command} trough ssh, the ssh result should pass and return {user} info'))

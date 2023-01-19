@@ -65,8 +65,8 @@ def the_smb_page_loads_click_advanced(driver):
     if wait_on_element(driver, 3, xpaths.popup.pleaseWait):
         assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, xpaths.smb_service.title)
-    assert wait_on_element(driver, 10, xpaths.button.advanced_settings, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.advanced_settings).click()
+    assert wait_on_element(driver, 10, xpaths.button.advanced_Settings, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.advanced_Settings).click()
 
 
 @then('Enter parameters and click save')

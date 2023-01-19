@@ -103,13 +103,13 @@ class app_Setup:
     root_Password_Input = '//ix-input[contains(.,"Root Password")]//input'
     enable_Flax_Checkbox = '//ix-checkbox[contains(.,"Enable Flax")]//mat-checkbox'
 
-    imageRepository_input = '//ix-input[contains(.,"Image repository")]//input'
-    imageTag_input = '//ix-input[contains(.,"Image Tag")]//input'
-    addPortForwading_button = '//ix-fieldset[contains(.,"Port Forwarding")]//button'
-    containerPort_input = '//ix-input[contains(.,"Container Port")]//input'
-    nodePort_input = '//ix-input[contains(.,"Node Port")]//input'
-    containerPort2_input = '(//ix-input[contains(.,"Container Port")]//input)[2]'
-    nodePort2_input = '(//ix-input[contains(.,"Node Port")]//input)[2]'
+    image_Repository_input = '//ix-input[contains(.,"Image repository")]//input'
+    image_Tag_Input = '//ix-input[contains(.,"Image Tag")]//input'
+    add_Port_Forwading_Button = '//ix-fieldset[contains(.,"Port Forwarding")]//button'
+    container_Port_Input = '//ix-input[contains(.,"Container Port")]//input'
+    node_Port_Input = '//ix-input[contains(.,"Node Port")]//input'
+    container_Port2_Input = '(//ix-input[contains(.,"Container Port")]//input)[2]'
+    node_Port2_Input = '(//ix-input[contains(.,"Node Port")]//input)[2]'
 
     def title(app_name):
         return f'//h3[contains(.,"{app_name}") and @class="ix-formtitle"]'
@@ -127,42 +127,42 @@ class button:
     CONTINUE = '//button[contains(*/text(),"CONTINUE")]'
     close = '//button[contains(.,"Close")]'
     CLOSE = '//button[contains(.,"CLOSE")]'
-    close_icon = '//mat-icon[@id="ix-close-icon"]'
-    advanced_option = '//button[contains(*/text(),"Advanced Options")]'
-    advanced_settings = '//button[contains(.,"Advanced Settings")]'
+    close_Icon = '//mat-icon[@id="ix-close-icon"]'
+    advanced_Option = '//button[contains(*/text(),"Advanced Options")]'
+    advanced_Settings = '//button[contains(.,"Advanced Settings")]'
     ok = '//button[@name="ok_button"]'
     power = '//button[@name="Power"]'
     restart = '//button[@name="power-restart"]'
-    unsetPool = '//button[contains(.,"Unset Pool")]'
+    unset_Pool = '//button[contains(.,"Unset Pool")]'
     unset = '//button[contains(.,"Unset")]'
-    chossePool = '//button[contains(.,"Choose Pool")]'
+    chosse_Pool = '//button[contains(.,"Choose Pool")]'
     add_Catalog = '//button[contains(.,"Add Catalog")]'
-    launchDockerImage = '//span[contains(.,"Launch Docker Image")]'
-    Initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
-    Leave_Domain = '//button[contains(.,"Leave Domain")]'
+    launch_Docker_Image = '//span[contains(.,"Launch Docker Image")]'
+    initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
+    leave_Domain = '//button[contains(.,"Leave Domain")]'
 
 
 class certificates:
     title = '//h1[text()="Certificates"]'
-    csrCard_title = '//h3[contains(text(),"Certificate Signing Requests")]'
-    csrAdd_button = '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]'
-    csr_title = ''
+    csr_Card_Title = '//h3[contains(text(),"Certificate Signing Requests")]'
+    csr_Add_Button = '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]'
+    csr_Title = ''
     email_Input = '//input[@ix-auto="input__Email"]'
 
 
 class checkbox:
     enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
-    old_confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
+    old_Confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
     confirm = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
     sudo = '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox'
     force = '//ix-checkbox[@formcontrolname="force"]//mat-checkbox'
 
 
-class chossePoolForApp:
+class chosse_Pool_For_App:
     title = '//h1[contains(.,"Choose a pool for Apps")]'
-    pool_select = '//ix-select[@formcontrolname="pool"]//mat-select'
-    tank_pool_option = '//mat-option[contains(.,"tank")]'
+    pool_Select = '//ix-select[@formcontrolname="pool"]//mat-select'
+    tank_Pool_Option = '//mat-option[contains(.,"tank")]'
 
 
 class dashboard:
@@ -173,175 +173,175 @@ class dashboard:
 
 class dataset:
     title = '//h1[text()="Datasets"]'
-    add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
-    permission_tile = '//h3[text()="Permissions"]'
-    permission_edit_button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
-    add_Zvol_button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
-    zfsEncryption_title = '//h3[text()="ZFS Encryption"]'
-    zfsEncryption_edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
-    lock_button = '//button[contains(.,"Lock")]'
-    unlock_button = '//a[contains(.,"Unlock")]'
-    lockPool_icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock"]'
-    unlockPool_icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock-open-variant"]'
+    add_Dataset_Button = '//button[contains(*/text(),"Add Dataset")]'
+    permission_Title = '//h3[text()="Permissions"]'
+    permission_Edit_Button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
+    add_Zvol_Button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
+    zfs_Encryption_Title = '//h3[text()="ZFS Encryption"]'
+    zfs_Encryption_Edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
+    lock_Button = '//button[contains(.,"Lock")]'
+    unlock_Button = '//a[contains(.,"Unlock")]'
+    lock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock"]'
+    unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//mat-icon[@fonticon="mdi-lock-open-variant"]'
 
-    def pool_tree_name(pool_name):
+    def pool_Tree_Name(pool_name):
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
 
-    def pool_selected(pool_name):
+    def pool_Selected(pool_name):
         return f'//span[text()="{pool_name}" and contains(@class,"own-name")]'
 
-    def pool_tree(pool_name):
+    def pool_Tree(pool_name):
         return f'//ix-dataset-node[contains(.,"{pool_name}")]/div'
 
-    def dataset_name(dataset_name):
-        return f'//span[contains(text(),"{dataset_name}")]'
+    def dataset_Name(dataset_Name):
+        return f'//span[contains(text(),"{dataset_Name}")]'
 
-    def dataset_tree(dataset_name):
-        return f'//ix-dataset-node[contains(.,"{dataset_name}")]/div'
+    def dataset_Tree(dataset_Name):
+        return f'//ix-dataset-node[contains(.,"{dataset_Name}")]/div'
 
-    def permissionAtOwner(user_name):
+    def permission_At_Owner(user_name):
         return f'//div[text()="owner@ - {user_name}"]'
 
-    def permissionAtGroup(group_name):
+    def permission_At_Group(group_name):
         return f'//div[text()="group@ - {group_name}"]'
 
-    def permissionUser(user_name):
+    def permission_User(user_name):
         return f'//div[text()="User - {user_name}"]'
 
 
-class deleteGroup:
+class delete_Group:
     title = '//h1[text()="Delete Group"]'
-    delete_button = '//mat-dialog-container//button[normalize-space(*/text())="Delete"]'
+    delete_Button = '//mat-dialog-container//button[normalize-space(*/text())="Delete"]'
 
 
-class directory_services:
+class directory_Services:
     title = '//h1[text()="Directory Services"]'
-    directory_disable_title = '//h3[text()="Active Directory and LDAP are disabled."]'
-    configureAD_button = '//button[contains(.,"Configure Active Directory")]'
-    configureLdap_button = '//button[contains(.,"Configure LDAP")]'
-    showButton = '//button[contains(*/text(),"Show")]'
-    warningDialog = '//h1[text()="Warning"]'
-    deleteAD02RealmButton = '//tr[contains(.,"AD02")]//button'
-    deleteDialog = '//h1[text()="Delete"]'
-    deleteConfirmCheckbox = '//mat-checkbox[@name="confirm_checkbox"]'
-    deleteConfirmButton = '//button[@id="confirm-dialog__action-button"]'
-    deleteADAccountButton = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
-    ldapCard_title = '//mat-card//h3[text()="LDAP"]'
-    ldapStatus = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
-    kerberosKeytabAdd_button = '//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]'
+    directory_Disable_Title = '//h3[text()="Active Directory and LDAP are disabled."]'
+    configure_AD_Button = '//button[contains(.,"Configure Active Directory")]'
+    configure_Ldap_Button = '//button[contains(.,"Configure LDAP")]'
+    show_Button = '//button[contains(*/text(),"Show")]'
+    warning_Dialog = '//h1[text()="Warning"]'
+    delete_AD02_Realm_Button = '//tr[contains(.,"AD02")]//button'
+    delete_Dialog = '//h1[text()="Delete"]'
+    delete_Confirm_Checkbox = '//mat-checkbox[@name="confirm_Checkbox"]'
+    delete_Confirm_Button = '//button[@id="confirm-dialog__action-button"]'
+    delete_AD_Account_Button = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
+    ldap_Card_Title = '//mat-card//h3[text()="LDAP"]'
+    ldap_Status = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
+    kerberos_Keytab_Add_Button = '//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]'
 
-    def ldapHostname(hostname):
+    def ldap_Hostname(hostname):
         return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
 
 
 class disks:
     title = '//h1[text()="Disks"]'
-    all_disk = '//div[contains(text(),"sd")]'
-    wipe_button = '//mat-dialog-container//button[contains(.,"Wipe")]'
+    all_Disk = '//div[contains(text(),"sd")]'
+    wipe_Button = '//mat-dialog-container//button[contains(.,"Wipe")]'
 
-    def disk_expander(disk):
+    def disk_Expander(disk):
         return f'//tr[@ix-auto="expander__{disk}"]/td[2]'
 
-    def wipe_disk_button(disk):
+    def wipe_Disk_Button(disk):
         return f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]'
 
-    def confirm_box_title(disk):
+    def confirm_Box_Title(disk):
         return f'//h1[contains(.,"Wipe Disk {disk}")]'
 
 
-class editAcl:
+class edit_Acl:
     title = '//h1[text()="Edit ACL"]'
-    owner_combobox = '//ix-combobox[@formcontrolname="owner"]//input'
-    ownerApply_checkbox = '//mat-checkbox[contains(.,"Apply Owner")]'
-    group_combobox = '//ix-combobox[@formcontrolname="ownerGroup"]//input'
-    gourpApply_checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
-    saveAcl_button = '//button[contains(*/text(),"Save Access Control List")]'
-    addItem_button = '//button[contains(.,"Add Item")]'
-    who_select = '//ix-select[@formcontrolname="tag"]//mat-select'
-    whoUser_option = '//mat-option[contains(.,"User")]'
-    user_combobox = '//ix-combobox[@formcontrolname="user"]//input'
-    builtinUsers_cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
-    builtinAdministrators_cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
-    recursive_checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
-    traverse_checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
+    owner_Combobox = '//ix-combobox[@formcontrolname="owner"]//input'
+    owner_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Owner")]'
+    group_Combobox = '//ix-combobox[@formcontrolname="ownerGroup"]//input'
+    group_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
+    save_Acl_Buttonox = '//button[contains(*/text(),"Save Access Control List")]'
+    add_Item_Button = '//button[contains(.,"Add Item")]'
+    who_Select = '//ix-select[@formcontrolname="tag"]//mat-select'
+    who_User_Option = '//mat-option[contains(.,"User")]'
+    user_Combobox = '//ix-combobox[@formcontrolname="user"]//input'
+    builtin_Users_Cancel = '//div[contains(.,"Group - builtin_users") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
+    builtin_Administrators_Cancel = '//div[contains(.,"Group - builtin_administrators") and contains(@class,"ace")]//mat-icon[text()="cancel"]'
+    recursive_Checkbox = '//ix-checkbox[@formcontrolname="recursive"]//mat-checkbox'
+    traverse_Checkbox = '//ix-checkbox[@formcontrolname="traverse"]//mat-checkbox'
 
-    def combobox_option(option):
+    def combobox_Option(option):
         return f'//mat-option[contains(.,"{option}")]'
 
-    def userInAcl(user_name):
+    def user_In_Acl(user_name):
         return f'//div[text()="User - {user_name}"]'
 
 
-class editEncryption:
+class edit_Encryption:
     title = '//h1[contains(.,"Edit Encryption Options")]'
-    encryptionType_checkbox = '//ix-select[@formcontrolname="encryption_type"]//mat-select'
-    encryptionType_passphrase_option = '//mat-option[contains(.,"Passphrase")]'
-    passphrase_input = '//ix-input[@formcontrolname="passphrase"]//input'
-    confirmPassphrase_input = '//ix-input[@formcontrolname="confirm_passphrase"]//input'
-    confirm_checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
+    encryption_Type_Checkbox = '//ix-select[@formcontrolname="encryption_type"]//mat-select'
+    encryption_Type_Passphrase_Option = '//mat-option[contains(.,"Passphrase")]'
+    passphrase_Input = '//ix-input[@formcontrolname="passphrase"]//input'
+    confirm_Passphrase_Input = '//ix-input[@formcontrolname="confirm_passphrase"]//input'
+    confirm_Checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
 
 
 class error:
-    def message_text(message):
+    def message_Text(message):
         return f'//mat-error[contains(.,"{message}")]'
 
 
-class exportDisconnectPool:
+class export_Disconnect_Pool:
     title = '//h1[contains(text(),"Export/disconnect pool")]'
-    destroy_checkbox = '//ix-checkbox[@formcontrolname="destroy"]//mat-checkbox'
-    confirm_checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
-    poolName_input = '//ix-input[@formcontrolname="nameInput"]//input'
-    exportDisconnect_button = '//mat-dialog-container//button[contains(.,"Export/Disconnect")]'
+    destroy_Checkbox = '//ix-checkbox[@formcontrolname="destroy"]//mat-checkbox'
+    confirm_Checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
+    pool_Name_Input = '//ix-input[@formcontrolname="nameInput"]//input'
+    export_Disconnect_Button = '//mat-dialog-container//button[contains(.,"Export/Disconnect")]'
 
 
-class global_configuration:
+class global_Configuration:
     title = '//h3[text()="Edit Global Configuration"]'
-    nameserver1_input = '//ix-input[contains(.,"Nameserver 1")]//input'
-    nameserver2_input = '//ix-input[contains(.,"Nameserver 2")]//input'
-    nameserver3_input = '//ix-input[contains(.,"Nameserver 3")]//input'
-    nameserver1_delete = '//ix-input[contains(.,"Nameserver 1")]//mat-icon[@fonticon="mdi-close-circle"]'
-    nameserver2_delete = '//ix-input[contains(.,"Nameserver 2")]//mat-icon[@fonticon="mdi-close-circle"]'
-    nameserver3_delete = '//ix-input[contains(.,"Nameserver 3")]//mat-icon[@fonticon="mdi-close-circle"]'
-    ipv4_defaultGateway_input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
+    nameserver1_Input = '//ix-input[contains(.,"Nameserver 1")]//input'
+    nameserver2_Input = '//ix-input[contains(.,"Nameserver 2")]//input'
+    nameserver3_Input = '//ix-input[contains(.,"Nameserver 3")]//input'
+    nameserver1_Delete = '//ix-input[contains(.,"Nameserver 1")]//mat-icon[@fonticon="mdi-close-circle"]'
+    nameserver2_Delete = '//ix-input[contains(.,"Nameserver 2")]//mat-icon[@fonticon="mdi-close-circle"]'
+    nameserver3_Delete = '//ix-input[contains(.,"Nameserver 3")]//mat-icon[@fonticon="mdi-close-circle"]'
+    ipv4_Default_Gateway_Input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
     hostname_Input = '//ix-input[contains(.,"Hostname")]//input'
 
 
 class groups:
     title = '//h1[contains(text(),"Groups")]'
-    edit_button = '//button[contains(.,"Edit")]'
-    qetest_name = '//div[contains(.,"qetest")]'
-    qetest_expemnd = '//tr[contains(.,"qetest")]/td'
-    qatest_name = '//div[contains(.,"qatest")]'
-    qatest_expemnd = '//tr[contains(.,"qatest")]/td'
-    gidtest_name = '//div[contains(.,"gidtest")]'
-    gidtestdupe_name = '//div[contains(.,"gidtestdupe")]'
-    gidtestdupe_expemnd = '//tr[contains(.,"gidtestdupe")]/td'
+    edit_Button = '//button[contains(.,"Edit")]'
+    qetest_Name = '//div[contains(.,"qetest")]'
+    qetest_Expend = '//tr[contains(.,"qetest")]/td'
+    qatest_Name = '//div[contains(.,"qatest")]'
+    qatest_Expend = '//tr[contains(.,"qatest")]/td'
+    gidtest_Name = '//div[contains(.,"gidtest")]'
+    gidtestdupe_Name = '//div[contains(.,"gidtestdupe")]'
+    gidtestdupe_Expend = '//tr[contains(.,"gidtestdupe")]/td'
 
 
 class interface:
     title = '//h3[contains(text(),"Edit Interface")]'
-    dhcp_checkbox = '//mat-checkbox[contains(.,"DHCP")]'
-    add_allias = '//div[@class="label-container" and contains(.,"Aliases")]//button'
-    ipAddress_input = '//ix-ip-input-with-netmask//input'
-    netmask_select = '//ix-ip-input-with-netmask//mat-select'
-    netmask_option = '//mat-option[contains(.,"24")]'
+    dhcp_Checkbox = '//mat-checkbox[contains(.,"DHCP")]'
+    add_Allias = '//div[@class="label-container" and contains(.,"Aliases")]//button'
+    ip_Address_Input = '//ix-ip-input-with-netmask//input'
+    netmask_Select = '//ix-ip-input-with-netmask//mat-select'
+    netmask_Option = '//mat-option[contains(.,"24")]'
 
 
 class ldap():
     title = '//h3[@class="ix-formtitle" and text()="LDAP"]'
     hostname_Input = '//ix-chips[@formcontrolname="hostname"]//input'
-    basedn_input = '//ix-input[@formcontrolname="basedn"]//input'
-    binddn_input = '//ix-input[@formcontrolname="binddn"]//input'
-    bindpw_input = '//ix-input[@formcontrolname="bindpw"]//input'
-    sambaSchema_checkbox = '//ix-checkbox[@formcontrolname="has_samba_schema"]//mat-checkbox'
-    encryptionMode_select = '//ix-select[@formcontrolname="ssl"]//mat-select'
-    encryptionModeOn_option = '//mat-option[contains(.,"ON")]'
+    basedn_Input = '//ix-input[@formcontrolname="basedn"]//input'
+    binddn_Input = '//ix-input[@formcontrolname="binddn"]//input'
+    bindpw_Input = '//ix-input[@formcontrolname="bindpw"]//input'
+    samba_Schema_Checkbox = '//ix-checkbox[@formcontrolname="has_samba_schema"]//mat-checkbox'
+    encryption_Mode_Select = '//ix-select[@formcontrolname="ssl"]//mat-select'
+    encryption_Mode_On_Option = '//mat-option[contains(.,"ON")]'
 
 
-class lockDataset:
+class lock_Dataset:
     title = '//h1[text()="Lock Dataset"]'
-    forceUnmount_checkbox = '//ix-checkbox[contains(.,"Force unmount")]'
-    lock_button = '//mat-dialog-container//button[contains(.,"Lock")]'
+    force_Unmount_Checkbox = '//ix-checkbox[contains(.,"Force unmount")]'
+    lock_Button = '//mat-dialog-container//button[contains(.,"Lock")]'
 
 
 class login:
@@ -353,7 +353,7 @@ class login:
 
 class network:
     title = '//h1[contains(.,"Network")]'
-    global_configurationTitle = '//h3[text()="Global Configuration"]'
+    global_ConfigurationTitle = '//h3[text()="Global Configuration"]'
     interface = '//mat-icon[@id="enp0s8"]'
 
 
@@ -410,7 +410,7 @@ class sideMenu:
     local_group = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]'
     local_user = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]'
     certificates = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Certificates"]'
-    directory_services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
+    directory_Services = '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]'
     network = '//mat-list-item[@ix-auto="option__Network"]'
     storage = '//mat-list-item[@ix-auto="option__Storage"]'
     apps = '//mat-list-item[@ix-auto="option__Apps"]'
@@ -443,7 +443,7 @@ class storage:
     create_pool_button = '//a[contains(.,"Create Pool")]'
     disks_button = '//a[*/text()=" Disks "]'
     encryptedPool = '//h2[text()="encrypted_pool"]'
-    exportDisconnect_button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'
+    export_Disconnect_Button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'
 
     def manageDataset_button(pool_name):
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
@@ -462,16 +462,16 @@ class toolbar:
     ha_enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
 
 
-class unlockDataset:
+class unlock_Dataset:
     title = '//h1[contains(.,"Unlock Datasets")]'
     datasetPassphrase_input = '//input[@ix-auto="input__Dataset Passphrase"]'
-    unlockDatasets_message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
-    unlockDatasets_message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
+    unlock_Datasets_message1 = '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]'
+    unlock_Datasets_message2 = '//p[contains(.,"These datasets were successfully unlocked.")]'
 
 
 class users:
     title = '//h1[text()="Users"]'
     eric_user = '//tr[contains(.,"ericbsd")]/td'
-    eric_edit_button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    eric_edit_Button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
     root_user = '//tr[contains(.,"root")]/td'
-    root_edit_button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    root_edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'

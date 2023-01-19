@@ -73,8 +73,8 @@ def click_three_dots_icon_for_truecharts_and_select_delete(driver):
 @then('confirm the confirmation')
 def confirm_the_confirmation(driver):
     """confirm the confirmation."""
-    assert wait_on_element(driver, 2, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
+    assert wait_on_element(driver, 2, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 10, xpaths.button.delete, 'clickable')
     driver.find_element_by_xpath(xpaths.button.delete).click()
     time.sleep(0.5)

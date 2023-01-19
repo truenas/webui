@@ -64,8 +64,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then(parsers.parse('the User Edit Page should open, change the user email "{email}" and click save'))

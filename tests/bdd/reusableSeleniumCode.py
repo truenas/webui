@@ -17,8 +17,8 @@ def Close_Common_Warning(driver):
 
 def Confirm_Creating_Pool(driver):
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 7, xpaths.pool_manager.create_pool_button, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.create_pool_button).click()
 
@@ -34,8 +34,8 @@ def Confirm_Failover(driver):
 
 def Confirm_Single_Disk(driver):
     assert wait_on_element(driver, 10, xpaths.popup.warning)
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
 
@@ -60,7 +60,7 @@ def Login_If_Not_On_Dashboard(driver, user, password):
         driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-def Leave_Domain(driver, user, password):
+def leave_domain(driver, user, password):
     assert wait_on_element(driver, 5, '//h1[text()="Leave Domain"]')
     assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="username"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys(user)

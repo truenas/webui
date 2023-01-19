@@ -59,8 +59,8 @@ def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
     assert wait_on_element(driver, 20, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
-    assert wait_on_element(driver, 5, xpaths.button.unsetPool, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.unsetPool).click()
+    assert wait_on_element(driver, 5, xpaths.button.unset_Pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.unset_Pool).click()
 
 
 @then('confirm unset pool and wait')
@@ -77,13 +77,13 @@ def click_setting_reset_pool(driver):
     """click setting, reset pool."""
     assert wait_on_element(driver, 10, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
-    assert wait_on_element(driver, 10, xpaths.button.chossePool, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.chossePool).click()
-    assert wait_on_element(driver, 7, xpaths.chossePoolForApp.title)
-    assert wait_on_element(driver, 5, xpaths.chossePoolForApp.pool_select, 'clickable')
-    driver.find_element_by_xpath(xpaths.chossePoolForApp.pool_select).click()
-    assert wait_on_element(driver, 7, xpaths.chossePoolForApp.tank_pool_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.chossePoolForApp.tank_pool_option).click()
+    assert wait_on_element(driver, 10, xpaths.button.chosse_Pool, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.chosse_Pool).click()
+    assert wait_on_element(driver, 7, xpaths.chosse_Pool_For_App.title)
+    assert wait_on_element(driver, 5, xpaths.chosse_Pool_For_App.pool_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.chosse_Pool_For_App.pool_Select).click()
+    assert wait_on_element(driver, 7, xpaths.chosse_Pool_For_App.tank_Pool_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.chosse_Pool_For_App.tank_Pool_Option).click()
     assert wait_on_element(driver, 7, xpaths.button.choose, 'clickable')
     driver.find_element_by_xpath(xpaths.button.choose).click()
     assert wait_on_element_disappear(driver, 60, xpaths.popup.configuring)

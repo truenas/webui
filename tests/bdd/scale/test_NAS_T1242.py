@@ -78,8 +78,8 @@ def click_encryption_and_confirm_popup(driver):
     assert wait_on_element(driver, 10, xpaths.pool_manager.encryption_checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.pool_manager.encryption_checkbox).click()
     assert wait_on_element(driver, 7, xpaths.popup.warning)
-    assert wait_on_element(driver, 10, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
+    assert wait_on_element(driver, 10, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__I UNDERSTAND"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I UNDERSTAND"]').click()
 

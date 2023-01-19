@@ -60,8 +60,8 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then('the User Edit Page should open, change the password in both fields and click save')

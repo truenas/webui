@@ -123,11 +123,11 @@ def click_on_credentials_and_local_groups(driver):
 def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     """on the Groups page expand QE group and click edit."""
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, xpaths.groups.qatest_name)
-    assert wait_on_element(driver, 10, xpaths.groups.qatest_expemnd, 'clickable')
-    driver.find_element_by_xpath(xpaths.groups.qatest_expemnd).click()
-    assert wait_on_element(driver, 7, xpaths.groups.edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.groups.edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_Name)
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_Expend, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.qatest_Expend).click()
+    assert wait_on_element(driver, 7, xpaths.groups.edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.edit_Button).click()
 
 
 @then('check the enable sudo box and click save')

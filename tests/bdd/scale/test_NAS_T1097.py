@@ -66,8 +66,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then(parsers.parse('the User Edit Page should open, change the user email "{invalid_email}"'))
@@ -87,5 +87,5 @@ def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appea
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, xpaths.button.close_icon, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close_icon).click()
+    assert wait_on_element(driver, 5, xpaths.button.close_Icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_Icon).click()
