@@ -10,6 +10,7 @@
   [fxLayout]="containerLayout"
   [required]="required"
   [disabled]="isDisabled"
+  [ixTest]="controlDirective.name"
   [value]="value"
   (change)="onRadiosChanged($event)"
 >
@@ -18,7 +19,10 @@
     fxFlex="100%"
     [fxFlex.gt-md]="fieldFlex"
   >
-    <mat-radio-button [value]="option.value">
+    <mat-radio-button
+      [value]="option.value"
+      [ixTest]="[controlDirective.name, option.label]"
+    >
       {{ option.label }}
     </mat-radio-button>
 
