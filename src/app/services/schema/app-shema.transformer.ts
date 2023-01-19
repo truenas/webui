@@ -13,6 +13,7 @@ import {
   DynamicFormSchemaList,
   DynamicFormSchemaNode,
   DynamicFormSchemaSelect,
+  DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -71,6 +72,18 @@ export function transformIntSchemaType(
     inputType: 'number',
   };
   return inputSchema;
+}
+
+export function transformUriSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaUri {
+  const { schema, chartSchemaNode } = payload;
+
+  return {
+    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    type: DynamicFormSchemaType.Uri,
+    inputType: undefined,
+  };
 }
 
 export function transformCronSchemaType(

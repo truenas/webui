@@ -51,7 +51,7 @@
     </ix-list>
 
     <ix-input
-      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Input"
+      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Input || dynamicSchema.type === DynamicFormSchemaType.Uri"
       [formControlName]="dynamicSchema.controlName"
       [label]="dynamicSchema.title | translate"
       [placeholder]="dynamicSchema.placeholder | translate"

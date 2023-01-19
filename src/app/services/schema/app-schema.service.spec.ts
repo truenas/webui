@@ -9,6 +9,7 @@ import {
   DynamicFormSchemaList,
   DynamicFormSchemaIpaddr,
   DynamicFormSchemaCron,
+  DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -235,8 +236,8 @@ const afterUri = [[{
   inputType: undefined,
   title: 'Label Uri',
   tooltip: undefined,
-  type: 'input',
-}]] as DynamicFormSchemaInput[][];
+  type: 'uri',
+}]] as DynamicFormSchemaUri[][];
 
 const beforeCron = [{
   variable: 'variable_cron',

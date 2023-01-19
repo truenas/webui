@@ -42,6 +42,7 @@ import {
   transformListSchemaType,
   transformPathSchemaType,
   transformStringSchemaType,
+  transformUriSchemaType,
 } from 'app/services/schema/app-shema.transformer';
 
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
@@ -67,8 +68,10 @@ export class AppSchemaService {
         case ChartSchemaType.Int:
           newSchema.push(transformIntSchemaType(transformPayload));
           break;
-        case ChartSchemaType.String:
         case ChartSchemaType.Uri:
+          newSchema.push(transformUriSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.String:
           newSchema.push(transformStringSchemaType(transformPayload));
           break;
         case ChartSchemaType.Path:
