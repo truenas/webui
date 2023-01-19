@@ -58,8 +58,8 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then('the User Edit Page should open, change the password in the 2nd field')
@@ -83,5 +83,5 @@ def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appea
     assert class_attribute == 'true'
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element(driver, 30, '//mat-error[contains(.,"New password and confirmation should match.")]')
-    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close_icon).click()
+    assert wait_on_element(driver, 10, xpaths.button.close_Icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_Icon).click()

@@ -65,11 +65,11 @@ def on_the_storage_click_on_the_tank_manage_datasets_button(driver):
 def on_the_datasets_page_click_on_the_tank_tree_and_click_add_zvol(driver):
     """on the Datasets page click on the tank tree and click Add Zvol."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
-    assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('tank'))
-    driver.find_element_by_xpath(xpaths.dataset.pool_tree('tank')).click()
-    assert wait_on_element(driver, 7, xpaths.dataset.pool_selected('tank'))
-    assert wait_on_element(driver, 4, xpaths.dataset.add_Zvol_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.dataset.add_Zvol_button).click()
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_Tree_Name('tank'))
+    driver.find_element_by_xpath(xpaths.dataset.pool_Tree('tank')).click()
+    assert wait_on_element(driver, 7, xpaths.dataset.pool_Selected('tank'))
+    assert wait_on_element(driver, 4, xpaths.dataset.add_Zvol_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.dataset.add_Zvol_Button).click()
 
 
 @then(parsers.parse('on the the Add Zvol page input {zvol_name} for Zvol Name'))
@@ -94,4 +94,4 @@ def input_1_gib_for_zvol_size_click_the_save_button(driver, zvol_size):
 def once_saved_the_nopeer1_volume_should_be_the_tank_tree(driver, zvol_name):
     """once saved the nopeer1 volume should be the tank tree."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 10, xpaths.dataset.dataset_name(zvol_name))
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(zvol_name))

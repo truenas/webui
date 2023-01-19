@@ -154,8 +154,8 @@ def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_st
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 10, xpaths.button.Initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Initiate_Failover).click()
+    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
 
 
 @then('on the Initiate Failover box check the Confirm checkbox, then click Failover')
@@ -222,10 +222,10 @@ def click_on_credentials_then_directory_services_and_leave_ad(driver):
     """click on Credentials then Directory Services and Leave AD."""
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services)
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services)
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 7, xpaths.directory_services.title)
+    assert wait_on_element(driver, 7, xpaths.directory_Services.title)
 
     assert wait_on_element(driver, 5, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
@@ -233,10 +233,10 @@ def click_on_credentials_then_directory_services_and_leave_ad(driver):
     assert wait_on_element(driver, 5, xpaths.active_Directory.title)
     assert wait_on_element(driver, 7, xpaths.active_Directory.enable_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.active_Directory.enable_Checkbox).click()
-    assert wait_on_element(driver, 7, xpaths.button.Leave_Domain, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Leave_Domain).click()
+    assert wait_on_element(driver, 7, xpaths.button.leave_Domain, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.leave_Domain).click()
 
-    rsc.Leave_Domain(driver, aduser, adpassword)
+    rsc.leave_Domain(driver, aduser, adpassword)
 
     assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 120, xpaths.popup.active_Directory)
@@ -250,17 +250,17 @@ def click_on_network_and_click_on_global_configuration(driver):
     assert wait_on_element(driver, 7, xpaths.network.title)
     assert wait_on_element(driver, 5, xpaths.button.settings)
     driver.find_element_by_xpath(xpaths.button.settings).click()
-    assert wait_on_element(driver, 10, xpaths.global_configuration.title)
+    assert wait_on_element(driver, 10, xpaths.global_Configuration.title)
 
 
 @then(parsers.parse('change nameservers to "{nameserver1}" and "{nameserver2}" then save'))
 def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserver1, nameserver2):
     """change nameservers to "{nameserver1}" and "{nameserver2}" then save."""
-    assert wait_on_element(driver, 5, xpaths.global_configuration.nameserver1_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).send_keys(nameserver1)
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_input).send_keys(nameserver2)
+    assert wait_on_element(driver, 5, xpaths.global_Configuration.nameserver1_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).send_keys(nameserver1)
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Input).send_keys(nameserver2)
 
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()

@@ -66,8 +66,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
 
 
 @then('the User Edit Page should open, add the root group and click save')
@@ -97,8 +97,8 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.users.eric_user, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
-    assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.users.eric_edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_edit_Button).click()
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
@@ -117,5 +117,5 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     # return to dashboard
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
     time.sleep(0.5)
-    assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close_icon).click()
+    assert wait_on_element(driver, 10, xpaths.button.close_Icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_Icon).click()

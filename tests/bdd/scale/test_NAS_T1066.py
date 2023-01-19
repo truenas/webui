@@ -59,7 +59,7 @@ def you_see_the_dashboard_click_network_on_the_side_menu(driver):
 def the_network_page_will_open_click_global_configuration_settings(driver):
     """the Network page will open, click Global Configuration Settings."""
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, xpaths.network.global_configurationTitle)
+    assert wait_on_element(driver, 7, xpaths.network.global_ConfigurationTitle)
     assert wait_on_element(driver, 10, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
 
@@ -67,23 +67,23 @@ def the_network_page_will_open_click_global_configuration_settings(driver):
 @then(parsers.parse('the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"'))
 def the_global_config_page_will_open_and_input_nameservers(driver, nameserver1, nameserver2, nameserver3):
     """the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"."""
-    assert wait_on_element(driver, 10, xpaths.global_configuration.title)
-    assert wait_on_element(driver, 7, xpaths.global_configuration.nameserver1_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).send_keys(nameserver1)
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_input).send_keys(nameserver2)
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver3_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver3_input).send_keys(nameserver3)
+    assert wait_on_element(driver, 10, xpaths.global_Configuration.title)
+    assert wait_on_element(driver, 7, xpaths.global_Configuration.nameserver1_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).send_keys(nameserver1)
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Input).send_keys(nameserver2)
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Input).send_keys(nameserver3)
 
 
 @then(parsers.parse('input gateway "{gateway}" and an hostname and click SAVE'))
 def input_gateway_and_a_hostname_and_click_save(driver, nas_hostname, gateway):
     """input gateway "{gateway}" and an hostname and click SAVE."""
-    driver.find_element_by_xpath(xpaths.global_configuration.ipv4_defaultGateway_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.ipv4_defaultGateway_input).send_keys(gateway)
-    driver.find_element_by_xpath(xpaths.global_configuration.hostname_Input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.hostname_Input).send_keys(nas_hostname)
+    driver.find_element_by_xpath(xpaths.global_Configuration.ipv4_Default_Gateway_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.ipv4_Default_Gateway_Input).send_keys(gateway)
+    driver.find_element_by_xpath(xpaths.global_Configuration.hostname_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.hostname_Input).send_keys(nas_hostname)
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -101,17 +101,17 @@ def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_
     assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
     driver.find_element_by_xpath(xpaths.network.interface).click()
     assert wait_on_element(driver, 7, xpaths.interface.title)
-    assert wait_on_element(driver, 7, xpaths.interface.dhcp_checkbox, 'clickable')
-    if attribute_value_exist(driver, xpaths.interface.dhcp_checkbox, 'class', 'mat-checkbox-checked'):
-        driver.find_element_by_xpath(xpaths.interface.dhcp_checkbox).click()
-    assert wait_on_element(driver, 7, xpaths.interface.add_allias, 'clickable')
-    driver.find_element_by_xpath(xpaths.interface.add_allias).click()
-    assert wait_on_element(driver, 7, xpaths.interface.ipAddress_input, 'clickable')
-    driver.find_element_by_xpath(xpaths.interface.ipAddress_input).clear()
-    driver.find_element_by_xpath(xpaths.interface.ipAddress_input).send_keys(nas_ip)
-    driver.find_element_by_xpath(xpaths.interface.netmask_select).click()
-    assert wait_on_element(driver, 10, xpaths.interface.netmask_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.interface.netmask_option).click()
+    assert wait_on_element(driver, 7, xpaths.interface.dhcp_Checkbox, 'clickable')
+    if attribute_value_exist(driver, xpaths.interface.dhcp_Checkbox, 'class', 'mat-checkbox-checked'):
+        driver.find_element_by_xpath(xpaths.interface.dhcp_Checkbox).click()
+    assert wait_on_element(driver, 7, xpaths.interface.add_Allias, 'clickable')
+    driver.find_element_by_xpath(xpaths.interface.add_Allias).click()
+    assert wait_on_element(driver, 7, xpaths.interface.ip_Address_Input, 'clickable')
+    driver.find_element_by_xpath(xpaths.interface.ip_Address_Input).clear()
+    driver.find_element_by_xpath(xpaths.interface.ip_Address_Input).send_keys(nas_ip)
+    driver.find_element_by_xpath(xpaths.interface.netmask_Select).click()
+    assert wait_on_element(driver, 10, xpaths.interface.netmask_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.interface.netmask_Option).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -130,8 +130,8 @@ def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__testChange"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__testChange"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Test Changes")]')
-    assert wait_on_element(driver, 7, xpaths.checkbox.old_confirm, 'clickable')
-    driver.find_element_by_xpath(xpaths.checkbox.old_confirm).click()
+    assert wait_on_element(driver, 7, xpaths.checkbox.old_Confirm, 'clickable')
+    driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__TEST CHANGES"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__keepChange"]', 'clickable')

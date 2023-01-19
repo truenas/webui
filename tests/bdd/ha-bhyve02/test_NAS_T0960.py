@@ -163,8 +163,8 @@ def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 5, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'inputable')
     assert attribute_value_exist(driver, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'value', ssh_key)
-    assert wait_on_element(driver, 5, xpaths.button.close_icon, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.close_icon).click()
+    assert wait_on_element(driver, 5, xpaths.button.close_Icon, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close_Icon).click()
     assert wait_on_element(driver, 7, '//h1[text()="Users"]')
     assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
 

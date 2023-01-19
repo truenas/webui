@@ -66,17 +66,17 @@ def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver
 @then(parsers.parse('on the Network Global Configuration page, change the first nameserver to "{nameserver1}"'))
 def on_the_network_global_configuration_page_change_the_first_nameserver_to_nameserver1(driver, nameserver1):
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}"."""
-    assert wait_on_element(driver, 10, xpaths.global_configuration.title)
-    assert wait_on_element(driver, 5, xpaths.global_configuration.nameserver1_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver1_input).send_keys(nameserver1)
+    assert wait_on_element(driver, 10, xpaths.global_Configuration.title)
+    assert wait_on_element(driver, 5, xpaths.global_Configuration.nameserver1_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).send_keys(nameserver1)
 
 
 @then('delete nameserver 2 and nameserver 3 IPs in there input')
 def delete_nameserver_2_and_nameserver_3_ips_in_there_input(driver):
     """delete nameserver 2 and nameserver 3 IPs in there input."""
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver2_delete).click()
-    driver.find_element_by_xpath(xpaths.global_configuration.nameserver3_delete).click()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Delete).click()
+    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Delete).click()
 
 
 @then('click Save, the progress bar should appear while settings are being applied')
@@ -92,17 +92,17 @@ def after_click_on_credentials_on_the_left_sidebar_then_directory_services(drive
     """after, click on Credentials on the left sidebar, then Directory Services."""
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
+    assert wait_on_element(driver, 7, xpaths.sideMenu.directory_Services, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.directory_Services).click()
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')
 def on_the_directory_services_page_click_setting_on_the_active_Directory_card(driver):
     """on the Directory Services page, click Setting on the Active Directory card."""
-    assert wait_on_element(driver, 7, xpaths.directory_services.title)
-    assert wait_on_element(driver, 5, xpaths.directory_services.directory_disable_title)
-    assert wait_on_element(driver, 7, xpaths.directory_services.configureAD_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.directory_services.configureAD_button).click()
+    assert wait_on_element(driver, 7, xpaths.directory_Services.title)
+    assert wait_on_element(driver, 5, xpaths.directory_Services.directory_Disable_Title)
+    assert wait_on_element(driver, 7, xpaths.directory_Services.configure_AD_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.directory_Services.configure_AD_Button).click()
 
 
 @then(parsers.parse('on the Active Directory page, input the Domain name "{ad_domain}"'))
@@ -129,8 +129,8 @@ def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_
 @then(parsers.parse('click advanced, and input the Computer Account OU "{ca_ou}"'))
 def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_ou):
     """click advanced, and input the Computer Account OU "ca_ou"."""
-    if is_element_present(driver, xpaths.button.advanced_option):
-        driver.find_element_by_xpath(xpaths.button.advanced_option).click()
+    if is_element_present(driver, xpaths.button.advanced_Option):
+        driver.find_element_by_xpath(xpaths.button.advanced_Option).click()
     assert wait_on_element(driver, 7, xpaths.active_Directory.ca_Ou_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.active_Directory.ca_Ou_Input).clear()
     driver.find_element_by_xpath(xpaths.active_Directory.ca_Ou_Input).send_keys(ca_ou)

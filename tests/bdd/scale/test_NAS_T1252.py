@@ -56,10 +56,10 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
 def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     """on the Groups page expand QE group and click edit."""
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, xpaths.groups.qetest_expemnd, 'clickable')
-    driver.find_element_by_xpath(xpaths.groups.qetest_expemnd).click()
-    assert wait_on_element(driver, 7, xpaths.groups.edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.groups.edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.groups.qetest_Expend, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.qetest_Expend).click()
+    assert wait_on_element(driver, 7, xpaths.groups.edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.edit_Button).click()
 
 
 @then('change the group name from qetest to qatest and click save')
@@ -78,4 +78,4 @@ def verify_that_the_group_name_shows_as_qatest(driver):
     """verify that the group name shows as qatest."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.groups.title)
-    assert wait_on_element(driver, 5, xpaths.groups.qatest_name)
+    assert wait_on_element(driver, 5, xpaths.groups.qatest_Name)

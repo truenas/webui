@@ -209,12 +209,12 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 
 
 @then('press Initiate Failover and confirm')
-def press_Initiate_Failover_and_confirm(driver):
+def press_initiate_failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 20, xpaths.toolbar.ha_enabled)
-    assert wait_on_element(driver, 10, xpaths.button.Initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.Initiate_Failover).click()
+    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
     rsc.Confirm_Failover(driver)
 
 
