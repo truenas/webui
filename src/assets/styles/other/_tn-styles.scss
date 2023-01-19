@@ -958,16 +958,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-left: 15px;
   }
 
-  .mat-progress-bar-fill::after {
+  .mat-mdc-progress-bar-fill::after {
     @include variable(background-color, --primary, $primary);
   }
 
-  .mat-progress-bar-buffer {
+  .mat-mdc-progress-bar-buffer {
     @include variable(background-color, --primary, $primary);
     opacity: 0.5;
   }
 
-  .mat-progress-bar .mat-progress-bar-background {
+  .mat-mdc-progress-bar .mat-mdc-progress-bar-background {
     display: none;
   }
 
@@ -1456,4 +1456,13 @@ ix-nested-tree-node[aria-level='2'] {
     overflow: auto;
     padding: 0 !important;
   }
+}
+
+body .mdc-linear-progress__buffer-bar {
+  background-color: var(--primary);
+  opacity: 0.5;
+}
+
+body .mdc-linear-progress__bar-inner {
+  border-color: var(--primary);
 }

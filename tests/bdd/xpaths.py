@@ -6,6 +6,7 @@ class activeDirectory:
     account_input = '//ix-input[@formcontrolname="bindname"]//input'
     password_input = '//ix-input[@formcontrolname="bindpw"]//input'
     ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
+    netbiosname_input = '//ix-input[@formcontrolname="netbiosname"]//input'
 
 
 class addCatalog:
@@ -444,7 +445,7 @@ class storage:
         return f'//ix-dashboard-pool[contains(.,"{pool_name}")]//a[normalize-space(span/text())="Manage Datasets"]'
 
 
-class system_dataset:
+class systemDataset:
     title = '//h3[text()="System Dataset Pool" and @class="ix-formtitle"]'
     select_pool = '//mat-select'
 
