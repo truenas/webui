@@ -36,8 +36,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -49,7 +49,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_on_credentials_on_the_left_sidebar(driver):
     """on the dashboard, click on Credentials on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
 
@@ -103,15 +103,15 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
 @then('on the Add Kerberos Keytab input name and upload the file')
 def on_the_add_kerberos_keytab_input_name_and_upload_the_file(driver):
     """on the Add Kerberos Keytab input name and upload the file."""
-    assert wait_on_element(driver, 7, xpaths.addKerberosKeytab.title)
-    assert wait_on_element(driver, 5, xpaths.addKerberosKeytab.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.addKerberosKeytab.name_input).clear()
-    driver.find_element_by_xpath(xpaths.addKerberosKeytab.name_input).send_keys("keytab_test")
+    assert wait_on_element(driver, 7, xpaths.add_Kerberos_Keytab.title)
+    assert wait_on_element(driver, 5, xpaths.add_Kerberos_Keytab.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Kerberos_Keytab.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_Kerberos_Keytab.name_Input).send_keys("keytab_test")
     # define file
     keytab_file_path = f'{os.getcwd()}/KEYTABNAME.KEYTAB'
     assert glob.glob(keytab_file_path)
     keytab_file = sorted(glob.glob(keytab_file_path))[-1]
-    driver.find_element_by_xpath(xpaths.addKerberosKeytab.file_input).send_keys(keytab_file)
+    driver.find_element_by_xpath(xpaths.add_Kerberos_Keytab.file_input).send_keys(keytab_file)
 
 
 @then('click save and verify that the file was accepted and utilized')

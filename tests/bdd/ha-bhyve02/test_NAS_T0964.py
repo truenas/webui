@@ -48,7 +48,7 @@ def the_login_page_appears_enter_root_and_password(driver, user, password):
 def on_the_dashboard_click_on_shares_on_the_left_sidebar(driver):
     """on the dashboard, click on Shares on the left sidebar."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 5, xpaths.sideMenu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
 
@@ -76,10 +76,10 @@ def on_the_add_smb_slide_box_set_the_path_to_mntdozermy_ad_dataset(driver, datas
 @then(parsers.parse('input the {share_name}, then click to enable'))
 def input_the_share_name_then_click_to_enable(driver, share_name):
     """input the <share_name>, then click to enable."""
-    assert wait_on_element(driver, 5, xpaths.smb.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.smb.name_input).click()
-    driver.find_element_by_xpath(xpaths.smb.name_input).clear()
-    driver.find_element_by_xpath(xpaths.smb.name_input).send_keys(share_name)
+    assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.name_Input).click()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
     assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
     if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-checkbox-checked'):
         driver.find_element_by_xpath(xpaths.checkbox.enable).click()
@@ -153,7 +153,7 @@ def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_st
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_enabled)
-    assert wait_on_element(driver, 10, xpaths.dashboard.System_Information_Standby_Title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 10, xpaths.button.Initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Initiate_Failover).click()
 
@@ -177,8 +177,8 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
     assert wait_on_element(driver, 10, xpaths.login.user_input, 'inputable')
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-    driver.find_element_by_xpath(xpaths.login.password_input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
     assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
@@ -187,7 +187,7 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_running(driver):
     """once on the dashboard go to the Services page and verify SMB service is RUNNING."""
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
-    assert wait_on_element(driver, 120, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_enabled)
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
@@ -230,16 +230,16 @@ def click_on_credentials_then_directory_services_and_leave_ad(driver):
     assert wait_on_element(driver, 5, xpaths.button.settings, 'clickable')
     driver.find_element_by_xpath(xpaths.button.settings).click()
 
-    assert wait_on_element(driver, 5, xpaths.active_directory.title)
-    assert wait_on_element(driver, 7, xpaths.active_directory.enableCheckbox, 'clickable')
-    driver.find_element_by_xpath(xpaths.active_directory.enableCheckbox).click()
+    assert wait_on_element(driver, 5, xpaths.active_Directory.title)
+    assert wait_on_element(driver, 7, xpaths.active_Directory.enable_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.active_Directory.enable_Checkbox).click()
     assert wait_on_element(driver, 7, xpaths.button.Leave_Domain, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Leave_Domain).click()
 
     rsc.Leave_Domain(driver, aduser, adpassword)
 
     assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 120, xpaths.popup.active_directory)
+    assert wait_on_element_disappear(driver, 120, xpaths.popup.active_Directory)
 
 
 @then('click on network and click on Global Configuration')

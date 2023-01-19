@@ -47,7 +47,7 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
     if wait_on_element(driver, 4, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 5, xpaths.sideMenu.datasets, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
 

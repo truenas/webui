@@ -34,8 +34,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -47,7 +47,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
@@ -72,14 +72,14 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 @then('the User Edit Page should open, change some permissions for the Home Directory and click save')
 def the_user_edit_page_should_open_change_some_permissions_for_the_home_directory_and_click_save(driver):
     """the User Edit Page should open, change some permissions for the Home Directory and click save."""
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     time.sleep(1)
-    assert wait_on_element(driver, 2, xpaths.addUser.home_mode_groupWrite_checkbox, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupWrite_checkbox).click()
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupExec_checkbox).click()
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherWrite_checkbox).click()
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherExec_checkbox).click()
+    assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Exec_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Exec_Checkbox).click()
     time.sleep(0.5)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
@@ -94,29 +94,29 @@ def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(drive
     driver.find_element_by_xpath(xpaths.users.eric_user).click()
     assert wait_on_element(driver, 10, xpaths.users.eric_edit_button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_edit_button).click()
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     time.sleep(1)
-    assert wait_on_element(driver, 2, xpaths.addUser.home_mode_groupWrite_checkbox)
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_ownerWrite_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_ownerRead_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_ownerExec_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_groupRead_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_groupWrite_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_groupExec_checkbox, 'class', 'mat-checkbox-checked') is False
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_otherRead_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_otherWrite_checkbox, 'class', 'mat-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.addUser.home_mode_otherExec_checkbox, 'class', 'mat-checkbox-checked') is False
+    assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox)
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Write_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Read_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Exec_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Read_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Exec_Checkbox, 'class', 'mat-checkbox-checked') is False
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Read_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Write_Checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Exec_Checkbox, 'class', 'mat-checkbox-checked') is False
 
 
 @then('revert your changes, click save, and return to dashboard')
 def revert_your_changes_click_save_and_return_to_dashboard(driver):
     """revert your changes, click save, and return to dashboard."""
-    assert wait_on_element(driver, 2, xpaths.addUser.home_mode_groupWrite_checkbox, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupWrite_checkbox).click()
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_groupExec_checkbox).click()
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherWrite_checkbox).click()
-    driver.find_element_by_xpath(xpaths.addUser.home_mode_otherExec_checkbox).click()
+    assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Exec_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Write_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.add_User.home_Mode_Other_Exec_Checkbox).click()
     time.sleep(0.5)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()

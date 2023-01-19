@@ -37,8 +37,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -50,7 +50,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_see_the_dashboard_click_network_on_the_side_menu(driver):
     """you see the dashboard click Network on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.network).click()
 
@@ -82,8 +82,8 @@ def input_gateway_and_a_hostname_and_click_save(driver, nas_hostname, gateway):
     """input gateway "{gateway}" and an hostname and click SAVE."""
     driver.find_element_by_xpath(xpaths.global_configuration.ipv4_defaultGateway_input).clear()
     driver.find_element_by_xpath(xpaths.global_configuration.ipv4_defaultGateway_input).send_keys(gateway)
-    driver.find_element_by_xpath(xpaths.global_configuration.hostname_input).clear()
-    driver.find_element_by_xpath(xpaths.global_configuration.hostname_input).send_keys(nas_hostname)
+    driver.find_element_by_xpath(xpaths.global_configuration.hostname_Input).clear()
+    driver.find_element_by_xpath(xpaths.global_configuration.hostname_Input).send_keys(nas_hostname)
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

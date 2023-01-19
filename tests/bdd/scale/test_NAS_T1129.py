@@ -53,8 +53,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -66,7 +66,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_shares_on_the_side_menu(driver):
     """you should be on the dashboard, click on Shares on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.shares).click()
 
@@ -93,10 +93,10 @@ def on_the_smb_add_set_path_to_mnttankmy_ldap_dataset(driver, path):
 @then(parsers.parse('input "{name}" as name and click enable'))
 def input_ldapsmbshare_as_name_and_click_enable(driver, name):
     """input "ldapsmbshare" as name and click enable."""
-    assert wait_on_element(driver, 5, xpaths.smb.name_input)
-    driver.find_element_by_xpath(xpaths.smb.name_input).click()
-    driver.find_element_by_xpath(xpaths.smb.name_input).clear()
-    driver.find_element_by_xpath(xpaths.smb.name_input).send_keys(name)
+    assert wait_on_element(driver, 5, xpaths.smb.name_Input)
+    driver.find_element_by_xpath(xpaths.smb.name_Input).click()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(name)
 
 
 @then(parsers.parse('input "{description}" as the description and click Save'))

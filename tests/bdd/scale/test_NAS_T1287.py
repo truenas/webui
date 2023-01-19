@@ -36,8 +36,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -49,7 +49,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_apps(driver):
     """on the Dashboard, click on apps."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
 
@@ -57,13 +57,13 @@ def on_the_dashboard_click_on_apps(driver):
 @then('on Application page click on the Available Applications tab')
 def on_application_page_click_on_the_available_applications_tab(driver):
     """on Application page click on the Available Applications tab."""
-    assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
-    driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
+    assert wait_on_element(driver, 10, xpaths.applications.available_Applications_Tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.available_Applications_Tab).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
 @then('on the collabora card click the Install button')
-def on_the_collabora_card_click_the_install_button(driver):
+def on_the_collabora_card_click_the_install_Button(driver):
     """on the collabora card click the Install button."""
     assert wait_on_element(driver, 7, '//h3[contains(.,"collabora")]')
     assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]', 'clickable')
@@ -75,17 +75,17 @@ def on_the_collabora_card_click_the_install_button(driver):
 @then('Enter an application name')
 def enter_an_application_name(driver):
     """Enter an application name."""
-    assert wait_on_element(driver, 7, xpaths.appSetup.title("collabora"))
-    assert wait_on_element(driver, 7, xpaths.appSetup.appName_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('collabora-test')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.title("collabora"))
+    assert wait_on_element(driver, 7, xpaths.app_Setup.app_Name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.app_Setup.app_Name_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.app_Name_Input).send_keys('collabora-test')
 
 
 @then('under Collabora configuration set a password for WebUI')
 def under_collabora_configuration_set_a_password_for_webui(driver):
     """under Collabora configuration set a password for WebUI."""
-    driver.find_element_by_xpath(xpaths.appSetup.password_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.password_input).send_keys('testingpass')
+    driver.find_element_by_xpath(xpaths.app_Setup.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.password_Input).send_keys('testingpass')
 
 
 @then('select trunas_default certificate')
@@ -95,10 +95,10 @@ def select_trunas_default_certificate(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
 
-    assert wait_on_element(driver, 5, xpaths.appSetup.certificate_select, 'clickable')
-    driver.find_element_by_xpath(xpaths.appSetup.certificate_select).click()
-    assert wait_on_element(driver, 7, xpaths.appSetup.truenasCertificate_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.appSetup.truenasCertificate_option).click()
+    assert wait_on_element(driver, 5, xpaths.app_Setup.certificate_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.app_Setup.certificate_Select).click()
+    assert wait_on_element(driver, 7, xpaths.app_Setup.truenas_Certificate_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.app_Setup.truenas_Certificate_Option).click()
 
 
 @then('click save and wait for the installation to finish')

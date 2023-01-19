@@ -35,8 +35,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_on_storage_in_the_side_menu(driver):
     """on the dashboard, click on Storage in the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
@@ -68,24 +68,24 @@ def on_the_datasets_page_click_on_the_tank_tree_and_click_add_zvol(driver):
     assert wait_on_element(driver, 7, xpaths.dataset.pool_tree_name('tank'))
     driver.find_element_by_xpath(xpaths.dataset.pool_tree('tank')).click()
     assert wait_on_element(driver, 7, xpaths.dataset.pool_selected('tank'))
-    assert wait_on_element(driver, 4, xpaths.dataset.addZvol_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.dataset.addZvol_button).click()
+    assert wait_on_element(driver, 4, xpaths.dataset.add_Zvol_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.dataset.add_Zvol_button).click()
 
 
 @then(parsers.parse('on the the Add Zvol page input {zvol_name} for Zvol Name'))
 def on_the_the_add_zvol_page_input_nopeer1_for_zvol_name(driver, zvol_name):
     """on the the Add Zvol page input nopeer1 for Zvol Name."""
-    assert wait_on_element(driver, 5, xpaths.addZvol.title)
-    assert wait_on_element(driver, 5, xpaths.addZvol.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.addZvol.name_input).clear()
-    driver.find_element_by_xpath(xpaths.addZvol.name_input).send_keys(zvol_name)
+    assert wait_on_element(driver, 5, xpaths.add_Zvol.title)
+    assert wait_on_element(driver, 5, xpaths.add_Zvol.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Zvol.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_Zvol.name_Input).send_keys(zvol_name)
 
 
 @then(parsers.parse('input "{zvol_size}" for Zvol Size, click the save button'))
 def input_1_gib_for_zvol_size_click_the_save_button(driver, zvol_size):
     """input "1 GiB" for Zvol Size, click the save button."""
-    assert wait_on_element(driver, 5, xpaths.addZvol.size_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.addZvol.size_input).send_keys(zvol_size)
+    assert wait_on_element(driver, 5, xpaths.add_Zvol.size_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Zvol.size_Input).send_keys(zvol_size)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

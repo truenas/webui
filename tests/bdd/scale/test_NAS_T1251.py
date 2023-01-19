@@ -31,8 +31,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -44,7 +44,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     """on the dashboard click on Credentials and Local Groups."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
@@ -64,7 +64,7 @@ def on_the_groups_page_expand_qe_group_and_click_edit(driver):
 @then('verify the edit page opens')
 def verify_the_edit_page_opens(driver):
     """verify the edit page opens."""
-    assert wait_on_element(driver, 10, xpaths.addGroup.edit_title)
-    assert wait_on_element(driver, 7, xpaths.addGroup.name_input, 'inputable')
+    assert wait_on_element(driver, 10, xpaths.add_Group.edit_Title)
+    assert wait_on_element(driver, 7, xpaths.add_Group.name_Input, 'inputable')
     assert wait_on_element(driver, 7, xpaths.button.close_icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_icon).click()

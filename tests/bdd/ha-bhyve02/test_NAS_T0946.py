@@ -42,7 +42,7 @@ def login_appear_enter_root_and_password(driver, password):
 def you_should_see_the_dashboard_and_information(driver, information):
     """you should see the dashboard and "information"."""
     assert wait_on_element(driver, 5, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('navigate to System Settings and click General')
@@ -274,8 +274,8 @@ def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_ho
     assert wait_on_element(driver, 7, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys('testing')
     assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
@@ -406,7 +406,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
     assert wait_on_element(driver, 7, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
     assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 30, xpaths.toolbar.ha_enabled)
@@ -431,7 +431,7 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     driver.refresh()
     time.sleep(2)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')

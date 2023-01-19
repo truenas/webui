@@ -42,8 +42,8 @@ def if_login_page_appear_enter_user_and_password(driver, user, password):
         assert wait_on_element(driver, 7, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
         assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -55,7 +55,7 @@ def if_login_page_appear_enter_user_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('Click on the Credentials item in the left side menu')

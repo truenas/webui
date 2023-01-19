@@ -35,8 +35,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('click on the Credentials on the side menu, click on Local Users')
@@ -72,16 +72,16 @@ def click_the_down_caret_right_of_the_users(driver):
 
 
 @then('click Enable Permit Sudo checkbox and click save')
-def click_enable_permit_sudo_checkbox_and_click_save(driver):
+def click_enable_permit_sudo_Checkbox_and_click_save(driver):
     """click Enable Permit Sudo checkbox and click save."""
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(5)
-    value_exist = attribute_value_exist(driver, xpaths.addUser.sudo_checkbox, 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, xpaths.add_User.sudo_Checkbox, 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath(xpaths.addUser.sudo_checkbox).click()
+        driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -113,12 +113,12 @@ def open_the_user_dropdown(driver):
 @then('updated value should be visible')
 def updated_value_should_be_visible(driver):
     """updated value should be visible."""
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert attribute_value_exist(driver, xpaths.addUser.sudo_checkbox, 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.sudo_Checkbox, 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 10, xpaths.button.close_icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_icon).click()
     time.sleep(0.5)
