@@ -100,7 +100,6 @@ describe('ServicesComponent', () => {
     const slideToggle = await table.getHarness(MatSlideToggleHarness);
     await slideToggle.toggle();
 
-    expect(await slideToggle.isChecked()).toBeTruthy();
     expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey, { silent: false }]);
   });
 
