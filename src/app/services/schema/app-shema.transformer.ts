@@ -5,6 +5,7 @@ import { CommonSchemaBase, CommonSchemaTransform, TransformNodeFunction } from '
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   DynamicFormSchemaCheckbox,
+  DynamicFormSchemaCron,
   DynamicFormSchemaDict,
   DynamicFormSchemaExplorer,
   DynamicFormSchemaInput,
@@ -70,6 +71,17 @@ export function transformIntSchemaType(
     inputType: 'number',
   };
   return inputSchema;
+}
+
+export function transformCronSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaCron {
+  const { schema, chartSchemaNode } = payload;
+
+  return {
+    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    type: DynamicFormSchemaType.Cron,
+  };
 }
 
 export function transformStringSchemaType(

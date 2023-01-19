@@ -16,21 +16,25 @@ import {
 import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { Relation } from 'app/modules/entity/entity-form/models/field-relation.interface';
 import {
   CustomUntypedFormArray,
-} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-array';
+} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
 import {
   CustomUntypedFormControl,
-} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untped-form-control';
+} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-control';
 import {
   CustomUntypedFormField,
-} from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { CustomUntypedFormGroup } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-group';
+} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
 import {
   isCommonSchemaType,
   transformBooleanSchemaType,
+  transformCronSchemaType,
   transformDictSchemaType,
   transformHostPathSchemaType,
   transformIntSchemaType,
@@ -96,7 +100,7 @@ export class AppSchemaService {
     } else if (schema.type === ChartSchemaType.List) {
       newSchema.push(transformListSchemaType(transformPayload, this.transformNode.bind(this)));
     } else if (schema.type === ChartSchemaType.Cron) {
-      newSchema.push(transformStringSchemaType(transformPayload));
+      newSchema.push(transformCronSchemaType(transformPayload));
     } else {
       console.error('Unsupported type = ', schema.type);
     }
@@ -125,7 +129,7 @@ export class AppSchemaService {
         this.addListSchemaTypeControl(addControlPayload);
         break;
       case schema.type === ChartSchemaType.Cron:
-        this.addCommonSchemaTypeControl(addControlPayload);
+        this.addCronSchemaTypeControl(addControlPayload);
         break;
       default:
         console.error('Unsupported type = ', schema.type);
@@ -197,9 +201,21 @@ export class AppSchemaService {
     event.array.removeAt(event.index);
   }
 
+  checkIsValidCronTab(crontab: string): boolean {
+    // invalid cron type example --> { minute: 5, hour: undefined }
+    return !Object.values(crontabToSchedule(crontab)).includes(undefined);
+  }
+
+  checkIsValidSchedule(schedule: Schedule): boolean {
+    return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
+  }
+
   serializeFormValue(data: SerializeFormValue): SerializeFormValue {
     if (data == null) {
       return data;
+    }
+    if (typeof data === 'string' && this.checkIsValidCronTab(data)) {
+      return crontabToSchedule(data) as SerializeFormValue;
     }
     if (Array.isArray(data)) {
       return this.serializeFormList(data);
@@ -244,16 +260,18 @@ export class AppSchemaService {
   ): HierarchicalObjectMap<ChartFormValue> {
     let newConfig = {} as HierarchicalObjectMap<ChartFormValue>;
     for (const [keyConfig, valueConfig] of Object.entries(config)) {
-      const formConfig = form.controls[keyConfig] as FormGroup;
+      const formConfig = form.controls?.[keyConfig] as FormGroup;
       const restoreKeysPayload: KeysRestoredFromFormGroup = {
         newConfig, formConfig, keyConfig, valueConfig,
       };
 
       if (!formConfig) { continue; }
 
-      if (_.isArray(valueConfig)) {
+      if (this.checkIsValidSchedule(valueConfig as Schedule)) {
+        newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
+      } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
-      } else if (_.isPlainObject(valueConfig)) {
+      } else if (_.isPlainObject(valueConfig) && keyConfig !== 'cron_test') {
         newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;
@@ -327,6 +345,20 @@ export class AppSchemaService {
     if (!isNew && (isParentImmutable || !!schema.immutable)) {
       newFormControl.disable();
     }
+  }
+  private addCronSchemaTypeControl(payload: CommonSchemaAddControl): void {
+    const { schema, formGroup, chartSchemaNode } = payload;
+
+    const defaultDaily = {
+      dom: '*',
+      dow: '*',
+      hour: '0',
+      minute: '0',
+      month: '*',
+    };
+
+    const newFormControl = new CustomUntypedFormControl(scheduleToCrontab(schema.default || defaultDaily));
+    formGroup.addControl(chartSchemaNode.variable, newFormControl);
   }
 
   private addDictSchemaTypeControl(payload: CommonSchemaAddControl): void {

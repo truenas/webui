@@ -11,6 +11,7 @@ export interface DynamicFormSchema {
 }
 
 export type DynamicFormSchemaNode =
+| DynamicFormSchemaCron
 | DynamicFormSchemaInput
 | DynamicFormSchemaSelect
 | DynamicFormSchemaExplorer
@@ -34,6 +35,11 @@ export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   tooltip?: string;
   inputType?: 'password' | 'number';
   placeholder?: string;
+}
+
+export interface DynamicFormSchemaCron extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Cron;
+  tooltip?: string;
 }
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {

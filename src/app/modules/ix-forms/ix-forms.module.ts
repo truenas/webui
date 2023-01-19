@@ -25,8 +25,6 @@ import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-chec
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxDynamicFormItemComponent } from 'app/modules/ix-forms/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxDynamicFormComponent } from 'app/modules/ix-forms/components/ix-dynamic-form/ix-dynamic-form.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -98,8 +96,6 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
-    IxDynamicFormComponent,
-    IxDynamicFormItemComponent,
     IxLabelComponent,
   ],
   exports: [
@@ -123,8 +119,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
-    IxDynamicFormComponent,
-    IxDynamicFormItemComponent,
+
     IxLabelComponent,
   ],
   providers: [
