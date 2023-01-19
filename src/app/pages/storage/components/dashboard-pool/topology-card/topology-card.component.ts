@@ -111,9 +111,16 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
     // There should only be one value
     const allVdevWidths: Set<number> = this.storageService.getVdevWidths(vdevs);
-
     const isMixedWidth = this.storageService.isMixedWidth(allVdevWidths);
-    if (!isMixedWidth) {
+    let isSingleDeviceCategory = false;
+
+    switch (category) {
+      case PoolTopologyCategory.Spare:
+      case PoolTopologyCategory.Cache:
+        isSingleDeviceCategory = true;
+    }
+
+    if (!isMixedWidth && !isSingleDeviceCategory) {
       vdevWidth = allVdevWidths.values().next().value;
     }
 
