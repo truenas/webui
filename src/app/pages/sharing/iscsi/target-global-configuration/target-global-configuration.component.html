@@ -30,7 +30,7 @@
     ></ix-input>
   </ix-fieldset>
 
-  <div class="form-actions">
+  <ix-form-actions class="form-actions">
     <button
       mat-button
       type="submit"
@@ -39,7 +39,7 @@
     >
       {{ 'Save' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
   <div *ngIf="areSettingsSaved" class="saved-message">
     {{ 'Settings saved.' | translate }}
   </div>

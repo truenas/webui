@@ -12,7 +12,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './catalog-add-form.component.html',
-  styleUrls: ['./catalog-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogAddFormComponent {

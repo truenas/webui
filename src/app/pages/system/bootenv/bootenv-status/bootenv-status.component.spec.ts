@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
@@ -69,7 +68,6 @@ describe('BootStatusListComponent', () => {
     component: BootStatusListComponent,
     imports: [
       AppLoaderModule,
-      TranslateModule,
       CoreComponents,
       TreeModule,
       IxIconModule,

@@ -10,11 +10,17 @@
 </div>
 
 <div mat-dialog-actions class="form-actions">
-  <button mat-button type="submit" color="primary" (click)="onSubmit()">
-    {{ 'Proceed' | translate }}
-  </button>
-
   <button mat-button type="button" matDialogClose>
     {{ 'Cancel' | translate }}
   </button>
+
+  <button
+    mat-button
+    type="submit"
+    color="primary"
+    (click)="onSubmit()"
+  >
+    {{ 'Proceed' | translate }}
+  </button>
+
 </div>

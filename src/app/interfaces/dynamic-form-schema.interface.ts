@@ -1,6 +1,7 @@
 import { UntypedFormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
@@ -68,7 +69,8 @@ export interface DynamicFormSchemaIpaddr extends DynamicFormSchemaBase {
 export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.List;
   items?: DynamicFormSchemaNode[];
-  itemsSchema?: unknown[];
+  itemsSchema?: ChartSchemaNode[];
+  default?: unknown[];
 }
 
 export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {

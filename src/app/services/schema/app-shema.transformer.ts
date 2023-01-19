@@ -187,6 +187,7 @@ export function transformListSchemaType(
     type: DynamicFormSchemaType.List,
     items,
     itemsSchema,
+    default: schema.default as unknown[],
     dependsOn: schema.show_if?.map((conditional) => conditional[0]),
   };
 }

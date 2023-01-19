@@ -17,7 +17,6 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 @UntilDestroy()
 @Component({
   templateUrl: './scrub-task-form.component.html',
-  styleUrls: ['./scrub-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskFormComponent {

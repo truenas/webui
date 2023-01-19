@@ -58,7 +58,6 @@ interface ZvolFormData {
 @UntilDestroy()
 @Component({
   templateUrl: './zvol-form.component.html',
-  styleUrls: ['./zvol-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })

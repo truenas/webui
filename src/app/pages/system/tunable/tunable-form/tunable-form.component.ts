@@ -13,7 +13,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @UntilDestroy()
 @Component({
   templateUrl: './tunable-form.component.html',
-  styleUrls: ['./tunable-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TunableFormComponent {
