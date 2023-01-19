@@ -32,7 +32,7 @@ import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
+  WebSocketService2, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -101,7 +101,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   memWarning = wizardHelptext.memory_warning;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private storageService: StorageService,
     private loader: AppLoaderService,
     private dialogService: DialogService,

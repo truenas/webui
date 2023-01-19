@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import helptext from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
@@ -17,7 +17,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, ModalService, SystemGeneralService, WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -51,7 +51,7 @@ describe('LdapComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('ldap.config', existingLdapConfig),
         mockCall('ldap.update', {} as LdapConfigUpdateResult),
         mockCall('kerberos.keytab.kerberos_principal_choices', [
@@ -89,7 +89,7 @@ describe('LdapComponent', () => {
   });
 
   it('loads LDAP config and shows it', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ldap.config');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('ldap.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -152,7 +152,7 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ldap.update', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('ldap.update', [{
       ...existingLdapConfig,
       bindpw: 'adminadmin',
       anonbind: true,

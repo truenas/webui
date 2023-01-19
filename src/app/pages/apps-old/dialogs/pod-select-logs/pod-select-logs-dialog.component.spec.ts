@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -32,7 +32,7 @@ describe('PodSelectLogsDialogComponent', () => {
       mockProvider(ApplicationsService, {
         getChartReleaseNames: () => of([{ name: 'chartRelease1' }, { name: 'chartRelease2' }, { name: 'chartRelease3' }]),
       }),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('chart.release.pod_logs_choices', {
           pod1: ['container11', 'container12', 'container13'],
           pod2: ['container21', 'container22'],

@@ -6,7 +6,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -30,7 +30,7 @@ describe('InitShutdownFormComponent', () => {
       TreeModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),

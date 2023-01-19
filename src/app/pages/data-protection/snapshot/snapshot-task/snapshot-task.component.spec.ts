@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -54,7 +54,7 @@ describe('SnapshotTaskComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket(),
+      mockWebsocket2(),
       mockWebsocket2([
         mockCall('pool.snapshottask.create'),
         mockCall('pool.snapshottask.update'),

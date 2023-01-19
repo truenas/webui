@@ -5,7 +5,7 @@ import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -13,13 +13,13 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('BootEnvironmentListComponent', () => {
   let spectator: Spectator<BootEnvironmentListComponent>;
   let loader: HarnessLoader;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
 
   const createComponent = createComponentFactory({
     component: BootEnvironmentListComponent,
@@ -31,7 +31,7 @@ describe('BootEnvironmentListComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('bootenv.query', fakeBootEnvironmentsDataSource),
       ]),
       mockProvider(DialogService, {
@@ -47,7 +47,7 @@ describe('BootEnvironmentListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   afterEach(() => {

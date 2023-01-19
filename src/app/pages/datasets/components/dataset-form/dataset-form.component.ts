@@ -46,7 +46,7 @@ import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/n
 import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/special-small-block-size-options.contant';
-import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { AppState } from 'app/store';
@@ -874,7 +874,7 @@ export class DatasetFormComponent implements FormConfiguration {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
     protected storageService: StorageService,

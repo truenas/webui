@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -65,7 +65,7 @@ describe('RsyncTaskFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
-      mockWebsocket(),
+      mockWebsocket2(),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
           { username: 'root' },

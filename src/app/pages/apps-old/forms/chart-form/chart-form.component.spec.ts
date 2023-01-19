@@ -2,7 +2,7 @@ import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
@@ -333,7 +333,7 @@ describe('ChartFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('chart.release.create'),
         mockCall('chart.release.update'),
       ]),

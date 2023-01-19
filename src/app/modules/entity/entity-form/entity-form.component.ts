@@ -29,7 +29,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService2, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -83,7 +83,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     // eslint-disable-next-line @typescript-eslint/ban-types
     private fb: UntypedFormBuilder,
     protected entityFormService: EntityFormService,

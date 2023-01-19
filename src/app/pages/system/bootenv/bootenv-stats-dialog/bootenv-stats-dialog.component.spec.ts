@@ -9,7 +9,7 @@ import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -17,7 +17,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialogComponent } from './bootenv-stats-dialog.component';
 
@@ -35,7 +35,7 @@ const poolInstance = {
 describe('BootenvStatsDialogComponent', () => {
   let spectator: Spectator<BootenvStatsDialogComponent>;
   let loader: HarnessLoader;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   const createComponent = createComponentFactory({
     component: BootenvStatsDialogComponent,
     imports: [
@@ -48,7 +48,7 @@ describe('BootenvStatsDialogComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
       ]),
@@ -69,7 +69,7 @@ describe('BootenvStatsDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   function getStatusItems(): { [name: string]: string } {

@@ -7,7 +7,7 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -115,7 +115,7 @@ describe('InterfaceFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
-      mockWebsocket(),
+      mockWebsocket2(),
     ],
   });
 

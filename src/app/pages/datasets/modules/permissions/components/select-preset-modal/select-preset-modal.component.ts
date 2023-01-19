@@ -13,7 +13,7 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class SelectPresetModalComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
     private dialogService: DialogService,

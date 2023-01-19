@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 import { failoverLicensedStatusLoaded, haSettingsUpdated, haStatusLoaded } from './ha-info.actions';
@@ -51,7 +51,7 @@ export class HaInfoEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     @Inject(WINDOW) private window: Window,
   ) { }
 }

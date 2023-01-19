@@ -8,7 +8,7 @@ import { PodDialogData } from 'app/interfaces/pod-select-dialog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ export class PodSelectDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<PodSelectDialogComponent>,
     public appService: ApplicationsService,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
   ) {
     this.selectedAppName = data.appName;

@@ -15,7 +15,7 @@ import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combob
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
-  DialogService, StorageService, UserService, WebSocketService,
+  DialogService, StorageService, UserService, WebSocketService2,
 } from 'app/services';
 
 @UntilDestroy()
@@ -68,7 +68,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private storageService: StorageService,
     private translate: TranslateService,
     private dialog: DialogService,

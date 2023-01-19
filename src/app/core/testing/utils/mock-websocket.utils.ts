@@ -12,7 +12,6 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
@@ -46,7 +45,7 @@ export function mockWebsocket(
 ): (FactoryProvider | ExistingProvider)[] {
   return [
     {
-      provide: WebSocketService,
+      provide: WebSocketService2,
       useFactory: (router: Router, window: Window) => {
         const mockWebsocketService = new MockWebsocketService(router, window);
         (mockResponses || []).forEach((mockResponse) => {
@@ -63,7 +62,7 @@ export function mockWebsocket(
     },
     {
       provide: MockWebsocketService,
-      useExisting: forwardRef(() => WebSocketService),
+      useExisting: forwardRef(() => WebSocketService2),
     },
   ];
 }

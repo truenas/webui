@@ -3,7 +3,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -21,7 +21,7 @@ describe('JobItemComponent', () => {
       MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
     ],
     providers: [
-      mockWebsocket(),
+      mockWebsocket2(),
       provideMockStore({
         selectors: [
           { selector: selectGeneralConfig, value: { timezone: 'UTC' } },

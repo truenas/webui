@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -24,7 +24,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -33,7 +33,7 @@ describe('DeviceFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let saveButton: MatButtonHarness;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   const createComponent = createComponentFactory({
     component: DeviceFormComponent,
     imports: [
@@ -41,7 +41,7 @@ describe('DeviceFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
         mockCall('vm.get_display_devices', []),
@@ -101,7 +101,7 @@ describe('DeviceFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
     saveButton = await loader.getHarness(MatButtonHarness);
     spectator.component.setVirtualMachineId(45);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   describe('CD-ROM', () => {

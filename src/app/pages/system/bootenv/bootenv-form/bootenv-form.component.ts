@@ -15,7 +15,7 @@ import {
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { BootEnvService, WebSocketService } from 'app/services';
+import { BootEnvService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -43,7 +43,7 @@ export class BootEnvironmentFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private bootEnvService: BootEnvService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

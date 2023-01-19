@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import helptext from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
@@ -24,7 +24,7 @@ import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, ModalService, SystemGeneralService, WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -61,7 +61,7 @@ describe('ActiveDirectoryComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Disabled,
         } as DirectoryServicesState),
@@ -98,8 +98,8 @@ describe('ActiveDirectoryComponent', () => {
   });
 
   it('loads and shows active directory config', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('directoryservices.get_state');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('activedirectory.config');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('activedirectory.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -174,7 +174,7 @@ describe('ActiveDirectoryComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('activedirectory.update', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('activedirectory.update', [{
       domainname: 'ad.truenas.com',
       bindname: 'Administrator',
       bindpw: '12345678',
