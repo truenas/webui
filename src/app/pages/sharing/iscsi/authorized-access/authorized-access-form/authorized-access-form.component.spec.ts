@@ -3,15 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('AuthorizedAccessFormComponent', () => {
   let spectator: Spectator<AuthorizedAccessFormComponent>;
@@ -35,7 +35,7 @@ describe('AuthorizedAccessFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('iscsi.auth.create'),
         mockCall('iscsi.auth.update'),
       ]),
@@ -63,7 +63,7 @@ describe('AuthorizedAccessFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.auth.create', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('iscsi.auth.create', [{
       tag: 113,
       user: 'new-user',
       secret: '123456789012',
@@ -104,7 +104,7 @@ describe('AuthorizedAccessFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith(
       'iscsi.auth.update',
       [
         123,

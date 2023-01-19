@@ -5,17 +5,18 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { ChangePasswordDialogComponent } from './change-password-dialog.component';
 
 describe('ChangePasswordDialogComponent', () => {
   let spectator: Spectator<ChangePasswordDialogComponent>;
   let loader: HarnessLoader;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ChangePasswordDialogComponent,
     imports: [
@@ -24,7 +25,7 @@ describe('ChangePasswordDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('auth.check_user', true),
         mockCall('user.update'),
       ]),
@@ -36,7 +37,7 @@ describe('ChangePasswordDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   it('checks current user password and shows an error if it is not correct', async () => {

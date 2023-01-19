@@ -6,7 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket2,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -15,8 +17,8 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('CertificateAcmeAddComponent', () => {
   let spectator: Spectator<CertificateAcmeAddComponent>;
@@ -29,7 +31,7 @@ describe('CertificateAcmeAddComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('certificate.acme_server_choices', {
           'https://acme-staging-v02.api.letsencrypt.org/directory': "Let's Encrypt Staging Directory",
           'https://acme-v02.api.letsencrypt.org/directory': "Let's Encrypt Production Directory",
@@ -68,7 +70,7 @@ describe('CertificateAcmeAddComponent', () => {
 
     expect(labels).toContain('DNS:truenas.com');
     expect(labels).toContain('DNS:truenas.io');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.get_domain_names', [2]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('certificate.get_domain_names', [2]);
   });
 
   it('creates an ACME certificate when form is submitted', async () => {

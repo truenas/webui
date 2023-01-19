@@ -10,7 +10,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +42,7 @@ export class ChangePasswordDialogComponent {
     private dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
     private dialogService: DialogService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private snackbar: SnackbarService,

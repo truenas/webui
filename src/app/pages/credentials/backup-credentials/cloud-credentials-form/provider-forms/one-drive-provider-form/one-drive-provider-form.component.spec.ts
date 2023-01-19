@@ -1,7 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -13,7 +13,8 @@ import {
 import {
   OneDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('OneDriveProviderFormComponent', () => {
   let spectator: Spectator<OneDriveProviderFormComponent>;
@@ -29,7 +30,7 @@ describe('OneDriveProviderFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('cloudsync.onedrive_list_drives', [
           {
             drive_type: OneDriveType.Business,
@@ -86,7 +87,7 @@ describe('OneDriveProviderFormComponent', () => {
       token: 'newtoken',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.onedrive_list_drives', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('cloudsync.onedrive_list_drives', [{
       client_id: 'newclient',
       client_secret: 'newsecret',
       token: 'newtoken',

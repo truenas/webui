@@ -5,22 +5,23 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import helptext from 'app/helptext/services/components/service-s3';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { ServiceS3Component } from './service-s3.component';
 
 describe('ServiceS3Component', () => {
   let spectator: Spectator<ServiceS3Component>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ServiceS3Component,
     imports: [
@@ -28,7 +29,7 @@ describe('ServiceS3Component', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('s3.config', {
           bindip: '0.0.0.0',
           bindport: 9000,
@@ -69,7 +70,7 @@ describe('ServiceS3Component', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('loads and shows current settings for S3 service when form is opened', async () => {

@@ -8,7 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +25,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<ManageDiskSedDialogComponent>,

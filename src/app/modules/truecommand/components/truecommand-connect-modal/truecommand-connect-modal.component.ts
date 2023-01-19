@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
@@ -39,7 +40,7 @@ export class TruecommandConnectModalComponent implements OnInit {
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent>,
     private fb: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) {}
 
   ngOnInit(): void {

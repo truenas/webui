@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -20,9 +20,10 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
-import { DialogService, UserService, WebSocketService } from 'app/services';
+import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('NfsFormComponent', () => {
   const existingShare = {
@@ -44,6 +45,8 @@ describe('NfsFormComponent', () => {
   let spectator: Spectator<NfsFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService2;
+
   const createComponent = createComponentFactory({
     component: NfsFormComponent,
     imports: [
@@ -51,7 +54,7 @@ describe('NfsFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
         mockCall('nfs.config', {
@@ -139,7 +142,7 @@ describe('NfsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
+    expect(websocket.call).toHaveBeenCalledWith('sharing.nfs.create', [{
       path: '/mnt/new',
       comment: 'New share',
       enabled: true,
@@ -152,7 +155,7 @@ describe('NfsFormComponent', () => {
       networks: ['192.168.1.189/24'],
       hosts: ['truenas.com'],
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.query');
+    expect(websocket.call).toHaveBeenCalledWith('service.query');
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 
@@ -199,7 +202,7 @@ describe('NfsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.update', [
+    expect(websocket.call).toHaveBeenCalledWith('sharing.nfs.update', [
       1,
       {
         comment: 'Updated share',
@@ -215,7 +218,7 @@ describe('NfsFormComponent', () => {
         security: [],
       },
     ]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.query');
+    expect(websocket.call).toHaveBeenCalledWith('service.query');
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 
@@ -234,7 +237,7 @@ describe('NfsFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', [ServiceName.Nfs, { silent: false }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.update', [ServiceName.Nfs, { enable: true }]);
+    expect(websocket.call).toHaveBeenCalledWith('service.start', [ServiceName.Nfs, { silent: false }]);
+    expect(websocket.call).toHaveBeenCalledWith('service.update', [ServiceName.Nfs, { enable: true }]);
   });
 });

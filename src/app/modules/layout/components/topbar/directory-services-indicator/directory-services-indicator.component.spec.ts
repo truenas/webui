@@ -6,7 +6,7 @@ import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -17,7 +17,7 @@ import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-indicator.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('DirectoryServicesIndicatorComponent', () => {
   let spectator: Spectator<DirectoryServicesIndicatorComponent>;
@@ -25,7 +25,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
   const createComponent = createComponentFactory({
     component: DirectoryServicesIndicatorComponent,
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Healthy,
           ldap: DirectoryServiceState.Disabled,
@@ -41,7 +41,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
   });
 
   it('loads directory services state and shows an icon if one of the services is enabled', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('directoryservices.get_state');
 
     const iconButton = await loader.getHarness(MatButtonHarness);
     await iconButton.click();

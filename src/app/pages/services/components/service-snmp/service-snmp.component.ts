@@ -10,7 +10,8 @@ import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +69,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private router: Router,

@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('DeleteUserDialogComponent', () => {
   let spectator: Spectator<DeleteUserDialogComponent>;
@@ -28,7 +28,7 @@ describe('DeleteUserDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('user.delete'),
         mockCall('group.query', [
           {
@@ -65,7 +65,7 @@ describe('DeleteUserDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('User deleted');
   });
@@ -80,7 +80,7 @@ describe('DeleteUserDialogComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('group.query', [[['id', '=', 23]]]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('group.query', [[['id', '=', 23]]]);
 
     const deleteGroupCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Delete user primary group `swine`' }));
     await deleteGroupCheckbox.setValue(true);
@@ -88,6 +88,6 @@ describe('DeleteUserDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);
   });
 });

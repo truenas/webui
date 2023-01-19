@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -17,8 +17,9 @@ import {
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import {
-  AppLoaderService, DialogService, WebSocketService,
+  AppLoaderService, DialogService,
 } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('ApiKeyFormDialogComponent', () => {
   let spectator: Spectator<ApiKeyFormDialogComponent>;
@@ -31,7 +32,7 @@ describe('ApiKeyFormDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('api_key.create', { key: 'generated-key' } as ApiKey),
         mockCall('api_key.update', {} as ApiKey),
       ]),
@@ -74,7 +75,7 @@ describe('ApiKeyFormDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(WebSocketService2).call)
       .toHaveBeenCalledWith('api_key.create', [{ name: 'My key', allowlist: [{ method: '*', resource: '*' }] }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, { data: 'generated-key' });
@@ -93,7 +94,7 @@ describe('ApiKeyFormDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: false }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, { data: 'generated-key' });
   });
@@ -113,7 +114,7 @@ describe('ApiKeyFormDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: true }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: true }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, { data: 'generated-key' });
   });
