@@ -170,8 +170,8 @@ export class ServiceNfsComponent implements OnInit {
       hideCheckBox: true,
       buttonMsg: this.translate.instant('Yes'),
       cancelMsg: this.translate.instant('No'),
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
       this.matDialog.open(AddSpnDialogComponent);
