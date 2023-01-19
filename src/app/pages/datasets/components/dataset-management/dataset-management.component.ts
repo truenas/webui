@@ -97,18 +97,25 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   // Flat API
   getLevel = (dataset: DatasetDetails): number => dataset.name.split('/').length - 1;
   isExpandable = (dataset: DatasetDetails): boolean => dataset.children.length > 0;
-  treeControl = new FlatTreeControl<DatasetDetails>(
+  getParent = (dataset: DatasetDetails, datasets: DatasetDetails[]): DatasetDetails => {
+    const datasetSegments = dataset.name.split('/');
+    datasetSegments.pop();
+    return datasets.find((item) => item.name === datasetSegments.join('/'));
+  };
+  treeControl = new FlatTreeControl<DatasetDetails, DatasetDetails>(
     this.getLevel,
     this.isExpandable,
+    { trackBy: (dataset) => dataset },
   );
   treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
     (dataset, level) => ({ ...dataset, level }),
     this.getLevel,
     this.isExpandable,
     () => ([]),
+    this.getParent,
   );
   dataSource: TreeDataSource<DatasetDetails, DatasetDetails>;
-  trackById: TrackByFunction<DatasetDetails> = (_: number, dataset: DatasetDetails): string => dataset.name;
+  trackById: TrackByFunction<DatasetDetails> = (_: number, dataset: DatasetDetails): DatasetDetails => dataset;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset.children.length > 0;
 
   constructor(

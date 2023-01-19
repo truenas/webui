@@ -6,16 +6,16 @@ import {
 } from 'rxjs';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 
-export class TreeDataSource<T, F, K = F> extends DataSource<F> {
-  filterPredicate: (node: T, query: string) => boolean;
+export class TreeDataSource<T, F extends { children?: F[] }, K = F> extends DataSource<F> {
+  filterPredicate: (node: F, query: string) => boolean;
   sortComparer: (a: T, b: T) => number;
   private filterValue: string;
   private readonly _data = new BehaviorSubject<T[]>([]);
-  private readonly _filteredData = new BehaviorSubject<T[]>([]);
   private readonly filterChanged$ = new BehaviorSubject<string>('');
   private readonly disconnect$ = new Subject<void>();
   private readonly _flattenedData = new BehaviorSubject<F[]>([]);
   private readonly _expandedData = new BehaviorSubject<F[]>([]);
+  private readonly _filteredData = new BehaviorSubject<F[]>([]);
 
   get data(): T[] {
     return this._data.value;
@@ -27,9 +27,11 @@ export class TreeDataSource<T, F, K = F> extends DataSource<F> {
   }
 
   private flatNodes(): void {
-    this._flattenedData.next(this.treeFlattener.flattenNodes(
-      this.filterValue ? this._filteredData.value : this.data,
-    ));
+    if (this.filterValue) {
+      this._flattenedData.next(this._filteredData.value);
+    } else {
+      this._flattenedData.next(this.treeFlattener.flattenNodes(this.data));
+    }
     this.treeControl.dataNodes = this._flattenedData.value;
   }
 
@@ -86,12 +88,19 @@ export class TreeDataSource<T, F, K = F> extends DataSource<F> {
           return;
         }
         this.filterValue = filterValue;
-        this._filteredData.next(this.filterData(this.data, filterValue));
+        this._filteredData.next(this.filterData(this.treeFlattener.flattenNodes(this.data), filterValue));
         this.flatNodes();
       });
   }
 
-  filterData(value: T[], query = ''): T[] {
-    return value.filter((node) => this.filterPredicate(node, query));
+  filterData(value: F[], query: string): F[] {
+    return value.filter((item) => {
+      const matches = this.filterPredicate(item, query);
+      if (item.children.length && matches) {
+        item.children = this.filterData(item.children, query);
+      }
+      console.info('filterPredicate', item, query, this.filterPredicate(item, query));
+      return matches;
+    });
   }
 }

@@ -7,6 +7,7 @@ export class TreeFlattener<T, F, K = F> {
     public getLevel: (node: F) => number,
     public isExpandable: (node: F) => boolean,
     public getChildren: (node: T) => Observable<T[]> | T[] | undefined | null,
+    public getParent?: (node: F, nodes: F[]) => F,
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -69,7 +70,9 @@ export class TreeFlattener<T, F, K = F> {
       if (this.isExpandable(node)) {
         currentExpand[this.getLevel(node) + 1] = treeControl.isExpanded(node);
       }
+      console.info('forEach', node, expand, this.isExpandable(node));
     });
+    console.info('expandFlattenedNodes', nodes, results);
     return results;
   }
 }
