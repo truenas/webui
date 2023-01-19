@@ -42,7 +42,7 @@ export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
 
 export interface DynamicFormSchemaUri extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Uri;
-  inputType: string | undefined;
+  inputType?: string;
   tooltip?: string;
   placeholder?: string;
 }
