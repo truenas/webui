@@ -1,107 +1,107 @@
 
-class active_directory:
+class active_Directory:
     title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
-    enableCheckbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
-    domain_input = '//ix-input[@formcontrolname="domainname"]//input'
-    account_input = '//ix-input[@formcontrolname="bindname"]//input'
-    password_input = '//ix-input[@formcontrolname="bindpw"]//input'
-    ca_ou_input = '//ix-input[@formcontrolname="createcomputer"]//input'
-    netbiosname_input = '//ix-input[@formcontrolname="netbiosname"]//input'
+    enable_Checkbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
+    domain_Input = '//ix-input[@formcontrolname="domainname"]//input'
+    account_Input = '//ix-input[@formcontrolname="bindname"]//input'
+    password_Input = '//ix-input[@formcontrolname="bindpw"]//input'
+    ca_Ou_Input = '//ix-input[@formcontrolname="createcomputer"]//input'
+    netbios_Name_Input = '//ix-input[@formcontrolname="netbiosname"]//input'
 
 
-class addCatalog:
+class add_Catalog:
     title = '//h3[text()="Add Catalog"]'
-    catalogName_input = '//ix-input[@formcontrolname="label"]//input'
-    repository_input = '//ix-input[@formcontrolname="repository"]//input'
-    train_input = '//ix-chips[@formcontrolname="preferred_trains"]//input'
-    branch_input = '//ix-input[@formcontrolname="branch"]//input'
+    catalog_Name_Input = '//ix-input[@formcontrolname="label"]//input'
+    repository_Input = '//ix-input[@formcontrolname="repository"]//input'
+    train_Input = '//ix-chips[@formcontrolname="preferred_trains"]//input'
+    branch_Input = '//ix-input[@formcontrolname="branch"]//input'
 
 
-class addDataset:
+class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
-    name_textarea = '//div[@id="name"]//textarea'
-    select_share_type = '//mat-select[@ix-auto="select__Share Type"]'
-    shareTypeSMB_option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
+    name_Textarea = '//div[@id="name"]//textarea'
+    share_Type_Select = '//mat-select[@ix-auto="select__Share Type"]'
+    share_Type_SMB_Option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
 
 
-class addGroup:
+class add_Group:
     title = '//h3[contains(.,"Add Group")]'
-    edit_title = '//h3[contains(.,"Edit Group")]'
-    name_input = '//ix-input[@formcontrolname="name"]//input'
-    gid_input = '//ix-input[@formcontrolname="gid"]//input'
-    allowDuplicateGid_checkbox = '//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox'
+    edit_Title = '//h3[contains(.,"Edit Group")]'
+    name_Input = '//ix-input[@formcontrolname="name"]//input'
+    gid_Input = '//ix-input[@formcontrolname="gid"]//input'
+    allow_Duplicate_Gid_Checkbox = '//ix-checkbox[@formcontrolname="allowDuplicateGid"]//mat-checkbox'
 
 
-class addKerberosKeytab:
+class add_Kerberos_Keytab:
     title = '//h3[text()="Add Kerberos Keytab"]'
-    name_input = '//ix-input[@formcontrolname="name"]//input'
+    name_Input = '//ix-input[@formcontrolname="name"]//input'
     file_input = '//ix-file-input[@formcontrolname="file"]//input'
 
 
-class addUser:
+class add_User:
     title = '//h3[text()="Add User"]'
-    edit_title = '//h3[text()="Edit User"]'
-    fullName_input = '//ix-input[@formcontrolname="full_name"]//input'
-    username_input = '//ix-input[@formcontrolname="username"]//input'
-    password_input = '//ix-input[@formcontrolname="password"]//input'
-    confirm_password_input = '//ix-input[@formcontrolname="password_conf"]//input'
-    select_shell = '//ix-combobox[@formcontrolname="shell"]//input'
-    shell_option = '//mat-option[contains(.,"bash")]'
-    sudo_checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
-    email_input = '//ix-input[@formcontrolname="email"]//input'
-    auxiliaryGroups_select = '//ix-select[@formcontrolname="groups"]//mat-select'
-    rootGroup_option = '//mat-option[contains(.,"root")]'
-    wheelGroup_option = '//mat-option[contains(.,"wheel")]'
-    qatestGroup_option = '//mat-option[contains(.,"qatest")]'
-    home_input = '//ix-explorer[@formcontrolname="home"]//input'
-    password_disabled_slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
-    home_mode_ownerWrite_checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
-    home_mode_ownerRead_checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[2]'
-    home_mode_ownerExec_checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[3]'
-    home_mode_groupRead_checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[1]'
-    home_mode_groupWrite_checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[2]'
-    home_mode_groupExec_checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[3]'
-    home_mode_otherRead_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[1]'
-    home_mode_otherWrite_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[2]'
-    home_mode_otherExec_checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[3]'
-    sshpubkey_textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
+    edit_Title = '//h3[text()="Edit User"]'
+    full_Name_Input = '//ix-input[@formcontrolname="full_name"]//input'
+    username_Input = '//ix-input[@formcontrolname="username"]//input'
+    password_Input = '//ix-input[@formcontrolname="password"]//input'
+    confirm_password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
+    shell_Select = '//ix-combobox[@formcontrolname="shell"]//input'
+    bash_Shell_Option = '//mat-option[contains(.,"bash")]'
+    sudo_Checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
+    email_Input = '//ix-input[@formcontrolname="email"]//input'
+    auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
+    root_Group_Option = '//mat-option[contains(.,"root")]'
+    wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
+    qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
+    home_Input = '//ix-explorer[@formcontrolname="home"]//input'
+    password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
+    home_Mode_Owner_Write_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[1]'
+    home_Mode_Owner_Read_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[2]'
+    home_Mode_Owner_Exec_Checkbox = '(//tr[contains(.,"User")]//mat-checkbox)[3]'
+    home_Mode_Group_Read_Checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[1]'
+    home_Mode_Group_Write_Checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[2]'
+    home_Mode_Group_Exec_Checkbox = '(//tr[contains(.,"Group")]//mat-checkbox)[3]'
+    home_Mode_Other_Read_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[1]'
+    home_Mode_Other_Write_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[2]'
+    home_Mode_Other_Exec_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[3]'
+    sshpubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
 
 
-class addZvol:
+class add_Zvol:
     title = '//h3[text()="Add Zvol"]'
-    name_input = '//ix-input[@formcontrolname="name"]//input'
-    size_input = '//ix-input[@formcontrolname="volsize"]//input'
+    name_Input = '//ix-input[@formcontrolname="name"]//input'
+    size_Input = '//ix-input[@formcontrolname="volsize"]//input'
 
 
 class advanced:
     title = '//h1[contains(.,"Advanced")]'
-    systemDatasetPool_card = '//h3[text()="System Dataset Pool"]'
-    systemDatasetPool_configure_button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
+    system_Dataset_Pool_Card = '//h3[text()="System Dataset Pool"]'
+    system_Dataset_Pool_Configure_Button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
-    def system_datasetPool_pool(pool_name):
+    def system_Dataset_Pool_Pool(pool_name):
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
 
 
 class applications:
     title = '//h1[text()="Applications"]'
-    availableApplications_tab = '//div[contains(text(),"Available Applications")]'
-    manageCatalogs_tab = '//div[contains(text(),"Manage Catalogs")]'
+    available_Applications_Tab = '//div[contains(text(),"Available Applications")]'
+    manage_Catalogs_Tab = '//div[contains(text(),"Manage Catalogs")]'
 
     def card(app_name):
         return f'//mat-card[contains(.,"{app_name}")]'
 
-    def install_button(app_name):
+    def install_Button(app_name):
         return f'//mat-card[contains(.,"{app_name}")]//span[contains(.,"Install")]'
 
 
-class appSetup:
-    appName_input = '//ix-input[contains(.,"Application Name")]//input'
-    password_input = '//ix-input[contains(.,"Password for WebUI")]//input'
-    certificate_select = '//ix-select[contains(.,"Certificate")]//mat-select//div'
-    truenasCertificate_option = '//mat-option[contains(.,"truenas_default")]'
-    rootUser_input = '//ix-input[contains(.,"Root User")]//input'
-    rootPassword_input = '//ix-input[contains(.,"Root Password")]//input'
-    enableFlax_checkbox = '//ix-checkbox[contains(.,"Enable Flax")]//mat-checkbox'
+class app_Setup:
+    app_Name_Input = '//ix-input[contains(.,"Application Name")]//input'
+    password_Input = '//ix-input[contains(.,"Password for WebUI")]//input'
+    certificate_Select = '//ix-select[contains(.,"Certificate")]//mat-select//div'
+    truenas_Certificate_Option = '//mat-option[contains(.,"truenas_default")]'
+    root_User_Input = '//ix-input[contains(.,"Root User")]//input'
+    root_Password_Input = '//ix-input[contains(.,"Root Password")]//input'
+    enable_Flax_Checkbox = '//ix-checkbox[contains(.,"Enable Flax")]//mat-checkbox'
 
     imageRepository_input = '//ix-input[contains(.,"Image repository")]//input'
     imageTag_input = '//ix-input[contains(.,"Image Tag")]//input'
@@ -136,7 +136,7 @@ class button:
     unsetPool = '//button[contains(.,"Unset Pool")]'
     unset = '//button[contains(.,"Unset")]'
     chossePool = '//button[contains(.,"Choose Pool")]'
-    addCatalog = '//button[contains(.,"Add Catalog")]'
+    add_Catalog = '//button[contains(.,"Add Catalog")]'
     launchDockerImage = '//span[contains(.,"Launch Docker Image")]'
     Initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
     Leave_Domain = '//button[contains(.,"Leave Domain")]'
@@ -147,7 +147,7 @@ class certificates:
     csrCard_title = '//h3[contains(text(),"Certificate Signing Requests")]'
     csrAdd_button = '//mat-card[contains(.,"Certificate Signing Requests")]//button[contains(.,"Add")]'
     csr_title = ''
-    email_input = '//input[@ix-auto="input__Email"]'
+    email_Input = '//input[@ix-auto="input__Email"]'
 
 
 class checkbox:
@@ -162,13 +162,13 @@ class checkbox:
 class chossePoolForApp:
     title = '//h1[contains(.,"Choose a pool for Apps")]'
     pool_select = '//ix-select[@formcontrolname="pool"]//mat-select'
-    tankPool_option = '//mat-option[contains(.,"tank")]'
+    tank_pool_option = '//mat-option[contains(.,"tank")]'
 
 
 class dashboard:
     title = '//h1[contains(.,"Dashboard")]'
-    systemInfoCardTitle = '//span[text()="System Information"]'
-    System_Information_Standby_Title = '//span[contains(.,"System Information Standby")]'
+    system_Info_Card_Title = '//span[text()="System Information"]'
+    system_Information_Standby_Title = '//span[contains(.,"System Information Standby")]'
 
 
 class dataset:
@@ -176,7 +176,7 @@ class dataset:
     add_dataset_button = '//button[contains(*/text(),"Add Dataset")]'
     permission_tile = '//h3[text()="Permissions"]'
     permission_edit_button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
-    addZvol_button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
+    add_Zvol_button = '//button[normalize-space(span/text())="Add Zvol (New)"]'
     zfsEncryption_title = '//h3[text()="ZFS Encryption"]'
     zfsEncryption_edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
     lock_button = '//button[contains(.,"Lock")]'
@@ -303,7 +303,7 @@ class global_configuration:
     nameserver2_delete = '//ix-input[contains(.,"Nameserver 2")]//mat-icon[@fonticon="mdi-close-circle"]'
     nameserver3_delete = '//ix-input[contains(.,"Nameserver 3")]//mat-icon[@fonticon="mdi-close-circle"]'
     ipv4_defaultGateway_input = '//ix-input[contains(.,"IPv4 Default Gateway")]//input'
-    hostname_input = '//ix-input[contains(.,"Hostname")]//input'
+    hostname_Input = '//ix-input[contains(.,"Hostname")]//input'
 
 
 class groups:
@@ -329,7 +329,7 @@ class interface:
 
 class ldap():
     title = '//h3[@class="ix-formtitle" and text()="LDAP"]'
-    hostname_input = '//ix-chips[@formcontrolname="hostname"]//input'
+    hostname_Input = '//ix-chips[@formcontrolname="hostname"]//input'
     basedn_input = '//ix-input[@formcontrolname="basedn"]//input'
     binddn_input = '//ix-input[@formcontrolname="binddn"]//input'
     bindpw_input = '//ix-input[@formcontrolname="bindpw"]//input'
@@ -346,7 +346,7 @@ class lockDataset:
 
 class login:
     user_input = '//ix-input[@formcontrolname="username"]//input'
-    password_input = '//ix-input[@formcontrolname="password"]//input'
+    password_Input = '//ix-input[@formcontrolname="password"]//input'
     signin_button = '//button[contains(.,"Log In")]'
     HA_Status_Enable = '//p[text()="HA is enabled."]'
 
@@ -359,7 +359,7 @@ class network:
 
 class pool_manager:
     title = '//div[contains(.,"Pool Manager")]'
-    name_input = '//input[@id="pool-manager__name-input-field"]'
+    name_Input = '//input[@id="pool-manager__name-input-field"]'
     firstDisk_checkbox = '(//mat-checkbox[contains(@id,"pool-manager__disks-sd")])[1]'
     vdevAdd_button = '//button[@id="vdev__add-button"]'
     force_checkbox = '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]'
@@ -375,7 +375,7 @@ class popup:
     smbStart_title = '//h1[text()="Start SMB Service"]'
     enableService_button = '//button[contains(*/text(),"Enable Service")]'
     pleaseWait = '//h6[contains(.,"Please wait")]'
-    active_directory = '//h1[text()="Active Directory"]'
+    active_Directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
     updatingAcl = '//h1[text()="Updating ACL"]'
     settingLdap = '//h1[text()="Setting up LDAP"]'
@@ -430,7 +430,7 @@ class smb:
     addTitle = '//h3[text()="Add SMB"]'
     description_input = '//ix-input[@formcontrolname="comment"]//input'
     path_input = '//ix-explorer[@formcontrolname="path"]//input'
-    name_input = '//ix-input[@formcontrolname="name"]//input'
+    name_Input = '//ix-input[@formcontrolname="name"]//input'
 
 
 class smb_service:

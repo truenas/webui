@@ -33,8 +33,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -46,7 +46,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_certificates(driver):
     """on the Dashboard, click on credentials and certificates."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 7, xpaths.sideMenu.certificates, 'clickable')
@@ -102,8 +102,8 @@ def set_company_info_and_click_next(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').send_keys('QE')
 
-    driver.find_element_by_xpath(xpaths.certificates.email_input).clear()
-    driver.find_element_by_xpath(xpaths.certificates.email_input).send_keys('qa@ixsystems.com')
+    driver.find_element_by_xpath(xpaths.certificates.email_Input).clear()
+    driver.find_element_by_xpath(xpaths.certificates.email_Input).send_keys('qa@ixsystems.com')
 
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Common Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').clear()

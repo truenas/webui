@@ -8,7 +8,6 @@ import xpaths
 from function import (
     wait_on_element,
     wait_on_element_disappear,
-    refresh_if_element_missing,
     get
 )
 from pytest_bdd import (
@@ -50,7 +49,7 @@ def the_login_page_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_the_system_information(driver):
     """you should see the dashboard and the System Information."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('navigate to Storage')
@@ -146,14 +145,14 @@ def navigate_to_system_setting_and_click_misc(driver):
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
     assert wait_on_element(driver, 7, xpaths.advanced.title)
-    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_card)
+    assert wait_on_element(driver, 7, xpaths.advanced.system_Dataset_Pool_Card)
 
 
 @then('click on System Dataset')
 def click_on_system_dataset(driver):
     """click on System Dataset."""
-    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_configure_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.advanced.system_datasetPool_configure_button).click()
+    assert wait_on_element(driver, 7, xpaths.advanced.system_Dataset_Pool_Configure_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.advanced.system_Dataset_Pool_Configure_Button).click()
     rsc.Close_Common_Warning(driver)
 
 
@@ -179,8 +178,8 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_datasetPool_pool('tank'))
-    assert wait_on_element(driver, 5, xpaths.advanced.system_datasetPool_pool('dozer'))
+    assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_Dataset_Pool_Pool('tank'))
+    assert wait_on_element(driver, 5, xpaths.advanced.system_Dataset_Pool_Pool('dozer'))
 
 
 @then('navigate to the dashboard')
@@ -188,7 +187,7 @@ def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
     assert wait_on_element(driver, 5, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('refresh and wait for the second node to be up')
@@ -212,7 +211,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_Initiate_Failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.System_Information_Standby_Title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 20, xpaths.toolbar.ha_enabled)
     assert wait_on_element(driver, 10, xpaths.button.Initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Initiate_Failover).click()
@@ -227,12 +226,12 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
 
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
     assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
-    assert wait_on_element(driver, 120, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward

@@ -35,8 +35,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_apps(driver):
     """on the Dashboard, click on apps."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
     assert wait_on_element(driver, 10, xpaths.applications.title)
@@ -82,8 +82,8 @@ def click_setting_reset_pool(driver):
     assert wait_on_element(driver, 7, xpaths.chossePoolForApp.title)
     assert wait_on_element(driver, 5, xpaths.chossePoolForApp.pool_select, 'clickable')
     driver.find_element_by_xpath(xpaths.chossePoolForApp.pool_select).click()
-    assert wait_on_element(driver, 7, xpaths.chossePoolForApp.tankPool_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.chossePoolForApp.tankPool_option).click()
+    assert wait_on_element(driver, 7, xpaths.chossePoolForApp.tank_pool_option, 'clickable')
+    driver.find_element_by_xpath(xpaths.chossePoolForApp.tank_pool_option).click()
     assert wait_on_element(driver, 7, xpaths.button.choose, 'clickable')
     driver.find_element_by_xpath(xpaths.button.choose).click()
     assert wait_on_element_disappear(driver, 60, xpaths.popup.configuring)

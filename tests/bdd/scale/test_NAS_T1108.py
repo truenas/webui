@@ -36,8 +36,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -49,7 +49,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     """on the Dashboard, click Dataset on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.datasets, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.datasets).click()
 
@@ -68,14 +68,14 @@ def on_the_dataset_page_click_on_the_system_pool_tree_and_click_add_dataset(driv
 @then(parsers.parse('on the Add Dataset slide, input Name "{dataset_name}" and Share Type SMB'))
 def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_name):
     """on the Add Dataset slide, input Name "my_ad_dataset" and Share Type SMB."""
-    assert wait_on_element(driver, 5, xpaths.addDataset.title)
-    assert wait_on_element(driver, 5, xpaths.addDataset.name_textarea, 'inputable')
-    driver.find_element_by_xpath(xpaths.addDataset.name_textarea).clear()
-    driver.find_element_by_xpath(xpaths.addDataset.name_textarea).send_keys(dataset_name)
-    assert wait_on_element(driver, 5, xpaths.addDataset.select_share_type)
-    driver.find_element_by_xpath(xpaths.addDataset.select_share_type).click()
-    assert wait_on_element(driver, 5, xpaths.addDataset.shareTypeSMB_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.addDataset.shareTypeSMB_option).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))

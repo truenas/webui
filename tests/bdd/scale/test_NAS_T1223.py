@@ -35,8 +35,8 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         assert wait_on_element(driver, 5, xpaths.login.user_input, 'inputable')
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
     """on the dashboard, if there is dismiss all notification."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 7, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 7, '//mat-icon[normalize-space(text())="notifications"]')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
         assert wait_on_element(driver, 7, '//button[contains(.,"notifications")]', 'clickable')

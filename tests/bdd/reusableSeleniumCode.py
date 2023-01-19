@@ -51,8 +51,8 @@ def Login_If_Not_On_Dashboard(driver, user, password):
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:

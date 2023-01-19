@@ -34,8 +34,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -47,7 +47,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
@@ -64,8 +64,8 @@ def when_the_storage_page_appears_click_create(driver):
 def on_the_pool_manager_page_enter_tank_for_pool_name(driver):
     """on the Pool Manager page enter tank for pool name,."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
-    assert wait_on_element(driver, 10, xpaths.pool_manager.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('tank')
+    assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('tank')
 
 
 @then('select the a disk and press right arrow under Data VDevs')

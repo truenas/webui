@@ -35,8 +35,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_services(driver):
     """you should be on the dashboard, click on Credentials and then Directory Services.."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 7, xpaths.sideMenu.directory_services, 'clickable')
@@ -71,9 +71,9 @@ def input_hostname_for_hostname(driver, hostname):
     # Verify the LDAP box is starting to load
     assert wait_on_element(driver, 5, xpaths.ldap.title)
     assert wait_on_element(driver, 5, xpaths.directory_services.configureLdap_button, 'clickable')
-    assert wait_on_element(driver, 5, xpaths.ldap.hostname_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.ldap.hostname_input).clear()
-    driver.find_element_by_xpath(xpaths.ldap.hostname_input).send_keys(hostname)
+    assert wait_on_element(driver, 5, xpaths.ldap.hostname_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.ldap.hostname_Input).clear()
+    driver.find_element_by_xpath(xpaths.ldap.hostname_Input).send_keys(hostname)
 
 
 @then(parsers.parse('input "{base_DN}" Base DN'))

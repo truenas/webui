@@ -29,7 +29,7 @@ def test_apps_page__validate_adding_truecommand_as_a_custom_app():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    #depends(request, ['App_readd_pool'], scope='session')
+    depends(request, ['App_readd_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_input)
@@ -37,8 +37,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -50,7 +50,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_apps_on_the_side_menu(driver):
     """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
@@ -70,45 +70,45 @@ def on_the_application_page_click_the_launch_docker_image_button(driver):
 def on_the_launch_docker_image_box_input_an_application_name(driver):
     """on the Launch Docker Image box input an Application Name."""
     assert wait_on_element(driver, 30, '//h3[contains(.,"Launch Docker Image")]')
-    assert wait_on_element(driver, 7, xpaths.appSetup.appName_input)
-    driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('truecommand-test')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.app_Name_Input)
+    driver.find_element_by_xpath(xpaths.app_Setup.app_Name_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.app_Name_Input).send_keys('truecommand-test')
 
 
 @then('under the Container Images input the Image repository And Image Tag')
 def under_the_container_images_input_the_image_repository_and_image_tag(driver):
     """under the Container Images input the Image repository And Image Tag."""
-    assert wait_on_element(driver, 7, xpaths.appSetup.imageRepository_input)
-    driver.find_element_by_xpath(xpaths.appSetup.imageRepository_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.imageRepository_input).send_keys('ixsystems/truecommand')
-    driver.find_element_by_xpath(xpaths.appSetup.imageTag_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.imageTag_input).send_keys('latest')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.imageRepository_input)
+    driver.find_element_by_xpath(xpaths.app_Setup.imageRepository_input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.imageRepository_input).send_keys('ixsystems/truecommand')
+    driver.find_element_by_xpath(xpaths.app_Setup.imageTag_input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.imageTag_input).send_keys('latest')
 
 
 @then('under Port Forwarding click Add input 80 in Container Port and 9004 in Node Port')
 def under_port_forwarding_click_add_input_80_in_container_port_and_9004_in_node_port(driver):
     """under Port Forwarding click Add input 80 in Container Port and 9004 in Node Port."""
-    assert wait_on_element(driver, 7, xpaths.appSetup.addPortForwading_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.appSetup.addPortForwading_button).click()
-    assert wait_on_element(driver, 7, xpaths.appSetup.containerPort_input)
-    driver.find_element_by_xpath(xpaths.appSetup.containerPort_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.containerPort_input).send_keys('80')
-    assert wait_on_element(driver, 7, xpaths.appSetup.nodePort_input)
-    driver.find_element_by_xpath(xpaths.appSetup.nodePort_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.nodePort_input).send_keys('9004')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.addPortForwading_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.app_Setup.addPortForwading_button).click()
+    assert wait_on_element(driver, 7, xpaths.app_Setup.containerPort_input)
+    driver.find_element_by_xpath(xpaths.app_Setup.containerPort_input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.containerPort_input).send_keys('80')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.nodePort_input)
+    driver.find_element_by_xpath(xpaths.app_Setup.nodePort_input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.nodePort_input).send_keys('9004')
 
 
 @then('click Add again input 443 in Container Port and 9005 in Node Port')
 def click_add_again_input_443_in_container_port_and_9005_in_node_port(driver):
     """click Add again input 443 in Container Port and 9005 in Node Port."""
-    assert wait_on_element(driver, 7, xpaths.appSetup.addPortForwading_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.appSetup.addPortForwading_button).click()
-    assert wait_on_element(driver, 7, xpaths.appSetup.containerPort2_input)
-    driver.find_element_by_xpath(xpaths.appSetup.containerPort2_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.containerPort2_input).send_keys('443')
-    assert wait_on_element(driver, 7, xpaths.appSetup.nodePort2_input)
-    driver.find_element_by_xpath(xpaths.appSetup.nodePort2_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.nodePort2_input).send_keys('9005')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.addPortForwading_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.app_Setup.addPortForwading_button).click()
+    assert wait_on_element(driver, 7, xpaths.app_Setup.containerPort2_input)
+    driver.find_element_by_xpath(xpaths.app_Setup.containerPort2_input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.containerPort2_input).send_keys('443')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.nodePort2_input)
+    driver.find_element_by_xpath(xpaths.app_Setup.nodePort2_input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.nodePort2_input).send_keys('9005')
 
 
 @then('click save, wait for the installation to finish')

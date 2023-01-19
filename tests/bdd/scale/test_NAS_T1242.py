@@ -35,8 +35,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_storage_on_the_side_menu(driver):
     """on the dashboard, click Storage on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
@@ -68,8 +68,8 @@ def on_the_storage_page_click_create_pool(driver):
 def on_the_pool_manager_enter_encrypted_poo_for_pool_name(driver):
     """on the Pool Manager enter encrypted_poo for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
-    assert wait_on_element(driver, 10, xpaths.pool_manager.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('encrypted_pool')
+    assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('encrypted_pool')
 
 
 @then('click encryption and confirm popup')

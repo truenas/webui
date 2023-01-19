@@ -37,8 +37,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -50,7 +50,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 5, xpaths.sideMenu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.network).click()
 
@@ -97,7 +97,7 @@ def after_click_on_credentials_on_the_left_sidebar_then_directory_services(drive
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')
-def on_the_directory_services_page_click_setting_on_the_active_directory_card(driver):
+def on_the_directory_services_page_click_setting_on_the_active_Directory_card(driver):
     """on the Directory Services page, click Setting on the Active Directory card."""
     assert wait_on_element(driver, 7, xpaths.directory_services.title)
     assert wait_on_element(driver, 5, xpaths.directory_services.directory_disable_title)
@@ -106,24 +106,24 @@ def on_the_directory_services_page_click_setting_on_the_active_directory_card(dr
 
 
 @then(parsers.parse('on the Active Directory page, input the Domain name "{ad_domain}"'))
-def on_the_active_directory_page_input_the_domain_name_ad_domain(driver, ad_domain):
+def on_the_active_Directory_page_input_the_domain_name_ad_domain(driver, ad_domain):
     """on the Active Directory page, input the Domain name "ad_domain"."""
     global domain
     domain = ad_domain
-    assert wait_on_element(driver, 5, xpaths.active_directory.title)
+    assert wait_on_element(driver, 5, xpaths.active_Directory.title)
     time.sleep(1)
-    assert wait_on_element(driver, 7, xpaths.active_directory.domain_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.active_directory.domain_input).clear()
-    driver.find_element_by_xpath(xpaths.active_directory.domain_input).send_keys(ad_domain)
+    assert wait_on_element(driver, 7, xpaths.active_Directory.domain_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.active_Directory.domain_Input).clear()
+    driver.find_element_by_xpath(xpaths.active_Directory.domain_Input).send_keys(ad_domain)
 
 
 @then(parsers.parse('input the Account name "{ad_user}", the Password "{ad_password}"'))
 def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_password):
     """input the Account name "ad_user", the Password "ad_password"."""
-    driver.find_element_by_xpath(xpaths.active_directory.account_input).clear()
-    driver.find_element_by_xpath(xpaths.active_directory.account_input).send_keys(ad_user)
-    driver.find_element_by_xpath(xpaths.active_directory.password_input).clear()
-    driver.find_element_by_xpath(xpaths.active_directory.password_input).send_keys(ad_password)
+    driver.find_element_by_xpath(xpaths.active_Directory.account_Input).clear()
+    driver.find_element_by_xpath(xpaths.active_Directory.account_Input).send_keys(ad_user)
+    driver.find_element_by_xpath(xpaths.active_Directory.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.active_Directory.password_Input).send_keys(ad_password)
 
 
 @then(parsers.parse('click advanced, and input the Computer Account OU "{ca_ou}"'))
@@ -131,26 +131,26 @@ def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_
     """click advanced, and input the Computer Account OU "ca_ou"."""
     if is_element_present(driver, xpaths.button.advanced_option):
         driver.find_element_by_xpath(xpaths.button.advanced_option).click()
-    assert wait_on_element(driver, 7, xpaths.active_directory.ca_ou_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.active_directory.ca_ou_input).clear()
-    driver.find_element_by_xpath(xpaths.active_directory.ca_ou_input).send_keys(ca_ou)
+    assert wait_on_element(driver, 7, xpaths.active_Directory.ca_Ou_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.active_Directory.ca_Ou_Input).clear()
+    driver.find_element_by_xpath(xpaths.active_Directory.ca_Ou_Input).send_keys(ca_ou)
 
 
 @then('change the netbios for the hostname and check the Enable box then click SAVE')
 def change_the_netbios_for_the_hostname_and_check_the_enable_box_then_click_save(driver, nas_hostname):
     """change the netbios for the hostname and check the Enable box then click SAVE."""
-    driver.find_element_by_xpath(xpaths.active_directory.netbiosname_input).clear()
-    driver.find_element_by_xpath(xpaths.active_directory.netbiosname_input).send_keys(nas_hostname)
-    driver.find_element_by_xpath(xpaths.active_directory.enableCheckbox).click()
+    driver.find_element_by_xpath(xpaths.active_Directory.netbios_Name_Input).clear()
+    driver.find_element_by_xpath(xpaths.active_Directory.netbios_Name_Input).send_keys(nas_hostname)
+    driver.find_element_by_xpath(xpaths.active_Directory.enable_Checkbox).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('the Active Directory setup should successfully save without an error')
-def the_active_directory_setup_should_successfully_save_without_an_error(driver):
+def the_active_Directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.active_directory)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.active_Directory)
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
     assert wait_on_element(driver, 7, '//span[text()="HEALTHY" and @class="value"]')
 

@@ -36,8 +36,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -49,7 +49,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
@@ -66,8 +66,8 @@ def the_pools_page_appears_click_create_pool(driver):
 def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
     """the Pool Manager appears, enter the system for pool name."""
     assert wait_on_element(driver, 7, xpaths.pool_manager.title)
-    assert wait_on_element(driver, 10, xpaths.pool_manager.name_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.pool_manager.name_input).send_keys('system')
+    assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('system')
 
 
 @then('click sdc checkbox, press the right arrow under Data VDevs')
@@ -117,9 +117,9 @@ def navigate_to_system_setting_and_click_advanced_to_open_the_advanced_page_shou
 def click_on_system_dataset_configure_button_and_close_the_popup(driver):
     """click on System Dataset Configure button and close the popup."""
     assert wait_on_element(driver, 7, xpaths.advanced.title)
-    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_card)
-    assert wait_on_element(driver, 7, xpaths.advanced.system_datasetPool_configure_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.advanced.system_datasetPool_configure_button).click()
+    assert wait_on_element(driver, 7, xpaths.advanced.system_Dataset_Pool_Card)
+    assert wait_on_element(driver, 7, xpaths.advanced.system_Dataset_Pool_Configure_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.advanced.system_Dataset_Pool_Configure_Button).click()
     rsc.Close_Common_Warning(driver)
 
 
@@ -140,5 +140,5 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_datasetPool_pool('tank'))
-    assert wait_on_element(driver, 5, xpaths.advanced.system_datasetPool_pool('system'))
+    assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_Dataset_Pool_Pool('tank'))
+    assert wait_on_element(driver, 5, xpaths.advanced.system_Dataset_Pool_Pool('system'))

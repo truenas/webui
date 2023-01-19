@@ -40,8 +40,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -54,7 +54,7 @@ def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
     """on the Dashboard, get the ssh host key."""
     global hostkey_before
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     results = ssh_cmd('ssh-keyscan 127.0.0.1', 'root', root_password, nas_ip)
     assert results['result'], results['output']
     hostkey_before = results['output']
@@ -82,8 +82,8 @@ def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
     assert wait_on_element(driver, 300, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
     assert wait_on_element(driver, 5, xpaths.login.signin_button, 'clickable')
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
 

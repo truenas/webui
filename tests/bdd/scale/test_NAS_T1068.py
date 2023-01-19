@@ -33,8 +33,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -46,7 +46,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
@@ -72,15 +72,15 @@ def the_user_field_should_expand_down_then_click_the_edit_button(driver):
 @when('the User Edit Page should open, change the user shell and click save')
 def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
     """the User Edit Page should open, change the user shell and click save."""
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, xpaths.addUser.select_shell, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.select_shell).click()
-    assert wait_on_element(driver, 10, xpaths.addUser.shell_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.shell_option).click()
+    assert wait_on_element(driver, 5, xpaths.add_User.shell_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.shell_Select).click()
+    assert wait_on_element(driver, 10, xpaths.add_User.bash_Shell_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.bash_Shell_Option).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

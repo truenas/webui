@@ -32,8 +32,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -45,7 +45,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_and_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu and click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
@@ -63,18 +63,18 @@ def the_users_page_should_open_click_on_the_add_button(driver):
 @then('the Users Add Page should open, input the fields Full Name, Username, Password and click Save')
 def the_users_add_page_should_open_input_the_fields_full_name_username_password_and_click_save(driver):
     """the Users Add Page should open."""
-    assert wait_on_element(driver, 7, xpaths.addUser.title)
+    assert wait_on_element(driver, 7, xpaths.add_User.title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     """input in the following fields Full Name, Username, and password."""
-    assert wait_on_element(driver, 7, xpaths.addUser.fullName_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.addUser.fullName_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.fullName_input).send_keys('Eric Turgeon')
-    driver.find_element_by_xpath(xpaths.addUser.username_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.username_input).send_keys('ericbsd')
-    driver.find_element_by_xpath(xpaths.addUser.password_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.password_input).send_keys('testing')
-    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).send_keys('testing')
+    assert wait_on_element(driver, 7, xpaths.add_User.full_Name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_User.full_Name_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.full_Name_Input).send_keys('Eric Turgeon')
+    driver.find_element_by_xpath(xpaths.add_User.username_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.username_Input).send_keys('ericbsd')
+    driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('testing')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

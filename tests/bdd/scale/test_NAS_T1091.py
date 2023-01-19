@@ -35,8 +35,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
@@ -68,11 +68,11 @@ def the_users_page_should_open_expand_the_user_and_click_the_edit_button(driver)
 @then('the User Edit Page should open, change the path of the users Home Directory')
 def the_user_edit_page_should_open_change_the_path_of_the_users_home_directory(driver):
     """the User Edit Page should open, change the path of the users Home Directory."""
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 7, xpaths.addUser.home_input, 'inputable')
-    driver.find_element_by_xpath(xpaths.addUser.home_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.home_input).send_keys('/mnt/tank/ericbsd')
+    assert wait_on_element(driver, 7, xpaths.add_User.home_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank/ericbsd')
 
 
 @then('click save and changes should be saved, the drop-down details pane should show the home directory has changed')

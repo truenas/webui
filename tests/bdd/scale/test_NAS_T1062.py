@@ -34,8 +34,8 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
     assert wait_on_element(driver, 10, xpaths.login.user_input)
     driver.find_element_by_xpath(xpaths.login.user_input).clear()
     driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
     assert wait_on_element(driver, 4, xpaths.login.signin_button, 'clickable')
     driver.find_element_by_xpath(xpaths.login.signin_button).click()
 
@@ -44,7 +44,7 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
     """on the dashboard, verify the Welcome box is loaded, click Close."""
     assert wait_on_element(driver, 5, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()

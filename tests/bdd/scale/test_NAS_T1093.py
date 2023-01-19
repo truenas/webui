@@ -34,8 +34,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -47,7 +47,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
@@ -67,10 +67,10 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
 @then('the User Edit Page should open, change "Disable Password" to Yes and click save')
 def the_user_edit_page_should_open_change_disable_password_to_yes_and_click_save(driver):
     """the User Edit Page should open, change "Disable Password" to Yes and click save."""
-    assert wait_on_element(driver, 10, xpaths.addUser.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
-    assert wait_on_element(driver, 3, xpaths.addUser.password_disabled_slide, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.password_disabled_slide).click()
+    assert wait_on_element(driver, 3, xpaths.add_User.password_Disabled_Slide, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.password_Disabled_Slide).click()
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

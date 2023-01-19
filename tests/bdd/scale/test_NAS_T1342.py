@@ -35,8 +35,8 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
         driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
         assert wait_on_element(driver, 5, xpaths.login.signin_button)
         driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
@@ -48,7 +48,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_apps_on_the_side_menu(driver):
     """on the Dashboard, click Apps on the side menu."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 10, xpaths.sideMenu.apps, 'clickable')
     driver.find_element_by_xpath(xpaths.sideMenu.apps).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
@@ -57,17 +57,17 @@ def on_the_dashboard_click_apps_on_the_side_menu(driver):
 @then('on Application page click on the Available Applications tab')
 def on_application_page_click_on_the_available_applications_tab(driver):
     """on Application page click on the Available Applications tab."""
-    assert wait_on_element(driver, 10, xpaths.applications.availableApplications_tab, 'clickable')
-    driver.find_element_by_xpath(xpaths.applications.availableApplications_tab).click()
+    assert wait_on_element(driver, 10, xpaths.applications.available_Applications_Tab, 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.available_Applications_Tab).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
 
 
 @then('on the minio card click the Install button')
-def on_the_minio_card_click_the_install_button(driver):
+def on_the_minio_card_click_the_install_Button(driver):
     """on the minio card click the Install button."""
     assert wait_on_element(driver, 7, xpaths.applications.card('minio'))
-    assert wait_on_element(driver, 20, xpaths.applications.install_button('minio'), 'clickable')
-    driver.find_element_by_xpath(xpaths.applications.install_button('minio')).click()
+    assert wait_on_element(driver, 20, xpaths.applications.install_Button('minio'), 'clickable')
+    driver.find_element_by_xpath(xpaths.applications.install_Button('minio')).click()
     if is_element_present(driver, xpaths.popup.pleaseWait):
         assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
 
@@ -75,19 +75,19 @@ def on_the_minio_card_click_the_install_button(driver):
 @then('Enter an application name')
 def enter_an_application_name(driver):
     """Enter an application name."""
-    assert wait_on_element(driver, 7, xpaths.appSetup.title('minio'))
-    assert wait_on_element(driver, 7, xpaths.appSetup.appName_input)
-    driver.find_element_by_xpath(xpaths.appSetup.appName_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.appName_input).send_keys('minio-test')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.title('minio'))
+    assert wait_on_element(driver, 7, xpaths.app_Setup.app_Name_Input)
+    driver.find_element_by_xpath(xpaths.app_Setup.app_Name_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.app_Name_Input).send_keys('minio-test')
 
 
 @then('under Minio Configuration set user with password')
 def under_minio_configuration_set_user_with_password(driver):
     """under Minio Configuration set user with password."""
-    driver.find_element_by_xpath(xpaths.appSetup.rootUser_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.rootUser_input).send_keys('minio-user')
-    driver.find_element_by_xpath(xpaths.appSetup.rootPassword_input).clear()
-    driver.find_element_by_xpath(xpaths.appSetup.rootPassword_input).send_keys('minio-pass')
+    driver.find_element_by_xpath(xpaths.app_Setup.root_User_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.root_User_Input).send_keys('minio-user')
+    driver.find_element_by_xpath(xpaths.app_Setup.root_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.root_Password_Input).send_keys('minio-pass')
 
 
 @then('click save, wait for the installation to finish')
