@@ -10,11 +10,11 @@ import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService2 } from 'app/services/index';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(private ws: WebSocketService) {}
+  constructor(private ws: WebSocketService2) {}
 
   getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');

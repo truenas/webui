@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -13,7 +13,7 @@ import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-se
 import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const fakeDataSource: NtpServer[] = [
   {
@@ -48,7 +48,7 @@ const fakeDataSource: NtpServer[] = [
 describe('NtpServerListComponent', () => {
   let spectator: Spectator<NtpServerListComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   let slideIn: IxSlideInService;
 
   const createComponent = createComponentFactory({
@@ -58,7 +58,7 @@ describe('NtpServerListComponent', () => {
       IxTableModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('system.ntpserver.query', fakeDataSource),
         mockCall('system.ntpserver.delete', true),
       ]),
@@ -75,7 +75,7 @@ describe('NtpServerListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
     slideIn = spectator.inject(IxSlideInService);
   });
 

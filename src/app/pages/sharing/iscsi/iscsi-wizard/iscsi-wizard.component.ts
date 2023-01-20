@@ -35,9 +35,10 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { UseforDefaults } from 'app/pages/sharing/iscsi/iscsi-wizard/usefor-defaults.interface';
 import {
-  IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
+  IscsiService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface CreatedItems {
   zvol: string;
@@ -531,7 +532,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   constructor(
     private iscsiService: IscsiService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,

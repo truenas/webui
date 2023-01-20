@@ -12,9 +12,8 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService, WebSocketService2 } from 'app/services';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
-import { WebSocketService2 } from 'app/services/ws2.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.

@@ -11,9 +11,8 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  WebSocketService, IscsiService, AppLoaderService, DialogService,
-} from 'app/services';
+import { IscsiService, AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -83,7 +82,7 @@ export class FibreChannelPortComponent implements OnInit {
   formGroup: UntypedFormGroup;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
     private translate: TranslateService,

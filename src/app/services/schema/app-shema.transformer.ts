@@ -172,6 +172,7 @@ export function transformDictSchemaType(
     type: DynamicFormSchemaType.Dict,
     title: chartSchemaNode.label,
     attrs,
+    tooltip: chartSchemaNode.description,
     editable: schema.editable,
   };
 }
@@ -200,6 +201,7 @@ export function transformListSchemaType(
     type: DynamicFormSchemaType.List,
     items,
     itemsSchema,
+    tooltip: payload.chartSchemaNode.description,
     default: schema.default as unknown[],
     dependsOn: schema.show_if?.map((conditional) => conditional[0]),
   };

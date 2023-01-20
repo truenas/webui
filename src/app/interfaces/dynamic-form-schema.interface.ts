@@ -27,6 +27,7 @@ export interface DynamicFormSchemaBase {
   dependsOn?: string[];
   title?: string;
   required?: boolean;
+  tooltip?: string;
   hidden?: boolean;
   editable?: boolean;
   indent?: boolean;

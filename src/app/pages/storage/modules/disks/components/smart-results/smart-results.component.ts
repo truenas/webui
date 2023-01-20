@@ -7,7 +7,7 @@ import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResult, SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { PageTitleService } from 'app/services/page-title.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
@@ -58,7 +58,7 @@ export class SmartResultsComponent implements EntityTableConfig {
     private aroute: ActivatedRoute,
     private translate: TranslateService,
     private pageTitleService: PageTitleService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) { }
 
   prerequisite(): Promise<boolean> {

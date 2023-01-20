@@ -361,7 +361,7 @@ export class WebSocketService {
     this.call('auth.me').pipe(
       switchMap((loggedInUser: DsUncachedUser) => {
         authenticatedUser = loggedInUser;
-        this.call('user.query', [[['uid', '=', authenticatedUser.pw_uid]]]);
+        return this.call('user.query', [[['uid', '=', authenticatedUser.pw_uid]]]);
       }),
       tap((users: User[]) => {
         if (users?.[0]?.id) {

@@ -11,7 +11,7 @@ import {
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import {
-  WebSocketService,
+  WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -28,7 +28,7 @@ export class GroupDetailsRowComponent {
   @Output() update = new EventEmitter<void>();
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private slideIn: IxSlideInService,
     private router: Router,

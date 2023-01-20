@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -24,7 +24,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -33,7 +33,7 @@ describe('DeviceFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let saveButton: MatButtonHarness;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   const createComponent = createComponentFactory({
     component: DeviceFormComponent,
     imports: [
@@ -41,7 +41,7 @@ describe('DeviceFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
         mockCall('vm.get_display_devices', []),
@@ -101,7 +101,7 @@ describe('DeviceFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
     saveButton = await loader.getHarness(MatButtonHarness);
     spectator.component.setVirtualMachineId(45);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   describe('CD-ROM', () => {
@@ -250,7 +250,7 @@ describe('DeviceFormComponent', () => {
       await form.fillForm({
         Type: 'NIC',
       });
-      spectator.inject(MockWebsocketService).call.mockClear();
+      spectator.inject(MockWebsocketService2).call.mockClear();
 
       const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
       await generateButton.click();
@@ -568,7 +568,7 @@ describe('DeviceFormComponent', () => {
     });
 
     it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-      spectator.inject(MockWebsocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+      spectator.inject(MockWebsocketService2).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
       spectator.component.setVirtualMachineId(46);
 
       const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
