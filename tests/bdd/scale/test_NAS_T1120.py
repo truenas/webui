@@ -176,7 +176,7 @@ def click_on_credentials_then_directory_services_and_disable_ad(driver):
     assert wait_on_element(driver, 7, xpaths.button.leave_Domain, 'clickable')
     driver.find_element_by_xpath(xpaths.button.leave_Domain).click()
 
-    rsc.leave_Domain(driver, aduser, adpassword)
+    rsc.Leave_Domain(driver, aduser, adpassword)
 
     assert wait_on_element_disappear(driver, 120, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 120, xpaths.popup.active_Directory)

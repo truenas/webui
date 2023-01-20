@@ -60,7 +60,7 @@ def Login_If_Not_On_Dashboard(driver, user, password):
         driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
-def leave_domain(driver, user, password):
+def Leave_Domain(driver, user, password):
     assert wait_on_element(driver, 5, '//h1[text()="Leave Domain"]')
     assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="username"]//input', 'inputable')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="username"]//input').send_keys(user)
