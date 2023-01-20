@@ -12,6 +12,7 @@
 </button>
 <mat-menu #userMenu="matMenu">
   <button
+    *ngIf="(loggedInUser$ | async)?.builtin"
     name="settings-change-password"
     mat-menu-item
     (click)="openChangePasswordDialog()"
