@@ -14,7 +14,8 @@ import {
   TopologyCardComponent,
 } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 
-describe('TopologyCardComponent', () => {
+// eslint-disable-next-line jest/no-focused-tests
+describe('TopologyCardComponent3', () => {
   let spectator: Spectator<TopologyCardComponent>;
 
   const createComponent = createComponentFactory({
@@ -55,35 +56,6 @@ describe('TopologyCardComponent', () => {
         disks: storage.disks,
       },
     });
-  });
-
-  it('rendering VDEVs rows', () => {
-    const captions = spectator.queryAll('.vdev-line b');
-    const values = spectator.queryAll('.vdev-line .vdev-value');
-    expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
-    expect(captions).toHaveLength(6);
-    expect(values).toHaveLength(6);
-
-    expect(captions[0]).toHaveText('Data VDEVs');
-    expect(values[0]).toHaveText('6 x MIRROR | 2 wide | 8 TiB');
-
-    // Can be Disk or MIRROR
-    expect(captions[2]).toHaveText('Log VDEVs');
-    expect(values[2]).toHaveText('2 x MIRROR | 2 wide | 2 TiB');
-
-    // Can be DISK Only
-    expect(captions[3]).toHaveText('Cache VDEVs');
-    expect(values[3]).toHaveText('2 x 2 TiB');
-
-    // Can be DISK only but should also be same size or larger than disk sizes used in data VDEVs
-    expect(captions[4]).toHaveText('Spare VDEVs');
-    expect(values[4]).toHaveText('3 x 8 TiB');
-
-    // Redundancy level should match data VDEVs
-    expect(captions[1]).toHaveText('Metadata');
-    expect(values[1]).toHaveText('Redundancy Mismatch');
-    expect(captions[5]).toHaveText('Dedup VDEVs');
-    expect(values[5]).toHaveText('VDEVs not assigned');
   });
 
   it('rendering status icon', () => {
