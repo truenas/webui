@@ -29,26 +29,26 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     depends(request, ['Set_Interface'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
 
-    if not wait_on_element(driver, 3, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 5, xpaths.login.user_input, 'inputable')
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+    if not wait_on_element(driver, 3, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 5, xpaths.login.user_Input, 'inputable')
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 7, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the dashboard, if there is dismiss all notification')
 def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
     """on the dashboard, if there is dismiss all notification."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 7, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 7, '//mat-icon[normalize-space(text())="notifications"]')
     if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
         assert wait_on_element(driver, 7, '//button[contains(.,"notifications")]', 'clickable')

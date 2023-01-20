@@ -30,29 +30,29 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     depends(request, ['Set_Group'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the dashboard click on Credentials and Local Users')
 def on_the_dashboard_click_on_credentials_and_local_users(driver):
     """on the dashboard click on Credentials and Local Users."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 10, xpaths.sideMenu.local_user, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.local_user).click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
 @then('create new qetestuser user add to qatest group')
@@ -61,37 +61,37 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     assert wait_on_element(driver, 10, xpaths.users.title)
     assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
     driver.find_element_by_xpath(xpaths.button.add).click()
-    assert wait_on_element(driver, 7, xpaths.addUser.title)
-    assert wait_on_element(driver, 7, xpaths.addUser.fullName_input)
-    driver.find_element_by_xpath(xpaths.addUser.fullName_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.fullName_input).send_keys('QE user')
-    driver.find_element_by_xpath(xpaths.addUser.username_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.username_input).send_keys('qetestuser')
-    driver.find_element_by_xpath(xpaths.addUser.password_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.password_input).send_keys('testing')
-    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.confirm_password_input).send_keys('testing')
+    assert wait_on_element(driver, 7, xpaths.add_User.title)
+    assert wait_on_element(driver, 7, xpaths.add_User.full_Name_Input)
+    driver.find_element_by_xpath(xpaths.add_User.full_Name_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.full_Name_Input).send_keys('QE user')
+    driver.find_element_by_xpath(xpaths.add_User.username_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.username_Input).send_keys('qetestuser')
+    driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('testing')
 
     # Home directory is needed
-    driver.find_element_by_xpath(xpaths.addUser.home_input).clear()
-    driver.find_element_by_xpath(xpaths.addUser.home_input).send_keys('/mnt/tank/qetestuser')
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.home_Input).send_keys('/mnt/tank/qetestuser')
 
     # The default shell is nologin this test will fail with nologin
-    assert wait_on_element(driver, 5, xpaths.addUser.select_shell, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.select_shell).click()
-    assert wait_on_element(driver, 10, xpaths.addUser.shell_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.shell_option).click()
+    assert wait_on_element(driver, 5, xpaths.add_User.shell_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.shell_Select).click()
+    assert wait_on_element(driver, 10, xpaths.add_User.bash_Shell_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.bash_Shell_Option).click()
 
-    assert wait_on_element(driver, 7, xpaths.addUser.auxiliaryGroups_select, 'clickable')
+    assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
     # scroll down to Auxiliary Groups
-    element = driver.find_element_by_xpath(xpaths.addUser.auxiliaryGroups_select)
+    element = driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select)
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, xpaths.addUser.auxiliaryGroups_select, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.auxiliaryGroups_select).click()
-    assert wait_on_element(driver, 15, xpaths.addUser.qatestGroup_option, 'clickable')
-    driver.find_element_by_xpath(xpaths.addUser.qatestGroup_option).click()
+    assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
+    assert wait_on_element(driver, 15, xpaths.add_User.qatest_Group_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.qatest_Group_Option).click()
 
-    driver.find_element_by_xpath(xpaths.addUser.qatestGroup_option).send_keys(Keys.TAB)
+    driver.find_element_by_xpath(xpaths.add_User.qatest_Group_Option).send_keys(Keys.TAB)
     element = driver.find_element_by_xpath(xpaths.button.save)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
@@ -113,27 +113,27 @@ def verify_user_can_ssh_in_and_cannot_sudo(driver, nas_ip):
 @then('click on Credentials and Local Groups')
 def click_on_credentials_and_local_groups(driver):
     """click on Credentials and Local Groups."""
-    assert wait_on_element(driver, 10, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 10, xpaths.sideMenu.local_group, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.local_group).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 10, xpaths.side_Menu.local_Group, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.local_Group).click()
 
 
 @then('on the Groups page expand QE group and click edit')
 def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     """on the Groups page expand QE group and click edit."""
     assert wait_on_element(driver, 10, xpaths.groups.title)
-    assert wait_on_element(driver, 10, xpaths.groups.qatest_name)
-    assert wait_on_element(driver, 10, xpaths.groups.qatest_expemnd, 'clickable')
-    driver.find_element_by_xpath(xpaths.groups.qatest_expemnd).click()
-    assert wait_on_element(driver, 7, xpaths.groups.edit_button, 'clickable')
-    driver.find_element_by_xpath(xpaths.groups.edit_button).click()
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_Name)
+    assert wait_on_element(driver, 10, xpaths.groups.qatest_Expend, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.qatest_Expend).click()
+    assert wait_on_element(driver, 7, xpaths.groups.edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.groups.edit_Button).click()
 
 
 @then('check the enable sudo box and click save')
 def check_the_enable_sudo_box_and_click_save(driver):
     """check the enable sudo box and click save."""
-    assert wait_on_element(driver, 10, xpaths.addGroup.edit_title)
+    assert wait_on_element(driver, 10, xpaths.add_Group.edit_Title)
     assert wait_on_element(driver, 7, xpaths.checkbox.sudo, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.sudo).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
