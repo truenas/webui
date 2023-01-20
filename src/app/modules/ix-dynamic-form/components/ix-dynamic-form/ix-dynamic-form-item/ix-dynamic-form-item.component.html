@@ -13,7 +13,7 @@
     ></ix-scheduler>
 
     <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
-      <div class="label">
+      <div *ngIf="dynamicSchema.title" class="label">
         <div class="label-wrapper">
           {{ dynamicSchema.title }}
         </div>
