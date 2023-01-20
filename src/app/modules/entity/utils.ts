@@ -271,12 +271,4 @@ export class EntityUtils {
 
     return result;
   }
-
-  snakeToPascal(str: string): string {
-    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
-  }
-
-  snakeToHuman(str: string): string {
-    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  }
 }
