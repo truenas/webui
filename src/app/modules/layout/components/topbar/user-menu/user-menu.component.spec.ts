@@ -44,7 +44,7 @@ describe('UserMenuComponent', () => {
     websocket.loggedInUser$.next(loggedInUser);
   });
 
-  it('has a Change Password menu item if logged in user is local that opens ChangePasswordDialogComponent when opened', async () => {
+  it('has a Change Password menu item if logged in user has { local: true } that opens ChangePasswordDialogComponent when opened', async () => {
     const changePassword = await menu.getItems({ text: /Change Password$/ });
     await changePassword[0].click();
 
