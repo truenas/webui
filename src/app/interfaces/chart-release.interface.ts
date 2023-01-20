@@ -136,7 +136,7 @@ export interface ChartSchemaNodeConf {
   type: ChartSchemaType;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
-  default?: unknown;
+  default?: unknown | unknown[];
   enum?: ChartSchemaEnum[];
   required?: boolean;
   value?: string;

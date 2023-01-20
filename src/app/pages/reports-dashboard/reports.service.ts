@@ -61,17 +61,17 @@ export class ReportsService implements OnDestroy {
         const chartId = (evt.sender as ReportComponent).chartId;
         this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
           next: (reportingData) => {
-            const res = [...reportingData];
+            const processedData = [...reportingData];
 
             const truncateTrailingNullValues = evt.data.truncate;
             if (truncateTrailingNullValues) {
-              res[0].data = this.truncateData(reportingData[0].data as number[][]);
+              processedData[0].data = this.truncateData(reportingData[0].data as number[][]);
             }
 
             const commands = [
               {
                 command: 'optimizeLegend',
-                input: res[0],
+                input: processedData[0],
               },
               {
                 command: 'convertAggregations',

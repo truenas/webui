@@ -7,11 +7,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -20,7 +20,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -69,7 +69,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     FormsModule,
     ImgFallbackModule,
     JobsModule,
-    IxFormsModule,
+    IxDynamicFormModule,
     IxTableModule,
     LayoutModule,
     MatButtonModule,

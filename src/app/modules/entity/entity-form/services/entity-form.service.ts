@@ -162,8 +162,8 @@ export class EntityFormService {
    */
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
     const nodes: ListdirChild[] = [];
-    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((res) => {
-      res.forEach((filesystem) => {
+    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((filesystems) => {
+      filesystems.forEach((filesystem) => {
         const pathArr = filesystem.split('/');
         if (pathArr.length === 1) {
           const node: ListdirChild = {

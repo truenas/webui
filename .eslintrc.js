@@ -228,6 +228,7 @@ module.exports = {
           argsIgnorePattern: "^_$",
           ignoreRestSiblings: true,
         }],
+        "id-denylist": ["error", "res"],
         "@typescript-eslint/ban-types": ["error", {
           extendDefaults: true,
           types: {

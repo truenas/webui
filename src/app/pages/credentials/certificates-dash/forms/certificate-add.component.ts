@@ -730,8 +730,8 @@ export class CertificateAddComponent implements WizardConfiguration {
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-        this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
+      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+        this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, value);
       });
     }
   }
@@ -753,8 +753,8 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.importCsrFields.forEach((field) => this.hideField(field, true));
     this.internalFields.forEach((field) => this.hideField(field, false));
     this.hideField(this.internalFields[2], true);
-    this.getField('csronsys').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.hideField('csrlist', !res);
+    this.getField('csronsys').valueChanges.pipe(untilDestroyed(this)).subscribe((hasCsr) => {
+      this.hideField('csrlist', !hasCsr);
     });
     this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((createType) => {
       this.wizardConfig[2].skip = false;

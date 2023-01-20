@@ -6,14 +6,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import {
   CloudCredentialsFormComponent,
@@ -106,7 +106,7 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     MatMenuModule,
     EntityModule,
     CommonDirectivesModule,
-    IxFormsModule,
+    IxDynamicFormModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
