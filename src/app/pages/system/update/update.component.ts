@@ -25,7 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -93,7 +93,7 @@ export class UpdateComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected matDialog: MatDialog,
     public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService,

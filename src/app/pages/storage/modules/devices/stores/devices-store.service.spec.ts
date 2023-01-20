@@ -6,7 +6,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DevicesState, DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 describe('DevicesStore', () => {
   let spectator: SpectatorService<DevicesStore>;
@@ -14,7 +14,7 @@ describe('DevicesStore', () => {
   const createService = createServiceFactory({
     service: DevicesStore,
     providers: [
-      mockProvider(WebSocketService),
+      mockProvider(WebSocketService2),
     ],
   });
 
@@ -25,7 +25,7 @@ describe('DevicesStore', () => {
 
   it('loads pool topology, disks and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService);
+      const mockWebsocket = spectator.inject(WebSocketService2);
       jest.spyOn(mockWebsocket, 'call').mockImplementation((method) => {
         if (method === 'pool.query') {
           return cold('-b|', {

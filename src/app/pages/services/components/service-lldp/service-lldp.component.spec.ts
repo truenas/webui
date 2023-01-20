@@ -4,18 +4,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { LldpConfig } from 'app/interfaces/lldp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
-import { DialogService, ServicesService, WebSocketService } from 'app/services';
+import { DialogService, ServicesService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('ServiceLldpComponent', () => {
   let spectator: Spectator<ServiceLldpComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ServiceLldpComponent,
     imports: [
@@ -23,7 +24,7 @@ describe('ServiceLldpComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('lldp.config', {
           country: 'country_code1',
           intdesc: true,
@@ -46,7 +47,7 @@ describe('ServiceLldpComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('loads and shows current settings for LLDP service when form is opened', async () => {

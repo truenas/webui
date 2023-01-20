@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from './ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServerTimeService {
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected dialogService: DialogService,
     protected translate: TranslateService,
   ) {}

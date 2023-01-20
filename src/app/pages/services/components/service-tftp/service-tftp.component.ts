@@ -10,8 +10,9 @@ import { TftpConfigUpdate } from 'app/interfaces/tftp-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, UserService, WebSocketService } from 'app/services';
+import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +48,7 @@ export class ServiceTftpComponent implements OnInit {
   readonly hosts$ = this.ws.call('tftp.host_choices').pipe(choicesToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private formBuilder: FormBuilder,

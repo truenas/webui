@@ -10,7 +10,8 @@ import { Group } from 'app/interfaces/group.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +26,7 @@ export class DeleteGroupDialogComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogService: DialogService,

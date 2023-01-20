@@ -21,7 +21,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService, WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -577,7 +577,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   private entityForm: EntityWizardComponent;
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private modalService: ModalService,
     protected loader: AppLoaderService,
     private dialogService: DialogService,

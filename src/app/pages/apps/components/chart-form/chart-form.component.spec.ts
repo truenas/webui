@@ -2,14 +2,16 @@ import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
 } from 'app/interfaces/chart-release.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ChartFormComponent', () => {
@@ -330,10 +332,12 @@ describe('ChartFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      IxDynamicFormModule,
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockProvider(DialogService),
+      mockWebsocket2([
         mockCall('chart.release.create'),
         mockCall('chart.release.update'),
       ]),

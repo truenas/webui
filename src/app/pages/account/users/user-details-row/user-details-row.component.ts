@@ -11,7 +11,7 @@ import {
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import {
-  WebSocketService, DialogService,
+  WebSocketService2, DialogService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -28,7 +28,7 @@ export class UserDetailsRowComponent {
   @Output() update = new EventEmitter<void>();
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,

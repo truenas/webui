@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -12,8 +12,9 @@ import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('AcmednsFormComponent', () => {
   let spectator: Spectator<AcmednsFormComponent>;
@@ -39,7 +40,8 @@ describe('AcmednsFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockProvider(DialogService),
+      mockWebsocket2([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),
         mockCall('acme.dns.authenticator.authenticator_schemas', [{
@@ -84,7 +86,7 @@ describe('AcmednsFormComponent', () => {
     let authenticator: Option[];
     spectator.component.authenticatorOptions$.subscribe((options) => authenticator = options);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
 
     expect(authenticator).toEqual([
       { label: 'cloudflare', value: 'cloudflare' },
@@ -129,7 +131,7 @@ describe('AcmednsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
       name: 'name_new',
       authenticator: 'cloudflare',
       attributes: {
@@ -154,7 +156,7 @@ describe('AcmednsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenLastCalledWith(
       'acme.dns.authenticator.update',
       [
         123,

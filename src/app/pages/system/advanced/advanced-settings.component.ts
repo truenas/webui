@@ -37,7 +37,7 @@ import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tuna
 import {
   DialogService,
   UserService,
-  WebSocketService,
+  WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -200,7 +200,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

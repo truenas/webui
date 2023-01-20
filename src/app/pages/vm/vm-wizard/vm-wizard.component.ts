@@ -42,7 +42,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import {
-  NetworkService, StorageService, SystemGeneralService, WebSocketService,
+  NetworkService, StorageService, SystemGeneralService, WebSocketService2,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -538,7 +538,7 @@ export class VmWizardComponent implements WizardConfiguration {
   private productType = this.systemGeneralService.getProductType();
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     public vmService: VmService,
     public networkService: NetworkService,
     protected loader: AppLoaderService,

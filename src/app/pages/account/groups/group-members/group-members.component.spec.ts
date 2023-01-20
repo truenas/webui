@@ -4,14 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatLegacyListHarness as MatListHarness } from '@angular/material/legacy-list/testing';
 import { Router } from '@angular/router';
-import { createRoutingFactory, SpectatorRouting } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { GroupMembersComponent } from 'app/pages/account/groups/group-members/group-members.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -26,7 +27,7 @@ const fakeGroupDataSource = [{
 describe('GroupMembersComponent', () => {
   let spectator: SpectatorRouting<GroupMembersComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createRoutingFactory({
     component: GroupMembersComponent,
     imports: [
@@ -35,11 +36,12 @@ describe('GroupMembersComponent', () => {
     ],
     declarations: [DualListboxComponent],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as User[]),
         mockCall('group.update'),
       ]),
+      mockProvider(DialogService),
     ],
     params: {
       pk: '1',
@@ -49,7 +51,7 @@ describe('GroupMembersComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('shows current group values when form is being edited', async () => {
