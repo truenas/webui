@@ -69,9 +69,9 @@ export class ReplicationSettingsComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInService.close();
       },
-      error: (res) => {
+      error: (error) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, res);
+        new EntityUtils().handleWsError(this, error);
         this.cdr.markForCheck();
       },
     });

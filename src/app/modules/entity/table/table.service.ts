@@ -29,17 +29,17 @@ export class TableService {
   getData(table: TableComponent): void {
     this.ws.call(table.tableConf.queryCall, table.tableConf.queryCallOption)
       .pipe(untilDestroyed(this))
-      .subscribe((res: unknown[]) => {
+      .subscribe((response: unknown[]) => {
         if (table.tableConf.dataSourceHelper) {
-          res = table.tableConf.dataSourceHelper(res);
+          response = table.tableConf.dataSourceHelper(response);
         }
         if (table.tableConf.afterGetDataExpandable) {
-          res = table.tableConf.afterGetDataExpandable(res);
+          response = table.tableConf.afterGetDataExpandable(response);
         }
         if (table.tableConf.getInOutInfo) {
-          table.tableConf.getInOutInfo(res);
+          table.tableConf.getInOutInfo(response);
         }
-        table.dataSource = res as Record<string, unknown>[];
+        table.dataSource = response as Record<string, unknown>[];
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
             type: EmptyType.NoPageData,
@@ -63,7 +63,7 @@ export class TableService {
         }
 
         if (table.tableConf.afterGetData) {
-          table.tableConf.afterGetData(res);
+          table.tableConf.afterGetData(response);
         }
 
         table.afterGetDataHook$.next();

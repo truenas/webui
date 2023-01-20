@@ -264,9 +264,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
-        this.getFunction.pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res.data) {
-            this.data = res.data as Record<string, unknown>;
+        this.getFunction.pipe(untilDestroyed(this)).subscribe((response) => {
+          if (response.data) {
+            this.data = response.data as Record<string, unknown>;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.data = this.conf.resourceTransformIncomingRestData(this.data) as Record<string, unknown>;
               const extraFieldSets = this.data['extra_fieldsets'] as FieldSet[];
@@ -297,10 +297,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               }
             });
           } else {
-            if (res[0]) {
-              this.wsResponse = res[0] as Record<string, unknown>;
+            if (response[0]) {
+              this.wsResponse = response[0] as Record<string, unknown>;
             } else {
-              this.wsResponse = res;
+              this.wsResponse = response;
             }
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
@@ -463,15 +463,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loaderOpen = true;
       this.submitFunction(value)
         .pipe(untilDestroyed(this)).subscribe({
-          next: (res) => {
+          next: (response) => {
             this.loader.close();
             this.loaderOpen = false;
 
-            if ((this.conf.isEditJob || this.conf.isCreateJob) && (res as Job).error) {
-              if ((res as Job).exc_info && (res as Job).exc_info.extra) {
-                new EntityUtils().handleWsError(this, res as Job);
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && (response as Job).error) {
+              if ((response as Job).exc_info && (response as Job).exc_info.extra) {
+                new EntityUtils().handleWsError(this, response as Job);
               } else {
-                this.dialog.errorReport('Error', (res as Job).error, (res as Job).exception);
+                this.dialog.errorReport('Error', (response as Job).error, (response as Job).exception);
               }
             } else {
               if (this.conf.afterSave) {
@@ -490,7 +490,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   this.conf.afterSubmit(value);
                 }
                 if (this.conf.responseOnSubmit) {
-                  this.conf.responseOnSubmit(res);
+                  this.conf.responseOnSubmit(response);
                 }
               }
               this.modalService.closeSlideIn().then((closed) => {
@@ -500,15 +500,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               });
             }
           },
-          error: (res: WebsocketError) => {
+          error: (error: WebsocketError) => {
             this.loader.close();
             this.loaderOpen = false;
             if (this.conf.errorReport) {
-              this.conf.errorReport(res);
-            } else if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace'))) {
-              new EntityUtils().handleWsError(this, res);
+              this.conf.errorReport(error);
+            } else if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace'))) {
+              new EntityUtils().handleWsError(this, error);
             } else {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleError(this, error);
             }
           },
         });

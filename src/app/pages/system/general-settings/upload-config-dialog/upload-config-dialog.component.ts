@@ -42,8 +42,8 @@ export class UploadConfigDialogComponent {
       dialogRef.close();
       this.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-      dialogRef.componentInstance.setDescription(res.error);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
+      dialogRef.componentInstance.setDescription(job.error);
     });
     dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.ws.token, formData);
   }

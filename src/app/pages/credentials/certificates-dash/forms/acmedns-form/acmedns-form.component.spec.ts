@@ -8,6 +8,7 @@ import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
@@ -33,6 +34,7 @@ describe('AcmednsFormComponent', () => {
     component: AcmednsFormComponent,
     imports: [
       IxFormsModule,
+      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [

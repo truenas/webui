@@ -145,7 +145,7 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   valueHandler(selectedTreeNodes: TreeNode[]): void {
-    const res: string[] = [];
+    const newValue: string[] = [];
     selectedTreeNodes.forEach((node) => {
       if (node === undefined) {
         return;
@@ -158,14 +158,14 @@ export class FormExplorerComponent implements Field, OnInit {
         ) {
           parent = parent.parent;
         }
-        if (!res.includes(parent.data.name)) {
-          res.push(parent.data.name);
+        if (!newValue.includes(parent.data.name)) {
+          newValue.push(parent.data.name);
         }
       } else if (node.isAllSelected && node.data.name !== '') {
-        res.push(node.data.name);
+        newValue.push(node.data.name);
       }
     });
-    this.control.setValue(res);
+    this.control.setValue(newValue);
   }
 
   loadNodeChildren(event: TreeNodeEvent): void {

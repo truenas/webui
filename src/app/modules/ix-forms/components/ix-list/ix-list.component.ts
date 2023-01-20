@@ -19,7 +19,7 @@ export class IxListComponent implements AfterViewInit {
   @Input() itemsSchema: ChartSchemaNode[];
   @Input() isEditMode: boolean;
 
-  @Output() add = new EventEmitter<unknown[]>();
+  @Output() add = new EventEmitter<ChartSchemaNode[]>();
 
   ngAfterViewInit(): void {
     if (!this.isEditMode && this.default?.length > 0) {
@@ -27,7 +27,7 @@ export class IxListComponent implements AfterViewInit {
     }
   }
 
-  addItem(schema?: unknown[]): void {
+  addItem(schema?: ChartSchemaNode[]): void {
     this.add.emit(schema);
   }
 

@@ -12,6 +12,8 @@ export interface DynamicFormSchema {
 }
 
 export type DynamicFormSchemaNode =
+| DynamicFormSchemaUri
+| DynamicFormSchemaCron
 | DynamicFormSchemaInput
 | DynamicFormSchemaSelect
 | DynamicFormSchemaExplorer
@@ -28,6 +30,7 @@ export interface DynamicFormSchemaBase {
   hidden?: boolean;
   editable?: boolean;
   indent?: boolean;
+  default?: unknown[];
 }
 
 export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
@@ -35,6 +38,18 @@ export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   tooltip?: string;
   inputType?: 'password' | 'number';
   placeholder?: string;
+}
+
+export interface DynamicFormSchemaUri extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Uri;
+  inputType?: string;
+  tooltip?: string;
+  placeholder?: string;
+}
+
+export interface DynamicFormSchemaCron extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Cron;
+  tooltip?: string;
 }
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
@@ -64,7 +79,6 @@ export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.List;
   items?: DynamicFormSchemaNode[];
   itemsSchema?: ChartSchemaNode[];
-  default?: unknown[];
 }
 
 export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
@@ -74,7 +88,7 @@ export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
 
 export interface AddListItemEvent {
   array: UntypedFormArray;
-  schema: unknown[];
+  schema: ChartSchemaNode[];
 }
 
 export interface DeleteListItemEvent {

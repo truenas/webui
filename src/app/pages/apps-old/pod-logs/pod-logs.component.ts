@@ -91,12 +91,12 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
-      .pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
-        if (res.msg && res.collection) {
+      .pipe(untilDestroyed(this)).subscribe((event: PodLogEvent) => {
+        if (event.msg && event.collection) {
           this.dialogService.closeAllDialogs();
-          this.dialogService.errorReport('Pod Connection', `${res.collection} ${res.msg}`);
-        } else if (res) {
-          this.podLogs.push(res);
+          this.dialogService.errorReport('Pod Connection', `${event.collection} ${event.msg}`);
+        } else if (event) {
+          this.podLogs.push(event);
           this.scrollToBottom();
         }
       });
@@ -158,13 +158,13 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
         fileName,
       ],
     ).pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
+      next: (download) => {
         this.loader.close();
-        const url = res[1];
+        const url = download[1];
         this.storageService.streamDownloadFile(url, fileName, mimetype)
           .pipe(untilDestroyed(this))
           .subscribe((file: Blob) => {
-            if (res !== null) {
+            if (download !== null) {
               this.storageService.downloadBlob(file, fileName);
             }
           });
