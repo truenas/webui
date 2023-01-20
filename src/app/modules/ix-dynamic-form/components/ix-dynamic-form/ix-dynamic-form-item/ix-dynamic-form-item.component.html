@@ -13,7 +13,18 @@
     ></ix-scheduler>
 
     <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
-      <div class="label">{{ dynamicSchema.title }}</div>
+      <div class="label">
+        <div class="label-wrapper">
+          {{ dynamicSchema.title }}
+        </div>
+
+        <div *ngIf="dynamicSchema.tooltip" class="label-tooltip"><ix-tooltip
+          class="tooltip"
+          [header]="dynamicSchema.title"
+          [message]="dynamicSchema.tooltip"
+        ></ix-tooltip></div>
+
+      </div>
       <ix-dynamic-form-item
         *ngFor="let attr of dynamicSchema.attrs"
         [dynamicSchema]="attr"

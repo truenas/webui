@@ -97,6 +97,7 @@ const afterIntString = [[{
   }] as DynamicFormSchemaInput[],
   controlName: 'variable_dict',
   editable: undefined,
+  tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
 }]] as DynamicFormSchemaDict[][];
@@ -179,6 +180,7 @@ const afterEnum = [[{
   }] as DynamicFormSchemaSelect[],
   controlName: 'variable_dict',
   editable: undefined,
+  tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
 }]] as DynamicFormSchemaDict[][];
