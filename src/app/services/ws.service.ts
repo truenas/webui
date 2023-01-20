@@ -356,15 +356,22 @@ export class WebSocketService {
   }
 
   private getLoggedInUserInformation(): void {
-    let authMeUser: DsUncachedUser;
+    let authenticatedUser: LoggedInUser;
 
     this.call('auth.me').pipe(
       switchMap((loggedInUser: DsUncachedUser) => {
-        authMeUser = loggedInUser;
-        return this.call('user.query', [[['uid', '=', authMeUser.pw_uid]]]);
+        authenticatedUser = loggedInUser;
+        this.call('user.query', [[['uid', '=', authenticatedUser.pw_uid]]]);
       }),
       tap((users: User[]) => {
-        this.loggedInUser$.next({ ...authMeUser, ...users[0] });
+        if (users?.[0]?.id) {
+          authenticatedUser = {
+            ...authenticatedUser,
+            ...users[0],
+          };
+        }
+
+        this.loggedInUser$.next(authenticatedUser);
       }),
       untilDestroyed(this),
     ).subscribe();
