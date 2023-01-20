@@ -10,7 +10,7 @@ import {
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap,
+  filter, map, share, switchMap, tap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,7 +19,9 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
 @Injectable()
@@ -27,8 +29,9 @@ export class WebSocketService {
   onClose$ = new Subject<boolean>();
 
   socket: WebSocket;
-  isConnected$ = new BehaviorSubject(false);
+  isConnected$ = new BehaviorSubject<boolean>(false);
   loggedIn = false;
+  loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
   @LocalStorage() token: string;
   shuttingdown = false;
 
@@ -307,6 +310,7 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
+      this.getLoggedInUserInformation();
 
       // Subscribe to all events by default
       this.send({
@@ -349,5 +353,27 @@ export class WebSocketService {
       this.router.navigate(['/sessions/signin']);
       this.window.location.reload();
     });
+  }
+
+  private getLoggedInUserInformation(): void {
+    let authenticatedUser: LoggedInUser;
+
+    this.call('auth.me').pipe(
+      switchMap((loggedInUser: DsUncachedUser) => {
+        authenticatedUser = loggedInUser;
+        return this.call('user.query', [[['uid', '=', authenticatedUser.pw_uid]]]);
+      }),
+      tap((users: User[]) => {
+        if (users?.[0]?.id) {
+          authenticatedUser = {
+            ...authenticatedUser,
+            ...users[0],
+          };
+        }
+
+        this.loggedInUser$.next(authenticatedUser);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }
