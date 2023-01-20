@@ -67,7 +67,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
       - name: Run tests
-        run: echo 'Setting up temporary environment file...' && ./setup_env.js -i 'headless.local' && jest --coverage --maxWorkers=2 src/app/pages/storage/components/dashboard-pool/topology-card/
+        run: echo 'Setting up temporary environment file...' && ./setup_env.js -i 'headless.local' && yarn jest --coverage --maxWorkers=2 src/app/pages/storage/components/dashboard-pool/topology-card/
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3
         with:
