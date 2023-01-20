@@ -95,8 +95,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   ) {
     super(translate);
     this.configurable = false;
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.isUpdateRunning = res === 'true';
+    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
+      this.isUpdateRunning = isUpdateRunning === 'true';
     });
 
     mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {

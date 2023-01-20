@@ -5,6 +5,7 @@
       <ix-dynamic-form
         [dynamicSection]="dynamicSection"
         [dynamicForm]="form"
+        [isEditMode]="!isNew"
         (addListItem)="addItem($event)"
         (deleteListItem)="deleteItem($event)"
       ></ix-dynamic-form>

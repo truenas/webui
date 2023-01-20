@@ -560,60 +560,60 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
   callGetFunction(skipActions = false): void {
     this.getFunction.pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        this.handleData(res, skipActions);
+      next: (response) => {
+        this.handleData(response, skipActions);
       },
-      error: (res: WebsocketError) => {
+      error: (error: WebsocketError) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, String(res.error) || res.reason);
+        this.configureEmptyTable(EmptyType.Errors, String(error.error) || error.reason);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
-        if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace') && res.hasOwnProperty('type'))) {
-          this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
+        if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace') && error.hasOwnProperty('type'))) {
+          this.dialogService.errorReport(error.type || error.trace.class, error.reason, error.trace.formatted);
         } else {
-          new EntityUtils().handleError(this, res);
+          new EntityUtils().handleError(this, error);
         }
       },
     });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleData(res: any, skipActions = false): Record<string, unknown> {
+  handleData(response: any, skipActions = false): Record<string, unknown> {
     this.expandedRows = document.querySelectorAll('.expanded-row').length;
     const cache = this.expandedElement;
     this.expandedElement = this.expandedRows > 0 ? cache : null;
 
-    if (typeof (res) === 'undefined' || typeof (res.data) === 'undefined') {
-      res = {
-        data: res,
+    if (typeof (response) === 'undefined' || typeof (response.data) === 'undefined') {
+      response = {
+        data: response,
       };
     }
 
-    if (res.data) {
+    if (response.data) {
       if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-        res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        response.data = this.conf.resourceTransformIncomingRestData(response.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-          if (res.data.length > 0 && Object.hasOwnProperty.call(res.data[0], prop) && typeof res.data[0][prop] === 'string') {
-            (res.data as Record<string, string>[]).forEach((row) => {
+          if (response.data.length > 0 && Object.hasOwnProperty.call(response.data[0], prop) && typeof response.data[0][prop] === 'string') {
+            (response.data as Record<string, string>[]).forEach((row) => {
               row[prop] = new EntityUtils().parseDow(row[prop]);
             });
           }
         }
       }
     } else if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
-      res = this.conf.resourceTransformIncomingRestData(res);
+      response = this.conf.resourceTransformIncomingRestData(response);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
-        if (res.length > 0 && Object.hasOwnProperty.call(res[0], prop) && typeof res[0][prop] === 'string') {
-          (res as Record<string, string>[]).forEach((row) => {
+        if (response.length > 0 && Object.hasOwnProperty.call(response[0], prop) && typeof response[0][prop] === 'string') {
+          (response as Record<string, string>[]).forEach((row) => {
             row[prop] = new EntityUtils().parseDow(row[prop]);
           });
         }
       }
     }
 
-    this.rows = this.generateRows(res);
+    this.rows = this.generateRows(response);
     if (!skipActions) {
       this.storageService.tableSorter(this.rows, this.sortKey, 'asc');
     }
@@ -660,7 +660,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     this.showSpinner = false;
 
-    return res;
+    return response;
   }
 
   patchCurrentRows(
@@ -696,21 +696,21 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  generateRows(res: any): Row[] {
+  generateRows(response: any): Row[] {
     let rows: Row[];
     if (this.loaderOpen) {
       this.loader.close();
       this.loaderOpen = false;
     }
 
-    if (res.data) {
-      if (res.data.result) {
-        rows = new EntityUtils().flattenData(res.data.result) as Row[];
+    if (response.data) {
+      if (response.data.result) {
+        rows = new EntityUtils().flattenData(response.data.result) as Row[];
       } else {
-        rows = new EntityUtils().flattenData(res.data) as Row[];
+        rows = new EntityUtils().flattenData(response.data) as Row[];
       }
     } else {
-      rows = new EntityUtils().flattenData(res) as Row[];
+      rows = new EntityUtils().flattenData(response) as Row[];
     }
 
     rows.forEach((row) => {
@@ -862,8 +862,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
         hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
         buttonMsg: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
-      }).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
+      }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+        if (confirmed) {
           this.toDeleteRow = item;
           this.delete(id);
         }
@@ -995,8 +995,8 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       message: multiDeleteMsg,
       hideCheckBox: false,
       buttonMsg: this.translate.instant('Delete'),
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
 

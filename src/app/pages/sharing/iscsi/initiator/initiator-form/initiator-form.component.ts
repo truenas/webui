@@ -87,8 +87,8 @@ export class InitiatorFormComponent implements OnInit {
 
   getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        this.connectedInitiators = _.unionBy(res, (item) => item.initiator && item.initiator_addr);
+      next: (sessions) => {
+        this.connectedInitiators = _.unionBy(sessions, (item) => item.initiator && item.initiator_addr);
       },
       error: (err) => {
         new EntityUtils().handleWsError(this, err);
@@ -114,8 +114,8 @@ export class InitiatorFormComponent implements OnInit {
       }
     });
 
-    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.connectedInitiatorsDisabled = res === 'DISABLED';
+    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.connectedInitiatorsDisabled = status === 'DISABLED';
     });
 
     if (this.pk) {

@@ -8,6 +8,8 @@ import {
   DynamicFormSchemaSelect,
   DynamicFormSchemaList,
   DynamicFormSchemaIpaddr,
+  DynamicFormSchemaCron,
+  DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -218,6 +220,49 @@ const afterBoolean = [[{
   type: 'checkbox',
 }]] as DynamicFormSchemaCheckbox[][];
 
+const beforeUri = [{
+  variable: 'variable_uri',
+  label: 'Label Uri',
+  schema: {
+    type: 'uri',
+    default: 'https://google.com',
+  },
+}] as ChartSchemaNode[];
+
+const afterUri = [[{
+  controlName: 'variable_uri',
+  editable: undefined,
+  required: undefined,
+  inputType: undefined,
+  title: 'Label Uri',
+  tooltip: undefined,
+  type: 'uri',
+}]] as DynamicFormSchemaUri[][];
+
+const beforeCron = [{
+  variable: 'variable_cron',
+  label: 'Label Cron',
+  schema: {
+    type: 'cron',
+    default: {
+      hour: '*',
+      minute: '*',
+      month: '*',
+      dom: '*',
+      dow: '*',
+    },
+  },
+}] as ChartSchemaNode[];
+
+const afterCron = [[{
+  controlName: 'variable_cron',
+  editable: undefined,
+  required: undefined,
+  title: 'Label Cron',
+  tooltip: undefined,
+  type: 'cron',
+}]] as DynamicFormSchemaCron[][];
+
 const beforePath = [{
   variable: 'variable_path',
   label: 'Label Path',
@@ -240,7 +285,9 @@ const beforeList = [{
   label: 'Label List',
   schema: {
     type: 'list',
-    default: [],
+    default: [
+      { item_list_1: 'prefilled_1', item_list_2: 2 },
+    ],
     items: [
       {
         variable: 'item_list_1',
@@ -286,6 +333,9 @@ const afterList = [[{
     { label: '', schema: { type: 'int' }, variable: 'item_list_2' },
   ],
   title: 'Label List',
+  default: [
+    { item_list_1: 'prefilled_1', item_list_2: 2 },
+  ],
   type: 'list',
 }]] as DynamicFormSchemaList[][];
 
@@ -349,6 +399,18 @@ describe('AppSchemaService', () => {
         expect(transformed).toEqual(afterPath[idx]);
       });
     });
+    beforeCron.forEach((item, idx) => {
+      it('converts schema with "cron" type', () => {
+        const transformed = service.transformNode(item, true, false);
+        expect(transformed).toEqual(afterCron[idx]);
+      });
+    });
+    beforeUri.forEach((item, idx) => {
+      it('converts schema with "uri" type', () => {
+        const transformed = service.transformNode(item, true, false);
+        expect(transformed).toEqual(afterUri[idx]);
+      });
+    });
     beforeList.forEach((item, idx) => {
       it('converts schema with "list" type', () => {
         const transformed = service.transformNode(item, true, false);
@@ -396,6 +458,34 @@ describe('AppSchemaService', () => {
     });
     it('creates form for "boolean" without default value', () => {
       expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
+    });
+
+    beforeUri.forEach((item) => {
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
+    });
+
+    it('creates form for "uri" with default value', () => {
+      expect(dynamicForm.controls['variable_uri'].value).toBe('https://google.com');
+    });
+
+    beforeCron.forEach((item) => {
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
+    });
+
+    it('creates form for "cron" with default value', () => {
+      expect(dynamicForm.controls['variable_cron'].value).toBe('* * * * *');
     });
 
     beforeBoolean.forEach((item) => {
@@ -459,6 +549,13 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
       expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null })).toEqual({ a: { d: 'test' } });
+      expect(service.serializeFormValue('* * * * *')).toEqual({
+        hour: '*',
+        minute: '*',
+        month: '*',
+        dom: '*',
+        dow: '*',
+      });
     });
   });
 
@@ -468,6 +565,13 @@ describe('AppSchemaService', () => {
         noObjectList: ['test1', 'test2', 'test3'],
         objectList: [{ nestedList: ['test4', 'test5'] }],
         object: { nestedList: ['test6', 'test7'] },
+        cron_test: {
+          hour: '*',
+          minute: '*',
+          month: '*',
+          dom: '*',
+          dow: '*',
+        },
       };
       const form = new FormGroup({
         noObjectList: new FormArray([
@@ -489,12 +593,14 @@ describe('AppSchemaService', () => {
             new FormControl({ key3: '' }),
           ]),
         }),
+        cron_test: new FormControl('* * * * *'),
       });
       const result = service.restoreKeysFromFormGroup(config, form);
       expect(result).toEqual({
         noObjectList: [{ key1: 'test1' }, { key1: 'test2' }, { key1: 'test3' }],
         objectList: [{ nestedList: [{ key2: 'test4' }, { key2: 'test5' }] }],
         object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },
+        cron_test: '* * * * *',
       });
     });
   });

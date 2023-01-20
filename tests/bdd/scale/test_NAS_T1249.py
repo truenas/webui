@@ -63,9 +63,11 @@ def on_the_storage_dashboard_click_the_on_exportdisconnect_button_of_encrypted_p
 def on_the_exportdisconnect_pool_box_click_the_destroy_and_confirm_checkboxes(driver):
     """on the Export/disconnect pool box click the Destroy and Confirm checkboxes."""
     assert wait_on_element(driver, 7, xpaths.exportDisconnectPool.title)
+    # Sometime there is a Please waits popup in the way.we need to make sure it is gone clicking
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
     assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.destroy_checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.exportDisconnectPool.destroy_checkbox).click()
-    assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.confirm_checkbox, 'clickable')
+
     driver.find_element_by_xpath(xpaths.exportDisconnectPool.confirm_checkbox).click()
 
 
@@ -74,7 +76,6 @@ def enter_the_pool_name_to_confirm_and_click_exportdisconnect(driver):
     """enter the pool name to confirm, and click Export/Disconnect."""
     assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.poolName_input, 'inputable')
     driver.find_element_by_xpath(xpaths.exportDisconnectPool.poolName_input).click()
-    # driver.find_element_by_xpath(xpaths.exportDisconnectPool.poolName_input).clear()
     driver.find_element_by_xpath(xpaths.exportDisconnectPool.poolName_input).send_keys("encrypted_pool")
     assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.exportDisconnect_button, 'clickable')
     driver.find_element_by_xpath(xpaths.exportDisconnectPool.exportDisconnect_button).click()

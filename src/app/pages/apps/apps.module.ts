@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
@@ -43,7 +43,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     PageHeaderModule,
     MatButtonModule,
     TranslateModule,
-    IxFormsModule,
+    IxDynamicFormModule,
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,

@@ -2,11 +2,11 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { AclType } from 'app/enums/acl-type.enum';
-import { Acl, AclTemplateByPath, AclTemplateСreateParams } from 'app/interfaces/acl.interface';
+import { Acl, AclTemplateByPath, AclTemplateCreateParams } from 'app/interfaces/acl.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -85,7 +85,7 @@ export class SaveAsPresetModalComponent implements OnInit {
 
   onSubmit(): void {
     this.acl.acl.forEach((acl) => delete acl.who);
-    const payload: AclTemplateСreateParams = {
+    const payload: AclTemplateCreateParams = {
       name: this.form.value.presetName,
       acltype: this.acl.acltype,
       acl: this.acl.acl,
@@ -96,6 +96,20 @@ export class SaveAsPresetModalComponent implements OnInit {
       next: () => {
         this.loader.close();
         this.dialogRef.close();
+      },
+      error: (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
+    });
+  }
+
+  onRemovePreset(preset: AclTemplateByPath): void {
+    this.loader.open();
+    this.ws.call('filesystem.acltemplate.delete', [preset.id]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loadOptions();
+        this.loader.close();
       },
       error: (err) => {
         this.loader.close();
