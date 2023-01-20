@@ -19,7 +19,7 @@ const loggedInUser = {
   pw_dir: '/root',
   pw_shell: '/usr/bin/zsh',
   id: 1,
-  builtin: true,
+  local: true,
 };
 
 describe('UserMenuComponent', () => {
