@@ -7,6 +7,7 @@ import { IxDynamicFormItemComponent } from 'app/modules/ix-dynamic-form/componen
 import { IxDynamicFormComponent } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
     ReactiveFormsModule,
     CastModule,
     SchedulerModule,
+    TooltipModule,
   ],
   exports: [
     IxFormsModule,

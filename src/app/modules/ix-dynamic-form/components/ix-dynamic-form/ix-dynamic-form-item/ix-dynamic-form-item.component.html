@@ -17,13 +17,14 @@
         <div class="label-wrapper">
           {{ dynamicSchema.title }}
         </div>
-        
-        <div *ngIf="dynamicSchema.tooltip" class="label-tooltip"><ix-tooltip
-          class="tooltip"
-          [header]="dynamicSchema.title"
-          [message]="dynamicSchema.tooltip"
-        ></ix-tooltip></div>
 
+        <div *ngIf="dynamicSchema.tooltip" class="label-tooltip">
+          <ix-tooltip
+            class="tooltip"
+            [header]="dynamicSchema.title"
+            [message]="dynamicSchema.tooltip"
+          ></ix-tooltip>
+        </div>
       </div>
       <ix-dynamic-form-item
         *ngFor="let attr of dynamicSchema.attrs"
