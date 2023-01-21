@@ -92,6 +92,13 @@ export class DatasetUnlockComponent implements OnInit {
         this.form.controls.datasets.enable();
       }
     });
+
+    this.form.controls.file.valueChanges.pipe(
+      switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
+      untilDestroyed(this),
+    ).subscribe((key) => {
+      this.form.controls.key.setValue(key);
+    });
   }
 
   getEncryptionSummary(): void {
