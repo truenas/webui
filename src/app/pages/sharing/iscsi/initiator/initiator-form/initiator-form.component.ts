@@ -100,9 +100,9 @@ export class InitiatorFormComponent implements OnInit {
     this.getConnectedInitiators();
 
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+      if (params.pk) {
+        this.pk = params.pk;
+        this.customFilter[0][0].push(parseInt(params.pk, 10));
       }
     });
 
@@ -114,7 +114,7 @@ export class InitiatorFormComponent implements OnInit {
       }
     });
 
-    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.formGroup.controls.initiators.statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';
     });
 
@@ -134,7 +134,7 @@ export class InitiatorFormComponent implements OnInit {
               }
             });
             if (groups[0]['initiators'].length === 0) {
-              this.formGroup.controls['all'].setValue(true);
+              this.formGroup.controls.all.setValue(true);
             }
           },
           error: (err) => {

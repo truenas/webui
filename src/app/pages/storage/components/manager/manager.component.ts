@@ -324,8 +324,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       error: this.handleError,
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['poolId']) {
-        this.pk = parseInt(params['poolId'], 10);
+      if (params.poolId) {
+        this.pk = parseInt(params.poolId, 10);
         this.isNew = false;
       }
     });
