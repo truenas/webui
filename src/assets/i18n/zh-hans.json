@@ -6,6 +6,7 @@
   "By default, all data disks are created with the amount of swap specified. Changing the value does not affect the amount of swap on existing disks, only disks added after the change. Does not affect log or cache devices as they are created without swap.": "",
   "Edit Associated Target": "",
   "Manual Selection": "",
+  "No logs": "",
   "Save Selection": "",
   "Storage Settings": "",
   "Submit": "",

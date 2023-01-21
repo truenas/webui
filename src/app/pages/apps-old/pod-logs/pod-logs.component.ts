@@ -43,7 +43,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   protected tailLines = 500;
   podLogSubscriptionId: string = null;
   podLogSubName = '';
-  areLoadingPodLogs = false;
+  isLoadingPodLogs = false;
 
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
@@ -83,7 +83,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
     this.podLogs = [];
-    this.areLoadingPodLogs = true;
+    this.isLoadingPodLogs = true;
 
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
@@ -95,15 +95,15 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
       .pipe(untilDestroyed(this)).subscribe({
         next: (podLog: PodLogEvent) => {
-          this.areLoadingPodLogs = false;
+          this.isLoadingPodLogs = false;
 
-          if (podLog) {
+          if (podLog && podLog.msg !== 'nosub') {
             this.podLogs.push(podLog);
             this.scrollToBottom();
           }
         },
         error: (error) => {
-          this.areLoadingPodLogs = true;
+          this.isLoadingPodLogs = false;
           if (error.reason) {
             this.dialogService.errorReport('Error', error.reason);
           }
