@@ -6,9 +6,12 @@ import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
+  combineLatest,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
-import { filter, share, switchMap } from 'rxjs/operators';
+import {
+  filter, map, share, switchMap, tap,
+} from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -16,7 +19,9 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
 @Injectable()
@@ -24,8 +29,9 @@ export class WebSocketService {
   onClose$ = new Subject<boolean>();
 
   socket: WebSocket;
-  isConnected$ = new BehaviorSubject(false);
+  isConnected$ = new BehaviorSubject<boolean>(false);
   loggedIn = false;
+  loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
   @LocalStorage() token: string;
   shuttingdown = false;
 
@@ -286,7 +292,12 @@ export class WebSocketService {
     const params: LoginParams = otpToken ? [username, password, otpToken] : [username, password];
 
     return new Observable((observer: Subscriber<boolean>) => {
-      this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
+      combineLatest([
+        this.call('auth.login', params),
+      ]).pipe(
+        map(([wsResponse]) => wsResponse),
+        untilDestroyed(this),
+      ).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });
     });
@@ -299,6 +310,7 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
+      this.getLoggedInUserInformation();
 
       // Subscribe to all events by default
       this.send({
@@ -341,5 +353,27 @@ export class WebSocketService {
       this.router.navigate(['/sessions/signin']);
       this.window.location.reload();
     });
+  }
+
+  private getLoggedInUserInformation(): void {
+    let authenticatedUser: LoggedInUser;
+
+    this.call('auth.me').pipe(
+      switchMap((loggedInUser: DsUncachedUser) => {
+        authenticatedUser = loggedInUser;
+        return this.call('user.query', [[['uid', '=', authenticatedUser.pw_uid]]]);
+      }),
+      tap((users: User[]) => {
+        if (users?.[0]?.id) {
+          authenticatedUser = {
+            ...authenticatedUser,
+            ...users[0],
+          };
+        }
+
+        this.loggedInUser$.next(authenticatedUser);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

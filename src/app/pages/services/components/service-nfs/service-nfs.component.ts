@@ -2,17 +2,21 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { rangeValidator, portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -22,6 +26,8 @@ import { DialogService, WebSocketService } from 'app/services';
 })
 export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
+  hasNfsStatus: boolean;
+  adHealth: DirectoryServiceState;
 
   form = this.fb.group({
     allow_nonroot: [false],
@@ -54,18 +60,20 @@ export class ServiceNfsComponent implements OnInit {
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
     this.isFormLoading = true;
     this.loadConfig();
+    this.loadState();
     this.setFieldDependencies();
   }
 
@@ -134,6 +142,40 @@ export class ServiceNfsComponent implements OnInit {
       } else {
         this.form.controls.userd_manage_gids.enable();
       }
+    });
+  }
+
+  private loadState(): void {
+    forkJoin([
+      this.ws.call('kerberos.keytab.has_nfs_principal'),
+      this.ws.call('directoryservices.get_state'),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([nfsStatus, { activedirectory }]) => {
+        this.hasNfsStatus = nfsStatus;
+        this.adHealth = activedirectory;
+      });
+  }
+
+  get isAddSpnVisible(): boolean {
+    if (!this.hasNfsStatus && this.form.value.v4_krb && this.adHealth === DirectoryServiceState.Healthy) {
+      return true;
+    }
+    return false;
+  }
+
+  addSpn(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Add Kerberos SPN Entry'),
+      message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
+      hideCheckBox: true,
+      buttonMsg: this.translate.instant('Yes'),
+      cancelMsg: this.translate.instant('No'),
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      this.matDialog.open(AddSpnDialogComponent);
     });
   }
 }

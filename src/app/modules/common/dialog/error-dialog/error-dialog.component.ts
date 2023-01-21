@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ export class ErrorDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     public storage: StorageService,
   ) {}
 
@@ -62,8 +62,7 @@ export class ErrorDialogComponent {
 
   downloadLogs(): void {
     this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        const url = res[1];
+      next: ([, url]) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {

@@ -13,7 +13,7 @@ import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService2 } from 'app/services';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;
@@ -45,7 +45,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private sorter: StorageService,
   ) {
@@ -196,8 +196,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     (disksWithTestResults as unknown as StorageDashboardDisk[]).forEach((diskWithResults) => {
       const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
       const tests = diskWithResults?.tests ?? [];
-      const testsStillRunning = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-      const testsStillFailed = tests.filter((test) => test.status !== SmartTestResultStatus.Failed);
+      const testsStillRunning = tests.filter((test) => test.status === SmartTestResultStatus.Running);
+      const testsStillFailed = tests.filter((test) => test.status === SmartTestResultStatus.Failed);
       testDisk.smartTestsRunning = testsStillRunning.length;
       testDisk.smartTestsFailed = testsStillFailed.length;
     });

@@ -6,12 +6,13 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { DialogService } from 'app/services';
 import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
 
 describe('BootPoolReplaceDialogComponent', () => {
@@ -25,7 +26,7 @@ describe('BootPoolReplaceDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('disk.get_unused', [
           {
             name: 'sdb',
@@ -35,6 +36,7 @@ describe('BootPoolReplaceDialogComponent', () => {
         mockJob('boot.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(FormErrorHandlerService),
+      mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),

@@ -6,13 +6,12 @@ import { Observable } from 'rxjs';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { ValidationService, WebSocketService } from 'app/services';
+import { ValidationService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './ntp-server-form.component.html',
-  styleUrls: ['./ntp-server-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerFormComponent {
@@ -41,7 +40,7 @@ export class NtpServerFormComponent {
     private slideInService: IxSlideInService,
     private validationService: ValidationService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,

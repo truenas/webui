@@ -38,15 +38,14 @@ import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restar
 import {
   AppLoaderService,
   DialogService,
-  WebSocketService,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './smb-form.component.html',
-  styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbFormComponent implements OnInit {
@@ -150,7 +149,7 @@ export class SmbFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private mdDialog: MatDialog,
     private dialog: DialogService,
     private slideInService: IxSlideInService,

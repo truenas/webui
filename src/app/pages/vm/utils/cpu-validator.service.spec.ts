@@ -1,16 +1,16 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 describe('CpuValidatorService', () => {
   let spectator: SpectatorService<CpuValidatorService>;
   const createService = createServiceFactory({
     service: CpuValidatorService,
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('vm.maximum_supported_vcpus', 7),
       ]),
     ],
@@ -36,7 +36,7 @@ describe('CpuValidatorService', () => {
           message: 'The product of vCPUs, cores and threads must not exceed 7 on this system.',
         },
       });
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.maximum_supported_vcpus');
+      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('vm.maximum_supported_vcpus');
     });
 
     it('only loads maximum supported vcpus once', () => {
@@ -44,7 +44,7 @@ describe('CpuValidatorService', () => {
       spectator.service.createValidator();
       spectator.service.createValidator();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledTimes(1);
     });
 
     it('returns a validator that does not return an error when product of '

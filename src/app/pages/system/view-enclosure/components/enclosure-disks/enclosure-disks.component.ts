@@ -54,7 +54,7 @@ import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
@@ -173,7 +173,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected store$: Store<AppState>,
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,

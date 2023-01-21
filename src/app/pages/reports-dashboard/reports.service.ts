@@ -12,7 +12,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { CoreService } from 'app/services/core-service/core.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -46,7 +46,7 @@ export class ReportsService implements OnDestroy {
   private hasTarget = false;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private core: CoreService,
     private store$: Store<AppState>,
   ) {
@@ -61,17 +61,17 @@ export class ReportsService implements OnDestroy {
         const chartId = (evt.sender as ReportComponent).chartId;
         this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
           next: (reportingData) => {
-            const res = [...reportingData];
+            const processedData = [...reportingData];
 
             const truncateTrailingNullValues = evt.data.truncate;
             if (truncateTrailingNullValues) {
-              res[0].data = this.truncateData(reportingData[0].data as number[][]);
+              processedData[0].data = this.truncateData(reportingData[0].data as number[][]);
             }
 
             const commands = [
               {
                 command: 'optimizeLegend',
-                input: res[0],
+                input: processedData[0],
               },
               {
                 command: 'convertAggregations',

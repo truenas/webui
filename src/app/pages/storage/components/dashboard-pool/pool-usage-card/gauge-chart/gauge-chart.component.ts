@@ -20,13 +20,16 @@ interface ChartElement {
   _view: Chart.DoughnutModel;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 Chart.defaults.roundedDoughnut = Chart.helpers.clone(Chart.defaults.doughnut);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 Chart.controllers.roundedDoughnut = Chart.controllers.doughnut.extend({
   draw(ease: number) {
     const ctx = this.chart.chart.ctx as CanvasRenderingContext2D;
 
     const easingDecimal = ease || 1;
     let tmpView: Chart.DoughnutModel;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     Chart.helpers.each(this.getMeta().data, (chartElem: ChartElement, index: number) => {
       if (index === 2) {
         return;

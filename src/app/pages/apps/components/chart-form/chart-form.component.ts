@@ -21,7 +21,7 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -225,22 +225,13 @@ export class ChartFormComponent implements OnDestroy {
     }
   }
 
-  deleteFieldFromData(
-    data: ChartFormValues,
-    fieldTobeDeleted: string,
-  ): void {
-    const keys = fieldTobeDeleted.split('.');
-    if (this.isNew || !_.get(this.config, keys)) {
-      _.unset(data, keys);
-    }
-  }
-
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue()) as ChartFormValues;
     const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
-      next: (fieldTobeDeleted) => {
-        this.deleteFieldFromData(data, fieldTobeDeleted);
+      next: (fieldToBeDeleted) => {
+        const keys = fieldToBeDeleted.split('.');
+        _.unset(data, keys);
       },
       complete: () => {
         this.saveData(data);

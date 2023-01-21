@@ -10,7 +10,8 @@ import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
 import { ipv4Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +36,7 @@ export class DefaultGatewayDialogComponent {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,

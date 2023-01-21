@@ -3,12 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -63,13 +62,12 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let websocket: MockWebsocketService;
+  let websocket: MockWebsocketService2;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
     imports: [
       AppLoaderModule,
-      TranslateModule,
       CoreComponents,
       TreeModule,
       IxIconModule,
@@ -79,7 +77,7 @@ describe('BootStatusListComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('boot.get_state', poolInstance),
       ]),
     ],
@@ -92,7 +90,7 @@ describe('BootStatusListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(MockWebsocketService);
+    websocket = spectator.inject(MockWebsocketService2);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {

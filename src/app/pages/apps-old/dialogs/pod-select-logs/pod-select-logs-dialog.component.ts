@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
 
@@ -43,7 +43,7 @@ export class PodSelectLogsDialogComponent implements OnInit {
     },
     public dialogRef: MatDialogRef<PodSelectLogsDialogComponent>,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,

@@ -11,14 +11,13 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import helptext from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './init-shutdown-form.component.html',
-  styleUrls: ['./init-shutdown-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownFormComponent implements OnInit {
@@ -72,7 +71,7 @@ export class InitShutdownFormComponent implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

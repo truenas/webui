@@ -5,6 +5,7 @@ import { CommonSchemaBase, CommonSchemaTransform, TransformNodeFunction } from '
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   DynamicFormSchemaCheckbox,
+  DynamicFormSchemaCron,
   DynamicFormSchemaDict,
   DynamicFormSchemaExplorer,
   DynamicFormSchemaInput,
@@ -12,6 +13,7 @@ import {
   DynamicFormSchemaList,
   DynamicFormSchemaNode,
   DynamicFormSchemaSelect,
+  DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -22,6 +24,7 @@ const commonSchemaTypes = [
   ChartSchemaType.Path,
   ChartSchemaType.Hostpath,
   ChartSchemaType.Ipaddr,
+  ChartSchemaType.Uri,
 ];
 
 export function isCommonSchemaType(type: ChartSchemaType): boolean {
@@ -69,6 +72,29 @@ export function transformIntSchemaType(
     inputType: 'number',
   };
   return inputSchema;
+}
+
+export function transformUriSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaUri {
+  const { schema, chartSchemaNode } = payload;
+
+  return {
+    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    type: DynamicFormSchemaType.Uri,
+    inputType: undefined,
+  };
+}
+
+export function transformCronSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaCron {
+  const { schema, chartSchemaNode } = payload;
+
+  return {
+    ...buildCommonSchemaBase({ schema, chartSchemaNode }),
+    type: DynamicFormSchemaType.Cron,
+  };
 }
 
 export function transformStringSchemaType(
@@ -146,6 +172,7 @@ export function transformDictSchemaType(
     type: DynamicFormSchemaType.Dict,
     title: chartSchemaNode.label,
     attrs,
+    tooltip: chartSchemaNode.description,
     editable: schema.editable,
   };
 }
@@ -174,6 +201,8 @@ export function transformListSchemaType(
     type: DynamicFormSchemaType.List,
     items,
     itemsSchema,
+    tooltip: payload.chartSchemaNode.description,
+    default: schema.default as unknown[],
     dependsOn: schema.show_if?.map((conditional) => conditional[0]),
   };
 }

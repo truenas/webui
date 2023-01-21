@@ -6,13 +6,12 @@ import helptext from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './catalog-add-form.component.html',
-  styleUrls: ['./catalog-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogAddFormComponent {
@@ -35,7 +34,7 @@ export class CatalogAddFormComponent {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

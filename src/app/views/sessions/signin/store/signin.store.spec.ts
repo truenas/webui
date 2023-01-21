@@ -5,8 +5,9 @@ import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -17,11 +18,16 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
   let websocket: MockWebsocketService;
+  let websocket2: MockWebsocketService2;
   const testScheduler = getTestScheduler();
 
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
+      mockWebsocket2([
+        mockCall('auth.generate_token', 'AUTH_TOKEN'),
+        mockCall('auth.login_with_token', true),
+      ]),
       mockWebsocket([
         mockCall('auth.generate_token', 'AUTH_TOKEN'),
         mockCall('auth.login_with_token', true),
@@ -52,8 +58,13 @@ describe('SigninStore', () => {
   beforeEach(() => {
     spectator = createService();
     websocket = spectator.inject(MockWebsocketService);
+    websocket2 = spectator.inject(MockWebsocketService2);
     // This strips @LocalStorage() decorator from token.
     Object.defineProperty(websocket, 'token', {
+      value: '',
+      writable: true,
+    });
+    Object.defineProperty(websocket2, 'token2', {
       value: '',
       writable: true,
     });

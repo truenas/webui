@@ -18,7 +18,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
@@ -59,7 +59,7 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
   isEmptyPools = false;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     protected router: Router,
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,

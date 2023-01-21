@@ -167,13 +167,13 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
         fileName,
       ],
     ).pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
+      next: (download) => {
         this.loader.close();
-        const [, url] = res;
+        const [, url] = download;
         this.storageService.streamDownloadFile(url, fileName, mimetype)
           .pipe(untilDestroyed(this))
           .subscribe((file: Blob) => {
-            if (res !== null) {
+            if (download !== null) {
               this.storageService.downloadBlob(file, fileName);
             }
           });

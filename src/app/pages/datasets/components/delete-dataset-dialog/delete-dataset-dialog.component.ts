@@ -16,7 +16,7 @@ import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
     private translate: TranslateService,

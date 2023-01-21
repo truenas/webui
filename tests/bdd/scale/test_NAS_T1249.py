@@ -1,13 +1,11 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from function import(
+import xpaths
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -15,74 +13,79 @@ from pytest_bdd import (
     then,
     when,
 )
+from pytest_dependency import depends
 
 
-@scenario('features/NAS-T1249.feature', 'Verify a dataset can be deleted')
+@scenario('features/NAS-T1249.feature', 'Verify a pool can be deleted')
 def test_verify_a_dataset_can_be_deleted():
     """Verify a dataset can be deleted."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
+    depends(request, ['encrypted_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+    if not is_element_present(driver, xpaths.sideMenu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_input)
+        driver.find_element_by_xpath(xpaths.login.user_input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_button)
+        driver.find_element_by_xpath(xpaths.login.signin_button).click()
     else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
 
 
-@when('on the dashboard click on storage')
-def on_the_dashboard_click_on_storage(driver):
-    """on the dashboard click on storage."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+@when('on the Dashboard click on Storage on the side menu')
+def on_the_dashboard_click_on_storage_on_the_side_menu(driver):
+    """on the Dashboard click on Storage on the side menu."""
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
+    assert wait_on_element(driver, 10, xpaths.sideMenu.storage, 'clickable')
+    driver.find_element_by_xpath(xpaths.sideMenu.storage).click()
 
 
-@then('the storage page opens click the pool config button')
-def the_storage_page_opens_click_the_pool_config_button(driver):
-    """the storage page opens click the pool config button."""
-    assert wait_on_element(driver, 10, '//mat-icon[@id="encrypted_tank_settings_button"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[@id="encrypted_tank_settings_button"]').click()
+@then('on the Storage Dashboard click the on Export/Disconnect button of encrypted_pool')
+def on_the_storage_dashboard_click_the_on_exportdisconnect_button_of_encrypted_pool(driver):
+    """on the Storage Dashboard click the on Export/Disconnect button of encrypted_pool."""
+    assert wait_on_element(driver, 7, xpaths.storage.title)
+    assert wait_on_element(driver, 5, xpaths.storage.encryptedPool)
+    assert wait_on_element(driver, 5, xpaths.storage.exportDisconnect_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.storage.exportDisconnect_button).click()
 
 
-@then('in the dropdown click Export Disconnect')
-def in_the_dropdown_click_export_disconnect(driver):
-    """in the dropdown click Export Disconnect."""
-    assert wait_on_element(driver, 10, '//span[contains(text(),"Export/Disconnect")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Export/Disconnect")]').click()
+@then('on the Export/disconnect pool box click the Destroy and Confirm checkboxes')
+def on_the_exportdisconnect_pool_box_click_the_destroy_and_confirm_checkboxes(driver):
+    """on the Export/disconnect pool box click the Destroy and Confirm checkboxes."""
+    assert wait_on_element(driver, 7, xpaths.exportDisconnectPool.title)
+    # Sometime there is a Please waits popup in the way.we need to make sure it is gone clicking
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.pleaseWait)
+    assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.destroy_checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.exportDisconnectPool.destroy_checkbox).click()
+
+    driver.find_element_by_xpath(xpaths.exportDisconnectPool.confirm_checkbox).click()
 
 
-@then('click the checkboxes, enter name, and click export')
-def click_the_checkboxes_enter_name_and_click_export(driver):
-    """click the checkboxes, enter name, and click export."""
-    assert wait_on_element(driver, 5, '//ix-checkbox[@formcontrolname = "destroy"]//mat-checkbox', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname = "destroy"]//mat-checkbox').click()   
-    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname = "nameInput"]//input', 'inputable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname = "nameInput"]//input').click()
-    #driver.find_element_by_xpath('//ix-input[@formcontrolname = "nameInput"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname = "nameInput"]//input').send_keys("encrypted_tank")
-    assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname = "confirm"]//mat-checkbox', 'clickable')
-    driver.find_element_by_xpath('//ix-checkbox[@formcontrolname = "confirm"]//mat-checkbox').click()   
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EXPORT/DISCONNECT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EXPORT/DISCONNECT"]').click()
+@then('enter the pool name to confirm, and click Export/Disconnect')
+def enter_the_pool_name_to_confirm_and_click_exportdisconnect(driver):
+    """enter the pool name to confirm, and click Export/Disconnect."""
+    assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.poolName_input, 'inputable')
+    driver.find_element_by_xpath(xpaths.exportDisconnectPool.poolName_input).click()
+    driver.find_element_by_xpath(xpaths.exportDisconnectPool.poolName_input).send_keys("encrypted_pool")
+    assert wait_on_element(driver, 5, xpaths.exportDisconnectPool.exportDisconnect_button, 'clickable')
+    driver.find_element_by_xpath(xpaths.exportDisconnectPool.exportDisconnect_button).click()
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
 
 
-@then('storage page should load and the pool should be gone')
-def storage_page_should_load_and_the_pool_should_be_gone(driver):
-    """storage page should load and the pool should be gone."""
-    assert wait_on_element(driver, 20, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element_disappear(driver, 10, '//div[contains(.,"encrypted_tank")]')
+@then('the pool should be removed from the Storage Dashboard')
+def the_pool_should_be_removed_from_the_storage_dashboard(driver):
+    """the pool should be removed from the Storage Dashboard."""
+    assert wait_on_element(driver, 20, xpaths.button.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.close).click()
+    assert wait_on_element(driver, 10, xpaths.storage.title)
+    assert wait_on_element_disappear(driver, 10, xpaths.storage.encryptedPool)

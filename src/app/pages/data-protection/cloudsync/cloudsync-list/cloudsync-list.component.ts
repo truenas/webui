@@ -31,9 +31,9 @@ import {
   CloudCredentialService,
   DialogService,
   TaskService,
-  WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -89,7 +89,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   };
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
     protected translate: TranslateService,
     protected dialog: DialogService,
     protected slideInService: IxSlideInService,
@@ -155,7 +155,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
+            switchMap(() => this.ws2.call('cloudsync.sync', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -185,7 +185,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe({
+              this.ws2.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe({
                 next: () => {
                   this.dialog.info(
                     this.translate.instant('Task Stopped'),
@@ -213,7 +213,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             hideCheckBox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws2.call('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
@@ -292,20 +292,16 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         dialogRef.componentInstance.jobId = row.job.id;
         dialogRef.componentInstance.job = row.job;
         dialogRef.componentInstance.enableRealtimeLogs(true);
-        const subId = dialogRef.componentInstance.getRealtimeLogs();
         dialogRef.componentInstance.wsshow();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
-          this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
         });
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });

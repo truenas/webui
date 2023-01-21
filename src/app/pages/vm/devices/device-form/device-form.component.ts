@@ -19,7 +19,7 @@ import {
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  DialogService, NetworkService, VmService, WebSocketService,
+  DialogService, NetworkService, VmService, WebSocketService2,
 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -216,7 +216,7 @@ export class DeviceFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private networkService: NetworkService,
     private filesystemService: FilesystemService,
@@ -316,7 +316,7 @@ export class DeviceFormComponent implements OnInit {
           this.dialogService.confirm({
             title: this.translate.instant('Warning'),
             message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
-          }).pipe(untilDestroyed(this)).subscribe((res) => res && this.onSend());
+          }).pipe(untilDestroyed(this)).subscribe((confirmed) => confirmed && this.onSend());
         } else {
           this.onSend();
         }

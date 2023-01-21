@@ -11,7 +11,7 @@ import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  DialogService, WebSocketService,
+  DialogService, WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -20,7 +20,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   templateUrl: './console-form.component.html',
-  styleUrls: ['./console-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleFormComponent implements OnInit {
@@ -56,7 +55,7 @@ export class ConsoleFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,

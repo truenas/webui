@@ -5,13 +5,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
-  DialogService, ServicesService, StorageService, WebSocketService,
+  DialogService, ServicesService, StorageService,
 } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { DownloadClientConfigModalComponent } from './download-client-config-modal.component';
 
 describe('DownloadClientConfigModalComponent', () => {
@@ -25,8 +26,8 @@ describe('DownloadClientConfigModalComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      DialogService,
-      mockWebsocket([
+      mockProvider(DialogService),
+      mockWebsocket2([
         mockCall('interface.websocket_local_ip', '127.0.0.1'),
       ]),
       mockProvider(ServicesService, {
@@ -65,7 +66,7 @@ describe('DownloadClientConfigModalComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('interface.websocket_local_ip');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('interface.websocket_local_ip');
     expect(spectator.inject(ServicesService).generateOpenServerClientConfig).toHaveBeenCalledWith(2, '127.0.0.1');
     expect(spectator.inject(StorageService).downloadText).toHaveBeenCalledWith('Key', 'openVPNClientConfig.ovpn');
   });

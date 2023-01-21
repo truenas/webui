@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
@@ -21,7 +21,7 @@ import {
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { AppState } from 'app/store';
@@ -53,7 +53,7 @@ export class SupportComponent implements OnInit {
   }
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialog: DialogService,
     private matDialog: MatDialog,
@@ -150,10 +150,19 @@ export class SupportComponent implements OnInit {
   }
 
   updateProductionStatus(event: MatCheckboxChange): void {
-    let request$: Observable<boolean | SetProductionStatusDialogResult> = of(true);
+    let request$: Observable<boolean | SetProductionStatusDialogResult> = of(false);
     if (event.checked) {
       request$ = request$.pipe(
-        switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed()),
+        switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
+          tap((confirmed) => {
+            if (confirmed) {
+              return true;
+            }
+            this.isProduction = false;
+            this.cdr.markForCheck();
+            return false;
+          }),
+        )),
         filter(Boolean),
       );
     }

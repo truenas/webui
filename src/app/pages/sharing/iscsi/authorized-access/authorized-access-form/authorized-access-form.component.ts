@@ -11,13 +11,12 @@ import {
 } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './authorized-access-form.component.html',
-  styleUrls: ['./authorized-access-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorizedAccessFormComponent {
@@ -82,7 +81,7 @@ export class AuthorizedAccessFormComponent {
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private validatorService: IxValidatorsService,
   ) {}
 

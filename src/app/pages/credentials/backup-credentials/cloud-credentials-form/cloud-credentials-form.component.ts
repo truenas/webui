@@ -68,14 +68,14 @@ import {
 import {
   WebdavProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
 @UntilDestroy()
 @Component({
   templateUrl: './cloud-credentials-form.component.html',
-  styleUrls: ['./cloud-credentials-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudCredentialsFormComponent implements OnInit {
@@ -95,7 +95,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
@@ -133,7 +133,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.commonForm.patchValue(credential);
 
     if (this.providerForm) {
-      this.providerForm.setValues(this.existingCredential.attributes);
+      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
     }
   }
 
@@ -231,7 +231,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           );
           this.renderProviderForm();
           if (this.existingCredential) {
-            this.providerForm.setValues(this.existingCredential.attributes);
+            this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
           }
           this.isLoading = false;
           this.cdr.markForCheck();

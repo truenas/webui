@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -15,7 +15,8 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore, ApiKeysState } from 'app/pages/api-keys/store/api-key.store';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('ApiKeyListComponent', () => {
   let spectator: Spectator<ApiKeyListComponent>;
@@ -34,7 +35,6 @@ describe('ApiKeyListComponent', () => {
     ],
     providers: [
       ApiKeyComponentStore,
-      mockProvider(WebSocketService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -43,7 +43,7 @@ describe('ApiKeyListComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('api_key.query', [{
           id: 1,
           name: 'first-api-key',
@@ -102,7 +102,7 @@ describe('ApiKeyListComponent', () => {
 
   it('should open edit dialog form when Edit item is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    spectator.inject(MockWebsocketService).mockCallOnce('api_key.query', [{
+    spectator.inject(MockWebsocketService2).mockCallOnce('api_key.query', [{
       id: 1,
       name: 'first-api-key',
       key: 'strong-key',
@@ -129,7 +129,7 @@ describe('ApiKeyListComponent', () => {
 
   it('should open delete dialog when Delete item is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    spectator.inject(MockWebsocketService).mockCallOnce('api_key.query', [{
+    spectator.inject(MockWebsocketService2).mockCallOnce('api_key.query', [{
       id: 1,
       name: 'first-api-key',
       key: 'strong-key',
@@ -143,6 +143,6 @@ describe('ApiKeyListComponent', () => {
     await actionsMenu.clickItem({ text: 'deleteDelete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', ['1']);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('api_key.delete', ['1']);
   });
 });

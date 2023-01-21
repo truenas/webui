@@ -6,14 +6,14 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { SmartInfoCardComponent } from './smart-info-card.component';
 
 describe('SmartInfoCardComponent', () => {
@@ -27,7 +27,7 @@ describe('SmartInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SmartInfoCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('smart.test.results', [
           {
             disk: 'sdc',
@@ -92,13 +92,13 @@ describe('SmartInfoCardComponent', () => {
       text: '4',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.results', [[['disk', '=', 'sdc']]]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('smart.test.results', [[['disk', '=', 'sdc']]]);
   });
 
   it('shows a link to view all smart tests for a disk', () => {
     const link = spectator.query(byText('View All Test Results'));
     expect(link).toBeTruthy();
-    expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/sdc');
+    expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/disk/sdc');
   });
 
   it('shows a dialog to run a manual SMART test when Run Manual Test is pressed', async () => {
@@ -140,7 +140,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('loads and shows a number of SMART tasks associated with the disk', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
 
     const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:')).parentElement;
     expect(detailsItem).toHaveDescendantWithText({

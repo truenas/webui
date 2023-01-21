@@ -6,7 +6,6 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 @Component({
   selector: 'ix-force-delete-certificate',
   templateUrl: './confirm-force-delete-dialog.component.html',
-  styleUrls: ['./confirm-force-delete-dialog.component.scss'],
 })
 export class ConfirmForceDeleteCertificateComponent {
   form = this.formBuilder.group({

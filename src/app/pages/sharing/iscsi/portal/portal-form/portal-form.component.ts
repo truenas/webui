@@ -14,8 +14,9 @@ import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IscsiService, WebSocketService } from 'app/services';
+import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +90,7 @@ export class PortalFormComponent {
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

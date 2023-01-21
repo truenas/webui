@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { AppLoaderService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +26,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,

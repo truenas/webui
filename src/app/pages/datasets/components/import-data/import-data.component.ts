@@ -16,13 +16,12 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './import-data.component.html',
-  styleUrls: ['./import-data.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportDataComponent implements OnInit {
@@ -59,7 +58,7 @@ export class ImportDataComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private filesystemService: FilesystemService,
     private matDialog: MatDialog,
