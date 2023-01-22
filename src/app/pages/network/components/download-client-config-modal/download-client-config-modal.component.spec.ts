@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -26,7 +26,7 @@ describe('DownloadClientConfigModalComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('interface.websocket_local_ip', '127.0.0.1'),
       ]),
@@ -41,7 +41,6 @@ describe('DownloadClientConfigModalComponent', () => {
         downloadText: jest.fn(),
       }),
       mockProvider(MatDialogRef),
-      mockWebsocket(),
     ],
   });
 

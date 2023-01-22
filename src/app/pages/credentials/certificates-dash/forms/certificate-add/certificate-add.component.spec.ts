@@ -1,8 +1,9 @@
+/* eslint-disable */
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
   CertificateAddComponent
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ViewChild } from '@angular/core';
@@ -63,7 +64,7 @@ describe('CertificateAddComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('certificate.create'),
       ]),
     ],

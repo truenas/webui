@@ -2,23 +2,28 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { of } from 'rxjs';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ServiceNfsComponent,
     imports: [
@@ -26,7 +31,7 @@ describe('ServiceNfsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('nfs.config', {
           allow_nonroot: false,
           servers: 3,
@@ -46,10 +51,22 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
+        mockCall('kerberos.keytab.has_nfs_principal', false),
+        mockCall('directoryservices.get_state', {
+          activedirectory: DirectoryServiceState.Healthy,
+          ldap: DirectoryServiceState.Disabled,
+        }),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(),
+        })),
+      }),
       mockProvider(Router),
     ],
   });
@@ -57,7 +74,7 @@ describe('ServiceNfsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('shows current settings for NFS service when form is opened', async () => {
@@ -134,5 +151,17 @@ describe('ServiceNfsComponent', () => {
     const controls = await form.getControlHarnessesDict();
     const supportMoreThan16GroupsControl = controls['Support >16 groups'] as IxCheckboxHarness;
     expect(await supportMoreThan16GroupsControl.isDisabled()).toBe(true);
+  });
+
+  it('should open dialog form when add SPN button is pressed', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Require Kerberos for NFSv4': true,
+    });
+
+    const addSpnButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add SPN' }));
+    await addSpnButton.click();
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialogComponent);
   });
 });

@@ -96,12 +96,12 @@ export class DashboardFormComponent {
     this.ws2.call('user.set_attribute', [rootUserId, 'dashState', clone]).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (res) => {
+      next: (wasSet) => {
         this.isFormLoading = false;
         this.onSubmit$.next(this.dashState);
         this.slideInService.close();
 
-        if (!res) {
+        if (!wasSet) {
           throw new Error('Unable to save Dashboard State');
         }
       },

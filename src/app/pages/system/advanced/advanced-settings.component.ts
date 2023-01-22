@@ -25,18 +25,19 @@ import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
-import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
+import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
   DialogService,
   UserService,
-  WebSocketService,
+  WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -55,7 +56,7 @@ enum AdvancedCardId {
   Cron = 'cron',
   InitShutdown = 'initshutdown',
   Sysctl = 'sysctl',
-  SystemDatasetPool = 'systemdatasetpool',
+  Storage = 'storage',
   Gpus = 'gpus',
   Sed = 'sed',
 }
@@ -199,12 +200,13 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private ixFormatter: IxFormatterService,
   ) {}
 
   ngOnInit(): void {
@@ -343,12 +345,16 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
           tableConf: this.sysctlTableConf,
         },
         {
-          id: AdvancedCardId.SystemDatasetPool,
-          title: this.translate.instant('System Dataset Pool'),
+          id: AdvancedCardId.Storage,
+          title: this.translate.instant('Storage'),
           items: [
             {
               label: this.translate.instant('System Dataset Pool'),
               value: this.systemDatasetPool,
+            },
+            {
+              label: this.translate.instant('Swap Size'),
+              value: this.ixFormatter.convertBytesToHumanReadable(this.configData.swapondrive),
             },
           ],
         },
@@ -431,8 +437,11 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       case AdvancedCardId.Sysctl:
         this.slideInService.open(TunableFormComponent);
         break;
-      case AdvancedCardId.SystemDatasetPool:
-        this.slideInService.open(SystemDatasetPoolComponent);
+      case AdvancedCardId.Storage:
+        this.slideInService.open(StorageSettingsComponent).setFormForEdit({
+          pool: this.systemDatasetPool,
+          swapondrive: this.configData.swapondrive.toString(),
+        });
         break;
       case AdvancedCardId.Gpus:
         this.slideInService.open(IsolatedGpuPcisFormComponent);

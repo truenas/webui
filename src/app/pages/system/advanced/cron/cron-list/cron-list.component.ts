@@ -15,7 +15,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import {
-  DialogService, TaskService, WebSocketService,
+  DialogService, TaskService, WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
@@ -66,7 +66,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   };
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     public translate: TranslateService,
     protected taskService: TaskService,
     public dialog: DialogService,

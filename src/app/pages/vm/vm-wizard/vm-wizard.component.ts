@@ -41,7 +41,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import {
-  NetworkService, StorageService, SystemGeneralService, WebSocketService,
+  NetworkService, StorageService, SystemGeneralService, WebSocketService2,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -537,7 +537,7 @@ export class VmWizardComponent implements WizardConfiguration {
   private productType = this.systemGeneralService.getProductType();
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     public vmService: VmService,
     public networkService: NetworkService,
     protected loader: AppLoaderService,
@@ -594,10 +594,10 @@ export class VmWizardComponent implements WizardConfiguration {
       diskConfig.options = zvols;
     });
 
-    this.getFormControlFromFieldName('enable_display').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      _.find(osSectionFields, { name: 'display_type' }).isHidden = !res;
-      _.find(osSectionFields, { name: 'bind' }).isHidden = !res;
-      if (res) {
+    this.getFormControlFromFieldName('enable_display').valueChanges.pipe(untilDestroyed(this)).subscribe((isDisplayEnabled) => {
+      _.find(osSectionFields, { name: 'display_type' }).isHidden = !isDisplayEnabled;
+      _.find(osSectionFields, { name: 'bind' }).isHidden = !isDisplayEnabled;
+      if (isDisplayEnabled) {
         this.ws.call('vm.port_wizard').pipe(untilDestroyed(this)).subscribe(({ port }) => {
           this.displayPort = port;
         });
@@ -610,8 +610,8 @@ export class VmWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.summary[this.translate.instant('Guest Operating System')] = res;
+    this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((os) => {
+      this.summary[this.translate.instant('Guest Operating System')] = os;
       this.getFormControlFromFieldName('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
         this.summary[this.translate.instant('Name')] = name;
       });
@@ -711,7 +711,7 @@ export class VmWizardComponent implements WizardConfiguration {
       });
       const grub = this.bootloader.options.find((option) => option.value === VmBootloader.Grub);
       const grubIndex = this.bootloader.options.indexOf(grub);
-      if (res === 'Windows') {
+      if (os === 'Windows') {
         if (grub) {
           this.bootloader.options.splice(grubIndex, 1);
         }
@@ -731,8 +731,8 @@ export class VmWizardComponent implements WizardConfiguration {
         this.getFormControlFromFieldName('volsize').setValue('10 GiB');
       }
     });
-    this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((createDisk) => {
+      if (createDisk) {
         _.find(disksSectionFields, { name: 'volsize' }).isHidden = false;
         _.find(disksSectionFields, { name: 'datastore' }).isHidden = false;
         _.find(disksSectionFields, { name: 'hdd_path' }).isHidden = true;
@@ -748,16 +748,16 @@ export class VmWizardComponent implements WizardConfiguration {
       _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }).isHidden = !willUpload;
       _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' }).isHidden = !willUpload;
     });
-    this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((path) => {
+      if (path) {
         const config = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }) as FormUploadConfig;
-        config.fileLocation = res;
+        config.fileLocation = path;
       }
     });
 
-    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((nic) => {
       this.nicAttach = _.find(this.wizardConfig[3].fieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
-      this.nicAttach.options = Object.keys(res || {}).map((nicId) => ({
+      this.nicAttach.options = Object.keys(nic || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));
@@ -801,13 +801,13 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   loadBindChoices(): void {
-    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && Object.keys(res).length > 0) {
+    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((bindChoices) => {
+      if (bindChoices && Object.keys(bindChoices).length > 0) {
         const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }) as FormSelectConfig;
-        Object.keys(res).forEach((address) => {
+        Object.keys(bindChoices).forEach((address) => {
           bind.options.push({ label: address, value: address });
         });
-        this.getFormControlFromFieldName('bind').setValue(res['0.0.0.0']);
+        this.getFormControlFromFieldName('bind').setValue(bindChoices['0.0.0.0']);
       }
     });
   }
@@ -983,7 +983,7 @@ export class VmWizardComponent implements WizardConfiguration {
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
         const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot === gpuPciSlot);
-        vmPayload.devices.push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
+        (vmPayload.devices as unknown[]).push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
           dtype: VmDeviceType.Pci,
           attributes: {
             pptdev: gpuDevice.vm_pci_slot,
@@ -994,7 +994,7 @@ export class VmWizardComponent implements WizardConfiguration {
 
     if (value.enable_display) {
       if (this.productType.includes(ProductType.Scale)) {
-        vmPayload.devices.push({
+        (vmPayload.devices as unknown[]).push({
           dtype: VmDeviceType.Display,
           attributes: {
             port: this.displayPort,
@@ -1005,7 +1005,7 @@ export class VmWizardComponent implements WizardConfiguration {
           },
         });
       } else if (value.bootloader === VmBootloader.Uefi) {
-        vmPayload.devices.push({
+        (vmPayload.devices as unknown[]).push({
           dtype: VmDeviceType.Display,
           attributes: {
             wait: value.wait,
@@ -1025,7 +1025,7 @@ export class VmWizardComponent implements WizardConfiguration {
       this.gpuService.addIsolatedGpuPciIds(value.gpus)
         .pipe(untilDestroyed(this))
         .subscribe({
-          next: (res) => res,
+          next: () => {},
           error: (err: Job) => new EntityUtils().handleWsError(this.entityWizard, err),
         });
     }
@@ -1048,7 +1048,7 @@ export class VmWizardComponent implements WizardConfiguration {
           for (const device of devices) {
             device.vm = newVm.id;
             observables.push(this.ws.call('vm.device.create', [device]).pipe(
-              map((res) => res),
+              map((createdDevice) => createdDevice),
               catchError((err) => {
                 err.device = { ...device };
                 throw err;
@@ -1102,7 +1102,7 @@ export class VmWizardComponent implements WizardConfiguration {
           for (const device of devices) {
             device.vm = newVm.id;
             observables.push(this.ws.call('vm.device.create', [device]).pipe(
-              map((res) => res),
+              map((createdDevice) => createdDevice),
               catchError((err) => {
                 err.device = { ...device };
                 throw err;

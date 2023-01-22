@@ -6,7 +6,7 @@ import {
   catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { rootUserId } from 'app/constants/root-user-id.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
@@ -79,7 +79,7 @@ export class PreferencesEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private store$: Store<AppState>,
   ) {}
 }

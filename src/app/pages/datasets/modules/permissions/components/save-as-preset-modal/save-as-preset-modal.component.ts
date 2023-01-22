@@ -2,13 +2,15 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { AclType } from 'app/enums/acl-type.enum';
-import { AclTemplateByPath } from 'app/interfaces/acl.interface';
+import { Acl, AclTemplateByPath, AclTemplateCreateParams } from 'app/interfaces/acl.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
-import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
+import { WebSocketService2, AppLoaderService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -22,19 +24,29 @@ export class SaveAsPresetModalComponent implements OnInit {
   });
   presets: AclTemplateByPath[] = [];
   isFormLoading = false;
+  acl: Acl;
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<SaveAsPresetModalComponent>,
+    private store: DatasetAclEditorStore,
     @Inject(MAT_DIALOG_DATA) public data: SaveAsPresetModalConfig,
   ) {}
 
   ngOnInit(): void {
     this.loadOptions();
+
+    this.store.state$
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        this.isFormLoading = state.isLoading;
+        this.acl = state.acl;
+        this.cdr.markForCheck();
+      });
   }
 
   isCurrentAclType(aclType: AclType): boolean {
@@ -72,7 +84,37 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // TODO: Save new preset
-    this.dialogRef.close();
+    this.acl.acl.forEach((acl) => delete acl.who);
+    const payload: AclTemplateCreateParams = {
+      name: this.form.value.presetName,
+      acltype: this.acl.acltype,
+      acl: this.acl.acl,
+    };
+
+    this.loader.open();
+    this.ws.call('filesystem.acltemplate.create', [payload]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loader.close();
+        this.dialogRef.close();
+      },
+      error: (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
+    });
+  }
+
+  onRemovePreset(preset: AclTemplateByPath): void {
+    this.loader.open();
+    this.ws.call('filesystem.acltemplate.delete', [preset.id]).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.loadOptions();
+        this.loader.close();
+      },
+      error: (err) => {
+        this.loader.close();
+        new EntityUtils().handleWsError(this, err, this.dialogService);
+      },
+    });
   }
 }

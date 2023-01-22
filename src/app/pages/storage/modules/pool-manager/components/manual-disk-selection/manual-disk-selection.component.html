@@ -1,0 +1,116 @@
+<mat-card class="container">
+  <mat-card-content class="content">
+    <form [formGroup]="form">
+      <div
+        class="inner-container" 
+      >
+
+        <div class="left-pane">
+          <div class="header header-top"><h3>{{ 'Manual Selection' | translate }}</h3></div>
+
+          <div class="filter-container">
+            <ix-search-input
+            ></ix-search-input>
+            <div class="select-container">
+              <ix-select
+                formControlName="diskType"
+                [label]="'Filter by Disk Type'"
+                [options]="typeOptions$"
+              ></ix-select>
+              <ix-select
+                formControlName="diskSize"
+                [label]="'Filter by Disk Size'"
+                [options]="sizeOptions$"
+              ></ix-select>
+            </div>
+          </div>
+          
+          <div class="tree-container">
+            <ix-tree-view
+              [ixDataSource]="dataSource"
+              [ixTreeControl]="treeControl"
+            >
+              <ix-tree-node
+                *treeNodeDef="let disk; dataSource: dataSource"
+                treeNodeToggle
+                routerLinkActive="selected"
+              >
+                <div class="info-wrapper">
+                  <div class="icon-wrapper">
+                    <ix-disk-icon 
+                      class="disk-icon"
+                      [identifier]="disk.identifier"
+                      [size]="getDiskSizeStr(disk)"
+                    ></ix-disk-icon>
+                  </div>
+                  
+                  <div class="details-wrapper">
+                    <ix-disk-info
+                      class="disk-info"
+                      [slot]="getDiskSlot(disk)"
+                      [type]="getDiskType(disk)"
+                      [model]="getDiskModel(disk)"
+                      [serial]="getDiskSerial(disk)"
+                    ></ix-disk-info>
+                  </div>
+                  
+                </div>
+              </ix-tree-node>
+
+              <ix-nested-tree-node
+                *treeNodeDef="let group; dataSource: dataSource; when: isGroup"
+                [treeNodeDefDataSource]="dataSource"
+              >
+                <div class="group-row" treeNodeToggle>
+                  <ix-icon name="ix:enclosure"></ix-icon>
+                  <span class="group-name">{{ group.identifier }}</span>
+                  <mat-icon>
+                    {{ treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right' }}
+                  </mat-icon>
+                </div>
+
+                <ng-container
+                  *ngIf="isExpanded(group)"
+                  treeNodeOutlet
+                ></ng-container>
+              </ix-nested-tree-node>
+
+            </ix-tree-view>
+          </div>
+        </div>
+        <mat-divider class="divider" [vertical]="true"></mat-divider>
+        <div class="enclosure-container">
+
+          <div class="header header-vdevs">
+            <h3>{{ 'Data VDevs' | translate }}</h3>
+            <div class="header-actions">
+              <button
+                mat-button
+                class="mat-button"
+              >{{ 'Add' | translate }}</button>
+            </div>
+          </div>
+          <mat-divider class="header-divider"></mat-divider>
+          <div class="vdevs-container">
+            <ix-manual-selection-vdev></ix-manual-selection-vdev>
+            <ix-manual-selection-vdev></ix-manual-selection-vdev>
+            <ix-manual-selection-vdev></ix-manual-selection-vdev>
+            <ix-manual-selection-vdev></ix-manual-selection-vdev>
+            <ix-manual-selection-vdev></ix-manual-selection-vdev>
+          </div>
+          <mat-divider class="divider actions-divider"></mat-divider>
+          <div class="actions">
+            <button
+              mat-button
+              color="primary"
+            >{{ 'Save Selection' | translate }}</button>
+            <button
+              mat-button
+            >{{ 'Cancel' | translate }}</button>
+          </div>
+        </div>
+        
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

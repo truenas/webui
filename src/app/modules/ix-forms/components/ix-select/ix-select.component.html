@@ -11,6 +11,7 @@
       [required]="required"
       [disabled]="disabledState"
       [multiple]="multiple"
+      [ixTest]="controlDirective.name"
       [(ngModel)]="value"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
@@ -33,6 +34,7 @@
           #ixOption
           [value]="option.value"
           [disabled]="option.disabled"
+          [ixTest]="[controlDirective.name, option.label]"
         >
           <ix-icon
             *ngIf="multiple"

@@ -10,7 +10,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class CertificateCsrExistsComponent implements OnInit, SummaryProvider {
   readonly helptext = helptextSystemCertificates;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,

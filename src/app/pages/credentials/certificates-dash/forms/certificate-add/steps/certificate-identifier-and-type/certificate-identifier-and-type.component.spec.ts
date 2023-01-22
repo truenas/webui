@@ -1,15 +1,15 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import {
-  CertificateIdentifierAndTypeComponent
-} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { CertificateProfile } from 'app/interfaces/certificate.interface';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  CertificateIdentifierAndTypeComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
 
 describe('CertificateIdentifierAndTypeComponent', () => {
   let spectator: Spectator<CertificateIdentifierAndTypeComponent>;
@@ -26,7 +26,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('certificate.profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,
@@ -66,17 +66,17 @@ describe('CertificateIdentifierAndTypeComponent', () => {
     it('returns summary with Profile when getSummary is called', () => {
       expect(spectator.component.getSummary()).toEqual([
         {
-          "label": "Name",
-          "value": "New Certificate"
+          label: 'Name',
+          value: 'New Certificate',
         },
         {
-          "label": "Type",
-          "value": "Internal Certificate"
+          label: 'Type',
+          value: 'Internal Certificate',
         },
         {
-          "label": "Profile",
-          "value": "Openvpn Client Certificate"
-        }
+          label: 'Profile',
+          value: 'Openvpn Client Certificate',
+        },
       ]);
     });
   });
@@ -94,22 +94,22 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       expect(fields).not.toContain('Profile');
 
       expect(spectator.component.form.value).toEqual({
-        "create_type": CertificateCreateType.CreateImported,
-        "name": "New Certificate",
-        "profile": ""
+        create_type: CertificateCreateType.CreateImported,
+        name: 'New Certificate',
+        profile: '',
       });
     });
 
     it('returns summary with Name and Type when getSummary is called', () => {
       expect(spectator.component.getSummary()).toEqual([
         {
-          "label": "Name",
-          "value": "New Certificate"
+          label: 'Name',
+          value: 'New Certificate',
         },
         {
-          "label": "Type",
-          "value": "Import Certificate"
-        }
+          label: 'Type',
+          value: 'Import Certificate',
+        },
       ]);
     });
   });

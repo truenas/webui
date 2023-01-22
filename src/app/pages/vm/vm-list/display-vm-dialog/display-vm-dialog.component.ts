@@ -8,7 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { VmDisplayWebUriParams, VmDisplayWebUriParamsOptions } from 'app/interfaces/virtual-machine.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ export class DisplayVmDialogComponent {
     @Inject(WINDOW) private window: Window,
     private dialogRef: MatDialogRef<DisplayVmDialogComponent>,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,

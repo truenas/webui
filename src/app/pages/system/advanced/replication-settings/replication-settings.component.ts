@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -26,7 +26,7 @@ export class ReplicationSettingsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -69,9 +69,9 @@ export class ReplicationSettingsComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInService.close();
       },
-      error: (res) => {
+      error: (error) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, res);
+        new EntityUtils().handleWsError(this, error);
         this.cdr.markForCheck();
       },
     });

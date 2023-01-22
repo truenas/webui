@@ -13,7 +13,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { DialogService, WebSocketService2, AppLoaderService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +33,7 @@ export class SnapshotDetailsRowComponent implements OnInit {
 
   constructor(
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,

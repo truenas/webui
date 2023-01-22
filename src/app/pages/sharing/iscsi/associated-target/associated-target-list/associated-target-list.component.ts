@@ -12,9 +12,10 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
 import {
-  AppLoaderService, DialogService, IscsiService, WebSocketService,
+  AppLoaderService, DialogService, IscsiService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -62,7 +63,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     private iscsiService: IscsiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}

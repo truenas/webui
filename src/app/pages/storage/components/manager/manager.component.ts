@@ -37,7 +37,7 @@ import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manag
 import {
   RepeatVdevDialogComponent, RepeatVdevDialogData,
 } from 'app/pages/storage/components/manager/repeat-vdev-dialog/repeat-vdev-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -169,7 +169,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private router: Router,
     private dialog: DialogService,
     private loader: AppLoaderService,

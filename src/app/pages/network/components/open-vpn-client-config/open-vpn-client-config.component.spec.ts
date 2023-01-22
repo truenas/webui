@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -77,7 +77,7 @@ describe('OpenVpnClientConfigComponent', () => {
       mockProvider(StorageService, {
         downloadBlob: jest.fn(),
       }),
-      mockWebsocket(),
+      mockProvider(DialogService),
     ],
     declarations: [
       DownloadClientConfigModalComponent,

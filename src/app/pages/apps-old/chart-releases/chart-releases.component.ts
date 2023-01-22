@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { startCase } from 'lodash';
 import { of, Subscription } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
@@ -281,7 +282,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   portalName(name = 'web_portal'): string {
-    return new EntityUtils().snakeToHuman(name);
+    return startCase(name);
   }
 
   portalLink(chart: ChartRelease, name = 'web_portal'): void {

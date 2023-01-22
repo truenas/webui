@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -55,7 +55,7 @@ export class ManualTestDialogComponent {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,

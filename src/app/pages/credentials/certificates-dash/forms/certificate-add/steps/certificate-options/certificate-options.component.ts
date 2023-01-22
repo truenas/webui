@@ -11,12 +11,11 @@ import {
   certificateKeyLengths,
 } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType, certificateKeyTypeLabels } from 'app/enums/certificate-key-type.enum';
-import { EcCurve } from 'app/enums/ec-curve.enum';
 import { choicesToOptions, idNameArrayToOptions, mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +50,7 @@ export class CertificateOptionsComponent implements OnInit, SummaryProvider {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private systemGeneralService: SystemGeneralService,
     private cdr: ChangeDetectorRef,
   ) { }

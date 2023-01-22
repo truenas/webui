@@ -1,10 +1,11 @@
+/* eslint-disable */
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
   CertificateConstraintsComponent
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -22,7 +23,7 @@ describe('CertificateConstraintsComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: "CLIENT_AUTH",
           CODE_SIGNING: "CODE_SIGNING"

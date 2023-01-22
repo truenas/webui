@@ -14,8 +14,9 @@ import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbi
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
-import { UserService, WebSocketService } from 'app/services';
+import { UserService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +51,7 @@ export class GroupFormComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,

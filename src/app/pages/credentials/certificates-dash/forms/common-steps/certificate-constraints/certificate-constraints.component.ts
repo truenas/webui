@@ -18,7 +18,7 @@ import {
   basicConstraintOptions,
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) {}
 
   ngOnInit(): void {

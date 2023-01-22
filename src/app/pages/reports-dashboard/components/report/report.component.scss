@@ -220,7 +220,7 @@ span.disk-detail-subtitle {
   padding-bottom: 5px;
 }
 
-.disk-detail-temps-bar .mat-progress-bar-buffer {
+.disk-detail-temps-bar .mat-mdc-progress-bar-buffer {
   opacity: 0 !important;
 }
 
@@ -255,7 +255,7 @@ span.disk-detail-subtitle {
   color: #c00;
 }
 
-.disk-detail-temp-label.hot .mat-progress-bar-element {
+.disk-detail-temp-label.hot .mat-mdc-progress-bar-element {
   border: solid 7px #c00;
 }
 

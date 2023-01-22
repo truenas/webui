@@ -11,7 +11,7 @@ import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { PoolManagerWizardFormValue } from 'app/pages/storage/modules/pool-manager/interfaces/pool-manager-wizard-form-value.interface';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService2 } from 'app/services';
 
 export interface PoolsManagerState {
   arePoolsLoading: boolean;
@@ -46,7 +46,7 @@ export class PoolManagerStore extends ComponentStore<PoolsManagerState> {
   readonly formValue$ = this.select((state) => state.formValue);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private sorter: StorageService,
   ) {

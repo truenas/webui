@@ -3,12 +3,12 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('GpuService', () => {
@@ -32,7 +32,7 @@ describe('GpuService', () => {
   const createService = createServiceFactory({
     service: GpuService,
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('device.get_info', allGpus),
       ]),
@@ -59,7 +59,7 @@ describe('GpuService', () => {
       const gpus = await firstValueFrom(spectator.service.getAllGpus());
 
       expect(gpus).toEqual(allGpus);
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('device.get_info', [DeviceType.Gpu]);
+      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('device.get_info', [DeviceType.Gpu]);
     });
   });
 
@@ -96,7 +96,7 @@ describe('GpuService', () => {
     it('adds new ids of new isolated gpu devices in addition to ones that were previously isolated', async () => {
       await firstValueFrom(spectator.service.addIsolatedGpuPciIds(['0000:01:00.0']));
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith(
         'system.advanced.update_gpu_pci_ids',
         [['0000:02:00.0', '0000:01:00.0']],
       );
@@ -106,7 +106,7 @@ describe('GpuService', () => {
       testScheduler.run(({ expectObservable }) => {
         const call$ = spectator.service.addIsolatedGpuPciIds(['0000:02:00.0']);
 
-        expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
+        expect(spectator.inject(WebSocketService2).call).not.toHaveBeenCalled();
         expectObservable(call$).toBe('|');
       });
     });
