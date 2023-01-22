@@ -4,18 +4,27 @@
   [class.indent]="dynamicSchema?.indent"
 >
   <ng-container *ngIf="!(isHidden$ | async)">
+    <ix-scheduler
+      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Cron"
+      [formControlName]="dynamicSchema.controlName"
+      [label]="dynamicSchema.title | translate"
+      [tooltip]="dynamicSchema.tooltip | translate"
+      [required]="dynamicSchema.required"
+    ></ix-scheduler>
+
     <ng-container *ngIf="dynamicSchema.type === DynamicFormSchemaType.Dict">
       <div class="label">
         <div class="label-wrapper">
           {{ dynamicSchema.title }}
         </div>
-        
-        <div class="label-tooltip" *ngIf="dynamicSchema.tooltip"><ix-tooltip
-          class="tooltip"
-          [header]="dynamicSchema.title"
-          [message]="dynamicSchema.tooltip"
-        ></ix-tooltip></div>
 
+        <div *ngIf="dynamicSchema.tooltip" class="label-tooltip">
+          <ix-tooltip
+            class="tooltip"
+            [header]="dynamicSchema.title"
+            [message]="dynamicSchema.tooltip"
+          ></ix-tooltip>
+        </div>
       </div>
       <ix-dynamic-form-item
         *ngFor="let attr of dynamicSchema.attrs"
@@ -46,6 +55,7 @@
           class="list"
           [dynamicSchema]="item"
           [dynamicForm]="element | cast"
+          [isEditMode]="isEditMode"
           (addListItem)="addControlNext($event)"
           (deleteListItem)="removeControlNext($event)"
         ></ix-dynamic-form-item>
@@ -53,7 +63,10 @@
     </ix-list>
 
     <ix-input
-      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Input"
+      *ngIf="
+        dynamicSchema.type === DynamicFormSchemaType.Input ||
+        dynamicSchema.type === DynamicFormSchemaType.Uri
+      "
       [formControlName]="dynamicSchema.controlName"
       [label]="dynamicSchema.title | translate"
       [placeholder]="dynamicSchema.placeholder | translate"

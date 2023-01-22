@@ -20,7 +20,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -69,7 +69,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     FormsModule,
     ImgFallbackModule,
     JobsModule,
-    IxFormsModule,
+    IxDynamicFormModule,
     IxTableModule,
     LayoutModule,
     MatButtonModule,

@@ -21,7 +21,7 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { CustomUntypedFormField } from 'app/modules/ix-forms/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services';
 import { AppSchemaService } from 'app/services/app-schema.service';
@@ -165,13 +165,13 @@ export class ChartFormComponent implements OnDestroy {
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls(
+      this.appSchemaService.addFormControls({
         chartSchemaNode,
-        this.form,
-        this.config,
-        this.isNew,
-        false,
-      ),
+        formGroup: this.form,
+        config: this.config,
+        isNew: this.isNew,
+        isParentImmutable: false,
+      }),
     );
   }
 
@@ -186,7 +186,11 @@ export class ChartFormComponent implements OnDestroy {
   }
 
   addItem(event: AddListItemEvent): void {
-    this.appSchemaService.addFormListItem(event, this.isNew, false);
+    this.appSchemaService.addFormListItem({
+      event,
+      isNew: this.isNew,
+      isParentImmutable: false,
+    });
   }
 
   deleteItem(event: DeleteListItemEvent): void {
