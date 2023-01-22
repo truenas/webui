@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -21,6 +22,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
+import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { RsyncConfigureComponent } from 'app/pages/services/components/service-rsync/rsync-configure/rsync-configure.component';
 import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
@@ -60,6 +62,7 @@ import { routing } from './services.routing';
     MatButtonModule,
     AppCommonModule,
     LayoutModule,
+    MatDialogModule,
   ],
   declarations: [
     ServicesComponent,
@@ -79,6 +82,7 @@ import { routing } from './services.routing';
     ServiceSnmpComponent,
     ServiceWebdavComponent,
     ServiceS3Component,
+    AddSpnDialogComponent,
   ],
 })
 export class ServicesModule {
