@@ -29,7 +29,7 @@ export class CertificateOptionsComponent implements OnInit, SummaryProvider {
     signedby: ['', Validators.required],
     key_type: [CertificateKeyType.Rsa],
     key_length: [2048],
-    ec_curve: [EcCurve.BrainpoolP384R1],
+    ec_curve: ['BrainpoolP384R1'],
     digest_algorithm: [CertificateDigestAlgorithm.Sha256],
     lifetime: [3650, [Validators.required, Validators.min(0)]],
   });
@@ -64,14 +64,13 @@ export class CertificateOptionsComponent implements OnInit, SummaryProvider {
     const values = this.form.value;
     const signingAuthority = this.signingAuthorities.find((option) => option.value === values.signedby);
 
-    // TODO: Ec curve
     return [
       { label: this.translate.instant('Signing Certificate Authority'), value: signingAuthority?.label || '' },
       { label: this.translate.instant('Key Type'), value: certificateKeyTypeLabels.get(values.key_type) },
       this.isRsa
         ? { label: this.translate.instant('Key Length'), value: String(values.key_length) }
         : { label: this.translate.instant('EC Curve'), value: String(values.ec_curve) },
-      { label: this.translate.instant('Digest Algorithm'), value: values.ec_curve },
+      { label: this.translate.instant('Digest Algorithm'), value: values.digest_algorithm },
       { label: this.translate.instant('Lifetime'), value: String(values.lifetime) },
     ];
   }

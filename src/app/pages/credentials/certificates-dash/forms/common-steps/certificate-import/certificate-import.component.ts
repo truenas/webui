@@ -27,7 +27,7 @@ export class CertificateImportComponent implements SummaryProvider {
 
   getSummary(): SummarySection {
     const values = this.form.value;
-    const certificateBody = values.certificate.match(/-----BEGIN CERTIFICATE-----(.*)-----END CERTIFICATE-----/s)?.[1] || '';
+    const certificateBody = values.certificate.match(/-----BEGIN CERTIFICATE-----\s(.*)\s-----END CERTIFICATE-----/s)?.[1] || '';
     const certificatePreview = certificateBody.replace(/(.{6}).*(.{6})/s, '$1......$2');
 
     const summary = [

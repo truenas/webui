@@ -71,6 +71,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     return this.form.value[extension].enabled;
   }
 
+  // TODO: Fix incorrect labels for selects
   getSummary(): SummarySection {
     return [
       ...this.getBasicConstraintsSummary(),
@@ -128,7 +129,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
 
   private getBasicConstraintsSummary(): SummaryItem[] {
     if (!this.hasExtension('BasicConstraints')) {
-      return;
+      return [];
     }
 
     const summary = [
@@ -150,7 +151,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
 
   private getAuthorityKeyIdentifierSummary(): SummaryItem[] {
     if (!this.hasExtension('AuthorityKeyIdentifier')) {
-      return;
+      return [];
     }
 
     return [
@@ -163,7 +164,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
 
   private getExtendedKeyUsageSummary(): SummaryItem[] {
     if (!this.hasExtension('ExtendedKeyUsage')) {
-      return;
+      return [];
     }
 
     const summary = [
@@ -185,7 +186,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
 
   private getKeyUsageSummary(): SummaryItem[] {
     if (!this.hasExtension('KeyUsage')) {
-      return;
+      return [];
     }
 
     return [
