@@ -1,3 +1,5 @@
+import { User } from 'app/interfaces/user.interface';
+
 export interface DsUncachedUser {
   pw_dir: string;
   pw_gecos: string;
@@ -6,6 +8,8 @@ export interface DsUncachedUser {
   pw_shell: string;
   pw_uid: number;
 }
+
+export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> {}
 
 export interface DsUncachedGroup {
   gr_gid: number;
