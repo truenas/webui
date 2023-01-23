@@ -28,7 +28,7 @@ import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
+import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -49,7 +49,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input() showReorderHandle = false;
   @Input() systemInfo: SystemInfo;
 
-  isUpgradePending$ = this.store$.select(selectIsUpgradePending);
+  hasOnlyMissmatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
 
   showTimeDiffWarning = false;
   timeInterval: Timeout;
