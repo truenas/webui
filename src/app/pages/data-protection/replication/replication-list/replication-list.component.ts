@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -28,13 +28,13 @@ import {
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import {
   DialogService,
-  WebSocketService,
   StorageService,
   TaskService,
   KeychainCredentialService,
   ReplicationService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -86,7 +86,7 @@ export class ReplicationListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private dialog: DialogService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,
@@ -132,7 +132,7 @@ export class ReplicationListComponent implements EntityTableConfig {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('replication.run', [row.id])),
+            switchMap(() => this.ws2.call('replication.run', [row.id])),
             tap(() => this.snackbar.success(
               this.translate.instant('Replication «{name}» has started.', { name: row.name }),
             )),
@@ -200,30 +200,19 @@ export class ReplicationListComponent implements EntityTableConfig {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
         dialogRef.componentInstance.jobId = row.job.id;
         dialogRef.componentInstance.job = row.job;
-        let subId: string = null;
         if (row.job.logs_path) {
           dialogRef.componentInstance.enableRealtimeLogs(true);
-          subId = dialogRef.componentInstance.getRealtimeLogs();
         }
         dialogRef.componentInstance.wsshow();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
           this.dialog.info(this.translate.instant('Task Aborted'), '');
-          if (subId) {
-            this.ws.unsub('filesystem.file_tail_follow:' + row.job.logs_path, subId);
-          }
         });
       } else if (row.state.state === JobState.Hold) {
         this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason);
@@ -244,10 +233,10 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   onCheckboxChange(row: ReplicationTaskUi): void {
-    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        row.enabled = res.enabled;
-        if (!res) {
+    this.ws2.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
+      next: (task) => {
+        row.enabled = task.enabled;
+        if (!task) {
           row.enabled = !row.enabled;
         }
       },

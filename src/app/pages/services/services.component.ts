@@ -16,7 +16,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServicesComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ServiceRow> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ServiceRow>([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
   loading = true;
@@ -44,7 +44,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private router: Router,
     private translate: TranslateService,
     private dialog: DialogService,

@@ -14,7 +14,8 @@ import helptext from 'app/helptext/services/components/service-webdav';
 import { WebdavConfig, WebdavConfigUpdate, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService, ValidationService, DialogService } from 'app/services';
+import { ValidationService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -96,7 +97,7 @@ export class ServiceWebdavComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     protected router: Router,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,

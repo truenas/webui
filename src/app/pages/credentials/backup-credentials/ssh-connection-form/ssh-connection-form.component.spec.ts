@@ -2,24 +2,27 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { KeychainCredentialService, WebSocketService } from 'app/services';
+import { DialogService, KeychainCredentialService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 
 describe('SshConnectionFormComponent', () => {
   let spectator: Spectator<SshConnectionFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService2;
+
   const existingConnection = {
     id: 11,
     name: 'auto',
@@ -42,7 +45,7 @@ describe('SshConnectionFormComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
         mockCall('keychaincredential.setup_ssh_connection'),
         mockCall('keychaincredential.update'),
@@ -54,6 +57,7 @@ describe('SshConnectionFormComponent', () => {
         ]),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
@@ -66,6 +70,7 @@ describe('SshConnectionFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   it('shows values for an existing SSH connection', async () => {
@@ -98,7 +103,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.update', [11, {
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.update', [11, {
       name: 'Updated',
       attributes: {
         cipher: CipherType.Fast,
@@ -132,7 +137,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
       setup_type: SshConnectionsSetupMethod.Manual,
       connection_name: 'New',
       private_key: {
@@ -168,7 +173,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
       connection_name: 'Update',
       setup_type: SshConnectionsSetupMethod.SemiAutomatic,
       private_key: {
@@ -204,7 +209,7 @@ describe('SshConnectionFormComponent', () => {
 
     const values = await form.getValues();
     expect(values['Remote Host Key']).toBe('ssh-rsaAREMOTE');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
       connect_timeout: '30',
       host: 'remote.com',
       port: 24,
@@ -222,7 +227,7 @@ describe('SshConnectionFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
       connection_name: 'Test',
       setup_type: SshConnectionsSetupMethod.SemiAutomatic,
       private_key: {

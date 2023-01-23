@@ -1,13 +1,14 @@
 import {
   ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { FormBuilder } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
@@ -37,9 +38,9 @@ export class TruecommandConnectModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private data: TruecommandSignupModalState,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent>,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) {}
 
   ngOnInit(): void {
@@ -88,8 +89,8 @@ export class TruecommandConnectModalComponent implements OnInit {
       icon: helptext.tcDeregisterDialog.icon,
       message: helptext.tcDeregisterDialog.message,
       confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (!confirmed) {
         return;
       }
 

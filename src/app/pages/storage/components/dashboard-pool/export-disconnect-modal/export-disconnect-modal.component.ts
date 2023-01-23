@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -15,7 +15,8 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -77,7 +78,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private datasetStore: DatasetTreeStore,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,
   ) {}
@@ -138,7 +139,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           if (
             _.isObject(failureData.exc_info.extra)
             && !Array.isArray(failureData.exc_info.extra)
-            && failureData.exc_info.extra['code'] === 'control_services'
+            && failureData.exc_info.extra.code === 'control_services'
           ) {
             this.dialogRef.close(true);
             this.isFormLoading = false;

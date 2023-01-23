@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -8,7 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { VmDisplayWebUriParams, VmDisplayWebUriParamsOptions } from 'app/interfaces/virtual-machine.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ export class DisplayVmDialogComponent {
     @Inject(WINDOW) private window: Window,
     private dialogRef: MatDialogRef<DisplayVmDialogComponent>,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,

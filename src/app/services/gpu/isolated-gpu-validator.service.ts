@@ -20,7 +20,7 @@ export class IsolatedGpuValidatorService {
     private validatorsService: IxValidatorsService,
   ) { }
 
-  validateGpu = (control: AbstractControl): Observable<ValidationErrors | null> => {
+  validateGpu = (control: AbstractControl<string[]>): Observable<ValidationErrors | null> => {
     return forkJoin([
       this.gpuService.getIsolatedGpuPciIds(),
       this.gpuService.getAllGpus(),

@@ -3,7 +3,8 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { NestedTreeControl } from '@angular/cdk/tree';
+import { DEFAULT_SCROLL_TIME, DEFAULT_RESIZE_TIME } from '@angular/cdk/scrolling';
+import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -15,8 +16,11 @@ import {
   ElementRef,
   Inject,
   TemplateRef,
+  TrackByFunction,
 } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import {
+  ActivatedRoute, NavigationStart, Router,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,12 +38,12 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datasource';
-import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
+import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
+import { WebSocketService2, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -65,12 +69,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  dataSource: IxNestedTreeDataSource<DatasetDetails>;
-  treeControl = new NestedTreeControl<DatasetDetails, string>(
-    (dataset) => dataset.children,
-    { trackBy: (dataset) => dataset.id },
-  );
-
   showMobileDetails = false;
   isMobileView = false;
   systemDataset: string;
@@ -78,6 +76,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   subscription = new Subscription();
   scrollTypes = ScrollType;
   ixTreeHeaderWidth: number | null = null;
+  treeWidthChange$ = new Subject<ResizedEvent>();
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -94,11 +93,27 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     },
   };
 
-  readonly hasNestedChild = (_: number, dataset: DatasetDetails): boolean => Boolean(dataset.children?.length);
   private readonly scrollSubject = new Subject<number>();
 
+  // Flat API
+  getLevel = (dataset: DatasetDetails): number => dataset?.name?.split('/')?.length - 1;
+  isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
+  treeControl = new FlatTreeControl<DatasetDetails>(
+    this.getLevel,
+    this.isExpandable,
+  );
+  treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
+    (dataset) => dataset,
+    this.getLevel,
+    this.isExpandable,
+    () => ([]),
+  );
+  dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
+  trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
+  readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
+
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
@@ -109,7 +124,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private layoutService: LayoutService,
     private slideIn: IxSlideInService,
     private store$: Store<AppState>,
-    private systemService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -124,32 +138,20 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
+    this.loadSystemDatasetConfig();
     this.setupTree();
     this.listenForRouteChanges();
-    this.loadSystemDatasetConfig();
     this.listenForLoading();
     this.listenForDatasetScrolling();
+    this.listenForTreeResizing();
   }
 
   private setupTree(): void {
     this.datasetStore.datasets$.pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
-        this.sortDatasetsByName(datasets);
         this.createDataSource(datasets);
-        this.treeControl.dataNodes = datasets;
+        this.expandDatasetBranch();
         this.cdr.markForCheck();
-
-        if (!datasets.length) {
-          return;
-        }
-
-        const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
-        if (routeDatasetId) {
-          this.datasetStore.selectDatasetById(routeDatasetId);
-        } else {
-          const firstNode = this.treeControl.dataNodes[0];
-          this.router.navigate(['/datasets', firstNode.id]);
-        }
       },
       error: this.handleError,
     });
@@ -164,40 +166,41 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  private sortDatasetsByName(datasets: DatasetDetails[]): void {
-    datasets.forEach((dataset) => {
-      if (dataset.children.length > 0) {
-        dataset.children.sort((a, b) => {
-          const na = a.name.toLowerCase();
-          const nb = b.name.toLowerCase();
-
-          if (na < nb) return -1;
-          if (na > nb) return 1;
-
-          return 0;
-        });
-        this.sortDatasetsByName(dataset.children);
-      }
-    });
+  private createDataSource(datasets: DatasetDetails[]): void {
+    this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
+    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => getTreeBranchToNode(
+      datasetsToFilter,
+      (dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()),
+    );
+    this.dataSource.sortComparer = (a, b) => {
+      return new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'accent',
+      }).compare(a.name, b.name);
+    };
+    this.dataSource.data = datasets;
   }
 
-  private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new IxNestedTreeDataSource<DatasetDetails>(datasets);
-    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      return flattenTreeWithFilter(datasetsToFilter, (dataset: DatasetDetails) => {
-        return dataset.name.toLowerCase().includes(query.toLowerCase());
-      });
-    };
+  private expandDatasetBranch(): void {
+    const routeDatasetId = this.activatedRoute.snapshot.paramMap.get('datasetId');
+    if (routeDatasetId) {
+      this.datasetStore.selectDatasetById(routeDatasetId);
+    } else {
+      const firstNode = this.treeControl.dataNodes[0];
+      if (firstNode) {
+        this.router.navigate(['/datasets', firstNode.id]);
+      }
+    }
   }
 
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.datasetId),
+        map((params) => params.datasetId as string),
         filter(Boolean),
         untilDestroyed(this),
       )
-      .subscribe((datasetId: string) => {
+      .subscribe((datasetId) => {
         this.datasetStore.selectDatasetById(datasetId);
       });
   }
@@ -227,11 +230,23 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
-        .pipe(debounceTime(0), distinctUntilChanged(), untilDestroyed(this))
+        .pipe(debounceTime(DEFAULT_SCROLL_TIME), distinctUntilChanged(), untilDestroyed(this))
         .subscribe({
           next: (scrollLeft: number) => {
             this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
             this.ixTree.nativeElement.scrollLeft = scrollLeft;
+          },
+        }),
+    );
+  }
+
+  private listenForTreeResizing(): void {
+    this.subscription.add(
+      this.treeWidthChange$
+        .pipe(debounceTime(DEFAULT_RESIZE_TIME), distinctUntilChanged(), untilDestroyed(this))
+        .subscribe({
+          next: (event: ResizedEvent) => {
+            this.ixTreeHeaderWidth = Math.round(event.newRect.width);
           },
         }),
     );
@@ -242,17 +257,25 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   };
 
   isSystemDataset(dataset: DatasetDetails): boolean {
-    return isRootDataset(dataset) && this.systemDataset === dataset.name;
+    return dataset.name.split('/').length === 1 && this.systemDataset === dataset.name;
   }
 
   updateScroll(type: ScrollType): void {
-    this.scrollSubject.next(
-      type === ScrollType.IxTree ? this.ixTree.nativeElement.scrollLeft : this.ixTreeHeader.nativeElement.scrollLeft,
-    );
+    switch (type) {
+      case ScrollType.IxTree:
+        this.scrollSubject.next(this.ixTree.nativeElement.scrollLeft);
+        break;
+      case ScrollType.IxTreeHeader:
+        this.scrollSubject.next(this.ixTreeHeader.nativeElement.scrollLeft);
+        break;
+      default:
+        console.warn('Unhandled scroll type.');
+        break;
+    }
   }
 
   onIxTreeWidthChange(event: ResizedEvent): void {
-    this.ixTreeHeaderWidth = Math.round(event.newRect.width);
+    this.treeWidthChange$.next(event);
   }
 
   onSearch(query: string): void {
@@ -270,7 +293,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           this.closeMobileDetails();
           this.isMobileView = false;
         }
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       });
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }

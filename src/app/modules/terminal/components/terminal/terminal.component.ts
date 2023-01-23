@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
-import { ShellService, WebSocketService } from 'app/services';
+import { ShellService, WebSocketService2 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -61,7 +61,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
                   Kill process shortcut is <i>Crtl+C</i>.`);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private shellService: ShellService,
     private dialog: MatDialog,
     private translate: TranslateService,

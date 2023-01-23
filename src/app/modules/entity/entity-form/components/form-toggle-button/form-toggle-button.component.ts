@@ -28,8 +28,8 @@ export class FormToggleButtonComponent implements Field, OnInit {
     this.init = true;
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: unknown) => {
-      if (!this.init || !this.config.options || !res) {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: unknown) => {
+      if (!this.init || !this.config.options || !value) {
         return;
       }
 

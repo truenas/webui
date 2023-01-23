@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -13,6 +13,12 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./error-dialog.component.scss'],
 })
 export class ErrorDialogComponent {
+  @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef;
+  @ViewChild('errorTitle') errorTitle: ElementRef;
+  @ViewChild('errorMdContent') errorMdContent: ElementRef;
+  @ViewChild('errorBtPanel') errorBtPanel: ElementRef;
+  @ViewChild('errorBtText') errorBtText: ElementRef;
+
   title: string;
   message: string;
   backtrace: string;
@@ -21,18 +27,18 @@ export class ErrorDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     public storage: StorageService,
   ) {}
 
   toggleOpen(): void {
     const dialogs = document.getElementsByClassName('mat-dialog-container');
     const dialog = dialogs[dialogs.length - 1];
-    const messageWrapper: HTMLElement = dialog.querySelector('#err-message-wrapper');
-    const title: HTMLElement = dialog.querySelector('#err-title');
-    const content: HTMLElement = dialog.querySelector('#err-md-content');
-    const btPanel: HTMLElement = dialog.querySelector('#err-bt-panel');
-    const txtarea: HTMLElement = dialog.querySelector('#err-bt-text');
+    const messageWrapper: HTMLElement = this.errorMessageWrapper.nativeElement;
+    const title: HTMLElement = this.errorTitle.nativeElement;
+    const content: HTMLElement = this.errorMdContent.nativeElement;
+    const btPanel: HTMLElement = this.errorBtPanel.nativeElement;
+    const txtarea: HTMLElement = this.errorBtText.nativeElement;
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
@@ -56,8 +62,7 @@ export class ErrorDialogComponent {
 
   downloadLogs(): void {
     this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        const url = res[1];
+      next: ([, url]) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {

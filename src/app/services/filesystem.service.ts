@@ -6,12 +6,12 @@ import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) {}
 
   /**

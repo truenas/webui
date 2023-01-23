@@ -3,16 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   let loader: HarnessLoader;
   const createComponent = createRoutingFactory({
     component: ServiceSnmpComponent,
@@ -23,7 +24,7 @@ describe('ServiceSnmpComponent', () => {
     routes: [],
     providers: [
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('snmp.update'),
         mockCall('snmp.config', {
           location: 'My location',
@@ -45,7 +46,7 @@ describe('ServiceSnmpComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

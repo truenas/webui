@@ -1,0 +1,17 @@
+<ng-container *ngFor="let section of dynamicSection">
+  <ix-fieldset
+    *ngIf="section.schema.length"
+    [title]="section.name | translate"
+    [tooltip]="section.description | translate"
+  >
+    <ng-container *ngFor="let schema of section.schema">
+      <ix-dynamic-form-item
+        [dynamicSchema]="schema"
+        [dynamicForm]="dynamicForm"
+        [isEditMode]="isEditMode"
+        (addListItem)="addControlNext($event)"
+        (deleteListItem)="removeControlNext($event)"
+      ></ix-dynamic-form-item>
+    </ng-container>
+  </ix-fieldset>
+</ng-container>

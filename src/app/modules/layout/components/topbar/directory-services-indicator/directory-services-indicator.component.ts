@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MatLegacyDialogState as MatDialogState } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -11,7 +11,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   private statusSubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) { }

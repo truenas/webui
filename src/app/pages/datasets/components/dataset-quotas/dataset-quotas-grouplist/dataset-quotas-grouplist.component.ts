@@ -26,7 +26,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, StorageService, WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -42,7 +42,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   datasetId: string;
-  dataSource: MatTableDataSource<DatasetQuota> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<DatasetQuota>([]);
   invalidQuotas: DatasetQuota[] = [];
   displayedColumns: string[] = ['name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions'];
   defaultSort: Sort = { active: 'id', direction: 'asc' };
@@ -53,8 +53,6 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   emptyType: EmptyType = EmptyType.NoPageData;
 
   useFullFilter = true;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
-  protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected invalidFilter: QueryParams<DatasetQuota> = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
 
   get emptyConfigService(): EmptyService {
@@ -62,7 +60,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected storageService: StorageService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
@@ -99,6 +97,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   };
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
+    if (row[field as keyof DatasetQuota] === undefined) {
+      return '—';
+    }
     switch (field) {
       case 'name':
         if (!row[field]) {
@@ -110,7 +111,9 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
       case 'used_percent':
         return `${Math.round(row[field] * 100) / 100}%`;
       case 'obj_used_percent':
-        return `${Math.round(row[field] * 100) / 100}%`;
+        return row.obj_quota ? `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%` : '—';
+      case 'obj_quota':
+        return row.obj_quota ? row.obj_quota : '—';
       case 'used_bytes':
         if (row[field] !== 0) {
           return this.storageService.convertBytesToHumanReadable(row[field], 2);
@@ -139,14 +142,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   }
 
   getGroupQuotas(): void {
-    const filterParam = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.Group, filterParam],
+      [this.datasetId, DatasetQuotaType.Group, []],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;
+        if (this.useFullFilter) {
+          quotas = quotas.filter((quota) => quota.quota > 0 || quota.obj_quota > 0);
+        }
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },

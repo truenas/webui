@@ -4,7 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -13,13 +13,15 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService2;
 
   const existingTarget = {
     id: 123,
@@ -50,7 +52,8 @@ describe('TargetFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockProvider(DialogService),
+      mockWebsocket2([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
         mockCall('iscsi.portal.query', [{
@@ -101,6 +104,7 @@ describe('TargetFormComponent', () => {
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    websocket = spectator.inject(WebSocketService2);
   });
 
   it('add new target when form is submitted', async () => {
@@ -134,7 +138,7 @@ describe('TargetFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.target.create', [{
+    expect(websocket.call).toHaveBeenCalledWith('iscsi.target.create', [{
       name: 'name_new',
       alias: 'alias_new',
       mode: 'ISCSI',
@@ -169,7 +173,7 @@ describe('TargetFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
+    expect(websocket.call).toHaveBeenLastCalledWith(
       'iscsi.target.update',
       [
         123,
@@ -206,9 +210,9 @@ describe('TargetFormComponent', () => {
     spectator.component.initiators$.subscribe((options) => initiator = options);
     spectator.component.auths$.subscribe((options) => auth = options);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
+    expect(websocket.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
+    expect(websocket.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
+    expect(websocket.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
     expect(portal).toEqual([
       { label: '11 (comment_1)', value: 1 },

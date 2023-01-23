@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/volumes/download-key';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
-  WebSocketService,
+  WebSocketService2,
   StorageService, DialogService,
 } from 'app/services';
 
@@ -24,7 +24,7 @@ export class DownloadKeyDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DownloadKeyDialogComponent>,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private storage: StorageService,
     public dialog: DialogService,
     private loader: AppLoaderService,

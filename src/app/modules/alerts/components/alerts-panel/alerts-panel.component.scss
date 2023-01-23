@@ -11,6 +11,10 @@
   }
 }
 
+.controls {
+  display: flex;
+}
+
 .alert-list {
   margin-top: 6px;
 }
@@ -24,6 +28,7 @@
   place-content: center space-between;
 
   .controls {
+    display: flex;
     opacity: 0.55;
   }
 }

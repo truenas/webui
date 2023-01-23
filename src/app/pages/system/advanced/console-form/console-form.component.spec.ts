@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -12,13 +12,13 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ConsoleFormComponent', () => {
   let spectator: Spectator<ConsoleFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ConsoleFormComponent,
     imports: [
@@ -26,7 +26,7 @@ describe('ConsoleFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('system.advanced.serial_port_choices', {
           ttyS0: 'ttyS0',
           ttyS1: 'ttyS1',
@@ -50,7 +50,7 @@ describe('ConsoleFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('loads current Console settings and shows them', async () => {
@@ -60,7 +60,7 @@ describe('ConsoleFormComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('system.advanced.config');
     expect(values).toEqual({
       'Show Text Console without Password Prompt': true,
-      'Configure Serial Console': true,
+      'Enable Serial Console': true,
       'Serial Port': 'ttyS0',
       'Serial Speed': '9600',
       'MOTD Banner': 'Welcome back, commander',
@@ -69,7 +69,7 @@ describe('ConsoleFormComponent', () => {
 
   it('disables Serial Port and Serial Speed controls when Serial Console is disabled', async () => {
     const serialConsoleCheckbox = await loader.getHarness(IxCheckboxHarness.with({
-      label: 'Configure Serial Console',
+      label: 'Enable Serial Console',
     }));
 
     await serialConsoleCheckbox.setValue(false);

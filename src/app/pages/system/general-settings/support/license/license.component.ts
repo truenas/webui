@@ -8,13 +8,12 @@ import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService2, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './license.component.html',
-  styleUrls: ['./license.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LicenseComponent {
@@ -34,7 +33,7 @@ export class LicenseComponent {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,

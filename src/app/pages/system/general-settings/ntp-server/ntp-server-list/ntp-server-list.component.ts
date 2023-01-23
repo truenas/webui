@@ -9,7 +9,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService2, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -20,7 +20,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerListComponent implements OnInit {
-  dataSource: MatTableDataSource<NtpServer> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<NtpServer>([]);
   displayedColumns = [
     'address',
     'burst',
@@ -44,7 +44,7 @@ export class NtpServerListComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private dialog: DialogService,

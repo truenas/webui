@@ -8,7 +8,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -97,8 +97,20 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: 'apps',
+      state: 'apps-old',
+      isVisible$: this.hasApps$,
+    },
+    {
+      name: T('Apps (WIP)'),
+      type: MenuItemType.SlideOut,
+      tooltip: T('Apps'),
+      icon: 'apps',
       state: 'apps',
       isVisible$: this.hasApps$,
+      sub: [
+        { name: T('Installed'), state: 'installed' },
+        { name: T('Available'), state: 'available' },
+      ],
     },
     {
       name: T('Reporting'),
@@ -135,7 +147,7 @@ export class NavigationService {
   ];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
   ) {

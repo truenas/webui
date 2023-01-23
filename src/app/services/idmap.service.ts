@@ -3,11 +3,11 @@ import { Observable } from 'rxjs';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable({ providedIn: 'root' })
 export class IdmapService {
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected ws: WebSocketService2) {}
 
   getCerts(): Observable<Certificate[]> {
     return this.ws.call('certificate.query');

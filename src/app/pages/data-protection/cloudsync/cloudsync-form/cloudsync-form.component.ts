@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,9 +28,10 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { CloudCredentialService, DialogService, WebSocketService } from 'app/services';
+import { CloudCredentialService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const newStorjBucket = 'new_storj_bucket';
 
@@ -53,6 +54,8 @@ export class CloudsyncFormComponent {
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
   }
+
+  googleDriveProviderId: number;
 
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],
@@ -118,9 +121,12 @@ export class CloudsyncFormComponent {
   credentialsList: CloudsyncCredential[] = [];
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
-      return options.map((option) => (
-        { label: `${option.name} (${option.provider})`, value: option.id }
-      ));
+      return options.map((option) => {
+        if (option.provider === CloudsyncProviderName.GoogleDrive) {
+          this.googleDriveProviderId = option.id;
+        }
+        return { label: `${option.name} (${option.provider})`, value: option.id };
+      });
     }),
     untilDestroyed(this),
   );
@@ -139,7 +145,7 @@ export class CloudsyncFormComponent {
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 
-  bucketOptions$: Observable<SelectOption[]> = of([]);
+  bucketOptions$ = of<SelectOption[]>([]);
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
@@ -149,7 +155,7 @@ export class CloudsyncFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -446,7 +452,7 @@ export class CloudsyncFormComponent {
   }
 
   getBuckets(credentialId: number): Observable<CloudsyncBucket[]> {
-    return this.ws.call('cloudsync.list_buckets', [credentialId]);
+    return this.ws2.call('cloudsync.list_buckets', [credentialId]);
   }
 
   getBucketsNodeProvider(): TreeNodeProvider {
@@ -475,7 +481,7 @@ export class CloudsyncFormComponent {
         delete data.attributes.bucket;
       }
 
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.ws2.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
           listing.forEach((file) => {
@@ -689,9 +695,9 @@ export class CloudsyncFormComponent {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws.call('cloudsync.create', [payload]);
+      request$ = this.ws2.call('cloudsync.create', [payload]);
     } else {
-      request$ = this.ws.call('cloudsync.update', [this.editingTask.id, payload]);
+      request$ = this.ws2.call('cloudsync.update', [this.editingTask.id, payload]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

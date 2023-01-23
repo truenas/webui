@@ -1,7 +1,9 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormBuilder, Validators,
+} from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
@@ -19,13 +21,12 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './snapshot-add-form.component.html',
-  styleUrls: ['./snapshot-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotAddFormComponent implements OnInit {
@@ -54,9 +55,9 @@ export class SnapshotAddFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,

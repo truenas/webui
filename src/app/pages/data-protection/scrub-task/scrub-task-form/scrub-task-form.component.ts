@@ -11,13 +11,12 @@ import {
   crontabToSchedule,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './scrub-task-form.component.html',
-  styleUrls: ['./scrub-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskFormComponent {
@@ -41,7 +40,7 @@ export class ScrubTaskFormComponent {
 
   isLoading = false;
 
-  poolOptions$ = this.ws.call('pool.query').pipe(
+  poolOptions$ = this.ws2.call('pool.query').pipe(
     map((pools) => {
       return pools.map((pool) => ({ label: pool.name, value: pool.id }));
     }),
@@ -60,7 +59,7 @@ export class ScrubTaskFormComponent {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -83,9 +82,9 @@ export class ScrubTaskFormComponent {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.scrub.create', [values as CreatePoolScrubTask]);
+      request$ = this.ws2.call('pool.scrub.create', [values as CreatePoolScrubTask]);
     } else {
-      request$ = this.ws.call('pool.scrub.update', [
+      request$ = this.ws2.call('pool.scrub.update', [
         this.editingTask.id,
         values as CreatePoolScrubTask,
       ]);

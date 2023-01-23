@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Optional,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +20,7 @@ import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interfac
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { AppLoaderService, KeychainCredentialService, WebSocketService } from 'app/services';
+import { AppLoaderService, KeychainCredentialService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
@@ -127,7 +127,7 @@ export class SshConnectionFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,
@@ -139,9 +139,9 @@ export class SshConnectionFormComponent {
   ) {}
 
   get isManualAuthFormValid(): boolean {
-    return this.form.controls['host'].valid
-      && this.form.controls['private_key'].valid
-      && this.form.controls['username'].valid;
+    return this.form.controls.host.valid
+      && this.form.controls.private_key.valid
+      && this.form.controls.username.valid;
   }
 
   setConnectionForEdit(connection: KeychainSshCredentials): void {

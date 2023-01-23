@@ -8,7 +8,7 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * MockWebsocketService can be used to update websocket mocks on the fly.
@@ -40,10 +40,6 @@ export class MockWebsocketService extends WebSocketService {
     this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
     this.sub = jest.fn(() => of());
     this.unsub = jest.fn();
-    this.socket = {
-      send: jest.fn(),
-      close: jest.fn(),
-    } as unknown as WebSocket;
     when(this.call).mockImplementation((method: ApiMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
@@ -86,6 +82,10 @@ export class MockWebsocketService extends WebSocketService {
   }
 
   connect(): void {
+    // Noop
+  }
+
+  reconnect(): void {
     // Noop
   }
 }

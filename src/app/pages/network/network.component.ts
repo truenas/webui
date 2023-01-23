@@ -1,13 +1,14 @@
 import {
+  AfterViewInit,
   Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom, Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -18,7 +19,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -41,10 +41,10 @@ import {
   AppLoaderService,
   DialogService,
   StorageService, SystemGeneralService,
-  WebSocketService,
 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { selectHaStatus } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 import { IpmiFormComponent } from './components/forms/ipmi-form.component';
@@ -55,7 +55,7 @@ import { IpmiFormComponent } from './components/forms/ipmi-form.component';
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
-export class NetworkComponent implements OnInit, OnDestroy {
+export class NetworkComponent implements OnInit, AfterViewInit, OnDestroy {
   protected summaryCall = 'network.general.summary' as const;
   formEvent$: Subject<CoreEvent>;
 
@@ -195,7 +195,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   hasConsoleFooter = false;
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private router: Router,
     private dialog: DialogService,
     private storageService: StorageService,
@@ -214,7 +214,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.ws
+    this.ws2
       .call('system.advanced.config')
       .pipe(untilDestroyed(this))
       .subscribe((advancedConfig) => {
@@ -250,8 +250,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
 
     this.openInterfaceForEditFromRoute();
+  }
 
-    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
+  ngAfterViewInit(): void {
+    this.ws2.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.ipmiEnabled = isIpmiLoaded;
     });
   }
@@ -284,19 +286,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   private getCheckinWaitingSeconds(): Promise<number> {
     return lastValueFrom(
-      this.ws.call('interface.checkin_waiting'),
+      this.ws2.call('interface.checkin_waiting'),
     );
   }
 
   private getPendingChanges(): Promise<boolean> {
     return lastValueFrom(
-      this.ws.call('interface.has_pending_changes'),
+      this.ws2.call('interface.has_pending_changes'),
     );
   }
 
   private async cancelCommit(): Promise<void> {
     await lastValueFrom(
-      this.ws.call('interface.cancel_rollback'),
+      this.ws2.call('interface.cancel_rollback'),
     );
   }
 
@@ -326,7 +328,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   commitPendingChanges(): void {
-    this.ws
+    this.ws2
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
       .subscribe((services) => {
@@ -338,8 +340,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
             if (systemService) {
               this.affectedServices.push(systemService);
             }
-            if (item['service']) {
-              this.affectedServices.push(item['service']);
+            if (item.service) {
+              this.affectedServices.push(item.service);
             }
             item.ips.forEach((ip) => {
               ips.push(ip);
@@ -363,7 +365,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
           .subscribe((confirm: boolean) => {
             if (confirm) {
               this.loader.open();
-              this.ws
+              this.ws2
                 .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
                 .pipe(untilDestroyed(this))
                 .subscribe({
@@ -420,7 +422,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   finishCheckin(): void {
     this.loader.open();
-    this.ws
+    this.ws2
       .call('interface.checkin')
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -454,7 +456,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       .subscribe((confirm: boolean) => {
         if (confirm) {
           this.loader.open();
-          this.ws
+          this.ws2
             .call('interface.rollback')
             .pipe(untilDestroyed(this))
             .subscribe({
@@ -494,23 +496,30 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
-    this.ws
-      .sub<ReportingRealtimeUpdate>('reporting.realtime')
-      .pipe(untilDestroyed(this))
-      .subscribe((evt) => {
-        if (evt.interfaces) {
+    this.ws2
+      .subscribe('reporting.realtime')
+      .pipe(
+        map((event) => event.fields),
+        untilDestroyed(this),
+      )
+      .subscribe((reportingData) => {
+        if (reportingData.interfaces) {
           tableSource.forEach((row) => {
-            if (!evt.interfaces[row.id]) {
+            if (!reportingData.interfaces[row.id]) {
               row.link_state = null;
             } else {
-              row.link_state = evt.interfaces[row.id].link_state;
-              if (evt.interfaces[row.id].received_bytes !== undefined) {
-                row.received = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].received_bytes);
-                row.received_bytes = evt.interfaces[row.id].received_bytes;
+              row.link_state = reportingData.interfaces[row.id].link_state;
+              if (reportingData.interfaces[row.id].received_bytes !== undefined) {
+                row.received = this.storageService.convertBytesToHumanReadable(
+                  reportingData.interfaces[row.id].received_bytes,
+                );
+                row.received_bytes = reportingData.interfaces[row.id].received_bytes;
               }
-              if (evt.interfaces[row.id].sent_bytes !== undefined) {
-                row.sent = this.storageService.convertBytesToHumanReadable(evt.interfaces[row.id].sent_bytes);
-                row.sent_bytes = evt.interfaces[row.id].sent_bytes;
+              if (reportingData.interfaces[row.id].sent_bytes !== undefined) {
+                row.sent = this.storageService.convertBytesToHumanReadable(
+                  reportingData.interfaces[row.id].sent_bytes,
+                );
+                row.sent_bytes = reportingData.interfaces[row.id].sent_bytes;
               }
             }
           });
@@ -521,7 +530,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   interfaceDataSourceHelper(nic: NetworkInterface[]): NetworkInterfaceUi[] {
     return nic.map((networkInterface) => {
       const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      transformed['link_state'] = networkInterface['state']['link_state'];
+      transformed.link_state = networkInterface.state.link_state;
       const addresses = new Set([]);
       transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
@@ -530,7 +539,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         }
       });
 
-      if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
+      if (transformed.ipv4_dhcp || transformed.ipv6_auto) {
         transformed.state.aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(`${alias.address}/${alias.netmask}`);
@@ -544,15 +553,15 @@ export class NetworkComponent implements OnInit, OnDestroy {
           }
         });
       }
-      transformed['addresses'] = Array.from(addresses);
+      transformed.addresses = Array.from(addresses);
       if (networkInterface.type === NetworkInterfaceType.Physical) {
-        transformed.active_media_type = networkInterface['state']['active_media_type'];
-        transformed.active_media_subtype = networkInterface['state']['active_media_subtype'];
+        transformed.active_media_type = networkInterface.state.active_media_type;
+        transformed.active_media_subtype = networkInterface.state.active_media_subtype;
       } else if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
-        transformed.lagg_ports = networkInterface['lag_ports'];
-        transformed.lagg_protocol = networkInterface['lag_protocol'];
+        transformed.lagg_ports = networkInterface.lag_ports;
+        transformed.lagg_protocol = networkInterface.lag_protocol;
       }
-      transformed.mac_address = networkInterface['state']['link_address'];
+      transformed.mac_address = networkInterface.state.link_address;
 
       return transformed;
     });
@@ -600,12 +609,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
       onChanging: false,
       onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
         row.onChanging = true;
-        this.ws
+        this.ws2
           .call('service.stop', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe({
-            next: (res) => {
-              if (res) {
+            next: (wasStopped) => {
+              if (wasStopped) {
                 this.dialog.info(
                   this.translate.instant('Service failed to stop'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
@@ -638,12 +647,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
       matTooltip: this.translate.instant('Start'),
       onClick: (row: Service & { onChanging: boolean; service_label: string }) => {
         row.onChanging = true;
-        this.ws
+        this.ws2
           .call('service.start', [row.service, { silent: false }])
           .pipe(untilDestroyed(this))
           .subscribe({
-            next: (res) => {
-              if (res) {
+            next: (hasStarted) => {
+              if (hasStarted) {
                 row.state = ServiceStatus.Running;
                 row.onChanging = false;
               } else {
@@ -696,7 +705,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
 
     this.loader.open();
-    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
+    this.ws2.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (interfaces) => {

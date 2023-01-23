@@ -2,7 +2,7 @@ import {
   Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -260,9 +260,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   checkNetworkCheckinWaiting(): void {
-    this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res !== null) {
-        const seconds = res;
+    this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((checkingSeconds) => {
+      if (checkingSeconds !== null) {
+        const seconds = checkingSeconds;
         if (seconds > 0 && this.checkinRemaining === null) {
           this.checkinRemaining = seconds;
           this.checkinInterval = setInterval(() => {

@@ -1,0 +1,38 @@
+.container {
+  background: var(--alt-bg1);
+  padding: 16px 24px;
+  padding-bottom: 0;
+}
+
+.outer-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.vdev-container {
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.vdev-container {
+  display: flex;
+  flex-direction: row;
+  margin: 0 10px;
+}
+
+.disk-icons {
+  display: flex;
+  flex-wrap: wrap;
+
+  ix-disk-icon {
+    margin: 1.5px;
+  }
+}
+
+p {
+  margin: 5px 0;
+}
+
+.type-container {
+  white-space: nowrap;
+}

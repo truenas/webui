@@ -12,13 +12,13 @@ import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
 import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './reports-config-form.component.html',
-  styleUrls: ['./reports-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsConfigFormComponent implements OnInit {
@@ -47,7 +47,7 @@ export class ReportsConfigFormComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,

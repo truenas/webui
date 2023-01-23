@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -48,7 +48,7 @@ export class DeviceListComponent implements EntityTableConfig {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected loader: AppLoaderService,
     public dialogService: DialogService,
     private matDialog: MatDialog,
@@ -123,8 +123,8 @@ export class DeviceListComponent implements EntityTableConfig {
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params['pk'];
-      this.vm = params['name'];
+      this.pk = params.pk;
+      this.vm = params.name;
       this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
       this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM

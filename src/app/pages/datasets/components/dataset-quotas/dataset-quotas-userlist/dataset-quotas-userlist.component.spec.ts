@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   BehaviorSubject, of, Subject,
 } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -16,7 +16,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, StorageService, WebSocketService2,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -27,7 +27,6 @@ const fakeUserQuotas: DatasetQuota[] = [{
   name: 'daemon',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_bytes: 0,
@@ -37,7 +36,6 @@ const fakeUserQuotas: DatasetQuota[] = [{
   name: 'bin',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_bytes: 0,
@@ -47,7 +45,7 @@ const fakeUserQuotas: DatasetQuota[] = [{
 describe('DatasetQuotasUserlistComponent', () => {
   let spectator: Spectator<DatasetQuotasUserlistComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotasUserlistComponent,
@@ -58,7 +56,7 @@ describe('DatasetQuotasUserlistComponent', () => {
     providers: [
       mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(WebSocketService),
+      mockProvider(WebSocketService2),
       mockProvider(StorageService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
@@ -75,7 +73,7 @@ describe('DatasetQuotasUserlistComponent', () => {
         onClose$: new Subject<unknown>(),
         open: jest.fn(),
       }),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('pool.dataset.get_quota', fakeUserQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
@@ -85,13 +83,13 @@ describe('DatasetQuotasUserlistComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('should show table rows', async () => {
     expect(ws.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.User, [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]]],
+      ['Test', DatasetQuotaType.User, []],
     );
 
     expect(ws.call).toHaveBeenCalledWith(
@@ -103,8 +101,8 @@ describe('DatasetQuotasUserlistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
+      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', 'delete'],
     ];
 
     expect(cells).toEqual(expectedRows);

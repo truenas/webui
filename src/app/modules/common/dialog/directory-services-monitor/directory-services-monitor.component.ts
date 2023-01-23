@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 interface DirectoryServicesMonitorRow {
   name: string;
@@ -25,7 +25,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   readonly DirectoryServiceState = DirectoryServiceState;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private router: Router,
     private dialogRef: MatDialogRef<DirectoryServicesMonitorComponent>,
   ) {}

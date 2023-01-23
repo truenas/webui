@@ -3,20 +3,21 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { WebdavConfig, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
 import {
-  AppLoaderService, DialogService, WebSocketService,
+  AppLoaderService, DialogService,
 } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('ServiceWebdavComponent', () => {
   let spectator: Spectator<ServiceWebdavComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ServiceWebdavComponent,
     imports: [
@@ -24,7 +25,7 @@ describe('ServiceWebdavComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('webdav.config', {
           protocol: WebdavProtocol.HttpHttps,
           tcpport: 8080,
@@ -49,7 +50,7 @@ describe('ServiceWebdavComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('loads current webdav config and show them', async () => {

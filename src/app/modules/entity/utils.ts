@@ -33,6 +33,7 @@ interface HttpError {
 
 export class EntityUtils {
   // TODO: error is probably of type HttpError
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError(entity: any, error: any): void {
     if (error.code === 409) {
       this.handleObjError(entity, error);
@@ -75,8 +76,8 @@ export class EntityUtils {
         }
         let errors = '';
         field.forEach((item: string) => { errors += item + ' '; });
-        fc['hasErrors'] = true;
-        fc['errors'] = errors;
+        fc.hasErrors = true;
+        fc.errors = errors;
       } else if (typeof field === 'string') {
         entity.error = field;
       } else {
@@ -87,8 +88,9 @@ export class EntityUtils {
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   handleWsError(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     entity: any,
-    res: WebsocketError | Job,
+    errorOrJob: WebsocketError | Job,
     dialogService?: DialogService,
     targetFieldConfig?: FieldConfig[],
   ): void {
@@ -98,21 +100,20 @@ export class EntityUtils {
     } else if (entity) {
       dialog = entity.dialog;
     }
-    if ('exc_info' in res && res.exc_info?.extra) {
-      (res as any).extra = res.exc_info.extra;
+    if ('exc_info' in errorOrJob && errorOrJob.exc_info?.extra) {
+      errorOrJob.extra = errorOrJob.exc_info.extra as Record<string, unknown>;
     }
 
-    if ('extra' in res && res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
+    if ('extra' in errorOrJob && errorOrJob.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
-      if ((res as Job).extra.excerpt) {
-        this.errorReport(res, dialog);
-      } else if (Array.isArray(res.extra)) {
-        res.extra.forEach((extraItem) => {
+      if ((errorOrJob as Job).extra.excerpt) {
+        this.errorReport(errorOrJob, dialog);
+      } else if (Array.isArray(errorOrJob.extra)) {
+        errorOrJob.extra.forEach((extraItem) => {
           const field = extraItem[0].split('.')[1];
           const error = extraItem[1];
 
-          let fc = _.find(entity.fieldConfig, { name: field })
-            || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          let fc = _.find(entity.fieldConfig, { name: field });
           let stepIndex;
           if (entity.wizardConfig) {
             _.find(entity.wizardConfig, (step, index) => {
@@ -122,11 +123,10 @@ export class EntityUtils {
             });
           }
           if (targetFieldConfig) {
-            fc = _.find(targetFieldConfig, { name: field })
-              || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+            fc = _.find(targetFieldConfig, { name: field });
           }
 
-          if (fc && !fc['isHidden']) {
+          if (fc && !fc.isHidden) {
             const element = document.getElementById(field);
             if (element) {
               if (
@@ -141,33 +141,33 @@ export class EntityUtils {
                 scroll = true;
               }
             }
-            fc['hasErrors'] = true;
-            fc['errors'] = error;
+            fc.hasErrors = true;
+            fc.errors = error;
             if (entity.wizardConfig && entity.entityWizard) {
               entity.entityWizard.stepper.selectedIndex = stepIndex;
             }
           } else if (entity.error) {
             entity.error = error;
           } else {
-            this.errorReport(res, dialog);
+            this.errorReport(errorOrJob, dialog);
           }
         });
       } else {
-        this.errorReport(res, dialog);
+        this.errorReport(errorOrJob, dialog);
       }
     } else {
-      this.errorReport(res, dialog);
+      this.errorReport(errorOrJob, dialog);
     }
   }
 
-  errorReport(res: WebsocketError | Job, dialog: DialogService): void {
-    if ('trace' in res && res.trace?.formatted && dialog) {
-      dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-    } else if ('state' in res && res.error && res.exception && dialog) {
-      dialog.errorReport(res.state, res.error, res.exception);
+  errorReport(errorOrJob: WebsocketError | Job, dialog: DialogService): void {
+    if ('trace' in errorOrJob && errorOrJob.trace?.formatted && dialog) {
+      dialog.errorReport(errorOrJob.trace.class, errorOrJob.reason, errorOrJob.trace.formatted);
+    } else if ('state' in errorOrJob && errorOrJob.error && errorOrJob.exception && dialog) {
+      dialog.errorReport(errorOrJob.state, errorOrJob.error, errorOrJob.exception);
     } else {
       // if it can't print the error at least put it on the console.
-      console.error(res);
+      console.error(errorOrJob);
     }
   }
 
@@ -270,13 +270,5 @@ export class EntityUtils {
     }
 
     return result;
-  }
-
-  snakeToPascal(str: string): string {
-    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
-  }
-
-  snakeToHuman(str: string): string {
-    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 }

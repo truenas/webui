@@ -2,15 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
 
 describe('SignCsrDialogComponent', () => {
@@ -24,10 +25,11 @@ describe('SignCsrDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('certificateauthority.ca_sign_csr'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(SystemGeneralService, {
         getUnsignedCertificates: () => of([
           { id: 1, name: 'csr-1' },
@@ -62,7 +64,7 @@ describe('SignCsrDialogComponent', () => {
     const signButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign' }));
     await signButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith(
       'certificateauthority.ca_sign_csr', [{
         ca_id: 13,
         csr_cert_id: 1,

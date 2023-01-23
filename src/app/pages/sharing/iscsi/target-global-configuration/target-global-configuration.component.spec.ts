@@ -4,21 +4,22 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';
 
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: TargetGlobalConfigurationComponent,
     imports: [
@@ -26,7 +27,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('iscsi.global.config', {
           basename: 'iqn.2005-10.org.freenas.ctl',
           isns_servers: ['188.23.4.23', '92.233.1.1'],
@@ -51,7 +52,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('loads iSCSI global config when component is initialized', () => {
@@ -99,7 +100,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('if iSCSI service is not running, asks user if service needs to be enabled', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebsocketService2);
     websocketMock.mockCall('service.query', [{
       id: 13,
       service: ServiceName.Iscsi,

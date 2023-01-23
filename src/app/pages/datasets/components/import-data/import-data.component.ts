@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
@@ -16,13 +16,12 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './import-data.component.html',
-  styleUrls: ['./import-data.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportDataComponent implements OnInit {
@@ -59,7 +58,7 @@ export class ImportDataComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private filesystemService: FilesystemService,
     private matDialog: MatDialog,
@@ -112,7 +111,7 @@ export class ImportDataComponent implements OnInit {
   }
 
   private detectTypeOnVolumeSelection(): void {
-    this.form.controls['volume'].valueChanges
+    this.form.controls.volume.valueChanges
       .pipe(
         filter((volume) => Boolean(volume)),
         switchMap((volume) => {

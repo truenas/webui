@@ -12,8 +12,9 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +90,7 @@ export class ServiceS3Component implements OnInit {
   private warned = false;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -115,7 +116,7 @@ export class ServiceS3Component implements OnInit {
       },
     });
 
-    this.form.controls['storage_path'].valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
+    this.form.controls.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
       if (!newPath || newPath === this.initialPath || this.warned) {
         return;
       }

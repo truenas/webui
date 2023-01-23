@@ -15,8 +15,9 @@ import { portRangeValidator, rangeValidator } from 'app/modules/entity/entity-fo
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -83,7 +84,7 @@ export class ServiceFtpComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private router: Router,
@@ -159,7 +160,7 @@ export class ServiceFtpComponent implements OnInit {
   }
 
   private setRootLoginWarning(): void {
-    this.form.controls['rootlogin'].valueChanges.pipe(
+    this.form.controls.rootlogin.valueChanges.pipe(
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({

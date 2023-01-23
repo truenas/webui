@@ -3,7 +3,10 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="fieldsets">
-        <ix-fieldset class="fieldset" [title]="helptext.fieldset_transfer | translate">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_transfer | translate"
+        >
           <ix-input
             *ngIf="form.controls.description.enabled"
             formControlName="description"
@@ -49,10 +52,17 @@
           ></ix-explorer>
         </ix-fieldset>
 
-        <ix-fieldset class="fieldset" [title]="helptext.fieldset_remote | translate">
-          <a [routerLink]="['/', 'credentials', 'backup-credentials']" (click)="slideInService.close()">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_remote | translate"
+        >
+          <a
+            [routerLink]="['/', 'credentials', 'backup-credentials']"
+            (click)="slideInService.close()"
+          >
             <div class="link">
-              {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
+              {{ 'Manage Credentials' | translate
+              }}<ix-icon name="open_in_new"></ix-icon>
             </div>
           </a>
           <ix-select
@@ -67,7 +77,7 @@
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"
             [label]="bucketPlaceholder | translate"
-            [tooltip]="bucketTooltip| translate"
+            [tooltip]="bucketTooltip | translate"
             [options]="bucketOptions$"
           ></ix-select>
           <ix-input
@@ -102,7 +112,10 @@
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset class="fieldset" [title]="helptext.fieldset_control | translate">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_control | translate"
+        >
           <ix-scheduler
             *ngIf="form.controls.cloudsync_picker.enabled"
             formControlName="cloudsync_picker"
@@ -118,8 +131,12 @@
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset class="fieldset" [title]="helptext.fieldset_advanced_options | translate">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_advanced_options | translate"
+        >
           <ix-checkbox
+            *ngIf="form.controls.credentials.value === googleDriveProviderId"
             formControlName="acknowledge_abuse"
             [label]="helptext.acknowledge_abuse_placeholder | translate"
             [tooltip]="helptext.acknowledge_abuse_tooltip | translate"
@@ -166,7 +183,9 @@
             [tooltip]="helptext.encryption_tooltip | translate"
             [options]="encryptionOptions$"
           ></ix-select>
-          <div class="advanced-title">{{ helptext.advanced_remote_options | translate }}</div>
+          <div class="advanced-title">
+            {{ helptext.advanced_remote_options | translate }}
+          </div>
           <ix-select
             *ngIf="form.controls.storage_class.enabled"
             formControlName="storage_class"
@@ -228,13 +247,17 @@
           type="submit"
           color="primary"
           [disabled]="form.invalid || isLoading"
-        >{{ 'Save' | translate }}</button>
+        >
+          {{ 'Save' | translate }}
+        </button>
         <button
           mat-button
           type="button"
           [disabled]="form.invalid || isLoading"
           (click)="onDryRun()"
-        >{{ helptext.action_button_dry_run | translate }}</button>
+        >
+          {{ helptext.action_button_dry_run | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

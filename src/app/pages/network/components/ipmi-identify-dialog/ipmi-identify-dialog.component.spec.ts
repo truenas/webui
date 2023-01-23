@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -12,7 +12,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   IpmiIdentifyDialogComponent,
 } from 'app/pages/network/components/ipmi-identify-dialog/ipmi-identify-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('IpmiIdentifyDialogComponent', () => {
   let spectator: Spectator<IpmiIdentifyDialogComponent>;
@@ -26,7 +27,7 @@ describe('IpmiIdentifyDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('ipmi.identify'),
       ]),
       mockProvider(MatDialogRef),
@@ -49,7 +50,7 @@ describe('IpmiIdentifyDialogComponent', () => {
     const okButton = await loader.getHarness(MatButtonHarness.with({ text: 'OK' }));
     await okButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ipmi.identify', [{ seconds: 180 }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('ipmi.identify', [{ seconds: 180 }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
@@ -62,6 +63,6 @@ describe('IpmiIdentifyDialogComponent', () => {
     const okButton = await loader.getHarness(MatButtonHarness.with({ text: 'OK' }));
     await okButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ipmi.identify', [{ force: true }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('ipmi.identify', [{ force: true }]);
   });
 });

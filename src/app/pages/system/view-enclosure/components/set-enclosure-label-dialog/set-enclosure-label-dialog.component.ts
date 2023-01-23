@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 
 export interface SetEnclosureLabelDialogData {
   enclosureId: string;
@@ -27,7 +27,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
     private dialogService: DialogService,
@@ -63,11 +63,11 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
   }
 
   private setFormRelationship(): void {
-    this.form.controls['resetToDefault'].valueChanges.pipe(untilDestroyed(this)).subscribe((resetToDefault) => {
+    this.form.controls.resetToDefault.valueChanges.pipe(untilDestroyed(this)).subscribe((resetToDefault) => {
       if (resetToDefault) {
-        this.form.controls['label'].disable();
+        this.form.controls.label.disable();
       } else {
-        this.form.controls['label'].enable();
+        this.form.controls.label.enable();
       }
     });
   }

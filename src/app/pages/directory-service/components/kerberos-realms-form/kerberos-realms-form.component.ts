@@ -6,13 +6,12 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-realms-form.component.html',
-  styleUrls: ['./kerberos-realms-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosRealmsFormComponent {
@@ -44,7 +43,7 @@ export class KerberosRealmsFormComponent {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

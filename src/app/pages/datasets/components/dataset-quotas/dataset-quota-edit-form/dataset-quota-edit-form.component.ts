@@ -13,13 +13,12 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './dataset-quota-edit-form.component.html',
-  styleUrls: ['./dataset-quota-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotaEditFormComponent {
@@ -91,7 +90,7 @@ export class DatasetQuotaEditFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
@@ -113,8 +112,8 @@ export class DatasetQuotaEditFormComponent {
         this.datasetQuota = quotas[0];
         this.isFormLoading = false;
         this.form.patchValue({
-          name: this.datasetQuota.name,
-          data_quota: this.datasetQuota.quota,
+          name: this.datasetQuota.name || '',
+          data_quota: this.datasetQuota.quota || null,
           obj_quota: this.datasetQuota.obj_quota,
         });
         this.cdr.markForCheck();
@@ -140,14 +139,14 @@ export class DatasetQuotaEditFormComponent {
     payload.push({
       quota_type: this.quotaType,
       id: String(this.datasetQuota.id),
-      quota_value: values.data_quota,
+      quota_value: values.data_quota || 0,
     });
     payload.push({
       quota_type: this.quotaType === DatasetQuotaType.User
         ? DatasetQuotaType.UserObj
         : DatasetQuotaType.GroupObj,
       id: String(this.datasetQuota.id),
-      quota_value: values.obj_quota,
+      quota_value: values.obj_quota || 0,
     });
 
     this.submit(values, payload);
@@ -179,7 +178,7 @@ export class DatasetQuotaEditFormComponent {
   }
 
   private isUnsettingQuota(values: typeof this.form.value): boolean {
-    return values.data_quota === 0 && values.obj_quota === 0;
+    return !values.data_quota && !values.obj_quota;
   }
 
   private getConfirmation(name: string): Observable<boolean> {

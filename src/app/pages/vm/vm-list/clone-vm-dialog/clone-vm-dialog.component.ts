@@ -2,11 +2,11 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VirtualMachine, VmCloneParams } from 'app/interfaces/virtual-machine.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +18,7 @@ export class CloneVmDialogComponent {
   nameControl = new FormControl('');
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
     private dialogRef: MatDialogRef<CloneVmDialogComponent>,

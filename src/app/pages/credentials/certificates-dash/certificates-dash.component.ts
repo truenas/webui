@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -24,7 +24,7 @@ import {
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { WebSocketService2, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
@@ -44,7 +44,7 @@ export class CertificatesDashComponent implements OnInit {
   constructor(
     private modalService: ModalService,
     private slideInService: IxSlideInService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: MatDialog,
     private dialogService: DialogService,
     private storage: StorageService,

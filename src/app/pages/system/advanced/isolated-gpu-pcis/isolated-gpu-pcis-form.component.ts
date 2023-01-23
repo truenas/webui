@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -16,7 +16,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @UntilDestroy()
 @Component({
   templateUrl: './isolated-gpu-pcis-form.component.html',
-  styleUrls: ['./isolated-gpu-pcis-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpuPcisFormComponent implements OnInit {
@@ -30,7 +29,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
   options$ = this.gpuService.getGpuOptions();
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private modal: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -51,7 +50,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading = true;
-    const isolatedGpuPciIds = this.formGroup.controls['isolated_gpu_pci_ids'].value;
+    const isolatedGpuPciIds = this.formGroup.controls.isolated_gpu_pci_ids.value;
 
     this.ws.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       untilDestroyed(this),

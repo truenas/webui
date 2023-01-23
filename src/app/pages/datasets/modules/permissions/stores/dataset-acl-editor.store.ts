@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import * as _ from 'lodash';
@@ -25,7 +25,7 @@ import {
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import {
-  DialogService, StorageService, UserService, WebSocketService,
+  DialogService, StorageService, UserService, WebSocketService2,
 } from 'app/services';
 
 const initialState: DatasetAclEditorState = {
@@ -41,7 +41,7 @@ const initialState: DatasetAclEditorState = {
 @Injectable()
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private matDialog: MatDialog,
     private router: Router,

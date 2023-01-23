@@ -2,17 +2,17 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -34,13 +34,13 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   unusedDisks: UnusedDisk[] = [];
 
-  unusedDisksOptions$: Observable<Option[]> = of([]);
+  unusedDisksOptions$ = of<Option[]>([]);
 
   readonly helptext = helptext;
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,

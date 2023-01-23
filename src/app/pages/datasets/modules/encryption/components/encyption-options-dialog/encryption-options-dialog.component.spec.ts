@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -14,12 +14,12 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
   let spectator: Spectator<EncryptionOptionsDialogComponent>;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>;
@@ -39,7 +39,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(AppLoaderService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('pool.dataset.change_key'),
         mockCall('pool.dataset.inherit_parent_encryption_properties'),
         mockCall('pool.dataset.query', [{
@@ -72,7 +72,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: dialogData },
       ],
     });
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     dialogRef = spectator.inject(MatDialogRef);
     form = await loader.getHarness(IxFormHarness);
@@ -80,7 +80,7 @@ describe('EncryptionOptionsDialogComponent', () => {
 
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     await setupTest();
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(WebSocketService2).call)
       .toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'pool/parent/child']]]);
     spectator.component.ngOnInit();
 

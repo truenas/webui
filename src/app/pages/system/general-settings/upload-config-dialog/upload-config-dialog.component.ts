@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -42,8 +42,8 @@ export class UploadConfigDialogComponent {
       dialogRef.close();
       this.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-      dialogRef.componentInstance.setDescription(res.error);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
+      dialogRef.componentInstance.setDescription(job.error);
     });
     dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.ws.token, formData);
   }

@@ -2,16 +2,17 @@ import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  AppLoaderService, DialogService, ServicesService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, ServicesService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +25,7 @@ export class DownloadClientConfigModalComponent {
   serverCertificates$ = this.services.getCerts().pipe(idNameArrayToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<DownloadClientConfigModalComponent>,

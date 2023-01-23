@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -55,7 +55,7 @@ export class ManualTestDialogComponent {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,

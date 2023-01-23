@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder, Validators,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
@@ -14,7 +16,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { LanguageService, SystemGeneralService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
@@ -34,7 +36,7 @@ export class LocalizationFormComponent {
 
   sortLanguagesByName = true;
 
-  formGroup: UntypedFormGroup = this.fb.group({
+  formGroup = this.fb.group({
     language: ['', [Validators.required]],
     kbdmap: [''],
     timezone: ['', [Validators.required]],
@@ -104,9 +106,9 @@ export class LocalizationFormComponent {
 
   constructor(
     private sysGeneralService: SystemGeneralService,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     public localeService: LocaleService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected langService: LanguageService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

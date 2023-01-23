@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -13,7 +13,7 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class SelectPresetModalComponent implements OnInit {
     usePreset: new FormControl(true),
   });
 
-  presetOptions$: Observable<Option[]> = of([]);
+  presetOptions$ = of<Option[]>([]);
   presets: AclTemplateByPath[] = [];
 
   readonly usePresetOptions$ = of([
@@ -49,7 +49,7 @@ export class SelectPresetModalComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
     private dialogService: DialogService,

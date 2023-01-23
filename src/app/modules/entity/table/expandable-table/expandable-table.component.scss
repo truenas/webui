@@ -9,7 +9,6 @@
 }
 
 .actions-row {
-  align-items: center;
   align-items: flex-end;
   display: flex;
   flex-direction: row;
@@ -59,7 +58,7 @@
   }
 }
 
-::ng-deep .tooltip .material-icons {
+:host ::ng-deep .tooltip .material-icons {
   align-items: center;
   display: flex;
   font-size: 24px !important;

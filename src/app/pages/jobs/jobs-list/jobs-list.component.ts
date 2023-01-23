@@ -31,7 +31,7 @@ import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService2 } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { JobTab } from './job-tab.enum';
 
@@ -49,7 +49,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
-  dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<Job>([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs', 'actions'];
   expandedRow: Job;
   selectedIndex: JobTab = 0;
@@ -86,7 +86,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private storage: StorageService,
     private translate: TranslateService,
     private dialogService: DialogService,

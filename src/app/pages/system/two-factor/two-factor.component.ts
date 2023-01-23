@@ -6,7 +6,7 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-facto
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService2, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +69,7 @@ export class TwoFactorComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,

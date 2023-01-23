@@ -53,12 +53,12 @@ span.code {
 }
 
 /* MENUS */
-.mat-menu-item {
+.mat-mdc-menu-item {
   height: 36px !important;
   line-height: 36px !important;
 }
 
-.mat-menu-item.sticky-bottom,
+.mat-mdc-menu-item.sticky-bottom,
 .mat-option.sticky-bottom {
   background: var(--bg2);
   border-top: solid 1px var(--lines);
@@ -66,7 +66,7 @@ span.code {
   position: sticky;
 }
 
-.mat-menu-item.sticky-top,
+.mat-mdc-menu-item.sticky-top,
 .mat-option.sticky-top {
   background: var(--bg2);
   border-bottom: solid 1px var(--lines);
@@ -76,36 +76,31 @@ span.code {
 
 
 /* Cards */
-
-.mat-card {
-  border: solid var(--highlights) rgba(255, 255, 255, 0.025);
-}
-
-.mat-card.mat-card-padded {
+.mat-mdc-card.mat-mdc-card-padded {
   padding: 16px 32px !important;
 }
 
-ix-entity-table .mat-card,
-ix-entity-form .mat-card {
+ix-entity-table .mat-mdc-card,
+ix-entity-form .mat-mdc-card {
   padding: 0 !important;
 }
 
-.form-card.mat-card {
+.form-card.mat-mdc-card {
   margin: 0 auto;
   max-width: 960px;
 }
 
-ix-entity-form .mat-card > *,
-ix-entity-table .mat-card > * {
+ix-entity-form .mat-mdc-card > *,
+ix-entity-table .mat-mdc-card > * {
   margin: 0 !important;
   padding: 16px !important;
 }
 
-.mat-card > .no-padding {
+.mat-mdc-card > .no-padding {
   padding: 0 !important;
 }
 
-.mat-card-title-text {
+.mat-mdc-card-title-text {
   margin: 0 !important;
 }
 
@@ -138,13 +133,13 @@ ix-entity-table .multiactions-title {
   margin-bottom: 16px;
 }
 
-ix-entity-table .mat-toolbar.mat-card-toolbar {
+ix-entity-table .mat-toolbar.mat-mdc-card-toolbar {
   position: relative;
   z-index: 2;
 }
 /* Elements with shadows */
 .datatable-header,
-ix-entity-table .mat-toolbar.mat-card-toolbar {
+ix-entity-table .mat-toolbar.mat-mdc-card-toolbar {
   box-shadow: var(--fn-dropshadow);
 }
 
@@ -207,7 +202,7 @@ textarea.mat-input-element::placeholder {
 
 .form-element.form-combobox .mat-form-field,
 .form-element.form-ip-netmask .mat-form-field,
-.form-element.form-combobox .mat-menu-trigger,
+.form-element.form-combobox .mat-mdc-menu-trigger,
 .form-element .mat-form-field-wrapper,
 .form-element input[type = 'password'],
 .form-element input[type = 'email'],
@@ -231,7 +226,7 @@ textarea.mat-input-element::placeholder {
 #password,
 .form-element.form-combobox .mat-form-field,
 .form-element.form-ip-netmask .mat-form-field,
-.form-element.form-combobox .mat-menu-trigger,
+.form-element.form-combobox .mat-mdc-menu-trigger,
 .form-element .mat-form-field-wrapper,
 .form-element .form-button,
 .form-element input[type = 'password'],
@@ -249,7 +244,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element,
 ix-entity-form-list .list-action-block-wrapper #password,
 ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
 ix-entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
-ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-menu-trigger,
+ix-entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-mdc-menu-trigger,
 ix-entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'password'],
 ix-entity-form-list .list-action-block-wrapper .form-element input[type = 'email'],
@@ -281,23 +276,23 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   padding: 0 8px;
 }
 
-.form-element.form-combobox .mat-menu-trigger:hover {
+.form-element.form-combobox .mat-mdc-menu-trigger:hover {
   cursor: pointer;
 }
 
-.form-element.form-combobox .mat-menu-trigger {
+.form-element.form-combobox .mat-mdc-menu-trigger {
   padding: 9px 2px 8px;
   position: relative;
   top: -9px;
 }
 
-.form-element.form-combobox .mat-menu-trigger .mat-icon {
+.form-element.form-combobox .mat-mdc-menu-trigger .mat-icon {
   position: relative !important;
   top: 7px !important;
 }
 
 .form-element.form-combobox .mat-form-field,
-.form-element.form-combobox .mat-menu-trigger {
+.form-element.form-combobox .mat-mdc-menu-trigger {
   height: 33px;
 }
 
@@ -435,6 +430,7 @@ ix-tooltip button i {
 }
 
 .mat-mdc-button,
+.mat-button,
 .mat-flat-button {
   border-radius: 0 !important;
   text-transform: capitalize !important;
@@ -445,8 +441,8 @@ ix-tooltip button i {
   opacity: 0.5;
 }
 
-.mat-card-actions .mat-mdc-button,
-.mat-card-actions .mat-flat-button {
+.mat-mdc-card-actions .mat-mdc-button,
+.mat-mdc-card-actions .mat-flat-button {
   background: var(--btn-default-bg) !important;
   background-color: var(--btn-default-bg) !important;
   color: var(--fg2) !important;
@@ -456,7 +452,7 @@ ix-tooltip button i {
 .mat-flat-button,
 button.mat-mdc-button.btn-default,
 button.mat-mdc-button.mat-default,
-.mat-card-actions button.mat-default,
+.mat-mdc-card-actions button.mat-default,
 button.mat-default,
 button.mat-mdc-button.mat-accent.btn-default,
 button.mat-mdc-button[type='button']:not(button.mat-primary) {
@@ -509,20 +505,20 @@ button.mat-mdc-button.mat-green {
 
 /* Menus */
 
-button.mat-menu-trigger.menu-toggle.mat-mdc-button {
+button.mat-mdc-menu-trigger.menu-toggle.mat-mdc-button {
   max-height: 36px;
 }
 
 .mat-option:hover:not(.mat-option-disabled),
 .sidenav-link:hover,
 .slide-in-nav-item:hover,
-.mat-menu-item:hover,
+.mat-mdc-menu-item:hover,
 .mat-mdc-button:hover {
   background-color: var(--hover-bg) !important;
 }
 
 /* Nested Cards */
-.mat-card .form-card.mat-card {
+.mat-mdc-card .form-card.mat-mdc-card {
   border: none;
   box-shadow: unset;
 }
@@ -534,14 +530,15 @@ button.mat-menu-trigger.menu-toggle.mat-mdc-button {
 }
 
 /* Material Cards*/
-.mat-card {
+body .mat-mdc-card {
   border: solid 1px var(--contrast-lighter);
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   padding: 0 !important;
   position: relative;
 }
 
-#ix-slide-in-form .mat-card,
-#slide-in-form .mat-card {
+#ix-slide-in-form .mat-mdc-card,
+#slide-in-form .mat-mdc-card {
   border: none;
   box-shadow: none;
 }
@@ -551,28 +548,37 @@ button.mat-menu-trigger.menu-toggle.mat-mdc-button {
   padding: 0;
 }
 
-.mat-card .mat-toolbar-row,
-.mat-card .mat-card-content > div,
-.mat-card .mat-card-footer {
+.mat-mdc-card .mat-toolbar-row,
+body .mdc-card__actions,
+.mat-mdc-card .mat-mdc-card-content > div,
+.mat-mdc-card .mat-mdc-card-footer {
   padding: 16px;
 }
 
-.mat-card .mat-toolbar-row {
+.mat-mdc-card-content {
+  padding: 0 !important;
+}
+
+.mat-mdc-card .mat-toolbar-row {
   border-bottom: solid 1px var(--lines);
   height: 56px;
   min-height: 48px !important;
+
+  .mat-card-title-text {
+    margin: 0;
+  }
 }
 
-.mat-card .mat-toolbar-row .actions {
+.mat-mdc-card .mat-toolbar-row .actions {
   position: absolute;
   right: 16px;
 }
 
-.mat-card .mat-card-footer .actions button {
+.mat-mdc-card .mat-mdc-card-footer .actions button {
   margin-right: 8px;
 }
 
-.mat-card .mat-card-footer {
+.mat-mdc-card .mat-mdc-card-footer {
   margin-top: 8px;
   padding: 0 16px;
   width: 100%;
@@ -696,17 +702,17 @@ thead.ui-treetable-thead tr {
 }
 
 /* Material Lists */
-.mat-list-item {
+.mat-mdc-list-item {
   border-bottom: solid 1px var(--lines) !important;
 }
 
 .value,
-.mat-list-item .value {
+.mat-mdc-list-item .value {
   font-weight: 500;
 }
 
 .label,
-.mat-list-item .label {
+.mat-mdc-list-item .label {
   margin-right: 8px;
 }
 
@@ -714,7 +720,7 @@ thead.ui-treetable-thead tr {
   opacity: 0.65;
 }
 
-mat-card.mat-card .mat-list-base {
+mat-card.mat-mdc-card .mat-mdc-list-base {
   padding-top: 0;
 }
 
@@ -824,7 +830,6 @@ ul.nested-list li {
   padding: 0;
 }
 
-
 .expanded-table mat-card {
   border: 0 !important;
   margin: 0 !important;
@@ -840,8 +845,8 @@ ul.nested-list li {
   display: flex;
 }
 
-.form-selection-list.mat-list-base .mat-list-item .mat-list-item-content,
-.form-selection-list.mat-list-base .mat-list-option .mat-list-item-content {
+.form-selection-list.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-list-item-content,
+.form-selection-list.mat-mdc-list-base .mat-mdc-list-option .mat-mdc-list-item-content {
   padding: 0;
 }
 

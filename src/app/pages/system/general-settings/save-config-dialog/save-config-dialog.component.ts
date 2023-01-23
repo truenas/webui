@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, Optional,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,7 +11,7 @@ import { switchMap } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityUtils } from 'app/modules/entity/utils';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, StorageService, WebSocketService2,
 } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -44,7 +44,7 @@ export class SaveConfigDialogComponent {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private store$: Store<AppState>,
     private storage: StorageService,
     private loader: AppLoaderService,

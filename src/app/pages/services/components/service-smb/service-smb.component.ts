@@ -18,8 +18,9 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
 import { UserService } from 'app/services/user.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
@@ -40,7 +41,7 @@ export class ServiceSmbComponent implements OnInit {
     netbiosname_b: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
-        (control: AbstractControl) => {
+        (control: AbstractControl<string[]>) => {
           return control.value?.every((alias: string) => alias.length <= 15);
         },
         this.translate.instant('Aliases must be 15 characters or less.'),
@@ -104,7 +105,7 @@ export class ServiceSmbComponent implements OnInit {
   readonly bindIpAddressOptions$ = this.ws.call('smb.bindip_choices').pipe(choicesToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

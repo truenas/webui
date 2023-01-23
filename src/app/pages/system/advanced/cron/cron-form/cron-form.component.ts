@@ -12,13 +12,12 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { UserService, WebSocketService } from 'app/services';
+import { UserService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './cron-form.component.html',
-  styleUrls: ['./cron-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronFormComponent {
@@ -60,7 +59,7 @@ export class CronFormComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

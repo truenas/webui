@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,7 +16,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -39,7 +39,7 @@ export class DatasetDetailsCardComponent {
     private datasetStore: DatasetTreeStore,
     private slideIn: IxSlideInService,
     private router: Router,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
   ) { }

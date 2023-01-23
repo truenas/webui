@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -31,8 +31,8 @@ export class TruecommandStatusModalComponent {
       message: helptext.tcDialog.message,
       is_html: true,
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (confirmed) {
         this.window.open(this.tc.remote_url);
       }
     });

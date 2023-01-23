@@ -2,17 +2,20 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket2,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { KmipComponent } from './kmip.component';
 
 describe('KmipComponent', () => {
@@ -26,7 +29,7 @@ describe('KmipComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('kmip.config', {
           server: 'kmip.truenas.com',
           enabled: false,
@@ -69,7 +72,7 @@ describe('KmipComponent', () => {
   it('loads current KMIP config and shows it in the form', async () => {
     const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('kmip.config');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('kmip.config');
     expect(values).toEqual({
       Server: 'kmip.truenas.com',
       Port: '5696',
@@ -122,13 +125,13 @@ describe('KmipComponent', () => {
   it('checks whether KMIP sync is pending and shows KMIP status', () => {
     const statusText = spectator.query('.key-status');
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('kmip.kmip_sync_pending');
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('kmip.kmip_sync_pending');
     expect(statusText.textContent).toContain('Disabled');
   });
 
   describe('pending sync', () => {
     beforeEach(() => {
-      spectator.inject(MockWebsocketService).mockCall('kmip.kmip_sync_pending', true);
+      spectator.inject(MockWebsocketService2).mockCall('kmip.kmip_sync_pending', true);
       spectator.component.ngOnInit();
     });
 
@@ -144,7 +147,7 @@ describe('KmipComponent', () => {
       const syncKeysButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync Keys' }));
       await syncKeysButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('kmip.sync_keys');
+      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('kmip.sync_keys');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         helptextSystemKmip.syncInfoDialog.title,
         helptextSystemKmip.syncInfoDialog.info,
@@ -155,7 +158,7 @@ describe('KmipComponent', () => {
       const clearSyncKeysButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Sync Keys' }));
       await clearSyncKeysButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('kmip.clear_sync_pending_keys');
+      expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('kmip.clear_sync_pending_keys');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         helptextSystemKmip.clearSyncKeyInfoDialog.title,
         helptextSystemKmip.clearSyncKeyInfoDialog.info,

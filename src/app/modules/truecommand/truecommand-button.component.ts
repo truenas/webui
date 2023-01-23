@@ -1,7 +1,7 @@
 import {
   Component, Inject, OnInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,7 +15,7 @@ import {
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +46,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private dialog: MatDialog,
     private loader: AppLoaderService,
@@ -100,8 +100,8 @@ export class TruecommandButtonComponent implements OnInit {
       icon: helptext.stopTCConnectingDialog.icon,
       message: helptext.stopTCConnectingDialog.message,
       confirmBtnMsg: helptext.stopTCConnectingDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+      if (confirmed) {
         this.loader.open();
         this.ws.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
           next: () => {

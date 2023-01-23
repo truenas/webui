@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,7 +16,7 @@ import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
     private translate: TranslateService,
@@ -149,7 +149,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private setConfirmValidator(): void {
-    this.form.controls['confirmDatasetName'].setValidators(
+    this.form.controls.confirmDatasetName.setValidators(
       this.validators.confirmValidator(
         this.dataset.name,
         this.translate.instant('Enter dataset name to continue.'),

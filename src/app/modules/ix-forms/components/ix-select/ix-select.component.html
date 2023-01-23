@@ -11,6 +11,7 @@
       [required]="required"
       [disabled]="disabledState"
       [multiple]="multiple"
+      [ixTest]="controlDirective.name"
       [(ngModel)]="value"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
@@ -33,6 +34,7 @@
           #ixOption
           [value]="option.value"
           [disabled]="option.disabled"
+          [ixTest]="[controlDirective.name, option.label]"
         >
           <ix-icon
             *ngIf="multiple"
@@ -40,6 +42,14 @@
           ></ix-icon>
 
           {{ option.label }}
+
+          <ix-tooltip
+            *ngIf="option.tooltip"
+            class="option-tooltip"
+            [header]="option.label"
+            [message]="option.tooltip"
+            (click)="onOptionTooltipClicked($event)"
+          ></ix-tooltip>
         </mat-option>
       </ng-container>
 

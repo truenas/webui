@@ -2,15 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
 
 describe('ManageDiskSedDialogComponent', () => {
@@ -25,7 +26,7 @@ describe('ManageDiskSedDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('disk.query', [
           {
             identifier: 'disk1234',
@@ -35,6 +36,7 @@ describe('ManageDiskSedDialogComponent', () => {
         mockCall('disk.update'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(SnackbarService),
       {
         provide: MAT_DIALOG_DATA,
@@ -50,7 +52,7 @@ describe('ManageDiskSedDialogComponent', () => {
   });
 
   it('loads and shows if password is currently set for the current disk', async () => {
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(WebSocketService2).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
     expect(await passwordInput.getValue()).toBe('123456');
@@ -60,7 +62,7 @@ describe('ManageDiskSedDialogComponent', () => {
     const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear SED Password' }));
     await clearButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });
@@ -71,7 +73,7 @@ describe('ManageDiskSedDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });

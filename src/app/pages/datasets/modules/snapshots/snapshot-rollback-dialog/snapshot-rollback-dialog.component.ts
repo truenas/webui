@@ -1,8 +1,8 @@
 import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { Validators, FormBuilder } from '@angular/forms';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService, WebSocketService2, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -57,9 +57,9 @@ export class SnapshotRollbackDialogComponent implements OnInit {
   };
 
   constructor(
-    private websocket: WebSocketService,
+    private websocket: WebSocketService2,
     private loader: AppLoaderService,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,

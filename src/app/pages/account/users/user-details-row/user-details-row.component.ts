@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,7 +11,7 @@ import {
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import {
-  WebSocketService, DialogService,
+  WebSocketService2, DialogService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -28,7 +28,7 @@ export class UserDetailsRowComponent {
   @Output() update = new EventEmitter<void>();
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,

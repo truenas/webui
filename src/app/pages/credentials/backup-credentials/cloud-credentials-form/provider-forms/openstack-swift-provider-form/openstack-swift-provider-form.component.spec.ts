@@ -24,7 +24,7 @@ describe('OpenstackSwiftProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       user: 'username',
       key: 'password',
       auth: 'http://openstack.com/auth',

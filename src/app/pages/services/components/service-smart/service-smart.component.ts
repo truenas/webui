@@ -11,7 +11,8 @@ import helptext from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +47,7 @@ export class ServiceSmartComponent implements OnInit {
   ]);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

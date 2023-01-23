@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import {
   TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions, TreeModel,
 } from '@circlon/angular-tree-component';
@@ -34,7 +34,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   private actionMapping: IActionMapping = {
     mouse: {
-      contextMenu: (tree, node, $event) => {
+      contextMenu: (tree, node, $event: Event) => {
         $event.preventDefault();
       },
       dblClick: (tree, node, $event) => {
@@ -77,8 +77,14 @@ export class FormExplorerComponent implements Field, OnInit {
 
   readonly ExplorerType = ExplorerType;
 
-  constructor(private entityFormService: EntityFormService,
-    public translate: TranslateService) {}
+  constructor(
+    private entityFormService: EntityFormService,
+    public translate: TranslateService,
+  ) {}
+
+  get control(): AbstractControl<string | string[]> {
+    return this.group.controls[this.config.name];
+  }
 
   ngOnInit(): void {
     this.rootSelectable = this.config.rootSelectable === undefined ? true : this.config.rootSelectable;
@@ -123,7 +129,7 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   setPath(node: TreeNode): void {
-    this.group.controls[this.config.name].setValue(node.data.name);
+    this.control.setValue(node.data.name);
   }
 
   onClick(event: TreeNodeEvent): void {
@@ -132,14 +138,14 @@ export class FormExplorerComponent implements Field, OnInit {
       .filter(([, value]) => value)
       .map((node) => event.treeModel.getNodeById(node[0]));
     // this is to mark selected node, but not update form value
-    if (event.eventName === 'select' && this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.indexOf(event.node.data.name) > -1) {
+    if (event.eventName === 'select' && this.control.value && this.control.value.includes(event.node.data.name)) {
       return;
     }
     this.valueHandler(selectedTreeNodes);
   }
 
   valueHandler(selectedTreeNodes: TreeNode[]): void {
-    const res: string[] = [];
+    const newValue: string[] = [];
     selectedTreeNodes.forEach((node) => {
       if (node === undefined) {
         return;
@@ -152,21 +158,21 @@ export class FormExplorerComponent implements Field, OnInit {
         ) {
           parent = parent.parent;
         }
-        if (!res.includes(parent.data.name)) {
-          res.push(parent.data.name);
+        if (!newValue.includes(parent.data.name)) {
+          newValue.push(parent.data.name);
         }
       } else if (node.isAllSelected && node.data.name !== '') {
-        res.push(node.data.name);
+        newValue.push(node.data.name);
       }
     });
-    this.group.controls[this.config.name].setValue(res);
+    this.control.setValue(newValue);
   }
 
   loadNodeChildren(event: TreeNodeEvent): void {
-    if (this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
+    if (this.customTemplateStringOptions.useCheckbox && this.control.value) {
       for (const item of (event.node.data.children || [])) {
-        if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
-          const target = event.treeModel.getNodeById(item.uuid);
+        if (this.control.value.includes(item.name)) {
+          const target: TreeNode = event.treeModel.getNodeById(item.uuid);
           target.setIsSelected(true);
         }
       }
@@ -177,11 +183,11 @@ export class FormExplorerComponent implements Field, OnInit {
     if (
       event.isExpanded
       && this.customTemplateStringOptions.useCheckbox
-      && this.group.controls[this.config.name].value
+      && this.control.value
     ) {
       for (const item of (event.node.data.children || [])) {
-        if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
-          const target = event.treeModel.getNodeById(item.uuid);
+        if (this.control.value.includes(item.name)) {
+          const target = event.treeModel.getNodeById(item.uuid) as TreeNode;
           target.setIsSelected(true);
         }
       }

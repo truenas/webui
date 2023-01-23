@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -32,6 +33,8 @@ export class ChangePasswordDialogComponent {
     ]],
   });
 
+  private loggedInUser: LoggedInUser;
+
   readonly tooltips = {
     password: helptext.changePasswordDialog.pw_new_pw_tooltip,
   };
@@ -45,12 +48,16 @@ export class ChangePasswordDialogComponent {
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private snackbar: SnackbarService,
-  ) {}
+  ) {
+    this.ws.loggedInUser$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
+      this.loggedInUser = user;
+    });
+  }
 
   onSubmit(): void {
     this.loader.open();
     const { currentPassword, password } = this.form.value;
-    this.ws.call('auth.check_user', ['root', currentPassword]).pipe(
+    this.ws.call('auth.check_user', [this.loggedInUser.pw_name, currentPassword]).pipe(
       tap((passwordVerified) => {
         if (passwordVerified) {
           return;
@@ -63,7 +70,7 @@ export class ChangePasswordDialogComponent {
         this.loader.close();
       }),
       filter(Boolean),
-      switchMap(() => this.ws.call('user.update', [1, { password }])),
+      switchMap(() => this.ws.call('user.update', [this.loggedInUser.id, { password }])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

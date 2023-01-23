@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
@@ -13,7 +13,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -38,9 +39,9 @@ export class ServiceUpsComponent implements OnInit {
     rmonitor: [false],
     shutdown: [null as string],
     shutdowntimer: [null as number],
-    shutdowncmd: [null as unknown],
+    shutdowncmd: [null as string],
     powerdown: [false],
-    nocommwarntime: [300 as unknown],
+    nocommwarntime: [300],
     hostsync: [15],
     description: [null as string],
     options: [null as string],
@@ -101,10 +102,10 @@ export class ServiceUpsComponent implements OnInit {
   readonly shutdownOptions$ = of(helptext.ups_shutdown_options);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private dialogService: DialogService,
     private router: Router,
   ) {}
@@ -115,7 +116,7 @@ export class ServiceUpsComponent implements OnInit {
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
 
-    this.form.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+    this.form.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
       if (mode === UpsMode.Master) {
         this.form.controls.remotehost.disable();
         this.form.controls.remoteport.disable();

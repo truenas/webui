@@ -11,7 +11,7 @@ import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -39,7 +39,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   get checkQuotas(): boolean {
-    return !this.dataset.locked && this.isFilesystem;
+    return !this.dataset.locked && this.isFilesystem && !this.dataset.readonly;
   }
 
   get hasQuota(): boolean {
@@ -55,7 +55,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,

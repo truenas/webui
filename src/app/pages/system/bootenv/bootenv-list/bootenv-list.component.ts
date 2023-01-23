@@ -2,9 +2,9 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MAT_LEGACY_SLIDE_TOGGLE_DEFAULT_OPTIONS as MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/legacy-slide-toggle';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { MatSort, Sort } from '@angular/material/sort';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,7 +27,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
-import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { DialogService, WebSocketService2, AppLoaderService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -42,7 +42,7 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  dataSource: MatTableDataSource<Bootenv> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<Bootenv>([]);
   displayedColumns = ['select', 'name', 'active', 'created', 'rawspace', 'keep', 'actions'];
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;
@@ -82,7 +82,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     public formatter: IxFormatterService,
     private loader: AppLoaderService,
     private dialog: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,

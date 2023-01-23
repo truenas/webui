@@ -10,10 +10,12 @@ import helptext from 'app/helptext/storage/vmware-snapshot/vm-ware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -67,7 +69,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
@@ -103,15 +105,15 @@ export class VmwareSnapshotFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.ws.call('vmware.match_datastores_with_datasets', [{
+    this.ws2.call('vmware.match_datastores_with_datasets', [{
       hostname,
       username,
       password,
     }]).pipe(untilDestroyed(this)).subscribe({
-      next: (res: MatchDatastoresWithDatasets) => {
+      next: (matches: MatchDatastoresWithDatasets) => {
         this.isLoading = false;
-        this.filesystemList = res.filesystems;
-        this.datastoreList = res.datastores;
+        this.filesystemList = matches.filesystems;
+        this.datastoreList = matches.datastores;
 
         this.filesystemOptions$ = of(
           this.filesystemList.map((filesystem) => ({
@@ -128,7 +130,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
@@ -147,9 +149,9 @@ export class VmwareSnapshotFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('vmware.create', [values]);
+      request$ = this.ws2.call('vmware.create', [values]);
     } else {
-      request$ = this.ws.call('vmware.update', [
+      request$ = this.ws2.call('vmware.update', [
         this.editingSnapshot.id,
         values,
       ]);

@@ -12,7 +12,7 @@ import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/inter
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services/';
+import { DialogService, WebSocketService2 } from 'app/services/';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ export class AlertConfigFormComponent implements OnInit {
   );
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     public dialog: DialogService,
     protected translate: TranslateService,
     private snackbarService: SnackbarService,
@@ -101,8 +101,8 @@ export class AlertConfigFormComponent implements OnInit {
     this.isFormLoading = true;
     const payload: AlertClassesUpdate = { classes: {} };
     for (const [className, classControl] of Object.entries(this.form.controls)) {
-      const levelControl = classControl.controls.level as FormControl;
-      const policyControl = classControl.controls.policy as FormControl;
+      const levelControl = classControl.controls.level as FormControl<AlertLevel>;
+      const policyControl = classControl.controls.policy as FormControl<AlertPolicy>;
       if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
         payload.classes[className] = {};
         if (levelControl.value !== levelControl.defaultValue) {

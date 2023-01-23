@@ -1,5 +1,6 @@
 <form [formGroup]="form" (submit)="onSubmit()">
   <ix-input
+    #usernameField
     ixAutofocus
     formControlName="username"
     prefixIcon="person"
@@ -31,6 +32,6 @@
     mat-button
     type="submit"
     color="primary"
-    [disabled]="!form.valid || (isLoading$ | async)"
+    [disabled]="(form.invalid || (isLoading$ | async)) && !wasFormAutofilled"
   >{{ 'Log In' | translate }}</button>
 </form>

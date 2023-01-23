@@ -18,6 +18,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface SigninState {
   isLoading: boolean;
@@ -63,6 +64,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
+    private ws2: WebSocketService2,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -106,6 +108,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
+    switchMap(() => this.authenticateWithTokenWs2()),
     switchMap(() => this.authenticateWithToken()),
     tapResponse(
       () => {
@@ -117,7 +120,10 @@ export class SigninStore extends ComponentStore<SigninState> {
         }
         this.router.navigateByUrl(this.getRedirectUrl());
       },
-      (error: WebsocketError) => new EntityUtils().handleWsError(this, error, this.dialogService),
+      (error: WebsocketError) => {
+        this.setLoadingState(false);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
+      },
     ),
   ));
 
@@ -154,20 +160,34 @@ export class SigninStore extends ComponentStore<SigninState> {
   }));
 
   private reLoginWithToken(): Observable<unknown> {
-    return this.ws.loginWithToken(this.ws.token).pipe(
-      tap(
-        (wasLoggedIn) => {
-          if (!wasLoggedIn) {
-            this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
-            this.ws.token = null;
-            this.setLoadingState(false);
+    this.ws2.token2 = this.ws.token;
+    return combineLatest([
+      this.ws.loginWithToken(this.ws.token),
+      this.ws2.call('auth.login_with_token', [this.ws2.token2]),
+    ]).pipe(
+      tap(([wasLoggedIn]) => {
+        if (!wasLoggedIn) {
+          this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
+          this.ws.token = null;
+          this.setLoadingState(false);
+          return;
+        }
+        this.handleSuccessfulLogin();
+      }),
+    );
+  }
+
+  private authenticateWithTokenWs2(): Observable<unknown> {
+    return this.ws2.call('auth.generate_token', [this.tokenLifetime])
+      .pipe(
+        tap((token: string) => {
+          if (!token) {
             return;
           }
-
-          this.handleSuccessfulLogin();
-        },
-      ),
-    );
+          this.ws2.token2 = token;
+        }),
+        switchMap(() => this.ws2.call('auth.login_with_token', [this.ws2.token2])),
+      );
   }
 
   private authenticateWithToken(): Observable<unknown> {

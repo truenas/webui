@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, Input, EventEmitter, Output, ChangeDetectorRef, OnInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -13,7 +13,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { DialogService, WebSocketService2, AppLoaderService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +33,7 @@ export class SnapshotDetailsRowComponent implements OnInit {
 
   constructor(
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,

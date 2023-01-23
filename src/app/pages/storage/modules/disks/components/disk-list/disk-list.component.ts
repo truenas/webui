@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,7 @@ import {
   forkJoin, lastValueFrom, of, Subject,
 } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -25,7 +26,7 @@ import {
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService2, DialogService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -101,7 +102,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
 
   protected unusedDisks: UnusedDisk[] = [];
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected router: Router,
     private matDialog: MatDialog,
     private core: CoreService,
@@ -144,7 +145,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
         name: 'smartresults',
         label: this.translate.instant('S.M.A.R.T. Test Results'),
         onClick: (row) => {
-          this.router.navigate(['/storage', 'disks', 'smartresults', row.name]);
+          this.router.navigate(['/storage', 'disks', 'smartresults', SmartTestResultPageType.Disk, row.name]);
         },
       });
     }
@@ -209,8 +210,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       ...disk,
       pool: this.getPoolColumn(disk),
       readable_size: filesize(disk.size, { standard: 'iec' }),
-      togglesmart: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.togglesmart : null,
-      smartoptions: Object.keys(this.smartDiskChoices).includes(disk.identifier) ? disk.smartoptions : null,
     }));
   }
 

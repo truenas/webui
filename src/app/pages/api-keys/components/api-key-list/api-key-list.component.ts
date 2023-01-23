@@ -1,7 +1,7 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort, Sort } from '@angular/material/sort';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -18,7 +18,7 @@ import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { DialogService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['name', 'created_at', 'actions'];
-  dataSource: MatTableDataSource<ApiKey> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ApiKey>([]);
   defaultSort: Sort = { active: 'name', direction: 'asc' };
   filterValue = '';
   loadingConfig: EmptyConfig = {
@@ -74,7 +74,7 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private matDialog: MatDialog,
     private dialog: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private emptyService: EmptyService,
   ) { }
 

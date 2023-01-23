@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,7 +21,7 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService2 } from 'app/services';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 enum EncryptionType {
@@ -71,7 +71,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialog: DialogService,
@@ -225,11 +225,11 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     this.form.controls.algorithm.disable();
 
     if (this.hasPassphraseParent || this.hasKeyChild) {
-      this.form.controls['encryption_type'].disable();
+      this.form.controls.encryption_type.disable();
     }
 
     this.subscriptions.push(
-      this.form.controls['key'].disabledWhile(combineLatestIsAny([
+      this.form.controls.key.disabledWhile(combineLatestIsAny([
         this.isSetToGenerateKey$,
         this.isKey$.pipe(map((value) => !value)),
         this.isInheriting$,
@@ -238,9 +238,9 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
     const arePassphraseFieldsDisabled$ = combineLatestIsAny([this.isKey$, this.isInheriting$]);
     this.subscriptions.push(
-      this.form.controls['passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
-      this.form.controls['confirm_passphrase'].disabledWhile(arePassphraseFieldsDisabled$),
-      this.form.controls['pbkdf2iters'].disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.passphrase.disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.confirm_passphrase.disabledWhile(arePassphraseFieldsDisabled$),
+      this.form.controls.pbkdf2iters.disabledWhile(arePassphraseFieldsDisabled$),
     );
   }
 }

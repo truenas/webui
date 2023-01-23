@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebsocket2, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { VmDisplayType } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,11 +15,11 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 describe('DisplayVmDialogComponent', () => {
   let spectator: Spectator<DisplayVmDialogComponent>;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
@@ -32,6 +32,7 @@ describe('DisplayVmDialogComponent', () => {
     providers: [
       { provide: MAT_DIALOG_DATA, useValue: {} },
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockWindow({
         location: {
           host: 'localhost',
@@ -39,7 +40,7 @@ describe('DisplayVmDialogComponent', () => {
         },
         open: jest.fn(),
       }),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('vm.get_display_web_uri', {
           1: { error: null, uri: 'http://localhost:4200/vm/display/1/vnc.html' },
           2: { error: null, uri: 'http://localhost:4200/vm/display/2/vnc.html' },
@@ -54,7 +55,7 @@ describe('DisplayVmDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: dialogData },
       ],
     });
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   }

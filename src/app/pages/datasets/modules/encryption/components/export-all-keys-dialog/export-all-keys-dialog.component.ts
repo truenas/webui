@@ -1,12 +1,12 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, StorageService, WebSocketService2,
 } from 'app/services';
 
 @UntilDestroy()
@@ -17,7 +17,7 @@ import {
 })
 export class ExportAllKeysDialogComponent {
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportAllKeysDialogComponent>,
     private dialogService: DialogService,

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -16,6 +16,7 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
@@ -24,7 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { StorageService, SystemGeneralService, WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -92,7 +93,7 @@ export class UpdateComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected matDialog: MatDialog,
     public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService,
@@ -389,7 +390,7 @@ export class UpdateComponent implements OnInit {
         }
         this.showSpinner = false;
       },
-      error: (err) => {
+      error: (err: WebsocketError) => {
         this.generalUpdateError = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },

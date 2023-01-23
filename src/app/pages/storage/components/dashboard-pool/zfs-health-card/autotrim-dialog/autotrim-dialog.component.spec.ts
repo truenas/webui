@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -15,7 +15,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('AutotrimDialogComponent', () => {
   let spectator: Spectator<AutotrimDialogComponent>;
@@ -37,10 +38,11 @@ describe('AutotrimDialogComponent', () => {
           },
         } as Pool,
       },
-      mockWebsocket([
+      mockWebsocket2([
         mockJob('pool.update', fakeSuccessfulJob()),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
     ],
   });
@@ -62,7 +64,7 @@ describe('AutotrimDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.update', [47, { autotrim: OnOff.Off }]);
+    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('pool.update', [47, { autotrim: OnOff.Off }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });

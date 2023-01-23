@@ -21,7 +21,7 @@ import { RelationAction } from 'app/modules/entity/entity-form/models/relation-a
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService, WebSocketService2 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 
@@ -577,7 +577,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   private entityForm: EntityWizardComponent;
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private modalService: ModalService,
     protected loader: AppLoaderService,
     private dialogService: DialogService,
@@ -645,8 +645,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-        this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
+      this.getField(fieldConfig.name).valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+        this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, value);
       });
     }
   }
@@ -728,9 +728,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
     this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
       if (this.identifier && status === 'INVALID') {
-        this.getTarget('name')['hasErrors'] = true;
+        this.getTarget('name').hasErrors = true;
       } else {
-        this.getTarget('name')['hasErrors'] = false;
+        this.getTarget('name').hasErrors = false;
       }
       this.setSummary();
     });
@@ -770,9 +770,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     if (value) {
       Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach((type: keyof CertificateExtensions) => {
-            Object.keys(value['cert_extensions'][type]).forEach((prop: CertificationExtensionAttribute) => {
-              const extension = value['cert_extensions'][type] as CertificateExtension;
+          Object.keys(value.cert_extensions).forEach((type: keyof CertificateExtensions) => {
+            Object.keys(value.cert_extensions[type]).forEach((prop: CertificationExtensionAttribute) => {
+              const extension = value.cert_extensions[type] as CertificateExtension;
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === extension[prop]) {
@@ -782,7 +782,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
                 }
               } else {
                 ctrl = this.getField(type);
-                const config = ctrl.value || [];
+                const config: unknown[] = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
                 if (reset && extension[prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);
@@ -844,6 +844,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   beforeSubmit(data: any): CertificateAuthorityUpdate {
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase === '') {
@@ -879,12 +880,12 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         }
         delete data[key];
       });
-      data['cert_extensions'] = certExtensions;
+      data.cert_extensions = certExtensions;
 
-      delete data['profiles'];
+      delete data.profiles;
     }
     if (data.create_type === CaCreateType.CaCreateIntermediate) {
-      delete data['add_to_trusted_store'];
+      delete data.add_to_trusted_store;
     }
 
     return data;

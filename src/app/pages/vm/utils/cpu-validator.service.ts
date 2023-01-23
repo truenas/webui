@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 /**
  * An async validator.
@@ -22,7 +22,7 @@ export class CpuValidatorService {
   constructor(
     private validators: IxValidatorsService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) {}
 
   createValidator(): (control: AbstractControl) => Observable<ValidationErrors | null> {
@@ -32,9 +32,9 @@ export class CpuValidatorService {
       return maximumCpus$.pipe(
         map((maxVcpus) => {
           const form = control.parent;
-          const vcpus: number = form.get('vcpus').value;
-          const cores: number = form.get('cores').value;
-          const threads: number = form.get('threads').value;
+          const vcpus = form.get('vcpus').value as number;
+          const cores = form.get('cores').value as number;
+          const threads = form.get('threads').value as number;
 
           const hasError = vcpus * cores * threads > maxVcpus;
           if (!hasError) {

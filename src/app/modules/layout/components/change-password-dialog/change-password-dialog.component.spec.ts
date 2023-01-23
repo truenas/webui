@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -11,6 +11,16 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DialogService, WebSocketService } from 'app/services';
 import { ChangePasswordDialogComponent } from './change-password-dialog.component';
+
+const loggedInUser = {
+  pw_name: 'root',
+  pw_uid: 0,
+  pw_gid: 0,
+  pw_gecos: 'root',
+  pw_dir: '/root',
+  pw_shell: '/usr/bin/zsh',
+  id: 1,
+};
 
 describe('ChangePasswordDialogComponent', () => {
   let spectator: Spectator<ChangePasswordDialogComponent>;
@@ -37,6 +47,7 @@ describe('ChangePasswordDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     websocket = spectator.inject(WebSocketService);
+    websocket.loggedInUser$.next(loggedInUser);
   });
 
   it('checks current user password and shows an error if it is not correct', async () => {
@@ -69,7 +80,7 @@ describe('ChangePasswordDialogComponent', () => {
     await saveButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('auth.check_user', ['root', 'correct']);
-    expect(websocket.call).toHaveBeenCalledWith('user.update', [1, { password: '123456' }]);
+    expect(websocket.call).toHaveBeenCalledWith('user.update', [loggedInUser.id, { password: '123456' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });

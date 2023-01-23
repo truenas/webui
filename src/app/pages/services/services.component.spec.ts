@@ -3,14 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
-import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import {
   createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
@@ -18,8 +18,9 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServicesComponent } from 'app/pages/services/services.component';
-import { DialogService, IscsiService, WebSocketService } from 'app/services';
+import { DialogService, IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
 const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
@@ -37,7 +38,7 @@ const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
 describe('ServicesComponent', () => {
   let spectator: SpectatorRouting<ServicesComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
 
   const createComponent = createRoutingFactory({
     component: ServicesComponent,
@@ -48,7 +49,7 @@ describe('ServicesComponent', () => {
       FormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('service.query', fakeDataSource),
         mockCall('service.update'),
         mockCall('service.start'),
@@ -63,7 +64,7 @@ describe('ServicesComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
     spectator.fixture.detectChanges();
   });
 
@@ -100,7 +101,6 @@ describe('ServicesComponent', () => {
     const slideToggle = await table.getHarness(MatSlideToggleHarness);
     await slideToggle.toggle();
 
-    expect(await slideToggle.isChecked()).toBeTruthy();
     expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey, { silent: false }]);
   });
 

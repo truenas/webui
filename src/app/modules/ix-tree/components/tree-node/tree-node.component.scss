@@ -1,0 +1,41 @@
+$level-offset: 40px;
+
+:host {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  min-height: 51px;
+  min-width: fit-content;
+  position: relative;
+
+  &[routerlinkactive] {
+    cursor: pointer;
+  }
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+    color: var(--fg2);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+
+  ::ng-deep button[disabled] {
+    pointer-events: none;
+    z-index: -1;
+  }
+}

@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,13 +9,14 @@ import _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
+import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -31,13 +32,14 @@ export class SmartInfoCardComponent implements OnChanges {
   totalResults$: Observable<LoadingState<number>>;
   lastResultsInCategory$: Observable<SmartTestResult[]>;
   smartTasksCount$: Observable<LoadingState<number>>;
+  SmartTestResultPageType = SmartTestResultPageType;
 
   readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
 
   private readonly maxResultCategories = 4;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private matDialog: MatDialog,
     private translate: TranslateService,
   ) { }
