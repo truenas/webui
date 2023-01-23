@@ -230,7 +230,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   setProductImage(data) {
     if (this.manufacturer !== 'ixsystems') return;
 
-    if (data.system_product.includes('MINI')) {
+    if (!this.isRackmount(data.system_product)) {
       this.setMiniImage(data.system_product);
     } else if (data.system_product.includes('CERTIFIED')) {
       this.certified = true;
@@ -281,6 +281,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else if (sys_product.includes('R50')) {
       this.product_image = '/servers/R50.png';
       this.product_model = 'R50';
+    } else if (sys_product.includes('MINI-R')) {
+      this.product_image = '/servers/MINI-R.png';
+      this.product_model = 'MINI-R';
     } else {
       this.product_image = 'ix-original.svg';
     }
@@ -316,5 +319,25 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   goToEnclosure() {
     if (this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
+  }
+
+  isRackmount(sys_product: string): boolean {
+    switch (sys_product) {
+      case 'FREENAS-MINI-2.0':
+      case 'FREENAS-MINI-3.0-E':
+      case 'FREENAS-MINI-3.0-E+':
+      case 'TRUENAS-MINI-3.0-E':
+      case 'TRUENAS-MINI-3.0-E+':
+      case 'FREENAS-MINI-3.0-X':
+      case 'FREENAS-MINI-3.0-X+':
+      case 'TRUENAS-MINI-3.0-X':
+      case 'TRUENAS-MINI-3.0-X+':
+      case 'FREENAS-MINI-XL':
+      case 'FREENAS-MINI-3.0-XL+':
+      case 'TRUENAS-MINI-3.0-XL+':
+        return false;
+      default:
+        return true;
+    }
   }
 }
