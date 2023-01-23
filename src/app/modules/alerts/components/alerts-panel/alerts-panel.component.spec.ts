@@ -68,6 +68,7 @@ describe('AlertsPanelComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
+            hasOnlyMissmatchVersionsReason: false,
           },
         },
       }),
