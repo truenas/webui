@@ -34,12 +34,12 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<ContainerImage>([]);
 
-  displayedColumns = ['select', 'id', 'repo_tags', 'created', 'size', 'update', 'actions'];
+  displayedColumns = ['select', 'id', 'repo_tags', 'size', 'update', 'actions'];
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ContainerImage>;
 
-  defaultSort: Sort = { active: 'created', direction: 'desc' };
+  defaultSort: Sort = { active: 'repo_tags', direction: 'desc' };
   filterString = '';
 
   readonly EmptyType = EmptyType;
