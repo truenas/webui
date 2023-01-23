@@ -66,8 +66,8 @@ export class SmartResultsComponent implements EntityTableConfig {
       this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
         tap((disks) => {
           this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-            this.pk = params['pk'];
-            this.type = params['type'];
+            this.pk = params.pk;
+            this.type = params.type;
 
             if (this.type === SmartTestResultPageType.Disk) {
               this.queryCallOption = [[['disk', '=', this.pk]]];
