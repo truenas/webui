@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MAT_LEGACY_SLIDE_TOGGLE_DEFAULT_OPTIONS as MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/legacy-slide-toggle';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { MatSort, Sort } from '@angular/material/sort';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
