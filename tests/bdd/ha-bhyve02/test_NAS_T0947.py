@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import reusableSeleniumCode as rsc
 import pytest
 import time
 import xpaths
@@ -35,36 +36,21 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    if wait_on_element(driver, 3, xpaths.login.user_input):
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys(user)
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(password)
-        assert wait_on_element(driver, 7, xpaths.login.signin_button, 'clickable')
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+    rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
-        try:
-            assert wait_on_element(driver, 2, xpaths.button.close, 'clickable')
-            driver.find_element_by_xpath(xpaths.button.close).click()
-        except ElementClickInterceptedException:
-            assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-            pass
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
 @then('Click on the Credentials item in the left side menu')
 def click_on_the_credentials_item_in_the_left_side_menu(driver):
     """Click on the Credentials item in the left side menu."""
-    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
 
 
 @then('The Credentials menu should expand to the right')
@@ -114,8 +100,8 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
     driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing')
     driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
     driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
 @then('User should be created and added to the user list')
