@@ -21,7 +21,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -43,7 +45,7 @@ export class ManualUpdateFormComponent implements OnInit {
     rebootAfterManualUpdate: [false],
   });
   private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
+    return '/_upload?auth_token=' + this.wsManager.token2;
   }
 
   readonly helptext = helptext;
@@ -58,7 +60,8 @@ export class ManualUpdateFormComponent implements OnInit {
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
+    private wsManager: WebsocketManagerService,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,

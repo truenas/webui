@@ -23,10 +23,12 @@ import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-valida
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
-  DialogService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -73,7 +75,8 @@ export class GuiFormComponent {
     private slideInService: IxSlideInService,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
+    private wsManager: WebsocketManagerService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private router: Router,
@@ -86,16 +89,14 @@ export class GuiFormComponent {
     this.setupThemePreview();
   }
 
-  reconnect(href: string): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      this.window.location.replace(href);
-    } else {
-      setTimeout(() => {
-        this.reconnect(href);
-      }, 5000);
-    }
+  replaceHrefWhenWsConnected(href: string): void {
+    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+      if (isConnected) {
+        this.loader.close();
+        // ws is connected
+        this.window.location.replace(href);
+      }
+    });
   }
 
   onSubmit(): void {
@@ -196,13 +197,14 @@ export class GuiFormComponent {
         href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;
 
         this.loader.open();
-        this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
+        this.wsManager.prepareShutdown(); // not really shutting down, just stop websocket detection temporarily
         this.ws.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
         ).subscribe({
           next: () => {
-            this.ws.reconnect(protocol, hostname + ':' + port);
-            this.reconnect(href);
+            this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
+            this.wsManager.closeWebsocketConnection();
+            this.replaceHrefWhenWsConnected(href);
           },
           error: (error: WebsocketError) => {
             this.loader.close();

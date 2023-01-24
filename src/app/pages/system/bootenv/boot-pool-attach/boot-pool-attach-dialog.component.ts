@@ -12,7 +12,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +49,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
     private translate: TranslateService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
   ) {}

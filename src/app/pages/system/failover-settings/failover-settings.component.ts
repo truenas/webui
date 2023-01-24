@@ -14,7 +14,9 @@ import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -47,7 +49,7 @@ export class FailoverSettingsComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: FormErrorHandlerService,
@@ -55,6 +57,7 @@ export class FailoverSettingsComponent implements OnInit {
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
+    private wsManager: WebsocketManagerService,
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +80,12 @@ export class FailoverSettingsComponent implements OnInit {
           this.cdr.markForCheck();
 
           if (values.disabled && !values.master) {
-            this.ws.logout();
+            this.ws.call('auth.logout').pipe(untilDestroyed(this)).subscribe({
+              next: () => {
+                this.wsManager.token2 = null;
+                this.wsManager.closeWebsocketConnection();
+              },
+            });
           }
         },
         error: (error) => {

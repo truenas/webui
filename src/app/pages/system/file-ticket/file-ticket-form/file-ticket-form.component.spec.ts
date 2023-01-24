@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -13,15 +13,16 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
-import { WebSocketService, DialogService, SystemGeneralService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { JiraOauthComponent } from './components/jira-oauth/jira-oauth.component';
 
 describe('FileTicketFormComponent', () => {
-  const onCloseSubject$ = new Subject<boolean>();
   let spectator: Spectator<FileTicketFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
 
   const mockNewTicketResponse = {
     ticket: 123456789,
@@ -41,9 +42,7 @@ describe('FileTicketFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockProvider(WebSocketService, {
-        token: 'token.is.mocked',
-        onClose$: onCloseSubject$,
+      mockProvider(WebSocketService2, {
         job: jest.fn((method) => {
           switch (method) {
             case 'support.new_ticket':
@@ -72,6 +71,9 @@ describe('FileTicketFormComponent', () => {
           }
         }),
       }),
+      mockProvider(WebsocketManagerService, {
+        token2: 'token.is.mocked',
+      }),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService, {
@@ -84,7 +86,7 @@ describe('FileTicketFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   afterEach(() => {

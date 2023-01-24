@@ -18,6 +18,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface SigninState {
@@ -65,6 +66,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private router: Router,
     private snackbar: MatSnackBar,
     private ws2: WebSocketService2,
+    private wsManager: WebsocketManagerService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -160,10 +162,10 @@ export class SigninStore extends ComponentStore<SigninState> {
   }));
 
   private reLoginWithToken(): Observable<unknown> {
-    this.ws2.token2 = this.ws.token;
+    this.wsManager.token2 = this.ws.token;
     return combineLatest([
       this.ws.loginWithToken(this.ws.token),
-      this.ws2.call('auth.login_with_token', [this.ws2.token2]),
+      this.ws2.call('auth.login_with_token', [this.wsManager.token2]),
     ]).pipe(
       tap(([wasLoggedIn]) => {
         if (!wasLoggedIn) {
@@ -184,9 +186,9 @@ export class SigninStore extends ComponentStore<SigninState> {
           if (!token) {
             return;
           }
-          this.ws2.token2 = token;
+          this.wsManager.token2 = token;
         }),
-        switchMap(() => this.ws2.call('auth.login_with_token', [this.ws2.token2])),
+        switchMap(() => this.ws2.call('auth.login_with_token', [this.wsManager.token2])),
       );
   }
 

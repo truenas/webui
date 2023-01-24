@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
+import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject, EMPTY, interval, Observable, of, switchMap, timer,
 } from 'rxjs';
@@ -20,7 +21,10 @@ export class WebsocketManagerService {
   private ws$: WebSocketSubject<unknown>;
   private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
+  private shutDownInProgress = false;
+  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
   private isConnectionReady$ = new BehaviorSubject(false);
+  @LocalStorage() token2: string;
 
   get websocketSubject$(): Observable<unknown> {
     return this.ws$.asObservable().pipe(
@@ -48,7 +52,7 @@ export class WebsocketManagerService {
 
   private initializeWebsocket(): void {
     this.ws$ = webSocket({
-      url: (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket',
+      url: this.connectionUrl,
       openObserver: {
         next: this.onOpen.bind(this),
       },
@@ -62,6 +66,7 @@ export class WebsocketManagerService {
   }
 
   private onOpen(): void {
+    this.shutDownInProgress = false;
     this.isConnectionReady$.next(true);
     this.setupConnectionEvents();
   }
@@ -69,7 +74,9 @@ export class WebsocketManagerService {
   private onClose(): void {
     this.isConnectionReady$.next(false);
     this.closeAllDialogs();
-    this.router.navigate(['/sessions/signin']);
+    if (!this.shutDownInProgress) {
+      this.router.navigate(['/sessions/signin']);
+    }
     timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
       next: () => this.initializeWebsocket(),
     });
@@ -124,9 +131,18 @@ export class WebsocketManagerService {
     this.ws$.complete();
   }
 
-  closeAllDialogs(): void {
+  private closeAllDialogs(): void {
     for (const openDialog of this.dialog.openDialogs) {
       openDialog.close();
     }
+  }
+
+  prepareShutdown(): void {
+    this.shutDownInProgress = true;
+  }
+
+  setupConnectionUrl(protocol: string, remote: string): void {
+    this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://')
+    + remote + '/websocket';
   }
 }

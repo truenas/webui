@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { LocalStorage } from 'ngx-webstorage';
 import { Observable } from 'rxjs';
 import {
   filter, map, share, switchMap, take,
@@ -19,7 +18,6 @@ import { WebsocketManagerService } from 'app/services/ws-manager.service';
   providedIn: 'root',
 })
 export class WebSocketService2 {
-  @LocalStorage() token2: string;
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
