@@ -8,7 +8,8 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 export interface DockerImagesState {
   isLoading: boolean;
@@ -25,7 +26,7 @@ const initialState: DockerImagesState = {
 @Injectable({ providedIn: 'root' })
 export class DockerImagesComponentStore extends ComponentStore<DockerImagesState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
   ) {
     super(initialState);
@@ -71,9 +72,9 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
   });
 
   readonly subscribeToRemoval = this.effect(() => {
-    return this.ws.sub('container.image.query').pipe(
+    return this.ws.subscribe('container.image.query').pipe(
       filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-      map((event) => this.entityDeleted(event.id)),
+      map((event) => this.entityDeleted(event.id.toString())),
     );
   });
 

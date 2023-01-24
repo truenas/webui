@@ -3,19 +3,20 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { PullImageFormComponent } from 'app/pages/apps-old/docker-images/pull-image-form/pull-image-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('PullImageFormComponent', () => {
   let spectator: Spectator<PullImageFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: PullImageFormComponent,
     imports: [
@@ -24,7 +25,8 @@ describe('PullImageFormComponent', () => {
       EntityModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket(),
+      mockWebsocket2([
         mockJob('container.image.pull'),
       ]),
       mockProvider(IxSlideInService),
@@ -36,7 +38,7 @@ describe('PullImageFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('pulls docker image when form is submitted', async () => {

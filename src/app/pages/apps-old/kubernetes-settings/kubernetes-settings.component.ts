@@ -17,9 +17,10 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import {
-  AppLoaderService, DialogService, WebSocketService,
+  AppLoaderService, DialogService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +60,7 @@ export class KubernetesSettingsComponent implements OnInit {
   private oldConfig: KubernetesConfig;
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private slideInService: IxSlideInService,
