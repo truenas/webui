@@ -8,7 +8,8 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { ExportDatasetKeyDialogComponent } from './export-dataset-key-dialog.component';
 
 describe('ExportDatasetKeyDialogComponent', () => {
@@ -44,7 +45,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
   });
 
   it('loads and shows dataset encryption key', () => {
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
+    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
     const key = spectator.query('.key');
     expect(key).toHaveText('12345678');
   });
@@ -53,7 +54,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
     const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Key' }));
     await downloadButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('core.download', [
       'pool.dataset.export_key',
       ['pool/my-dataset', true],
       'dataset_my-dataset_key.json',
