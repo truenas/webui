@@ -3,7 +3,6 @@ import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/le
 import { OptionHarness } from 'app/modules/ix-forms/components/ix-select/option.harness';
 
 export class SelectHarness extends MatSelectHarness {
-  test = 'pizza';
   protected _optionClass = OptionHarness;
 
   async getOptions(filter?: Omit<LegacyOptionHarnessFilters, 'ancestor'>): Promise<OptionHarness[]> {

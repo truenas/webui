@@ -29,7 +29,6 @@ export class CertificateAcmeAddComponent {
   form = this.formBuilder.group({
     name: ['', [
       Validators.required,
-      // TODO: Maybe extract somewhere.
       this.validatorsService.withMessage(
         Validators.pattern('[A-Za-z0-9_-]+$'),
         this.translate.instant(helptextSystemCertificates.add.name.errors),

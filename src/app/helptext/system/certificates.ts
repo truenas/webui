@@ -4,7 +4,6 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
-// TODO: Clear
 export const helptextSystemCertificates = {
   add: {
     title: T('Add Certificate'),
