@@ -81,6 +81,19 @@ export class SystemProfiler {
     this.parseSensorData(this._sensorData);
   }
 
+  private _isRackmount: boolean;
+  get isRackmount(): boolean {
+    switch (this.platform) {
+      case 'mini':
+      case 'mini-x':
+      case 'mini-xl':
+      case 'mini-xl-plus':
+        return false;
+      default:
+        return true;
+    }
+  }
+
   constructor(model: string, enclosures: Enclosure[]) {
     this.platform = model;
     this.enclosures = enclosures;
