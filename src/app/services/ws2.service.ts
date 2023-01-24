@@ -45,11 +45,12 @@ export class WebSocketService2 {
   job<K extends ApiMethod>(
     method: K,
     params?: ApiDirectory[K]['params'],
-  ): Observable<ApiEvent<Job<ApiDirectory[K]['response']>>> {
+  ): Observable<Job<ApiDirectory[K]['response']>> {
     return this.call(method, params).pipe(
       switchMap((jobId) => {
         return this.subscribe('core.get_jobs').pipe(
           filter((apiEvent) => apiEvent.id === jobId),
+          map((apiEvent) => apiEvent.fields),
         );
       }),
     );

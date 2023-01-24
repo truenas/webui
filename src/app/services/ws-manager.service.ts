@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
@@ -40,6 +41,7 @@ export class WebsocketManagerService {
   constructor(
     @Inject(WINDOW) protected window: Window,
     protected router: Router,
+    private dialog: MatDialog,
   ) {
     this.initializeWebsocket();
   }
@@ -66,6 +68,7 @@ export class WebsocketManagerService {
 
   private onClose(): void {
     this.isConnectionReady$.next(false);
+    this.closeAllDialogs();
     this.router.navigate(['/sessions/signin']);
     timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
       next: () => this.initializeWebsocket(),
@@ -115,5 +118,15 @@ export class WebsocketManagerService {
 
   send(payload: unknown): void {
     this.ws$.next(payload);
+  }
+
+  closeWebsocketConnection(): void {
+    this.ws$.complete();
+  }
+
+  closeAllDialogs(): void {
+    for (const openDialog of this.dialog.openDialogs) {
+      openDialog.close();
+    }
   }
 }
