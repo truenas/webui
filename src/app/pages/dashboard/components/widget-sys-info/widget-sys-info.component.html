@@ -165,7 +165,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!hasHa"
+                    [disabled]="!hasHa && !(hasOnlyMissmatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -283,7 +283,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!hasHa"
+                    [disabled]="!hasHa && !(hasOnlyMissmatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>
