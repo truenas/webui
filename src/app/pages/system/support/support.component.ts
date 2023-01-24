@@ -45,7 +45,7 @@ export class SupportComponent implements OnInit {
       }
 
       // Always try to show product image for iX Systems hardware regardless of platform or license
-      if (res.system_manufacturer && res.system_manufacturer.toLowerCase() == 'ixsystems' && res.system_product.includes('MINI')) {
+      if (res.system_manufacturer && res.system_manufacturer.toLowerCase() == 'ixsystems' && !this.isRackmount(res.system_product)) {
         this.getFreeNASImage(res.system_product);
       } else {
         this.getTrueNASImage(res.system_product);
@@ -113,6 +113,8 @@ export class SupportComponent implements OnInit {
       this.product_image = '/servers/R40.png';
     } else if (sys_product.includes('R50')) {
       this.product_image = '/servers/R50.png';
+    } else if (sys_product.includes('MINI-R')) {
+      this.product_image = '/servers/MINI-R.png';
     } else {
       this.product_image = 'ix-original.png';
     }
@@ -141,6 +143,26 @@ export class SupportComponent implements OnInit {
       default:
         this.product_image = 'ix-original.png';
         break;
+    }
+  }
+
+  isRackmount(sys_product: string): boolean {
+    switch (sys_product) {
+      case 'FREENAS-MINI-2.0':
+      case 'FREENAS-MINI-3.0-E':
+      case 'FREENAS-MINI-3.0-E+':
+      case 'TRUENAS-MINI-3.0-E':
+      case 'TRUENAS-MINI-3.0-E+':
+      case 'FREENAS-MINI-3.0-X':
+      case 'FREENAS-MINI-3.0-X+':
+      case 'TRUENAS-MINI-3.0-X':
+      case 'TRUENAS-MINI-3.0-X+':
+      case 'FREENAS-MINI-XL':
+      case 'FREENAS-MINI-3.0-XL+':
+      case 'TRUENAS-MINI-3.0-XL+':
+        return false;
+      default:
+        return true;
     }
   }
 }
