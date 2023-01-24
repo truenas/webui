@@ -41,7 +41,7 @@ export class MockWebsocketService2 extends WebSocketService2 {
   mockCallOnce<K extends ApiMethod>(method: K, response: ApiDirectory[K]['response']): void {
     when(this.call).calledWith(method, expect.anything()).mockReturnValueOnce(of(response));
   }
-  mockJob<K extends ApiMethod>(method: K, response: ApiEvent<Job<ApiDirectory[K]['response']>>): void {
+  mockJob<K extends ApiMethod>(method: K, response: Job<ApiDirectory[K]['response']>): void {
     const responseWithJobId = {
       ...response,
       id: this.jobIdCounter,

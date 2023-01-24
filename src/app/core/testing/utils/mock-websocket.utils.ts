@@ -8,7 +8,6 @@ import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -79,12 +78,7 @@ export function mockWebsocket2(
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
           } else if (mockResponse.type === MockWebsocketResponseType.Job) {
-            mockWebsocketService.mockJob(mockResponse.method, {
-              collection: mockResponse.method,
-              id: mockResponse.id,
-              msg: IncomingApiMessageType.Changed,
-              fields: mockResponse.response,
-            });
+            mockWebsocketService.mockJob(mockResponse.method, mockResponse.response);
           }
         });
         return mockWebsocketService;
