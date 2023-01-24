@@ -4,6 +4,7 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
@@ -15,6 +16,7 @@ import {
   passiveNodeReplaced,
   systemFeaturesLoaded,
   systemInfoLoaded,
+  upgradePendingStateLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -90,6 +92,22 @@ export class SystemInfoEffects {
           return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
         }),
       );
+    }),
+  ));
+
+  loadUpgradePendingState = createEffect(() => this.actions$.pipe(
+    ofType(haStatusLoaded),
+    mergeMap(({ haStatus }) => {
+      if (
+        (haStatus.hasHa && haStatus.reasons.length === 0)
+        || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions)
+      ) {
+        return this.ws.call('failover.upgrade_pending').pipe(
+          map((isUpgradePending) => {
+            return upgradePendingStateLoaded({ isUpgradePending });
+          }),
+        );
+      }
     }),
   ));
 

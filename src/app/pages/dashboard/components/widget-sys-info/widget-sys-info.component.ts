@@ -28,7 +28,7 @@ import { ServerTimeService } from 'app/services/server-time.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { systemInfoDatetimeUpdated } from 'app/store/system-info/system-info.actions';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHasOnlyMissmatchVersionsReason, selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -46,6 +46,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input() enclosureSupport = false;
   @Input() showReorderHandle = false;
   @Input() systemInfo: SystemInfo;
+
+  hasOnlyMissmatchVersionsReason$ = this.store$.select(selectHasOnlyMissmatchVersionsReason);
 
   showTimeDiffWarning = false;
   timeInterval: Timeout;
