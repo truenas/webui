@@ -1,21 +1,26 @@
 import { createReducer, on } from '@ngrx/store';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
-  haStatusLoaded, systemFeaturesLoaded, systemInfoLoaded, systemInfoDatetimeUpdated,
+  haStatusLoaded, systemFeaturesLoaded, systemInfoLoaded, systemInfoDatetimeUpdated, upgradePendingStateLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 export interface SystemInfoState {
   systemInfo: SystemInfo;
   haStatus: HaStatus;
   systemFeatures: SystemFeatures;
+  isUpgradePending: boolean;
+  hasOnlyMissmatchVersionsReason: boolean;
 }
 
 const initialState: SystemInfoState = {
   systemInfo: null,
   haStatus: null,
   systemFeatures: null,
+  isUpgradePending: false,
+  hasOnlyMissmatchVersionsReason: false,
 };
 
 export const systemInfoReducer = createReducer(
@@ -23,5 +28,11 @@ export const systemInfoReducer = createReducer(
   on(systemInfoLoaded, (state, { systemInfo }) => ({ ...state, systemInfo })),
   on(systemFeaturesLoaded, (state, { systemFeatures }) => ({ ...state, systemFeatures })),
   on(systemInfoDatetimeUpdated, (state, { datetime }) => ({ ...state, systemInfo: { ...state.systemInfo, datetime } })),
-  on(haStatusLoaded, (state, { haStatus }) => ({ ...state, haStatus })),
+  on(haStatusLoaded, (state, { haStatus }) => ({
+    ...state,
+    haStatus,
+    hasOnlyMissmatchVersionsReason:
+      haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions,
+  })),
+  on(upgradePendingStateLoaded, (state, { isUpgradePending }) => ({ ...state, isUpgradePending })),
 );
