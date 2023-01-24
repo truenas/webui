@@ -230,7 +230,7 @@ describe('CertificateAddComponent', () => {
       create_type: CertificateCreateType.CreateImported,
       certificate: '-----BEGIN CERTIFICATE-----',
       passphrase: '1234567890',
-      private_key: '-----BEGIN PRIVATE-----',
+      privatekey: '-----BEGIN PRIVATE-----',
     }]);
   });
 
