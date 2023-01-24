@@ -14,7 +14,7 @@ from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
+    when
 )
 from pytest_dependency import depends
 
@@ -69,8 +69,8 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.find_element_by_xpath(xpaths.add_User.username_Input).send_keys('qetestuser')
     driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
     driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing')
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).send_keys('testing')
 
     # Home directory is needed
     driver.find_element_by_xpath(xpaths.add_User.home_Input).clear()

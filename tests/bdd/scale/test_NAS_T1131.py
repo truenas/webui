@@ -132,10 +132,10 @@ def clear_built_in_user_and_administrators_and_click_the_save_access_control_lis
     driver.find_element_by_xpath(xpaths.edit_Acl.builtin_Administrators_Cancel).click()
     time.sleep(0.5)
 
-    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
-    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
     time.sleep(1)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
 
 
 @then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))

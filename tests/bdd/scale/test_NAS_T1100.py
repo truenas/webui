@@ -19,7 +19,7 @@ from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
+    when
 )
 from pytest_dependency import depends
 
@@ -98,9 +98,9 @@ def the_root_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver,
     """the root user Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 5, xpaths.add_User.sshpubkey_Textarea, 'inputable')
-    driver.find_element_by_xpath(xpaths.add_User.sshpubkey_Textarea).clear()
-    driver.find_element_by_xpath(xpaths.add_User.sshpubkey_Textarea).send_keys(ssh_key)
+    assert wait_on_element(driver, 5, xpaths.add_User.ssh_Pubkey_Textarea, 'inputable')
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).clear()
+    driver.find_element_by_xpath(xpaths.add_User.ssh_Pubkey_Textarea).send_keys(ssh_key)
     assert wait_on_element(driver, 2, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
@@ -116,8 +116,8 @@ def reopen_the_root_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 5, xpaths.add_User.sshpubkey_Textarea, 'inputable')
-    assert attribute_value_exist(driver, xpaths.add_User.sshpubkey_Textarea, 'value', ssh_key)
+    assert wait_on_element(driver, 5, xpaths.add_User.ssh_Pubkey_Textarea, 'inputable')
+    assert attribute_value_exist(driver, xpaths.add_User.ssh_Pubkey_Textarea, 'value', ssh_key)
     time.sleep(0.5)
     assert wait_on_element(driver, 10, xpaths.button.close_Icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()

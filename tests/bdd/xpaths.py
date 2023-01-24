@@ -44,7 +44,7 @@ class add_User:
     full_Name_Input = '//ix-input[@formcontrolname="full_name"]//input'
     username_Input = '//ix-input[@formcontrolname="username"]//input'
     password_Input = '//ix-input[@formcontrolname="password"]//input'
-    confirm_password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
+    confirm_Password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
     shell_Select = '//ix-combobox[@formcontrolname="shell"]//input'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
     sudo_Checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
@@ -64,7 +64,7 @@ class add_User:
     home_Mode_Other_Read_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[1]'
     home_Mode_Other_Write_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[2]'
     home_Mode_Other_Exec_Checkbox = '(//tr[contains(.,"Other")]//mat-checkbox)[3]'
-    sshpubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
+    ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
 
 
 class add_Zvol:
@@ -103,7 +103,7 @@ class app_Setup:
     root_Password_Input = '//ix-input[contains(.,"Root Password")]//input'
     enable_Flax_Checkbox = '//ix-checkbox[contains(.,"Enable Flax")]//mat-checkbox'
 
-    image_Repository_input = '//ix-input[contains(.,"Image repository")]//input'
+    image_Repository_Input = '//ix-input[contains(.,"Image repository")]//input'
     image_Tag_Input = '//ix-input[contains(.,"Image Tag")]//input'
     add_Port_Forwading_Button = '//ix-fieldset[contains(.,"Port Forwarding")]//button'
     container_Port_Input = '//ix-input[contains(.,"Container Port")]//input'
@@ -255,7 +255,7 @@ class edit_Acl:
     owner_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Owner")]'
     group_Combobox = '//ix-combobox[@formcontrolname="ownerGroup"]//input'
     group_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
-    save_Acl_Buttonox = '//button[contains(*/text(),"Save Access Control List")]'
+    save_Acl_Button = '//button[contains(*/text(),"Save Access Control List")]'
     add_Item_Button = '//button[contains(.,"Add Item")]'
     who_Select = '//ix-select[@formcontrolname="tag"]//mat-select'
     who_User_Option = '//mat-option[contains(.,"User")]'

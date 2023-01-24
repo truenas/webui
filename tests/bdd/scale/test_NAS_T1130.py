@@ -12,7 +12,7 @@ from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
+    when
 )
 
 
@@ -70,8 +70,8 @@ def input_fullname_username_password_confirmpassword_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.add_User.username_Input).send_keys('foo')
     driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
     driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing')
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).send_keys('testing')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

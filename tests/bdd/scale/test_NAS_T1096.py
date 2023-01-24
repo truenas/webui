@@ -11,7 +11,7 @@ from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
+    when
 )
 from pytest_dependency import depends
 
@@ -70,8 +70,8 @@ def the_user_edit_page_should_open_change_the_password_in_the_2nd_field(driver):
     assert wait_on_element(driver, 10, xpaths.add_User.password_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
     driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing1234')
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('1234testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).send_keys('1234testing')
 
 
 @then('you should not be able to save the changes and an error message should appear')

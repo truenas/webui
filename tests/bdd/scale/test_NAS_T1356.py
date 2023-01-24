@@ -6,14 +6,13 @@ import xpaths
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
-
+    when
 )
 import pytest
 from pytest_dependency import depends
@@ -78,9 +77,9 @@ def on_the_launch_docker_image_box_input_an_application_name(driver):
 @then('under the Container Images input the Image repository And Image Tag')
 def under_the_container_images_input_the_image_repository_and_image_tag(driver):
     """under the Container Images input the Image repository And Image Tag."""
-    assert wait_on_element(driver, 7, xpaths.app_Setup.image_Repository_input)
-    driver.find_element_by_xpath(xpaths.app_Setup.image_Repository_input).clear()
-    driver.find_element_by_xpath(xpaths.app_Setup.image_Repository_input).send_keys('ixsystems/truecommand')
+    assert wait_on_element(driver, 7, xpaths.app_Setup.image_Repository_Input)
+    driver.find_element_by_xpath(xpaths.app_Setup.image_Repository_Input).clear()
+    driver.find_element_by_xpath(xpaths.app_Setup.image_Repository_Input).send_keys('ixsystems/truecommand')
     driver.find_element_by_xpath(xpaths.app_Setup.image_Tag_Input).clear()
     driver.find_element_by_xpath(xpaths.app_Setup.image_Tag_Input).send_keys('latest')
 

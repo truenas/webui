@@ -97,10 +97,10 @@ def in_user_input_enter_ericbsd_click_the_save_access_control_list(driver, usern
     driver.find_element_by_xpath(xpaths.edit_Acl.user_Combobox).send_keys(username)
     ActionChains(driver).send_keys(Keys.TAB).perform()
     assert wait_on_element(driver, 7, xpaths.edit_Acl.user_In_Acl(username))
-    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
-    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatin_Acl)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.updating_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
 
 
 @then(parsers.parse('on the Permission card, verify the new ACL item "{username}" exist'))

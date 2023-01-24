@@ -131,10 +131,10 @@ def apply_acl_with_both_recursive_and_transverse_set_to_rtacltest1(driver, datas
 
     assert wait_on_element(driver, 7, xpaths.edit_Acl.traverse_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.edit_Acl.traverse_Checkbox).click()
-    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
-    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatin_Acl)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.updating_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
     assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 
@@ -247,10 +247,10 @@ def apply_acl_to_rtacltest1_with_recusrive_checked(driver, dataset1_name):
     driver.find_element_by_xpath(xpaths.checkbox.old_Confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.Continue, 'clickable')
     driver.find_element_by_xpath(xpaths.button.Continue).click()
-    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
-    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
-    assert wait_on_element(driver, 7, xpaths.popup.updatin_Acl)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.updating_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
     assert wait_on_element(driver, 7, xpaths.dataset.title)
 
 

@@ -7,7 +7,7 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -125,10 +125,10 @@ def input_the_group_name(driver, group_name):
 @then('click the Save Access Control List button')
 def click_the_save_access_control_list_button(driver):
     """click the Save Access Control List button."""
-    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Buttonox, 'clickable')
-    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Buttonox).click()
+    assert wait_on_element(driver, 5, xpaths.edit_Acl.save_Acl_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.edit_Acl.save_Acl_Button).click()
     time.sleep(1)
-    assert wait_on_element_disappear(driver, 60, xpaths.popup.updatin_Acl)
+    assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
 
 
 @then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))

@@ -7,7 +7,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd,
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -72,8 +72,8 @@ def the_user_edit_page_should_open_change_the_password_in_both_fields_and_click_
     assert wait_on_element(driver, 10, xpaths.add_User.password_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
     driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing1234')
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('testing1234')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).send_keys('testing1234')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
