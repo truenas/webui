@@ -40,6 +40,9 @@ import {
   CertificateAddComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import {
+  CertificateImportComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
+import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import {
@@ -64,11 +67,9 @@ import { CertificateEditComponent } from './certificates-dash/certificate-edit/c
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
 import { OldCertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
-import { CertificateCsrExistsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-csr-exists/certificate-csr-exists.component';
 import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
 import { CertificateOptionsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
 import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
-import { CertificateImportComponent } from './certificates-dash/forms/common-steps/certificate-import/certificate-import.component';
 import { CertificateSubjectComponent } from './certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 
 @NgModule({
@@ -111,7 +112,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateIdentifierAndTypeComponent,
     CertificateConstraintsComponent,
     CertificateImportComponent,
-    CertificateCsrExistsComponent,
   ],
   imports: [
     CommonModule,

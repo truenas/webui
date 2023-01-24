@@ -7,7 +7,10 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import {
+  mockCall, mockJob, mockWebsocket, mockWebsocket2,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
@@ -87,7 +90,7 @@ describe('CertificateAddComponent', () => {
         ] as Certificate[]),
       ]),
       mockWebsocket([
-        mockCall('certificate.create'),
+        mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
@@ -159,7 +162,7 @@ describe('CertificateAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.create', [
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [
       {
         name: 'new',
         create_type: CertificateCreateType.CreateInternal,
@@ -222,7 +225,7 @@ describe('CertificateAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.create', [{
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
       create_type: CertificateCreateType.CreateImported,
       certificate: '-----BEGIN CERTIFICATE-----',

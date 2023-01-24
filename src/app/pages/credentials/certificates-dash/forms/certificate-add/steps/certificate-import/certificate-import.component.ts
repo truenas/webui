@@ -27,8 +27,8 @@ export class CertificateImportComponent implements OnInit, SummaryProvider, Cert
   form = this.formBuilder.group({
     csrExistsOnSystem: [false],
     csr: [null as number],
-    certificate: ['', [Validators.required]],
-    private_key: ['', [Validators.required]],
+    certificate: [''],
+    privatekey: [''],
     passphrase: ['', [matchOtherValidator('passphrase2')]],
     passphrase2: [''],
   });
@@ -56,11 +56,13 @@ export class CertificateImportComponent implements OnInit, SummaryProvider, Cert
 
   ngOnInit(): void {
     this.loadCsrs();
+    this.setFieldValidators();
   }
 
   getSummary(): SummarySection {
     const values = this.form.value;
-    const certificateBody = values.certificate.match(/-----BEGIN CERTIFICATE-----\s(.*)\s-----END CERTIFICATE-----/s)?.[1] || '';
+    const certificateBody = values.certificate.match(/-----BEGIN CERTIFICATE-----\s(.*)\s-----END CERTIFICATE-----/s)?.[1]
+      || values.certificate;
     const certificatePreview = certificateBody.replace(/(.{6}).*(.{6})/s, '$1......$2');
 
     const summary: SummarySection = [];
@@ -89,14 +91,13 @@ export class CertificateImportComponent implements OnInit, SummaryProvider, Cert
 
     if (this.csrExists) {
       return {
-        csr: values.csr,
-        certificate: this.selectedCsr?.certificate,
-        private_key: this.selectedCsr?.privatekey,
+        certificate: values.certificate,
+        privatekey: this.selectedCsr?.privatekey,
         passphrase: this.selectedCsr?.passphrase,
       };
     }
 
-    return _.pick(values, ['certificate', 'private_key', 'passphrase']);
+    return _.pick(values, ['certificate', 'privatekey', 'passphrase']);
   }
 
   private loadCsrs(): void {
@@ -116,6 +117,23 @@ export class CertificateImportComponent implements OnInit, SummaryProvider, Cert
         error: (error) => {
           new EntityUtils().handleWsError(this, error, this.dialogService);
         },
+      });
+  }
+
+  private setFieldValidators(): void {
+    this.form.controls.csrExistsOnSystem.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((csrExists) => {
+        if (csrExists) {
+          this.form.controls.privatekey.setValidators(null);
+          this.form.controls.csr.setValidators([Validators.required]);
+        } else {
+          this.form.controls.certificate.setValidators([Validators.required]);
+          this.form.controls.csr.setValidators(null);
+        }
+
+        this.form.controls.privatekey.updateValueAndValidity();
+        this.form.controls.csr.updateValueAndValidity();
       });
   }
 }

@@ -80,10 +80,10 @@ export class CertificateAddComponent {
     this.cdr.markForCheck();
 
     const payload = this.preparePayload();
-    this.ws.call('certificate.create', [payload])
+    this.ws.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        complete: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
           this.slideIn.close();
@@ -93,12 +93,16 @@ export class CertificateAddComponent {
           this.cdr.markForCheck();
 
           // TODO: Need to update error handler to open step with an error.
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          new EntityUtils().errorReport(error, this.dialogService);
         },
       });
   }
 
   onProfileSelected(profile: CertificateProfile): void {
+    if (!profile) {
+      return;
+    }
+
     const { cert_extensions: extensions, ...otherFields } = profile;
 
     this.getNewCertificateSteps().forEach((step) => {

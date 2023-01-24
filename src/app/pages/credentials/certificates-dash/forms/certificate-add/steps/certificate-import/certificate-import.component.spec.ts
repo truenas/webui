@@ -62,7 +62,7 @@ describe('CertificateImportComponent', () => {
       expect(spectator.component.getPayload()).toEqual({
         certificate,
         passphrase: '123456',
-        private_key: 'ABHDDJJKEY',
+        privatekey: 'ABHDDJJKEY',
       });
     });
 
@@ -83,9 +83,7 @@ describe('CertificateImportComponent', () => {
   describe('not using an existing CSR', () => {
     beforeEach(async () => {
       await form.fillForm({
-        Certificate: '-----BEGIN CERTIFICATE-----\n'
-          + 'ABCDEFGHAwIBAgIJAKZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUA0987654321\n'
-          + '-----END CERTIFICATE-----',
+        Certificate: certificate,
         'CSR exists on this system': true,
       });
       await form.fillForm({
@@ -95,10 +93,9 @@ describe('CertificateImportComponent', () => {
 
     it('returns fields to import certificate when getPayload() is called', () => {
       expect(spectator.component.getPayload()).toEqual({
-        csr: 1,
-        certificate: 'CSR Certificate',
+        certificate,
         passphrase: 'CSR Passphrase',
-        private_key: 'CSR Private Key',
+        privatekey: 'CSR Private Key',
       });
     });
 
