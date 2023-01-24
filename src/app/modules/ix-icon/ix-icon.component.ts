@@ -7,6 +7,7 @@ import {
   ErrorHandler,
   Inject,
   Input,
+  OnChanges,
   OnInit,
   Optional,
   ViewEncapsulation,
@@ -38,7 +39,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxIconComponent extends MatIcon implements OnInit, AfterContentInit {
+export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   @Input() name: string;
 
   private get iconName(): string {
@@ -83,6 +84,10 @@ export class IxIconComponent extends MatIcon implements OnInit, AfterContentInit
   ngOnInit(): void {
     this.updateIcon(this.iconName);
     super.ngOnInit();
+  }
+
+  ngOnChanges(): void {
+    this.updateIcon(this.name);
   }
 
   ngAfterContentInit(): void {
