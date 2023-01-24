@@ -23,7 +23,7 @@ export interface ExtendedKeyUsage {
   extension_critical: boolean;
 }
 
-export interface KeyUsage {
+export interface KeyUsages {
   enabled: boolean;
   digital_signature: boolean;
   content_commitment: boolean;
@@ -41,7 +41,7 @@ export interface CertificateExtensions {
   BasicConstraints: BasicConstraints;
   AuthorityKeyIdentifier: AuthorityKeyIdentifier;
   ExtendedKeyUsage: ExtendedKeyUsage;
-  KeyUsage: KeyUsage;
+  KeyUsage: KeyUsages;
 }
 
 export interface CertificateAuthorityUpdate {

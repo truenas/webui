@@ -1,14 +1,14 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  CertificateSubjectComponent
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { SystemGeneralService } from 'app/services';
-import { of } from 'rxjs';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  CertificateSubjectComponent,
+} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+import { SystemGeneralService } from 'app/services';
 
 describe('CertificateSubjectComponent', () => {
   let spectator: Spectator<CertificateSubjectComponent>;
@@ -24,8 +24,8 @@ describe('CertificateSubjectComponent', () => {
     providers: [
       mockProvider(SystemGeneralService, {
         getCertificateCountryChoices: () => of({
-          'CA': 'Canada',
-          'US': 'United States',
+          CA: 'Canada',
+          US: 'United States',
         }),
       }),
     ],
@@ -48,19 +48,16 @@ describe('CertificateSubjectComponent', () => {
     });
   });
 
-  it('shows a form with subject fields for a certificate', () => {
+  it('returns subject fields when getPayload() is called', () => {
     expect(spectator.component.form.value).toEqual({
-      "country": "US",
-      "state": "Pennsylvania",
-      "city": "Racoon City",
-      "organization": "Umbrella Corp",
-      "organizational_unit": "Virus Research Dept",
-      "email": "no-reply@umbrella.com",
-      "common": "virus.umbrella.com",
-      "san": [
-        "jobs.umbrella.com",
-        "security.umbrella.com"
-      ],
+      country: 'US',
+      state: 'Pennsylvania',
+      city: 'Racoon City',
+      organization: 'Umbrella Corp',
+      organizational_unit: 'Virus Research Dept',
+      email: 'no-reply@umbrella.com',
+      common: 'virus.umbrella.com',
+      san: ['jobs.umbrella.com', 'security.umbrella.com'],
     });
   });
 
@@ -68,20 +65,20 @@ describe('CertificateSubjectComponent', () => {
     it('returns a summary of fields when all fields are set', () => {
       expect(spectator.component.getSummary()).toEqual([
         {
-          "label": "SAN",
-          "value": "jobs.umbrella.com, security.umbrella.com"
+          label: 'SAN',
+          value: 'jobs.umbrella.com, security.umbrella.com',
         },
         {
-          "label": "Common Name",
-          "value": "virus.umbrella.com"
+          label: 'Common Name',
+          value: 'virus.umbrella.com',
         },
         {
-          "label": "Email",
-          "value": "no-reply@umbrella.com"
+          label: 'Email',
+          value: 'no-reply@umbrella.com',
         },
         {
-          "label": "Subject",
-          "value": "Virus Research Dept, Umbrella Corp, Racoon City, Pennsylvania, US"
+          label: 'Subject',
+          value: 'Virus Research Dept, Umbrella Corp, Racoon City, Pennsylvania, US',
         },
       ]);
     });
@@ -94,17 +91,17 @@ describe('CertificateSubjectComponent', () => {
 
       expect(spectator.component.getSummary()).toEqual([
         {
-          "label": "SAN",
-          "value": "jobs.umbrella.com, security.umbrella.com"
+          label: 'SAN',
+          value: 'jobs.umbrella.com, security.umbrella.com',
         },
         {
-          "label": "Email",
-          "value": "no-reply@umbrella.com"
+          label: 'Email',
+          value: 'no-reply@umbrella.com',
         },
         {
-          "label": "Subject",
-          "value": "Umbrella Corp, Racoon City, Pennsylvania, US"
-        }
+          label: 'Subject',
+          value: 'Umbrella Corp, Racoon City, Pennsylvania, US',
+        },
       ]);
     });
   });

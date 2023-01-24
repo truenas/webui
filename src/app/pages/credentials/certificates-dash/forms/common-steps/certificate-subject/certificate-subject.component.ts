@@ -1,9 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import {
+  CertificateStep,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
 import { SystemGeneralService } from 'app/services';
 
 @Component({
@@ -11,7 +15,7 @@ import { SystemGeneralService } from 'app/services';
   templateUrl: './certificate-subject.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateSubjectComponent implements SummaryProvider {
+export class CertificateSubjectComponent implements SummaryProvider, CertificateStep {
   form = this.formBuilder.group({
     country: ['US', Validators.required],
     state: ['', Validators.required],
@@ -61,5 +65,10 @@ export class CertificateSubjectComponent implements SummaryProvider {
     summary.push({ label: this.translate.instant('Subject'), value: subject });
 
     return summary;
+  }
+
+  getPayload(): CertificateSubjectComponent['form']['value'] {
+    // Filter out empty values
+    return _.pickBy(this.form.value, Boolean);
   }
 }

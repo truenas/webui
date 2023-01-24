@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
@@ -10,6 +10,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
+import { DialogService } from 'app/services';
 
 describe('CertificateIdentifierAndTypeComponent', () => {
   let spectator: Spectator<CertificateIdentifierAndTypeComponent>;
@@ -32,6 +33,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
           'Openvpn Client Certificate': openvpnProfile,
         }),
       ]),
+      mockProvider(DialogService),
     ],
   });
 
@@ -51,11 +53,10 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       });
     });
 
-    it('shows Name, Type and Profiles fields when creating new certificate', () => {
-      expect(spectator.component.form.value).toEqual({
+    it('returns name and type when getPayload is called', () => {
+      expect(spectator.component.getPayload()).toEqual({
         name: 'New Certificate',
         create_type: CertificateCreateType.CreateInternal,
-        profile: 'Openvpn Client Certificate',
       });
     });
 
@@ -92,12 +93,6 @@ describe('CertificateIdentifierAndTypeComponent', () => {
     it('does not show a Profile field when Type is changed to Import', async () => {
       const fields = await form.getLabels();
       expect(fields).not.toContain('Profile');
-
-      expect(spectator.component.form.value).toEqual({
-        create_type: CertificateCreateType.CreateImported,
-        name: 'New Certificate',
-        profile: '',
-      });
     });
 
     it('returns summary with Name and Type when getSummary is called', () => {

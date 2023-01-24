@@ -1,0 +1,121 @@
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
+import { Observable, of } from 'rxjs';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import {
+  CertificateStep,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
+import { DialogService, WebSocketService2 } from 'app/services';
+
+@UntilDestroy()
+@Component({
+  selector: 'ix-certificate-import',
+  templateUrl: './certificate-import.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CertificateImportComponent implements OnInit, SummaryProvider, CertificateStep {
+  form = this.formBuilder.group({
+    csrExistsOnSystem: [false],
+    csr: [null as number],
+    certificate: ['', [Validators.required]],
+    private_key: ['', [Validators.required]],
+    passphrase: ['', [matchOtherValidator('passphrase2')]],
+    passphrase2: [''],
+  });
+
+  csrs: Certificate[] = [];
+  csrOptions$: Observable<Option[]> = of([]);
+
+  readonly helptext = helptextSystemCertificates;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private translate: TranslateService,
+    private ws: WebSocketService2,
+    private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  get csrExists(): boolean {
+    return this.form.controls.csrExistsOnSystem.value;
+  }
+
+  get selectedCsr(): Certificate | undefined {
+    return this.csrs.find((csr) => csr.id === this.form.value.csr);
+  }
+
+  ngOnInit(): void {
+    this.loadCsrs();
+  }
+
+  getSummary(): SummarySection {
+    const values = this.form.value;
+    const certificateBody = values.certificate.match(/-----BEGIN CERTIFICATE-----\s(.*)\s-----END CERTIFICATE-----/s)?.[1] || '';
+    const certificatePreview = certificateBody.replace(/(.{6}).*(.{6})/s, '$1......$2');
+
+    const summary: SummarySection = [];
+
+    if (this.form.value.csrExistsOnSystem) {
+      summary.push({
+        label: this.translate.instant('Using CSR'),
+        value: this.selectedCsr.name,
+      });
+    }
+
+    summary.push({
+      label: this.translate.instant('Certificate'),
+      value: certificatePreview,
+    });
+
+    if (values.passphrase || this.selectedCsr?.passphrase) {
+      summary.push({ label: 'Passphrase', value: 'With passphrase' });
+    }
+
+    return summary;
+  }
+
+  getPayload(): Omit<CertificateImportComponent['form']['value'], 'csrExistsOnSystem' | 'passphrase2'> {
+    const values = this.form.value;
+
+    if (this.csrExists) {
+      return {
+        csr: values.csr,
+        certificate: this.selectedCsr?.certificate,
+        private_key: this.selectedCsr?.privatekey,
+        passphrase: this.selectedCsr?.passphrase,
+      };
+    }
+
+    return _.pick(values, ['certificate', 'private_key', 'passphrase']);
+  }
+
+  private loadCsrs(): void {
+    this.ws.call('certificate.query', [[['CSR', '!=', null]]])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (csrs) => {
+          this.csrs = csrs;
+          this.csrOptions$ = of(
+            csrs.map((csr) => ({
+              label: csr.name,
+              value: csr.id,
+            })),
+          );
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          new EntityUtils().handleWsError(this, error, this.dialogService);
+        },
+      });
+  }
+}

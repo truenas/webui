@@ -1,23 +1,31 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { of } from 'rxjs';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
+import { choicesToOptions, valueToLabel } from 'app/helpers/options.helper';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
-import { CertificateExtension } from 'app/interfaces/certificate.interface';
+import { CertificateExtensions, KeyUsages } from 'app/interfaces/certificate-authority.interface';
+import { CertificateCreate, CertificateExtension } from 'app/interfaces/certificate.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import {
+  CertificateStep,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
 import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';
 import {
-  authorityKeyIdentifierOptions,
+  AuthorityKeyIdentifier,
+  authorityKeyIdentifierOptions, BasicConstraint,
   basicConstraintOptions,
   keyUsageOptions,
-} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constant';
+} from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
 import { WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
@@ -26,20 +34,20 @@ import { WebSocketService2 } from 'app/services';
   templateUrl: './certificate-constraints.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
+export class CertificateConstraintsComponent implements OnInit, SummaryProvider, CertificateStep {
   form = this.formBuilder.group({
     BasicConstraints: this.formBuilder.group({
       enabled: [false],
       path_length: [null as number],
-      BasicConstraints: [[] as string[]],
+      BasicConstraints: [[] as BasicConstraint[]],
     }),
     AuthorityKeyIdentifier: this.formBuilder.group({
       enabled: [false],
-      AuthorityKeyIdentifier: [[] as string[]],
+      AuthorityKeyIdentifier: [[] as AuthorityKeyIdentifier[]],
     }),
     ExtendedKeyUsage: this.formBuilder.group({
       enabled: [false],
-      usages: [[] as string[]],
+      usages: [[] as ExtendedKeyUsageFlag[]],
       extension_critical: [false],
     }),
     KeyUsage: this.formBuilder.group({
@@ -52,26 +60,27 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
 
   readonly basicConstraintsOptions$ = of(translateOptions(this.translate, basicConstraintOptions));
   readonly authorityKeyIdentifierOptions$ = of(translateOptions(this.translate, authorityKeyIdentifierOptions));
-  readonly extendedKeyUsageOptions$ = this.ws.call('certificate.extended_key_usage_choices')
-    .pipe(choicesToOptions());
-
   readonly keyUsageOptions$ = of(translateOptions(this.translate, keyUsageOptions));
+  extendedKeyUsageOptions$ = of<Option[]>([]);
+
+  private extendedKeyUsageOptions: Option[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private ws: WebSocketService2,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.updateUsagesValidator();
+    this.loadKeyUsageOptions();
   }
 
   hasExtension(extension: CertificateExtension): boolean {
     return this.form.value[extension].enabled;
   }
 
-  // TODO: Fix incorrect labels for selects
   getSummary(): SummarySection {
     return [
       ...this.getBasicConstraintsSummary(),
@@ -79,6 +88,47 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       ...this.getExtendedKeyUsageSummary(),
       ...this.getKeyUsageSummary(),
     ];
+  }
+
+  getPayload(): Pick<CertificateCreate, 'cert_extensions'> {
+    const {
+      BasicConstraints: basicConstraints,
+      AuthorityKeyIdentifier: authorityKeyIdentifier,
+      ExtendedKeyUsage: extendedKeyUsage,
+      KeyUsage: keyUsage,
+    } = this.form.value;
+
+    return {
+      cert_extensions: {
+        BasicConstraints: {
+          enabled: basicConstraints.enabled,
+          ca: basicConstraints.BasicConstraints.includes(BasicConstraint.Ca),
+          extension_critical: basicConstraints.BasicConstraints.includes(BasicConstraint.ExtensionCritical),
+          path_length: basicConstraints.path_length,
+        },
+        AuthorityKeyIdentifier: {
+          enabled: authorityKeyIdentifier.enabled,
+          authority_cert_issuer: authorityKeyIdentifier.AuthorityKeyIdentifier
+            .includes(AuthorityKeyIdentifier.AuthorityCertIssuer),
+          extension_critical: authorityKeyIdentifier.AuthorityKeyIdentifier
+            .includes(AuthorityKeyIdentifier.ExtensionCritical),
+        },
+        ExtendedKeyUsage: {
+          enabled: extendedKeyUsage.enabled,
+          extension_critical: extendedKeyUsage.extension_critical,
+          usages: extendedKeyUsage.usages,
+        },
+        KeyUsage: {
+          enabled: keyUsage.enabled,
+          ...keyUsage.KeyUsage.reduce((acc, usage) => {
+            return {
+              ...acc,
+              [usage]: true,
+            };
+          }, {} as KeyUsages),
+        },
+      },
+    };
   }
 
   setFromProfile(extensions: CertificateExtensions): void {
@@ -93,11 +143,15 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       BasicConstraints: {
         enabled: basicConstraints.enabled,
         path_length: basicConstraints.path_length || null,
-        BasicConstraints: extensionsToSelectValues(_.omit(basicConstraints, ['enabled', 'path_length'])),
+        BasicConstraints: extensionsToSelectValues(
+          _.omit(basicConstraints, ['enabled', 'path_length']),
+        ) as BasicConstraint[],
       },
       AuthorityKeyIdentifier: {
         enabled: authorityKeyIdentifier.enabled,
-        AuthorityKeyIdentifier: extensionsToSelectValues(_.omit(authorityKeyIdentifier, ['enabled'])),
+        AuthorityKeyIdentifier: extensionsToSelectValues(
+          _.omit(authorityKeyIdentifier, ['enabled']),
+        ) as AuthorityKeyIdentifier[],
       },
       ExtendedKeyUsage: {
         enabled: extendedKeyUsage.enabled,
@@ -135,7 +189,9 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     const summary = [
       {
         label: this.translate.instant('Basic Constraints'),
-        value: this.form.value.BasicConstraints.BasicConstraints.join(', '),
+        value: this.form.value.BasicConstraints.BasicConstraints
+          .map(valueToLabel(basicConstraintOptions))
+          .join(', '),
       },
     ];
 
@@ -157,7 +213,9 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     return [
       {
         label: this.translate.instant('Authority Key Identifier'),
-        value: this.form.value.AuthorityKeyIdentifier.AuthorityKeyIdentifier.join(', '),
+        value: this.form.value.AuthorityKeyIdentifier.AuthorityKeyIdentifier
+          .map(valueToLabel(authorityKeyIdentifierOptions))
+          .join(', '),
       },
     ];
   }
@@ -170,7 +228,9 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     const summary = [
       {
         label: this.translate.instant('Extended Key Usage'),
-        value: this.form.value.ExtendedKeyUsage.usages.join(', '),
+        value: this.form.value.ExtendedKeyUsage.usages
+          .map(valueToLabel(this.extendedKeyUsageOptions))
+          .join(', '),
       },
     ];
 
@@ -192,8 +252,23 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     return [
       {
         label: this.translate.instant('Key Usage'),
-        value: this.form.value.KeyUsage.KeyUsage.join(', '),
+        value: this.form.value.KeyUsage.KeyUsage
+          .map(valueToLabel(keyUsageOptions))
+          .join(', '),
       },
     ];
+  }
+
+  private loadKeyUsageOptions(): void {
+    this.ws.call('certificate.extended_key_usage_choices')
+      .pipe(
+        choicesToOptions(),
+        untilDestroyed(this),
+      )
+      .subscribe((options) => {
+        this.extendedKeyUsageOptions = options;
+        this.extendedKeyUsageOptions$ = of(options);
+        this.cdr.markForCheck();
+      });
   }
 }

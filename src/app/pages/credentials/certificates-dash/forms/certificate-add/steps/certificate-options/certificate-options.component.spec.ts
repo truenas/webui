@@ -58,8 +58,8 @@ describe('CertificateOptionsComponent', () => {
       });
     });
 
-    it('shows a certificate options form for a key of RSA type', () => {
-      expect(spectator.component.form.value).toMatchObject({
+    it('returns fields when getPayload() is called', () => {
+      expect(spectator.component.getPayload()).toEqual({
         signedby: 1,
         digest_algorithm: CertificateDigestAlgorithm.Sha384,
         lifetime: 3660,
@@ -108,8 +108,8 @@ describe('CertificateOptionsComponent', () => {
       });
     });
 
-    it('shows a certificate options form for a key of EC type', () => {
-      expect(spectator.component.form.value).toMatchObject({
+    it('returns fields when getPayload() is called for a key of EC type', () => {
+      expect(spectator.component.getPayload()).toEqual({
         signedby: 2,
         ec_curve: 'SECP256K1',
         digest_algorithm: CertificateDigestAlgorithm.Sha384,

@@ -15,6 +15,9 @@ import { choicesToOptions, idNameArrayToOptions, mapToOptions } from 'app/helper
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import {
+  CertificateStep,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
 import { SystemGeneralService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
@@ -23,9 +26,9 @@ import { SystemGeneralService, WebSocketService2 } from 'app/services';
   templateUrl: './certificate-options.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateOptionsComponent implements OnInit, SummaryProvider {
+export class CertificateOptionsComponent implements OnInit, SummaryProvider, CertificateStep {
   form = this.formBuilder.group({
-    signedby: ['', Validators.required],
+    signedby: [null as number, Validators.required],
     key_type: [CertificateKeyType.Rsa],
     key_length: [2048],
     ec_curve: ['BrainpoolP384R1'],
@@ -74,11 +77,23 @@ export class CertificateOptionsComponent implements OnInit, SummaryProvider {
     ];
   }
 
+  getPayload(): CertificateOptionsComponent['form']['value'] {
+    const {
+      ec_curve: ecCurve,
+      key_length: keyLength,
+      ...otherFields
+    } = this.form.value;
+
+    return this.isRsa
+      ? { ...otherFields, key_length: keyLength }
+      : { ...otherFields, ec_curve: ecCurve };
+  }
+
   private loadSigningAuthorities(): void {
     this.systemGeneralService.getUnsignedCas()
       .pipe(idNameArrayToOptions(), untilDestroyed(this))
       .subscribe((options) => {
-        this.form.patchValue({ signedby: String(options[0].value) });
+        this.form.patchValue({ signedby: options[0].value as number });
         this.signingAuthorities = options;
         this.signingAuthorities$ = of(options);
         this.cdr.markForCheck();

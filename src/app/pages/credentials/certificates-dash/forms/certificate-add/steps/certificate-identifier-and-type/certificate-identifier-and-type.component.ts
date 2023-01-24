@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -13,6 +14,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import {
+  CertificateStep,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-step.interface';
 import { DialogService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
@@ -21,7 +25,7 @@ import { DialogService, WebSocketService2 } from 'app/services';
   templateUrl: './certificate-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider {
+export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider, CertificateStep {
   @Output() profileSelected = new EventEmitter<CertificateProfile>();
 
   form = this.formBuilder.group({
@@ -94,6 +98,10 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
     }
 
     return summary;
+  }
+
+  getPayload(): Pick<CertificateIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type'> {
+    return _.pick(this.form.value, ['name', 'create_type']);
   }
 
   private emitEventOnProfileChange(): void {

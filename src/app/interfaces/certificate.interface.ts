@@ -1,13 +1,13 @@
+import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
-import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import {
   AuthorityKeyIdentifier,
   BasicConstraints,
   CertificateAuthority,
   CertificateExtensions,
   ExtendedKeyUsage,
-  KeyUsage,
+  KeyUsages,
 } from 'app/interfaces/certificate-authority.interface';
 
 export interface Certificate {
@@ -83,7 +83,7 @@ export type SomeCertificateExtension =
   & BasicConstraints
   & AuthorityKeyIdentifier
   & ExtendedKeyUsage
-  & KeyUsage
+  & KeyUsages
   >;
 
 /**
@@ -93,7 +93,7 @@ export type CertificationExtensionAttribute =
   | keyof BasicConstraints
   | keyof AuthorityKeyIdentifier
   | keyof ExtendedKeyUsage
-  | keyof KeyUsage;
+  | keyof KeyUsages;
 
 /**
  * @deprecated
@@ -131,7 +131,7 @@ export interface CertificateCreate {
   state?: string;
   create_type: CertificateCreateType;
   digest_algorithm?: string;
-  san?: string;
+  san?: string[];
   cert_extensions?: CertificateExtensions;
 }
 

@@ -1,5 +1,5 @@
 import {
-  extensionsToSelectValues
+  extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';
 
 describe('extensionsToSelectValues', () => {
