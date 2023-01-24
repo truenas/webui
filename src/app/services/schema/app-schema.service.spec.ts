@@ -8,6 +8,8 @@ import {
   DynamicFormSchemaSelect,
   DynamicFormSchemaList,
   DynamicFormSchemaIpaddr,
+  DynamicFormSchemaCron,
+  DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -95,6 +97,7 @@ const afterIntString = [[{
   }] as DynamicFormSchemaInput[],
   controlName: 'variable_dict',
   editable: undefined,
+  tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
 }]] as DynamicFormSchemaDict[][];
@@ -177,6 +180,7 @@ const afterEnum = [[{
   }] as DynamicFormSchemaSelect[],
   controlName: 'variable_dict',
   editable: undefined,
+  tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
 }]] as DynamicFormSchemaDict[][];
@@ -217,6 +221,49 @@ const afterBoolean = [[{
   tooltip: undefined,
   type: 'checkbox',
 }]] as DynamicFormSchemaCheckbox[][];
+
+const beforeUri = [{
+  variable: 'variable_uri',
+  label: 'Label Uri',
+  schema: {
+    type: 'uri',
+    default: 'https://google.com',
+  },
+}] as ChartSchemaNode[];
+
+const afterUri = [[{
+  controlName: 'variable_uri',
+  editable: undefined,
+  required: undefined,
+  inputType: undefined,
+  title: 'Label Uri',
+  tooltip: undefined,
+  type: 'uri',
+}]] as DynamicFormSchemaUri[][];
+
+const beforeCron = [{
+  variable: 'variable_cron',
+  label: 'Label Cron',
+  schema: {
+    type: 'cron',
+    default: {
+      hour: '*',
+      minute: '*',
+      month: '*',
+      dom: '*',
+      dow: '*',
+    },
+  },
+}] as ChartSchemaNode[];
+
+const afterCron = [[{
+  controlName: 'variable_cron',
+  editable: undefined,
+  required: undefined,
+  title: 'Label Cron',
+  tooltip: undefined,
+  type: 'cron',
+}]] as DynamicFormSchemaCron[][];
 
 const beforePath = [{
   variable: 'variable_path',
@@ -354,6 +401,18 @@ describe('AppSchemaService', () => {
         expect(transformed).toEqual(afterPath[idx]);
       });
     });
+    beforeCron.forEach((item, idx) => {
+      it('converts schema with "cron" type', () => {
+        const transformed = service.transformNode(item, true, false);
+        expect(transformed).toEqual(afterCron[idx]);
+      });
+    });
+    beforeUri.forEach((item, idx) => {
+      it('converts schema with "uri" type', () => {
+        const transformed = service.transformNode(item, true, false);
+        expect(transformed).toEqual(afterUri[idx]);
+      });
+    });
     beforeList.forEach((item, idx) => {
       it('converts schema with "list" type', () => {
         const transformed = service.transformNode(item, true, false);
@@ -385,22 +444,50 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "int" with default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_with_default'].value).toBe(9401);
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_int_with_default.value).toBe(9401);
     });
     it('creates form for "string" with default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_with_default'].value).toBe('test input string');
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_string_with_default.value).toBe('test input string');
     });
     it('creates form for "boolean" with default value', () => {
-      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toBe(true);
+      expect(dynamicForm.controls.variable_subquestion_boolean.value).toBe(true);
     });
     it('creates form for "int" without default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_without_default'].value).toBeNull();
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_int_without_default.value).toBeNull();
     });
     it('creates form for "string" without default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_without_default'].value).toBe('');
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_string_without_default.value).toBe('');
     });
     it('creates form for "boolean" without default value', () => {
-      expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
+      expect(dynamicForm.controls.variable_boolean.value).toBe(false);
+    });
+
+    beforeUri.forEach((item) => {
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
+    });
+
+    it('creates form for "uri" with default value', () => {
+      expect(dynamicForm.controls.variable_uri.value).toBe('https://google.com');
+    });
+
+    beforeCron.forEach((item) => {
+      service.addFormControls({
+        chartSchemaNode: item,
+        formGroup: dynamicForm,
+        config: null,
+        isNew: true,
+        isParentImmutable: false,
+      });
+    });
+
+    it('creates form for "cron" with default value', () => {
+      expect(dynamicForm.controls.variable_cron.value).toBe('* * * * *');
     });
 
     beforeBoolean.forEach((item) => {
@@ -414,8 +501,8 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "boolean"', () => {
-      expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
-      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toBe(true);
+      expect(dynamicForm.controls.variable_boolean.value).toBe(false);
+      expect(dynamicForm.controls.variable_subquestion_boolean.value).toBe(true);
     });
 
     beforeList.forEach((item) => {
@@ -429,7 +516,7 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "list"', () => {
-      expect(dynamicForm.controls['variable_list'].value).toEqual([]);
+      expect(dynamicForm.controls.variable_list.value).toEqual([]);
     });
 
     beforeHidden.forEach((item) => {
@@ -443,9 +530,9 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for hidden field', () => {
-      expect(dynamicForm.controls['hidden_field'].value).toBe('hidden_field');
-      expect(dynamicForm.controls['hidden_field'].disabled).toBe(true);
-      expect((dynamicForm.controls['if_field'])).toBeUndefined();
+      expect(dynamicForm.controls.hidden_field.value).toBe('hidden_field');
+      expect(dynamicForm.controls.hidden_field.disabled).toBe(true);
+      expect((dynamicForm.controls.if_field)).toBeUndefined();
     });
   });
   describe('serializeFormValue()', () => {
@@ -464,6 +551,13 @@ describe('AppSchemaService', () => {
       expect(service.serializeFormValue({ a: { b: 1 } })).toEqual({ a: { b: 1 } });
       expect(service.serializeFormValue({ a: { b: [{ c: 'test' }] } })).toEqual({ a: { b: ['test'] } });
       expect(service.serializeFormValue({ a: { c: null, d: 'test' }, b: null })).toEqual({ a: { d: 'test' } });
+      expect(service.serializeFormValue('* * * * *')).toEqual({
+        hour: '*',
+        minute: '*',
+        month: '*',
+        dom: '*',
+        dow: '*',
+      });
     });
   });
 
@@ -473,6 +567,13 @@ describe('AppSchemaService', () => {
         noObjectList: ['test1', 'test2', 'test3'],
         objectList: [{ nestedList: ['test4', 'test5'] }],
         object: { nestedList: ['test6', 'test7'] },
+        cron_test: {
+          hour: '*',
+          minute: '*',
+          month: '*',
+          dom: '*',
+          dow: '*',
+        },
       };
       const form = new FormGroup({
         noObjectList: new FormArray([
@@ -494,12 +595,14 @@ describe('AppSchemaService', () => {
             new FormControl({ key3: '' }),
           ]),
         }),
+        cron_test: new FormControl('* * * * *'),
       });
       const result = service.restoreKeysFromFormGroup(config, form);
       expect(result).toEqual({
         noObjectList: [{ key1: 'test1' }, { key1: 'test2' }, { key1: 'test3' }],
         objectList: [{ nestedList: [{ key2: 'test4' }, { key2: 'test5' }] }],
         object: { nestedList: [{ key3: 'test6' }, { key3: 'test7' }] },
+        cron_test: '* * * * *',
       });
     });
   });

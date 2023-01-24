@@ -17,7 +17,7 @@ import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
-  IdmapService, WebSocketService,
+  IdmapService, WebSocketService2,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -56,7 +56,7 @@ export class IdmapListComponent implements EntityTableConfig {
 
   constructor(
     protected idmapService: IdmapService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideIn: IxSlideInService,
     protected dialogService: DialogService,
     protected translate: TranslateService,

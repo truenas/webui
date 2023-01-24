@@ -19,7 +19,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DynamicListComponent,
 } from 'app/pages/sharing/iscsi/initiator/initiator-form/dynamic-list/dynamic-list.component';
-import { WebSocketService, DialogService, NetworkService } from 'app/services';
+import { DialogService, NetworkService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -79,7 +80,7 @@ export class InitiatorFormComponent implements OnInit {
     protected router: Router,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected dialog: DialogService,
@@ -87,8 +88,8 @@ export class InitiatorFormComponent implements OnInit {
 
   getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
-      next: (res) => {
-        this.connectedInitiators = _.unionBy(res, (item) => item.initiator && item.initiator_addr);
+      next: (sessions) => {
+        this.connectedInitiators = _.unionBy(sessions, (item) => item.initiator && item.initiator_addr);
       },
       error: (err) => {
         new EntityUtils().handleWsError(this, err);
@@ -100,9 +101,9 @@ export class InitiatorFormComponent implements OnInit {
     this.getConnectedInitiators();
 
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+      if (params.pk) {
+        this.pk = params.pk;
+        this.customFilter[0][0].push(parseInt(params.pk, 10));
       }
     });
 
@@ -114,8 +115,8 @@ export class InitiatorFormComponent implements OnInit {
       }
     });
 
-    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.connectedInitiatorsDisabled = res === 'DISABLED';
+    this.formGroup.controls.initiators.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.connectedInitiatorsDisabled = status === 'DISABLED';
     });
 
     if (this.pk) {
@@ -134,7 +135,7 @@ export class InitiatorFormComponent implements OnInit {
               }
             });
             if (groups[0].initiators.length === 0) {
-              this.formGroup.controls['all'].setValue(true);
+              this.formGroup.controls.all.setValue(true);
             }
           },
           error: (err) => {

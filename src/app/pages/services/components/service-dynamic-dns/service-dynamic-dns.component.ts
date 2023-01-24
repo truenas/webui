@@ -12,7 +12,8 @@ import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const customProvider = 'custom';
 
@@ -64,7 +65,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
   readonly isCustomProvider$ = this.form.select((values) => values.provider === customProvider);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

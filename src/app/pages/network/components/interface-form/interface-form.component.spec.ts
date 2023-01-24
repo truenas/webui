@@ -7,7 +7,7 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -24,7 +24,7 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { NetworkService, SystemGeneralService } from 'app/services';
+import { DialogService, NetworkService, SystemGeneralService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -65,6 +65,8 @@ describe('InterfaceFormComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
+            isUpgradePending: false,
+            hasOnlyMissmatchVersionsReason: false,
           },
         },
       }),
@@ -111,11 +113,11 @@ describe('InterfaceFormComponent', () => {
         ],
       }),
       mockProvider(CoreService),
+      mockProvider(DialogService),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
-      mockWebsocket(),
     ],
   });
 

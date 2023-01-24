@@ -8,9 +8,9 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class NfsListComponent implements EntityTableConfig<NfsShare> {
 
   constructor(
     private slideInService: IxSlideInService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private dialog: DialogService,
     private translate: TranslateService,
   ) {}

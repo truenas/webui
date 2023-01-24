@@ -4,6 +4,7 @@ $standard-height: 40px;
 @import '@angular/material/theming';
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
+@include mat.slide-toggle-density(-1);
 @import 'angular15';
 
 // mandatory stuff for theming
@@ -379,7 +380,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(border-color, --primary-txt, $primary-txt, !important);
   }
 
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-slide-toggle:not(.mat-checked) .mat-slide-toggle-bar {
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-mdc-slide-toggle:not(.mat-checked) .mat-mdc-slide-toggle-bar {
     @include variable(background, --bg1, $bg1, !important);
   }
 
@@ -1465,4 +1466,8 @@ body .mdc-linear-progress__buffer-bar {
 
 body .mdc-linear-progress__bar-inner {
   border-color: var(--primary);
+}
+
+.mat-mdc-slide-toggle {
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
 }

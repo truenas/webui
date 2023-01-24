@@ -1,3 +1,5 @@
+$opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
+
 .mat-mdc-dialog-actions {
   display: block;
   min-height: unset;
@@ -13,7 +15,7 @@
 
   &.open {
     margin-bottom: 24px;
-    max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
+    max-height: $opened-scroll-container-height;
     padding: 2px;
   }
 
@@ -22,7 +24,7 @@
     border: 1px solid var(--lines);
     color: var(--fg2);
     font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
-    height: 100%;
+    max-height: $opened-scroll-container-height;
     min-height: 100px;
     overflow: auto;
     padding: 1rem;

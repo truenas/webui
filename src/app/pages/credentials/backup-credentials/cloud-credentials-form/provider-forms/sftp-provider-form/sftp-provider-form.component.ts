@@ -14,7 +14,7 @@ import { Option } from 'app/interfaces/option.interface';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 const newOption = 'NEW' as const;
 
@@ -55,7 +55,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
     });
   }
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
   ) {

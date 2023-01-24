@@ -12,6 +12,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -20,7 +21,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
@@ -69,7 +70,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     FormsModule,
     ImgFallbackModule,
     JobsModule,
-    IxFormsModule,
+    IxDynamicFormModule,
     IxTableModule,
     LayoutModule,
     MatButtonModule,
@@ -88,6 +89,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     ReactiveFormsModule,
     TerminalModule,
     TranslateModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     ApplicationsComponent,

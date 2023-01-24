@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
@@ -12,15 +12,16 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { WebdavFormComponent } from './webdav-form.component';
 
 describe('WebdavFormComponent', () => {
   let spectator: Spectator<WebdavFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   let form: IxFormHarness;
 
   const existingWebdav = {
@@ -41,7 +42,7 @@ describe('WebdavFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('sharing.webdav.create'),
         mockCall('sharing.webdav.update'),
         mockCall('service.query', [{
@@ -66,7 +67,7 @@ describe('WebdavFormComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
     form = await loader.getHarness(IxFormHarness);
   });
 

@@ -11,9 +11,8 @@ import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interfa
 import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  WebSocketService, IscsiService, AppLoaderService, DialogService,
-} from 'app/services';
+import { IscsiService, AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -83,7 +82,7 @@ export class FibreChannelPortComponent implements OnInit {
   formGroup: UntypedFormGroup;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
     private translate: TranslateService,
@@ -116,14 +115,14 @@ export class FibreChannelPortComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
-    this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      targetField.required = res === FibreChannelPortMode.Target;
-      if (res === FibreChannelPortMode.Target) {
-        this.formGroup.controls['target'].setValidators([Validators.required]);
-        this.formGroup.controls['target'].updateValueAndValidity();
+    this.formGroup.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+      targetField.required = mode === FibreChannelPortMode.Target;
+      if (mode === FibreChannelPortMode.Target) {
+        this.formGroup.controls.target.setValidators([Validators.required]);
+        this.formGroup.controls.target.updateValueAndValidity();
       } else {
-        this.formGroup.controls['target'].clearValidators();
-        this.formGroup.controls['target'].updateValueAndValidity();
+        this.formGroup.controls.target.clearValidators();
+        this.formGroup.controls.target.updateValueAndValidity();
       }
     });
     Object.keys(this.config).forEach((i) => {
@@ -135,7 +134,7 @@ export class FibreChannelPortComponent implements OnInit {
 
   isShow(field: string): boolean {
     if (field === 'target' || field === 'initiators') {
-      return this.formGroup.controls['mode'].value === FibreChannelPortMode.Target;
+      return this.formGroup.controls.mode.value === FibreChannelPortMode.Target;
     }
     return true;
   }

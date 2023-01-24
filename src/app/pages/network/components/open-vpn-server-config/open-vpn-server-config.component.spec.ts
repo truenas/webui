@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { OpenVpnDeviceType } from 'app/enums/open-vpn-device-type.enum';
 import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -34,7 +34,7 @@ describe('OpenVpnServerConfigComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket2([
         mockCall('openvpn.server.update'),
         mockCall('openvpn.server.config', {
@@ -54,7 +54,6 @@ describe('OpenVpnServerConfigComponent', () => {
           tls_crypt_auth: 'Key 1',
         } as OpenvpnServerConfig),
       ]),
-      mockWebsocket(),
       mockProvider(IxSlideInService),
       mockProvider(ServicesService, {
         getCerts: () => of([

@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -31,7 +31,7 @@ export class KernelFormComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -59,9 +59,9 @@ export class KernelFormComponent {
         this.slideInService.close();
         this.store$.dispatch(advancedConfigUpdated());
       },
-      error: (res) => {
+      error: (error) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, res);
+        new EntityUtils().handleWsError(this, error);
         this.cdr.markForCheck();
       },
     });

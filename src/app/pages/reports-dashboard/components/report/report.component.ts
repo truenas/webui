@@ -34,11 +34,11 @@ import {
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportingDatabaseError } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
-import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -103,7 +103,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   constructor(
     public translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     protected localeService: LocaleService,
     private dialog: DialogService,
     private core: CoreService,

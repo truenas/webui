@@ -15,8 +15,9 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +54,7 @@ export class CertificateAcmeAddComponent {
     private formBuilder: FormBuilder,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideIn: IxSlideInService,

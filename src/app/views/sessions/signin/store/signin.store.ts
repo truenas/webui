@@ -121,6 +121,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.router.navigateByUrl(this.getRedirectUrl());
       },
       (error: WebsocketError) => {
+        this.setLoadingState(false);
         new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     ),

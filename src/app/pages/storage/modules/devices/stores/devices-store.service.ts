@@ -10,7 +10,7 @@ import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 export interface DevicesState {
   isLoading: boolean;
@@ -119,7 +119,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
   ) {
     super(initialState);

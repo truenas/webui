@@ -4,20 +4,21 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { SmartConfig } from 'app/interfaces/smart-test.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { ServiceSmartComponent } from './service-smart.component';
 
 describe('ServiceSmartComponent', () => {
   let spectator: Spectator<ServiceSmartComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
   const createComponent = createComponentFactory({
     component: ServiceSmartComponent,
     imports: [
@@ -25,7 +26,7 @@ describe('ServiceSmartComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('smart.config', {
           interval: 30,
           powermode: SmartPowerMode.Never,
@@ -45,7 +46,7 @@ describe('ServiceSmartComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   it('shows current settings for SMART service when form is opened', async () => {

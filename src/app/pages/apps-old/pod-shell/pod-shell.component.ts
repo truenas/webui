@@ -13,7 +13,7 @@ import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
-import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { DialogService, ShellService, WebSocketService2 } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +29,7 @@ export class PodShellComponent implements TerminalConfiguration {
   protected podDetails: Record<string, string[]>;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     private aroute: ActivatedRoute,
     private translate: TranslateService,
@@ -39,9 +39,9 @@ export class PodShellComponent implements TerminalConfiguration {
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
       this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-        this.chartReleaseName = params['rname'];
-        this.podName = params['pname'];
-        this.command = params['cname'];
+        this.chartReleaseName = params.rname;
+        this.podName = params.pname;
+        this.command = params.cname;
 
         this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((consoleChoices) => {
           this.podDetails = { ...consoleChoices };

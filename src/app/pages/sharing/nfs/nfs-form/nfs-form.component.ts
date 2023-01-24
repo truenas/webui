@@ -17,9 +17,10 @@ import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combob
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, UserService, WebSocketService } from 'app/services';
+import { DialogService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -82,7 +83,7 @@ export class NfsFormComponent implements OnInit {
   ]);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private userService: UserService,
     private translate: TranslateService,

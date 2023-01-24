@@ -35,9 +35,10 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { UseforDefaults } from 'app/pages/sharing/iscsi/iscsi-wizard/usefor-defaults.interface';
 import {
-  IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
+  IscsiService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface CreatedItems {
   zvol: string;
@@ -531,7 +532,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   constructor(
     private iscsiService: IscsiService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
@@ -564,9 +565,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
         this.loader.close();
         diskField.options = [...options, createNewOption];
       },
-      error: (res) => {
+      error: (error) => {
         this.loader.close();
-        new EntityUtils().handleWsError(this.entityWizard, res);
+        new EntityUtils().handleWsError(this.entityWizard, error);
       },
     });
     const targetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
@@ -842,8 +843,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
     };
 
     // eslint-disable-next-line no-restricted-syntax,guard-for-in
-    for (const createdItem in createdItems) {
-      const item = createdItem as keyof CreatedItems;
+    for (const createdItemName in createdItems) {
+      const item = createdItemName as keyof CreatedItems;
       // eslint-disable-next-line sonarjs/no-collapsible-if
       if (!toStop) {
         if (!(
@@ -853,19 +854,19 @@ export class IscsiWizardComponent implements WizardConfiguration {
                     || ((item === 'initiator' || item === 'portal' || item === 'target') && value.target !== 'NEW')
         )) {
           await this.doCreate(value, item).then(
-            (res) => {
+            (createdItem) => {
               if (item === 'zvol') {
-                value.disk = 'zvol/' + (res as Dataset).id.replace(' ', '+');
+                value.disk = 'zvol/' + (createdItem as Dataset).id.replace(' ', '+');
               } else if (item === 'auth') {
-                value.discovery_authgroup = (res as IscsiAuthAccess).tag;
+                value.discovery_authgroup = (createdItem as IscsiAuthAccess).tag;
               } else {
-                value[item] = res.id;
+                value[item] = createdItem.id;
               }
 
               if (item === 'zvol') {
-                createdItems[item] = res.id as string;
+                createdItems[item] = createdItem.id as string;
               } else {
-                createdItems[item] = res.id as number;
+                createdItems[item] = createdItem.id as number;
               }
             },
             (err) => {
@@ -982,8 +983,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
       }
 
       this.ws.call(this.deleteCalls[type], [id]).pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          console.info('rollback ' + type, res);
+        (wasDeleted) => {
+          console.info('rollback ' + type, wasDeleted);
         },
       );
     });

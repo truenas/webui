@@ -7,7 +7,7 @@ import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService2 } from 'app/services/index';
 
 export interface Temperature {
   keys: string[];
@@ -29,7 +29,7 @@ export class DiskTemperatureService {
 
   constructor(
     protected core: CoreService,
-    protected websocket: WebSocketService,
+    protected websocket: WebSocketService2,
     private disksUpdateService: DisksUpdateService,
   ) { }
 

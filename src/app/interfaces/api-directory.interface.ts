@@ -14,8 +14,8 @@ import {
   AclQueryParams,
   AclTemplateByPath,
   AclTemplateByPathParams,
-  AclTemplateСreateParams,
-  AclTemplateСreateResponse,
+  AclTemplateCreateParams,
+  AclTemplateCreateResponse,
   NfsAclItem,
   PosixAclItem,
   SetAcl,
@@ -321,6 +321,7 @@ export type ApiDirectory = {
   'auth.generate_token': { params: [number]; response: string };
   'auth.login_with_token': { params: [token: string]; response: boolean };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
+  'auth.me': { params: void; response: DsUncachedUser };
   'auth.login': {
     params: LoginParams;
     response: boolean;
@@ -487,7 +488,8 @@ export type ApiDirectory = {
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.setacl': { params: [SetAcl]; response: void };
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
-  'filesystem.acltemplate.create': { params: [AclTemplateСreateParams]; response: AclTemplateСreateResponse };
+  'filesystem.acltemplate.create': { params: [AclTemplateCreateParams]; response: AclTemplateCreateResponse };
+  'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
 
   // Failover
   'failover.become_passive': { params: void; response: void };

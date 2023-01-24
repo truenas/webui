@@ -33,9 +33,9 @@ import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav
 import {
   DialogService,
   IscsiService,
-  WebSocketService,
 } from 'app/services';
 import { IxSlideInService, ResponseOnClose } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 enum ShareType {
   Smb = 'smb',
@@ -86,7 +86,7 @@ export class SharesDashboardComponent implements AfterViewInit {
   isClustered = false;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private router: Router,
     private translate: TranslateService,

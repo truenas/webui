@@ -9,7 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { User } from 'app/interfaces/user.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +25,7 @@ export class DeleteUserDialogComponent implements OnInit {
   readonly deleteMessage = T('Are you sure you want to delete user <b>"{user}"</b>?');
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public user: User,

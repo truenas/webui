@@ -32,7 +32,7 @@ import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
+  WebSocketService2, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -101,7 +101,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   memWarning = wizardHelptext.memory_warning;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private storageService: StorageService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
@@ -305,8 +305,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   updateRows(rows: VirtualMachineRow[]): Promise<VirtualMachineRow[]> {
     return new Promise((resolve, reject) => {
       this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe({
-        next: (res) => {
-          rows = this.resourceTransformIncomingRestData(res);
+        next: (vms) => {
+          rows = this.resourceTransformIncomingRestData(vms);
           resolve(rows);
         },
         error: (err) => {
@@ -470,8 +470,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   checkMemory(): void {
-    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.availableMemory = this.storageService.convertBytesToHumanReadable(res);
+    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((availableMemory) => {
+      this.availableMemory = this.storageService.convertBytesToHumanReadable(availableMemory);
     });
   }
 

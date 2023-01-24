@@ -7,8 +7,9 @@ import { idNameArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IscsiService, WebSocketService } from 'app/services';
+import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -22,8 +23,8 @@ export class AssociatedTargetFormComponent {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant('Add Authorized Target')
-      : this.translate.instant('Edit Authorized Target');
+      ? this.translate.instant('Add Associated Target')
+      : this.translate.instant('Edit Associated Target');
   }
 
   form = this.formBuilder.group({
@@ -51,7 +52,7 @@ export class AssociatedTargetFormComponent {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,

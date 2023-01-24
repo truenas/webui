@@ -27,7 +27,7 @@ import {
   InputUnitConfig,
   UnitType,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable()
 export class EntityFormService {
@@ -50,7 +50,7 @@ export class EntityFormService {
   constructor(
     // eslint-disable-next-line @typescript-eslint/ban-types
     @Inject(UntypedFormBuilder) private formBuilder: UntypedFormBuilder,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
   ) {}
 
   createFormGroup(controls: FieldConfig[]): UntypedFormGroup {
@@ -162,8 +162,8 @@ export class EntityFormService {
    */
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
     const nodes: ListdirChild[] = [];
-    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((res) => {
-      res.forEach((filesystem) => {
+    return lastValueFrom(this.ws.call('pool.filesystem_choices', param)).then((filesystems) => {
+      filesystems.forEach((filesystem) => {
         const pathArr = filesystem.split('/');
         if (pathArr.length === 1) {
           const node: ListdirChild = {

@@ -12,7 +12,7 @@ import {
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService2 } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -24,7 +24,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class SaveDebugButtonComponent {
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private store$: Store<AppState>,
     private datePipe: DatePipe,
     private matDialog: MatDialog,

@@ -5,8 +5,8 @@ import {
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
-import { IxDynamicFormItemComponent } from 'app/modules/ix-forms/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxDynamicFormComponent } from 'app/modules/ix-forms/components/ix-dynamic-form/ix-dynamic-form.component';
+import { IxDynamicFormItemComponent } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
+import { IxDynamicFormComponent } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
 
 const dynamicForm = new FormGroup({});

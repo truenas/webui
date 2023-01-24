@@ -4,7 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { WebSocketService, IscsiService } from 'app/services';
+import { IscsiService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -51,7 +52,7 @@ export class IscsiComponent implements OnInit {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected translate: TranslateService,
     private store$: Store<AppState>,
   ) {}
@@ -69,7 +70,7 @@ export class IscsiComponent implements OnInit {
       },
     );
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.activeTab = params['pk'];
+      this.activeTab = params.pk;
     });
   }
 
