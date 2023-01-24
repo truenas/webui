@@ -21,7 +21,7 @@ export interface SetEnclosureLabelDialogData {
 })
 export class SetEnclosureLabelDialogComponent implements OnInit {
   form = this.formBuilder.group({
-    label: ['', Validators.required],
+    label: ['', [Validators.required, Validators.pattern('^(?!\\s*$).+')]],
     resetToDefault: [false],
   });
 
