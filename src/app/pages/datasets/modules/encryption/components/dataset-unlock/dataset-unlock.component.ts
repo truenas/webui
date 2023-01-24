@@ -132,7 +132,7 @@ export class DatasetUnlockComponent implements OnInit {
               } else {
                 this.form.controls.datasets.push(this.formBuilder.group({
                   name: [''],
-                  key: ['', [Validators.minLength(64), Validators.maxLength(64), Validators.required]],
+                  key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
                   file: [null as File[]],
                   is_passphrase: [false],
                 }));
@@ -216,9 +216,10 @@ export class DatasetUnlockComponent implements OnInit {
     if (!values.use_file) {
       values.datasets.forEach((dataset: DatasetFormValue) => {
         if (values.unlock_children || dataset.name === this.pk) {
-          if (dataset.is_passphrase) {
+          if (dataset.is_passphrase && dataset.passphrase) {
             datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
-          } else {
+          }
+          if (!dataset.is_passphrase && dataset.key) {
             datasets.push({ name: dataset.name, key: dataset.key });
           }
         }

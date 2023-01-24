@@ -79,7 +79,6 @@ describe('DatasetUnlockComponent', () => {
 
   it('saves when set key from file', async () => {
     const file = fakeFile('key.txt');
-    file.text = jest.fn().mockImplementation(() => Promise.resolve('json_key'));
 
     const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Upload Key file' }));
     await fileInput.setValue([file]);

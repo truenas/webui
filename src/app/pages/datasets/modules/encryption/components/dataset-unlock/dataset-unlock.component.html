@@ -44,7 +44,6 @@
               formControlName="key"
               [label]="helptext.dataset_key_placeholder | translate"
               [tooltip]="helptext.dataset_key_placeholder | translate"
-              [required]="true"
             ></ix-textarea>
             <ix-file-input
               *ngIf="!dataset.value.is_passphrase"
@@ -56,7 +55,6 @@
               type="password"
               [label]="helptext.dataset_passphrase_placeholder | translate"
               [tooltip]="helptext.dataset_passphrase_tooltip | translate"
-              [required]="true"
             ></ix-input>
           </ix-list-item>
         </ix-list>
