@@ -38,6 +38,7 @@ import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
+import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
 import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
 import { R20 } from 'app/pages/system/view-enclosure/classes/hardware/r20';
 import { R20A } from 'app/pages/system/view-enclosure/classes/hardware/r20a';
@@ -117,7 +118,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
   get expanders(): (EnclosureElement | EnclosureElementsGroup)[] {
-    if (!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]) {
+    if (this.system.isRackmount && this.system.enclosures && this.selectedEnclosure.disks[0]) {
       const enclosureNumber = Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
     }
@@ -440,6 +441,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES12':
         this.chassis = new Es12();
         break;
+      case 'TRUENAS-MINI-R':
+        this.chassis = new MINIR();
+        break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
       case 'E16':
@@ -567,6 +571,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'X Series':
       case 'ES12':
         extractedChassis = new Es12();
+        break;
+      case 'TRUENAS-MINI-R':
+        extractedChassis = new MINIR();
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
