@@ -21,6 +21,7 @@
       mat-button
       type="submit"
       color="primary"
+      [disabled]="form.invalid"
     >
       {{ 'Save' | translate }}
     </button>
