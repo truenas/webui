@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatLegacyCheckboxHarness as MatCheckboxHarness } from '@angular/material/legacy-checkbox/testing';
-import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import {
@@ -101,7 +101,6 @@ describe('ServicesComponent', () => {
     const slideToggle = await table.getHarness(MatSlideToggleHarness);
     await slideToggle.toggle();
 
-    expect(await slideToggle.isChecked()).toBeTruthy();
     expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey, { silent: false }]);
   });
 

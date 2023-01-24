@@ -55,6 +55,8 @@ export class CloudsyncFormComponent {
       : this.translate.instant('Edit Cloud Sync Task');
   }
 
+  googleDriveProviderId: number;
+
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
@@ -119,9 +121,12 @@ export class CloudsyncFormComponent {
   credentialsList: CloudsyncCredential[] = [];
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
-      return options.map((option) => (
-        { label: `${option.name} (${option.provider})`, value: option.id }
-      ));
+      return options.map((option) => {
+        if (option.provider === CloudsyncProviderName.GoogleDrive) {
+          this.googleDriveProviderId = option.id;
+        }
+        return { label: `${option.name} (${option.provider})`, value: option.id };
+      });
     }),
     untilDestroyed(this),
   );

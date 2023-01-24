@@ -1,11 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap } from 'rxjs/operators';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService2 } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
-import { failoverLicensedStatusLoaded, haSettingsUpdated, haStatusLoaded } from './ha-info.actions';
+import {
+  failoverLicensedStatusLoaded,
+  haSettingsUpdated,
+  haStatusLoaded,
+  upgradePendingStateLoaded,
+} from './ha-info.actions';
 
 @Injectable()
 export class HaInfoEffects {
@@ -31,6 +37,22 @@ export class HaInfoEffects {
           return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
         }),
       );
+    }),
+  ));
+
+  loadUpgradePendingState = createEffect(() => this.actions$.pipe(
+    ofType(haStatusLoaded),
+    mergeMap(({ haStatus }) => {
+      if (
+        (haStatus.hasHa && haStatus.reasons.length === 0)
+        || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions)
+      ) {
+        return this.ws.call('failover.upgrade_pending').pipe(
+          map((isUpgradePending) => {
+            return upgradePendingStateLoaded({ isUpgradePending });
+          }),
+        );
+      }
     }),
   ));
 

@@ -29,6 +29,7 @@
   opacity: 0.5;
 }
 
+.no-logs,
 .timestamp {
   display: inline-block;
   margin-right: 10px;
@@ -41,3 +42,12 @@
   white-space: pre-wrap;
   word-break: break-all;
 }
+
+.no-logs {
+  margin: 5px 10px;
+}
+
+.spinner {
+  margin: 23px auto 0;
+}
+

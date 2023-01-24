@@ -139,7 +139,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           if (
             _.isObject(failureData.exc_info.extra)
             && !Array.isArray(failureData.exc_info.extra)
-            && failureData.exc_info.extra['code'] === 'control_services'
+            && failureData.exc_info.extra.code === 'control_services'
           ) {
             this.dialogRef.close(true);
             this.isFormLoading = false;

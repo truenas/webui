@@ -12,6 +12,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -88,6 +89,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     ReactiveFormsModule,
     TerminalModule,
     TranslateModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     ApplicationsComponent,
