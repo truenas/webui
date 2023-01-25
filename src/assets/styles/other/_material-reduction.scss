@@ -724,14 +724,9 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
   padding-top: 0;
 }
 
-.mat-paginator-page-size {
-  margin-top: 10px !important;
-}
-
 .entity-table-controls > div {
   margin-left: 8px;
 }
-
 
 #row-filter.form-element {
   display: inline;
@@ -915,4 +910,16 @@ ix-root {
 ix-tree-node,
 ix-nested-tree-node > div {
   padding: 1px;
+}
+
+.mdc-text-field--outlined .mdc-notched-outline {
+  display: none;
+}
+
+.mat-mdc-paginator-container {
+  min-height: 56px;
+}
+
+body .mat-mdc-option {
+  min-height: 36px;
 }
