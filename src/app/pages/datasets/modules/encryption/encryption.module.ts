@@ -16,9 +16,7 @@ import {
   EncryptionOptionsDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
-import {
-  UnlockDialogComponent,
-} from 'app/pages/datasets/modules/encryption/components/unlock-dialog/unlock-dialog.component';
+import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import {
   ZfsEncryptionCardComponent,
 } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
@@ -46,7 +44,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
   declarations: [
     ZfsEncryptionCardComponent,
     EncryptionOptionsDialogComponent,
-    UnlockDialogComponent,
+    UnlockSummaryDialogComponent,
     DatasetUnlockComponent,
     ExportDatasetKeyDialogComponent,
     ExportAllKeysDialogComponent,
