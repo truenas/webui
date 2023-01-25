@@ -69,7 +69,7 @@ describe('SystemDatasetPoolComponent', () => {
 
     expect(values).toEqual({
       'Select Pool': 'current-pool',
-      'Swap Size': '5 GiB',
+      'Swap Size': '5',
     });
   });
 
