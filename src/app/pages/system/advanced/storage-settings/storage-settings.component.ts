@@ -38,7 +38,7 @@ export class StorageSettingsComponent {
     pool: ['', Validators.required],
     swapondrive: ['', [
       Validators.required,
-      this.ixValidator.withMessage(Validators.min(1), this.translate.instant('Minimum value is 1')),
+      this.ixValidator.withMessage(Validators.min(0), this.translate.instant('Minimum value is 0')),
       this.ixValidator.withMessage(Validators.pattern('^[0-9]*$'), this.translate.instant('Only integers allowed')),
     ]],
   });
@@ -58,10 +58,6 @@ export class StorageSettingsComponent {
     private snackbar: SnackbarService,
     public ixFormatter: IxFormatterService,
   ) {}
-
-  format = (value: string): string => {
-    return value + ' GiB';
-  };
 
   onSubmit(): void {
     const values = this.form.value;
