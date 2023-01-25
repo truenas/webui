@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { combineLatest } from 'rxjs';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { WebSocketService2 } from 'app/services/ws2.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
@@ -39,7 +39,7 @@ export class SigninFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
     private translate: TranslateService,
-    private ws2: WebSocketService2,
+    private authService: AuthService,
     private autofillMonitor: AutofillMonitor,
   ) { }
 
@@ -51,16 +51,16 @@ export class SigninFormComponent implements OnInit {
   onSubmit(): void {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
-    const params: [string, string, string] | [string, string] = this.hasTwoFactor
-      ? [formValues.username, formValues.password, formValues.otp]
-      : [formValues.username, formValues.password];
     const request$ = this.hasTwoFactor
       ? this.ws.login(formValues.username, formValues.password, formValues.otp)
       : this.ws.login(formValues.username, formValues.password);
+    const request2$ = this.hasTwoFactor
+      ? this.authService.loginWithOtp(formValues.username, formValues.password, formValues.otp)
+      : this.authService.login(formValues.username, formValues.password);
 
     combineLatest([
       request$,
-      this.ws2.call('auth.login', params),
+      request2$,
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([wasLoggedIn, wasLoggedIn2]) => {
         this.signinStore.setLoadingState(false);

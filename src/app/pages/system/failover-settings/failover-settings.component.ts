@@ -15,6 +15,7 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
@@ -52,6 +53,7 @@ export class FailoverSettingsComponent implements OnInit {
     private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -80,7 +82,7 @@ export class FailoverSettingsComponent implements OnInit {
           this.cdr.markForCheck();
 
           if (values.disabled && !values.master) {
-            this.ws.call('auth.logout').pipe(untilDestroyed(this)).subscribe({
+            this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
                 this.wsManager.token2 = null;
                 this.wsManager.closeWebsocketConnection();

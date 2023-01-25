@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { NonAuthApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
@@ -14,11 +14,11 @@ export interface FormConfiguration {
   target?: Subject<CoreEvent>;
   resourceName?: string;
   isEntity?: boolean;
-  addCall?: ApiMethod;
-  editCall?: ApiMethod;
+  addCall?: NonAuthApiMethod;
+  editCall?: NonAuthApiMethod;
   isCreateJob?: boolean;
   isEditJob?: boolean;
-  queryCall?: ApiMethod;
+  queryCall?: NonAuthApiMethod;
   queryCallOption?: unknown[];
   queryKey?: string; // use this to define your id for websocket call
   isNew?: boolean;

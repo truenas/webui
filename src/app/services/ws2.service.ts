@@ -7,7 +7,9 @@ import {
   filter, map, share, switchMap, take,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import {
+  ApiDirectory, NonAuthApiDirectory, NonAuthApiMethod,
+} from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -28,22 +30,22 @@ export class WebSocketService2 {
     return this.wsManager.websocketSubject$;
   }
 
-  call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
+  call<K extends NonAuthApiMethod>(method: K, params?: NonAuthApiDirectory[K]['params']): Observable<NonAuthApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     this.wsManager.send({
       id: uuid, msg: IncomingApiMessageType.Method, method, params,
     });
     return this.ws$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
+      map((data: ResultMessage<NonAuthApiDirectory[K]['response']>) => data.result),
       take(1),
     );
   }
 
-  job<K extends ApiMethod>(
+  job<K extends NonAuthApiMethod>(
     method: K,
     params?: ApiDirectory[K]['params'],
-  ): Observable<Job<ApiDirectory[K]['response']>> {
+  ): Observable<Job<NonAuthApiDirectory[K]['response']>> {
     return this.call(method, params).pipe(
       switchMap((jobId) => {
         return this.subscribe('core.get_jobs').pipe(

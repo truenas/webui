@@ -4,7 +4,7 @@ import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.gua
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
 import { ApplicationsComponent } from 'app/pages/apps-old/applications.component';
 import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
-import { AuthService } from './services/auth/auth.service';
+import { AuthGuardService } from './services/auth/auth-guard.service';
 
 export const rootRouterConfig: Routes = [{
   path: '',
@@ -29,7 +29,7 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AdminLayoutComponent,
-  canActivate: [AuthService, TranslationsLoadedGuard],
+  canActivate: [AuthGuardService, TranslationsLoadedGuard],
   children: [{
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then((module) => module.DashboardModule),

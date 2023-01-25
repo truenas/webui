@@ -4,7 +4,7 @@ import { UUID } from 'angular2-uuid';
 import { Subject, Subscription } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Injectable({
@@ -15,7 +15,7 @@ export class DisksUpdateService {
   private subscribers: { [key: string]: Subject<ApiEvent<Disk>> } = { };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
   ) { }
 
   addSubscriber(newSubscriber$: Subject<ApiEvent<Disk>>): string {
@@ -39,7 +39,7 @@ export class DisksUpdateService {
   removeSubscriber(uuid: string): void {
     delete this.subscribers[uuid];
     if (Object.keys(this.subscribers).length === 0) {
-      this.ws.unsubscribe(this.subscription);
+      this.subscription.unsubscribe();
       this.subscription = null;
     }
   }

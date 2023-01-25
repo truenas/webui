@@ -10,6 +10,7 @@ import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SigninFormComponent } from 'app/views/sessions/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
@@ -24,9 +25,11 @@ describe('SigninFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket2([
-        mockCall('auth.login', true),
-      ]),
+      mockWebsocket2(),
+      mockProvider(AuthService, {
+        login: jest.fn(() => of(true)),
+        loginWithOtp: jest.fn(() => of(true)),
+      }),
       mockWebsocket([
         mockCall('auth.two_factor_auth', false),
       ]),

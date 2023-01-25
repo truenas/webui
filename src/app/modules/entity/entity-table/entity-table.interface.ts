@@ -2,7 +2,7 @@ import { Type } from '@angular/core';
 import { LegacyTooltipPosition as TooltipPosition } from '@angular/material/legacy-tooltip';
 import { Observable, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { NonAuthApiMethod } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 
@@ -21,7 +21,7 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   globalConfig?: EntityTableGlobalConfig;
   columnFilter?: boolean;
   hideTopActions?: boolean;
-  queryCall?: ApiMethod;
+  queryCall?: NonAuthApiMethod;
   queryCallOption?: unknown;
   queryCallJob?: boolean;
   resourceName?: string;
@@ -39,8 +39,8 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   rowDetailComponent?: Type<unknown>;
   cardHeaderComponent?: Type<unknown>;
   asyncView?: boolean;
-  wsDelete?: ApiMethod;
-  wsMultiDelete?: ApiMethod;
+  wsDelete?: NonAuthApiMethod;
+  wsMultiDelete?: NonAuthApiMethod;
   noAdd?: boolean;
   emptyTableConfigMessages?: {
     errors?: { title: string; message: string };

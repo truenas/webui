@@ -19,11 +19,15 @@ import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.i
 })
 export class WebsocketManagerService {
   private ws$: WebSocketSubject<unknown>;
+
   private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
+
   private shutDownInProgress = false;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
+
   private isConnectionReady$ = new BehaviorSubject(false);
+
   @LocalStorage() token2: string;
 
   get websocketSubject$(): Observable<unknown> {
@@ -103,6 +107,12 @@ export class WebsocketManagerService {
     this.setupPing();
   }
 
+  private closeAllDialogs(): void {
+    for (const openDialog of this.dialog.openDialogs) {
+      openDialog.close();
+    }
+  }
+
   buildSubscriber(name: string): Observable<unknown> {
     const uuid = UUID.UUID();
     return this.ws$.multiplex(
@@ -129,12 +139,6 @@ export class WebsocketManagerService {
 
   closeWebsocketConnection(): void {
     this.ws$.complete();
-  }
-
-  private closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
-      openDialog.close();
-    }
   }
 
   prepareShutdown(): void {

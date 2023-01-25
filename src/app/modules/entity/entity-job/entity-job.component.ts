@@ -10,7 +10,9 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import {
+  ApiDirectory, NonAuthApiMethod,
+} from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config.interface';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -24,7 +26,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   job: Job = {} as Job;
   progressTotalPercent = 0;
   description: string;
-  method: ApiMethod;
+  method: NonAuthApiMethod;
   args: ApiDirectory[keyof ApiDirectory]['params'] = [];
 
   title = '';
@@ -95,7 +97,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     this.scrollBottom();
   }
 
-  setCall<K extends ApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
+  setCall<K extends NonAuthApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
     this.method = method;
     if (args) {
       this.args = args;

@@ -16,6 +16,7 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService2 } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { CoreService } from 'app/services/core-service/core.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -67,6 +68,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     private translate: TranslateService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
     public core: CoreService,
   ) {}
@@ -107,7 +109,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initShell(): void {
-    this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe((token) => {
+    this.authService.generateTokenWithDefaultLifetime().pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
       this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
       this.initializeTerminal();

@@ -12,10 +12,10 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
@@ -79,7 +79,7 @@ export class SystemGeneralService {
   private jiraToken: string;
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
   ) {}

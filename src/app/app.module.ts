@@ -31,6 +31,7 @@ import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-k
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -43,9 +44,8 @@ import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './modules/common/app-common.module';
 import { AppLoaderModule } from './modules/loader/app-loader.module';
 import { AppLoaderService } from './modules/loader/app-loader.service';
-import { AuthService } from './services/auth/auth.service';
+import { AuthGuardService } from './services/auth/auth-guard.service';
 import { EntityTableService } from './services/entity-table.service';
-import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
 
@@ -118,7 +118,7 @@ import { WebSocketService } from './services/ws.service';
   ],
   providers: [
     RoutePartsService,
-    NavigationService,
+    AuthGuardService,
     AuthService,
     WebSocketService,
     WebSocketService2,

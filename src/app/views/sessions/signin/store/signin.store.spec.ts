@@ -7,12 +7,13 @@ import {
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SigninStore', () => {
@@ -24,10 +25,11 @@ describe('SigninStore', () => {
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockWebsocket2([
-        mockCall('auth.generate_token', 'AUTH_TOKEN'),
-        mockCall('auth.login_with_token', true),
-      ]),
+      mockProvider(AuthService, {
+        loginWithToken: jest.fn(() => of(true)),
+        generateToken: jest.fn(() => of('AUTH_TOKEN')),
+        generateTokenWithDefaultLifetime: jest.fn(() => of('AUTH_TOKEN')),
+      }),
       mockWebsocket([
         mockCall('auth.generate_token', 'AUTH_TOKEN'),
         mockCall('auth.login_with_token', true),

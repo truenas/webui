@@ -11,6 +11,7 @@ import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-gr
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
@@ -36,9 +37,10 @@ describe('SetAdminPasswordFormComponent', () => {
         setLoadingState: jest.fn(),
         handleSuccessfulLogin: jest.fn(),
       }),
-      mockWebsocket2([
-        mockCall('auth.login', true),
-      ]),
+      mockWebsocket2(),
+      mockProvider(AuthService, {
+        login: jest.fn(() => of(true)),
+      }),
     ],
   });
 

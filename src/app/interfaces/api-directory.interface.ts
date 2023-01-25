@@ -1041,4 +1041,12 @@ export type ApiDirectory = {
  */
 export type ApiMethod = keyof ApiDirectory;
 
+export type NonAuthApiDirectory = Omit<ApiDirectory,
+'auth.login'
+| 'auth.generate_token'
+| 'auth.login_with_token'
+| 'auth.logout'
+>;
+export type NonAuthApiMethod = keyof NonAuthApiDirectory;
+
 export type ApiParams<T extends ApiMethod> = ApiDirectory[T]['params'];
