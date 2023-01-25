@@ -10,10 +10,10 @@ import {
 import { DialogService } from 'app/services';
 
 @Component({
-  templateUrl: './unlock-dialog.component.html',
-  styleUrls: ['./unlock-dialog.component.scss'],
+  templateUrl: './unlock-summary-dialog.component.html',
+  styleUrls: ['./unlock-summary-dialog.component.scss'],
 })
-export class UnlockDialogComponent {
+export class UnlockSummaryDialogComponent {
   title: string = helptext.unlock_dataset_dialog.title;
   errorsMessage: string = helptext.unlock_dataset_dialog.errors_message;
   unlockMessage: string = helptext.unlock_dataset_dialog.unlock_message;
@@ -30,7 +30,7 @@ export class UnlockDialogComponent {
   parent: DatasetUnlockComponent;
 
   constructor(
-    public dialogRef: MatDialogRef<UnlockDialogComponent>,
+    public dialogRef: MatDialogRef<UnlockSummaryDialogComponent>,
     private dialogService: DialogService,
   ) {}
 
