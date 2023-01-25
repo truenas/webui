@@ -9,13 +9,17 @@ export class IxFormatterService {
    * @param value The string to be formatted
    * @returns Formatted string
    */
-  memorySizeFormatting: (val: string | number) => string = (value: string | number) => {
-    if (!value) {
-      return '';
-    }
-    value = value.toString();
-    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 0);
-  };
+  memorySizeFormatting: (
+    val: string | number,
+    unit?: 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB'
+  ) => string = (value: string | number, unit?: 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB') => {
+      if (!value) {
+        return '';
+      }
+      value = value.toString();
+      const setUnit = unit || null;
+      return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 2, setUnit);
+    };
 
   /**
    * Parses passed in human readable memory size string into a normalized value.
@@ -23,11 +27,11 @@ export class IxFormatterService {
    * @param value The value to be parsed
    * @returns The parsed value
    */
-  memorySizeParsing: (val: string) => number = (value: string) => {
+  memorySizeParsing: (val: string, dec?: boolean) => number = (value: string, dec = false) => {
     if (!value) {
       return null;
     }
-    const humanStringToNum = this.convertHumanStringToNum(value);
+    const humanStringToNum = this.convertHumanStringToNum(value, dec);
     // Default unit is MiB so if the user passed in no unit, we assume unit is MiB
     return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb');
   };
