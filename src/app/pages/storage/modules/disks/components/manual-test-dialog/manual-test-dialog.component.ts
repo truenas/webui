@@ -84,7 +84,7 @@ export class ManualTestDialogComponent {
           const subscriptionId = UUID.UUID();
           this.ws.sub(this.subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((result) => {
             if (result && result.progress) {
-              this.progressTotalPercent = result.progress.percent;
+              this.progressTotalPercent = result.progress.percent / 100;
             }
             if (result && result.msg === IncomingApiMessageType.NoSub) {
               this.ws.unsub(result.collection, subscriptionId);
