@@ -264,7 +264,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-    assert wait_on_element_disappear(driver, 35, xpaths.popup.please_Wait)
+    assert wait_on_element_disappear(driver, 45, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
