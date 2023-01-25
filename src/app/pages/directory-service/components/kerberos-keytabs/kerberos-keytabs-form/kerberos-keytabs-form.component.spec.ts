@@ -2,12 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
-import { StorageService } from 'app/services';
+import { DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('KerberosKeytabsFormComponent', () => {
@@ -30,7 +30,8 @@ describe('KerberosKeytabsFormComponent', () => {
     providers: [
       mockProvider(IxSlideInService),
       mockProvider(StorageService),
-      mockWebsocket([
+      mockProvider(DialogService),
+      mockWebsocket2([
         mockCall('kerberos.keytab.create'),
         mockCall('kerberos.keytab.update'),
       ]),

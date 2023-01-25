@@ -9,7 +9,8 @@ import helptext from 'app/helptext/services/components/service-rsync';
 import { RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService, DialogService, AppLoaderService } from 'app/services';
+import { DialogService, AppLoaderService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +42,7 @@ export class RsyncConfigureComponent implements OnInit {
     protected router: Router,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
   ) {}

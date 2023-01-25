@@ -10,7 +10,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/modules/entity/table/table.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, AppLoaderService } from 'app/services';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Injectable()
@@ -18,7 +18,7 @@ export class TableService {
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -40,6 +40,7 @@ export class TableService {
           table.tableConf.getInOutInfo(response);
         }
         table.dataSource = response as Record<string, unknown>[];
+        table.showCollapse = false;
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
             type: EmptyType.NoPageData,

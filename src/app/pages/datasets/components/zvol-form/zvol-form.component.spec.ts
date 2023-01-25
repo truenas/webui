@@ -4,14 +4,14 @@ import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebsocket2, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ZvolFormComponent', () => {
@@ -25,7 +25,7 @@ describe('ZvolFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('pool.dataset.create'),
         mockCall('pool.dataset.update'),
         mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
@@ -107,6 +107,7 @@ describe('ZvolFormComponent', () => {
         }),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
     ],
   });
 
@@ -146,7 +147,7 @@ describe('ZvolFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
       name: 'test pool/new zvol',
       comments: 'comments text',
       compression: 'LZ4',
@@ -181,7 +182,7 @@ describe('ZvolFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['test pool', {
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenLastCalledWith('pool.dataset.update', ['test pool', {
       comments: '',
       compression: 'INHERIT',
       deduplication: 'INHERIT',

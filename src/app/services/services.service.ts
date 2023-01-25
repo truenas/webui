@@ -4,11 +4,11 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable({ providedIn: 'root' })
 export class ServicesService {
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected ws: WebSocketService2) {}
 
   getOpenVpnClientAuthAlgorithmChoices(): Observable<Choices> {
     return this.ws.call('openvpn.client.authentication_algorithm_choices');

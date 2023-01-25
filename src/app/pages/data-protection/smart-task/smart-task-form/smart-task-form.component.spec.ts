@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -52,8 +52,8 @@ describe('SmartTaskFormComponent', () => {
           sdc: 'sdc',
         }),
       ]),
-      mockWebsocket(),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       provideMockStore({
         selectors: [
           {

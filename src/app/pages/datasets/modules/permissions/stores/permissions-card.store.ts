@@ -7,7 +7,7 @@ import {
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 const initialState: PermissionsCardState = {
   isLoading: false,
@@ -18,7 +18,7 @@ const initialState: PermissionsCardState = {
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
   ) {
     super(initialState);

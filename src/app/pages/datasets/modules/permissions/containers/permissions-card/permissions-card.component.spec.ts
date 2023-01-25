@@ -7,8 +7,8 @@ import {
   byTitle, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockWebsocket2, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -26,7 +26,7 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 describe('PermissionsCardComponent', () => {
   const stat = {
@@ -55,7 +55,7 @@ describe('PermissionsCardComponent', () => {
       PermissionsCardStore,
       mockProvider(DialogService),
       mockProvider(Router),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('filesystem.stat', stat),
         mockCall('filesystem.getacl', {
           trivial: true,
@@ -72,7 +72,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(WebSocketService2);
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
     expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', false, true]);
@@ -97,7 +97,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockWebsocketService2).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -115,7 +115,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockWebsocketService2).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,

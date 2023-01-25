@@ -188,9 +188,9 @@ def run_cmd(command):
     stdout = process.stdout
     stderr = process.stderr
     if process.returncode != 0:
-        return {'result': False, 'output': stderr}
+        return {'result': False, 'output': stdout, 'stderr': stderr}
     else:
-        return {'result': True, 'output': stdout}
+        return {'result': True, 'output': stdout, 'stderr': stderr}
 
 
 def get(url, api_path, auth):

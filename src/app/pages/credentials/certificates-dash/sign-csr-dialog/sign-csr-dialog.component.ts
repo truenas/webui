@@ -7,8 +7,9 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateAuthoritySignRequest } from 'app/interfaces/certificate-authority.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  AppLoaderService, SystemGeneralService, WebSocketService,
+  AppLoaderService, SystemGeneralService,
 } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +32,7 @@ export class SignCsrDialogComponent {
     private systemGeneralService: SystemGeneralService,
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}

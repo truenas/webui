@@ -7,7 +7,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebsocket2, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -44,7 +44,7 @@ describe('GroupDetailsRowComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('user.query'),
         mockCall('group.delete'),
         mockCall('group.query', []),

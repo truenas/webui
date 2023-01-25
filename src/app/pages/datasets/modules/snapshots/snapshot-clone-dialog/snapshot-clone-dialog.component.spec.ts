@@ -4,11 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { SnapshotCloneDialogComponent } from './snapshot-clone-dialog.component';
 
 describe('SnapshotCloneDialogComponent', () => {
@@ -28,7 +28,7 @@ describe('SnapshotCloneDialogComponent', () => {
       },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('zfs.snapshot.clone'),
       ]),
     ],
@@ -51,7 +51,7 @@ describe('SnapshotCloneDialogComponent', () => {
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.clone', [{
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith('zfs.snapshot.clone', [{
       dataset_dst: 'pool/dataset',
       snapshot: 'my-snapshot',
     }]);

@@ -29,7 +29,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService2, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -83,7 +83,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     // eslint-disable-next-line @typescript-eslint/ban-types
     private fb: UntypedFormBuilder,
     protected entityFormService: EntityFormService,
@@ -204,7 +204,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         if (this.conf.rowid) {
           this.pk = this.conf.rowid;
         } else {
-          this.pk = params['pk'];
+          this.pk = params.pk;
         }
 
         if (this.pk && !this.conf.isNew) {
@@ -269,10 +269,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.data = response.data as Record<string, unknown>;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.data = this.conf.resourceTransformIncomingRestData(this.data) as Record<string, unknown>;
-              const extraFieldSets = this.data['extra_fieldsets'] as FieldSet[];
+              const extraFieldSets = this.data.extra_fieldsets as FieldSet[];
               if (extraFieldSets) {
                 this.addFormControls(extraFieldSets);
-                delete this.data['extra_fieldsets'];
+                delete this.data.extra_fieldsets;
               }
             }
             Object.keys(this.data).forEach((key) => {
@@ -305,10 +305,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse) as Record<string, unknown>;
-              const extraFieldSets = this.wsResponse['extra_fieldsets'] as FieldSet[];
+              const extraFieldSets = this.wsResponse.extra_fieldsets as FieldSet[];
               if (extraFieldSets) {
                 this.addFormControls(extraFieldSets);
-                delete this.wsResponse['extra_fieldsets'];
+                delete this.wsResponse.extra_fieldsets;
               }
             }
             if (this.conf.dataHandler) {

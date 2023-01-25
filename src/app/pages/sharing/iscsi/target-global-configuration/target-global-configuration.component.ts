@@ -17,7 +17,8 @@ import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.inte
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +45,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,

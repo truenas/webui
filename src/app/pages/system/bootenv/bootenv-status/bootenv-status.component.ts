@@ -18,7 +18,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { DialogService } from 'app/services';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 export enum BootPoolActionType {
   Replace = 'replace',
@@ -56,7 +56,7 @@ export class BootStatusListComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialog: DialogService,
     private mdDialog: MatDialog,
     private loader: AppLoaderService,

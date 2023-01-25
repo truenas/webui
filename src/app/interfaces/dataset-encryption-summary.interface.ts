@@ -18,8 +18,8 @@ export interface DatasetEncryptionSummaryQueryParams {
 
 export interface DatasetEncryptionSummaryQueryParamsDataset {
   name: string;
-  key: string;
-  passphrase: string;
+  key?: string;
+  passphrase?: string;
 }
 
 export interface DatasetEncryptedRootKeys {

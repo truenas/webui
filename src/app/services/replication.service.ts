@@ -15,12 +15,12 @@ import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tr
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from './ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable()
 export class ReplicationService {
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private dialogService: DialogService,
   ) { }
 

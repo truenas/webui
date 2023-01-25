@@ -6,7 +6,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket, mockWebsocket2,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -54,7 +56,6 @@ const expectedProcessLines = [
 describe('ExportDisconnectModalComponent', () => {
   let spectator: Spectator<ExportDisconnectModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
 
   function createComponentWithData(
     data: { pool: Pool; attachments: PoolAttachment[]; processes: Process[] },
@@ -68,11 +69,13 @@ describe('ExportDisconnectModalComponent', () => {
         EntityModule,
       ],
       providers: [
-        mockWebsocket([
-          mockJob('pool.export'),
+        mockWebsocket2([
           mockCall('pool.attachments', data.attachments),
           mockCall('pool.processes', data.processes),
           mockCall('systemdataset.config', { pool: 'fakeSystemPool' } as SystemDatasetConfig),
+        ]),
+        mockWebsocket([
+          mockJob('pool.export'),
         ]),
         mockProvider(DialogService),
         mockProvider(MatDialogRef),
@@ -104,7 +107,6 @@ describe('ExportDisconnectModalComponent', () => {
         beforeEach(() => {
           spectator = createComponent();
           loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-          ws = spectator.inject(WebSocketService);
         });
 
         afterEach(() => {
@@ -132,7 +134,6 @@ describe('ExportDisconnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {
@@ -164,7 +165,6 @@ describe('ExportDisconnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
     });
 
     afterEach(() => {
@@ -196,7 +196,7 @@ describe('ExportDisconnectModalComponent', () => {
         const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
         await submitButton.click();
 
-        expect(ws.job).toHaveBeenCalledWith('pool.export', [
+        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.export', [
           fakeData.pool.id,
           {
             cascade: true,
