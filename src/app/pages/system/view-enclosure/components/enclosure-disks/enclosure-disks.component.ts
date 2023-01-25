@@ -27,6 +27,7 @@ import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.inter
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
+import { CompoundChassisView } from 'app/pages/system/view-enclosure/classes/compound-chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
 import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
@@ -442,7 +443,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new Es12();
         break;
       case 'TRUENAS-MINI-R':
-        this.chassis = new MINIR();
+        this.chassis = new MINIR(
+          profile.enclosureKey,
+          (profile.enclosureKey + 1),
+        );
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
@@ -573,7 +577,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         extractedChassis = new Es12();
         break;
       case 'TRUENAS-MINI-R':
-        extractedChassis = new MINIR();
+        extractedChassis = new MINIR(
+          profile.enclosureKey,
+          (profile.enclosureKey + 1),
+        );
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
@@ -714,7 +721,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         const vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
-        this.labels = new VDevLabelsSvg(this.enclosure, this.app, this.selectedDisk, this.theme);
+        this.labels = new VDevLabelsSvg(this.enclosure, this.app, this.selectedDisk, this.theme, this.system);
 
         this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this } as LabelDrivesEvent);
 
@@ -808,7 +815,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
   }
 
-  optimizeChassisOpacity(extractedEnclosure?: ChassisView): void {
+  optimizeChassisOpacity(extractedEnclosure?: ChassisView | CompoundChassisView): void {
     const css = document.documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
 
@@ -826,9 +833,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  setDisksEnabledState(enclosure?: ChassisView): void {
-    if (!enclosure) { enclosure = this.enclosure; }
-    enclosure.driveTrayObjects.forEach((dt) => {
+  setDisksEnabledState(chassisView?: ChassisView): void {
+    if (!chassisView) { chassisView = this.enclosure; }
+
+    chassisView.driveTrayObjects.forEach((dt) => {
       const disk = this.findDiskBySlotNumber(Number(dt.id));
       dt.enabled = !!disk;
     });
@@ -842,10 +850,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   setDisksHealthState(): void {
     const selectedEnclosure = this.getSelectedEnclosure();
-
     selectedEnclosure.disks.forEach((disk) => {
       this.setDiskHealthState(disk);
     });
+
+    if (selectedEnclosure.siblings.length) {
+      const sibling = this.system.profile[selectedEnclosure.siblings[0]];
+      sibling.disks.forEach((disk) => {
+        this.setDiskHealthState(disk);
+      });
+    }
   }
 
   setDiskHealthState(disk: EnclosureDisk, enclosure: ChassisView = this.enclosure): void {
@@ -862,7 +876,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       return;
     }
 
-    enclosure.driveTrayObjects[index].enabled = !!disk.enclosure.slot;
+    enclosure.driveTrayObjects[index].enabled = true; //! !disk.enclosure.slot;
 
     let failed = false;
 
@@ -870,16 +884,40 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if (disk && disk.status) {
       switch (disk.status) {
         case 'ONLINE':
-          enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme.green } });
+          enclosure.events.next({
+            name: 'ChangeDriveTrayColor',
+            data: {
+              id: disk.enclosure.slot,
+              color: this.theme.green,
+              enclosure: disk.enclosure.number,
+              slot: disk.enclosure.slot,
+            },
+          });
           break;
         case 'FAULT':
           failed = true;
           break;
         case 'AVAILABLE':
-          enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
+          enclosure.events.next({
+            name: 'ChangeDriveTrayColor',
+            data: {
+              id: disk.enclosure.slot,
+              color: '#999999',
+              enclosure: disk.enclosure.number,
+              slot: disk.enclosure.slot,
+            },
+          });
           break;
         default:
-          enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme.yellow } });
+          enclosure.events.next({
+            name: 'ChangeDriveTrayColor',
+            data: {
+              id: disk.enclosure.slot,
+              color: this.theme.yellow,
+              enclosure: disk.enclosure.number,
+              slot: disk.enclosure.slot,
+            },
+          });
           break;
       }
     }
@@ -895,7 +933,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     if (failed) {
-      enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme.red } });
+      enclosure.events.next({
+        name: 'ChangeDriveTrayColor',
+        data: {
+          id: disk.enclosure.slot,
+          color: this.theme.red,
+          enclosure: disk.enclosure.number,
+          slot: disk.enclosure.slot,
+        },
+      });
     }
   }
 
@@ -955,6 +1001,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.system.profile[this.system.rearIndex].disks.forEach((disk) => {
         analyze(disk);
       });
+    } else if (selectedEnclosure.siblings.length) {
+      selectedEnclosure.disks.forEach((disk: EnclosureDisk) => {
+        analyze(disk);
+      });
+      const sibling = this.system.profile[selectedEnclosure.siblings[0]];
+      sibling.disks.forEach((disk: EnclosureDisk) => {
+        analyze(disk);
+      });
     } else {
       selectedEnclosure.disks.forEach((disk) => {
         analyze(disk);
@@ -974,26 +1028,46 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const selectedEnclosure: EnclosureMetadata = this.getSelectedEnclosure();
     this.setDisksDisabled();
 
-    selectedEnclosure.disks.forEach((disk): void => {
-      if (
-        disk.enclosure.slot < this.enclosure.slotRange.start
-        || disk.enclosure.slot > this.enclosure.slotRange.end
-      ) {
-        return;
-      }
+    const paintSlots = (targetEnclosure: EnclosureMetadata): void => {
+      targetEnclosure.disks.forEach((disk): void => {
+        if (
+          disk.enclosure.slot < this.enclosure.slotRange.start
+          || disk.enclosure.slot > this.enclosure.slotRange.end
+        ) {
+          return;
+        }
 
-      if (!disk.vdev) {
-        this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
-        return;
-      }
+        if (!disk.vdev) {
+          this.enclosure.events.next({
+            name: 'ChangeDriveTrayColor',
+            data: {
+              id: disk.enclosure.slot,
+              color: '#999999',
+              enclosure: disk.enclosure.number,
+              slot: disk.enclosure.slot,
+            },
+          });
+          return;
+        }
 
-      const pIndex = disk.vdev.poolIndex;
+        const pIndex = disk.vdev.poolIndex;
 
-      this.enclosure.events.next({
-        name: 'ChangeDriveTrayColor',
-        data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex] as keyof Theme] },
+        this.enclosure.events.next({
+          name: 'ChangeDriveTrayColor',
+          data: {
+            id: disk.enclosure.slot,
+            color: this.theme[this.theme.accentColors[pIndex] as keyof Theme],
+            enclosure: disk.enclosure.number,
+            slot: disk.enclosure.slot,
+          },
+        });
       });
-    });
+    };
+
+    paintSlots(selectedEnclosure);
+    if (selectedEnclosure.siblings.length) {
+      paintSlots(this.system.profile[selectedEnclosure.siblings[0]]);
+    }
   }
 
   converter(size: number): string {
@@ -1007,6 +1081,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   findDiskBySlotNumber(slot: number): EnclosureDisk {
     const selectedEnclosure = this.getSelectedEnclosure();
+    const slotCount = this.system.getSiblingSlots(selectedEnclosure).length;
+    if (slot > slotCount) {
+      const sibling = this.system.profile[selectedEnclosure.siblings[0]];
+      const offset = (this.chassis.front as CompoundChassisView).siblingOffset;
+      return sibling.disks.find((disk) => disk.enclosure.slot === (slot - offset));
+    }
     return selectedEnclosure.disks.find((disk) => {
       return disk.enclosure.slot === slot;
     });
