@@ -169,9 +169,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-drawer,
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-mdc-card,
-  .mat-paginator,
+  .mat-mdc-paginator,
   .mat-select-content,
   .mat-select-panel,
+  .mat-mdc-select-panel,
   .mat-select-panel-done-animating,
   .mat-expansion-panel,
   .mat-mdc-dialog-container,
@@ -202,8 +203,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-list .mat-list-item,
   .mat-mdc-menu-panel button,
   .mat-mdc-menu-panel a,
-  .mat-paginator-navigation-next,
-  .mat-paginator-navigation-previous,
+  .mat-mdc-paginator-navigation-next,
+  .mat-mdc-paginator-navigation-previous,
 
   .mat-nav-list .mat-list-item,
   .mat-form-field-label,
@@ -359,12 +360,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
+  .mat-mdc-select-panel .mat-mdc-option:focus,
   .mat-select-panel .mat-option:focus-visible,
-  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+  .mat-mdc-select-panel .mat-mdc-option:focus-visible,
+  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple),
+  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
 
+  .mat-mdc-select-panel .mat-mdc-option:hover,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
@@ -658,13 +663,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // style nav chevrons on datatable pager w/regard to theme
-  .mdc-button__label .mat-paginator-decrement,
-  .mdc-button__label .mat-paginator-increment {
+  .mdc-button__label .mat-mdc-paginator-decrement,
+  .mdc-button__label .mat-mdc-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
   }
 
-  .mat-icon-button:disabled .mdc-button__label .mat-paginator-decrement,
-  .mat-icon-button:disabled .mdc-button__label .mat-paginator-increment {
+  .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-decrement,
+  .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
     opacity: 0.38;
   }
@@ -1189,7 +1194,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     text-decoration: underline;
   }
 
-  .mat-select-panel {
+  .mat-select-panel,
+  .mat-mdc-select-panel {
     max-height: 50vh !important; // values over 50vh will push last visible element out the screen
   }
 
