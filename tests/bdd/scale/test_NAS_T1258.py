@@ -28,29 +28,29 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
     """the browser is open, navigate to the SCALE URL, and login."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-    if not is_element_present(driver, xpaths.sideMenu.dashboard):
-        assert wait_on_element(driver, 10, xpaths.login.user_input)
-        driver.find_element_by_xpath(xpaths.login.user_input).clear()
-        driver.find_element_by_xpath(xpaths.login.user_input).send_keys('root')
-        driver.find_element_by_xpath(xpaths.login.password_input).clear()
-        driver.find_element_by_xpath(xpaths.login.password_input).send_keys(root_password)
-        assert wait_on_element(driver, 5, xpaths.login.signin_button)
-        driver.find_element_by_xpath(xpaths.login.signin_button).click()
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 10, xpaths.sideMenu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.sideMenu.dashboard).click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
 @when('on the Dashboard, click on credentials and certificates')
 def on_the_dashboard_click_on_credentials_and_certificates(driver):
     """on the Dashboard, click on credentials and certificates."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.systemInfoCardTitle)
-    assert wait_on_element(driver, 7, xpaths.sideMenu.credentials, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.credentials).click()
-    assert wait_on_element(driver, 7, xpaths.sideMenu.certificates, 'clickable')
-    driver.find_element_by_xpath(xpaths.sideMenu.certificates).click()
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 7, xpaths.side_Menu.credentials, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.certificates, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.certificates).click()
 
 
 @then('click on CSR add')
@@ -102,8 +102,8 @@ def set_company_info_and_click_next(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Organizational Unit"]').send_keys('QE')
 
-    driver.find_element_by_xpath(xpaths.certificates.email_input).clear()
-    driver.find_element_by_xpath(xpaths.certificates.email_input).send_keys('qa@ixsystems.com')
+    driver.find_element_by_xpath(xpaths.certificates.email_Input).clear()
+    driver.find_element_by_xpath(xpaths.certificates.email_Input).send_keys('qa@ixsystems.com')
 
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Common Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').clear()
