@@ -3,10 +3,10 @@ import {
   ChangeDetectorRef,
   Component, Input, ViewChild,
 } from '@angular/core';
-import {
-  MatLegacyPaginator as MatPaginator, MatLegacyPaginatorIntl as MatPaginatorIntl,
-} from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import {
+  MatPaginator, MatPaginatorIntl,
+} from '@angular/material/paginator';
 
 @Component({
   selector: 'ix-table-paginator',
