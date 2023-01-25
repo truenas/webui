@@ -66,6 +66,7 @@ export class StorageSettingsComponent {
 
     const { pool } = values;
     const { swapondrive } = values;
+    const swapondriveInGibs = +swapondrive / this.ixFormatter.convertUnitToNum('GiB');
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
       switchMap(() => {
@@ -73,7 +74,7 @@ export class StorageSettingsComponent {
         this.cdr.markForCheck();
         return combineLatest([
           this.ws.job('systemdataset.update', [{ pool }]),
-          this.ws.call('system.advanced.update', [{ swapondrive: +swapondrive }]),
+          this.ws.call('system.advanced.update', [{ swapondrive: swapondriveInGibs }]),
         ]).pipe(
           tap(([job]) => {
             if (job.state !== JobState.Success) {
