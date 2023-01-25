@@ -4,7 +4,8 @@ import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SystemGeneralService, WebSocketService } from './services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { SystemGeneralService, WebSocketService2 } from './services';
 
 @UntilDestroy()
 @Component({
@@ -15,7 +16,8 @@ export class AppComponent {
   constructor(
     public title: Title,
     private router: Router,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
+    private authService: AuthService,
     private sysGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -50,7 +52,7 @@ export class AppComponent {
       // save currenturl
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
-        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
+        if (this.authService.isAuthenticated && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -58,7 +57,6 @@ export class FailoverSettingsComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
     private wsManager: WebsocketManagerService,
   ) {}
 
@@ -84,7 +82,7 @@ export class FailoverSettingsComponent implements OnInit {
           if (values.disabled && !values.master) {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
-                this.wsManager.token2 = null;
+                this.authService.token2 = null;
                 this.wsManager.closeWebsocketConnection();
               },
             });

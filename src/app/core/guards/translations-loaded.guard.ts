@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import {
   catchError, map, timeout,
 } from 'rxjs/operators';
 import { LanguageService } from 'app/services/language.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
 
 /**
  * Ensures that translations have been loaded.
@@ -14,16 +15,20 @@ import { WebSocketService } from 'app/services/ws.service';
 export class TranslationsLoadedGuard implements CanActivate {
   // Bail on translations if it takes too much time to load.
   private readonly maxLanguageLoadingTime = 10 * 1000;
-
+  isConnected = false;
   constructor(
     private languageService: LanguageService,
-    private ws: WebSocketService,
-  ) {}
+    private wsManager: WebsocketManagerService,
+  ) {
+    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+      this.isConnected = isConnected;
+    });
+  }
 
   canActivate(): Observable<boolean> {
     let waitForTranslations$: Observable<boolean>;
 
-    if (!this.ws.connected) {
+    if (!this.isConnected) {
       // Cannot load translations for an unauthorized user.
       waitForTranslations$ = this.languageService.setLanguageFromBrowser();
     } else {

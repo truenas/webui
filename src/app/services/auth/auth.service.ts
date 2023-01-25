@@ -1,17 +1,24 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
+import { LocalStorage } from 'ngx-webstorage';
 import {
-  BehaviorSubject, filter, map, Observable, take, tap,
+  BehaviorSubject, filter, map, Observable, switchMap, take, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { User } from 'app/interfaces/user.interface';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private isLoggedIn = false;
+  @LocalStorage() token2: string;
+  private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
   get isAuthenticated(): boolean {
@@ -20,6 +27,10 @@ export class AuthService {
 
   get isAuthenticated$(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
+  }
+
+  get user$(): Observable<LoggedInUser> {
+    return this.loggedInUser$.asObservable();
   }
 
   constructor(
@@ -54,13 +65,13 @@ export class AuthService {
     }));
   }
 
-  loginWithToken(token: string): Observable<boolean> {
+  loginWithToken(): Observable<boolean> {
     const uuid = UUID.UUID();
     this.wsManager.send({
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login_with_token',
-      params: [token],
+      params: [this.token2],
     });
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
       this.isLoggedIn = response;
@@ -116,5 +127,40 @@ export class AuthService {
       this.isLoggedIn = false;
       this.isLoggedIn$.next(false);
     }));
+  }
+
+  private getLoggedInUserInformation(): void {
+    let authenticatedUser: LoggedInUser;
+    const uuid = UUID.UUID();
+    const payload = {
+      id: uuid,
+      msg: IncomingApiMessageType.Method,
+      method: 'auth.me',
+    };
+    this.wsManager.send(payload);
+    this.getFilteredWebsocketResponse(uuid).pipe(
+      switchMap((loggedInUser: DsUncachedUser) => {
+        authenticatedUser = loggedInUser;
+        const userQueryPayload = {
+          id: uuid,
+          msg: IncomingApiMessageType.Method,
+          method: 'user.query',
+          params: [[['uid', '=', authenticatedUser.pw_uid]]],
+        };
+        this.wsManager.send(userQueryPayload);
+        return this.getFilteredWebsocketResponse(uuid);
+      }),
+      tap((users: User[]) => {
+        if (users?.[0]?.id) {
+          authenticatedUser = {
+            ...authenticatedUser,
+            ...users[0],
+          };
+        }
+
+        this.loggedInUser$.next(authenticatedUser);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

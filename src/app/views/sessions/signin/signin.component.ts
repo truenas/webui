@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
@@ -16,13 +16,13 @@ export class SigninComponent implements OnInit {
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
-  readonly isConnected$ = this.ws.isConnected$;
+  readonly isConnected$ = this.wsManager.isConnected$;
   readonly hasLoadingIndicator$ = combineLatest([this.signinStore.isLoading$, this.isConnected$]).pipe(
     map(([isLoading, isConnected]) => isLoading || !isConnected),
   );
 
   constructor(
-    private ws: WebSocketService,
+    private wsManager: WebsocketManagerService,
     private signinStore: SigninStore,
   ) {}
 

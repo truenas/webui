@@ -1,4 +1,4 @@
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { NonAuthApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 export enum MockWebsocketResponseType {
@@ -9,14 +9,14 @@ export enum MockWebsocketResponseType {
 
 export interface MockWebsocketCallResponse {
   type: MockWebsocketResponseType.Call;
-  method: ApiMethod;
+  method: NonAuthApiMethod;
   response: unknown;
   id?: number;
 }
 
 export interface MockWebsocketJobResponse {
   type: MockWebsocketResponseType.Job;
-  method: ApiMethod;
+  method: NonAuthApiMethod;
   response: Job;
   id?: number;
 }

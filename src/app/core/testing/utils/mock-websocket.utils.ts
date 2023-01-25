@@ -2,17 +2,15 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { WINDOW } from 'app/helpers/window.helper';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiDirectory, NonAuthApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService, WebSocketService2 } from 'app/services';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
@@ -30,7 +28,7 @@ import { WebsocketManagerService } from 'app/services/ws-manager.service';
  * If you need more customization, use ordinary mockProvider().
  * @example
  * providers: [
- *   mockProvider(WebSocketService, {
+ *   mockProvider(WebSocketService2, {
  *     call: jest.fn((method) => {
  *       if (method === 'filesystem.stat') {
  *         return of({ user: 'john' } as FileSystemStat);
@@ -39,32 +37,6 @@ import { WebsocketManagerService } from 'app/services/ws-manager.service';
  *   }),
  * ]
  */
-export function mockWebsocket(
-  mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
-): (FactoryProvider | ExistingProvider)[] {
-  return [
-    {
-      provide: WebSocketService,
-      useFactory: (router: Router, window: Window) => {
-        const mockWebsocketService = new MockWebsocketService(router, window);
-        (mockResponses || []).forEach((mockResponse) => {
-          if (mockResponse.type === MockWebsocketResponseType.Call) {
-            mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
-          } else if (mockResponse.type === MockWebsocketResponseType.Job) {
-            mockWebsocketService.mockJob(mockResponse.method, mockResponse.response);
-          }
-        });
-
-        return mockWebsocketService;
-      },
-      deps: [Router, WINDOW],
-    },
-    {
-      provide: MockWebsocketService,
-      useExisting: forwardRef(() => WebSocketService),
-    },
-  ];
-}
 
 export function mockWebsocket2(
   mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
@@ -96,7 +68,7 @@ export function mockWebsocket2(
   ];
 }
 
-export function mockCall<M extends ApiMethod>(
+export function mockCall<M extends NonAuthApiMethod>(
   method: M,
   response: ApiDirectory[M]['response'] = undefined,
 ): MockWebsocketCallResponse {
@@ -111,7 +83,7 @@ export function mockCall<M extends ApiMethod>(
  * Mocks immediate call() and job() responses and core.get_jobs when id is queried.
  * @see MockWebsocketService.mockJob()
  */
-export function mockJob<M extends ApiMethod>(
+export function mockJob<M extends NonAuthApiMethod>(
   method: M,
   response: Job<ApiDirectory[M]['response']> = undefined,
 ): MockWebsocketJobResponse {

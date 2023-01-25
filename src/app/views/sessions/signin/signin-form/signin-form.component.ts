@@ -5,10 +5,9 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest } from 'rxjs';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
@@ -34,7 +33,7 @@ export class SigninFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
@@ -52,20 +51,14 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
     const request$ = this.hasTwoFactor
-      ? this.ws.login(formValues.username, formValues.password, formValues.otp)
-      : this.ws.login(formValues.username, formValues.password);
-    const request2$ = this.hasTwoFactor
       ? this.authService.loginWithOtp(formValues.username, formValues.password, formValues.otp)
       : this.authService.login(formValues.username, formValues.password);
 
-    combineLatest([
-      request$,
-      request2$,
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: ([wasLoggedIn, wasLoggedIn2]) => {
+    request$.pipe(untilDestroyed(this)).subscribe({
+      next: (wasLoggedIn) => {
         this.signinStore.setLoadingState(false);
 
-        if (!wasLoggedIn || !wasLoggedIn2) {
+        if (!wasLoggedIn) {
           this.handleFailedLogin();
           return;
         }
@@ -80,7 +73,7 @@ export class SigninFormComponent implements OnInit {
   }
 
   private checkForTwoFactor(): void {
-    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactor) => {
+    this.ws2.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((hasTwoFactor) => {
       this.hasTwoFactor = hasTwoFactor;
       if (hasTwoFactor) {
         this.form.controls.otp.enable();

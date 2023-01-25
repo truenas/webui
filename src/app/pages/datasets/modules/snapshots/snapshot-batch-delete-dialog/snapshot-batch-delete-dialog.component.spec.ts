@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockPipe } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockWebsocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -45,7 +45,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebsocket2([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
         mockCall('zfs.snapshot.delete'),
       ]),

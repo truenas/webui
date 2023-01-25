@@ -11,8 +11,8 @@ import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-inpu
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { UploadConfigDialogComponent } from './upload-config-dialog.component';
 
 describe('UploadConfigDialogComponent', () => {
@@ -39,7 +39,7 @@ describe('UploadConfigDialogComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
-      mockProvider(WebsocketManagerService, {
+      mockProvider(AuthService, {
         token2: 'token',
       }),
     ],

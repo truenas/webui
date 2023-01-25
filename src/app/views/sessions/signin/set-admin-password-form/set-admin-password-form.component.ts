@@ -10,8 +10,8 @@ import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 const adminUsername = 'admin';
@@ -48,7 +48,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -66,12 +66,11 @@ export class SetAdminPasswordFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
 
     const request$ = this.hasInstanceId
-      ? this.ws.call('user.setup_local_administrator', [username, password, { instance_id: instanceId }])
-      : this.ws.call('user.setup_local_administrator', [username, password]);
+      ? this.ws2.call('user.setup_local_administrator', [username, password, { instance_id: instanceId }])
+      : this.ws2.call('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
       switchMap(() => this.authService.login(username, password)),
-      switchMap(() => this.ws.login(username, password)),
       untilDestroyed(this),
     ).subscribe({
       next: (wasLoggedIn) => {
@@ -91,7 +90,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
   }
 
   private checkForEc2Environment(): void {
-    this.ws.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
+    this.ws2.call('system.environment').pipe(untilDestroyed(this)).subscribe((env) => {
       this.hasInstanceId = env === SystemEnvironment.Ec2;
       if (this.hasInstanceId) {
         this.form.controls.instanceId.enable();

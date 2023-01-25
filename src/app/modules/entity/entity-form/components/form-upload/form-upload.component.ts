@@ -10,7 +10,7 @@ import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-co
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
@@ -26,7 +26,7 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  apiEndPoint = '/_upload?auth_token=' + this.wsManager.token2;
+  apiEndPoint = '/_upload?auth_token=' + this.authService.token2;
   fileList: FileList;
   fbrowser: HTMLInputElement;
 
@@ -37,7 +37,7 @@ export class FormUploadComponent {
     public dialog: DialogService,
     public translate: TranslateService,
     private snackbar: SnackbarService,
-    private wsManager: WebsocketManagerService,
+    private authService: AuthService,
   ) {}
 
   fileBtnClick(): void {

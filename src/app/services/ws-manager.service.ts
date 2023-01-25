@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
-import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject, EMPTY, interval, Observable, of, switchMap, timer,
 } from 'rxjs';
@@ -27,8 +26,6 @@ export class WebsocketManagerService {
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
 
   private isConnectionReady$ = new BehaviorSubject(false);
-
-  @LocalStorage() token2: string;
 
   get websocketSubject$(): Observable<unknown> {
     return this.ws$.asObservable().pipe(

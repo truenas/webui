@@ -5,11 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SigninFormComponent } from 'app/views/sessions/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
@@ -30,7 +29,7 @@ describe('SigninFormComponent', () => {
         login: jest.fn(() => of(true)),
         loginWithOtp: jest.fn(() => of(true)),
       }),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('auth.two_factor_auth', false),
       ]),
       mockProvider(SigninStore, {
@@ -45,8 +44,8 @@ describe('SigninFormComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    const websocketMock = spectator.inject(WebSocketService);
-    jest.spyOn(websocketMock, 'login').mockReturnValue(of(true));
+    const authServiceMock = spectator.inject(AuthService);
+    jest.spyOn(authServiceMock, 'login').mockReturnValue(of(true));
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
@@ -63,12 +62,12 @@ describe('SigninFormComponent', () => {
 
     const signinStore = spectator.inject(SigninStore);
     expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
-    expect(spectator.inject(WebSocketService).login).toHaveBeenCalledWith('root', '12345678');
+    expect(spectator.inject(AuthService).login).toHaveBeenCalledWith('root', '12345678');
     expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
   });
 
   it('logs user in with OTP code when two factor auth is set up', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebsocketService2);
     websocketMock.mockCall('auth.two_factor_auth', true);
     spectator.component.ngOnInit();
 
@@ -81,7 +80,7 @@ describe('SigninFormComponent', () => {
     const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
     await loginButton.click();
 
-    expect(spectator.inject(WebSocketService).login).toHaveBeenCalledWith('root', '12345678', '212484');
+    expect(spectator.inject(AuthService).loginWithOtp).toHaveBeenCalledWith('root', '12345678', '212484');
     expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
   });
 

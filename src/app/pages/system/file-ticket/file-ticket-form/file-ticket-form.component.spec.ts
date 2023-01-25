@@ -14,8 +14,8 @@ import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { DialogService, SystemGeneralService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { JiraOauthComponent } from './components/jira-oauth/jira-oauth.component';
 
@@ -71,7 +71,7 @@ describe('FileTicketFormComponent', () => {
           }
         }),
       }),
-      mockProvider(WebsocketManagerService, {
+      mockProvider(AuthService, {
         token2: 'token.is.mocked',
       }),
       mockProvider(IxSlideInService),

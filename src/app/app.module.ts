@@ -47,7 +47,6 @@ import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthGuardService } from './services/auth/auth-guard.service';
 import { EntityTableService } from './services/entity-table.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
-import { WebSocketService } from './services/ws.service';
 
 @NgModule({
   imports: [
@@ -120,7 +119,6 @@ import { WebSocketService } from './services/ws.service';
     RoutePartsService,
     AuthGuardService,
     AuthService,
-    WebSocketService,
     WebSocketService2,
     AppLoaderService,
     EntityTableService,
