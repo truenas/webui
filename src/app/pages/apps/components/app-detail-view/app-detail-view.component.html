@@ -1,0 +1,90 @@
+<ng-template #pageHeader>
+  <ix-page-title-header [pageTitle]="pageTitle"></ix-page-title-header>
+</ng-template>
+
+<section fxLayout="row">
+  <div class="app" fxFlex="200px">
+    <div class="app-image-holder">
+      <img *ngIf="appInfo" [src]="appInfo.chart_metadata.icon" [src-fallback]="imagePlaceholder" />
+      <ngx-skeleton-loader *ngIf="isLoading$ | async" class="app-image-loader"></ngx-skeleton-loader>
+    </div>
+    <a
+      mat-button
+      color="primary"
+      [disabled]="!appInfo"
+      (click)="onInstallButtonPressed()"
+      >{{ 'Install' | translate }}</a>
+  </div>
+
+  <div class="app-info" fxFlex="240px">
+    <ngx-skeleton-loader *ngIf="isLoading$ | async" count="5"></ngx-skeleton-loader>
+    <ng-container *ngIf="appInfo">
+      <h5>{{ 'Official Catalog' | translate }}</h5>
+      <div>{{ 'App Version' | translate }}: {{ appInfo.chart_metadata.version }}</div>
+      <div>{{ 'Keywords' | translate }}: {{ appInfo.chart_metadata.keywords.join(',') }}</div>
+      <div>{{ 'Train' | translate }}: {{ appInfo.catalog_train }}</div>
+      <div>{{ 'Home Page' | translate }}: <a [href]="appInfo.chart_metadata.home">{{ appInfo.chart_metadata.home }}</a></div>
+    </ng-container>
+  </div>
+
+  <div class="app-description">
+    <ngx-skeleton-loader *ngIf="isLoading$ | async" count="3"></ngx-skeleton-loader>
+    <ng-container *ngIf="appInfo">
+      <div>{{ appInfo.chart_metadata.description }}</div>
+    </ng-container>
+  </div>
+</section>
+
+<section>
+  <h2>{{ 'Screenshots' | translate }}</h2>
+  <div fxLayout="row nowrap" fxLayoutGap="16px">
+    <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+    <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+    <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+  </div>
+</section>
+
+<section>
+  <h2>{{ 'Similar Apps' | translate }}</h2>
+  <div fxLayout="row wrap" fxLayoutGap="16px">
+    <ngx-skeleton-loader fxFlex class="similar-app-loader"></ngx-skeleton-loader>
+    <ngx-skeleton-loader fxFlex class="similar-app-loader"></ngx-skeleton-loader>
+  </div>
+</section>
+
+<section class="app-info-cards">
+  <div class="app-info-card">
+    <h3>{{ 'Available Resources' | translate }}</h3>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async" count="4"></ngx-skeleton-loader>
+
+    <ng-container *ngIf="appInfo">
+      <div>{{ 'CPU Usage' | translate }}: {{ 25 | percent }}</div>
+      <div>{{ 'Memory Usage' | translate }}: {{ '48GB / 96GB' }}</div>
+      <div>{{ 'Pool' | translate }}: {{ appInfo.dataset }}</div>
+      <div>{{ 'Available Space' | translate }}: {{ '3 TiB' }}</div>
+    </ng-container>
+  </div>
+
+  <div class="app-info-card">
+    <h3>{{ 'Helm Chart Info' | translate }}</h3>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async" count="4"></ngx-skeleton-loader>
+
+    <ng-container *ngIf="appInfo">
+      <div>{{ 'Catalog' | translate }}: {{ appInfo.catalog }}</div>
+      <div>{{ 'Train' | translate }}: {{ appInfo.catalog_train }}</div>
+      <div>{{ 'Chart Version' | translate }}: {{ appInfo.version }}</div>
+      <div>{{ 'Maintainer' | translate }}: {{ 'iXsystems' }}</div>
+    </ng-container>
+  </div>
+
+  <div class="app-info-card">
+    <h3>{{ 'Application Info' | translate }}</h3>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async" count="4"></ngx-skeleton-loader>
+
+    <ng-container *ngIf="appInfo">
+      <div>{{ 'Version' | translate }}: {{ appInfo.chart_metadata.version }}</div>
+      <div>{{ 'App Source' | translate }}: {{ appInfo.chart_metadata.sources.join(',') }}</div>
+      <div>{{ 'Last App Updated' }}: {{ appInfo.chart_metadata.latest_chart_version }}</div>
+    </ng-container>
+  </div>
+</section>
