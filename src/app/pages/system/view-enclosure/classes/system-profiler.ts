@@ -153,9 +153,11 @@ export class SystemProfiler {
   getSeriesFromModel(model: string): string {
     if (model.startsWith('Z')) {
       return 'Z Series';
-    } if (model.startsWith('X')) {
+    }
+    if (model.startsWith('X')) {
       return 'X Series';
-    } if (model.startsWith('M')) {
+    }
+    if (model.startsWith('M')) {
       return 'M Series';
     }
     return model;
