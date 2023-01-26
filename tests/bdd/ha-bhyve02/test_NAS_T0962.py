@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE High Availability (tn-bhyve01) feature tests."""
+"""SCALE High Availability (tn-bhyve06) feature tests."""
 
 import pytest
 import reusableSeleniumCode as rsc
@@ -265,33 +265,33 @@ def on_the_dataset_page_click_on_the_dozer_tree_and_click_add_dataset(driver):
     driver.find_element_by_xpath(xpaths.dataset.add_Dataset_Button).click()
 
 
-@then(parsers.parse('on the Add Dataset slide, input Name "{dataset_Name}" and Share Type SMB'))
-def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_Name):
+@then(parsers.parse('on the Add Dataset slide, input Name "{dataset_name}" and Share Type SMB'))
+def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver, dataset_name):
     """on the Add Dataset slide, input Name "my_ad_dataset" and Share Type SMB."""
     assert wait_on_element(driver, 5, xpaths.add_Dataset.title)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
-    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_Name)
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
 
 
-@then(parsers.parse('click Save the "{dataset_Name}" data should be created'))
-def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_Name):
+@then(parsers.parse('click Save the "{dataset_name}" data should be created'))
+def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_Name))
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
 
 
-@then(parsers.parse('click on the "{dataset_Name}" tree, click on Edit beside Permissions'))
-def click_on_the_my_ad_dataset_tree_click_on_edit_beside_permissions(driver, dataset_Name):
+@then(parsers.parse('click on the "{dataset_name}" tree, click on Edit beside Permissions'))
+def click_on_the_my_ad_dataset_tree_click_on_edit_beside_permissions(driver, dataset_name):
     """click on the "my_ad_dataset" tree, click on Edit beside Permissions."""
-    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset_Name))
-    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset_Name)).click()
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset_name)).click()
     assert wait_on_element(driver, 5, xpaths.dataset.permission_Title)
     assert wait_on_element(driver, 5, xpaths.dataset.permission_Edit_Button)
     driver.find_element_by_xpath(xpaths.dataset.permission_Edit_Button).click()
@@ -331,14 +331,14 @@ def click_the_save_access_control_list_button(driver):
     assert wait_on_element_disappear(driver, 60, xpaths.popup.updating_Acl)
 
 
-@then(parsers.parse('on the Dataset page click on the "{dataset_Name}" tree'))
-def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_Name):
+@then(parsers.parse('on the Dataset page click on the "{dataset_name}" tree'))
+def on_the_dataset_page_click_on_the_my_ad_dataset_tree(driver, dataset_name):
     """on the Dataset page click on the "my_ad_dataset" tree."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
     assert wait_on_element(driver, 7, '//span[text()=" dozer " and contains(@class,"name")]')
-    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_Name))
-    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset_Name))
-    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset_Name)).click()
+    assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
+    assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset_name))
+    driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset_name)).click()
 
 
 @then(parsers.parse('on the permission card, verify the user is "{user_name}"'))
