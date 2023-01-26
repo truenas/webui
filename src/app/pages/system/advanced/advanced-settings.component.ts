@@ -427,7 +427,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
             },
             {
               label: this.translate.instant('Swap Size'),
-              value: this.ixFormatter.convertBytesToHumanReadable(this.configData.swapondrive),
+              value: this.configData.swapondrive.toString() + ' GiB',
             },
           ],
         },
