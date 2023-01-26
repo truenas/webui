@@ -39,7 +39,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
@@ -83,7 +83,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public themeService: ThemeService,
     private router: Router,
     private ws: WebSocketService2,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,

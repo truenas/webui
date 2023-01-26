@@ -7,7 +7,7 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class MockWebsocketService2 extends WebSocketService2 {
 
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketManagerService,
+    protected wsManager: WebsocketConnectionService,
   ) {
     super(router, wsManager);
 

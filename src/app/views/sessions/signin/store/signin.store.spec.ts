@@ -13,7 +13,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SigninStore', () => {
@@ -31,7 +31,7 @@ describe('SigninStore', () => {
         mockCall('failover.get_ips', ['123.23.44.54']),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
       ]),
-      mockProvider(WebsocketManagerService, {
+      mockProvider(WebsocketConnectionService, {
         isConnected$: of(true),
         websocketSubject$: of(),
       }),

@@ -15,7 +15,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
@@ -57,7 +57,7 @@ export class FailoverSettingsComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
   ) {}
 
   ngOnInit(): void {

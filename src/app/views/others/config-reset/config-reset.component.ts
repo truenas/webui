@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 export class ConfigResetComponent implements OnInit {
   constructor(
     protected ws2: WebSocketService2,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     public translate: TranslateService,

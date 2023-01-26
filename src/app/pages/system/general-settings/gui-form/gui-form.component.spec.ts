@@ -18,7 +18,7 @@ import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui
 import { SystemGeneralService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -67,7 +67,7 @@ describe('GuiFormComponent', () => {
       mockProvider(IxSlideInService, {
         onClose$: of(),
       }),
-      mockProvider(WebsocketManagerService),
+      mockProvider(WebsocketConnectionService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -166,7 +166,7 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if HTTPS redirect is enabled', async () => {
-    const websocketManager = spectator.inject(WebsocketManagerService);
+    const websocketManager = spectator.inject(WebsocketConnectionService);
     jest.spyOn(websocketManager, 'isConnected$', 'get').mockReturnValue(of(true));
 
     const form = await loader.getHarness(IxFormHarness);
@@ -184,7 +184,7 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
-    const websocketManager = spectator.inject(WebsocketManagerService);
+    const websocketManager = spectator.inject(WebsocketConnectionService);
     jest.spyOn(websocketManager, 'isConnected$', 'get').mockReturnValue(of(true));
 
     const form = await loader.getHarness(IxFormHarness);

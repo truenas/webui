@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
@@ -22,7 +22,7 @@ export class SigninComponent implements OnInit {
   );
 
   constructor(
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
     private signinStore: SigninStore,
   ) {}
 

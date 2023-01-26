@@ -17,7 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface SigninState {
@@ -65,7 +65,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
     private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {

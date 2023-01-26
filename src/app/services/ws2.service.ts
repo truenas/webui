@@ -13,7 +13,7 @@ import {
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({
@@ -23,7 +23,7 @@ export class WebSocketService2 {
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketManagerService,
+    protected wsManager: WebsocketConnectionService,
   ) { }
 
   private get ws$(): Observable<unknown> {

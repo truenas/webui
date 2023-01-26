@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
@@ -16,7 +16,7 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 export class RebootComponent implements OnInit {
   constructor(
     protected ws: WebSocketService2,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,

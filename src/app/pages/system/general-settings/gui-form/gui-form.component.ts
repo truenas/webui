@@ -27,7 +27,7 @@ import {
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
@@ -76,7 +76,7 @@ export class GuiFormComponent {
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService2,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private router: Router,

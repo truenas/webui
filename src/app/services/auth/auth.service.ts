@@ -9,7 +9,7 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({
@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   constructor(
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
   ) { }
 
   login(username: string, password: string, otp: string = null): Observable<boolean> {

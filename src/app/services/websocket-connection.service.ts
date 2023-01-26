@@ -16,7 +16,7 @@ import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.i
 @Injectable({
   providedIn: 'root',
 })
-export class WebsocketManagerService {
+export class WebsocketConnectionService {
   private ws$: WebSocketSubject<unknown>;
 
   private readonly pingTimeoutMillis = 20 * 1000;
@@ -92,6 +92,7 @@ export class WebsocketManagerService {
     this.setupConnectionEvents();
   }
 
+  /** TODO: Extract disconnection logic somewhere else */
   private onClose(): void {
     this.isConnectionReady$.next(false);
     this.closeAllDialogs();

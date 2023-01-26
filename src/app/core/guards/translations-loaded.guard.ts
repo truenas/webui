@@ -6,7 +6,7 @@ import {
   catchError, map, timeout,
 } from 'rxjs/operators';
 import { LanguageService } from 'app/services/language.service';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 /**
  * Ensures that translations have been loaded.
@@ -19,7 +19,7 @@ export class TranslationsLoadedGuard implements CanActivate {
   isConnected = false;
   constructor(
     private languageService: LanguageService,
-    private wsManager: WebsocketManagerService,
+    private wsManager: WebsocketConnectionService,
   ) {
     this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       this.isConnected = isConnected;

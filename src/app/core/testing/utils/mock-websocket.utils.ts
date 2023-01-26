@@ -9,7 +9,7 @@ import {
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 /**
@@ -44,7 +44,7 @@ export function mockWebsocket2(
   return [
     {
       provide: WebSocketService2,
-      useFactory: (router: Router, wsManager: WebsocketManagerService) => {
+      useFactory: (router: Router, wsManager: WebsocketConnectionService) => {
         const mockWebsocketService = new MockWebsocketService2(router, wsManager);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
@@ -55,15 +55,15 @@ export function mockWebsocket2(
         });
         return mockWebsocketService;
       },
-      deps: [Router, WebsocketManagerService],
+      deps: [Router, WebsocketConnectionService],
     },
     {
       provide: MockWebsocketService2,
       useExisting: forwardRef(() => WebSocketService2),
     },
     {
-      provide: WebsocketManagerService,
-      useValue: ({ send: jest.fn() } as unknown as WebsocketManagerService),
+      provide: WebsocketConnectionService,
+      useValue: ({ send: jest.fn() } as unknown as WebsocketConnectionService),
     },
   ];
 }
