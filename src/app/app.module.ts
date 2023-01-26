@@ -35,6 +35,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 import { rootEffects, rootReducers } from 'app/store';
@@ -118,6 +119,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
   providers: [
     RoutePartsService,
     AuthGuardService,
+    NavigationService,
     AuthService,
     WebSocketService2,
     AppLoaderService,
