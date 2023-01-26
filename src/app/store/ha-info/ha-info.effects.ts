@@ -47,10 +47,10 @@ export class HaInfoEffects {
     ofType(haStatusLoaded),
     withLatestFrom(this.store$.select(selectIsHaLicensed)),
     mergeMap(([{ haStatus }, isHa]) => {
-      const needToCheckForUpgradePending = (haStatus.hasHa && haStatus.reasons.length === 0)
+      const shouldCheckForPendingUpgrade = (haStatus.hasHa && haStatus.reasons.length === 0)
         || (haStatus.reasons.length === 1 && haStatus.reasons[0] === FailoverDisabledReason.MismatchVersions);
 
-      if (isHa && needToCheckForUpgradePending) {
+      if (isHa && shouldCheckForPendingUpgrade) {
         return this.ws.call('failover.upgrade_pending').pipe(
           map((isUpgradePending) => upgradePendingStateLoaded({ isUpgradePending })),
         );
