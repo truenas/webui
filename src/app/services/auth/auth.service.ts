@@ -73,7 +73,7 @@ export class AuthService {
     );
   }
 
-  generateToken(tokenLiftime: number): Observable<string> {
+  generateToken(tokenLifetime: number): Observable<string> {
     const uuid = UUID.UUID();
     const payload: {
       id: string;
@@ -84,7 +84,7 @@ export class AuthService {
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.generate_token',
-      params: [tokenLiftime],
+      params: [tokenLifetime],
     };
     this.wsManager.send(payload);
     return this.getFilteredWebsocketResponse<string>(uuid);
