@@ -318,15 +318,9 @@ export type ApiDirectory = {
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
 
   // Auth
-  'auth.generate_token': { params: [number]; response: string };
-  'auth.login_with_token': { params: [token: string]; response: boolean };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
-  'auth.login': {
-    params: LoginParams;
-    response: boolean;
-  };
-  'auth.logout': { params: void; response: void };
+
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: void; response: boolean };
@@ -1033,6 +1027,18 @@ export type ApiDirectory = {
 };
 
 /**
+ * API definitions for `call` and `job` methods for auth apis.
+ */
+export type AuthApiDirectory = {
+  'auth.login': {
+    params: LoginParams;
+    response: boolean;
+  };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.logout': { params: void; response: void };
+  'auth.generate_token': { params: [number]; response: string };
+};
+/**
  * Prefer typing like this:
  * ```
  * queryCall: 'user.query' as const
@@ -1040,13 +1046,5 @@ export type ApiDirectory = {
  * instead of using ApiMethod.
  */
 export type ApiMethod = keyof ApiDirectory;
-
-export type NonAuthApiDirectory = Omit<ApiDirectory,
-'auth.login'
-| 'auth.generate_token'
-| 'auth.login_with_token'
-| 'auth.logout'
->;
-export type NonAuthApiMethod = keyof NonAuthApiDirectory;
 
 export type ApiParams<T extends ApiMethod> = ApiDirectory[T]['params'];

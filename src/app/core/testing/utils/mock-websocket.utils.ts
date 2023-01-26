@@ -7,7 +7,7 @@ import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { ApiDirectory, NonAuthApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketManagerService } from 'app/services/ws-manager.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -68,7 +68,7 @@ export function mockWebsocket2(
   ];
 }
 
-export function mockCall<M extends NonAuthApiMethod>(
+export function mockCall<M extends ApiMethod>(
   method: M,
   response: ApiDirectory[M]['response'] = undefined,
 ): MockWebsocketCallResponse {
@@ -83,7 +83,7 @@ export function mockCall<M extends NonAuthApiMethod>(
  * Mocks immediate call() and job() responses and core.get_jobs when id is queried.
  * @see MockWebsocketService.mockJob()
  */
-export function mockJob<M extends NonAuthApiMethod>(
+export function mockJob<M extends ApiMethod>(
   method: M,
   response: Job<ApiDirectory[M]['response']> = undefined,
 ): MockWebsocketJobResponse {

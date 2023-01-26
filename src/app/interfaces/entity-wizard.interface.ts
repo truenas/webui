@@ -1,10 +1,10 @@
 import { MatStepper } from '@angular/material/stepper';
-import { NonAuthApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 
 export interface WizardConfiguration {
-  addWsCall?: NonAuthApiMethod;
+  addWsCall?: ApiMethod;
   hideCancel?: boolean;
   isLinear?: boolean;
   summary?: Record<string, unknown>;
