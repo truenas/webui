@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import {
   catchError, map, timeout,
@@ -11,6 +11,7 @@ import { WebsocketManagerService } from 'app/services/ws-manager.service';
 /**
  * Ensures that translations have been loaded.
  */
+@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class TranslationsLoadedGuard implements CanActivate {
   // Bail on translations if it takes too much time to load.
