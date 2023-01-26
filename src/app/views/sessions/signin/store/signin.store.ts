@@ -53,8 +53,8 @@ export class SigninStore extends ComponentStore<SigninState> {
     return state.failover && state.failover.status !== FailoverStatus.Single;
   });
 
-  statusSubscription: Subscription;
-  disabledReasonsSubscription: Subscription;
+  private statusSubscription: Subscription;
+  private disabledReasonsSubscription: Subscription;
 
   private readonly tokenLifetime = 300;
 
