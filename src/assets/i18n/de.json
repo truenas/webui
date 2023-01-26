@@ -3316,7 +3316,6 @@
   "File upload complete": "Datei-Upload abgeschlossen",
   "Filename Encryption": "Dateinamenverschlüsselung",
   "Filesize": "Dateigröße",
-  "Finish Upgrade?": "Upgrade beenden?",
   "Finished": "Abgeschlossen",
   "First vdev has {n} disks, new vdev has {m}": "Das erste VDEV hat {n} Datenträger, neue vdev hat {m}",
   "First vdev is a {vdevType}, new vdev is {newVdevType}": "Das erste VDEV ist ein {vdevType}, das neue vdev ist {newVdevType}",

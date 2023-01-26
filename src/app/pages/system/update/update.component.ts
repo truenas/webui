@@ -224,33 +224,6 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  checkUpgradePending(): void {
-    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((hasPendingUpdate) => {
-      this.failoverUpgradePending = hasPendingUpdate;
-    });
-  }
-
-  applyFailoverUpgrade(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Finish Upgrade?'),
-      message: '',
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Continue'),
-    }).pipe(untilDestroyed(this)).subscribe((confirmed: boolean) => {
-      if (!confirmed) {
-        return;
-      }
-
-      const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-      dialogRef.componentInstance.setCall('failover.upgrade_finish');
-      dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        this.failoverUpgradePending = false;
-        dialogRef.close(false);
-      });
-    });
-  }
-
   onTrainChanged(newTrain: string, prevTrain: string): void {
     // For the case when the user switches away, then BACK to the train of the current OS
     if (newTrain === this.selectedTrain) {
@@ -294,7 +267,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  pendingupdates(): void {
+  pendingUpdates(): void {
     this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
       if (pending.length !== 0) {
         this.updateDownloaded = true;
@@ -325,7 +298,7 @@ export class UpdateComponent implements OnInit {
     this.releaseNotes = '';
 
     this.showSpinner = true;
-    this.pendingupdates();
+    this.pendingUpdates();
     this.error = null;
     sessionStorage.updateLastChecked = Date.now();
     this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe({
@@ -545,7 +518,7 @@ export class UpdateComponent implements OnInit {
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             dialogRef.close(false);
             this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
-            this.pendingupdates();
+            this.pendingUpdates();
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
             new EntityUtils().handleWsError(this, err, this.dialogService);
