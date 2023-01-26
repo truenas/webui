@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import pytest
 import reusableSeleniumCode as rsc
@@ -195,7 +195,7 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 45, xpaths.toolbar.ha_Disabled)
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodeb")]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -235,7 +235,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
+    assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
     time.sleep(5)
 

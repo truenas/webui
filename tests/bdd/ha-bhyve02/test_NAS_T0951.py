@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import reusableSeleniumCode as rsc
 from selenium.webdriver.common.keys import Keys

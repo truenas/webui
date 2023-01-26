@@ -1,5 +1,5 @@
 # coding=utf-8
-"""SCALE High Availability (tn-bhyve01) feature tests."""
+"""SCALE High Availability (tn-bhyve06) feature tests."""
 
 import pytest
 import reusableSeleniumCode as rsc
