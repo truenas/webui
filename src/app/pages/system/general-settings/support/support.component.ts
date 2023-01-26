@@ -71,9 +71,14 @@ export class SupportComponent implements OnInit {
       this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
         const getImage = this.productImgServ.getMiniImagePath(systemInfo.system_product);
+        if (this.productImgServ.isRackmount(systemInfo.system_product)) {
+          this.isProductImageRack = true;
+          this.extraMargin = true;
+        } else {
+          this.isProductImageRack = false;
+          this.extraMargin = false;
+        }
         this.productImage = getImage || 'ix-original-cropped.png';
-        this.isProductImageRack = false;
-        this.extraMargin = false;
       } else {
         this.getServerImage(systemInfo.system_product);
       }
