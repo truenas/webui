@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import pytest
 import reusableSeleniumCode as rsc
@@ -435,8 +435,8 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     time.sleep(2)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')
