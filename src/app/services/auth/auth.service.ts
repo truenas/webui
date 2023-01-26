@@ -37,27 +37,13 @@ export class AuthService {
     private wsManager: WebsocketManagerService,
   ) { }
 
-  login(username: string, password: string): Observable<boolean> {
+  login(username: string, password: string, otp: string = null): Observable<boolean> {
     const uuid = UUID.UUID();
     this.wsManager.send({
       id: uuid,
       msg: IncomingApiMessageType.Method,
       method: 'auth.login',
-      params: [username, password],
-    });
-    return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
-      this.isLoggedIn = response;
-      this.isLoggedIn$.next(response);
-    }));
-  }
-
-  loginWithOtp(username: string, password: string, otp: string): Observable<boolean> {
-    const uuid = UUID.UUID();
-    this.wsManager.send({
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.login',
-      params: [username, password, otp],
+      params: otp ? [username, password, otp] : [username, password],
     });
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
       this.isLoggedIn = response;

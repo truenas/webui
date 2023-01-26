@@ -51,7 +51,7 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
     const request$ = this.hasTwoFactor
-      ? this.authService.loginWithOtp(formValues.username, formValues.password, formValues.otp)
+      ? this.authService.login(formValues.username, formValues.password, formValues.otp)
       : this.authService.login(formValues.username, formValues.password);
 
     request$.pipe(untilDestroyed(this)).subscribe({

@@ -27,7 +27,6 @@ describe('SigninFormComponent', () => {
       mockWebsocket2(),
       mockProvider(AuthService, {
         login: jest.fn(() => of(true)),
-        loginWithOtp: jest.fn(() => of(true)),
       }),
       mockWebsocket2([
         mockCall('auth.two_factor_auth', false),
@@ -80,7 +79,7 @@ describe('SigninFormComponent', () => {
     const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
     await loginButton.click();
 
-    expect(spectator.inject(AuthService).loginWithOtp).toHaveBeenCalledWith('root', '12345678', '212484');
+    expect(spectator.inject(AuthService).login).toHaveBeenCalledWith('root', '12345678', '212484');
     expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
   });
 
