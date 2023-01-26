@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, TemplateRef, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
@@ -13,17 +13,25 @@ import { LayoutService } from 'app/services/layout.service';
 @UntilDestroy()
 @Component({
   templateUrl: './available-apps.component.html',
+  styleUrls: ['./available-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AvailableAppsComponent implements AfterViewInit {
+export class AvailableAppsComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
+  apps: CatalogApp[] = [];
 
   constructor(
     private layoutService: LayoutService,
     private loader: AppLoaderService,
     private appService: ApplicationsService,
     private slideIn: IxSlideInService,
+    private cdr: ChangeDetectorRef,
   ) {}
+
+  ngOnInit(): void {
+    this.loadTestData();
+  }
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
@@ -51,5 +59,34 @@ export class AvailableAppsComponent implements AfterViewInit {
 
   onSettingsPressed(): void {
 
+  }
+
+  trackByAppId(_: number, app: CatalogApp): string {
+    return `${app.catalog.id}-${app.catalog.train}-${app.name}`;
+  }
+
+  private loadTestData(): void {
+    // TODO: Temporary
+    this.appService.getAllCatalogs().pipe(untilDestroyed(this)).subscribe((catalogs) => {
+      const apps: CatalogApp[] = [];
+
+      catalogs.forEach((catalog) => {
+        Object.entries(catalog.trains).forEach(([train, trainCatalog]) => {
+          Object.values(trainCatalog).forEach((item) => {
+            apps.push({
+              ...item,
+              catalog: {
+                id: catalog.id,
+                train,
+                label: catalog.label,
+              },
+            });
+          });
+        });
+      });
+
+      this.apps = apps;
+      this.cdr.markForCheck();
+    });
   }
 }

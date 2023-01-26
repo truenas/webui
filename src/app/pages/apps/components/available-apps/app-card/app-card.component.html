@@ -1,0 +1,42 @@
+<div class="left-column">
+  <div *ngIf="installed" class="installed-badge">{{ 'Installed' | translate }}</div>
+
+  <div
+    class="logo-container"
+    [class.logo-loaded]="wasLogoLoaded"
+  >
+    <img
+      *ngIf="app.icon_url"
+      class="logo"
+      [offset]="800"
+      [lazyLoad]="app.icon_url"
+      [defaultImage]="appImagePlaceholder"
+      [scrollTarget]="scrollTarget"
+      (onStateChange)="onLogoLoaded($event)"
+    >
+
+    <div class="logo-placeholder"></div>
+  </div>
+
+  <div
+    class="catalog"
+    [class.catalog-official]="app.catalog.id === officialCatalog"
+  >
+    {{ app.catalog.label | titlecase }}
+  </div>
+</div>
+
+<div class="right-column">
+  <div class="header">
+    <h3 class="name">{{ app.name }}</h3>
+    <div class="version">v{{ app.latest_version }}</div>
+  </div>
+
+  <div class="description">{{ description }}</div>
+
+  <div class="meta">
+    <div class="train">{{ 'Train: {train}' | translate: { train: app.catalog.train } }}</div>
+    <!-- TODO: Missing backend support -->
+    <!--    <div class="updated">{{ 'Updated: {date}' | translate: { date: 'TODO' } }}</div>-->
+  </div>
+</div>
