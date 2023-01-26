@@ -4,6 +4,7 @@ import {
   easing,
 } from 'popmotion';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
 import { ChangeDriveTrayColorEvent, ChangeDriveTrayOptions } from 'app/interfaces/events/enclosure-events.interface';
@@ -84,13 +85,11 @@ export class ChassisView {
     this.driveTrays = new PIXI.Container();
     this.events = new Subject<CoreEvent>();
 
-    this.events.subscribe((evt: CoreEvent) => {
-      switch (evt.name) {
-        case 'ChangeDriveTrayColor':
-          this.colorDriveTray((evt as ChangeDriveTrayColorEvent).data);
-          break;
-      }
-    });
+    this.events
+      .pipe(filter((event) => event.name === 'ChangeDriveTrayColor'))
+      .subscribe((evt: CoreEvent) => {
+        this.colorDriveTray((evt as ChangeDriveTrayColorEvent).data);
+      });
 
     // defaults
     this.rows = 6;
