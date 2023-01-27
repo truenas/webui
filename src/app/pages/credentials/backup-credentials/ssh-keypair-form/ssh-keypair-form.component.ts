@@ -86,7 +86,7 @@ export class SshKeypairFormComponent {
 
   onDownloadKey(keyType: 'private_key' | 'public_key'): void {
     const name = this.form.value.name;
-    const key = this.form.get(keyType).value;
+    const key = this.form.controls[keyType].value;
     const filename = `${name}_${keyType}_rsa`;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storage.downloadBlob(blob, filename);

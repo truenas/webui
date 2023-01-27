@@ -72,8 +72,8 @@ export class SmbFormComponent implements OnInit {
   purposeOptions$: Observable<Option[]>;
 
   get hasAddedAllowDenyHosts(): boolean {
-    const hostsallow = this.form.get('hostsallow').value;
-    const hostsdeny = this.form.get('hostsdeny').value;
+    const hostsallow = this.form.controls.hostsallow.value;
+    const hostsdeny = this.form.controls.hostsdeny.value;
     return (
       (this.isNew && hostsallow && hostsallow.length > 0)
       || (this.isNew && hostsdeny && hostsdeny.length > 0)
@@ -98,7 +98,7 @@ export class SmbFormComponent implements OnInit {
   }
 
   get isNewTimemachineShare(): boolean {
-    const timemachine = this.form.get('timemachine').value;
+    const timemachine = this.form.controls.timemachine.value;
     return (
       (this.isNew && timemachine)
       || timemachine !== this.existingSmbShare?.timemachine
@@ -106,7 +106,7 @@ export class SmbFormComponent implements OnInit {
   }
 
   get isNewHomeShare(): boolean {
-    const homeShare = this.form.get('home').value;
+    const homeShare = this.form.controls.home.value;
     return (
       (this.isNew && homeShare) || homeShare !== this.existingSmbShare?.home
     );
@@ -114,7 +114,7 @@ export class SmbFormComponent implements OnInit {
 
   get wasPathChanged(): boolean {
     return (
-      !this.isNew && this.form.get('path').value !== this.existingSmbShare?.path
+      !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path
     );
   }
 
@@ -179,60 +179,51 @@ export class SmbFormComponent implements OnInit {
   }
 
   setupAclControl(): void {
-    this.form
-      .get('acl')
+    this.form.controls.acl
       .valueChanges.pipe(debounceTime(100), untilDestroyed(this))
       .subscribe((acl) => {
-        this.checkAndShowStripAclWarning(this.form.get('path').value, acl);
+        this.checkAndShowStripAclWarning(this.form.controls.path.value, acl);
       });
   }
 
   setupMangleWarning(): void {
-    this.form
-      .get('aapl_name_mangling')
-      .valueChanges.pipe(
-        filter(
-          (value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew,
-        ),
-        take(1),
-        switchMap(() => this.dialog.confirm({
-          title: helptextSharingSmb.manglingDialog.title,
-          message: helptextSharingSmb.manglingDialog.message,
-          hideCheckBox: true,
-          buttonMsg: helptextSharingSmb.manglingDialog.action,
-          hideCancel: true,
-        })),
-        untilDestroyed(this),
-      )
+    this.form.controls.aapl_name_mangling.valueChanges.pipe(
+      filter(
+        (value) => value !== this.existingSmbShare?.aapl_name_mangling && !this.isNew,
+      ),
+      take(1),
+      switchMap(() => this.dialog.confirm({
+        title: helptextSharingSmb.manglingDialog.title,
+        message: helptextSharingSmb.manglingDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptextSharingSmb.manglingDialog.action,
+        hideCancel: true,
+      })),
+      untilDestroyed(this),
+    )
       .subscribe();
   }
 
   setupPathControl(): void {
-    this.form
-      .get('path')
-      .valueChanges.pipe(
-        debounceTime(50),
-        tap(() => this.setNameFromPath()),
-        untilDestroyed(this),
-      )
+    this.form.controls.path.valueChanges.pipe(
+      debounceTime(50),
+      tap(() => this.setNameFromPath()),
+      untilDestroyed(this),
+    )
       .subscribe((path) => {
-        this.checkAndShowStripAclWarning(path, this.form.get('acl').value);
+        this.checkAndShowStripAclWarning(path, this.form.controls.acl.value);
       });
   }
 
   setupAfpWarning(): void {
-    this.form
-      .get('afp')
-      .valueChanges.pipe(untilDestroyed(this))
+    this.form.controls.afp.valueChanges.pipe(untilDestroyed(this))
       .subscribe((value: boolean) => {
         this.afpConfirmEnable(value);
       });
   }
 
   setupPurposeControl(): void {
-    this.form
-      .get('purpose')
-      .valueChanges.pipe(untilDestroyed(this))
+    this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
       .subscribe((value: string) => {
         this.clearPresets();
         this.setValuesFromPreset(value);
@@ -273,6 +264,7 @@ export class SmbFormComponent implements OnInit {
     }
     Object.keys(this.presets[preset].params).forEach((param) => {
       this.presetFields.push(param as keyof SmbShare);
+      // eslint-disable-next-line no-restricted-syntax
       const ctrl = this.form.get(param);
       if (ctrl && param !== 'auxsmbconf') {
         ctrl.setValue(this.presets[preset].params[param as keyof SmbShare]);
@@ -294,13 +286,11 @@ export class SmbFormComponent implements OnInit {
           value: presetName,
         }));
         this.purposeOptions$ = of(options);
-        this.form
-          .get('purpose')
-          .setValue(
-            this.isNew
-              ? SmbPresetType.DefaultShareParameters
-              : this.existingSmbShare?.purpose,
-          );
+        this.form.controls.purpose.setValue(
+          this.isNew
+            ? SmbPresetType.DefaultShareParameters
+            : this.existingSmbShare?.purpose,
+        );
         this.cdr.markForCheck();
         return of(null);
       }),
@@ -316,7 +306,7 @@ export class SmbFormComponent implements OnInit {
       )
       .subscribe((shareNames) => {
         this.namesInUse = ['global', ...shareNames];
-        this.form.get('name').setValidators(forbiddenValues(this.namesInUse));
+        this.form.controls.name.setValidators(forbiddenValues(this.namesInUse));
       });
   }
 
@@ -335,6 +325,7 @@ export class SmbFormComponent implements OnInit {
 
   clearPresets(): void {
     for (const item of this.presetFields) {
+      // eslint-disable-next-line no-restricted-syntax
       this.form.get(item).enable();
     }
     this.presetFields = [];
@@ -354,7 +345,7 @@ export class SmbFormComponent implements OnInit {
     if (!value) {
       return;
     }
-    const afpControl = this.form.get('afp');
+    const afpControl = this.form.controls.afp;
     this.dialog
       .confirm({
         title: helptextSharingSmb.afpDialog_title,
@@ -413,7 +404,7 @@ export class SmbFormComponent implements OnInit {
                 hideCheckBox: true,
               }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
                 if (isConfigure) {
-                  const homeShare = this.form.get('home').value;
+                  const homeShare = this.form.controls.home.value;
                   this.router.navigate(
                     ['/', 'datasets', 'acl', 'edit'],
                     { queryParams: { homeShare, path: smbShareResponse.path_local } },
@@ -487,12 +478,12 @@ export class SmbFormComponent implements OnInit {
   };
 
   shouldRedirectToAclEdit(): Observable<boolean> {
-    const sharePath: string = this.form.get('path').value;
+    const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
     return this.ws.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
         return of(
-          stat.acl !== this.form.get('acl').value && datasetId.includes('/'),
+          stat.acl !== this.form.controls.acl.value && datasetId.includes('/'),
         );
       }),
     );
