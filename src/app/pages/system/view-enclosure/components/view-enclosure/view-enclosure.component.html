@@ -37,7 +37,7 @@
 
       <ng-container *ngIf="supportedHardware">
         <div
-          *ngIf="!system.platform.includes('MINI'); else mini"
+          *ngIf="system.isRackmount; else mini"
           class="enclosure-disks-wrapper"
         >
           <ix-enclosure-disks
