@@ -325,11 +325,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(border-color, --primary, $primary);
   }
 
-  .headerCheckBox .mat-mdc-checkbox-frame,
-  .ngx-datatable .datatable-body .mat-mdc-checkbox-frame {
-    @include variable(border-color, --alt-fg1, $alt-fg1, !important);
-  }
-
   .mat-expansion-indicator::after,
   button.card-close,
   .mat-pseudo-checkbox {
@@ -830,16 +825,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border: none;
   }
 
-
   .mat-mdc-checkbox.mat-mdc-checkbox-disabled * {
     cursor: not-allowed;
-  }
-
-  .mat-mdc-checkbox.mat-mdc-checkbox-disabled .mat-mdc-checkbox-background,
-  .mat-mdc-checkbox.mat-mdc-checkbox-checked.mat-mdc-checkbox-disabled .mat-mdc-checkbox-background {
-    @include variable(background, --grey, #4d4d4d, !important);
-    @include variable(border-color, --grey, #4d4d4d, !important);
-    border: solid 2px;
   }
 
   .form-selection-list {
