@@ -28,6 +28,7 @@ describe('ServiceSshComponent', () => {
       mockWebsocket([
         mockCall('ssh.config', {
           tcpport: 22,
+          adminlogin: false,
           rootlogin: true,
           passwordauth: true,
           kerberosauth: false,
@@ -44,6 +45,7 @@ describe('ServiceSshComponent', () => {
           macvtap0: 'macvtap0',
         }),
         mockCall('ssh.update'),
+        mockCall('user.query', []),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
@@ -108,9 +110,10 @@ describe('ServiceSshComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
+    expect(ws.call).toHaveBeenLastCalledWith('ssh.update', [{
       // New basic options
       tcpport: 23,
+      adminlogin: false,
       rootlogin: false,
       passwordauth: false,
       kerberosauth: true,
@@ -143,10 +146,11 @@ describe('ServiceSshComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
+    expect(ws.call).toHaveBeenLastCalledWith('ssh.update', [{
       // Old basic options
       kerberosauth: false,
       passwordauth: true,
+      adminlogin: false,
       rootlogin: true,
       tcpfwd: false,
       tcpport: 22,
