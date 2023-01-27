@@ -21,6 +21,7 @@ class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
     name_Textarea = '//div[@id="name"]//textarea'
     share_Type_Select = '//mat-select[@ix-auto="select__Share Type"]'
+    share_Type_Select_Text = '//mat-select[@ix-auto="select__Share Type"]//span[contains(@class,"mat-select-min-line")]'
     share_Type_SMB_Option = '//mat-option[@ix-auto="option__Share Type_SMB"]'
 
 
@@ -36,6 +37,13 @@ class add_Kerberos_Keytab:
     title = '//h3[text()="Add Kerberos Keytab"]'
     name_Input = '//ix-input[@formcontrolname="name"]//input'
     file_input = '//ix-file-input[@formcontrolname="file"]//input'
+
+
+class add_NFS:
+    title = '//h3[text()="Add NFS Share"]'
+    path_Input = '//ix-explorer[@formcontrolname="path"]//input'
+    mapall_User_Combobox = '//ix-combobox[@formcontrolname="mapall_user"]//input'
+    mapall_Group_Combobox = '//ix-combobox[@formcontrolname="mapall_group"]//input'
 
 
 class add_User:
@@ -281,6 +289,14 @@ class edit_Encryption:
     confirm_Checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
 
 
+class edit_Permissions:
+    title = '//h1[text()="Edit Permissions"]'
+    user_Combobox = '//ix-combobox[@formcontrolname="user"]//input'
+    user_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply User")]'
+    group_Combobox = '//ix-combobox[@formcontrolname="group"]//input'
+    group_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
+
+
 class error:
     def message_Text(message):
         return f'//mat-error[contains(.,"{message}")]'
@@ -373,10 +389,12 @@ class popup:
     smb_Restart_Title = '//h3[text()="Restart SMB Service"]'
     smb_Restart_Button = '//button[contains(*/text(),"Restart Service")]'
     smb_Start_Title = '//h1[text()="Start SMB Service"]'
+    enable_Service_Title = '//h1[text()="Enable service"]'
     enable_Service_Button = '//button[contains(*/text(),"Enable Service")]'
     please_Wait = '//h6[contains(.,"Please wait")]'
     active_Directory = '//h1[text()="Active Directory"]'
     warning = '//h1[contains(.,"Warning")]'
+    saving_Permissions = '//h1[text()="Saving Permissions"]'
     updatin_Acl = '//h1[text()="Updating ACL"]'
     setting_Ldap = '//h1[text()="Setting up LDAP"]'
     configuring = '//h1[contains(.,"Configuring...")]'
@@ -390,12 +408,27 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
+    nfs_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
+    nfs_Service_Button = '//tr[contains(.,"SSH")]//button'
+    nfs_Service_Name = '//td[contains(text(),"SSH")]'
     smb_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
     smb_Service_Name = '//td[contains(text(),"SMB")]'
     smb_Service_Button = '//tr[contains(.,"SMB")]//button'
-    ssh_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
-    ssh_Service_Button = '//tr[contains(.,"SSH")]//button'
-    ssh_Service_Name = '//td[contains(text(),"SSH")]'
+
+
+
+class sharing:
+    title = '//h1[text()="Sharing"]'
+    smb_Panel_Title = '//a[contains(text(),"Windows (SMB) Shares")]'
+    smb_Add_Button = '//span[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]'
+    smb_Service_Status = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
+
+    nfs_Panel_Title = '//a[contains(text(),"UNIX (NFS) Shares")]'
+    nfs_Add_Button = '//span[contains(.,"UNIX (NFS) Shares")]//button[contains(.,"Add")]'
+    nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
+
+    def smb_Share_Name(share_name):
+        return f'//div[contains(text(),"{share_name}")]'
 
 
 class side_Menu:
@@ -414,16 +447,6 @@ class side_Menu:
     network = '//mat-list-item[@ix-auto="option__Network"]'
     storage = '//mat-list-item[@ix-auto="option__Storage"]'
     apps = '//mat-list-item[@ix-auto="option__Apps"]'
-
-
-class sharing:
-    title = '//h1[text()="Sharing"]'
-    smb_Panel_Title = '//a[contains(text(),"Windows (SMB) Shares")]'
-    smb_Add_Button = '//span[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]'
-    smb_Service_Status = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
-
-    def smb_Share_Name(share_name):
-        return f'//div[contains(text(),"{share_name}")]'
 
 
 class smb:
