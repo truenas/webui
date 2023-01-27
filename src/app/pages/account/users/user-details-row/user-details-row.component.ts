@@ -36,16 +36,31 @@ export class UserDetailsRowComponent {
   ) {}
 
   getDetails(user: User): Option[] {
-    return [
+    const details = [
       { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
       { label: this.translate.instant('Home Directory'), value: user.home },
       { label: this.translate.instant('Shell'), value: user.shell },
       { label: this.translate.instant('Email'), value: user.email },
       { label: this.translate.instant('Password Disabled'), value: user.password_disabled.toString() },
       { label: this.translate.instant('Lock User'), value: user.locked.toString() },
-      { label: this.translate.instant('Permit Sudo'), value: user.sudo.toString() },
       { label: this.translate.instant('Samba Authentication'), value: user.smb.toString() },
     ];
+
+    if (user.sudo_commands.length > 0) {
+      details.push({
+        label: this.translate.instant('Allowed Sudo Commands'),
+        value: user.sudo_commands.join(', '),
+      });
+    }
+
+    if (user.sudo_commands_nopasswd.length > 0) {
+      details.push({
+        label: this.translate.instant('Allowed Sudo Commands (No Password)'),
+        value: user.sudo_commands_nopasswd.join(', '),
+      });
+    }
+
+    return details;
   }
 
   doEdit(user: User): void {
