@@ -825,6 +825,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border: none;
   }
 
+  .mat-mdc-checkbox .mdc-checkbox__ripple {
+    background-color: var(--primary);
+  }
+
   .mat-mdc-checkbox.mat-mdc-checkbox-disabled * {
     cursor: not-allowed;
   }
