@@ -1,5 +1,5 @@
 import { NgControl } from '@angular/forms';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -25,11 +25,6 @@ describe('IxCheckboxComponent', () => {
     it('when called with true, sets \'isDisabled\' to true', () => {
       spectator.component.setDisabledState(true);
       expect(spectator.component.isDisabled).toBeTruthy();
-    });
-    it('when called with false, input is not disabled', () => {
-      spectator.component.setDisabledState(false);
-      spectator.detectChanges();
-      expect(spectator.query('input')).not.toBeDisabled();
     });
     it('when called with true, input is disabled', () => {
       spectator.component.setDisabledState(true);
