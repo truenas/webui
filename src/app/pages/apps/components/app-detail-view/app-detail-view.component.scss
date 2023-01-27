@@ -51,6 +51,17 @@ $app-image-size: 160px;
 .screenshot {
   position: relative;
 
+
+  ix-icon {
+    display: inline-flex;
+    height: 1.5rem;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 7rem;
+  }
+
   .screenshot-image {
     display: block;
     height: auto;
@@ -75,14 +86,16 @@ $app-image-size: 160px;
   background-color: var(--bg2);
   margin-bottom: 1rem;
   max-width: 320px;
-  min-width: 320px;
-  padding: 2rem;
+  padding: 1rem;
+  width: 100%;
+
+  h3 {
+    margin-bottom: 1rem;
+  }
 }
 
 .app-info-cards {
-  position: absolute;
-  right: 0;
-  top: 0;
+  padding: 1rem;
 }
 
 section {
