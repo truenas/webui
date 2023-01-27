@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import pytest
 import reusableSeleniumCode as rsc
@@ -264,7 +264,9 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
     assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
-    assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 5, xpaths.popup.please_Wait)
+    # sleep 5 second to let the changes to take effect
+    time.sleep(5)
 
 
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
@@ -433,8 +435,8 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     time.sleep(2)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')
