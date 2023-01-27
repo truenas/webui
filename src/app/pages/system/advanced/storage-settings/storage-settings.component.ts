@@ -18,6 +18,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -36,7 +37,11 @@ export class StorageSettingsComponent {
 
   form = this.fb.group({
     pool: ['', Validators.required],
-    swapondrive: ['', Validators.required],
+    swapondrive: ['', [
+      Validators.required,
+      this.ixValidator.withMessage(Validators.min(0), this.translate.instant('Minimum value is 0')),
+      this.ixValidator.withMessage(Validators.pattern('^[0-9]*$'), this.translate.instant('Only integers allowed')),
+    ]],
   });
 
   readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
@@ -47,6 +52,7 @@ export class StorageSettingsComponent {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
+    private ixValidator: IxValidatorsService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
@@ -56,7 +62,6 @@ export class StorageSettingsComponent {
 
   onSubmit(): void {
     const values = this.form.value;
-
     const { pool } = values;
     const { swapondrive } = values;
     this.confirmSmbRestartIfNeeded().pipe(

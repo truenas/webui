@@ -23,10 +23,14 @@ export interface HighlightDiskEvent {
 export interface ChangeDriveTrayColorEvent {
   name: 'ChangeDriveTrayColor';
   sender: unknown;
-  data: {
-    id: string;
-    color: string;
-  };
+  data: ChangeDriveTrayOptions;
+}
+
+export interface ChangeDriveTrayOptions {
+  id: string;
+  color: string;
+  enclosure?: number;
+  slot?: number;
 }
 
 export interface EnclosureCanvasEvent {

@@ -30,6 +30,7 @@ import {
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
 import {
   Bootenv,
@@ -326,6 +327,9 @@ export type ApiDirectory = {
   'auth.two_factor_auth': { params: void; response: boolean };
   'auth.twofactor.renew_secret': { params: void; response: boolean };
   'auth.twofactor.config': { params: void; response: TwoFactorConfig };
+  'auth.sessions': { params: void; response: AuthSession[] };
+  'auth.terminate_session': { params: [id: string]; response: void };
+  'auth.terminate_other_sessions': { params: void; response: void };
 
   // Boot
   'boot.set_scrub_interval': { params: [number]; response: number };

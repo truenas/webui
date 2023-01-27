@@ -7,7 +7,7 @@
 
 .disk-ui-name,
 .disk-ui-type {
-  background: var(--black);
+  background: #000;
   color: var(--white);
   font-size: 12px;
   padding: 2px 0;
@@ -23,7 +23,9 @@
 
 .disk-ui-icon .mat-icon {
   font-size: 52px;
+  height: auto;
   left: -2px;
   position: relative;
-  top: -1px;
+  top: 4px;
+  width: auto;
 }

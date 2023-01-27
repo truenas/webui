@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, finalize } from 'rxjs/operators';
+import { filter, finalize, take } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -40,7 +40,7 @@ import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
@@ -63,7 +63,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   haDisabledReasons: FailoverDisabledReason[] = [];
   isFailoverLicensed = false;
   upgradeWaitingToFinish = false;
-  pendingUpgradeChecked = false;
   hostname: string;
   checkinRemaining: number;
   checkinInterval: Interval;
@@ -113,6 +112,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
+      this.listenForUpgradePendingState();
 
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isFailoverLicensed = isHaLicensed;
@@ -346,14 +346,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
-    if (info.hasHa) {
-      this.haStatusText = helptext.ha_status_text_enabled;
-      if (!this.pendingUpgradeChecked) {
-        this.checkUpgradePending();
-      }
-    } else {
-      this.haStatusText = helptext.ha_status_text_disabled;
-    }
+    this.haStatusText = info.hasHa ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
   }
 
   getHaStatus(): void {
@@ -387,16 +380,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     } else {
       this.dialogService.info(haStatus, reasons, true);
     }
-  }
-
-  checkUpgradePending(): void {
-    this.pendingUpgradeChecked = true;
-    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((isUpgradePending) => {
-      this.upgradeWaitingToFinish = isUpgradePending;
-      if (isUpgradePending) {
-        this.upgradePendingDialog();
-      }
-    });
   }
 
   upgradePendingDialog(): void {
@@ -445,5 +428,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   openIx(): void {
     this.window.open('https://www.ixsystems.com/', '_blank');
+  }
+
+  private listenForUpgradePendingState(): void {
+    this.store$.select(selectIsUpgradePending).pipe(filter(Boolean), take(1), untilDestroyed(this)).subscribe(() => {
+      this.upgradeWaitingToFinish = true;
+      this.upgradePendingDialog();
+    });
   }
 }
