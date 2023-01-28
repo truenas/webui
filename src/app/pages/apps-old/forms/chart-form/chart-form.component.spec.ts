@@ -444,7 +444,7 @@ describe('ChartFormComponent', () => {
     spectator.component.setChartEdit(existingChartEditWithImmutable);
     spectator.detectComponentChanges();
 
-    expect(spectator.component.form.get('timezone').disabled).toBeTruthy();
+    expect(spectator.component.form.controls.timezone.disabled).toBeTruthy();
   });
 
   it('editing when form is submitted', () => {

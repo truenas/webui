@@ -31,7 +31,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
   unusedDisks: UnusedDisk[] = [];
 
   dev = {
-    fcName: 'dev',
+    fcName: 'dev' as const,
     label: this.translate.instant(helptextSystemBootenv.dev_placeholder),
     tooltip: this.translate.instant(helptextSystemBootenv.dev_tooltip),
     options: of([]),
@@ -78,7 +78,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
   }
 
   setupWarningForExportedPools(): void {
-    this.form.get(this.dev.fcName).valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls[this.dev.fcName].valueChanges.pipe(untilDestroyed(this)).subscribe(
       this.warnForExportedPools.bind(this),
     );
   }

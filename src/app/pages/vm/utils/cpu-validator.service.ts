@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  AbstractControl, ValidationErrors,
+  AbstractControl, FormGroup, ValidationErrors,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -31,10 +31,10 @@ export class CpuValidatorService {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return maximumCpus$.pipe(
         map((maxVcpus) => {
-          const form = control.parent;
-          const vcpus = form.get('vcpus').value as number;
-          const cores = form.get('cores').value as number;
-          const threads = form.get('threads').value as number;
+          const form = control.parent as FormGroup;
+          const vcpus = form.controls.vcpus.value as number;
+          const cores = form.controls.cores.value as number;
+          const threads = form.controls.threads.value as number;
 
           const hasError = vcpus * cores * threads > maxVcpus;
           if (!hasError) {

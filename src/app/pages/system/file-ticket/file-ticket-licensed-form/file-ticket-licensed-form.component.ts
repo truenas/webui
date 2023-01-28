@@ -103,7 +103,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = false;
 
-    this.form.get('screenshot').valueChanges.pipe(
+    this.form.controls.screenshot.valueChanges.pipe(
       switchMap((screenshots) => this.fileUpload.validateScreenshots(screenshots)),
       catchError((error: WebsocketError) => {
         this.errorHandler.handleWsFormError(error, this.form);
@@ -117,9 +117,9 @@ export class FileTicketLicensedFormComponent implements OnInit {
       this.screenshots = validScreenshots;
       if (invalidFiles.length) {
         const message = invalidFiles.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-        this.form.get('screenshot').setErrors({ ixManualValidateError: { message } });
+        this.form.controls.screenshot.setErrors({ ixManualValidateError: { message } });
       } else {
-        this.form.get('screenshot').setErrors(null);
+        this.form.controls.screenshot.setErrors(null);
       }
       this.cdr.markForCheck();
     });

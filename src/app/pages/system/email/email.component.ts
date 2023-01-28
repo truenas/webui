@@ -88,7 +88,7 @@ export class EmailComponent implements OnInit {
   ) {}
 
   get hasSmtpAuthentication(): boolean {
-    return this.form.get('smtp').value;
+    return this.form.controls.smtp.value;
   }
 
   get isSmtp(): boolean {
