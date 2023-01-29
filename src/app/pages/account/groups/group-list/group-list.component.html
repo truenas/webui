@@ -58,12 +58,12 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="sudo">
+    <ng-container matColumnDef="sudo_commands">
       <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Permit Sudo' | translate }}
+        {{ 'Allows sudo commands' | translate }}
       </th>
       <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.sudo }}
+        {{ group.sudo_commands.length || group.sudo_commands_nopasswd.length ? ('Yes' | translate) : ('No' | translate) }}
       </td>
     </ng-container>
 

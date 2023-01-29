@@ -15,8 +15,7 @@ export interface User {
   smb: boolean;
   password_disabled: boolean;
   locked: boolean;
-  sudo: boolean;
-  sudo_nopasswd: boolean;
+  sudo_commands_nopasswd: string[];
   sudo_commands: string[];
   attributes: {
     preferences: Preferences;
@@ -59,8 +58,7 @@ export interface UserUpdate {
   password_disabled?: boolean;
   locked?: boolean;
   smb?: boolean;
-  sudo?: boolean;
-  sudo_nopasswd?: boolean;
+  sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
   sshpubkey?: string;
   groups?: number[];
