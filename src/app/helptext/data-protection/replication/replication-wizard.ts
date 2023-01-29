@@ -48,7 +48,7 @@ export default {
  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for \
  snapshot storage.'),
 
-  sudo_tooltip: T('Controls whether the user used for SSH/SSH+NETCAT replication should use sudo to execute zfs commands on the remote host.\
+  sudo_tooltip: T('Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.\
     If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
 
   recursive_placeholder: T('Recursive'),
