@@ -362,10 +362,11 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 }
 
 .login-form .form-element.username .mat-form-field-prefix {
-  top: -6px;
+  top: -4px;
 }
 
-.login-form .form-element.username .mat-form-field-flex {
+.login-form .form-element.username .mat-form-field-flex,
+.login-form .form-element.otp .mat-form-field-flex {
   align-items: flex-start;
   position: relative;
   top: -2px;
