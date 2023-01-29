@@ -47,8 +47,5 @@ export default {
  using password-based services until this option is unset. Locking an \
  account is only possible when <b>Disable Password</b> is <i>No</i> and \
  a <b>Password</b> has been created for the account.'),
-  user_form_sudo_tooltip: T('Give this user permission to use <a \
- href="https://www.sudo.ws/" target="_blank">sudo</a>. When using sudo, \
- a user is prompted for their account <b>Password</b>.'),
   user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.'),
 };
