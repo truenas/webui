@@ -67,6 +67,8 @@ export class GroupFormComponent {
    * @param group Skip argument to add new group.
    */
   setupForm(group?: Group): void {
+    this.setFormRelations();
+
     this.editingGroup = group;
     if (this.isNew) {
       this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
@@ -90,8 +92,6 @@ export class GroupFormComponent {
       });
       this.setNamesInUseValidator(this.editingGroup.group);
     }
-
-    this.setFormRelations();
   }
 
   private setNamesInUseValidator(currentName?: string): void {
