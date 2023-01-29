@@ -145,7 +145,7 @@ export class UserFormComponent {
       this.form.controls.sshpubkey.setValue(key);
     });
 
-    this.form.get('password_conf').addValidators(
+    this.form.controls.password_conf.addValidators(
       this.validatorsService.withMessage(
         matchOtherValidator('password'),
         this.translate.instant(this.isNewUser ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
@@ -235,14 +235,14 @@ export class UserFormComponent {
   }
 
   onDownloadSshPublicKey(): void {
-    const name = this.form.get('username').value;
-    const key = this.form.get('sshpubkey').value;
+    const name = this.form.controls.username.value;
+    const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
   getUsernameHint(): string {
-    if (this.form.get('username')?.value?.length > 8) {
+    if (this.form.controls.username?.value?.length > 8) {
       return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
     }
     return null;
@@ -256,9 +256,9 @@ export class UserFormComponent {
     this.detectFullNameChanges();
 
     this.subscriptions.push(
-      this.form.get('password').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_conf').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
+      this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
     );
   }
 
@@ -283,27 +283,27 @@ export class UserFormComponent {
       username: user.username,
     });
 
-    this.form.get('uid').disable();
-    this.form.get('group_create').disable();
+    this.form.controls.uid.disable();
+    this.form.controls.group_create.disable();
 
     if (user.immutable) {
-      this.form.get('group').disable();
-      this.form.get('home_mode').disable();
-      this.form.get('home').disable();
-      this.form.get('username').disable();
+      this.form.controls.group.disable();
+      this.form.controls.home_mode.disable();
+      this.form.controls.home.disable();
+      this.form.controls.username.disable();
     }
 
     this.setNamesInUseValidator(user.username);
   }
 
   private detectFullNameChanges(): void {
-    this.form.get('full_name').valueChanges.pipe(
+    this.form.controls.full_name.valueChanges.pipe(
       map((fullName) => this.getUserName(fullName)),
       filter((username) => !!username),
       untilDestroyed(this),
     ).subscribe((username) => {
       this.form.patchValue({ username });
-      this.form.get('username').markAsTouched();
+      this.form.controls.username.markAsTouched();
     });
   }
 
@@ -317,7 +317,7 @@ export class UserFormComponent {
       switchMap((homeSharePath) => {
         this.form.patchValue({ home: homeSharePath });
 
-        return combineLatest([of(homeSharePath), this.form.get('username').valueChanges]);
+        return combineLatest([of(homeSharePath), this.form.controls.username.valueChanges]);
       }),
       untilDestroyed(this),
     ).subscribe(([homeSharePath, username]) => {
@@ -347,7 +347,7 @@ export class UserFormComponent {
       if (currentName) {
         forbiddenNames = _.remove(forbiddenNames, currentName);
       }
-      this.form.get('username').addValidators(forbiddenValues(forbiddenNames));
+      this.form.controls.username.addValidators(forbiddenValues(forbiddenNames));
     });
   }
 

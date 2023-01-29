@@ -84,8 +84,8 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.toPool.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === AddToPoolType.New) {
-        this.form.get('pool').reset();
-        this.form.get('pool').setErrors(null);
+        this.form.controls.pool.reset();
+        this.form.controls.pool.setErrors(null);
       }
       this.cdr.detectChanges();
     });

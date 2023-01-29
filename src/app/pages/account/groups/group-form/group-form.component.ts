@@ -79,7 +79,7 @@ export class GroupFormComponent {
       });
       this.setNamesInUseValidator();
     } else {
-      this.form.get('gid').disable();
+      this.form.controls.gid.disable();
       this.form.patchValue({
         gid: group.gid,
         name: group.group,
@@ -100,7 +100,7 @@ export class GroupFormComponent {
       if (currentName) {
         forbiddenNames = _.remove(forbiddenNames, currentName);
       }
-      this.form.get('name').addValidators(forbiddenValues(forbiddenNames));
+      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
     });
   }
 
