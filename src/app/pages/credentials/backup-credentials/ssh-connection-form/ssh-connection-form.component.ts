@@ -57,6 +57,7 @@ export class SshConnectionFormComponent {
       (control) => control.parent && !this.isManualSetup,
       Validators.required,
     )],
+    sudo: [false],
     otp_token: [''],
     private_key: [null as (number | typeof generateNewKeyValue), Validators.required],
 
@@ -119,6 +120,10 @@ export class SshConnectionFormComponent {
       value: CipherType.Disabled,
     },
   ]);
+
+  readonly isNotRootUsername$ = this.form.get('username').valueChanges.pipe(
+    map((username) => username !== 'root'),
+  );
 
   readonly helptext = helptext;
 
@@ -236,6 +241,7 @@ export class SshConnectionFormComponent {
         otp_token: values.otp_token,
         connect_timeout: values.connect_timeout,
         cipher: values.cipher,
+        sudo: values.sudo,
       };
     }
 

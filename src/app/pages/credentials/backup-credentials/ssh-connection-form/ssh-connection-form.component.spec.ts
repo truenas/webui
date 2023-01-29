@@ -165,6 +165,10 @@ describe('SshConnectionFormComponent', () => {
 
       Cipher: 'Fast',
     });
+    await form.fillForm({
+      'Use Sudo For Zfs Commands': true,
+    });
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
@@ -183,6 +187,7 @@ describe('SshConnectionFormComponent', () => {
         url: 'https://truenas.com',
         username: 'john',
         admin_username: 'admin',
+        sudo: true,
       },
     }]);
   });
@@ -237,6 +242,7 @@ describe('SshConnectionFormComponent', () => {
         url: 'https://truenas.com',
         username: 'root',
         admin_username: 'root',
+        sudo: false,
       },
     }]);
   });
