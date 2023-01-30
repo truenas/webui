@@ -166,7 +166,7 @@ describe('SshConnectionFormComponent', () => {
       Cipher: 'Fast',
     });
     await form.fillForm({
-      'Use Sudo For Zfs Commands': true,
+      'Enable passwordless sudo for zfs commands': true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

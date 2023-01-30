@@ -24,8 +24,7 @@ export default {
   username_placeholder: T('Username'),
   username_tooltip: T('Username on the remote system which will be used to login <b>via SSH</b>.'),
 
-  sudo_tooltip: T('Controls whether the user used for SSH/SSH+NETCAT replication should use sudo to execute zfs commands on the remote host.\
-    Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.\
+  sudo_tooltip: T('Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.\
     If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
 
   private_key_placeholder: T('Private Key'),

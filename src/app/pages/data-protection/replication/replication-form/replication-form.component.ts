@@ -20,7 +20,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import globalHelptext from 'app/helptext/global-helptext';
-import sshHelptext from 'app/helptext/system/ssh-connections';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
@@ -134,7 +133,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           type: 'checkbox',
           name: 'sudo',
           placeholder: this.translate.instant('Use Sudo For Zfs Commands'),
-          tooltip: sshHelptext.sudo_tooltip,
+          tooltip: repwizardhelptext.sudo_tooltip,
           relation: [
             {
               action: RelationAction.Hide,
