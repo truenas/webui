@@ -21,6 +21,13 @@
         ></ix-checkbox>
 
         <ix-checkbox
+          *ngIf="hasAdminUsers$ | async"
+          formControlName="adminlogin"
+          [label]="'Log in as Admin with Password' | translate"
+          [tooltip]="tooltips.rootlogin | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
           formControlName="passwordauth"
           [label]="'Allow Password Authentication' | translate"
           [tooltip]="tooltips.passwordauth | translate"

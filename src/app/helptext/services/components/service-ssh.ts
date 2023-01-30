@@ -10,6 +10,9 @@ export default {
   ssh_rootlogin_tooltip: T('<b>Root logins are discouraged.</b> Allows root \
  logins. A password must be set for the <i>root</i> user account.'),
 
+  ssh_adminlogin_tooltip: T('<b>Admin logins are discouraged.</b> Allows admin \
+ logins. A password must be set for the <i>admin</i> user account.'),
+
   ssh_passwordauth_tooltip: T('Enabling allows using a password to authenticate \
  the SSH login. <i>Warning:</i> when directory services are enabled, allowing password \
  authentication can grant access to all users imported by the directory service.<br> \
