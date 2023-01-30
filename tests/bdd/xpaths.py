@@ -408,10 +408,11 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
+    nfs_Service_Checkbox = '//tr[contains(.,"NFS")]//mat-checkbox'
     nfs_Service_Toggle = '//tr[contains(.,"NFS")]//mat-slide-toggle'
     nfs_Service_Button = '//tr[contains(.,"NFS")]//button'
     nfs_Service_Name = '//td[contains(text(),"NFS")]'
-    smb_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
+    smb_Service_Toggle = '//tr[contains(.,"SMB")]//mat-slide-toggle'
     smb_Service_Name = '//td[contains(text(),"SMB")]'
     smb_Service_Button = '//tr[contains(.,"SMB")]//button'
     ssh_Service_Toggle = '//tr[contains(.,"SSH")]//mat-slide-toggle'
