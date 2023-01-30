@@ -930,7 +930,7 @@
   "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but has the greatest impact on  connection speed.</li><br>  <li><i>Fast</i> is less secure than <i>Standard</i> but can give  reasonable transfer rates for devices with limited cryptographic speed.</li><br>  <li><i>Disabled</i> removes all security in favor of maximizing  connection speed. Disabling the security should only be used within a  secure, trusted network.</li></ul>": "Verbindingsbeveiligingsniveau:<br> <ul><li><i>Standaard</i> is het veiligst maar heeft de grootste invloed op de verbindingssnelheid.</li><br> <li><i>Snel</i> is minder veilig dan <i>Standaard</i> maar kan redelijke overdrachtssnelheden geven voor apparaten met beperkte cryptografische snelheid.</li><br> <li><i>Uitgeschakeld</i> verwijdert alle beveiliging ten gunste van verbindingssnelheid om die te maximaliseren. Het uitschakelen van de beveiliging mag alleen worden gebruikt binnen een veilig, vertrouwd netwerk.</li></ul>",
   "Connections": "Verbindingen",
   "Console": "Console",
-  "Console Keyboard Map": "Toetsenbordindeling console",
+  "Console Keyboard Map": "Toetsenbordindeling",
   "Console Port": "Console-poort",
   "Contact": "Contactpersoon",
   "Container": "Container",
