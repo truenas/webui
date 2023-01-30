@@ -51,7 +51,7 @@ export class FileTicketFormComponent implements OnInit {
   readonly acceptedFiles = ticketAcceptedFiles;
   readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
-    tap((options) => this.form.get('category').setDisable(!options.length)),
+    tap((options) => this.form.controls.category.setDisable(!options.length)),
   );
   tooltips = {
     token: helptext.token.tooltip,
@@ -80,21 +80,21 @@ export class FileTicketFormComponent implements OnInit {
     private dialog: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.form.get('category').setDisable(true);
+    this.form.controls.category.setDisable(true);
     this.restoreToken();
   }
 
   ngOnInit(): void {
     this.isFormLoading$.next(false);
 
-    this.form.get('token').value$.pipe(
+    this.form.controls.token.value$.pipe(
       filter((token) => !!token),
       untilDestroyed(this),
     ).subscribe((token) => {
       this.sysGeneralService.setTokenForJira(token);
     });
 
-    this.form.get('screenshot').valueChanges.pipe(
+    this.form.controls.screenshot.valueChanges.pipe(
       switchMap((screenshots) => this.fileUpload.validateScreenshots(screenshots)),
       catchError((error: WebsocketError) => {
         this.errorHandler.handleWsFormError(error, this.form);
@@ -108,16 +108,16 @@ export class FileTicketFormComponent implements OnInit {
       this.screenshots = validScreenshots;
       if (invalidFiles.length) {
         const message = invalidFiles.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-        this.form.get('screenshot').setErrors({ ixManualValidateError: { message } });
+        this.form.controls.screenshot.setErrors({ ixManualValidateError: { message } });
       } else {
-        this.form.get('screenshot').setErrors(null);
+        this.form.controls.screenshot.setErrors(null);
       }
       this.cdr.markForCheck();
     });
   }
 
   getCategories(): Observable<Option[]> {
-    return this.form.get('token').value$.pipe(
+    return this.form.controls.token.value$.pipe(
       filter((token) => !!token),
       debounceTime(300),
       switchMap((token) => this.ws.call('support.fetch_categories', [token])),

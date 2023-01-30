@@ -148,27 +148,27 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   get isVlan(): boolean {
-    return this.form.get('type').value === NetworkInterfaceType.Vlan;
+    return this.form.controls.type.value === NetworkInterfaceType.Vlan;
   }
 
   get isBridge(): boolean {
-    return this.form.get('type').value === NetworkInterfaceType.Bridge;
+    return this.form.controls.type.value === NetworkInterfaceType.Bridge;
   }
 
   get isLag(): boolean {
-    return this.form.get('type').value === NetworkInterfaceType.LinkAggregation;
+    return this.form.controls.type.value === NetworkInterfaceType.LinkAggregation;
   }
 
   get isLacpLag(): boolean {
-    return this.form.get('lag_protocol').value === LinkAggregationProtocol.Lacp;
+    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.Lacp;
   }
 
   get isFailover(): boolean {
-    return this.form.get('lag_protocol').value === LinkAggregationProtocol.Failover;
+    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.Failover;
   }
 
   get isLoadBalanceLag(): boolean {
-    return this.form.get('lag_protocol').value === LinkAggregationProtocol.LoadBalance;
+    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.LoadBalance;
   }
 
   get canHaveAliases(): boolean {
