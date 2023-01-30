@@ -20,14 +20,16 @@ const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,
-  sudo: true,
+  sudo_commands: [],
+  sudo_commands_nopasswd: [],
   smb: true,
   users: [1],
 }, {
   group: 'fake',
   gid: 1001,
   builtin: true,
-  sudo: true,
+  sudo_commands: ['ls'],
+  sudo_commands_nopasswd: [],
   smb: true,
   users: [2],
 }] as Group[];
@@ -88,9 +90,9 @@ describe('GroupListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedRows = [
-      ['Group', 'GID', 'Builtin', 'Permit Sudo', 'Samba Authentication', ''],
-      ['mock', '1000', 'true', 'true', 'true', 'expand_more'],
-      ['fake', '1001', 'true', 'true', 'true', 'expand_more'],
+      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', ''],
+      ['mock', '1000', 'true', 'No', 'true', 'expand_more'],
+      ['fake', '1001', 'true', 'Yes', 'true', 'expand_more'],
     ];
 
     expect(cells).toEqual(expectedRows);

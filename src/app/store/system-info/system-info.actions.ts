@@ -35,3 +35,8 @@ export const haSettingsUpdated = createAction(
 export const passiveNodeReplaced = createAction(
   '[System Info API] Passive Node Replaced',
 );
+
+export const upgradePendingStateLoaded = createAction(
+  '[HA Info API] Upgrade pending state loaded',
+  props<{ isUpgradePending: boolean }>(),
+);

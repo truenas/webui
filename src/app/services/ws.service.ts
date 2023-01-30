@@ -5,9 +5,12 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
+  BehaviorSubject,
   Observable, Observer, Subject, Subscriber, Subscription,
 } from 'rxjs';
-import { filter, share, switchMap } from 'rxjs/operators';
+import {
+  filter, share, switchMap, tap,
+} from 'rxjs/operators';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,7 +18,9 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
 @Injectable()
@@ -27,6 +32,7 @@ export class WebSocketService {
   connected = false;
   loggedIn = false;
   @LocalStorage() token: string;
+  loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
   shuttingdown = false;
 
   private authStatus$ = new Subject<boolean>();
@@ -290,6 +296,7 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
+      this.getLoggedInUserInformation();
 
       // Subscribe to all events by default
       this.send({
@@ -332,5 +339,27 @@ export class WebSocketService {
       this.router.navigate(['/sessions/signin']);
       this.window.location.reload();
     });
+  }
+
+  private getLoggedInUserInformation(): void {
+    let authenticatedUser: LoggedInUser;
+
+    this.call('auth.me').pipe(
+      switchMap((loggedInUser: DsUncachedUser) => {
+        authenticatedUser = loggedInUser;
+        return this.call('user.query', [[['uid', '=', authenticatedUser.pw_uid]]]);
+      }),
+      tap((users: User[]) => {
+        if (users?.[0]?.id) {
+          authenticatedUser = {
+            ...authenticatedUser,
+            ...users[0],
+          };
+        }
+
+        this.loggedInUser$.next(authenticatedUser);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

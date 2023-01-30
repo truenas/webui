@@ -24,7 +24,7 @@ describe('AzureProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       account: 'azure',
       endpoint: 'blob.core.usgovcloudapi.net',
       key: 'key-1',

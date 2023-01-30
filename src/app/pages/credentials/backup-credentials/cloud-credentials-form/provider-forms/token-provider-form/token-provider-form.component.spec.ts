@@ -40,7 +40,7 @@ describe('TokenProviderFormComponent', () => {
 
   describe('without credentials_oauth set provider', () => {
     it('show existing provider attributes when they are set as form values', async () => {
-      spectator.component.setValues({
+      spectator.component.getFormSetter$().next({
         token: 'token1234',
       });
 
@@ -71,7 +71,7 @@ describe('TokenProviderFormComponent', () => {
     });
 
     it('show existing provider attributes when they are set as form values', async () => {
-      spectator.component.setValues({
+      spectator.component.getFormSetter$().next({
         client_id: 'client1234',
         client_secret: 'secret1234',
         token: 'token1234',

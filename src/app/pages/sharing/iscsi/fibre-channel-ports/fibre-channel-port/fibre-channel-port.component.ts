@@ -116,14 +116,14 @@ export class FibreChannelPortComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
-    this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.formGroup.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       targetField.required = res === FibreChannelPortMode.Target;
       if (res === FibreChannelPortMode.Target) {
-        this.formGroup.controls['target'].setValidators([Validators.required]);
-        this.formGroup.controls['target'].updateValueAndValidity();
+        this.formGroup.controls.target.setValidators([Validators.required]);
+        this.formGroup.controls.target.updateValueAndValidity();
       } else {
-        this.formGroup.controls['target'].clearValidators();
-        this.formGroup.controls['target'].updateValueAndValidity();
+        this.formGroup.controls.target.clearValidators();
+        this.formGroup.controls.target.updateValueAndValidity();
       }
     });
     Object.keys(this.config).forEach((i) => {
@@ -135,7 +135,7 @@ export class FibreChannelPortComponent implements OnInit {
 
   isShow(field: string): boolean {
     if (field === 'target' || field === 'initiators') {
-      return this.formGroup.controls['mode'].value === FibreChannelPortMode.Target;
+      return this.formGroup.controls.mode.value === FibreChannelPortMode.Target;
     }
     return true;
   }
