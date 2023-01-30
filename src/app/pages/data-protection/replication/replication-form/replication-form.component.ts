@@ -130,6 +130,23 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: TransportMode.Ssh,
         },
         {
+          type: 'checkbox',
+          name: 'sudo',
+          placeholder: this.translate.instant('Use Sudo For Zfs Commands'),
+          tooltip: repwizardhelptext.sudo_tooltip,
+          relation: [
+            {
+              action: RelationAction.Hide,
+              when: [
+                {
+                  name: 'transport',
+                  value: TransportMode.Local,
+                },
+              ],
+            },
+          ],
+        },
+        {
           type: 'input',
           inputType: 'number',
           name: 'retries',
