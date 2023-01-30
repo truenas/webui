@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, Inject, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -14,6 +14,7 @@ import {
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -33,6 +34,7 @@ import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { ReplicationSettingsComponent } from 'app/pages/system/advanced/replication-settings/replication-settings.component';
 import { SedFormComponent } from 'app/pages/system/advanced/sed-form/sed-form.component';
 import { StorageSettingsComponent } from 'app/pages/system/advanced/storage-settings/storage-settings.component';
+import { TokenSettingsComponent } from 'app/pages/system/advanced/token-settings/token-settings.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import {
@@ -62,6 +64,7 @@ enum AdvancedCardId {
   Gpus = 'gpus',
   Sed = 'sed',
   Sessions = 'sessions',
+  Token = 'token',
 }
 
 interface AuthSessionRow {
@@ -280,6 +283,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     private loader: AppLoaderService,
     private ixFormatter: IxFormatterService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -446,6 +450,16 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
           title: helptextSystemAdvanced.fieldset_sessions,
           tableConf: this.sessionsTableConf,
         },
+        {
+          title: helptextSystemAdvanced.fieldset_token,
+          id: AdvancedCardId.Token,
+          items: [
+            {
+              label: this.translate.instant('Token Lifetime'),
+              value: this.window.localStorage.getItem('lifetime'),
+            },
+          ],
+        },
       ];
 
       this.ws.call('system.advanced.sed_global_password').pipe(untilDestroyed(this)).subscribe(
@@ -508,6 +522,9 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         break;
       case AdvancedCardId.Replication:
         this.slideInService.open(ReplicationSettingsComponent);
+        break;
+      case AdvancedCardId.Token:
+        this.slideInService.open(TokenSettingsComponent);
         break;
       case AdvancedCardId.Syslog:
         this.slideInService.open(SyslogFormComponent);

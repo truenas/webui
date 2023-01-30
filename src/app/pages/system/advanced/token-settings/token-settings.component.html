@@ -1,0 +1,31 @@
+<ix-modal-header
+  [title]="'Token Settings' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="token_lifetime"
+          type="number"
+          [label]="'Token Lifetime' | translate"
+          [tooltip]="'Stands for Time To Live of the token, in seconds. The token will be invalidated if the connection has been inactive for a time greater than this.' | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <mat-divider></mat-divider>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

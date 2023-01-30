@@ -53,7 +53,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     return state.failover && state.failover.status !== FailoverStatus.Single;
   });
 
-  private readonly tokenLifetime = 300;
+  private readonly tokenLifetimeDefault = 300;
   private statusSubscriptionId: string;
   private disabledReasonsSubscriptionId: string;
 
@@ -178,7 +178,9 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private authenticateWithTokenWs2(): Observable<unknown> {
-    return this.ws2.call('auth.generate_token', [this.tokenLifetime])
+    const tokenLifetime = Number(this.window.localStorage.getItem('lifetime')) || this.tokenLifetimeDefault;
+    this.window.localStorage.setItem('lifetime', String(tokenLifetime));
+    return this.ws2.call('auth.generate_token', [tokenLifetime])
       .pipe(
         tap((token: string) => {
           if (!token) {
@@ -191,7 +193,9 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private authenticateWithToken(): Observable<unknown> {
-    return this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(
+    const tokenLifetime = Number(this.window.localStorage.getItem('lifetime')) || this.tokenLifetimeDefault;
+    this.window.localStorage.setItem('lifetime', String(tokenLifetime));
+    return this.ws.call('auth.generate_token', [tokenLifetime]).pipe(
       tap(
         (token) => {
           if (!token) {

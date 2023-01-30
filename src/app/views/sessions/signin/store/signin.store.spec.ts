@@ -50,6 +50,10 @@ describe('SigninStore', () => {
           location: {
             protocol: 'https:',
           },
+          localStorage: {
+            getItem: () => '300',
+            setItem: jest.fn(),
+          },
         },
       },
     ],
