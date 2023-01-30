@@ -61,7 +61,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   ngOnInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold');
+    this.scrollContainer = this.layoutService.getContentContainer();
     this.scrollContainer.style.overflow = 'hidden';
 
     this.reportsService.getReportGraphs()

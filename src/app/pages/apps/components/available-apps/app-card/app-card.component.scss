@@ -67,10 +67,11 @@
     }
 
     .logo-placeholder {
-      background-image: url('~assets/images/truenas_scale_ondark_favicon.png');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 70%;
+      background-color: var(--fg1);
+      mask-image: url('~assets/customicons/truenas_scale_logomark.svg');
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: 70%;
       opacity: 1;
     }
   }

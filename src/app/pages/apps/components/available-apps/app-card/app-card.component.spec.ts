@@ -1,4 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
+import { MockDirective } from 'ng-mocks';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 
@@ -6,8 +8,8 @@ describe('AppCardComponent', () => {
   let spectator: Spectator<AppCardComponent>;
   const createComponent = createComponentFactory({
     component: AppCardComponent,
-    imports: [
-
+    declarations: [
+      MockDirective(LazyLoadImageDirective),
     ],
   });
 
@@ -34,7 +36,7 @@ describe('AppCardComponent', () => {
   });
 
   it('shows app logo', () => {
-    expect(spectator.query('.logo')).toHaveAttribute('src', 'https://www.seti.org/logo.png');
+    expect(spectator.query(LazyLoadImageDirective).lazyImage).toBe('https://www.seti.org/logo.png');
   });
 
   it('shows installed badge when [installed] is true', () => {
@@ -57,10 +59,5 @@ describe('AppCardComponent', () => {
 
   it('shows app version', () => {
     expect(spectator.query('.version')).toHaveExactText('v1.0.0');
-  });
-
-  // TODO: Missing backend support.
-  it.skip('shows last update date of an app', () => {
-    expect(spectator.query('.updated')).toHaveExactText('08/08/2023');
   });
 });

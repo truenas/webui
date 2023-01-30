@@ -67,6 +67,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
 
   private loadTestData(): void {
     // TODO: Temporary
+    this.loader.open();
     this.appService.getAllCatalogs().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       const apps: CatalogApp[] = [];
 
@@ -86,6 +87,7 @@ export class AvailableAppsComponent implements OnInit, AfterViewInit {
       });
 
       this.apps = apps;
+      this.loader.close();
       this.cdr.markForCheck();
     });
   }

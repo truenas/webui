@@ -4,6 +4,7 @@ import {
 import { StateChange } from 'ng-lazyload-image';
 import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { LayoutService } from 'app/services/layout.service';
 
 @Component({
   selector: 'ix-app-card',
@@ -17,13 +18,14 @@ export class AppCardComponent {
 
   wasLogoLoaded = false;
 
-  readonly scrollTarget = document.querySelector('.rightside-content-hold');
+  readonly scrollTarget = this.layoutService.getContentContainer();
 
   readonly officialCatalog = officialCatalog;
   readonly appImagePlaceholder = appImagePlaceholder;
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private layoutService: LayoutService,
   ) {}
 
   onLogoLoaded(event: StateChange): void {
