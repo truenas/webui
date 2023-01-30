@@ -901,6 +901,14 @@ body.safari-platform {
   color: var(--orange) !important;
 }
 
-.mat-tooltip {
+body .mdc-tooltip {
   word-break: break-word;
+
+  .mdc-tooltip__surface {
+    background-color: #666;
+    color: #fff;
+    font-size: 10px;
+    line-height: 16px;
+    padding: 6px 8px;
+  }
 }

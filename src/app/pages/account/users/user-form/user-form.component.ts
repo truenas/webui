@@ -13,6 +13,7 @@ import {
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
@@ -81,7 +82,10 @@ export class UserFormComponent {
     password_disabled: [false],
     shell: [null as string],
     locked: [false],
-    sudo: [false],
+    sudo_commands: [[] as string[]],
+    sudo_commands_all: [false],
+    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd_all: [false],
     smb: [true],
   });
 
@@ -102,7 +106,6 @@ export class UserFormComponent {
     password_disabled: helptext.user_form_auth_pw_enable_tooltip,
     shell: helptext.user_form_shell_tooltip,
     locked: helptext.user_form_lockuser_tooltip,
-    sudo: helptext.user_form_sudo_tooltip,
     smb: helptext.user_form_smb_tooltip,
   };
 
@@ -142,7 +145,7 @@ export class UserFormComponent {
       this.form.controls.sshpubkey.setValue(key);
     });
 
-    this.form.get('password_conf').addValidators(
+    this.form.controls.password_conf.addValidators(
       this.validatorsService.withMessage(
         matchOtherValidator('password'),
         this.translate.instant(this.isNewUser ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
@@ -157,11 +160,12 @@ export class UserFormComponent {
       this.form.patchValue({ home_mode: '755' });
     }
     this.subscriptions.push(
-      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('sudo').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_conf').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('group').disabledWhile(this.form.get('group_create').value$),
+      this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.group.disabledWhile(this.form.controls.group_create.value$),
+      this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$),
+      this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$),
     );
 
     if (this.isNewUser) {
@@ -185,7 +189,8 @@ export class UserFormComponent {
       shell: values.shell,
       smb: values.smb,
       sshpubkey: values.sshpubkey,
-      sudo: values.password_disabled ? false : values.sudo,
+      sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+      sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       username: values.username,
     };
 
@@ -230,14 +235,14 @@ export class UserFormComponent {
   }
 
   onDownloadSshPublicKey(): void {
-    const name = this.form.get('username').value;
-    const key = this.form.get('sshpubkey').value;
+    const name = this.form.controls.username.value;
+    const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
   getUsernameHint(): string {
-    if (this.form.get('username')?.value?.length > 8) {
+    if (this.form.controls.username?.value?.length > 8) {
       return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
     }
     return null;
@@ -251,10 +256,9 @@ export class UserFormComponent {
     this.detectFullNameChanges();
 
     this.subscriptions.push(
-      this.form.get('password').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_conf').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('sudo').disabledWhile(this.form.get('password_disabled').value$),
+      this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
     );
   }
 
@@ -271,32 +275,35 @@ export class UserFormComponent {
       shell: user.shell,
       smb: user.smb,
       sshpubkey: user.sshpubkey,
-      sudo: user.sudo,
+      sudo_commands: user.sudo_commands.includes(allCommands) ? [] : user.sudo_commands,
+      sudo_commands_all: user.sudo_commands.includes(allCommands),
+      sudo_commands_nopasswd: user.sudo_commands_nopasswd.includes(allCommands) ? [] : user.sudo_commands_nopasswd,
+      sudo_commands_nopasswd_all: user.sudo_commands_nopasswd.includes(allCommands),
       uid: user.uid,
       username: user.username,
     });
 
-    this.form.get('uid').disable();
-    this.form.get('group_create').disable();
+    this.form.controls.uid.disable();
+    this.form.controls.group_create.disable();
 
     if (user.immutable) {
-      this.form.get('group').disable();
-      this.form.get('home_mode').disable();
-      this.form.get('home').disable();
-      this.form.get('username').disable();
+      this.form.controls.group.disable();
+      this.form.controls.home_mode.disable();
+      this.form.controls.home.disable();
+      this.form.controls.username.disable();
     }
 
     this.setNamesInUseValidator(user.username);
   }
 
   private detectFullNameChanges(): void {
-    this.form.get('full_name').valueChanges.pipe(
+    this.form.controls.full_name.valueChanges.pipe(
       map((fullName) => this.getUserName(fullName)),
       filter((username) => !!username),
       untilDestroyed(this),
     ).subscribe((username) => {
       this.form.patchValue({ username });
-      this.form.get('username').markAsTouched();
+      this.form.controls.username.markAsTouched();
     });
   }
 
@@ -310,7 +317,7 @@ export class UserFormComponent {
       switchMap((homeSharePath) => {
         this.form.patchValue({ home: homeSharePath });
 
-        return combineLatest([of(homeSharePath), this.form.get('username').valueChanges]);
+        return combineLatest([of(homeSharePath), this.form.controls.username.valueChanges]);
       }),
       untilDestroyed(this),
     ).subscribe(([homeSharePath, username]) => {
@@ -340,7 +347,7 @@ export class UserFormComponent {
       if (currentName) {
         forbiddenNames = _.remove(forbiddenNames, currentName);
       }
-      this.form.get('username').addValidators(forbiddenValues(forbiddenNames));
+      this.form.controls.username.addValidators(forbiddenValues(forbiddenNames));
     });
   }
 

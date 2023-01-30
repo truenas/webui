@@ -75,7 +75,7 @@ export class SshConnectionFormComponent {
   }
 
   get isManualSetup(): boolean {
-    return this.form.get('setup_method').value === SshConnectionsSetupMethod.Manual;
+    return this.form.controls.setup_method.value === SshConnectionsSetupMethod.Manual;
   }
 
   isLoading = false;
@@ -157,9 +157,9 @@ export class SshConnectionFormComponent {
   onDiscoverRemoteHostKeyPressed(): void {
     this.loader.open();
     const requestParams = {
-      host: this.form.get('host').value,
-      port: this.form.get('port').value,
-      connect_timeout: this.form.get('connect_timeout').value,
+      host: this.form.controls.host.value,
+      port: this.form.controls.port.value,
+      connect_timeout: this.form.controls.connect_timeout.value,
     };
 
     this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
