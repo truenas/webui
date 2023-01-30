@@ -32,9 +32,8 @@ const dummyUser = {
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: 'test-user@test-user.com',
   group: {
     id: 41,

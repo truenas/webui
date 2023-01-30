@@ -8,7 +8,8 @@ import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.inter
 import { ThemeChangedEvent } from 'app/interfaces/events/theme-changed-event.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
-import { EnclosureDisk, VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
+import { EnclosureDisk, SystemProfiler, VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
+import { CompoundChassisView } from './compound-chassis-view';
 import InteractionManager = PIXI.interaction.InteractionManager;
 
 export class VDevLabelsSvg {
@@ -37,6 +38,7 @@ export class VDevLabelsSvg {
     private app: Application,
     private selectedDisk: EnclosureDisk,
     theme: Theme,
+    private system: SystemProfiler,
   ) {
     this.color = 'var(--cyan)';
     this.selectedDiskColor = 'var(--yellow)';
@@ -151,22 +153,38 @@ export class VDevLabelsSvg {
       ? Object.keys(vdev.disks)
       : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
 
-    disks.forEach((disk) => {
-      const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
+    disks.forEach((diskName) => {
+      const defaultSlot = typeof vdev.slots !== 'undefined' ? vdev.slots[diskName] : this.selectedDisk.enclosure.slot;
+      let slot: number = null;
+      let isSibling = false;
+      const isOnController: boolean = this.system.isDiskOnController(diskName);
 
-      if (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end) {
+      // Adjust slot number for siblings
+      if (this.chassis.className === 'CompoundChassisView' && !isOnController) {
+        isSibling = true;
+        const offset = (this.chassis as CompoundChassisView).siblingOffset;
+        const slotAlias = this.system.getSiblingSlotAlias(diskName, this.chassis.totalDriveTrays, offset);
+        slot = slotAlias;
+      } else if (this.chassis.className === 'CompoundChassisView' && isOnController) {
+        slot = !defaultSlot ? this.system.getDiskByName(diskName).enclosure.slot : defaultSlot;
+      } else {
+        slot = defaultSlot;
+      }
+
+      const isInRange = (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end);
+      if (isSibling || isInRange) {
         // Create tile if the disk is in the current enclosure
         const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === slot);
         const src = dt.container;
         const tray = src.getGlobalPosition();
 
-        const tileClass = 'tile tile_' + disk;
+        const tileClass = 'tile tile_' + diskName;
 
         const tileWidth = src.width * this.chassis.driveTrays.scale.x * this.chassis.container.scale.x;
         const tileHeight = src.height * this.chassis.driveTrays.scale.y * this.chassis.container.scale.y;
 
-        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, disk);
-        this.trays[disk] = {
+        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, diskName);
+        this.trays[diskName] = {
           x: tray.x, y: tray.y, width: tileWidth, height: tileHeight,
         };
       }

@@ -203,6 +203,7 @@ export class ChartFormComponent implements OnDestroy {
     path = '',
   ): void {
     if (path) {
+      // eslint-disable-next-line no-restricted-syntax
       const formField = (this.form.get(path) as CustomUntypedFormField);
       formField?.hidden$?.pipe(
         take(1),
