@@ -56,44 +56,44 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.side_Menu.local_User, 'clickable')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
 
 
 @then('On the right side of the table, click the expand arrow for one of the users')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
     """On the right side of the table, click the expand arrow for one of the users."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
+    assert wait_on_element(driver, 7, xpaths.users.eric_User)
+    driver.find_element_by_xpath(xpaths.users.eric_User).click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button, 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
+    driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
 
 
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 7, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
     time.sleep(1)
 
 
@@ -114,18 +114,18 @@ def change_the_permissions_for_the_users_home_directory_invert_them_and_click_sa
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
-    assert wait_on_element(driver, 10, '//td[contains(.,"ericbsd")]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.users.eric_User)
 
 
 @then('Reopen the user edit page and ensure that the additional Aux Group was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_additional_aux_group_was_saved(driver):
     """Reopen the user edit page and ensure that the additional Aux Group was saved."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
-    assert wait_on_element(driver, 5, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_User).click()
+    assert wait_on_element(driver, 5, xpaths.users.eric_Edit_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
+    assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)
     assert wait_on_element(driver, 5, '//legend[normalize-space(text())="Identification"]')
     time.sleep(1)
 
@@ -153,5 +153,5 @@ def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 5, '//h1[text()="Users"]')
-    assert wait_on_element(driver, 10, '//td[contains(.,"ericbsd")]')
+    assert wait_on_element(driver, 5, xpaths.users.title)
+    assert wait_on_element(driver, 10, xpaths.users.eric_User)
