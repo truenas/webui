@@ -185,14 +185,6 @@ export class SigninStore extends ComponentStore<SigninState> {
           }
           this.authService.token2 = token;
         }),
-        switchMap(() => this.authService.loginWithToken()),
-        tap(
-          (wasLoggedIn) => {
-            if (!wasLoggedIn) {
-              throw new Error(this.translate.instant('Error authenticating with token, please try again.'));
-            }
-          },
-        ),
       );
   }
 

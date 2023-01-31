@@ -1445,7 +1445,6 @@
   "Error": "错误",
   "Error Downloading File": "下载文件时出错",
   "Error Updating Production Status": "更新生产状态时出错",
-  "Error authenticating with token, please try again.": "令牌验证失败，请重试。",
   "Error checking for updates.": "检查更新时出错。",
   "Error creating CA.": "创建 CA 时出错。",
   "Error creating VM.": "创建虚拟机时出错。",
