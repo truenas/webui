@@ -28,9 +28,8 @@ const fakeUserDataSource: User[] = [{
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: 'root@root.root',
   group: {
     id: 41,
@@ -49,9 +48,8 @@ const fakeUserDataSource: User[] = [{
   smb: true,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: null,
   group: {
     id: 101,

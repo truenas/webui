@@ -14,9 +14,12 @@
     thumbLabel
     [min]="config.min"
     [max]="config.max"
-    [formControlName]="config.name"
-    (change)="updateValue($event)"
   >
+    <input
+      matSliderThumb
+      [formControlName]="config.name"
+      [(ngModel)]="value"
+    />
   </mat-slider>
   <label>
     <h5>

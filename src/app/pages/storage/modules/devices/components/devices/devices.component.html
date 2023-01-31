@@ -141,14 +141,13 @@
   </div>
   <div
     class="details-container"
-    ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-disk-details-panel
       *ngIf="selectedNode"
       [topologyItem]="selectedNode | cast"
       [topologyParentItem]="selectedParentNode$ | async | cast"
-      [disk]="getDisk(selectedNode)"
+      [disk]="getDisk(selectedNode.children[0] || selectedNode)"
       [poolId]="poolId"
       [topologyCategory]="selectedTopologyCategory$ | async"
       (closeMobileDetails)="closeMobileDetails()"

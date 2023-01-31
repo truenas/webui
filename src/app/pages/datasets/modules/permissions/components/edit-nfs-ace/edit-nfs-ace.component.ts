@@ -169,8 +169,8 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private updateFormValues(): void {
-    const userField = this.form.get('user');
-    const groupField = this.form.get('group');
+    const userField = this.form.controls.user;
+    const groupField = this.form.controls.group;
 
     userField.clearValidators();
     groupField.clearValidators();
