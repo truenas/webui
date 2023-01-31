@@ -48,6 +48,9 @@ export class AuthService {
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
       this.isLoggedIn = response;
       this.isLoggedIn$.next(response);
+      if (response) {
+        this.getLoggedInUserInformation();
+      }
     }));
   }
 
@@ -62,6 +65,9 @@ export class AuthService {
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
       this.isLoggedIn = response;
       this.isLoggedIn$.next(response);
+      if (response) {
+        this.getLoggedInUserInformation();
+      }
     }));
   }
 
