@@ -115,7 +115,7 @@ def updated_value_should_be_visible(driver):
     """updated value should be visible."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    element = driver.find_element_by_xpath(xpaths.button.save)
+    element = driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     assert attribute_value_exist(driver, xpaths.add_User.sudo_Checkbox, 'class', 'mat-checkbox-checked')

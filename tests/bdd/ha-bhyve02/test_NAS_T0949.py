@@ -114,12 +114,12 @@ def enable_permit_sudo_and_click_save(driver):
     """Enable Permit Sudo and click save."""
     assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
     assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Authentication"]')
-    assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Permit Sudo")]')
-    element = driver.find_element_by_xpath('//mat-checkbox[contains(.,"Permit Sudo")]')
+    assert wait_on_element(driver, 7, xpaths.add_User.sudo_Checkbox)
+    element = driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox)
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//mat-checkbox[contains(.,"Permit Sudo")]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[contains(.,"Permit Sudo")]').click()
+    assert wait_on_element(driver, 7, xpaths.add_User.sudo_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.sudo_Checkbox).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
@@ -136,16 +136,14 @@ def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
     """Open the user drop down to verify the value has been changed."""
     assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
-    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
-    assert element_text == 'true'
+    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]/../dd').text
+    assert element_text == 'ALL'
 
 
 @then('Open shell and run su user to become that user')
