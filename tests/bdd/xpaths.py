@@ -55,7 +55,7 @@ class add_User:
     confirm_password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
     shell_Select = '//ix-combobox[@formcontrolname="shell"]//input'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
-    sudo_Checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
+    sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
     auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
     root_Group_Option = '//mat-option[contains(.,"root")]'

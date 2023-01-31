@@ -94,23 +94,19 @@ def click_the_edit_button_that_appears(driver):
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
     assert wait_on_element(driver, 7, '//h3[text()="Edit User"]')
-    time.sleep(0.5)
 
 
 @then('Add user to additional groups, like wheel and save change')
 def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     """Add user to additional groups, like wheel and save change."""
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Identification"]')
-    assert wait_on_element(driver, 7, '//legend[normalize-space(text())="Authentication"]')
-    element = driver.find_element_by_xpath('//legend[normalize-space(text())="Authentication"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//ix-select[@formcontrolname="groups"]//mat-select', 'clickable')
-    driver.find_element_by_xpath('//ix-select[@formcontrolname="groups"]//mat-select').click()
-    assert wait_on_element(driver, 7, '//mat-option[contains(.,"root")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[contains(.,"root")]').click()
-    driver.find_element_by_xpath('//mat-option[contains(.,"root")]').send_keys(Keys.TAB)
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
+    assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
+
+    driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
+    assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).click()
+    driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
+    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
 
