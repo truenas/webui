@@ -18,6 +18,6 @@ export class ConfirmForceDeleteCertificateComponent {
   ) { }
 
   onSubmit(): void {
-    this.dialogRef.close({ force: this.form.get('force').value });
+    this.dialogRef.close({ force: this.form.controls.force.value });
   }
 }

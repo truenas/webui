@@ -11,7 +11,7 @@ import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-o
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
-  AppLoaderService, DialogService, StorageService, UserService,
+  AppLoaderService, DialogService, StorageService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
@@ -31,7 +31,7 @@ export class SshKeypairFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
+    name: ['', Validators.required],
     private_key: [''],
     public_key: ['', atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])],
   });
@@ -86,7 +86,7 @@ export class SshKeypairFormComponent {
 
   onDownloadKey(keyType: 'private_key' | 'public_key'): void {
     const name = this.form.value.name;
-    const key = this.form.get(keyType).value;
+    const key = this.form.controls[keyType].value;
     const filename = `${name}_${keyType}_rsa`;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storage.downloadBlob(blob, filename);
