@@ -296,7 +296,7 @@ module.exports = {
         "angular-file-naming/module-filename-suffix": "error",
         "angular-file-naming/pipe-filename-suffix": "error",
         "angular-file-naming/service-filename-suffix": ["error", {
-          "suffixes": ["service", "effects", "store", "guard"]
+          "suffixes": ["service", "effects", "store", "guard", "pipe"]
         }],
       }
     },
