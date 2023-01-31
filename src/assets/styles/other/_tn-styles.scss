@@ -5,6 +5,7 @@ $standard-height: 40px;
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
 @include mat.slide-toggle-density(-1);
+@include mat.radio-density(-1);
 @import 'angular15';
 
 // mandatory stuff for theming
