@@ -130,6 +130,23 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: TransportMode.Ssh,
         },
         {
+          type: 'checkbox',
+          name: 'sudo',
+          placeholder: this.translate.instant('Use Sudo For Zfs Commands'),
+          tooltip: repwizardhelptext.sudo_tooltip,
+          relation: [
+            {
+              action: RelationAction.Hide,
+              when: [
+                {
+                  name: 'transport',
+                  value: TransportMode.Local,
+                },
+              ],
+            },
+          ],
+        },
+        {
           type: 'input',
           inputType: 'number',
           name: 'retries',
@@ -1030,17 +1047,17 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   countEligibleManualSnapshots(): void {
-    const namingSchema = this.entityForm.formGroup.controls['also_include_naming_schema'].value;
-    const nameRegex = this.entityForm.formGroup.controls['name_regex'].value;
+    const namingSchema = this.entityForm.formGroup.controls.also_include_naming_schema.value;
+    const nameRegex = this.entityForm.formGroup.controls.name_regex.value;
     if ((typeof namingSchema !== 'string' && namingSchema.length === 0) && (typeof nameRegex !== 'string' && nameRegex.length === 0)) {
       return;
     }
 
-    const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
+    const datasets = this.entityForm.formGroup.controls.target_dataset_PUSH.value;
     const payload: CountManualSnapshotsParams = {
       datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
-      transport: this.entityForm.formGroup.controls['transport'].value,
-      ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
+      transport: this.entityForm.formGroup.controls.transport.value,
+      ssh_credentials: this.entityForm.formGroup.controls.ssh_credentials.value,
     };
 
     if (this.entityForm.formGroup.get('schema_or_regex').value === SnapshotNamingOption.NamingSchema) {
@@ -1059,7 +1076,7 @@ export class ReplicationFormComponent implements FormConfiguration {
             {
               eligible: snapshotCount.eligible,
               total: snapshotCount.total,
-              targetDataset: this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
+              targetDataset: this.entityForm.formGroup.controls.target_dataset_PUSH.value,
             },
           );
         },
@@ -1076,21 +1093,22 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 
-    const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
+    const readonlyCtrl = this.entityForm.formGroup.controls.readonly;
     if (this.pk === undefined) {
       readonlyCtrl.setValue(ReadOnlyMode.Require);
     }
 
-    if (this.entityForm.formGroup.controls['speed_limit'].value) {
-      const presetSpeed = String(this.entityForm.formGroup.controls['speed_limit'].value);
+    if (this.entityForm.formGroup.controls.speed_limit.value) {
+      const presetSpeed = String(this.entityForm.formGroup.controls.speed_limit.value);
       this.storageService.humanReadable = presetSpeed;
     }
 
-    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.entityForm.formGroup.controls.target_dataset_PUSH.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       if (
-        entityForm.formGroup.controls['direction'].value === Direction.Push
-        && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
+        entityForm.formGroup.controls.direction.value === Direction.Push
+        && entityForm.formGroup.controls.transport.value !== TransportMode.Local
+        && (entityForm.formGroup.controls.also_include_naming_schema.value !== undefined
+        || entityForm.formGroup.controls.name_regex.value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1098,15 +1116,16 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.entityForm.formGroup.controls.schema_or_regex.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.toggleNamingSchemaOrRegex();
     });
 
-    entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
+    entityForm.formGroup.controls.direction.valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
       if (
         direction === Direction.Push
-        && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
+        && entityForm.formGroup.controls.transport.value !== TransportMode.Local
+        && (entityForm.formGroup.controls.also_include_naming_schema.value !== undefined
+        || entityForm.formGroup.controls.name_regex.value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1116,11 +1135,12 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.toggleNamingSchemaOrRegex();
     });
 
-    entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((transport) => {
+    entityForm.formGroup.controls.transport.valueChanges.pipe(untilDestroyed(this)).subscribe((transport) => {
       if (
         transport !== TransportMode.Local
-        && entityForm.formGroup.controls['direction'].value === Direction.Push
-        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
+        && entityForm.formGroup.controls.direction.value === Direction.Push
+        && (entityForm.formGroup.controls.also_include_naming_schema.value !== undefined
+        || entityForm.formGroup.controls.name_regex.value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1128,21 +1148,21 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
 
       if (transport === TransportMode.Local) {
-        entityForm.formGroup.controls['direction'].setValue(Direction.Push);
+        entityForm.formGroup.controls.direction.setValue(Direction.Push);
         entityForm.setDisabled('target_dataset_PUSH', true, true);
         entityForm.setDisabled('ssh_credentials', true, true);
         entityForm.setDisabled('target_dataset_PULL', false, false);
       }
     });
 
-    entityForm.formGroup.controls['schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((schedule) => {
+    entityForm.formGroup.controls.schedule.valueChanges.pipe(untilDestroyed(this)).subscribe((schedule) => {
       entityForm.setDisabled('schedule_picker', !schedule, !schedule);
       entityForm.setDisabled('schedule_begin', !schedule, !schedule);
       entityForm.setDisabled('schedule_end', !schedule, !schedule);
       entityForm.setDisabled('only_matching_schedule', !schedule, !schedule);
     });
 
-    entityForm.formGroup.controls['schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    entityForm.formGroup.controls.schedule_picker.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
         entityForm.setDisabled('schedule_begin', true, true);
         entityForm.setDisabled('schedule_end', true, true);
@@ -1152,17 +1172,18 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
-        entityForm.setDisabled('restrict_schedule_begin', true, true);
-        entityForm.setDisabled('restrict_schedule_end', true, true);
-      } else {
-        entityForm.setDisabled('restrict_schedule_begin', false, false);
-        entityForm.setDisabled('restrict_schedule_end', false, false);
-      }
-    });
+    entityForm.formGroup.controls.restrict_schedule_picker.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((value) => {
+        if (value === CronPresetValue.Daily || value === CronPresetValue.Weekly || value === CronPresetValue.Monthly) {
+          entityForm.setDisabled('restrict_schedule_begin', true, true);
+          entityForm.setDisabled('restrict_schedule_end', true, true);
+        } else {
+          entityForm.setDisabled('restrict_schedule_begin', false, false);
+          entityForm.setDisabled('restrict_schedule_end', false, false);
+        }
+      });
 
-    entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    entityForm.formGroup.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
         const explorerConfig = this.fieldSets.config(item) as FormExplorerConfig;
         const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
@@ -1178,7 +1199,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['speed_limit'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    entityForm.formGroup.controls.speed_limit.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const speedLimitField = this.fieldSets.config('speed_limit');
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
       speedLimitField.hasErrors = false;
@@ -1189,56 +1210,57 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['properties_override'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
-      if (value) {
-        for (const item of value) {
-          if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {
-            entityForm.formGroup.controls['properties_override'].setErrors({
-              manualValidateError: true,
-              manualValidateErrorMsg: helptext.properties_override_error,
-            });
-            return;
+    entityForm.formGroup.controls.properties_override.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((value: string[]) => {
+        if (value) {
+          for (const item of value) {
+            if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {
+              entityForm.formGroup.controls.properties_override.setErrors({
+                manualValidateError: true,
+                manualValidateErrorMsg: helptext.properties_override_error,
+              });
+              return;
+            }
           }
         }
-      }
-      entityForm.formGroup.controls['properties_override'].setErrors(null);
-    });
+        entityForm.formGroup.controls.properties_override.setErrors(null);
+      });
 
-    entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
+    entityForm.formGroup.controls.auto.setValue(entityForm.formGroup.controls.auto.value);
     this.toggleNamingSchemaOrRegex();
   }
 
   resourceTransformIncomingRestData(wsResponse: ReplicationTask): Record<string, unknown> {
     this.queryRes = _.cloneDeep(wsResponse);
     const formData = _.cloneDeep(wsResponse) as unknown as Record<string, unknown>;
-    formData['source_datasets_PUSH'] = wsResponse.source_datasets;
-    formData['target_dataset_PUSH'] = wsResponse.target_dataset;
-    formData['source_datasets_PULL'] = wsResponse.source_datasets;
-    formData['target_dataset_PULL'] = wsResponse.target_dataset;
+    formData.source_datasets_PUSH = wsResponse.source_datasets;
+    formData.target_dataset_PUSH = wsResponse.target_dataset;
+    formData.source_datasets_PULL = wsResponse.source_datasets;
+    formData.target_dataset_PULL = wsResponse.target_dataset;
 
     if (wsResponse.ssh_credentials) {
-      formData['ssh_credentials'] = wsResponse.ssh_credentials.id;
+      formData.ssh_credentials = wsResponse.ssh_credentials.id;
     }
 
-    formData['compression'] = wsResponse.compression === null ? CompressionType.Disabled : wsResponse.compression;
-    formData['logging_level'] = wsResponse.logging_level === null ? LoggingLevel.Default : wsResponse.logging_level;
+    formData.compression = wsResponse.compression === null ? CompressionType.Disabled : wsResponse.compression;
+    formData.logging_level = wsResponse.logging_level === null ? LoggingLevel.Default : wsResponse.logging_level;
     const snapshotTasks = wsResponse.periodic_snapshot_tasks.map((item: PeriodicSnapshotTask) => item.id);
-    formData['periodic_snapshot_tasks'] = snapshotTasks;
+    formData.periodic_snapshot_tasks = snapshotTasks;
 
     if (wsResponse.schedule) {
-      formData['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
-      formData['schedule_begin'] = wsResponse.schedule.begin;
-      formData['schedule_end'] = wsResponse.schedule.end;
-      formData['schedule'] = true;
+      formData.schedule_picker = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
+      formData.schedule_begin = wsResponse.schedule.begin;
+      formData.schedule_end = wsResponse.schedule.end;
+      formData.schedule = true;
     }
 
     if (wsResponse.restrict_schedule) {
-      formData['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
-      formData['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
-      formData['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
-      formData['restrict_schedule'] = true;
+      formData.restrict_schedule_picker = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
+      formData.restrict_schedule_begin = wsResponse.restrict_schedule.begin;
+      formData.restrict_schedule_end = wsResponse.restrict_schedule.end;
+      formData.restrict_schedule = true;
     }
-    formData['speed_limit'] = wsResponse.speed_limit
+    formData.speed_limit = wsResponse.speed_limit
       ? this.storageService.convertBytesToHumanReadable(wsResponse.speed_limit, 0)
       : undefined;
     // block large_block changes if it is enabled
@@ -1251,7 +1273,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       for (const [key, value] of Object.entries(wsResponse.properties_override)) {
         propertiesExcludeList.push(`${key}=${String(value)}`);
       }
-      formData['properties_override'] = propertiesExcludeList;
+      formData.properties_override = propertiesExcludeList;
     }
 
     formData.encryption_key_location_truenasdb = wsResponse.encryption_key_location === truenasDbKeyLocation;
@@ -1433,8 +1455,8 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.fieldSets.config(item).hasErrors = false;
     }
 
-    const transport = this.entityForm.formGroup.controls['transport'].value;
-    const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
+    const transport = this.entityForm.formGroup.controls.transport.value;
+    const sshCredentials = this.entityForm.formGroup.controls.ssh_credentials.value;
     if ((sshCredentials === undefined || sshCredentials === '') && transport !== TransportMode.Local) {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
         const fieldConfig = this.fieldSets.config(item);
@@ -1451,17 +1473,17 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   speedLimitBlur(): void {
     if (this.entityForm) {
-      this.entityForm.formGroup.controls['speed_limit'].setValue(this.storageService.humanReadable);
+      this.entityForm.formGroup.controls.speed_limit.setValue(this.storageService.humanReadable);
     }
   }
 
   blurEventCountSnapshots(): void {
     if (
       this.entityForm
-      && this.entityForm.formGroup.controls['direction'].value === Direction.Push
-      && this.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-      && (this.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
-        || this.entityForm.formGroup.controls['name_regex'].value !== undefined)
+      && this.entityForm.formGroup.controls.direction.value === Direction.Push
+      && this.entityForm.formGroup.controls.transport.value !== TransportMode.Local
+      && (this.entityForm.formGroup.controls.also_include_naming_schema.value !== undefined
+        || this.entityForm.formGroup.controls.name_regex.value !== undefined)
     ) {
       this.countEligibleManualSnapshots();
     } else {
@@ -1474,9 +1496,9 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   toggleNamingSchemaOrRegex(): void {
-    const directionValue = this.entityForm.formGroup.controls['direction'].value;
-    const schemaOrRegexValue = this.entityForm.formGroup.controls['schema_or_regex'].value;
-    const retentionPolicyValue = this.entityForm.formGroup.controls['retention_policy'].value;
+    const directionValue = this.entityForm.formGroup.controls.direction.value;
+    const schemaOrRegexValue = this.entityForm.formGroup.controls.schema_or_regex.value;
+    const retentionPolicyValue = this.entityForm.formGroup.controls.retention_policy.value;
 
     const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
 

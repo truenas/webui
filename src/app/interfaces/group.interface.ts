@@ -6,7 +6,8 @@ export interface Group {
   id_type_both: boolean;
   local: boolean;
   smb: boolean;
-  sudo: boolean;
+  sudo_commands_nopasswd?: string[];
+  sudo_commands?: string[];
   /**
    * List of user ids.
    */
@@ -23,13 +24,15 @@ export interface CreateGroup {
   gid: number;
   name: string;
   smb: boolean;
-  sudo: boolean;
+  sudo_commands_nopasswd?: string[];
+  sudo_commands?: string[];
 }
 
 export interface UpdateGroup {
   allow_duplicate_gid?: boolean;
   name?: string;
   smb?: boolean;
-  sudo?: boolean;
+  sudo_commands_nopasswd?: string[];
+  sudo_commands?: string[];
   users?: number[];
 }

@@ -43,6 +43,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   protected tailLines = 500;
   podLogSubscriptionId: string = null;
   podLogSubName = '';
+  isLoadingPodLogs = false;
 
   private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
@@ -59,10 +60,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.chartReleaseName = params['rname'];
-      this.podName = params['pname'];
-      this.containerName = params['cname'];
-      this.tailLines = params['tail_lines'];
+      this.chartReleaseName = params.rname;
+      this.podName = params.pname;
+      this.containerName = params.cname;
+      this.tailLines = params.tail_lines;
 
       this.reconnect();
     });
@@ -82,6 +83,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
     this.podLogs = [];
+    this.isLoadingPodLogs = true;
 
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
@@ -91,14 +93,21 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
-      .pipe(untilDestroyed(this)).subscribe((event: PodLogEvent) => {
-        if (event.msg && event.collection) {
-          this.dialogService.closeAllDialogs();
-          this.dialogService.errorReport('Pod Connection', `${event.collection} ${event.msg}`);
-        } else if (event) {
-          this.podLogs.push(event);
-          this.scrollToBottom();
-        }
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (podLog: PodLogEvent) => {
+          this.isLoadingPodLogs = false;
+
+          if (podLog && podLog.msg !== 'nosub') {
+            this.podLogs.push(podLog);
+            this.scrollToBottom();
+          }
+        },
+        error: (error) => {
+          this.isLoadingPodLogs = false;
+          if (error.reason) {
+            this.dialogService.errorReport('Error', error.reason);
+          }
+        },
       });
   }
 
@@ -160,7 +169,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     ).pipe(untilDestroyed(this)).subscribe({
       next: (download) => {
         this.loader.close();
-        const url = download[1];
+        const [, url] = download;
         this.storageService.streamDownloadFile(url, fileName, mimetype)
           .pipe(untilDestroyed(this))
           .subscribe((file: Blob) => {

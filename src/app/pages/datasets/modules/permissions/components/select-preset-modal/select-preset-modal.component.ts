@@ -63,8 +63,8 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    this.form.get('usePreset').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.get('presetName').updateValueAndValidity();
+    this.form.controls.usePreset.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.controls.presetName.updateValueAndValidity();
     });
   }
 

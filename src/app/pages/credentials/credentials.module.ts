@@ -8,10 +8,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatStepperModule } from '@angular/material/stepper';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -34,6 +36,12 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import {
+  CertificateAddComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
+import {
+  CertificateImportComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
@@ -58,7 +66,11 @@ import { CertificateAuthorityEditComponent } from './certificates-dash/certifica
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
-import { CertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
+import { OldCertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
+import { CertificateIdentifierAndTypeComponent } from './certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
+import { CertificateOptionsComponent } from './certificates-dash/forms/certificate-add/steps/certificate-options/certificate-options.component';
+import { CertificateConstraintsComponent } from './certificates-dash/forms/common-steps/certificate-constraints/certificate-constraints.component';
+import { CertificateSubjectComponent } from './certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +78,7 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     SshConnectionFormComponent,
     SshKeypairFormComponent,
     CertificatesDashComponent,
-    CertificateAddComponent,
+    OldCertificateAddComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
     CertificateEditComponent,
@@ -94,6 +106,12 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     StorjProviderFormComponent,
     OauthProviderComponent,
     CertificateAcmeAddComponent,
+    CertificateOptionsComponent,
+    CertificateSubjectComponent,
+    CertificateAddComponent,
+    CertificateIdentifierAndTypeComponent,
+    CertificateConstraintsComponent,
+    CertificateImportComponent,
   ],
   imports: [
     CommonModule,
@@ -113,6 +131,8 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
     CoreComponents,
     MatProgressBarModule,
     RouterModule,
+    MatStepperModule,
+    AppCommonModule,
   ],
 })
 export class CredentialsModule { }

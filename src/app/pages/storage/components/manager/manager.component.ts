@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -324,8 +324,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       error: this.handleError,
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['poolId']) {
-        this.pk = parseInt(params['poolId'], 10);
+      if (params.poolId) {
+        this.pk = parseInt(params.poolId, 10);
         this.isNew = false;
       }
     });

@@ -96,7 +96,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((preferences) => {
       this.form.patchValue({ autoRefresh: preferences.autoRefreshReports });
-      this.form.get('autoRefresh').valueChanges.pipe(
+      this.form.controls.autoRefresh.valueChanges.pipe(
         untilDestroyed(this),
       ).subscribe(() => {
         this.store$.dispatch(autoRefreshReportsToggled());

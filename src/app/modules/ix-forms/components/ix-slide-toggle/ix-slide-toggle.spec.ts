@@ -1,5 +1,5 @@
 import { NgControl } from '@angular/forms';
-import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
@@ -26,15 +26,15 @@ describe('IxSlideToggleComponent', () => {
       spectator.component.setDisabledState(true);
       expect(spectator.component.isDisabled).toBeTruthy();
     });
-    it('when called with false, input is not disabled', () => {
+    it('when called with false, button is not disabled', () => {
       spectator.component.setDisabledState(false);
       spectator.detectChanges();
-      expect(spectator.query('input')).not.toBeDisabled();
+      expect(spectator.query('button')).not.toBeDisabled();
     });
-    it('when called with true, input is disabled', () => {
+    it('when called with true, buton is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
-      expect(spectator.query('input')).toBeDisabled();
+      expect(spectator.query('button')).toBeDisabled();
     });
   });
 

@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -40,6 +41,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     EntityModule,
     MatCardModule,
     MatDividerModule,
+    MatProgressBarModule,
   ],
   declarations: [
     DiskBulkEditComponent,
