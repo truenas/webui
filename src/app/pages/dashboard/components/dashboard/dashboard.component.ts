@@ -198,7 +198,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   optimizeWidgetContainer(): void {
-    const wrapper = document.querySelector<HTMLElement>('.rightside-content-hold');
+    const wrapper = this.layoutService.getContentContainer();
 
     const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);

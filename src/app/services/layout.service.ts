@@ -36,4 +36,8 @@ export class LayoutService {
       'open',
     );
   }
+
+  getContentContainer(): HTMLElement {
+    return this.window.document.querySelector('.rightside-content-hold');
+  }
 }
