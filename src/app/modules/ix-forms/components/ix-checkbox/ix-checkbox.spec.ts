@@ -26,6 +26,11 @@ describe('IxCheckboxComponent', () => {
       spectator.component.setDisabledState(true);
       expect(spectator.component.isDisabled).toBeTruthy();
     });
+    it('when called with false, input is not disabled', () => {
+      spectator.component.setDisabledState(false);
+      spectator.detectChanges();
+      expect(spectator.query('input')).not.toBeDisabled();
+    });
     it('when called with true, input is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
