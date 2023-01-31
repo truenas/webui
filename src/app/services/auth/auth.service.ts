@@ -16,14 +16,10 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
   providedIn: 'root',
 })
 export class AuthService {
-  private isLoggedIn = false;
   @LocalStorage() token2: string;
   private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  get isAuthenticated(): boolean {
-    return this.isLoggedIn;
-  }
 
   get isAuthenticated$(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
@@ -35,7 +31,13 @@ export class AuthService {
 
   constructor(
     private wsManager: WebsocketConnectionService,
-  ) { }
+  ) {
+    this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isLoggedIn) => {
+      if (isLoggedIn) {
+        this.getLoggedInUserInformation();
+      }
+    });
+  }
 
   login(username: string, password: string, otp: string = null): Observable<boolean> {
     const uuid = UUID.UUID();
@@ -46,11 +48,7 @@ export class AuthService {
       params: otp ? [username, password, otp] : [username, password],
     });
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
-      this.isLoggedIn = response;
       this.isLoggedIn$.next(response);
-      if (response) {
-        this.getLoggedInUserInformation();
-      }
     }));
   }
 
@@ -63,11 +61,7 @@ export class AuthService {
       params: [this.token2],
     });
     return this.getFilteredWebsocketResponse<boolean>(uuid).pipe(tap((response) => {
-      this.isLoggedIn = response;
       this.isLoggedIn$.next(response);
-      if (response) {
-        this.getLoggedInUserInformation();
-      }
     }));
   }
 
@@ -116,7 +110,6 @@ export class AuthService {
     };
     this.wsManager.send(payload);
     return this.getFilteredWebsocketResponse<void>(uuid).pipe(tap(() => {
-      this.isLoggedIn = false;
       this.isLoggedIn$.next(false);
     }));
   }
