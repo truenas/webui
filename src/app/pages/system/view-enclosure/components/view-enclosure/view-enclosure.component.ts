@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { filter } from 'rxjs/operators';
 import { CoreEvent } from 'app/interfaces/events';
 import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -58,14 +57,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       || !this.supportedHardware
     ) return false;
 
-    // These conditions are here because M series actually reports a separate chassis for
-    // the rear bays. SystemProfiler will store a rearIndex value for those machines.
-    if (this.system && this.system.rearIndex && this.system.profile.length > 2) {
-      return true;
-    } if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
-      return true;
-    }
-    return false;
+    return (this.system.getShelfCount() > 0);
   }
 
   systemManufacturer: string;
@@ -268,14 +260,11 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       }, 1500);
     });
     if (!this.disksUpdateSubscriptionId) {
-      const diskUpdatesTrigger$ = new Subject<ApiEvent<Disk>>();
-      diskUpdatesTrigger$.pipe(
-        switchMap(() => this.ws.call('disk.query')),
-        untilDestroyed(this),
-      ).subscribe((disks) => {
+      const diskUpdatesTrigger$ = new Subject<Disk[]>();
+      diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe((disks) => {
         this.handleLoadedDisks(disks);
       });
-      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$);
+      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
     }
   }
 

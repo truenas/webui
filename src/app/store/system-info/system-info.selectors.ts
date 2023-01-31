@@ -24,3 +24,13 @@ export const selectSystemFeatures = createSelector(
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
 
 export const waitForSystemFeatures = selectNotNull(selectSystemFeatures);
+
+export const selectIsUpgradePending = createSelector(
+  selectSystemInfoState,
+  (state) => state.isUpgradePending,
+);
+
+export const selectHasOnlyMissmatchVersionsReason = createSelector(
+  selectSystemInfoState,
+  (state) => state.hasOnlyMissmatchVersionsReason,
+);

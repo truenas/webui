@@ -442,22 +442,22 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "int" with default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_with_default'].value).toBe(9401);
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_int_with_default.value).toBe(9401);
     });
     it('creates form for "string" with default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_with_default'].value).toBe('test input string');
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_string_with_default.value).toBe('test input string');
     });
     it('creates form for "boolean" with default value', () => {
-      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toBe(true);
+      expect(dynamicForm.controls.variable_subquestion_boolean.value).toBe(true);
     });
     it('creates form for "int" without default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_int_without_default'].value).toBeNull();
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_int_without_default.value).toBeNull();
     });
     it('creates form for "string" without default value', () => {
-      expect(dynamicForm.controls['variable_dict'].controls['variable_input_string_without_default'].value).toBe('');
+      expect(dynamicForm.controls.variable_dict.controls.variable_input_string_without_default.value).toBe('');
     });
     it('creates form for "boolean" without default value', () => {
-      expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
+      expect(dynamicForm.controls.variable_boolean.value).toBe(false);
     });
 
     beforeUri.forEach((item) => {
@@ -471,7 +471,7 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "uri" with default value', () => {
-      expect(dynamicForm.controls['variable_uri'].value).toBe('https://google.com');
+      expect(dynamicForm.controls.variable_uri.value).toBe('https://google.com');
     });
 
     beforeCron.forEach((item) => {
@@ -485,7 +485,7 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "cron" with default value', () => {
-      expect(dynamicForm.controls['variable_cron'].value).toBe('* * * * *');
+      expect(dynamicForm.controls.variable_cron.value).toBe('* * * * *');
     });
 
     beforeBoolean.forEach((item) => {
@@ -499,8 +499,8 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "boolean"', () => {
-      expect(dynamicForm.controls['variable_boolean'].value).toBe(false);
-      expect(dynamicForm.controls['variable_subquestion_boolean'].value).toBe(true);
+      expect(dynamicForm.controls.variable_boolean.value).toBe(false);
+      expect(dynamicForm.controls.variable_subquestion_boolean.value).toBe(true);
     });
 
     beforeList.forEach((item) => {
@@ -514,7 +514,7 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "list"', () => {
-      expect(dynamicForm.controls['variable_list'].value).toEqual([]);
+      expect(dynamicForm.controls.variable_list.value).toEqual([]);
     });
 
     beforeHidden.forEach((item) => {
@@ -528,9 +528,9 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for hidden field', () => {
-      expect(dynamicForm.controls['hidden_field'].value).toBe('hidden_field');
-      expect(dynamicForm.controls['hidden_field'].disabled).toBe(true);
-      expect((dynamicForm.controls['if_field'])).toBeUndefined();
+      expect(dynamicForm.controls.hidden_field.value).toBe('hidden_field');
+      expect(dynamicForm.controls.hidden_field.disabled).toBe(true);
+      expect((dynamicForm.controls.if_field)).toBeUndefined();
     });
   });
   describe('serializeFormValue()', () => {

@@ -23,6 +23,7 @@ export interface SshConfig {
   passwordauth: boolean;
   privatekey: string;
   rootlogin: boolean;
+  adminlogin: boolean;
   sftp_log_facility: SshSftpLogFacility;
   sftp_log_level: SshSftpLogLevel;
   tcpfwd: boolean;
