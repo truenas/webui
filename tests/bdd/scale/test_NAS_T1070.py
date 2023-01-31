@@ -103,9 +103,9 @@ def open_the_user_dropdown(driver):
     assert wait_on_element(driver, 7, xpaths.users.title, 'clickable')
     assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd')
-    element_text = driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Permit Sudo:")]/../dd').text
-    assert element_text == 'true'
+    assert wait_on_element(driver, 7, xpaths.users.eric_Allowed_Sudo_Commands)
+    element_text = driver.find_element_by_xpath(xpaths.users.eric_Allowed_Sudo_Commands).text
+    assert element_text == 'ALL'
     assert wait_on_element(driver, 10, xpaths.users.eric_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
 
