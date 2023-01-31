@@ -77,7 +77,6 @@
   "Enable passwordless sudo for zfs commands": "",
   "Enable to use <a href=\"https://searchstorage.techtarget.com/definition/thin-provisioning\" target=\"_blank\">thin provisioning</a> where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",
   "Enabled Protocols": "",
-  "Enclosure Label": "",
   "Enter a number of degrees in Celsius. S.M.A.R.T. reports if the temperature of a drive has changed by N degrees Celsius since the last report.": "",
   "Enter a threshold temperature in Celsius. S.M.A.R.T. will message with a log level of LOG_CRIT and send an email if the temperature is higher than the threshold.": "",
   "Enter a threshold temperature in Celsius. S.M.A.R.T. will message with a log level of LOG_INFO if the temperature is higher than the threshold.": "",
