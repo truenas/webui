@@ -117,7 +117,7 @@ def verify_ixsystems_goes_to_wwwixsystemscom(driver):
     driver.find_element_by_xpath('//mat-dialog-container//div[@class="copyright-txt"]//a').click()
     time.sleep(1)
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '//img[contains(@title,"ix_logo")]')
+    assert wait_on_element(driver, 7, '//img[contains(@title,"iXsystems")]')
     assert 'www.ixsystems.com' in driver.current_url, driver.current_url
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
