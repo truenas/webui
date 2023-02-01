@@ -10,7 +10,7 @@
           formControlName="token_lifetime"
           type="number"
           [label]="'Token Lifetime' | translate"
-          [tooltip]="'Stands for Time To Live of the token, in seconds. The token will be invalidated if the connection has been inactive for a time greater than this.' | translate"
+          [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
         ></ix-input>
       </ix-fieldset>
 

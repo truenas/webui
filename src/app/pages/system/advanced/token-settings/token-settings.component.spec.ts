@@ -3,12 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/token-settings/token-settings.component';
 import { SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('TokenSettingsComponent', () => {
   let spectator: Spectator<TokenSettingsComponent>;
@@ -22,12 +25,17 @@ describe('TokenSettingsComponent', () => {
     providers: [
       mockWindow({
         localStorage: {
-          getItem: () => '300',
           setItem: jest.fn,
         },
       }),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService),
+      provideMockStore({
+        selectors: [{
+          selector: selectPreferences,
+          value: { lifetime: 300 } as Preferences,
+        }],
+      }),
     ],
   });
 

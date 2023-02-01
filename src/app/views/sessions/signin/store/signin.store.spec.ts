@@ -52,7 +52,6 @@ describe('SigninStore', () => {
           },
           localStorage: {
             getItem: () => '300',
-            setItem: jest.fn(),
           },
         },
       },

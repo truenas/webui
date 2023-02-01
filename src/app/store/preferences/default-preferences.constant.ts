@@ -18,4 +18,5 @@ export const defaultPreferences: Preferences = {
 
   rebootAfterManualUpdate: false,
   autoRefreshReports: false,
+  lifetime: 300,
 };

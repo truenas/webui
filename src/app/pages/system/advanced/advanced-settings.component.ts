@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
-  AfterViewInit, Component, Inject, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,6 @@ import {
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -46,6 +45,7 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
@@ -87,6 +87,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   systemDatasetPool: string;
   isFirstTime = true;
   sedPassword = '';
+  lifetimeToken = '';
 
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
@@ -283,13 +284,16 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     private loader: AppLoaderService,
     private ixFormatter: IxFormatterService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
     this.getDatasetData();
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
+    });
+
+    this.store$.select(selectPreferences).pipe(filter(Boolean), untilDestroyed(this)).subscribe((preferences) => {
+      this.lifetimeToken = preferences.lifetime.toString();
     });
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -456,7 +460,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
           items: [
             {
               label: this.translate.instant('Token Lifetime'),
-              value: this.window.localStorage.getItem('lifetime'),
+              value: this.lifetimeToken,
             },
           ],
         },
