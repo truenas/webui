@@ -134,11 +134,11 @@ export class IdmapFormComponent implements OnInit {
   });
 
   get isCustomName(): boolean {
-    return this.form.get('name').value === customIdmapName;
+    return this.form.controls.name.value === customIdmapName;
   }
 
   get currentBackend(): IdmapBackendOption {
-    return this.backendChoices?.[this.form.get('idmap_backend').value];
+    return this.backendChoices?.[this.form.controls.idmap_backend.value];
   }
 
   constructor(

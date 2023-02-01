@@ -112,8 +112,8 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   private resetZvolConfirmValidState(): void {
-    this.form.get('zvolConfirm').reset();
-    this.form.get('zvolConfirm').setErrors(null);
+    this.form.controls.zvolConfirm.reset();
+    this.form.controls.zvolConfirm.setErrors(null);
   }
 
   private getZvolName(disk: VmDiskDevice): string {

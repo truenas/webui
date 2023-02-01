@@ -251,13 +251,13 @@ export class ExportDisconnectModalComponent implements OnInit {
       }
     });
 
-    this.form.get('destroy').valueChanges
+    this.form.controls.destroy.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.resetNameInputValidState());
   }
 
   private resetNameInputValidState(): void {
-    this.form.get('nameInput').reset();
-    this.form.get('nameInput').setErrors(null);
+    this.form.controls.nameInput.reset();
+    this.form.controls.nameInput.setErrors(null);
   }
 }

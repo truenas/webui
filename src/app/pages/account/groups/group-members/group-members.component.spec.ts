@@ -20,7 +20,6 @@ const fakeGroupDataSource = [{
   group: 'dummy-group',
   builtin: false,
   smb: true,
-  sudo: false,
   users: [41],
 }] as Group[];
 

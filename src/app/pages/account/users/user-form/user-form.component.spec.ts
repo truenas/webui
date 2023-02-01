@@ -6,6 +6,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -34,9 +35,8 @@ const mockUser = {
   smb: true,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
-  sudo_commands: [],
+  sudo_commands_nopasswd: ['rm -rf /'],
+  sudo_commands: [allCommands],
   email: null,
   sshpubkey: null,
   group: {
@@ -203,7 +203,6 @@ describe('UserFormComponent', () => {
         'Home Directory Permissions': '700',
         'Home Directory': '/home/test',
         'Lock User': false,
-        'Permit Sudo': false,
         'Primary Group': 'test-group',
         'Samba Authentication': true,
         'Authorized Keys': '',
@@ -213,6 +212,10 @@ describe('UserFormComponent', () => {
         'New Password': '',
         Shell: 'bash',
         Username: 'test',
+        'Allowed sudo commands': [],
+        'Allow all sudo commands': true,
+        'Allowed sudo commands with no password': ['rm -rf /'],
+        'Allow all sudo commands with no password': false,
       });
     });
 
@@ -223,12 +226,15 @@ describe('UserFormComponent', () => {
         'Full Name': 'updated',
         'Home Directory Permissions': '755',
         'Home Directory': '/home/updated',
-        'Permit Sudo': true,
         'Primary Group': 'mock-group',
         'Samba Authentication': false,
         'Lock User': true,
         Shell: 'zsh',
         Username: 'updated',
+        'Allow all sudo commands': false,
+        'Allowed sudo commands': ['pwd'],
+        'Allowed sudo commands with no password': [],
+        'Allow all sudo commands with no password': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -248,7 +254,8 @@ describe('UserFormComponent', () => {
           shell: '/usr/bin/zsh',
           smb: false,
           sshpubkey: null,
-          sudo: true,
+          sudo_commands: ['pwd'],
+          sudo_commands_nopasswd: [allCommands],
           username: 'updated',
         },
       ]);
@@ -268,7 +275,6 @@ describe('UserFormComponent', () => {
       expect(disabled).toEqual(expect.objectContaining({
         'Confirm Password': true,
         'Lock User': true,
-        'Permit Sudo': true,
         Password: true,
       }));
     });

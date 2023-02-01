@@ -136,11 +136,11 @@ export class ServiceS3Component implements OnInit {
         });
     });
 
-    this.form.get('certificate').value$.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.certificate.value$.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value !== null) {
-        this.form.get('tls_server_uri').addValidators([this.tlsServerUriRequiredIfCertificateNotNull.validatorFn()]);
+        this.form.controls.tls_server_uri.addValidators([this.tlsServerUriRequiredIfCertificateNotNull.validatorFn()]);
       } else {
-        this.form.get('tls_server_uri').removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
+        this.form.controls.tls_server_uri.removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
       }
     });
   }

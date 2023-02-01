@@ -5,11 +5,13 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import { of } from 'rxjs';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogService, WebSocketService2 } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -49,13 +51,16 @@ export class ManualTestDialogComponent {
   supportedDisks: Disk[] = [];
   unsupportedDisks: Disk[] = [];
   startedTests: ManualSmartTest[] = [];
+  endedTests = false;
+  progressTotalPercent = 0;
+  subName = 'smart.test.progress';
 
   get hasStartedTests(): boolean {
     return Boolean(this.startedTests.length);
   }
 
   constructor(
-    private ws: WebSocketService2,
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -76,6 +81,18 @@ export class ManualTestDialogComponent {
       .subscribe({
         next: (startedTests) => {
           this.startedTests = startedTests;
+          const subscriptionId = UUID.UUID();
+          this.ws.sub(this.subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((result) => {
+            if (result && result.progress) {
+              this.progressTotalPercent = result.progress.percent / 100;
+            }
+            if (result && result.msg === IncomingApiMessageType.NoSub) {
+              this.ws.unsub(result.collection, subscriptionId);
+              this.endedTests = true;
+            }
+            this.cdr.markForCheck();
+          });
+
           this.cdr.markForCheck();
         },
         error: (error) => {

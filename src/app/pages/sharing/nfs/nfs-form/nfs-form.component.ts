@@ -107,19 +107,19 @@ export class NfsFormComponent implements OnInit {
   }
 
   addNetworkControl(): void {
-    this.form.get('networks').push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
+    this.form.controls.networks.push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
   }
 
   removeNetworkControl(index: number): void {
-    this.form.get('networks').removeAt(index);
+    this.form.controls.networks.removeAt(index);
   }
 
   addHostControl(): void {
-    this.form.get('hosts').push(this.formBuilder.control('', Validators.required));
+    this.form.controls.hosts.push(this.formBuilder.control('', Validators.required));
   }
 
   removeHostControl(index: number): void {
-    this.form.get('hosts').removeAt(index);
+    this.form.controls.hosts.removeAt(index);
   }
 
   toggleAdvancedMode(): void {

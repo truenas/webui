@@ -76,7 +76,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetOptions$ = of(datasetOptions);
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading = false;
-        this.form.get('name').markAsTouched();
+        this.form.controls.name.markAsTouched();
         this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
@@ -94,7 +94,7 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   setDataset(datasetId: string): void {
-    this.form.get('dataset').setValue(datasetId);
+    this.form.controls.dataset.setValue(datasetId);
   }
 
   onSubmit(): void {
