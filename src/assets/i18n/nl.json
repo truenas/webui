@@ -205,6 +205,7 @@
   "Thread #": "",
   "Thread responsible for syncing db transactions not running on other node.": "",
   "Thread responsible for syncing db transactions not running on this node.": "",
+  "Train: {train}": "",
   "TrueNAS software versions do not match between storage controllers.": "",
   "UPS": "",
   "USB Passthrough Device": "",

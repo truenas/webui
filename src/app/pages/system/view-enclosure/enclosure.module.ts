@@ -11,6 +11,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -45,6 +46,7 @@ import { TemperatureMeterComponent } from './components/temperature-meter/temper
     MatDialogModule,
     ReactiveFormsModule,
     IxFormsModule,
+    CoreComponents,
   ],
   declarations: [
     ViewEnclosureComponent,

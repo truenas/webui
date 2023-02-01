@@ -1,7 +1,6 @@
 import {
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { MatLegacySliderChange as MatSliderChange } from '@angular/material/legacy-slider';
 
 @Component({
   selector: 'ix-toolbar-slider',
@@ -16,8 +15,8 @@ export class ToolbarSliderComponent {
   @Input() name: string;
   @Output() valueChange = new EventEmitter<number>();
 
-  onChange(event: MatSliderChange): void {
-    this.value = event.value;
+  onChange(updatedValue: string): void {
+    this.value = +updatedValue;
     this.valueChange.emit(this.value);
   }
 }

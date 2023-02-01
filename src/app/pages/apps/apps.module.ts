@@ -1,18 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { ImgFallbackModule } from 'ngx-img-fallback';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { CoreComponents } from 'app/core/core-components.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
@@ -26,7 +23,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps/components/chart-form/chart-form.component';
-import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
+import { AppCardComponent } from './components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from './components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
@@ -41,7 +38,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ManageCatalogSummaryDialogComponent,
     CatalogEditFormComponent,
     CatalogAddFormComponent,
-    AppDetailViewComponent,
+    AppCardComponent,
   ],
   imports: [
     CommonModule,
@@ -57,10 +54,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatSelectModule,
     FormsModule,
     MatDialogModule,
-    ImgFallbackModule,
-    NgxSkeletonLoaderModule,
-    IxIconModule,
-    FlexLayoutModule,
+    LazyLoadImageModule,
   ],
 })
 export class AppsModule { }

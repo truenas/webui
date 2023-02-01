@@ -11,4 +11,10 @@
 
 <ix-available-apps-header></ix-available-apps-header>
 
-<router-outlet></router-outlet>
+<div class="apps">
+  <ix-app-card
+    *ngFor="let app of apps; trackBy: trackByAppId"
+    [app]="app"
+    [routerLink]="['fixme']"
+  ></ix-app-card>
+</div>
