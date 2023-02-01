@@ -102,9 +102,9 @@ def input_my_active_Directory_smb_share_as_the_description_click_save(driver, de
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    assert wait_on_element(driver, 7, xpaths.popup.smb_Start_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
@@ -131,8 +131,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_Service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smb_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Toggle, 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('send a file to "{share_name}" with "{ad_user}"%"{ad_password}"'))

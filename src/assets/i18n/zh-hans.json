@@ -1,5 +1,6 @@
 {
   "": "",
+  "Edit Certificate": "",
   "Enable to use <a href=\"https://searchstorage.techtarget.com/definition/thin-provisioning\" target=\"_blank\">thin provisioning</a> where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",
   "Go to HA settings": "",
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "",
