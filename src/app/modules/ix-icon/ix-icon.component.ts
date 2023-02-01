@@ -1,5 +1,6 @@
 import {
   AfterContentInit,
+  AfterViewInit,
   Attribute,
   ChangeDetectionStrategy,
   Component,
@@ -39,7 +40,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
+export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterViewInit, AfterContentInit {
   @Input() name: string;
 
   private get iconName(): string {
@@ -91,6 +92,10 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   }
 
   ngAfterContentInit(): void {
+    this.updateIcon(this.name);
+  }
+
+  ngAfterViewInit(): void {
     this.updateIcon(this.name);
   }
 

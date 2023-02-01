@@ -432,7 +432,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .form-line .mat-mdc-checkbox {
-    margin-left: 0;
+    margin-left: -10px;
+    margin-right: 8px;
   }
 
   /////////////////// END SpecSelectors
