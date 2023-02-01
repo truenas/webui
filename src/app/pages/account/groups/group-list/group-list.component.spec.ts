@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CoreComponents } from 'app/core/core-components.module';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -45,6 +46,7 @@ describe('GroupListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      CoreComponents,
     ],
     declarations: [
       GroupDetailsRowComponent,
@@ -92,8 +94,8 @@ describe('GroupListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', ''],
-      ['mock', '1000', 'true', 'No', 'true', 'expand_more'],
-      ['fake', '1001', 'true', 'Yes', 'true', 'expand_more'],
+      ['mock', '1000', 'Yes', 'No', 'Yes', 'expand_more'],
+      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'expand_more'],
     ];
 
     expect(cells).toEqual(expectedRows);
