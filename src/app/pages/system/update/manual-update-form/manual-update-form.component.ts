@@ -80,7 +80,7 @@ export class ManualUpdateFormComponent implements OnInit {
         if (userPrefs.rebootAfterManualUpdate === undefined) {
           userPrefs.rebootAfterManualUpdate = false;
         }
-        this.form.get('rebootAfterManualUpdate').setValue(userPrefs.rebootAfterManualUpdate);
+        this.form.controls.rebootAfterManualUpdate.setValue(userPrefs.rebootAfterManualUpdate);
       }),
       untilDestroyed(this),
     ).subscribe(noop);

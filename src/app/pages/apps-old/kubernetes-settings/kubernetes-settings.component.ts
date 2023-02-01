@@ -129,7 +129,7 @@ export class KubernetesSettingsComponent implements OnInit {
   }
 
   private setHostPathCheckWarning(): void {
-    this.form.get('validate_host_path').valueChanges.pipe(
+    this.form.controls.validate_host_path.valueChanges.pipe(
       filter((value) => !value),
       switchMap(() => {
         return this.dialogService.confirm({

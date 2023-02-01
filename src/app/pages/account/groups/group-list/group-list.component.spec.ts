@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CoreComponents } from 'app/core/core-components.module';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -21,14 +22,16 @@ const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,
-  sudo: true,
+  sudo_commands: [],
+  sudo_commands_nopasswd: [],
   smb: true,
   users: [1],
 }, {
   group: 'fake',
   gid: 1001,
   builtin: true,
-  sudo: true,
+  sudo_commands: ['ls'],
+  sudo_commands_nopasswd: [],
   smb: true,
   users: [2],
 }] as Group[];
@@ -43,6 +46,7 @@ describe('GroupListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      CoreComponents,
     ],
     declarations: [
       GroupDetailsRowComponent,
@@ -89,9 +93,9 @@ describe('GroupListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedRows = [
-      ['Group', 'GID', 'Builtin', 'Permit Sudo', 'Samba Authentication', ''],
-      ['mock', '1000', 'true', 'true', 'true', 'expand_more'],
-      ['fake', '1001', 'true', 'true', 'true', 'expand_more'],
+      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', ''],
+      ['mock', '1000', 'Yes', 'No', 'Yes', 'expand_more'],
+      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'expand_more'],
     ];
 
     expect(cells).toEqual(expectedRows);

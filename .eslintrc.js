@@ -154,7 +154,11 @@ module.exports = {
           {
             "selector": "WithStatement",
             "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
-          }
+          },
+          {
+            selector: 'MemberExpression[property.name="get"][object.name="form"], MemberExpression[property.name="get"] > MemberExpression[property.name="form"]',
+            message: "For type safety reasons prefer `controls.name` over `get('name')`",
+          },
         ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
@@ -292,7 +296,7 @@ module.exports = {
         "angular-file-naming/module-filename-suffix": "error",
         "angular-file-naming/pipe-filename-suffix": "error",
         "angular-file-naming/service-filename-suffix": ["error", {
-          "suffixes": ["service", "effects", "store", "guard"]
+          "suffixes": ["service", "effects", "store", "guard", "pipe"]
         }],
       }
     },

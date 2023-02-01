@@ -71,7 +71,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
   }
 
   setupExportedPoolWarning(): void {
-    this.form.get('replacement').valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.replacement.valueChanges.pipe(untilDestroyed(this)).subscribe(
       this.warnAboutExportedPool.bind(this),
     );
   }

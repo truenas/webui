@@ -117,14 +117,14 @@ export class ServiceSmbComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
   ) {
-    this.form.get('netbiosname_b').disable();
+    this.form.controls.netbiosname_b.disable();
   }
 
   ngOnInit(): void {
     this.isFormLoading = true;
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
       this.subscriptions.push(
-        this.form.get('netbiosname_b').disabledWhile(
+        this.form.controls.netbiosname_b.disabledWhile(
           this.store$.select(selectIsHaLicensed).pipe(
             tap((isHaLicensed) => this.hasSecondController = isHaLicensed),
             map((isHaLicensed) => !isHaLicensed),

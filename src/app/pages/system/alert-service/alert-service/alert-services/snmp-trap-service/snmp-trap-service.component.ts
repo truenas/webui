@@ -92,7 +92,7 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
   ]);
 
   get isV3(): boolean {
-    return this.form.get('v3').value;
+    return this.form.controls.v3.value;
   }
 
   constructor(

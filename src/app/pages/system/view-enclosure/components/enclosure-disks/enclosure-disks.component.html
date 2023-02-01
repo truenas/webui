@@ -477,7 +477,7 @@
                     {{ 'S.M.A.R.T. Enabled' | translate }}
                   </div>
                   <div class="value">
-                    {{ selectedDisk.togglesmart ? 'Yes' : 'No' }}
+                    {{ selectedDisk.togglesmart | yesNo }}
                   </div>
                 </div>
               </div>

@@ -141,6 +141,7 @@
 
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
+      left: 2px;
       position: relative;
       top: 1px;
     }

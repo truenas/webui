@@ -27,7 +27,10 @@ export interface ApiEvent<T = unknown> {
   collection: string; // TODO: ApiMethod?
   fields: T;
   id: number;
-  msg: IncomingApiMessageType.Changed | IncomingApiMessageType.Added | IncomingApiMessageType.Removed;
+  msg: IncomingApiMessageType.Changed
+  | IncomingApiMessageType.Added
+  | IncomingApiMessageType.Removed
+  | IncomingApiMessageType.NoSub;
   // true when item is fully removed from the collection
   // TODO: Find usages and guard against directly in WebsocketService2. Only rely on 'removed' ApiEventMessage
   /**
