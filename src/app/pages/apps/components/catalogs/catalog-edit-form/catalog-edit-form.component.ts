@@ -14,7 +14,6 @@ import { WebSocketService2 } from 'app/services/ws2.service';
 @UntilDestroy()
 @Component({
   templateUrl: './catalog-edit-form.component.html',
-  styleUrls: ['./catalog-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogEditFormComponent implements OnInit {

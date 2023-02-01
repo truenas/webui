@@ -40,4 +40,8 @@
   --mdc-switch-selected-pressed-track-color: var(--primary);
   --primary-txt: #fff;
   --mdc-circular-progress-active-indicator-color: var(--primary);
+  --mdc-snackbar-container-color: var(--bg1);
+  --mdc-snackbar-supporting-text-color: var(--primary-txt);
+  --mdc-snackbar-supporting-text-font: var(--mdc-dialog-supporting-text-font);
+  --mdc-snackbar-supporting-text-size: 1rem;
 }

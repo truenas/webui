@@ -30,7 +30,7 @@ describe('CpuValidatorService', () => {
         threads: new FormControl(2),
       });
 
-      const result$ = validator(form.get('vcpus'));
+      const result$ = validator(form.controls.vcpus);
       expect(await lastValueFrom(result$)).toEqual({
         invalidCpus: {
           message: 'The product of vCPUs, cores and threads must not exceed 7 on this system.',
@@ -56,7 +56,7 @@ describe('CpuValidatorService', () => {
         threads: new FormControl(2),
       });
 
-      const result$ = validator(form.get('vcpus'));
+      const result$ = validator(form.controls.vcpus);
       expect(await lastValueFrom(result$)).toBeNull();
     });
   });

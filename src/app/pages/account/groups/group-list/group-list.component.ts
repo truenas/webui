@@ -38,7 +38,7 @@ export class GroupListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo', 'smb', 'actions'];
+  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'actions'];
   dataSource = new MatTableDataSource<Group>([]);
   defaultSort: Sort = { active: 'gid', direction: 'asc' };
   expandedRow: Group;
