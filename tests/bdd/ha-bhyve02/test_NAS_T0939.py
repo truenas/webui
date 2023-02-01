@@ -22,7 +22,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T939.feature', 'Create a smb share the AD permission dataset')
+@scenario('features/NAS-T939.feature', 'Create a smb share with the AD permission dataset')
 def test_create_a_smb_share_the_ad_permission_dataset(driver):
     """Create a smb share the AD permission dataset."""
 
