@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import {
-  Validators, UntypedFormControl, ValidationErrors, UntypedFormGroup,
+  Validators, UntypedFormControl, ValidationErrors, UntypedFormGroup, AbstractControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { lastValueFrom } from 'rxjs';
+import {
+  catchError, lastValueFrom, map, Observable, of,
+} from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -28,10 +30,12 @@ import {
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { FormComboboxConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { UseforDefaults } from 'app/pages/sharing/iscsi/iscsi-wizard/usefor-defaults.interface';
 import {
@@ -116,6 +120,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
             Validators.required,
             forbiddenValues(this.namesInUse),
           ],
+          asyncValidation: [this.entityService.adaptAsyncValidator(this.nameValidator())],
         },
         {
           type: 'select',
@@ -536,8 +541,10 @@ export class IscsiWizardComponent implements WizardConfiguration {
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
+    private ixValidatorService: IxValidatorsService,
     private router: Router,
     private storageService: StorageService,
+    private entityService: EntityFormService,
     private translate: TranslateService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
@@ -672,6 +679,23 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
   }
 
+  nameValidator(): (control: AbstractControl) => Observable<ValidationErrors> {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      return this.ws.call('iscsi.target.validate_name', [control?.value]).pipe(
+        map((validationResponse) => {
+          if (validationResponse === null) {
+            return null;
+          }
+          return this.ixValidatorService.makeErrorMessage(
+            'invalidTargetName',
+            validationResponse,
+          );
+        }),
+        catchError(() => of(null)),
+      );
+    };
+  }
+
   summaryInit(): void {
     for (let step = 0; step < 3; step++) {
       Object.entries(
@@ -793,7 +817,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
   formUseforValueUpdate(selected: string): void {
     const settings = _.find(this.defaultUseforSettings, { key: selected });
-    Object.keys(settings).forEach((i) => {
+    Object.keys(settings.values).forEach((i) => {
       const controller = this.entityWizard.formArray.get([0]).get(i);
       controller.setValue(settings.values[i as keyof UseforDefaults['values']]);
     });
