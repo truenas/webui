@@ -73,8 +73,8 @@ def the_users_add_page_should_open_input_the_fields_full_name_username_password_
     driver.find_element_by_xpath(xpaths.add_User.username_Input).send_keys('ericbsd')
     driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
     driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing')
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).clear()
-    driver.find_element_by_xpath(xpaths.add_User.confirm_password_Input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).send_keys('testing')
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
