@@ -55,7 +55,6 @@ export class ManualTestDialogComponent {
   startedTests: ManualSmartTest[] = [];
   endedTests = false;
   progressTotalPercent = 0;
-  subName = 'smart.test.progress';
 
   get hasStartedTests(): boolean {
     return Boolean(this.startedTests.length);
