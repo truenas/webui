@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import reusableSeleniumCode as rsc
 import time
@@ -54,44 +54,44 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.side_Menu.local_User, 'clickable')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
 
 
 @then('On the right side of the table, click the expand arrow for one of the users')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
     """On the right side of the table, click the expand arrow for one of the users."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
+    assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_User).click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button, 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
+    driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
 
 
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 7, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
     time.sleep(0.5)
 
 
@@ -112,15 +112,15 @@ def change_the_users_email_and_click_save(driver, email):
 def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
 
 
 @then('Open the user drop down to verify the email has been changed')
 def open_the_user_drop_down_to_verify_the_email_has_been_changed(driver):
     """Open the user drop down to verify the email has been changed."""
-    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd")]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]')
+    assert wait_on_element(driver, 5, xpaths.users.eric_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_User).click()
+    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
     assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(text(),"Email:")]')
 
 
