@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   getFilteredWebsocketResponse<T>(uuid: string): Observable<T> {
-    return this.wsManager.websocketSubject$.pipe(
+    return this.wsManager.websocket$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       map((data: ResultMessage<T>) => data.result),
       take(1),

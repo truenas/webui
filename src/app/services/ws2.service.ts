@@ -27,7 +27,7 @@ export class WebSocketService2 {
   ) { }
 
   private get ws$(): Observable<unknown> {
-    return this.wsManager.websocketSubject$;
+    return this.wsManager.websocket$;
   }
 
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {

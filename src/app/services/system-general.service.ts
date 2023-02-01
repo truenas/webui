@@ -82,7 +82,9 @@ export class SystemGeneralService {
     protected ws: WebSocketService2,
     @Inject(WINDOW) private window: Window,
     private store$: Store<AppState>,
-  ) {}
+  ) {
+    this.getProductType$.subscribe();
+  }
 
   getCertificateAuthorities(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);
