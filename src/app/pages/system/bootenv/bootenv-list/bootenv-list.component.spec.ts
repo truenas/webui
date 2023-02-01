@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -37,6 +38,7 @@ describe('BootEnvironmentListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(MatSnackBar),
       mockProvider(IxSlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(),
