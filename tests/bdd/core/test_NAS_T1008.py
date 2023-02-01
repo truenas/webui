@@ -17,7 +17,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1008.feature', 'Add an ACL Item and verify is preserve on the tank ACL dataset')
+@scenario('features/NAS-T1008.feature', 'Add an ACL Item and verify is preserve on the tank AD permission dataset')
 def test_add_an_acl_item_and_verify_is_preserve_on_the_tank_acl_dataset(driver):
     """Add an ACL Item and verify is preserve on the tank ACL dataset."""
 

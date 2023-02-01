@@ -19,7 +19,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1010.feature', 'Create an smb share with the system ACL dataset')
+@scenario('features/NAS-T1010.feature', 'Create an smb share with the system AD permission dataset')
 def test_create_an_smb_share_with_the_system_acl_dataset():
     """Create an smb share with the system ACL dataset."""
 
