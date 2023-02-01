@@ -54,6 +54,15 @@ def Go_To_Service(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.services).click()
 
 
+def Login(driver, user, password):
+    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
+    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
+    assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+
+
 def Login_If_Not_On_Dashboard(driver, user, password):
     if not is_element_present(driver, xpaths.side_Menu.dashboard):
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
