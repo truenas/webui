@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class UploadConfigDialogComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private mdDialog: MatDialog,
-    private ws: WebSocketService,
+    private authService: AuthService,
   ) {}
 
   onSubmit(): void {
@@ -45,6 +45,6 @@ export class UploadConfigDialogComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
       dialogRef.componentInstance.setDescription(job.error);
     });
-    dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.ws.token, formData);
+    dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.authService.token2, formData);
   }
 }

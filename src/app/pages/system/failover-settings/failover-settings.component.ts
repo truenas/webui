@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,12 +9,14 @@ import { Subscription } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -47,14 +49,15 @@ export class FailoverSettingsComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
+    private wsManager: WebsocketConnectionService,
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +80,12 @@ export class FailoverSettingsComponent implements OnInit {
           this.cdr.markForCheck();
 
           if (values.disabled && !values.master) {
-            this.ws.logout();
+            this.authService.logout().pipe(untilDestroyed(this)).subscribe({
+              next: () => {
+                this.authService.token2 = null;
+                this.wsManager.closeWebsocketConnection();
+              },
+            });
           }
         },
         error: (error) => {

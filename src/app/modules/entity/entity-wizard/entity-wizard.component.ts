@@ -18,7 +18,8 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +43,7 @@ export class EntityWizardComponent implements OnInit {
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     // eslint-disable-next-line @typescript-eslint/ban-types
     private formBuilder: UntypedFormBuilder,
     private entityFormService: EntityFormService,
@@ -181,23 +182,25 @@ export class EntityWizardComponent implements OnInit {
     } else {
       this.loader.open();
 
-      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe({
-        next: (result) => {
-          this.loader.close();
-          if (result.error) {
+      this.ws.job(this.conf.addWsCall, [value])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (result) => {
+            this.loader.close();
+            if (result.error) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.dialog.errorReport(result.error, (result as any).reason, result.exception);
-          } else if (this.conf.routeSuccess) {
-            this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
-          } else {
-            this.snackbar.success(this.translate.instant('Settings saved.'));
-          }
-        },
-        error: (error) => {
-          this.loader.close();
-          new EntityUtils().handleError(this, error);
-        },
-      });
+              this.dialog.errorReport(result.error, (result as any).reason, result.exception);
+            } else if (this.conf.routeSuccess) {
+              this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
+            } else {
+              this.snackbar.success(this.translate.instant('Settings saved.'));
+            }
+          },
+          error: (error) => {
+            this.loader.close();
+            new EntityUtils().handleError(this, error);
+          },
+        });
     }
   }
 

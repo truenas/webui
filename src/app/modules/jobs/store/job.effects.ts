@@ -10,7 +10,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { jobAborted } from './job.actions';
 
@@ -40,7 +40,6 @@ export class JobEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
@@ -61,7 +60,7 @@ export class JobEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
-      return this.ws.sub('core.get_jobs').pipe(
+      return this.ws.subscribe('core.get_jobs').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
         map((event) => jobRemoved({ id: event.id })),
       );
@@ -79,7 +78,7 @@ export class JobEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
   ) {}
 }

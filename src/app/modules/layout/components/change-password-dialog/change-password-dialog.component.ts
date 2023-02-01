@@ -11,7 +11,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -44,12 +45,13 @@ export class ChangePasswordDialogComponent {
     private dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
     private dialogService: DialogService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
+    private authService: AuthService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private snackbar: SnackbarService,
   ) {
-    this.ws.loggedInUser$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
+    this.authService.user$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
       this.loggedInUser = user;
     });
   }

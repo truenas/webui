@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -14,7 +14,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialogComponent>;
@@ -28,7 +28,7 @@ describe('ExtendDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockJob('pool.attach', fakeSuccessfulJob()),
         mockCall('disk.get_unused', [
           {
@@ -66,7 +66,7 @@ describe('ExtendDialogComponent', () => {
   });
 
   it('loads unused disks and shows them in a New Disk select', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalled();
     expect(await newDiskSelect.getOptionLabels()).toEqual(['sde (10.91 TiB)', 'sdf (9.1 TiB)']);
   });
 
@@ -75,7 +75,7 @@ describe('ExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',
@@ -91,7 +91,7 @@ describe('ExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sdf',

@@ -53,7 +53,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
 import {
@@ -196,7 +196,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
   constructor(
     protected router: Router,
-    public ws: WebSocketService,
+    public ws: WebSocketService2,
     public dialogService: DialogService,
     public loader: AppLoaderService,
     protected translate: TranslateService,

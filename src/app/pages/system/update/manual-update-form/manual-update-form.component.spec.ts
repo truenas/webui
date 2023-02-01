@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -30,7 +30,7 @@ describe('ManualUpdateFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('user.query', [{
           attributes: {
             preferences: {
@@ -79,7 +79,7 @@ describe('ManualUpdateFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     // form = await loader.getHarness(IxFormHarness);
-    // websocket = spectator.inject(WebSocketService);
+    // websocket = spectator.inject(WebSocketService2);
   });
 
   it('loads all pool location options', async () => {

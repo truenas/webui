@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, finalize, take } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -32,13 +32,14 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService2 } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
@@ -80,7 +81,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   constructor(
     public themeService: ThemeService,
     private router: Router,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
+    private wsManager: WebsocketConnectionService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,
@@ -182,9 +184,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.hostname = sysInfo.hostname;
     });
 
-    this.ws.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.modalService.closeSlideIn();
-    });
+    this.wsManager.websocketSubject$.pipe(
+      finalize(() => {
+        this.modalService.closeSlideIn();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   ngOnDestroy(): void {
