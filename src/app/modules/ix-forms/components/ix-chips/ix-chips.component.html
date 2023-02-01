@@ -6,22 +6,22 @@
 ></ix-label>
 
 <div class="input-container" [class.disabled]="isDisabled">
-  <mat-chip-list
+  <mat-chip-grid
     #chipList
     class="form-chip"
     [disabled]="isDisabled"
     [required]="required"
   >
-    <mat-chip
+    <mat-chip-row
       *ngFor="let item of values"
       class="chip"
-      [selectable]="true"
+      [disabled]="false"
       [removable]="!isDisabled"
       (removed)="onRemove(item)"
     >
       {{ item }}
       <mat-icon *ngIf="!isDisabled" matChipRemove>cancel</mat-icon>
-    </mat-chip>
+    </mat-chip-row>
 
     <input
       #chipInput
@@ -33,7 +33,7 @@
       (blur)="onInputBlur($event)"
       (matChipInputTokenEnd)="onAdd($event.value)"
     />
-  </mat-chip-list>
+  </mat-chip-grid>
 
   <mat-autocomplete
     #auto="matAutocomplete"

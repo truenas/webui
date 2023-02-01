@@ -333,7 +333,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 }
 
 /* Chips */
-.form-element .mat-chip {
+.form-element .mat-mdc-chip {
   font-size: smaller !important;
   padding: 1px 16px 0 !important;
 }
@@ -922,4 +922,12 @@ ix-nested-tree-node > div {
 
 body .mat-mdc-option {
   min-height: 36px;
+}
+
+.mat-mdc-chip {
+  font-weight: 500;
+}
+
+mat-chip-grid {
+  width: 100%;
 }
