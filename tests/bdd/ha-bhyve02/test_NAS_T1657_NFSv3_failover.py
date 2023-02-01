@@ -319,13 +319,8 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
     """wait for the login to appear and HA to be enabled, login with <user> and <password>."""
     assert wait_on_element(driver, 180, xpaths.login.user_Input)
     assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
-    assert wait_on_element(driver, 10, xpaths.login.user_Input, 'inputable')
-    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
-    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+
+    rsc.Login(driver, user, password)
 
 
 @then('once on the Dashboard, click on System Settings and click Services')

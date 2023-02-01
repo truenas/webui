@@ -222,13 +222,7 @@ def wait_for_the_login_page_to_appear(driver):
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
 def at_the_login_page_enter_user_and_password(driver, user, password):
     """At the login page, enter "user" and "password"."""
-    assert wait_on_element(driver, 10, xpaths.login.user_Input, 'inputable')
-    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
-    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+    rsc.Login(driver, user, password)
 
 
 @then('on the Dashboard, wait for the Active Directory service')
