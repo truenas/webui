@@ -149,7 +149,7 @@ def if_the_smb_service_is_not_started_start_the_service(driver):
 def send_a_file_to_the_share_with_ip_ldapsmbshare_and_ldap_user_ldap_password(driver, nas_ip, smbname, ldap_user, ldap_password):
     """send a file to the share with ip/ldapsmbshare and ldap_user%ldap_password."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U "{ldap_user}%{ldap_password}" -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 
