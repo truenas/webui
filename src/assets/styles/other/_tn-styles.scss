@@ -431,11 +431,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-height: 256px;
   }
 
-  .form-line .mat-mdc-checkbox {
-    margin-left: -10px;
-    margin-right: 8px;
-  }
-
   /////////////////// END SpecSelectors
 
   .mat-dialog-container {
@@ -537,7 +532,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // To fix alignment issues w/checkboxes on Create Pool page
   .headerCheckBox {
     left: 16px;
-    margin-top: 7px;
     position: relative;
   }
 
