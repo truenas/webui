@@ -47,7 +47,7 @@ class add_User:
     confirm_password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
     shell_Select = '//ix-combobox[@formcontrolname="shell"]//input'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
-    sudo_Checkbox = '//mat-checkbox[contains(.,"Permit Sudo")]'
+    sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
     auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
     root_Group_Option = '//mat-option[contains(.,"root")]'
@@ -155,7 +155,7 @@ class checkbox:
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     old_Confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
     confirm = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
-    sudo = '//ix-checkbox[@formcontrolname="sudo"]//mat-checkbox'
+    sudo = '//ix-checkbox[@formcontrolname="sudo_commands_all"]//mat-checkbox'
     force = '//ix-checkbox[@formcontrolname="force"]//mat-checkbox'
 
 
@@ -473,5 +473,6 @@ class users:
     title = '//h1[text()="Users"]'
     eric_User = '//tr[contains(.,"ericbsd")]/td'
     eric_Edit_Button = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
+    eric_Allowed_Sudo_Commands = '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//dt[contains(.,"Allowed Sudo Commands:")]/../dd'
     root_User = '//tr[contains(.,"root")]/td'
     root_Edit_Button = '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]'
