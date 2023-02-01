@@ -76,17 +76,12 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
-    element = driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select)
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).click()
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).send_keys(Keys.TAB)
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
-    element = driver.find_element_by_xpath(xpaths.button.save)
-    driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.find_element_by_xpath(xpaths.button.save).click()
 
 
@@ -103,9 +98,7 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
     element = driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select)
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
