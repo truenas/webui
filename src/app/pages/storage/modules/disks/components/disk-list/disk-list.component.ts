@@ -8,7 +8,7 @@ import * as filesize from 'filesize';
 import {
   forkJoin, lastValueFrom, of, Subject,
 } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, debounceTime, map } from 'rxjs/operators';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -195,7 +195,10 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
 
   afterInit(entityList: EntityTableComponent<Disk>): void {
     const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
-    disksUpdateTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
+    disksUpdateTrigger$.pipe(
+      debounceTime(50),
+      untilDestroyed(this),
+    ).subscribe(() => {
       entityList.getData();
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);

@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subject, switchMap, tap } from 'rxjs';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { QueryOptions } from 'app/interfaces/query-api.interface';
+import { map, Subject } from 'rxjs';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -20,8 +19,8 @@ export interface Temperature {
 @Injectable({
   providedIn: 'root',
 })
-export class DiskTemperatureService {
-  protected disks: Disk[] = [];
+export class DiskTemperatureService implements OnDestroy {
+  protected disks: { name: string; type: DiskType }[] = [];
   protected broadcast: Interval;
   protected subscribers = 0;
 
@@ -48,22 +47,23 @@ export class DiskTemperatureService {
       }
     });
 
-    const queryOptions: QueryOptions<Disk> = { select: ['name', 'type'] };
-    this.websocket.call('disk.query', [[], queryOptions]).subscribe((disks) => {
+    this.websocket.call('disk.query', [[], { select: ['name', 'type'] }]).subscribe((disks) => {
       this.disks = disks;
       if (this.subscribers > 0) this.start();
     });
 
-    const disksUpdateTrigger$ = new Subject<ApiEvent<Disk>>();
+    const disksUpdateTrigger$ = new Subject<Disk[]>();
     disksUpdateTrigger$.pipe(
-      tap(() => this.stop()),
-      switchMap(() => this.websocket.call('disk.query', [[], queryOptions])),
+      map((disks) => {
+        this.stop();
+        return disks.map((disk) => ({ name: disk.name, type: disk.type }));
+      }),
       untilDestroyed(this),
     ).subscribe((disks) => {
       this.disks = disks;
       if (this.subscribers > 0) this.start();
     });
-    this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(disksUpdateTrigger$);
+    this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(disksUpdateTrigger$, true);
   }
 
   start(): void {
@@ -88,5 +88,9 @@ export class DiskTemperatureService {
       };
       this.core.emit({ name: 'DiskTemperatures', data, sender: this });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
   }
 }

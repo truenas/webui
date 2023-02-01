@@ -50,7 +50,7 @@
         {{ 'Builtin' | translate }}
       </th>
       <td *matCellDef="let user; dataSource: dataSource" mat-cell>
-        {{ user.builtin }}
+        {{ user.builtin | yesNo }}
       </td>
     </ng-container>
 

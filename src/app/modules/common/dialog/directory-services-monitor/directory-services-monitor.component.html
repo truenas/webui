@@ -46,14 +46,15 @@
           <mat-icon *ngSwitchCase="DirectoryServiceState.Disabled" class="state-disabled">remove_circle</mat-icon>
         </ng-container>
       </mat-cell>
-    </ng-container>    <!-- Name Column -->
+    </ng-container>
+
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef>
         {{ 'Name' | translate }}
       </mat-header-cell>
       <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
     </ng-container>
-    <!-- State Column -->
+
     <ng-container matColumnDef="state">
       <mat-header-cell *matHeaderCellDef>
         {{ 'State' | translate }}
