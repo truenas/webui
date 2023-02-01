@@ -121,18 +121,23 @@ def pytest_runtest_makereport(item):
                 # Press CLOSE if exist
                 if element_exist('//button[@ix-auto="button__CLOSE"]'):
                     web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+
             # take screenshot after looking for error
             save_screenshot(screenshot_name)
-            if wait_on_element(1, '//mat-icon[@id="close-icon" and text()="cancel"]', 'clickable'):
+
+            if element_exist('//h1[contains(text(),"Installing")]') and element_exist('//mat-dialog-content[contains(.,"Error:")]'):
+                web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+
+            if wait_on_element(1, '//mat-icon[@id="ix-close-icon"]', 'clickable'):
                 try:
-                    web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                    web_driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
                 except ElementClickInterceptedException:
                     try:
                         # Press Tab in case a dropdown is in the way
                         actions = ActionChains(web_driver)
                         actions.send_keys(Keys.TAB)
                         actions.perform()
-                        web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
+                        web_driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
                     except ElementClickInterceptedException:
                         pass
 
