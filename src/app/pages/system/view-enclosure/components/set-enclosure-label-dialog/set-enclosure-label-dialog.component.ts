@@ -4,7 +4,9 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from 'app/modules/entity/utils';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 export interface SetEnclosureLabelDialogData {
@@ -20,8 +22,15 @@ export interface SetEnclosureLabelDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SetEnclosureLabelDialogComponent implements OnInit {
+  enclosureLabel = 'Enclosure Label';
+
   form = this.formBuilder.group({
-    label: ['', Validators.required],
+    label: ['', [
+      Validators.required,
+      this.validatorsService.withMessage(
+        Validators.pattern('^(?!\\s*$).+'),
+        this.translate.instant(`${this.enclosureLabel} cannot contain only whitespace characters.`),
+      )]],
     resetToDefault: [false],
   });
 
@@ -31,6 +40,8 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
     private dialogService: DialogService,
+    private validatorsService: IxValidatorsService,
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private data: SetEnclosureLabelDialogData,
   ) { }
 

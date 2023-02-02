@@ -1221,15 +1221,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((newLabel: string) => {
-        this.core.emit({
-          name: 'EnclosureLabelChanged',
-          sender: this,
-          data: {
-            index: this.selectedEnclosure.enclosureKey,
-            id: enclosure.id,
-            label: newLabel,
-          },
-        } as EnclosureLabelChangedEvent);
+        if (newLabel) {
+          this.core.emit({
+            name: 'EnclosureLabelChanged',
+            sender: this,
+            data: {
+              index: this.selectedEnclosure.enclosureKey,
+              id: enclosure.id,
+              label: newLabel,
+            },
+          } as EnclosureLabelChangedEvent);
+        }
       });
   }
 }
