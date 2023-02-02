@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import {
   filter, map, share, switchMap, take,
 } from 'rxjs/operators';
@@ -37,6 +37,13 @@ export class WebSocketService2 {
     });
     return this.ws$.pipe(
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      switchMap((data: IncomingWebsocketMessage) => {
+        if ('error' in data && data.error) {
+          console.error('Error: ', data.error);
+          return throwError(() => data.error);
+        }
+        return of(data);
+      }),
       map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
       take(1),
     );

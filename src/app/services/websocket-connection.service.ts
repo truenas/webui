@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject, EMPTY, interval, Observable, of, switchMap, tap, throwError, timer,
+  BehaviorSubject, EMPTY, interval, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -61,10 +61,6 @@ export class WebsocketConnectionService {
         if (this.hasAuthError(data)) {
           this.ws$.complete();
           return EMPTY;
-        }
-        if ('error' in data && data.error) {
-          console.error('Error: ', data.id, data.error);
-          return throwError(() => data.error);
         }
         return of(data);
       }),
