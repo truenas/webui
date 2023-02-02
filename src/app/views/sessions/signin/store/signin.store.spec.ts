@@ -33,7 +33,7 @@ describe('SigninStore', () => {
       ]),
       mockProvider(WebsocketConnectionService, {
         isConnected$: of(true),
-        websocketSubject$: of(),
+        websocket$: of(),
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
