@@ -4,9 +4,10 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { Observable, of, throwError } from 'rxjs';
 import {
-  filter, map, share, switchMap, take,
+  filter, map, share, switchMap, take, takeWhile,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import {
   ApiDirectory, ApiMethod,
 } from 'app/interfaces/api-directory.interface';
@@ -57,6 +58,15 @@ export class WebSocketService2 {
       switchMap((jobId) => {
         return this.subscribe('core.get_jobs').pipe(
           filter((apiEvent) => apiEvent.id === jobId),
+          takeWhile((apiEvent) => {
+            return apiEvent.fields.state !== JobState.Success;
+          }, true),
+          switchMap((apiEvent) => {
+            if (apiEvent.fields.state === JobState.Failed) {
+              return throwError(() => apiEvent.fields);
+            }
+            return of(apiEvent);
+          }),
           map((apiEvent) => apiEvent.fields),
         );
       }),
@@ -69,7 +79,17 @@ export class WebSocketService2 {
       return oldObservable$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
     }
 
-    const subObs$ = this.wsManager.buildSubscriber(name).pipe(share());
+    const subObs$ = this.wsManager.buildSubscriber(name).pipe(
+      switchMap((apiEvent: unknown) => {
+        const erroredEvent = apiEvent as { error: unknown };
+        if (erroredEvent.error) {
+          console.error('Error: ', erroredEvent.error);
+          return throwError(() => erroredEvent.error);
+        }
+        return of(apiEvent);
+      }),
+      share(),
+    );
     this.eventSubscriptions.set(name, subObs$);
     return subObs$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
   }
