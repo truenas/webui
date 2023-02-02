@@ -15,6 +15,6 @@
   <ix-app-card
     *ngFor="let app of apps; trackBy: trackByAppId"
     [app]="app"
-    [routerLink]="['fixme']"
+    [routerLink]="['/apps', 'available', app.name]"
   ></ix-app-card>
 </div>

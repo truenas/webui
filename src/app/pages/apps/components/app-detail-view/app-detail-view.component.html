@@ -7,72 +7,97 @@
     <section fxLayout="row">
       <div class="app" fxFlex="200px">
         <div class="app-image-holder">
-          <img *ngIf="appInfo" [src]="appInfo.chart_metadata.icon" [src-fallback]="imagePlaceholder" />
-          <ngx-skeleton-loader *ngIf="isLoading$ | async" class="app-image-loader"></ngx-skeleton-loader>
+          <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
         </div>
-        <a mat-button color="primary" [disabled]="!appInfo" (click)="onInstallButtonPressed()">{{ 'Install' | translate
-          }}</a>
+        <a
+          mat-button
+          color="primary"
+          [disabled]="!app" (click)="onInstallButtonPressed()"
+        >{{ 'Install' | translate }}</a>
       </div>
 
       <div class="app-info" fxFlex="240px">
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" count="5"></ngx-skeleton-loader>
-        <ng-container *ngIf="appInfo">
-          <h5>{{ 'Official Catalog' | translate }}</h5>
-          <div>{{ 'App Version' | translate }}: {{ appInfo.chart_metadata.version }}</div>
-          <div>{{ 'Keywords' | translate }}: {{ appInfo.chart_metadata.keywords.join(',') }}</div>
-          <div>{{ 'Train' | translate }}: {{ appInfo.catalog_train }}</div>
-          <div>{{ 'Home Page' | translate }}: <a [href]="appInfo.chart_metadata.home">{{ appInfo.chart_metadata.home
-              }}</a></div>
-        </ng-container>
+        <h5 class="catalog-header">{{ 'Official Catalog' | translate }}</h5>
+        <div class="app-list-item">
+          {{ 'App Version' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
+          <ng-template #latestAppVersion>
+            {{ app.latest_app_version }}
+          </ng-template>
+        </div>
+        <div class="app-list-item">
+          {{ 'Keywords' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
+          <ng-template #appCategories>
+            {{ app.categories.join(', ') }}
+          </ng-template>
+        </div>
+        <div class="app-list-item">
+          {{ 'Train' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Home Page' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
       </div>
 
       <div class="app-description">
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" count="3"></ngx-skeleton-loader>
-        <ng-container *ngIf="appInfo">
-          <div>{{ appInfo.chart_metadata.description }}</div>
-        </ng-container>
+        <ngx-skeleton-loader *ngIf="isLoading$ | async; else appDescription" count="2"></ngx-skeleton-loader>
+        <ng-template #appDescription>
+          <div>{{ description }}</div>
+        </ng-template>
       </div>
     </section>
 
     <section>
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" fxFlex class="screenshot-loader"></ngx-skeleton-loader>
-        <div *ngIf="appInfo" class="screenshot">
-          <img
-            alt="Logo image background of stars and sky at night"
-            class="screenshot-image"
-            src="assets/images/stars-sky-1200w.jpg"
-            srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-          <ix-icon name="ix:truenas_scale_logo_full"></ix-icon>
-        </div>
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" fxFlex class="screenshot-loader"></ngx-skeleton-loader>
-        <div *ngIf="appInfo" class="screenshot">
-          <img
-            alt="Logo image background of stars and sky at night"
-            class="screenshot-image"
-            src="assets/images/stars-sky-1200w.jpg"
-            srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-          <ix-icon name="ix:truenas_scale_logo_full"></ix-icon>
-        </div>
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" fxFlex class="screenshot-loader"></ngx-skeleton-loader>
-        <div *ngIf="appInfo" class="screenshot">
-          <img
-            alt="Logo image background of stars and sky at night"
-            class="screenshot-image"
-            src="assets/images/stars-sky-1200w.jpg"
-            srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-          <ix-icon name="ix:truenas_scale_logo_full"></ix-icon>
-        </div>
+        <ng-container *ngIf="isLoading$ | async; else appScreenshots">
+          <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+          <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+          <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+        </ng-container>
+
+        <ng-template #appScreenshots>
+          <div class="screenshot">
+            <img
+              alt="Logo image background of stars and sky at night"
+              class="screenshot-image"
+              src="assets/images/stars-sky-1200w.jpg"
+              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
+            <ix-icon name="ix:truenas_scale_logomark"></ix-icon>
+          </div>
+          <div class="screenshot">
+            <img
+              alt="Logo image background of stars and sky at night"
+              class="screenshot-image"
+              src="assets/images/stars-sky-1200w.jpg"
+              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
+            <ix-icon name="ix:truenas_scale_logomark"></ix-icon>
+          </div>
+          <div class="screenshot">
+            <img
+              alt="Logo image background of stars and sky at night"
+              class="screenshot-image"
+              src="assets/images/stars-sky-1200w.jpg"
+              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
+            <ix-icon name="ix:truenas_scale_logomark"></ix-icon>
+          </div>
+        </ng-template>
       </div>
     </section>
 
     <section>
       <h2>{{ 'Similar Apps' | translate }}</h2>
-      <div fxLayout="row wrap" fxLayoutGap="16px">
-        <ngx-skeleton-loader fxFlex class="similar-app-loader"></ngx-skeleton-loader>
-        <ngx-skeleton-loader fxFlex class="similar-app-loader"></ngx-skeleton-loader>
+      <div *ngIf="isLoading$ | async; else emptySimilarApps" fxLayout="row wrap" fxLayoutGap="16px">
+        <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
+        <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
       </div>
+
+      <ng-template #emptySimilarApps>
+        <h4>{{ 'No apps are found.' | translate }}</h4>
+      </ng-template>
     </section>
   </div>
   <div fxFlex fxLayoutAlign="end">
@@ -80,39 +105,67 @@
     <section class="app-info-cards">
       <div class="app-info-card">
         <h3>{{ 'Available Resources' | translate }}</h3>
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" count="4"></ngx-skeleton-loader>
 
-        <ng-container *ngIf="appInfo">
-          <div>{{ 'CPU Usage' | translate }}: {{ 25 | percent }}</div>
-          <div>{{ 'Memory Usage' | translate }}: {{ '48GB / 96GB' }}</div>
-          <div>{{ 'Pool' | translate }}: {{ appInfo.dataset }}</div>
-          <div>{{ 'Available Space' | translate }}: {{ '3 TiB' }}</div>
-        </ng-container>
+        <div class="app-list-item">
+          {{ 'CPU Usage' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Memory Usage' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Pool' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Available Space' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
       </div>
 
       <div class="app-info-card">
         <h3>{{ 'Helm Chart Info' | translate }}</h3>
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" count="4"></ngx-skeleton-loader>
 
-        <ng-container *ngIf="appInfo">
-          <div>{{ 'Catalog' | translate }}: {{ appInfo.catalog }}</div>
-          <div>{{ 'Train' | translate }}: {{ appInfo.catalog_train }}</div>
-          <div>{{ 'Chart Version' | translate }}: {{ appInfo.version }}</div>
-          <div>{{ 'Maintainer' | translate }}: {{ 'iXsystems' }}</div>
-        </ng-container>
+        <div class="app-list-item">
+          {{ 'Catalog' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Train' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Chart Version' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Maintainer' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
       </div>
 
       <div class="app-info-card">
         <h3>{{ 'Application Info' | translate }}</h3>
-        <ngx-skeleton-loader *ngIf="isLoading$ | async" count="4"></ngx-skeleton-loader>
 
-        <ng-container *ngIf="appInfo">
-          <div>{{ 'Version' | translate }}: {{ appInfo.chart_metadata.version }}</div>
-          <div>{{ 'App Source' | translate }}: {{ appInfo.chart_metadata.sources.join(',') }}</div>
-          <div>{{ 'Last App Updated' }}: {{ appInfo.chart_metadata.latest_chart_version }}</div>
-        </ng-container>
+        <div class="app-list-item">
+          {{ 'Version' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'App Source' | translate }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
+        <div class="app-list-item">
+          {{ 'Last App Updated' }}:
+          <ngx-skeleton-loader *ngIf="isLoading$ | async; else notAvailable"></ngx-skeleton-loader>
+        </div>
       </div>
     </section>
 
   </div>
 </div>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>

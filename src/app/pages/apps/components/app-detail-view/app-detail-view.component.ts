@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   map, filter, BehaviorSubject,
 } from 'rxjs';
-import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants/catalog.constants';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -21,11 +22,15 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class AppDetailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-  appInfo: ChartRelease;
+  app: CatalogApp;
   appId: string;
+  isLoading$ = new BehaviorSubject<boolean>(false);
+  readonly imagePlaceholder = appImagePlaceholder;
+  readonly officialCatalog = officialCatalog;
+
   get pageTitle(): string {
-    if (this.appInfo) {
-      return this.appInfo.name;
+    if (this.app) {
+      return this.app.name;
     }
 
     if (this.appId) {
@@ -34,9 +39,10 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
     return this.translate.instant('Loading');
   }
-  imagePlaceholder = appImagePlaceholder;
 
-  isLoading$ = new BehaviorSubject<boolean>(false);
+  get description(): string {
+    return this.app.app_readme.replace(/<[^>]*>/g, '');
+  }
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -45,9 +51,11 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private appService: ApplicationsService,
   ) {
 
   }
+
   ngOnInit(): void {
     this.listenForRouteChanges();
   }
@@ -65,26 +73,38 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
       )
       .subscribe((appId) => {
         this.appId = appId;
-        this.loadAppInfo(appId);
+        this.loadAppInfo();
       });
   }
 
-  private loadAppInfo(appId: string): void {
+  private loadAppInfo(): void {
     this.isLoading$.next(true);
-    this.ws.call('chart.release.query', [[['id', '=', appId]]]).pipe(
-      map((apps) => apps[0]),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (appInfo) => {
-        this.appInfo = appInfo;
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
-      },
-    });
+    this.appService
+      .getCatalogItem(this.appId, officialCatalog, chartsTrain)
+      .pipe(
+        untilDestroyed(this),
+      ).subscribe({
+        next: (app) => {
+          this.app = app;
+          this.isLoading$.next(false);
+          this.cdr.markForCheck();
+
+          this.loadSimilarApps();
+          this.loadScreenshots();
+        },
+        error: () => {
+          this.isLoading$.next(false);
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private loadSimilarApps(): void {
+    console.warn('The Similar Apps section is under construction.');
+  }
+
+  private loadScreenshots(): void {
+    console.warn('The Screenshot section is under construction.');
   }
 
   onInstallButtonPressed(): void {

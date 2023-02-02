@@ -12,13 +12,22 @@
 
 .app-info {
   padding-left: 2rem;
-  padding-top: 2rem;
+
+  .catalog-header {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.app-list-item {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
 }
 
 .app-description {
   flex-basis: 50%;
   padding-left: 2rem;
-  padding-top: 2rem;
 }
 
 $app-image-size: 160px;
@@ -85,7 +94,7 @@ $app-image-size: 160px;
 .app-info-card {
   background-color: var(--bg2);
   margin-bottom: 1rem;
-  max-width: 320px;
+  max-width: 420px;
   padding: 1rem;
   width: 100%;
 
@@ -94,8 +103,21 @@ $app-image-size: 160px;
   }
 }
 
+.app-info,
+.app-info-card {
+  ngx-skeleton-loader {
+    display: inline-flex;
+    width: 35%;
+
+    ::ng-deep span {
+      margin: 0;
+    }
+  }
+}
+
 .app-info-cards {
-  padding: 1rem;
+  flex: 1;
+  padding: 0 1rem 0 2rem;
 }
 
 section {

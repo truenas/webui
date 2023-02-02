@@ -1,22 +1,7 @@
 <div class="left-column">
   <div *ngIf="installed" class="installed-badge">{{ 'Installed' | translate }}</div>
 
-  <div
-    class="logo-container"
-    [class.logo-loaded]="wasLogoLoaded"
-  >
-    <img
-      *ngIf="app.icon_url"
-      class="logo"
-      [offset]="800"
-      [lazyLoad]="app.icon_url"
-      [defaultImage]="appImagePlaceholder"
-      [scrollTarget]="scrollTarget"
-      (onStateChange)="onLogoLoaded($event)"
-    >
-
-    <div class="logo-placeholder"></div>
-  </div>
+  <ix-app-card-logo [app]="app" [url]="app.icon_url"></ix-app-card-logo>
 
   <div
     class="catalog"

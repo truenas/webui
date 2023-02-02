@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { LazyLoadImageDirective } from 'ng-lazyload-image';
-import { MockDirective } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 
 describe('AppCardComponent', () => {
@@ -9,7 +9,7 @@ describe('AppCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AppCardComponent,
     declarations: [
-      MockDirective(LazyLoadImageDirective),
+      MockComponent(AppCardLogoComponent),
     ],
   });
 
@@ -36,7 +36,7 @@ describe('AppCardComponent', () => {
   });
 
   it('shows app logo', () => {
-    expect(spectator.query(LazyLoadImageDirective).lazyImage).toBe('https://www.seti.org/logo.png');
+    expect(spectator.query(AppCardLogoComponent).url).toBe('https://www.seti.org/logo.png');
   });
 
   it('shows installed badge when [installed] is true', () => {

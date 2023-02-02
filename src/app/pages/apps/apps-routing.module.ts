@@ -5,6 +5,7 @@ import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
+import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 
 const routes: Routes = [
   {
@@ -14,9 +15,14 @@ const routes: Routes = [
   },
   {
     path: 'installed',
-    component: InstalledAppsComponent,
+    component: AppRouterOutletComponent,
     data: { title: T('Installed'), breadcrumb: T('Applications') },
     children: [{
+      path: '',
+      component: InstalledAppsComponent,
+      data: { title: T('Installed'), breadcrumb: T('Applications') },
+    },
+    {
       path: ':appId',
       component: AppDetailViewComponent,
       data: { title: T('App Detail'), breadcrumb: T('App Detail') },
@@ -24,9 +30,14 @@ const routes: Routes = [
   },
   {
     path: 'available',
-    component: AvailableAppsComponent,
-    data: { title: T('Available'), breadcrumb: T('Available') },
+    component: AppRouterOutletComponent,
+    data: { title: T('Available'), breadcrumb: T('Applications') },
     children: [{
+      path: '',
+      component: AvailableAppsComponent,
+      data: { title: T('Available'), breadcrumb: T('Applications') },
+    },
+    {
       path: ':appId',
       component: AppDetailViewComponent,
       data: { title: T('App Detail'), breadcrumb: T('App Detail') },
