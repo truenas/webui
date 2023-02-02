@@ -18,7 +18,8 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +39,7 @@ export class DashboardPoolComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
     private store: PoolsDashboardStore,

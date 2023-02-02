@@ -2,28 +2,28 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { LocalStorage } from 'ngx-webstorage';
 import { Observable } from 'rxjs';
 import {
   filter, map, share, switchMap, take,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import {
+  ApiDirectory, ApiMethod,
+} from 'app/interfaces/api-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService2 {
-  @LocalStorage() token2: string;
   private readonly eventSubscriptions = new Map<string, Observable<unknown>>();
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketManagerService,
+    protected wsManager: WebsocketConnectionService,
   ) { }
 
   private get ws$(): Observable<unknown> {
@@ -45,11 +45,12 @@ export class WebSocketService2 {
   job<K extends ApiMethod>(
     method: K,
     params?: ApiDirectory[K]['params'],
-  ): Observable<ApiEvent<Job<ApiDirectory[K]['response']>>> {
+  ): Observable<Job<ApiDirectory[K]['response']>> {
     return this.call(method, params).pipe(
       switchMap((jobId) => {
         return this.subscribe('core.get_jobs').pipe(
           filter((apiEvent) => apiEvent.id === jobId),
+          map((apiEvent) => apiEvent.fields),
         );
       }),
     );

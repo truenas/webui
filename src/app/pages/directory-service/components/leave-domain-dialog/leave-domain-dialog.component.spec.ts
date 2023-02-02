@@ -5,12 +5,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { LeaveDomainDialogComponent } from './leave-domain-dialog.component';
 
 describe('LeaveDomainDialogComponent', () => {
@@ -24,7 +25,7 @@ describe('LeaveDomainDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockJob('activedirectory.leave', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService),
@@ -48,7 +49,7 @@ describe('LeaveDomainDialogComponent', () => {
     const leaveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Domain' }));
     await leaveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('activedirectory.leave', [{
+    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('activedirectory.leave', [{
       username: 'Administrator',
       password: '12345678',
     }]);

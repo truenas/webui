@@ -91,7 +91,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   }
 
   ngAfterContentInit(): void {
-    this.updateIcon(this.name);
+    this.updateIcon(this.name || this.iconName);
   }
 
   private updateIcon(iconName: string): void {

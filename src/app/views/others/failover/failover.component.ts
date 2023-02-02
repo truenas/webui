@@ -7,8 +7,9 @@ import { Store } from '@ngrx/store';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
@@ -18,7 +19,8 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 })
 export class FailoverComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -28,15 +30,19 @@ export class FailoverComponent implements OnInit {
   ) {}
 
   isWsConnected(): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      this.router.navigate(['/session/signin']);
-    } else {
-      setTimeout(() => {
-        this.isWsConnected();
-      }, 5000);
-    }
+    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
+      next: (isConnected) => {
+        if (isConnected) {
+          this.loader.close();
+          // ws is connected
+          this.router.navigate(['/session/signin']);
+        } else {
+          setTimeout(() => {
+            this.isWsConnected();
+          }, 5000);
+        }
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -54,7 +60,7 @@ export class FailoverComponent implements OnInit {
       complete: () => { // show reboot screen
         this.store$.dispatch(passiveNodeReplaced());
 
-        this.ws.prepareShutdown();
+        this.wsManager.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWsConnected();

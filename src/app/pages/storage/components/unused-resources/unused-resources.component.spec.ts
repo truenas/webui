@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
@@ -12,7 +12,7 @@ describe('UnusedResourcesComponent', () => {
   const createComponent = createComponentFactory({
     component: UnusedResourcesComponent,
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('disk.get_unused', [
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
@@ -40,7 +40,7 @@ describe('UnusedResourcesComponent', () => {
   });
 
   it('hides an \'Unassigned Disks\' card when does not exist unused disks', () => {
-    spectator.inject(MockWebsocketService).mockCall('disk.get_unused', []);
+    spectator.inject(MockWebsocketService2).mockCall('disk.get_unused', []);
     spectator.component.ngOnInit();
     spectator.detectChanges();
 

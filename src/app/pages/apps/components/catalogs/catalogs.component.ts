@@ -1,9 +1,8 @@
 import {
-  AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -22,21 +21,20 @@ import {
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
 
 @UntilDestroy()
 @Component({
   templateUrl: './catalogs.component.html',
 })
-export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit, OnDestroy {
+export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   title = 'Catalogs';
   queryCall = 'catalog.query' as const;
   wsDelete = 'catalog.delete' as const;
   queryCallOption: CatalogQueryParams = [[], { extra: { item_details: true } }];
-  jobsSubscription: Subscription;
   disableActionsConfig = true;
 
   columns = [
@@ -73,13 +71,13 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
   constructor(
     private mdDialog: MatDialog,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
-    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(
+    this.ws.subscribe('core.get_jobs').pipe(
       filter((event) => event.fields.method === 'catalog.sync'),
       untilDestroyed(this),
     ).subscribe((event) => {
@@ -101,12 +99,6 @@ export class CatalogsComponent implements EntityTableConfig<Catalog>, OnInit, Af
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  ngOnDestroy(): void {
-    if (this.jobsSubscription) {
-      this.ws.unsubscribe(this.jobsSubscription);
-    }
   }
 
   refresh(): void {

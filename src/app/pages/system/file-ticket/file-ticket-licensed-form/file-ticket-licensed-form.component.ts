@@ -29,10 +29,10 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -87,7 +87,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   jobs$ = new BehaviorSubject<Observable<Job>[]>([]);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,

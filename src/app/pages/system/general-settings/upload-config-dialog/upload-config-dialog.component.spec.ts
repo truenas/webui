@@ -10,7 +10,8 @@ import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-jo
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { UploadConfigDialogComponent } from './upload-config-dialog.component';
 
@@ -38,8 +39,8 @@ describe('UploadConfigDialogComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
-      mockProvider(WebSocketService, {
-        token: 'token',
+      mockProvider(AuthService, {
+        token2: 'token',
       }),
     ],
   });

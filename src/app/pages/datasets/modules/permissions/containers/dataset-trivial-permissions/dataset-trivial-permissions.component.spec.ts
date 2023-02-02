@@ -5,22 +5,25 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket2,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  DialogService, StorageService, UserService, WebSocketService,
+  DialogService, StorageService, UserService,
 } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 
 describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: WebSocketService2;
   let saveButton: MatButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
@@ -33,7 +36,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: AclType.Posix1e,
@@ -68,7 +71,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(WebSocketService2);
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
   });
 

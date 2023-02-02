@@ -7,8 +7,9 @@ import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, StorageService,
 } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +21,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
   key: string;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
     private dialogService: DialogService,
