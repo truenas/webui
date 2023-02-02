@@ -8,13 +8,13 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {
@@ -31,7 +31,7 @@ describe('ManualTestDialogComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },
           { disk: 'sdb', error: 'Disk is on fire.' },
@@ -85,7 +85,7 @@ describe('ManualTestDialogComponent', () => {
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await startButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(WebSocketService2).call).toHaveBeenCalledWith(
       'smart.test.manual_test',
       [[
         { identifier: 'ID1', type: SmartTestType.Short },

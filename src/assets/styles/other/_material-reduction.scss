@@ -393,7 +393,9 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   position: static !important;
 }
 
-.mat-checkbox {
+.mat-mdc-checkbox {
+  margin-left: -10px;
+  margin-right: 8px;
   opacity: 0.75;
 }
 
@@ -895,7 +897,6 @@ ix-root {
 
   .cdk-focused,
   .cdk-keyboard-focused {
-
     @extend %focused-shared;
     background-color: var(--focus-bg) !important;
   }
@@ -930,4 +931,8 @@ body .mat-mdc-option {
 
 mat-chip-grid {
   width: 100%;
+}
+
+body .mat-mdc-checkbox label {
+  padding-left: 0;
 }

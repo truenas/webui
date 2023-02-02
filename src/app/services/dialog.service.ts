@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -10,7 +9,6 @@ import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
-import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
 @Injectable({
@@ -19,13 +17,7 @@ import { WebSocketService } from './ws.service';
 export class DialogService {
   protected loaderOpen = false;
 
-  constructor(private dialog: MatDialog, private ws: WebSocketService) {
-    /* Close all open dialogs when websocket connection is dropped */
-    this.ws.onClose$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => this.closeAllDialogs());
-  }
+  constructor(private dialog: MatDialog) { }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
   /**
@@ -133,16 +125,16 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
-      openDialog.close();
-    }
-  }
-
   generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
     const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
+  }
+
+  closeAllDialogs(): void {
+    for (const openDialog of this.dialog.openDialogs) {
+      openDialog.close();
+    }
   }
 }

@@ -6,8 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -16,7 +17,8 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class ConfigResetComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService,
+    protected ws2: WebSocketService2,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     public translate: TranslateService,
@@ -26,15 +28,18 @@ export class ConfigResetComponent implements OnInit {
   ) {}
 
   isWsConnected(): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      this.router.navigate(['/session/signin']);
-    } else {
-      setTimeout(() => {
-        this.isWsConnected();
-      }, 1000);
-    }
+    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
+      next: (isConnected) => {
+        if (isConnected) {
+          this.loader.close();
+          this.router.navigate(['/session/signin']);
+        } else {
+          setTimeout(() => {
+            this.isWsConnected();
+          }, 1000);
+        }
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -52,7 +57,7 @@ export class ConfigResetComponent implements OnInit {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.ws.prepareShutdown();
+      this.wsManager.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
         this.isWsConnected();

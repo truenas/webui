@@ -1829,7 +1829,6 @@
   "Error": "Erreur",
   "Error Downloading File": "Erreur de téléchargement de fichier",
   "Error Updating Production Status": "Erreur lors de la mise à jour du statut de production",
-  "Error authenticating with token, please try again.": "Erreur d'authentification avec le jeton, veuillez réessayer.",
   "Error checking for updates.": "Erreur lors de la vérification des mises à jour.",
   "Error creating CA.": "Erreur de création de l'AC.",
   "Error creating VM.": "Erreur lors de la création de la VM.",

@@ -5,13 +5,15 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
-import { of } from 'rxjs';
+import {
+  map, of, takeWhile,
+} from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService2 } from 'app/services';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -53,14 +55,13 @@ export class ManualTestDialogComponent {
   startedTests: ManualSmartTest[] = [];
   endedTests = false;
   progressTotalPercent = 0;
-  subName = 'smart.test.progress';
 
   get hasStartedTests(): boolean {
     return Boolean(this.startedTests.length);
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -81,16 +82,25 @@ export class ManualTestDialogComponent {
       .subscribe({
         next: (startedTests) => {
           this.startedTests = startedTests;
-          const subscriptionId = UUID.UUID();
-          this.ws.sub(this.subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((result) => {
-            if (result && result.progress) {
-              this.progressTotalPercent = result.progress.percent / 100;
-            }
-            if (result && result.msg === IncomingApiMessageType.NoSub) {
-              this.ws.unsub(result.collection, subscriptionId);
-              this.endedTests = true;
-            }
-            this.cdr.markForCheck();
+          this.ws.subscribe('smart.test.progress').pipe(
+            map((event) => event.fields),
+            takeWhile((result) => {
+              const condition = result
+                && (result as unknown as IncomingWebsocketMessage).msg === IncomingApiMessageType.NoSub;
+              this.endedTests = condition;
+              return !condition;
+            }),
+            untilDestroyed(this),
+          ).subscribe({
+            next: (result) => {
+              if (result && result.progress) {
+                this.progressTotalPercent = result.progress.percent / 100;
+              }
+              this.cdr.markForCheck();
+            },
+            complete: () => {
+              this.cdr.markForCheck();
+            },
           });
 
           this.cdr.markForCheck();

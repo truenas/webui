@@ -7,7 +7,7 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketManagerService } from 'app/services/ws-manager.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class MockWebsocketService2 extends WebSocketService2 {
 
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketManagerService,
+    protected wsManager: WebsocketConnectionService,
   ) {
     super(router, wsManager);
 
@@ -41,7 +41,7 @@ export class MockWebsocketService2 extends WebSocketService2 {
   mockCallOnce<K extends ApiMethod>(method: K, response: ApiDirectory[K]['response']): void {
     when(this.call).calledWith(method, expect.anything()).mockReturnValueOnce(of(response));
   }
-  mockJob<K extends ApiMethod>(method: K, response: ApiEvent<Job<ApiDirectory[K]['response']>>): void {
+  mockJob<K extends ApiMethod>(method: K, response: Job<ApiDirectory[K]['response']>): void {
     const responseWithJobId = {
       ...response,
       id: this.jobIdCounter,
@@ -59,17 +59,5 @@ export class MockWebsocketService2 extends WebSocketService2 {
 
   emitSubscribeEvent(event: ApiEvent<unknown>): void {
     this.subscribeStream$.next(event);
-  }
-
-  onclose(): void {
-    // Noop to avoid calling redirect.
-  }
-
-  connect(): void {
-    // Noop
-  }
-
-  reconnect(): void {
-    // Noop
   }
 }

@@ -2,8 +2,9 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -12,7 +13,8 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class ShutdownComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
+    private wsManager: WebsocketConnectionService,
     protected router: Router,
     protected dialogService: DialogService,
     private location: Location,
@@ -31,7 +33,7 @@ export class ShutdownComponent implements OnInit {
           });
       },
       complete: () => {
-        this.ws.prepareShutdown();
+        this.wsManager.prepareShutdown();
       },
     });
     // fade to black after 60 sec on shut down

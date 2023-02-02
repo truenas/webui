@@ -9,7 +9,9 @@ import { Subscription } from 'rxjs';
 import { FormUploadConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -24,17 +26,18 @@ export class FormUploadComponent {
   busy: Subscription[] = [];
   sub: Subscription;
   jobId: number;
-  apiEndPoint = '/_upload?auth_token=' + this.ws.token;
+  apiEndPoint = '/_upload?auth_token=' + this.authService.token2;
   fileList: FileList;
   fbrowser: HTMLInputElement;
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     protected http: HttpClient,
     private loader: AppLoaderService,
     public dialog: DialogService,
     public translate: TranslateService,
     private snackbar: SnackbarService,
+    private authService: AuthService,
   ) {}
 
   fileBtnClick(): void {

@@ -4,20 +4,20 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import {
-  combineLatest, forkJoin, Observable, of,
+  combineLatest, forkJoin, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  filter, finalize, map, switchMap, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface SigninState {
@@ -43,7 +43,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
   canLogin$ = combineLatest([
-    this.ws.isConnected$,
+    this.wsManager.isConnected$,
     this.select((state) => [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status)),
   ]).pipe(
     map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
@@ -53,18 +53,20 @@ export class SigninStore extends ComponentStore<SigninState> {
     return state.failover && state.failover.status !== FailoverStatus.Single;
   });
 
+  private statusSubscription: Subscription;
+  private disabledReasonsSubscription: Subscription;
+
   private readonly tokenLifetime = 300;
-  private statusSubscriptionId: string;
-  private disabledReasonsSubscriptionId: string;
 
   constructor(
-    private ws: WebSocketService,
+    private ws2: WebSocketService2,
     private translate: TranslateService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private ws2: WebSocketService2,
+    private wsManager: WebsocketConnectionService,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -86,7 +88,7 @@ export class SigninStore extends ComponentStore<SigninState> {
             this.updateFailoverStatusOnDisconnect();
 
             // TODO: ws.token implicitly stores token in localStorage.
-            if (!this.ws.token) {
+            if (!this.authService.token2) {
               return of(null);
             }
 
@@ -109,14 +111,15 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.snackbar.dismiss();
     }),
     switchMap(() => this.authenticateWithTokenWs2()),
-    switchMap(() => this.authenticateWithToken()),
     tapResponse(
       () => {
-        if (this.statusSubscriptionId) {
-          this.ws.unsub('failover.status', this.statusSubscriptionId);
+        if (this.statusSubscription && !this.statusSubscription.closed) {
+          this.statusSubscription.unsubscribe();
+          this.statusSubscription = null;
         }
-        if (this.disabledReasonsSubscriptionId) {
-          this.ws.unsub('failover.disabled_reasons', this.disabledReasonsSubscriptionId);
+        if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
+          this.disabledReasonsSubscription.unsubscribe();
+          this.disabledReasonsSubscription = null;
         }
         this.router.navigateByUrl(this.getRedirectUrl());
       },
@@ -160,15 +163,11 @@ export class SigninStore extends ComponentStore<SigninState> {
   }));
 
   private reLoginWithToken(): Observable<unknown> {
-    this.ws2.token2 = this.ws.token;
-    return combineLatest([
-      this.ws.loginWithToken(this.ws.token),
-      this.ws2.call('auth.login_with_token', [this.ws2.token2]),
-    ]).pipe(
-      tap(([wasLoggedIn]) => {
+    return this.authService.loginWithToken().pipe(
+      tap((wasLoggedIn) => {
         if (!wasLoggedIn) {
           this.showSnackbar(this.translate.instant('Token expired, please log back in.'));
-          this.ws.token = null;
+          this.authService.token2 = null;
           this.setLoadingState(false);
           return;
         }
@@ -178,38 +177,15 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private authenticateWithTokenWs2(): Observable<unknown> {
-    return this.ws2.call('auth.generate_token', [this.tokenLifetime])
+    return this.authService.generateToken(this.tokenLifetime)
       .pipe(
         tap((token: string) => {
           if (!token) {
-            return;
-          }
-          this.ws2.token2 = token;
-        }),
-        switchMap(() => this.ws2.call('auth.login_with_token', [this.ws2.token2])),
-      );
-  }
-
-  private authenticateWithToken(): Observable<unknown> {
-    return this.ws.call('auth.generate_token', [this.tokenLifetime]).pipe(
-      tap(
-        (token) => {
-          if (!token) {
             throw new Error(this.translate.instant('Error generating token, please try again.'));
           }
-
-          this.ws.token = token;
-        },
-      ),
-      switchMap(() => this.ws.call('auth.login_with_token', [this.ws.token])),
-      tap(
-        (wasLoggedIn) => {
-          if (!wasLoggedIn) {
-            throw new Error(this.translate.instant('Error authenticating with token, please try again.'));
-          }
-        },
-      ),
-    );
+          this.authService.token2 = token;
+        }),
+      );
   }
 
   getRedirectUrl(): string {
@@ -222,7 +198,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
-    return this.ws.call('user.has_local_administrator_set_up').pipe(
+    return this.ws2.call('user.has_local_administrator_set_up').pipe(
       tap(
         (wasAdminSet) => this.patchState({ wasAdminSet }),
       ),
@@ -230,7 +206,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private loadFailoverStatus(): Observable<unknown> {
-    return this.ws.call('failover.status').pipe(
+    return this.ws2.call('failover.status').pipe(
       switchMap((status) => {
         this.setFailoverStatus(status);
 
@@ -246,8 +222,8 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private loadAdditionalFailoverInfo(): Observable<unknown> {
     return forkJoin([
-      this.ws.call('failover.get_ips'),
-      this.ws.call('failover.disabled.reasons'),
+      this.ws2.call('failover.get_ips'),
+      this.ws2.call('failover.disabled.reasons'),
     ])
       .pipe(
         tap(
@@ -260,14 +236,12 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private subscribeToFailoverUpdates(): void {
-    this.statusSubscriptionId = UUID.UUID();
-    this.ws.sub<FailoverStatus>('failover.status', this.statusSubscriptionId)
-      .pipe(untilDestroyed(this))
+    this.statusSubscription = this.ws2.subscribe('failover.status')
+      .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((status) => this.setFailoverStatus(status));
 
-    this.disabledReasonsSubscriptionId = UUID.UUID();
-    this.ws.sub<FailoverDisabledReasonEvent>('failover.disabled.reasons', this.disabledReasonsSubscriptionId)
-      .pipe(untilDestroyed(this))
+    this.disabledReasonsSubscription = this.ws2.subscribe('failover.disabled.reasons')
+      .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((event) => {
         this.setFailoverDisabledReasons(event.disabled_reasons);
       });
@@ -277,12 +251,16 @@ export class SigninStore extends ComponentStore<SigninState> {
    * If websocket connection is lost because of failover event, we need to resubscribe to updates.
    */
   private updateFailoverStatusOnDisconnect(): void {
-    this.ws.onClose$
-      .pipe(
-        switchMap(() => this.ws.isConnected$.pipe(filter(Boolean))),
-        switchMap(() => this.loadFailoverStatus()),
-        untilDestroyed(this),
-      )
+    this.wsManager.websocketSubject$.pipe(
+      finalize(() => {
+        this.wsManager.isConnected$.pipe(
+          filter(Boolean),
+          switchMap(() => this.loadFailoverStatus()),
+          untilDestroyed(this),
+        ).subscribe();
+      }),
+      untilDestroyed(this),
+    )
       .subscribe();
   }
 }

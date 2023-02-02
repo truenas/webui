@@ -12,7 +12,7 @@ import { User } from 'app/interfaces/user.interface';
 import {
   userPageEntered, usersLoaded, usersNotLoaded, userRemoved,
 } from 'app/pages/account/users/store/user.actions';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -46,7 +46,7 @@ export class UserEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
-      return this.ws.sub('user.query').pipe(
+      return this.ws.subscribe('user.query').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
         map((event) => userRemoved({ id: event.id })),
       );
@@ -55,7 +55,7 @@ export class UserEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
