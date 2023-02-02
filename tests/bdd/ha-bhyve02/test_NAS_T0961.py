@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import pytest
 import reusableSeleniumCode as rsc
@@ -37,12 +37,14 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
         assert wait_on_element(driver, 5, xpaths.login.user_Input)
 
 
-@when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
-def the_login_page_appear_enter_root_and_password(driver, user, password):
-    """the login page appears, enter "{user}" and "{password}"."""
-    global root_password
-    root_password = password
-    rsc.Login_If_Not_On_Dashboard(driver, user, password)
+@when(parsers.parse('the login page appears, enter "{admin_user}" and "{password}"'))
+def the_login_page_appear_enter_root_and_password(driver, admin_user, password):
+    """the login page appears, enter "{admin_user}" and "{password}"."""
+    global root_Password, admin_User
+    admin_User = admin_user
+    root_Password = password
+
+    rsc.Login_If_Not_On_Dashboard(driver, admin_user, password)
 
 
 @then('you should see the dashboard and the System Information')
@@ -195,7 +197,7 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 45, xpaths.toolbar.ha_Disabled)
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodeb")]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -203,7 +205,7 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
 @then('verify the system dataset is dozer on the active node')
 def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
     """verify the system dataset is dozer on the active node."""
-    results = get(host, '/systemdataset/', ('root', root_password))
+    results = get(host, '/systemdataset/', ('root', root_Password))
     assert results.status_code == 200, results.text
     assert results.json()['pool'] == 'dozer', results.text
 
@@ -224,18 +226,14 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     assert wait_on_element(driver, 180, xpaths.login.user_Input)
     assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
-    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
-    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+    rsc.Login(driver, admin_User, root_Password)
+
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve01-nodea")]')
+    assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
     assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
     time.sleep(5)
 
@@ -243,6 +241,6 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
 @then('verify the system dataset is dozer on the active node after failover')
 def verify_the_system_dataset_is_dozer_on_the_active_node_after_failover(driver):
     """verify the system dataset is dozer on the active node after failover."""
-    results = get(host, '/systemdataset/', ('root', root_password))
+    results = get(host, '/systemdataset/', ('root', root_Password))
     assert results.status_code == 200, results.text
     assert results.json()['pool'] == 'dozer', results.text

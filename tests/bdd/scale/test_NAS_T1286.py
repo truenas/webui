@@ -69,7 +69,7 @@ def confirm_unset_pool_and_wait(driver):
     assert wait_on_element(driver, 20, '//h1[contains(.,"Unset Pool")]')
     assert wait_on_element(driver, 10, xpaths.button.unset, 'clickable')
     driver.find_element_by_xpath(xpaths.button.unset).click()
-    assert wait_on_element_disappear(driver, 240, xpaths.popup.configuring)
+    assert wait_on_element_disappear(driver, 300, xpaths.popup.configuring)
 
 
 @then('click setting, reset pool')

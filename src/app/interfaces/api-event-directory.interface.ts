@@ -9,6 +9,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -33,4 +34,5 @@ export type ApiEventDirectory = {
   'group.query': { response: Group };
   'container.image.query': { response: ContainerImage };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
+  'smart.test.progress': { response: SmartTestProgressUpdate };
 };

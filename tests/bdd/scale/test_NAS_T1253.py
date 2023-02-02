@@ -83,17 +83,12 @@ def create_new_qetestuser_user_add_to_qatest_group(driver):
     driver.find_element_by_xpath(xpaths.add_User.bash_Shell_Option).click()
 
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
-    # scroll down to Auxiliary Groups
-    element = driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select)
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 15, xpaths.add_User.qatest_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.qatest_Group_Option).click()
 
     driver.find_element_by_xpath(xpaths.add_User.qatest_Group_Option).send_keys(Keys.TAB)
-    element = driver.find_element_by_xpath(xpaths.button.save)
-    driver.execute_script("arguments[0].scrollIntoView();", element)
+
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
@@ -138,8 +133,8 @@ def check_the_enable_sudo_box_and_click_save(driver):
     driver.find_element_by_xpath(xpaths.checkbox.sudo).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    # give middleware time to actually do its work
-    time.sleep(4)
+    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    time.sleep(1)
 
 
 @then('ssh in with qetest user and try to sudo')

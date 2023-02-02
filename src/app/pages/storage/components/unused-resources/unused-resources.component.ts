@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
+import { Subscription } from 'rxjs';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -14,24 +15,20 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['./unused-resources.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnusedResourcesComponent implements OnInit, OnDestroy {
+export class UnusedResourcesComponent implements OnInit {
   @Input() pools: Pool[];
   unusedDisks: UnusedDisk[] = [];
-  diskQuerySubscriptionId: string;
+  diskQuerySubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.updateUnusedDisks();
     this.subscribeToDiskQuery();
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribeFromDiskQuery();
   }
 
   updateUnusedDisks(): void {
@@ -48,17 +45,15 @@ export class UnusedResourcesComponent implements OnInit, OnDestroy {
 
   private subscribeToDiskQuery(): void {
     this.unsubscribeFromDiskQuery();
-    this.diskQuerySubscriptionId = UUID.UUID();
-    this.ws.sub('disk.query', this.diskQuerySubscriptionId).pipe(untilDestroyed(this)).subscribe(() => {
+    this.diskQuerySubscription = this.ws.subscribe('disk.query').pipe(untilDestroyed(this)).subscribe(() => {
       this.updateUnusedDisks();
     });
   }
 
   private unsubscribeFromDiskQuery(): void {
-    if (!this.diskQuerySubscriptionId) {
+    if (!this.diskQuerySubscription || this.diskQuerySubscription.closed) {
       return;
     }
-    this.ws.unsub('zfs.pool.scan', this.diskQuerySubscriptionId);
-    this.diskQuerySubscriptionId = null;
+    this.diskQuerySubscription.unsubscribe();
   }
 }

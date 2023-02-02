@@ -5,7 +5,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
-import { WebSocketService } from 'app/services';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import {
   DisconnectedMessageComponent,
 } from 'app/views/sessions/signin/disconnected-message/disconnected-message.component';
@@ -48,7 +48,7 @@ describe('SigninComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(WebSocketService, {
+      mockProvider(WebsocketConnectionService, {
         isConnected$,
       }),
       mockProvider(SigninStore, {

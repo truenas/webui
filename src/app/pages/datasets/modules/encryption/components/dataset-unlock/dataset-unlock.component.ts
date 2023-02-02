@@ -15,7 +15,8 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 export interface Subs {
   apiEndPoint: string;
@@ -66,13 +67,13 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   private get apiEndPoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
+    return '/_upload?auth_token=' + this.authService.token2;
   }
 
   constructor(
     private formBuilder: FormBuilder,
     protected aroute: ActivatedRoute,
-    private ws: WebSocketService,
+    private authService: AuthService,
     protected dialogService: DialogService,
     private dialog: MatDialog,
     private router: Router,

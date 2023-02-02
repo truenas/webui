@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import reusableSeleniumCode as rsc
 import time
@@ -54,55 +54,55 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.side_Menu.local_User, 'clickable')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
 
 
 @then('On the right side of the table, click the expand arrow for one of the users')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
     """On the right side of the table, click the expand arrow for one of the users."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/td').click()
+    assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_User).click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button, 'clickable')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
+    driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
 
 
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 7, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
     time.sleep(0.5)
 
 
 @then('Change the password in both fields but make sure they are different and try to click save.')
 def change_the_password_in_both_fields_but_make_sure_they_are_different_and_try_to_click_save(driver):
     """Change the password in both fields but make sure they are different and try to click save.."""
-    assert wait_on_element(driver, 5, '//ix-input[@formcontrolname="password"]//input', 'clickable')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password"]//input').send_keys('testing')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="password_conf"]//input').send_keys('testing2')
+    assert wait_on_element(driver, 5, xpaths.add_User.password_Input, 'clickable')
+    driver.find_element_by_xpath(xpaths.add_User.password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.password_Input).send_keys('testing')
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).clear()
+    driver.find_element_by_xpath(xpaths.add_User.confirm_Password_Input).send_keys('testing2')
 
 
 @then('You should not be able to save the changes')
@@ -113,6 +113,6 @@ def you_should_not_be_able_to_save_the_changes(driver):
     class_attribute = element.get_attribute('disabled')
     assert class_attribute == 'true'
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element(driver, 30, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 30, xpaths.add_User.edit_Title)
     assert wait_on_element(driver, 30, '//mat-error[contains(.,"New password and confirmation should match.")]')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()
