@@ -125,8 +125,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_Service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smb_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Toggle, 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('send a file on {share_name}on {nas_hostname} with {ad_user}%{ad_password}'))
@@ -174,13 +174,7 @@ def wait_for_the_login_to_appear_and_ha_to_be_enable(driver):
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
 def at_the_login_page_enter_user_and_password(driver, user, password):
     """At the login page, enter "user" and "password"."""
-    assert wait_on_element(driver, 10, xpaths.login.user_Input, 'inputable')
-    driver.find_element_by_xpath(xpaths.login.user_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
-    driver.find_element_by_xpath(xpaths.login.password_Input).clear()
-    driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(password)
-    assert wait_on_element(driver, 4, xpaths.login.signin_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.login.signin_Button).click()
+    rsc.Login(driver, user, password)
 
 
 @then('once on the dashboard go to the Services page and verify SMB service is RUNNING')
@@ -197,8 +191,8 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
     rsc.Go_To_Service(driver)
 
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smb_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Toggle, 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('verify you can get the file from {share_name} and modify it on {nas_hostname} with {ad_user}%{ad_password}'))

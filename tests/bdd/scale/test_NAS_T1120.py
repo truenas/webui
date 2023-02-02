@@ -131,8 +131,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_Service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smb_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Toggle, 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mat-checked')
 
 
 @then(parsers.parse('send a file to "{share_name}" with "{ad_user}"%"{ad_password}"'))

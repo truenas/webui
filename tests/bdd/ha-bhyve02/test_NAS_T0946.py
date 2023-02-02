@@ -41,8 +41,7 @@ def login_appear_enter_root_and_password(driver, password):
 @then(parsers.parse('you should see the dashboard and "{information}"'))
 def you_should_see_the_dashboard_and_information(driver, information):
     """you should see the dashboard and "information"."""
-    assert wait_on_element(driver, 5, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
 
 @then('navigate to System Settings and click General')
@@ -120,7 +119,7 @@ def both_serials_should_show_under_system_serial_serial1_and_serial2(driver, ser
 @then('navigate to Network and on the Network page click on Global Configuration Settings')
 def navigate_to_network_and_on_the_network_page_click_on_global_configuration_settings(driver):
     """navigate to Network and on the Network page click on Global Configuration Settings."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.network).click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 7, '//h3[text()="Global Configuration"]')
     assert wait_on_element(driver, 7, '//div[text()="Nameservers"]')
@@ -207,8 +206,8 @@ def after_settings_are_applied_you_should_see_settings_applied(driver):
 @then('navigate to Network then under Interfaces click enp0s6f0')
 def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
     """navigate to Network then under Interfaces click enp0s6f0."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
+    assert wait_on_element(driver, 7, xpaths.side_Menu.network, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.network).click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 7, '//h3[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 7, '//td[contains(.,"enp0s6f0")]')
