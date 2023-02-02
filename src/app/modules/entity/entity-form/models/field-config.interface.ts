@@ -1,6 +1,6 @@
 import { ElementRef } from '@angular/core';
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatLegacySelectionListChange as MatSelectionListChange } from '@angular/material/legacy-list';
 import { MatLegacyRadioChange as MatRadioChange } from '@angular/material/legacy-radio';
 import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';

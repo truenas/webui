@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
