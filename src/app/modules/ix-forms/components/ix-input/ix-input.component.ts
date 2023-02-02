@@ -65,7 +65,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
   set value(val: string | number) {
     if (this.type === 'number') {
-      this._value = val ? Number(val) : null;
+      this._value = (val || val === 0) ? Number(val) : null;
       return;
     }
     this._value = val;
