@@ -11,7 +11,6 @@ import { appImagePlaceholder, chartsTrain, officialCatalog } from 'app/constants
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
@@ -46,7 +45,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     private snackbar: SnackbarService,
