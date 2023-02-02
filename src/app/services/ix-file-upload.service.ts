@@ -12,7 +12,7 @@ import {
 } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Injectable({
@@ -24,13 +24,13 @@ export class IxFileUploadService {
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
   get defaultUploadEndpoint(): string {
-    return '/_upload?auth_token=' + this.ws.token;
+    return '/_upload?auth_token=' + this.authService.token2;
   }
 
   constructor(
     protected http: HttpClient,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private authService: AuthService,
   ) {}
 
   upload(

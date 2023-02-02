@@ -4,7 +4,7 @@ import {
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()

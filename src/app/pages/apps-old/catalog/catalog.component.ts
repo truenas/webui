@@ -1,11 +1,10 @@
 import {
-  Component, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
+  Component, OnInit, AfterViewInit, ViewChild, TemplateRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
-import { Subscription } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -23,9 +22,10 @@ import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { CommonAppsToolbarButtonsComponent } from 'app/pages/apps-old/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/apps-old/dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -41,7 +41,7 @@ interface CatalogSyncJob {
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
-export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CatalogComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
   commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
@@ -54,8 +54,6 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedPool = '';
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
-
-  jobsSubscription: Subscription;
 
   imagePlaceholder = appImagePlaceholder;
   private noAvailableCatalog = true;
@@ -74,7 +72,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogService: DialogService,
     private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private appService: ApplicationsService,
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
@@ -85,7 +83,7 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadCatalogs();
     this.loadPoolSet();
 
-    this.jobsSubscription = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id === event.fields.id);
       if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
@@ -101,12 +99,6 @@ export class CatalogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  ngOnDestroy(): void {
-    if (this.jobsSubscription) {
-      this.ws.unsubscribe(this.jobsSubscription);
-    }
   }
 
   loadCatalogs(): void {

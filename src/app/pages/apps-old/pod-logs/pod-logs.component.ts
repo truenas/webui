@@ -1,21 +1,22 @@
 import {
   AfterViewInit,
-  Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
+  Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   LogsDialogFormValue,
   PodSelectLogsDialogComponent,
 } from 'app/pages/apps-old/dialogs/pod-select-logs/pod-select-logs-dialog.component';
-import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { DialogService, ShellService } from 'app/services';
 import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 interface PodLogEvent {
   data: string;
@@ -32,7 +33,7 @@ interface PodLogEvent {
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PodLogsComponent implements OnInit, AfterViewInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
@@ -49,7 +50,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
   podLogs: PodLogEvent[];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
@@ -73,42 +74,36 @@ export class PodLogsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  ngOnDestroy(): void {
-    if (this.podLogsChangedListener) {
-      this.podLogsChangedListener.unsubscribe();
-      this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
-    }
-  }
-
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
     this.podLogs = [];
     this.isLoadingPodLogs = true;
 
-    if (this.podLogsChangedListener) {
+    if (this.podLogsChangedListener && !this.podLogsChangedListener.closed) {
       this.podLogsChangedListener.unsubscribe();
-      this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
     }
 
     this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
     this.podLogSubscriptionId = UUID.UUID();
-    this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
-      .pipe(untilDestroyed(this)).subscribe({
-        next: (podLog: PodLogEvent) => {
-          this.isLoadingPodLogs = false;
+    this.podLogsChangedListener = this.ws.subscribeToLogs(this.podLogSubName).pipe(
+      map((apiEvent) => apiEvent.fields),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (podLog: PodLogEvent) => {
+        this.isLoadingPodLogs = false;
 
-          if (podLog && podLog.msg !== 'nosub') {
-            this.podLogs.push(podLog);
-            this.scrollToBottom();
-          }
-        },
-        error: (error) => {
-          this.isLoadingPodLogs = false;
-          if (error.reason) {
-            this.dialogService.errorReport('Error', error.reason);
-          }
-        },
-      });
+        if (podLog && podLog.msg !== 'nosub') {
+          this.podLogs.push(podLog);
+          this.scrollToBottom();
+        }
+      },
+      error: (error) => {
+        this.isLoadingPodLogs = false;
+        if (error.reason) {
+          this.dialogService.errorReport('Error', error.reason);
+        }
+      },
+    });
   }
 
   scrollToBottom(): void {
