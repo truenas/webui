@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { StateChange } from 'ng-lazyload-image';
 import { officialCatalog, appImagePlaceholder } from 'app/constants/catalog.constants';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { LayoutService } from 'app/services/layout.service';
 
 @Component({
@@ -13,7 +12,6 @@ import { LayoutService } from 'app/services/layout.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppCardLogoComponent {
-  @Input() app: CatalogApp;
   @Input() url: string;
 
   wasLogoLoaded = false;

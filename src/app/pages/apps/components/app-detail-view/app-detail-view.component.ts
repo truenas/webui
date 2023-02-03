@@ -40,7 +40,7 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   }
 
   get description(): string {
-    return this.app.app_readme.replace(/<[^>]*>/g, '');
+    return this.app?.app_readme?.replace(/<[^>]*>/g, '');
   }
 
   constructor(
