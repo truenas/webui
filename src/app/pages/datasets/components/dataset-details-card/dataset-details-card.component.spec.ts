@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
@@ -63,6 +64,7 @@ describe('DatasetDetailsCardComponent', () => {
         openInSlideIn: jest.fn(() => fakeModalRef),
         onClose$: of(),
       }),
+      mockProvider(MatSnackBar),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => fakeSlideInRef),
         onClose$: of(),

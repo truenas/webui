@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve01) feature tests."""
+"""High Availability (tn-bhyve06) feature tests."""
 
 import os
 import pytest
@@ -81,19 +81,19 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.side_Menu.local_User, 'clickable')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
 
 
 @then('On the right side of the table, click the expand arrow for the root user')
@@ -118,7 +118,7 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 7, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
     assert wait_on_element(driver, 5, '//legend[normalize-space(text())="Identification"]')
 
 
@@ -139,8 +139,8 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
-    assert wait_on_element_disappear(driver, 7, '//h3[text()="Edit User"]')
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element_disappear(driver, 7, xpaths.add_User.edit_Title)
+    assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
 
 
@@ -151,7 +151,7 @@ def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     driver.find_element_by_xpath('//tr[contains(.,"root")]/td').click()
     assert wait_on_element(driver, 5, '//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"root")]/following-sibling::ix-user-details-row//button[contains(.,"Edit")]').click()
-    assert wait_on_element(driver, 5, '//h3[text()="Edit User"]')
+    assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)
     assert wait_on_element(driver, 5, '//legend[normalize-space(text())="Identification"]')
 
 
@@ -165,7 +165,7 @@ def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     assert attribute_value_exist(driver, '//ix-textarea[@formcontrolname="sshpubkey"]//textarea', 'value', ssh_key)
     assert wait_on_element(driver, 5, xpaths.button.close_Icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()
-    assert wait_on_element(driver, 7, '//h1[text()="Users"]')
+    assert wait_on_element(driver, 7, xpaths.users.title)
     assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
 
 

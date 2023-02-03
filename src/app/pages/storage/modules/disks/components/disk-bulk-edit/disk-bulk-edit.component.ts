@@ -11,9 +11,9 @@ import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ export class DiskBulkEditComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private snackbarService: SnackbarService,

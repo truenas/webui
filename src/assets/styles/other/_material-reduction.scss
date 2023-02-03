@@ -393,7 +393,9 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   position: static !important;
 }
 
-.mat-checkbox {
+.mat-mdc-checkbox {
+  margin-left: -10px;
+  margin-right: 8px;
   opacity: 0.75;
 }
 
@@ -895,7 +897,6 @@ ix-root {
 
   .cdk-focused,
   .cdk-keyboard-focused {
-
     @extend %focused-shared;
     background-color: var(--focus-bg) !important;
   }
@@ -922,4 +923,8 @@ ix-nested-tree-node > div {
 
 body .mat-mdc-option {
   min-height: 36px;
+}
+
+body .mat-mdc-checkbox label {
+  padding-left: 0;
 }

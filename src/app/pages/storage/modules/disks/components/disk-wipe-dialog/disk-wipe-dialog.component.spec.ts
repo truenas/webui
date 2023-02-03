@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -13,7 +13,8 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   DiskWipeDialogComponent,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 describe('DiskWipeDialogComponent', () => {
   let spectator: Spectator<DiskWipeDialogComponent>;
@@ -26,7 +27,7 @@ describe('DiskWipeDialogComponent', () => {
       EntityModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebsocket2([
         mockJob('disk.wipe'),
       ]),
       mockProvider(DialogService, {
@@ -55,6 +56,6 @@ describe('DiskWipeDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('disk.wipe', ['sda', DiskWipeMethod.Full]);
+    expect(spectator.inject(WebSocketService2).job).toHaveBeenCalledWith('disk.wipe', ['sda', DiskWipeMethod.Full]);
   });
 });

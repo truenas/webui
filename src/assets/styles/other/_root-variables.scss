@@ -40,4 +40,18 @@
   --mdc-switch-selected-pressed-track-color: var(--primary);
   --primary-txt: #fff;
   --mdc-circular-progress-active-indicator-color: var(--primary);
+  --mdc-checkbox-selected-icon-color: var(--primary);
+  --mdc-checkbox-selected-icon-color: var(--primary);
+  --mdc-checkbox-unselected-icon-color: var(--primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--primary);
+  --mdc-checkbox-unselected-hover-icon-color: var(--primary);
+  --mdc-checkbox-unselected-pressed-icon-color: var(--primary);
+  --mdc-checkbox-unselected-focus-icon-color: var(--primary);
+  --mdc-checkbox-disabled-selected-icon-color: #9c9c9c;
+  --mdc-checkbox-disabled-unselected-icon-color: #9c9c9c;
+  --mdc-snackbar-container-color: var(--bg1);
+  --mdc-snackbar-supporting-text-color: var(--primary-txt);
+  --mdc-snackbar-supporting-text-font: var(--mdc-dialog-supporting-text-font);
+  --mdc-snackbar-supporting-text-size: 1rem;
 }

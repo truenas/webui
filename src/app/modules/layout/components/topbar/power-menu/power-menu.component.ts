@@ -4,7 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -16,14 +17,14 @@ export class PowerMenuComponent {
   readonly tooltips = helptext.mat_tooltips;
 
   constructor(
-    private ws: WebSocketService,
+    private authService: AuthService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
   ) { }
 
   onSignOut(): void {
-    this.ws.logout();
+    this.authService.logout();
   }
 
   onReboot(): void {

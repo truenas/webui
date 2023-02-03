@@ -116,7 +116,7 @@
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell class="keep-td">
       <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
-      {{ bootenv.keep ? ('Yes' | translate) : ('No' | translate) }}
+      {{ bootenv.keep | yesNo }}
     </td>
   </ng-container>
 
@@ -170,7 +170,6 @@
     mat-row
   ></tr>
 
-  
 </table>
 
 <ix-table-paginator
