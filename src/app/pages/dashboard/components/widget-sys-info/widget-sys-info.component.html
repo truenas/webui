@@ -236,7 +236,7 @@
 
                   <mat-list-item *ngIf="data.system_serial && manufacturer === 'ixsystems'">
                     <strong>{{ 'Serial Number' | translate }}:</strong>
-                    <span>{{ data.system_serial }}</span>
+                    {{ (isPassive ? data.license?.system_serial_ha : data.license?.system_serial) || data.system_serial }}
                   </mat-list-item>
 
                   <mat-list-item>
