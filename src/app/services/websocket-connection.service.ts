@@ -28,17 +28,10 @@ export class WebsocketConnectionService {
 
   private isConnectionReady = false;
   private isConnectionReady$ = new BehaviorSubject(false);
+  private wsAsObservable$: Observable<unknown>;
 
-  get websocketSubject$(): Observable<unknown> {
-    return this.ws$.asObservable().pipe(
-      switchMap((data: IncomingWebsocketMessage) => {
-        if (this.hasAuthError(data)) {
-          this.ws$.complete();
-          return EMPTY;
-        }
-        return of(data);
-      }),
-    );
+  get websocket$(): Observable<unknown> {
+    return this.wsAsObservable$;
   }
 
   get isConnected$(): Observable<boolean> {
@@ -63,7 +56,15 @@ export class WebsocketConnectionService {
         next: this.onClose.bind(this),
       },
     });
-
+    this.wsAsObservable$ = this.ws$.asObservable().pipe(
+      switchMap((data: IncomingWebsocketMessage) => {
+        if (this.hasAuthError(data)) {
+          this.ws$.complete();
+          return EMPTY;
+        }
+        return of(data);
+      }),
+    );
     // Atleast one explicit subscription required to keep the connection open
     this.ws$.pipe(
       tap((response: IncomingWebsocketMessage) => {

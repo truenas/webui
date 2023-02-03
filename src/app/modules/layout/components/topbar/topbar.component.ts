@@ -184,7 +184,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.hostname = sysInfo.hostname;
     });
 
-    this.wsManager.websocketSubject$.pipe(
+    this.wsManager.websocket$.pipe(
       finalize(() => {
         this.modalService.closeSlideIn();
       }),

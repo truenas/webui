@@ -251,7 +251,7 @@ export class SigninStore extends ComponentStore<SigninState> {
    * If websocket connection is lost because of failover event, we need to resubscribe to updates.
    */
   private updateFailoverStatusOnDisconnect(): void {
-    this.wsManager.websocketSubject$.pipe(
+    this.wsManager.websocket$.pipe(
       finalize(() => {
         this.wsManager.isConnected$.pipe(
           filter(Boolean),
