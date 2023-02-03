@@ -74,6 +74,15 @@ describe('IxInputComponent', () => {
 
       expect(formControl.value).toBe('');
     });
+
+    it('shows button that resets input when input type is number and value is 0', () => {
+      formControl.setValue('0');
+      spectator.detectComponentChanges();
+
+      spectator.click('.reset-input mat-icon');
+
+      expect(formControl.value).toBe('');
+    });
   });
 
   describe('form control', () => {
@@ -111,6 +120,15 @@ describe('IxInputComponent', () => {
       spectator.typeInElement('123', 'input');
 
       expect(formControl.value).toBe(123);
+    });
+
+    it('counts 0 as valid when type is number', () => {
+      spectator.setInput('type', 'number');
+
+      spectator.typeInElement('0', 'input');
+
+      expect(formControl.value).toBe(0);
+      expect(spectator.query('.mat-error')).toBeNull();
     });
 
     it('renders input element as pseudo-password field (via search input type) to disable password managers', () => {
