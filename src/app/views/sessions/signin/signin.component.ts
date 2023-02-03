@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
@@ -28,5 +28,9 @@ export class SigninComponent implements OnInit {
 
   ngOnInit(): void {
     this.signinStore.init();
+
+    this.isConnected$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.signinStore.init();
+    });
   }
 }
