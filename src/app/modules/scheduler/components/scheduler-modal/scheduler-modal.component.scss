@@ -53,23 +53,6 @@
     margin-top: 12px;
   }
 
-  .months,
-  .weekdays {
-    ::ng-deep .mat-checkbox-layout {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-
-      .mat-checkbox-inner-container {
-        margin: 0;
-      }
-
-      .mat-checkbox-label {
-        margin-top: 4px;
-      }
-    }
-  }
-
   .form-actions {
     text-align: center;
   }

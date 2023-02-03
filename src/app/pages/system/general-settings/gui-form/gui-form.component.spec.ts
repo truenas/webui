@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -15,9 +15,11 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
-import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
+import { SystemGeneralService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -25,7 +27,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: WebSocketService2;
 
   const mockSystemGeneralConfig = {
     crash_reporting: true,
@@ -58,13 +60,14 @@ describe('GuiFormComponent', () => {
     ],
     providers: [
       DialogService,
-      mockWebsocket([
+      mockWebsocket2([
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart'),
       ]),
       mockProvider(IxSlideInService, {
         onClose$: of(),
       }),
+      mockProvider(WebsocketConnectionService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -114,7 +117,7 @@ describe('GuiFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(WebSocketService2);
   });
 
   afterEach(() => {
@@ -163,8 +166,8 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if HTTPS redirect is enabled', async () => {
-    const websocket = spectator.inject(WebSocketService);
-    jest.spyOn(websocket, 'connected', 'get').mockReturnValue(true);
+    const websocketManager = spectator.inject(WebsocketConnectionService);
+    jest.spyOn(websocketManager, 'isConnected$', 'get').mockReturnValue(of(true));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -181,8 +184,8 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
-    const websocket = spectator.inject(WebSocketService);
-    jest.spyOn(websocket, 'connected', 'get').mockReturnValue(true);
+    const websocketManager = spectator.inject(WebsocketConnectionService);
+    jest.spyOn(websocketManager, 'isConnected$', 'get').mockReturnValue(of(true));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

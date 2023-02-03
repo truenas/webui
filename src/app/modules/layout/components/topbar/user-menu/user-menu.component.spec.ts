@@ -3,13 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { of } from 'rxjs';
+import { mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/components/topbar/user-menu/user-menu.component';
-import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 const loggedInUser = {
   pw_name: 'root',
@@ -25,13 +26,15 @@ const loggedInUser = {
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
   let loader: HarnessLoader;
-  let websocket: WebSocketService;
   let menu: MatMenuHarness;
   const createComponent = createComponentFactory({
     component: UserMenuComponent,
     providers: [
       mockProvider(MatDialog),
-      mockWebsocket(),
+      mockProvider(AuthService, {
+        user$: of(loggedInUser),
+      }),
+      mockWebsocket2(),
     ],
   });
 
@@ -40,8 +43,6 @@ describe('UserMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     menu = await loader.getHarness(MatMenuHarness);
     await menu.open();
-    websocket = spectator.inject(WebSocketService);
-    websocket.loggedInUser$.next(loggedInUser);
   });
 
   it('has a Change Password menu item if logged in user has { local: true } that opens ChangePasswordDialogComponent when opened', async () => {

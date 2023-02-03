@@ -18,7 +18,7 @@ import {
   alertsNotLoaded,
 } from 'app/modules/alerts/store/alert.actions';
 import { AlertSlice, selectDismissedAlerts, selectUnreadAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable()
@@ -39,7 +39,6 @@ export class AlertEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
@@ -60,9 +59,9 @@ export class AlertEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      return this.ws.sub('alert.list').pipe(
+      return this.ws.subscribe('alert.list').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Changed && event.cleared),
-        map((event) => alertRemoved({ id: event.id })),
+        map((event) => alertRemoved({ id: event.id.toString() })),
       );
     }),
   ));
@@ -102,7 +101,7 @@ export class AlertEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private store$: Store<AlertSlice>,
     private translate: TranslateService,
   ) {}

@@ -333,7 +333,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 }
 
 /* Chips */
-.form-element .mat-chip {
+.form-element .mat-mdc-chip {
   font-size: smaller !important;
   padding: 1px 16px 0 !important;
 }
@@ -393,7 +393,9 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   position: static !important;
 }
 
-.mat-checkbox {
+.mat-mdc-checkbox {
+  margin-left: -10px;
+  margin-right: 8px;
   opacity: 0.75;
 }
 
@@ -895,7 +897,6 @@ ix-root {
 
   .cdk-focused,
   .cdk-keyboard-focused {
-
     @extend %focused-shared;
     background-color: var(--focus-bg) !important;
   }
@@ -922,4 +923,21 @@ ix-nested-tree-node > div {
 
 body .mat-mdc-option {
   min-height: 36px;
+}
+
+.mat-mdc-chip {
+  font-weight: 500;
+}
+
+mat-chip-grid {
+  width: 100%;
+}
+
+body .mat-mdc-checkbox label {
+  padding-left: 0;
+}
+
+body .mdc-evolution-chip-set .mdc-evolution-chip {
+  margin-bottom: 2px;
+  margin-top: 2px;
 }

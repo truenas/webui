@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef, OnDestroy,
+  Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { startCase } from 'lodash';
-import { of, Subscription } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -35,10 +35,11 @@ import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
-import { RedirectService, DialogService, WebSocketService } from 'app/services';
+import { RedirectService, DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +47,7 @@ import { ModalService } from 'app/services/modal.service';
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })
-export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ChartReleasesComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   @Output() updateTab = new EventEmitter<ApplicationUserEvent>();
@@ -59,7 +60,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly officialCatalog = officialCatalog;
-  private chartsSubscription: Subscription;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -82,7 +82,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     public appService: ApplicationsService,
     private modalService: ModalService,
     private slideInService: IxSlideInService,
-    protected ws: WebSocketService,
+    protected ws: WebSocketService2,
     private redirect: RedirectService,
     private layoutService: LayoutService,
     private snackbar: SnackbarService,
@@ -185,7 +185,7 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
   }
 
   addChartReleaseChangedEventListener(): void {
-    this.chartsSubscription = this.ws.subscribe('chart.release.query').pipe(
+    this.ws.subscribe('chart.release.query').pipe(
       untilDestroyed(this),
     ).subscribe((evt) => {
       const app = this.chartItems.get(evt.fields.name);
@@ -202,12 +202,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit, OnDestroy 
     this.filteredChartItems = this.getChartItems();
     this.showLoadStatus(EmptyType.Loading);
     this.updateChartReleases();
-  }
-
-  ngOnDestroy(): void {
-    if (this.chartsSubscription) {
-      this.ws.unsubscribe(this.chartsSubscription);
-    }
   }
 
   updateChartReleases(): void {
