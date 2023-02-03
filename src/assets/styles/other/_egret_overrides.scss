@@ -89,7 +89,7 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
 }
 
 /* Tabbed navigation is fixed too */
-.tab-header-fixed .mat-tab-header {
+.tab-header-fixed .mat-mdc-tab-header {
   background: #efefef;
   flex-shrink: 0;
   overflow: hidden;
@@ -104,7 +104,7 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
   margin-top: -10px;
 }
 
-.mat-tab-body-wrapper {
+.mat-mdc-tab-body-wrapper {
   padding: 16px;
 }
 

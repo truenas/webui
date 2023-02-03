@@ -99,8 +99,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   /////////////////// SpecSelectors: Selectors not originally in ix-dark theme
-  .mat-tab-label,
-  .mat-tab-link {
+  .mdc-tab__text-label {
     @include variable(color, --fg1, $fg1);
   }
 
@@ -665,8 +664,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  ix-iscsi .mat-tab-label-active,
-  ix-reports-dashboard .mat-tab-label-active {
+  ix-iscsi .mat-mdc-tab-label-active,
+  ix-reports-dashboard .mat-mdc-tab-label-active {
     @include variable(border-color, --primary, $primary);
     border-bottom: 2px solid;
   }
@@ -928,8 +927,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     display: none;
   }
 
-  .mat-tab-nav-bar,
-  .mat-tab-header {
+  .mat-mdc-tab-nav-bar,
+  .mat-mdc-tab-header {
     border-bottom: 1px solid var(--lines);
   }
 
@@ -1124,7 +1123,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   }
 
-  ix-iscsi .mat-tab-links {
+  ix-iscsi .mat-mdc-tab-links {
     flex-wrap: wrap;
   }
 
