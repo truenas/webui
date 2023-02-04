@@ -1,7 +1,7 @@
 import {
   Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
 } from '@angular/core';
-import { MatLegacyTabGroup as MatTabGroup } from '@angular/material/legacy-tabs';
+import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge } from 'rxjs';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
