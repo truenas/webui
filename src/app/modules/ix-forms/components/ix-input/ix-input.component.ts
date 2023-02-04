@@ -65,7 +65,7 @@ export class IxInputComponent implements ControlValueAccessor {
 
   set value(val: string | number) {
     if (this.type === 'number') {
-      this._value = val ? Number(val) : null;
+      this._value = (val || val === 0) ? Number(val) : null;
       return;
     }
     this._value = val;
@@ -125,7 +125,7 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.invalid || (this.value && this.value.toString().length > 0);
+    return this.invalid || this.value?.toString()?.length > 0;
   }
 
   resetInput(input: HTMLInputElement): void {
