@@ -10,10 +10,10 @@
   <div [innerHtml]="helptext.warning | translate"></div>
 
   <ix-form-actions>
-    <button mat-button type="button" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ helptext.cancelButton | translate }}
     </button>
-    <button mat-button type="submit" color="primary">
+    <button mat-button type="submit" color="primary" ixTest="save">
       {{ helptext.saveButton | translate }}
     </button>
   </ix-form-actions>

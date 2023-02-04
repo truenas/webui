@@ -246,6 +246,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
@@ -253,6 +254,7 @@
         <button
           mat-button
           type="button"
+          ixTest="dry-run"
           [disabled]="form.invalid || isLoading"
           (click)="onDryRun()"
         >

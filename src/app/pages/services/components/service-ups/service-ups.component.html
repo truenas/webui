@@ -159,12 +159,13 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button color="accent" (click)="onCancel()">
+        <button mat-button color="accent" ixTest="cancel" (click)="onCancel()">
           {{ 'Cancel' | translate }}
         </button>
       </div>

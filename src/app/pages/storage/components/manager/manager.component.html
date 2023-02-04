@@ -26,6 +26,7 @@
                   type="text"
                   name="poolname"
                   id="pool-manager__name-input-field"
+                  ixTest="name"
                   [formControl]="nameControl"
                   (input)="checkPoolName()"
                 />
@@ -276,6 +277,7 @@
                 id="pool-manager__extend-name-input-field"
                 matInput
                 disabled
+                ixTest="name"
                 [placeholder]="'Name' | translate"
                 [value]="nameControl.value"
               />
@@ -624,6 +626,7 @@
                 matInput
                 id="pool-manager__nameFilter"
                 type="text"
+                ixTest="name-filter"
                 [formControl]="nameFilterControl"
                 [placeholder]="'Filter disks by name' | translate"
                 (keyup)="updateFilter($event)"
@@ -636,6 +639,7 @@
                 matInput
                 id="pool-manager__capacityFilter"
                 type="text"
+                ixTest="capacity-filter"
                 [formControl]="capacityFilterControl"
                 [placeholder]="'Filter disks by capacity' | translate"
                 (keyup)="updateFilter($event)"

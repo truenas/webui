@@ -26,6 +26,7 @@
     <mat-form-field fxFlex="calc(100% - 72px - 16px)" class="display-none">
       <input
         matInput
+        ixTest="noop"
         [type]="config.inputType ? config.inputType : 'text'"
         [placeholder]="config.placeholder | translate"
         [attr.value]="config.value"
@@ -38,6 +39,7 @@
         ix-auto
         ix-auto-type="input"
         [ix-auto-identifier]="config.placeholder"
+        [ixTest]="config.name"
         [placeholder]="config.placeholder | translate"
         [ngModelOptions]="{ standalone: true }"
         [readonly]="config.readonly"

@@ -93,6 +93,7 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { AppLoaderService } from 'app/services';
@@ -150,6 +151,7 @@ import { AppLoaderService } from 'app/services';
     CastModule,
     MatNativeDateModule,
     SchedulerModule,
+    TestIdModule,
   ],
   declarations: [
     TaskScheduleListComponent,

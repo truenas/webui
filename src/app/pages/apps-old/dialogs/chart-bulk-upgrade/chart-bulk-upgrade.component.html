@@ -92,11 +92,12 @@
       mat-button
       type="submit"
       color="primary"
+      ixTest="upgrade"
       [disabled]="form.invalid || bulkItems.size === 0"
     >
       {{ 'Upgrade' | translate }}
     </button>
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" matDialogClose ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
   </div>

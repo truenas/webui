@@ -17,10 +17,11 @@
 </div>
 
 <div mat-dialog-actions class="buttons">
-  <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
+  <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button
     mat-button
     color="primary"
+    ixTest="save"
     [disabled]="selectControl.invalid"
     (click)="onSave()"
   >

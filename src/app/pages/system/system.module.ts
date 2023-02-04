@@ -33,6 +33,7 @@ import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
@@ -144,6 +145,7 @@ import { routing } from './system.routing';
     MatExpansionModule,
     MatSlideToggleModule,
     AppLoaderModule,
+    TestIdModule,
   ],
   declarations: [
     AdvancedSettingsComponent,

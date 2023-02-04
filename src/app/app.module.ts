@@ -1,6 +1,7 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -30,6 +31,7 @@ import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DownloadKeyDialogComponent } from 'app/modules/common/dialog/download-key/download-key-dialog.component';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
@@ -111,6 +113,8 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
         opacity: 0.25,
       },
     }),
+    MatButtonModule,
+    TestIdModule,
   ],
   declarations: [
     AppComponent,

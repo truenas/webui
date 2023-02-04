@@ -11,6 +11,7 @@
     type=""
     matInput
     [required]="required"
+    [ixTest]="controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
     (input)="onAddressInput(addressInput)"

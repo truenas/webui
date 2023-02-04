@@ -11,6 +11,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
   CatalogAddFormComponent,
@@ -55,6 +56,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FormsModule,
     MatDialogModule,
     LazyLoadImageModule,
+    TestIdModule,
   ],
 })
 export class AppsModule { }

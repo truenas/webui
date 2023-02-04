@@ -8,11 +8,17 @@
 </mat-dialog-content>
 
 <ix-form-actions matDialogActions>
-  <button mat-button type="button" [matDialogClose]="false">
+  <button mat-button type="button" ixTest="close" [matDialogClose]="false">
     {{ 'Close' | translate }}
   </button>
 
-  <button mat-button type="submit" color="primary" (click)="onDownload()">
+  <button
+    mat-button
+    type="submit"
+    color="primary"
+    ixTest="download-key"
+    (click)="onDownload()"
+  >
     {{ 'Download Key' | translate }}
   </button>
 </ix-form-actions>

@@ -49,6 +49,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="!canSubmit"
         >
           {{ 'Save' | translate }}
@@ -56,6 +57,7 @@
         <button
           mat-button
           type="button"
+          ixTest="send-test-alert"
           [disabled]="!canSubmit"
           (click)="onSendTestAlert()"
         >

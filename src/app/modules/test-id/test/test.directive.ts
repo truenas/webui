@@ -3,6 +3,19 @@ import {
 } from '@angular/core';
 import { snakeCase } from 'lodash';
 
+/**
+ * Adds test attribute to the element for the benefit of Release Engineering.
+ * Prefer not to use test attributes in our unit tests.
+ *
+ * Usage:
+ * Add some description to [ixTest]. Both string and array of strings are supported.
+ * Do NOT add element type, in most cases it'll be added automatically.
+ *
+ * Examples:
+ * <button ixTest="reset-settings">Reset Settings</button>
+ * <input [ixTest]="formControl.name">
+ * <mat-option [ixTest]="[formControl.name, option.label]"></mat-option>
+ */
 @Directive({
   selector: '[ixTest]',
 })

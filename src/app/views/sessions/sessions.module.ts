@@ -16,6 +16,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { SetAdminPasswordFormComponent } from 'app/views/sessions/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/views/sessions/signin/true-command-status/true-command-status.component';
@@ -45,6 +46,7 @@ import { SigninComponent } from './signin/signin.component';
     MatInputModule,
     AppCommonModule,
     CommonDirectivesModule,
+    TestIdModule,
   ],
   declarations: [
     SigninComponent,
