@@ -30,6 +30,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { UserEffects } from 'app/pages/account/users/store/user.effects';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
 import { userStateKey } from 'app/pages/account/users/store/user.selectors';
@@ -75,6 +76,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     TranslateModule,
     NgxFilesizeModule,
     LayoutModule,
+    TestIdModule,
   ],
   declarations: [
     UserListComponent,

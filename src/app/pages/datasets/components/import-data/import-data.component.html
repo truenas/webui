@@ -43,6 +43,7 @@
           *ngIf="canViewImportLog"
           mat-button
           type="button"
+          ixTest="view-import-log"
           (click)="viewImportLog()"
         >
           {{ 'View Import Log' | translate }}
@@ -51,6 +52,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="import"
           [disabled]="form.invalid"
         >
           {{ 'Import' | translate }}

@@ -2,19 +2,19 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button (click)="openBootenvStats()">
+    <button mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
       {{ 'Stats/Settings' | translate }}
     </button>
 
-    <button mat-button [routerLink]="['/', 'system', 'boot', 'status']">
+    <button mat-button ixTest="bootenv-status" [routerLink]="['/', 'system', 'boot', 'status']">
       {{ 'Boot Pool Status' | translate }}
     </button>
 
-    <button mat-button (click)="doScrub()">
+    <button mat-button ixTest="bootenv-scrub" (click)="doScrub()">
       {{ 'Scrub Boot Pool' | translate }}
     </button>
 
-    <button mat-button color="primary" (click)="doAdd()">
+    <button mat-button color="primary" ixTest="bootenv-add" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -36,6 +36,7 @@
   <div class="actions">
     <button
       mat-button
+      ixTest="delete"
       [disabled]="!selectionHasItems"
       (click)="doDelete(checkboxColumn?.selection.selected)"
     >
@@ -125,6 +126,7 @@
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
       <button
         mat-icon-button
+        ixTest="bootenv-actions"
         [title]="'Settings' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >

@@ -46,11 +46,17 @@
   ></ix-input>
 
   <ix-form-actions>
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" matDialogClose ixTest="close">
       {{ 'Close' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="update-interval"
+      [disabled]="form.invalid"
+    >
       {{ 'Update Interval' | translate }}
     </button>
   </ix-form-actions>

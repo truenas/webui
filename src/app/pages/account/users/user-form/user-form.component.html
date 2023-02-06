@@ -171,6 +171,7 @@
       mat-button
       type="submit"
       color="primary"
+      ixTest="save"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Save' | translate }}
@@ -179,6 +180,7 @@
       *ngIf="!isNewUser"
       mat-button
       type="button"
+      ixTest="download-keys"
       (click)="onDownloadSshPublicKey()"
     >
       {{ 'Download Authorized Keys' | translate }}

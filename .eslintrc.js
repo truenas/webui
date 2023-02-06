@@ -319,10 +319,15 @@ module.exports = {
     {
       "files": ["*.html"],
       "extends": ["plugin:@angular-eslint/template/recommended"],
+      "plugins": ["angular-test-ids"],
       "rules": {
         "@angular-eslint/template/attributes-order": ["error"],
         "@angular-eslint/template/no-duplicate-attributes": ['error'],
         "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
+        "angular-test-ids/require-test-id": ["error", {
+          "attribute": "ixTest",
+          "overrideElements": ["input"],
+        }],
 
         // TODO: To be enabled later
         '@angular-eslint/template/use-track-by-function': ['off'],

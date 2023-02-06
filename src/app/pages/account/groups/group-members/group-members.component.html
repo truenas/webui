@@ -35,11 +35,12 @@
     <button
       mat-button
       color="primary"
+      ixTest="save"
       [disabled]="isFormLoading"
       (click)="onSubmit()"
     >
       {{ 'Save' | translate }}
     </button>
-    <button mat-button (click)="onCancel()">{{ 'Cancel' | translate }}</button>
+    <button mat-button ixTest="cancel" (click)="onCancel()">{{ 'Cancel' | translate }}</button>
   </mat-card-actions>
 </mat-card>

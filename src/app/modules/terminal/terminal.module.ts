@@ -8,6 +8,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     MatButtonModule,
     TooltipModule,
     LayoutModule,
+    TestIdModule,
   ],
   declarations: [
     TerminalComponent,

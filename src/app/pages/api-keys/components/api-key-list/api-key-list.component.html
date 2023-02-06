@@ -7,7 +7,7 @@
     <a mat-button href="/api/docs" target="_blank">
       {{ 'API Docs' | translate }}
     </a>
-    <button mat-button color="primary" (click)="openApiKeyForm()">
+    <button mat-button color="primary" ixTest="add" (click)="openApiKeyForm()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -49,17 +49,18 @@
       <td *matCellDef="let apiKey; dataSource: dataSource" mat-cell>
         <button
           mat-icon-button
+          ixTest="key-actions"
           [matMenuTriggerFor]="actionsMenu"
           [attr.aria-label]="'API Key Actions' | translate"
         >
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #actionsMenu="matMenu">
-          <button mat-menu-item (click)="openApiKeyForm(apiKey)">
+          <button mat-menu-item ixTest="edit-key" (click)="openApiKeyForm(apiKey)">
             <mat-icon>edit</mat-icon>
             <span>{{ 'Edit' | translate }}</span>
           </button>
-          <button mat-menu-item (click)="doDelete(apiKey)">
+          <button mat-menu-item ixTest="delete" (click)="doDelete(apiKey)">
             <mat-icon>delete</mat-icon>
             <span>{{ 'Delete' | translate }}</span>
           </button>

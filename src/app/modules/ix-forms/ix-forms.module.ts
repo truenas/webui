@@ -43,7 +43,7 @@ import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/i
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestModule } from 'app/modules/test/test.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
@@ -74,7 +74,7 @@ import { IxLabelComponent } from './components/ix-label/ix-label.component';
     TreeModule,
     MatListModule,
     CastModule,
-    TestModule,
+    TestIdModule,
   ],
   declarations: [
     IxInputComponent,
