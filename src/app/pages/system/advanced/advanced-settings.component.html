@@ -42,10 +42,15 @@
           </mat-list>
         </ng-template>
       </mat-card-content>
+
+      <ix-conf-table
+        *ngIf="card.tableConf"
+        [conf]="card.tableConf"
+      ></ix-conf-table>
     </mat-card>
 
     <ix-conf-table
-      *ngIf="card.tableConf"
+      *ngIf="!card.items && card.tableConf"
       [conf]="card.tableConf"
     ></ix-conf-table>
   </ng-container>

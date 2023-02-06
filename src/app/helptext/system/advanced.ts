@@ -10,7 +10,7 @@ export const helptextSystemAdvanced = {
   fieldset_cron: T('Cron Jobs'),
   fieldset_initshutdown: T('Init/Shutdown Scripts'),
   fieldset_sessions: T('Sessions'),
-  fieldset_token: T('Token'),
+  fieldset_sessions_table: T('Active Sessions'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
   dialog_generate_debug_message: T('This operation might take a long time. It cannot be aborted once started. Proceed?'),

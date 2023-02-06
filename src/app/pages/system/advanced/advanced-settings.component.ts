@@ -64,7 +64,6 @@ enum AdvancedCardId {
   Gpus = 'gpus',
   Sed = 'sed',
   Sessions = 'sessions',
-  Token = 'token',
 }
 
 interface AuthSessionRow {
@@ -214,7 +213,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   };
 
   sessionsTableConf: AppTableConfig = {
-    title: helptextSystemAdvanced.fieldset_sessions,
+    title: helptextSystemAdvanced.fieldset_sessions_table,
     queryCall: 'auth.sessions',
     queryCallOption: [[['internal', '=', false]]],
     parent: this,
@@ -254,7 +253,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
         },
       ];
     },
-    tableActions: [
+    tableFooterActions: [
       {
         label: this.translate.instant('Terminate Other Sessions'),
         onClick: () => {
@@ -454,10 +453,6 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
           id: AdvancedCardId.Sessions,
           title: helptextSystemAdvanced.fieldset_sessions,
           tableConf: this.sessionsTableConf,
-        },
-        {
-          title: helptextSystemAdvanced.fieldset_token,
-          id: AdvancedCardId.Token,
           items: [
             {
               label: this.translate.instant('Token Lifetime'),
@@ -528,7 +523,7 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
       case AdvancedCardId.Replication:
         this.slideInService.open(ReplicationSettingsComponent);
         break;
-      case AdvancedCardId.Token:
+      case AdvancedCardId.Sessions:
         this.slideInService.open(TokenSettingsComponent);
         break;
       case AdvancedCardId.Syslog:
