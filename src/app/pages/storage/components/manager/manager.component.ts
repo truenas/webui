@@ -350,6 +350,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.addVdev('data', new ManagerVdev(this.firstDataVdevDisktype, 'data'));
+    this.dirty = false;
 
     this.loader.open();
     this.loaderOpen = true;
@@ -1017,9 +1018,5 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
 
     vdev.rawSize = estimate;
-  }
-
-  vdevsTracker(index: number, vdev: ManagerVdev): string {
-    return vdev.uuid;
   }
 }
