@@ -158,6 +158,7 @@ export class ChartFormComponent implements OnDestroy {
         this.form.patchValue(this.config);
       }
     } catch (error: unknown) {
+      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
