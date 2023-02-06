@@ -8,8 +8,9 @@ import { filter } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -25,17 +26,18 @@ export class TokenLifetimeService {
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
-    private dialog: MatDialog,
-    private ws: WebSocketService,
+    private matDialog: MatDialog,
+    private authService: AuthService,
+    private wsManager: WebsocketConnectionService,
     private appStore$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);
 
-    this.dialog.afterOpened.pipe(untilDestroyed(this)).subscribe((testDialog) => {
-      if (testDialog.componentInstance instanceof EntityJobComponent) {
+    this.matDialog.afterOpened.pipe(untilDestroyed(this)).subscribe((dialog) => {
+      if (dialog.componentInstance instanceof EntityJobComponent) {
         this.stop();
-        testDialog.componentInstance.dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+        dialog.componentInstance.dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
           this.start();
         });
       }
@@ -54,7 +56,14 @@ export class TokenLifetimeService {
       this.actionWaitTimeout = setTimeout(() => {
         this.stop();
         const showConfirmTime = 30000;
-        this.terminateCancelTimeout = setTimeout(() => this.ws.logout(), showConfirmTime);
+        this.terminateCancelTimeout = setTimeout(() => {
+          this.authService.logout().pipe(untilDestroyed(this)).subscribe({
+            next: () => {
+              this.authService.token2 = null;
+              this.wsManager.closeWebsocketConnection();
+            },
+          });
+        }, showConfirmTime);
         this.dialogService.confirm({
           title: this.translate.instant('Logout'),
           message: this.translate.instant(`
