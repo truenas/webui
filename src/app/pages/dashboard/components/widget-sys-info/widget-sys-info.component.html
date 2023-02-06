@@ -252,7 +252,8 @@
                       {{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}
                     </span>
                   </mat-list-item>
-                  <mat-list-item *ngIf="showTimeDiffWarning" class="time-warning">
+                  <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-120121 -->
+                  <mat-list-item *ngIf="showTimeDiffWarning && false" class="time-warning">
                     <mat-icon class="icon-warning" [matTooltip]="timeDiffWarning">error</mat-icon>
                     <span>{{ timeDiffWarning }}</span>
                     <button
