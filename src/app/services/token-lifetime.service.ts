@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,6 +7,7 @@ import { format } from 'date-fns';
 import { filter } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
@@ -23,11 +25,21 @@ export class TokenLifetimeService {
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
+    private dialog: MatDialog,
     private ws: WebSocketService,
     private appStore$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);
+
+    this.dialog.afterOpened.pipe(untilDestroyed(this)).subscribe((testDialog) => {
+      if (testDialog.componentInstance instanceof EntityJobComponent) {
+        this.stop();
+        testDialog.componentInstance.dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+          this.start();
+        });
+      }
+    });
   }
 
   start(): void {
