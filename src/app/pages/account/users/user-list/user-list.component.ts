@@ -19,7 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { userPageEntered } from 'app/pages/account/users/store/user.actions';
+import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -156,5 +156,9 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   onListFiltered(query: string): void {
     this.dataSource.filter = query;
+  }
+
+  handleDeletedUser(id: number): void {
+    this.store$.dispatch(userRemoved({ id }));
   }
 }
