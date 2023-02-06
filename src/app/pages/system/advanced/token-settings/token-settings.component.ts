@@ -9,7 +9,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
 @Component({
@@ -38,9 +37,7 @@ export class TokenSettingsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.window.localStorage.setItem('lifetime', this.form.value.token_lifetime.toString());
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
-    this.store$.dispatch(advancedConfigUpdated());
     this.slideInService.close();
   }
 }

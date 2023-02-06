@@ -50,9 +50,6 @@ describe('SigninStore', () => {
           location: {
             protocol: 'https:',
           },
-          localStorage: {
-            getItem: () => '300',
-          },
         },
       },
     ],

@@ -293,7 +293,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     });
 
     this.store$.select(selectPreferences).pipe(filter(Boolean), untilDestroyed(this)).subscribe((preferences) => {
-      this.lifetimeToken = preferences.lifetime.toString();
+      this.lifetimeToken = preferences.lifetime ? preferences.lifetime.toString() : '';
+      this.getDatasetData();
     });
 
     this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

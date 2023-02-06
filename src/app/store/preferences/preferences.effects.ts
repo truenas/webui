@@ -44,8 +44,6 @@ export class PreferencesEffects {
             return noPreferencesFound();
           }
 
-          this.window.localStorage.setItem('lifetime', preferences.lifetime.toString());
-
           return preferencesLoaded({ preferences });
         }),
         catchError((error) => {

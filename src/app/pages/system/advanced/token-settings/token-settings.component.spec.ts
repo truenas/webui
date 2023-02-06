@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -11,6 +12,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/token-settings/token-settings.component';
 import { SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('TokenSettingsComponent', () => {
@@ -54,6 +56,9 @@ describe('TokenSettingsComponent', () => {
   });
 
   it('updates lifetime when save is pressed', async () => {
+    const store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
+
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Token Lifetime': '60',
@@ -62,6 +67,7 @@ describe('TokenSettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
+    expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 60 }));
     expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
   });
 });

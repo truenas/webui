@@ -139,11 +139,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.store$.dispatch(adminUiInitialized());
 
-    this.tokenLifetimeService.start(true);
+    this.tokenLifetimeService.start();
   }
 
   ngOnDestroy(): void {
-    this.tokenLifetimeService.stop(true);
+    this.tokenLifetimeService.stop();
   }
 
   ngAfterViewInit(): void {
