@@ -35,7 +35,7 @@
   ></ix-select>
 
   <ix-form-actions>
-    <button mat-button type="button" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -43,6 +43,7 @@
       mat-button
       type="submit"
       color="primary"
+      ixTest="start-test"
       [disabled]="form.invalid || !supportedDisks.length"
     >
       {{ 'Start' | translate }}
@@ -83,7 +84,7 @@
   </div>
 
   <ix-form-actions>
-    <button mat-button type="button" [matDialogClose]="true">
+    <button mat-button type="button" ixTest="close" [matDialogClose]="true">
       {{ 'Close' | translate }}
     </button>
   </ix-form-actions>

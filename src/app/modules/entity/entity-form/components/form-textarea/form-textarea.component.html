@@ -52,6 +52,7 @@
           mat-button
           color="accent"
           class="btn-default"
+          [ixTest]="['choose-file', config.name]"
           (click)="fileBtnClick()"
         >
           {{ 'Choose File' | translate }}

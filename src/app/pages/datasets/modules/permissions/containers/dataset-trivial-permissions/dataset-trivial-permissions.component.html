@@ -73,6 +73,7 @@
           class="save-button"
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
@@ -80,6 +81,7 @@
         <button
           mat-button
           type="button"
+          ixTest="cancel"
           [routerLink]="['/datasets', datasetId]"
         >
           {{ 'Cancel' | translate }}
@@ -90,6 +92,7 @@
           class="set-acl-button"
           mat-button
           type="button"
+          ixTest="set-acl"
           (click)="onSetAclPressed()"
         >
           {{ 'Set ACL' | translate }}

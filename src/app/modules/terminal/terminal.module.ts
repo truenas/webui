@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -22,6 +23,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     TooltipModule,
     LayoutModule,
     TestIdModule,
+    MatDialogModule,
   ],
   declarations: [
     TerminalComponent,

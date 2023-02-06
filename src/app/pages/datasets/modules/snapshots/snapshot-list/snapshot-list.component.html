@@ -13,7 +13,7 @@
     >
       <label>{{ 'Show extra columns' | translate }}</label>
     </mat-slide-toggle>
-    <button mat-button color="primary" (click)="doAdd()">
+    <button mat-button color="primary" ixTest="add-snapshot" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -31,6 +31,7 @@
     <button
       mat-button
       matTooltipPosition="below"
+      ixTest="delete-selected"
       [matTooltip]="'Delete selections' | translate"
       (click)="doBatchDelete(checkboxColumn?.selection.selected)"
     >
