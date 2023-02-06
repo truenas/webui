@@ -1,5 +1,5 @@
 <mat-card>
-  <nav mat-tab-nav-bar>
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel">
     <a
       *ngFor="let link of navLinks"
       #rla="routerLinkActive"
@@ -16,9 +16,11 @@
   </nav>
 
   <router-outlet>
-    <ix-rsync-configure *ngIf="activedTab === 'configure'"></ix-rsync-configure>
-    <ix-rsync-module-list
-      *ngIf="activedTab === 'rsync-module'"
-    ></ix-rsync-module-list>
+    <mat-tab-nav-panel #tabPanel>
+      <ix-rsync-configure *ngIf="activedTab === 'configure'"></ix-rsync-configure>
+      <ix-rsync-module-list
+        *ngIf="activedTab === 'rsync-module'"
+      ></ix-rsync-module-list>
+    </mat-tab-nav-panel>
   </router-outlet>
 </mat-card>

@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -106,7 +106,7 @@ export class SupportComponent implements OnInit {
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
     if (this.licenseInfo?.system_serial_ha) {
-      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.licenseInfo.system_serial_ha;
+      this.systemInfo.serial = this.licenseInfo.system_serial + ' / ' + this.licenseInfo.system_serial_ha;
     } else {
       this.systemInfo.serial = this.systemInfo.system_serial;
     }

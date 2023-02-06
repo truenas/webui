@@ -43,12 +43,12 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   @Input() name: string;
 
   private get iconName(): string {
-    if (this.iconLigature) {
-      return this.iconLigature;
-    }
-
     if (this.name) {
       return this.name;
+    }
+
+    if (this.iconLigature) {
+      return this.iconLigature;
     }
 
     if (this.svgIcon) {
@@ -91,7 +91,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   }
 
   ngAfterContentInit(): void {
-    this.updateIcon(this.name);
+    this.updateIcon(this.iconName);
   }
 
   private updateIcon(iconName: string): void {

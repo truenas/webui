@@ -54,7 +54,7 @@
         {{ 'Builtin' | translate }}
       </th>
       <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.builtin }}
+        {{ group.builtin | yesNo }}
       </td>
     </ng-container>
 
@@ -63,7 +63,7 @@
         {{ 'Allows sudo commands' | translate }}
       </th>
       <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.sudo_commands.length || group.sudo_commands_nopasswd.length ? ('Yes' | translate) : ('No' | translate) }}
+        {{ (group.sudo_commands.length || group.sudo_commands_nopasswd.length) | yesNo }}
       </td>
     </ng-container>
 
@@ -72,7 +72,7 @@
         {{ 'Samba Authentication' | translate }}
       </th>
       <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.smb }}
+        {{ group.smb | yesNo }}
       </td>
     </ng-container>
 

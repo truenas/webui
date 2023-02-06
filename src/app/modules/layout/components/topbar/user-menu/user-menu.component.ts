@@ -8,7 +8,7 @@ import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dial
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
-import { WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @Component({
   selector: 'ix-user-menu',
@@ -17,11 +17,11 @@ import { WebSocketService } from 'app/services';
 })
 export class UserMenuComponent {
   readonly tooltips = helptext.mat_tooltips;
-  loggedInUser$ = this.ws.loggedInUser$.pipe(filter(Boolean));
+  loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
 
   constructor(
     private dialog: MatDialog,
-    private ws: WebSocketService,
+    private authService: AuthService,
   ) { }
 
   openChangePasswordDialog(): void {

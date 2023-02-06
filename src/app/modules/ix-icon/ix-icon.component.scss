@@ -8,7 +8,7 @@ $size: 24px;
   flex-shrink: 0;
   justify-content: center;
 
-  svg {
+  &:not([name^='ix:truenas']) svg {
     height: $size;
     width: $size;
   }

@@ -1,16 +1,18 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
-import { WebSocketService } from 'app/services';
+import { WebSocketService2 } from 'app/services';
 
 describe('ConsoleMessagesStore', () => {
   let spectator: SpectatorService<ConsoleMessagesStore>;
   const createService = createServiceFactory({
     service: ConsoleMessagesStore,
     providers: [
-      mockProvider(WebSocketService, {
-        sub: jest.fn(() => of({
-          data: '[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.',
+      mockProvider(WebSocketService2, {
+        subscribeToLogs: jest.fn(() => of({
+          fields: {
+            data: '[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.',
+          },
         })),
       }),
     ],
@@ -23,8 +25,8 @@ describe('ConsoleMessagesStore', () => {
   it('subscribeToMessageUpdates - subscribes to log updates and calls addMessage when new message is received', async () => {
     spectator.service.subscribeToMessageUpdates();
 
-    expect(spectator.inject(WebSocketService).sub)
-      .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500', expect.any(String));
+    expect(spectator.inject(WebSocketService2).subscribeToLogs)
+      .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500');
     const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({
       lines: [
@@ -46,16 +48,5 @@ describe('ConsoleMessagesStore', () => {
     spectator.service.subscribeToMessageUpdates();
     const lines = await firstValueFrom(spectator.service.lastThreeLogLines$);
     expect(lines).toBe('[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.');
-  });
-
-  it('unsubscribes from updates when component is destroyed', () => {
-    spectator.service.subscribeToMessageUpdates();
-    const subscriptionId = spectator.inject(WebSocketService).sub.mock.lastCall[1] as string;
-
-    spectator.service.ngOnDestroy();
-    expect(spectator.inject(WebSocketService).unsub).toHaveBeenCalledWith(
-      'filesystem.file_tail_follow:/var/log/messages:500',
-      subscriptionId,
-    );
   });
 });

@@ -10,7 +10,8 @@ import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService2 } from 'app/services/ws2.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +31,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Catalog,
-    private ws: WebSocketService,
+    private ws: WebSocketService2,
     private loader: AppLoaderService,
     protected dialogService: DialogService,
   ) {
@@ -39,37 +40,39 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.job('catalog.items', [this.catalog.label]).pipe(untilDestroyed(this)).subscribe({
-      next: (job: Job<CatalogItems>) => {
-        if (job.state !== JobState.Success) {
-          return;
-        }
+    this.ws.job('catalog.items', [this.catalog.label])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (job: Job<CatalogItems>) => {
+          if (job.state !== JobState.Success) {
+            return;
+          }
 
-        this.loader.close();
-        const result = job.result;
-        this.catalogItems = [];
-        this.trainOptions = ['All'];
-        if (result) {
-          Object.keys(result).forEach((trainKey) => {
-            const train = result[trainKey];
-            this.trainOptions.push(trainKey);
-            Object.keys(train).forEach((appKey) => {
-              const app = train[appKey];
-              this.catalogItems.push({
-                train: trainKey,
-                app: appKey,
-                healthy: app.healthy,
+          this.loader.close();
+          const result = job.result;
+          this.catalogItems = [];
+          this.trainOptions = ['All'];
+          if (result) {
+            Object.keys(result).forEach((trainKey) => {
+              const train = result[trainKey];
+              this.trainOptions.push(trainKey);
+              Object.keys(train).forEach((appKey) => {
+                const app = train[appKey];
+                this.catalogItems.push({
+                  train: trainKey,
+                  app: appKey,
+                  healthy: app.healthy,
+                });
               });
             });
-          });
-          this.filteredItems = this.catalogItems;
-        }
-      },
-      error: (err) => {
-        this.loader.close();
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
-    });
+            this.filteredItems = this.catalogItems;
+          }
+        },
+        error: (err) => {
+          this.loader.close();
+          new EntityUtils().handleWsError(this, err, this.dialogService);
+        },
+      });
   }
 
   onOptionChanged(): void {

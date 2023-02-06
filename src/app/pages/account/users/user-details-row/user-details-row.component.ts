@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -33,6 +34,7 @@ export class UserDetailsRowComponent {
     private dialogService: DialogService,
     private slideIn: IxSlideInService,
     private matDialog: MatDialog,
+    private yesNoPipe: YesNoPipe,
   ) {}
 
   getDetails(user: User): Option[] {
@@ -41,9 +43,18 @@ export class UserDetailsRowComponent {
       { label: this.translate.instant('Home Directory'), value: user.home },
       { label: this.translate.instant('Shell'), value: user.shell },
       { label: this.translate.instant('Email'), value: user.email },
-      { label: this.translate.instant('Password Disabled'), value: user.password_disabled.toString() },
-      { label: this.translate.instant('Lock User'), value: user.locked.toString() },
-      { label: this.translate.instant('Samba Authentication'), value: user.smb.toString() },
+      {
+        label: this.translate.instant('Password Disabled'),
+        value: this.yesNoPipe.transform(user.password_disabled),
+      },
+      {
+        label: this.translate.instant('Lock User'),
+        value: this.yesNoPipe.transform(user.locked),
+      },
+      {
+        label: this.translate.instant('Samba Authentication'),
+        value: this.yesNoPipe.transform(user.smb),
+      },
     ];
 
     if (user.sudo_commands.length > 0) {

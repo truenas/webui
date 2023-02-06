@@ -319,15 +319,9 @@ export type ApiDirectory = {
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
 
   // Auth
-  'auth.generate_token': { params: [number]; response: string };
-  'auth.login_with_token': { params: [token: string]; response: boolean };
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
-  'auth.login': {
-    params: LoginParams;
-    response: boolean;
-  };
-  'auth.logout': { params: void; response: void };
+
   'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: void; response: boolean };
@@ -592,6 +586,7 @@ export type ApiDirectory = {
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
   'iscsi.global.update': { params: [IscsiGlobalConfigUpdate]; response: IscsiGlobalConfig };
   'iscsi.targetextent.create': { params: [IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
+  'iscsi.target.validate_name': { params: [string]; response: string };
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
@@ -1036,6 +1031,18 @@ export type ApiDirectory = {
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };
 
+/**
+ * API definitions for `call` and `job` methods for auth apis.
+ */
+export type AuthApiDirectory = {
+  'auth.login': {
+    params: LoginParams;
+    response: boolean;
+  };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.logout': { params: void; response: void };
+  'auth.generate_token': { params: [number]; response: string };
+};
 /**
  * Prefer typing like this:
  * ```

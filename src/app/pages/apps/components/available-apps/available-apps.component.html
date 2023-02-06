@@ -10,3 +10,11 @@
 </ng-template>
 
 <ix-available-apps-header></ix-available-apps-header>
+
+<div class="apps">
+  <ix-app-card
+    *ngFor="let app of apps; trackBy: trackByAppId"
+    [app]="app"
+    [routerLink]="['/apps', 'available', app.name]"
+  ></ix-app-card>
+</div>

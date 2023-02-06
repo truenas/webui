@@ -1,0 +1,41 @@
+.logo-container {
+  height: 80px;
+  margin-bottom: auto;
+  padding: 5px;
+  position: relative;
+  width: 110px;
+
+  &.logo-loaded {
+    .logo {
+      opacity: 1;
+    }
+
+    .logo-placeholder {
+      opacity: 0;
+    }
+  }
+
+  .logo,
+  .logo-placeholder {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: opacity 250ms;
+    width: 100%;
+  }
+
+  .logo {
+    object-fit: contain;
+    opacity: 0;
+  }
+
+  .logo-placeholder {
+    background-color: var(--fg1);
+    mask-image: url('~assets/customicons/truenas_scale_logomark.svg');
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: 70%;
+    opacity: 1;
+  }
+}

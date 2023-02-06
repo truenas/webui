@@ -1,4 +1,3 @@
-export * from './ws.service';
 export * from './ws2.service';
 export * from './system-general.service';
 export * from './network.service';
