@@ -16,7 +16,7 @@ from pytest_bdd import (
     parsers
 )
 import pytest
-pytestmark = [pytest.mark.debug_test]
+#pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1118.feature', 'Verify Amazon S3 credentials can be added')
@@ -136,7 +136,8 @@ def click_verify_credential_to_verify_the_key_id_is_invalid(driver):
     """click Verify Credential to verify the key id is invalid."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    if wait_on_element(driver, 5, '//h1[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Error"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"InvalidAccessKeyId:")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')

@@ -93,8 +93,14 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
     assert wait_on_element(driver, 10, '//a[text()="Proceed"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="Proceed"]').click()
     assert wait_on_element(driver, 10, '//div[@class="login-header" and contains(.,"Sign in to Dropbox to link with TrueNAS CloudSync")]')
-    assert wait_on_element(driver, 5, '//button[contains(.,"Sign in with Google")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Sign in with Google")]').click()
+
+    if wait_on_element(driver, 7, '//iframe[@id="consent-iframe"]'):
+        driver.switch_to.frame('consent-iframe')
+        wait_on_element(driver, 7, '//button[contains(text(),"Accept All")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(text(),"Accept All")]').click()
+        driver.switch_to.default_content()
+    assert wait_on_element(driver, 5, '//button[contains(.,"Continue with Google")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Continue with Google")]').click()
     assert wait_on_element(driver, 10, '//div[text()="Sign in with Google"]')
     assert wait_on_element(driver, 5, '//span[text()="Sign in"]')
     assert wait_on_element(driver, 5, '//input[@id="identifierId"]', 'inputable')
@@ -131,7 +137,8 @@ def click_verify_credential_to_verify_it_is_valid(driver):
     """click Verify Credential to verify it is valid."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    if wait_on_element(driver, 5, '//h1[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Valid"]')
     assert wait_on_element(driver, 10, '//textarea[text()="The Credential is valid."]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')

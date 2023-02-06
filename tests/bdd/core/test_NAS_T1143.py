@@ -16,7 +16,7 @@ from pytest_bdd import (
     parsers
 )
 import pytest
-pytestmark = [pytest.mark.debug_test]
+#pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1143.feature', 'Verify Backblaze B2 Cloud Sync task works')
@@ -108,15 +108,15 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
     """enter the <user_name> click Next and enter the <password> click Next."""
     assert wait_on_element(driver, 5, '//h3[text()="Welcome Back"]')
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
+    assert wait_on_element(driver, 5, '//input[@name="email-field"]', 'inputable')
+    driver.find_element_by_xpath('//input[@name="email-field"]').send_keys(user_name)
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
     time.sleep(1)
     assert wait_on_element(driver, 10, f'//p[@class="user-email" and contains(text(),"{user_name}")]')
-    assert wait_on_element(driver, 5, '//input[@placeholder="Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+    assert wait_on_element(driver, 5, '//input[@name="password-field"]', 'inputable')
+    driver.find_element_by_xpath('//input[@name="password-field"]').send_keys(password)
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in") and @type="submit"]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Sign in") and @type="submit"]').click()

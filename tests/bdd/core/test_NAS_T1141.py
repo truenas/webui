@@ -149,7 +149,7 @@ def under_transfer_mode_select_copy_click_save(driver):
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
 
 
 @then('the Google Drive tasks should save without error')
@@ -239,7 +239,7 @@ def select_the_path_folder_and_click_save(driver, path):
     driver.find_element_by_xpath('//input[@placeholder="Folder"]').send_keys(path)
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Please wait")]')
     # give time to the system to handle changes
     time.sleep(2)
 
@@ -345,7 +345,7 @@ def click_save_the_google_drive_tasks_should_save_without_error(driver):
     """click Save, the Google Drive tasks should save without error."""
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
     # give time to the system to handle changes

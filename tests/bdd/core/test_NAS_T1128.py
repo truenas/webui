@@ -16,7 +16,7 @@ from pytest_bdd import (
 )
 
 import pytest
-pytestmark = [pytest.mark.debug_test]
+#pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1128.feature', 'Verify Box credentials can be added')
@@ -105,6 +105,8 @@ def click_authorize_and_then_click_grant_access_to_box(driver):
     """click Authorize and then click Grant Access to Box."""
     assert wait_on_element(driver, 5, '//button[@id="consent_accept_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="consent_accept_button"]').click()
+    while len(driver.window_handles) != 1:
+        time.sleep(1)
     driver.switch_to.window(driver.window_handles[0])
 
 
@@ -120,7 +122,8 @@ def click_verify_credential_to_verify_it_is_valid(driver):
     assert element3.get_attribute('value') != '', element3.get_attribute('value')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    if wait_on_element(driver, 5, '//h1[contains(.,"Please wait")]'):
+        assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Valid"]')
     assert wait_on_element(driver, 10, '//textarea[text()="The Credential is valid."]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')

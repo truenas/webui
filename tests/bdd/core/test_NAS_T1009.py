@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1009.feature', 'Add an ACL Item and verify is preserve on the system ACL dataset')
-def test_add_an_acl_item_and_verify_is_preserve_on_the_system_acl_dataset(driver):
-    """Add an ACL Item and verify is preserve on the system ACL dataset."""
+@scenario('features/NAS-T1009.feature', 'Add an ACL Item and verify is preserve on the system AD permission dataset')
+def test_add_an_acl_item_and_verify_is_preserve_on_the_system_ad_permission_dataset(driver):
+    """Add an ACL Item and verify is preserve on the system AD permission dataset."""
 
 
 @given('the browser is open on the TrueNAS URL and logged in')

@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1008.feature', 'Add an ACL Item and verify is preserve on the tank ACL dataset')
-def test_add_an_acl_item_and_verify_is_preserve_on_the_tank_acl_dataset(driver):
-    """Add an ACL Item and verify is preserve on the tank ACL dataset."""
+@scenario('features/NAS-T1008.feature', 'Add an ACL Item and verify is preserve on the tank AD permission dataset')
+def test_add_an_acl_item_and_verify_is_preserve_on_the_tank_ad_permission_dataset(driver):
+    """Add an ACL Item and verify is preserve on the tank AD permission dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
