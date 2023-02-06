@@ -206,11 +206,11 @@ export class AppSchemaService {
 
   checkIsValidCronTab(crontab: string): boolean {
     // invalid cron type example --> { minute: 5, hour: undefined }
-    return !Object.values(crontabToSchedule(crontab))?.includes(undefined);
+    return !Object.values(crontabToSchedule(crontab)).includes(undefined);
   }
 
   checkIsValidSchedule(schedule: Schedule): boolean {
-    return !!(schedule?.month && schedule?.hour && schedule?.minute && schedule?.dom && schedule?.dow);
+    return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
   }
 
   serializeFormValue(data: SerializeFormValue): SerializeFormValue {
@@ -270,7 +270,7 @@ export class AppSchemaService {
 
       if (!formConfig) { continue; }
 
-      if (this.checkIsValidSchedule(valueConfig as Schedule)) {
+      if (valueConfig && this.checkIsValidSchedule(valueConfig as Schedule)) {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
       } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
