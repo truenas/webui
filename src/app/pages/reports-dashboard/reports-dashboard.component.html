@@ -14,7 +14,8 @@
   fxLayout="row wrap"
   fxLayoutAlign="space-evenly"
 >
-  <div *ngIf="timeDiffWarning" class="time-warning">
+  <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-120121 -->
+  <div *ngIf="timeDiffWarning && false" class="time-warning">
     <div>
       <ix-icon name="warning" class="icon-warning"></ix-icon>
     </div>
