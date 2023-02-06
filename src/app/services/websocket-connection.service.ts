@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject, EMPTY, interval, Observable, of, switchMap, timer,
+  BehaviorSubject, EMPTY, interval, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 
@@ -15,22 +16,22 @@ import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.i
 @Injectable({
   providedIn: 'root',
 })
-export class WebsocketManagerService {
+export class WebsocketConnectionService {
   private ws$: WebSocketSubject<unknown>;
+
   private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
-  private isConnectionReady$ = new BehaviorSubject(false);
+  private pendingCallsBeforeConnectionReady = new Map<string, unknown>();
 
-  get websocketSubject$(): Observable<unknown> {
-    return this.ws$.asObservable().pipe(
-      switchMap((data: IncomingWebsocketMessage) => {
-        if (this.hasAuthError(data)) {
-          this.ws$.complete();
-          return EMPTY;
-        }
-        return of(data);
-      }),
-    );
+  private shutDownInProgress = false;
+  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
+
+  private isConnectionReady = false;
+  private isConnectionReady$ = new BehaviorSubject(false);
+  private wsAsObservable$: Observable<unknown>;
+
+  get websocket$(): Observable<unknown> {
+    return this.wsAsObservable$;
   }
 
   get isConnected$(): Observable<boolean> {
@@ -40,13 +41,14 @@ export class WebsocketManagerService {
   constructor(
     @Inject(WINDOW) protected window: Window,
     protected router: Router,
+    private dialog: MatDialog,
   ) {
     this.initializeWebsocket();
   }
 
   private initializeWebsocket(): void {
     this.ws$ = webSocket({
-      url: (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket',
+      url: this.connectionUrl,
       openObserver: {
         next: this.onOpen.bind(this),
       },
@@ -54,19 +56,50 @@ export class WebsocketManagerService {
         next: this.onClose.bind(this),
       },
     });
-
+    this.wsAsObservable$ = this.ws$.asObservable().pipe(
+      switchMap((data: IncomingWebsocketMessage) => {
+        if (this.hasAuthError(data)) {
+          this.ws$.complete();
+          return EMPTY;
+        }
+        return of(data);
+      }),
+    );
     // Atleast one explicit subscription required to keep the connection open
-    this.ws$.pipe(untilDestroyed(this)).subscribe();
+    this.ws$.pipe(
+      tap((response: IncomingWebsocketMessage) => {
+        if (response.msg === IncomingApiMessageType.Connected) {
+          this.isConnectionReady$.next(true);
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+    this.isConnected$.pipe(untilDestroyed(this)).subscribe({
+      next: (isConnected) => {
+        this.isConnectionReady = isConnected;
+        if (isConnected) {
+          const keys = this.pendingCallsBeforeConnectionReady.keys();
+          for (const key of keys) {
+            this.send(this.pendingCallsBeforeConnectionReady.get(key));
+            this.pendingCallsBeforeConnectionReady.delete(key);
+          }
+        }
+      },
+    });
   }
 
   private onOpen(): void {
-    this.isConnectionReady$.next(true);
+    this.shutDownInProgress = false;
     this.setupConnectionEvents();
   }
 
+  /** TODO: Extract disconnection logic somewhere else */
   private onClose(): void {
     this.isConnectionReady$.next(false);
-    this.router.navigate(['/sessions/signin']);
+    this.closeAllDialogs();
+    if (!this.shutDownInProgress) {
+      this.router.navigate(['/sessions/signin']);
+    }
     timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
       next: () => this.initializeWebsocket(),
     });
@@ -85,12 +118,18 @@ export class WebsocketManagerService {
   }
 
   private setupConnectionEvents(): void {
-    this.send({
+    this.ws$.next({
       msg: OutgoingApiMessageType.Connect,
       version: '1',
       support: ['1'],
     });
     this.setupPing();
+  }
+
+  private closeAllDialogs(): void {
+    for (const openDialog of this.dialog.openDialogs) {
+      openDialog.close();
+    }
   }
 
   buildSubscriber(name: string): Observable<unknown> {
@@ -114,6 +153,23 @@ export class WebsocketManagerService {
   }
 
   send(payload: unknown): void {
-    this.ws$.next(payload);
+    if (this.isConnectionReady) {
+      this.ws$.next(payload);
+    } else {
+      this.pendingCallsBeforeConnectionReady.set(UUID.UUID(), payload);
+    }
+  }
+
+  closeWebsocketConnection(): void {
+    this.ws$.complete();
+  }
+
+  prepareShutdown(): void {
+    this.shutDownInProgress = true;
+  }
+
+  setupConnectionUrl(protocol: string, remote: string): void {
+    this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://')
+    + remote + '/websocket';
   }
 }

@@ -2,10 +2,9 @@ import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel, TestKey,
 } from '@angular/cdk/testing';
 import {
-  MatLegacyChipHarness as MatChipHarness,
-  MatLegacyChipInputHarness as MatChipInputHarness,
-  MatLegacyChipListHarness as MatChipListHarness,
-} from '@angular/material/legacy-chips/testing';
+  MatChipGridHarness,
+  MatChipHarness,
+} from '@angular/material/chips/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
@@ -23,13 +22,9 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
         (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
-  getMatChipListHarness = this.locatorFor(MatChipListHarness);
+  getMatChipListHarness = this.locatorFor(MatChipGridHarness);
   getMatChips = this.locatorForAll(MatChipHarness);
   getErrorText = getErrorText;
-
-  async getChipInputHarness(): Promise<MatChipInputHarness> {
-    return (await this.getMatChipListHarness()).getInput();
-  }
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorForOptional(IxLabelHarness)();
@@ -67,7 +62,7 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async addChips(values: string[]): Promise<void> {
-    const input = await this.getChipInputHarness();
+    const input = await (await this.getMatChipListHarness()).getInput();
     for (const value of values) {
       await input.setValue(value);
       await input.sendSeparatorKey(TestKey.ENTER);
@@ -75,6 +70,6 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async isDisabled(): Promise<boolean> {
-    return (await this.getChipInputHarness()).isDisabled();
+    return (await this.getMatChipListHarness()).isDisabled();
   }
 }

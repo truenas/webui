@@ -20,7 +20,6 @@ import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Device } from 'app/interfaces/device.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -901,7 +900,7 @@ export class VmWizardComponent implements WizardConfiguration {
   }
 
   getFormArrayIndexFromFieldName(fieldName: string, parent: VmWizardComponent = this): number {
-    return parent.wizardConfig.findIndex((conf: FormConfiguration) => {
+    return parent.wizardConfig.findIndex((conf) => {
       return conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0;
     });
   }

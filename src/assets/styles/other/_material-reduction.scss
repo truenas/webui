@@ -333,7 +333,7 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
 }
 
 /* Chips */
-.form-element .mat-chip {
+.form-element .mat-mdc-chip {
   font-size: smaller !important;
   padding: 1px 16px 0 !important;
 }
@@ -393,7 +393,9 @@ ix-entity-form-list .list-action-block-wrapper .form-element select {
   position: static !important;
 }
 
-.mat-checkbox {
+.mat-mdc-checkbox {
+  margin-left: -10px;
+  margin-right: 8px;
   opacity: 0.75;
 }
 
@@ -425,15 +427,15 @@ ix-tooltip button i {
 
 /* Buttons */
 .mat-mdc-button,
-.mat-raised-button {
-  font-weight: 400 !important;
-}
-
-.mat-mdc-button,
 .mat-button,
 .mat-flat-button {
   border-radius: 0 !important;
+  font-weight: 400 !important;
   text-transform: capitalize !important;
+
+  &:focus-visible {
+    outline: 1px solid var(--alt-fg2) !important;
+  }
 }
 
 .mat-mdc-button[disabled] span.mdc-button__label,
@@ -873,18 +875,36 @@ ul.nested-list li {
   margin: 8px 0;
 }
 
-.mat-tab-header-pagination-chevron {
+.mat-mdc-tab-header-pagination-chevron {
   border-color: unset !important;
   color: var(--fg2);
 }
 
-.mat-tab-header-pagination {
+.mat-mdc-tab-header-pagination {
   background-color: var(--lines);
   opacity: 0.6;
 }
 
-.mat-tab-header-pagination-disabled {
+.mat-mdc-tab-header-pagination-disabled {
   opacity: 0.2;
+}
+
+.mdc-tab {
+  flex-grow: initial !important;
+
+  .mdc-tab__content {
+    font-family: var(--mdc-dialog-subhead-font);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &.mdc-tab--active {
+    color: var(--primary);
+
+    .mdc-tab__text-label {
+      color: var(--primary);
+    }
+  }
 }
 
 ix-root {
@@ -895,7 +915,6 @@ ix-root {
 
   .cdk-focused,
   .cdk-keyboard-focused {
-
     @extend %focused-shared;
     background-color: var(--focus-bg) !important;
   }
@@ -922,4 +941,21 @@ ix-nested-tree-node > div {
 
 body .mat-mdc-option {
   min-height: 36px;
+}
+
+.mat-mdc-chip {
+  font-weight: 500;
+}
+
+mat-chip-grid {
+  width: 100%;
+}
+
+body .mat-mdc-checkbox label {
+  padding-left: 0;
+}
+
+body .mdc-evolution-chip-set .mdc-evolution-chip {
+  margin-bottom: 2px;
+  margin-top: 2px;
 }

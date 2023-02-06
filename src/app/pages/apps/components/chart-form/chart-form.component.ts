@@ -30,7 +30,6 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
 @UntilDestroy()
 @Component({
   templateUrl: './chart-form.component.html',
-  styleUrls: ['./chart-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartFormComponent implements OnDestroy {

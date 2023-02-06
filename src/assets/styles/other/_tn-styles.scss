@@ -5,6 +5,8 @@ $standard-height: 40px;
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
 @include mat.slide-toggle-density(-1);
+@include mat.radio-density(-1);
+@include mat.checkbox-density(-1);
 @import 'angular15';
 
 // mandatory stuff for theming
@@ -45,11 +47,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .breadcrumb-bar {
     @include variable(color, --fg1, $fg1, !important);
-  }
-
-  .mat-checkbox-label {
-    color: var(--fg1);
-    white-space: initial;
   }
 
   .mat-bg-accent {
@@ -102,8 +99,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   /////////////////// SpecSelectors: Selectors not originally in ix-dark theme
-  .mat-tab-label,
-  .mat-tab-link {
+  .mdc-tab__text-label {
     @include variable(color, --fg1, $fg1);
   }
 
@@ -157,9 +153,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-raised-button.mat-accent,
   .mat-fab.mat-accent,
   .mat-mini-fab.mat-accent,
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
-  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
-  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a {
     @include variable(background, --accent, $accent, !important);
     @include variable(color, #000, #000, !important);
     background-color: map-get($md-accent, 500);
@@ -226,15 +220,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --primary, $primary, !important);
   }
 
-  .mat-checkbox-disabled .mat-checkbox-label {
-    @include variable(color, --grey, #4d4d4d);
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  .mat-checkbox-disabled .mat-checkbox-frame,
-  .mat-checkbox-disabled .mat-checkbox-inner-container {
+  .mat-mdc-checkbox-disabled {
     opacity: 0.7;
+    pointer-events: all;
+
+    label {
+      @include variable(color, --grey, #4d4d4d);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
   }
 
   .mat-mdc-menu-panel,
@@ -327,14 +321,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .egret-swatch,
-  .mat-checkbox-frame,
   .mat-radio-outer-circle {
     @include variable(border-color, --primary, $primary);
-  }
-
-  .headerCheckBox .mat-checkbox-frame,
-  .ngx-datatable .datatable-body .mat-checkbox-frame {
-    @include variable(border-color, --alt-fg1, $alt-fg1, !important);
   }
 
   .mat-expansion-indicator::after,
@@ -379,10 +367,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     background-color: var(--hover-bg);
-  }
-
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
-    @include variable(border-color, --primary-txt, $primary-txt, !important);
   }
 
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-mdc-slide-toggle:not(.mat-checked) .mat-mdc-slide-toggle-bar {
@@ -447,28 +431,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-height: 256px;
   }
 
-  .mat-checkbox {
-    margin: 4px 8px;
-  }
-
-  .form-line .mat-checkbox {
-    margin-left: 0;
-  }
-
-  .ngx-datatable .mat-checkbox-inner-container {
-    margin-left: 4px;
-  }
-
-  .mat-checkbox-inner-container {
-    height: 16px;
-    overflow: visible;
-    width: 16px;
-  }
-
-  .mat-checkbox-ripple {
-    left: -17px;
-    top: -17px;
-  }
   /////////////////// END SpecSelectors
 
   .mat-dialog-container {
@@ -570,7 +532,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // To fix alignment issues w/checkboxes on Create Pool page
   .headerCheckBox {
     left: 16px;
-    margin-top: 7px;
     position: relative;
   }
 
@@ -703,8 +664,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  ix-iscsi .mat-tab-label-active,
-  ix-reports-dashboard .mat-tab-label-active {
+  ix-iscsi .mat-mdc-tab-label-active,
+  ix-reports-dashboard .mat-mdc-tab-label-active {
     @include variable(border-color, --primary, $primary);
     border-bottom: 2px solid;
   }
@@ -853,29 +814,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Gets checkboxes in SMART tests to pick up theme color
-  .mat-checkbox-checked .mat-checkbox-background,
   .mat-primary .mat-pseudo-checkbox-checked,
-  .mat-primary .mat-pseudo-checkbox-indeterminate,
-  .mat-primary.mat-checkbox-indeterminate .mat-checkbox-background {
+  .mat-primary .mat-pseudo-checkbox-indeterminate {
     @include variable(background, --primary, $primary, !important);
     border: none;
   }
 
-  .mat-checkbox .mat-checkbox-background {
-    @include variable(border-color, --primary, $primary, !important);
-    border: solid 2px;
+  .mat-mdc-checkbox .mdc-checkbox__ripple {
+    background-color: var(--primary);
   }
 
-  .mat-checkbox.mat-checkbox-disabled,
-  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled {
+  .mat-mdc-checkbox.mat-mdc-checkbox-disabled * {
     cursor: not-allowed;
-  }
-
-  .mat-checkbox.mat-checkbox-disabled .mat-checkbox-background,
-  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled .mat-checkbox-background {
-    @include variable(background, --grey, #4d4d4d, !important);
-    @include variable(border-color, --grey, #4d4d4d, !important);
-    border: solid 2px;
   }
 
   .form-selection-list {
@@ -946,8 +896,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Make room for checkbox ripple effect in datatables
-  .datatable-header-cell .mat-checkbox,
-  .datatable-body-cell .mat-checkbox {
+  .datatable-header-cell .mat-mdc-checkbox,
+  .datatable-body-cell .mat-mdc-checkbox {
     margin-left: 5px;
   }
 
@@ -956,7 +906,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Adjustments to checkboxes and header labels on unique tables
-  ix-services .datatable-body-cell .mat-checkbox {
+  ix-services .datatable-body-cell .mat-mdc-checkbox {
     bottom: 7px !important;
   }
 
@@ -977,8 +927,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     display: none;
   }
 
-  .mat-tab-nav-bar,
-  .mat-tab-header {
+  .mat-mdc-tab-nav-bar,
+  .mat-mdc-tab-header {
     border-bottom: 1px solid var(--lines);
   }
 
@@ -1173,7 +1123,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   }
 
-  ix-iscsi .mat-tab-links {
+  ix-iscsi .mat-mdc-tab-links {
     flex-wrap: wrap;
   }
 

@@ -14,7 +14,18 @@
 
 :host-context(.ix-form-container) :host {
   justify-content: flex-start;
-  margin: 8px 11px;
+  margin: 0 10px;
+
+  ::ng-deep > {
+    button,
+    a {
+      margin: 0 8px 0 0;
+    }
+  }
+}
+
+:host-context(mat-vertical-stepper) :host {
+  justify-content: flex-start;
 
   ::ng-deep > {
     button,

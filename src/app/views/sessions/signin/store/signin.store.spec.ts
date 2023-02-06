@@ -1,41 +1,40 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import {
-  BehaviorSubject, firstValueFrom, of,
-} from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { firstValueFrom, of } from 'rxjs';
 import { MockWebsocketService2 } from 'app/core/testing/classes/mock-websocket2.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket2 } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let websocket: MockWebsocketService;
   let websocket2: MockWebsocketService2;
+  let authService: AuthService;
   const testScheduler = getTestScheduler();
 
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
       mockWebsocket2([
-        mockCall('auth.generate_token', 'AUTH_TOKEN'),
-        mockCall('auth.login_with_token', true),
-      ]),
-      mockWebsocket([
-        mockCall('auth.generate_token', 'AUTH_TOKEN'),
-        mockCall('auth.login_with_token', true),
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
       ]),
+      mockProvider(WebsocketConnectionService, {
+        isConnected$: of(true),
+        websocket$: of(),
+      }),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
@@ -57,19 +56,16 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(MockWebsocketService);
     websocket2 = spectator.inject(MockWebsocketService2);
+    authService = spectator.inject(AuthService);
     // This strips @LocalStorage() decorator from token.
-    Object.defineProperty(websocket, 'token', {
+    Object.defineProperty(authService, 'token2', {
       value: '',
       writable: true,
     });
-    Object.defineProperty(websocket2, 'token2', {
-      value: '',
-      writable: true,
-    });
-    websocket.isConnected$ = new BehaviorSubject(true);
-    jest.spyOn(websocket, 'loginWithToken').mockReturnValue(of(true));
+    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
+    jest.spyOn(authService, 'generateToken').mockReturnValue(of('AUTH_TOKEN'));
+    jest.spyOn(authService, 'generateTokenWithDefaultLifetime').mockReturnValue(of('AUTH_TOKEN'));
   });
 
   describe('selectors', () => {
@@ -107,8 +103,8 @@ describe('SigninStore', () => {
   describe('handleSuccessfulLogin', () => {
     it('generates auth token and redirects user inside', () => {
       spectator.service.handleSuccessfulLogin();
-      expect(websocket.call).toHaveBeenCalledWith('auth.generate_token', [300]);
-      expect(websocket.token).toBe('AUTH_TOKEN');
+      expect(authService.generateToken).toHaveBeenCalledWith(300);
+      expect(authService.token2).toBe('AUTH_TOKEN');
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
   });
@@ -117,8 +113,8 @@ describe('SigninStore', () => {
     it('checks if root password is set and loads failover status', async () => {
       spectator.service.init();
 
-      expect(websocket.call).toHaveBeenCalledWith('user.has_local_administrator_set_up');
-      expect(websocket.call).toHaveBeenCalledWith('failover.status');
+      expect(websocket2.call).toHaveBeenCalledWith('user.has_local_administrator_set_up');
+      expect(websocket2.call).toHaveBeenCalledWith('failover.status');
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
@@ -130,12 +126,12 @@ describe('SigninStore', () => {
     });
 
     it('loads additional failover info if failover status is not Single', async () => {
-      websocket.mockCall('failover.status', FailoverStatus.Master);
+      websocket2.mockCall('failover.status', FailoverStatus.Master);
 
       spectator.service.init();
 
-      expect(websocket.call).toHaveBeenCalledWith('failover.get_ips');
-      expect(websocket.call).toHaveBeenCalledWith('failover.disabled.reasons');
+      expect(websocket2.call).toHaveBeenCalledWith('failover.get_ips');
+      expect(websocket2.call).toHaveBeenCalledWith('failover.disabled.reasons');
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         isLoading: false,
@@ -147,35 +143,35 @@ describe('SigninStore', () => {
       });
     });
 
-    it('logs in with token if it is present in local storage (via WebsocketService.token)', () => {
-      websocket.token = 'EXISTING_TOKEN';
+    it('logs in with token if it is present in local storage (via AuthService.token2)', () => {
+      authService.token2 = 'EXISTING_TOKEN';
       spectator.service.init();
 
-      expect(websocket.loginWithToken).toHaveBeenCalledWith('EXISTING_TOKEN');
+      expect(authService.loginWithToken).toHaveBeenCalled();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
   });
 
   describe('init - failover subscriptions', () => {
     beforeEach(() => {
-      websocket.mockCall('failover.status', FailoverStatus.Master);
+      websocket2.mockCall('failover.status', FailoverStatus.Master);
     });
 
     it('subscribes to failover updates if failover status is not Single', () => {
       spectator.service.init();
 
-      expect(websocket.sub).toHaveBeenCalledWith('failover.status', expect.any(String));
-      expect(websocket.sub).toHaveBeenCalledWith('failover.disabled.reasons', expect.any(String));
+      expect(websocket2.subscribe).toHaveBeenCalledWith('failover.status');
+      expect(websocket2.subscribe).toHaveBeenCalledWith('failover.disabled.reasons');
     });
 
     it('changes failover status in store when websocket event is emitted', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        jest.spyOn(websocket, 'sub').mockImplementation((method) => {
+        jest.spyOn(websocket2, 'subscribe').mockImplementation((method) => {
           if (method !== 'failover.status') {
             return of();
           }
 
-          return cold('a', { a: FailoverStatus.Importing });
+          return cold('a', { a: { fields: FailoverStatus.Importing } as unknown as ApiEvent<FailoverStatus> });
         });
 
         spectator.service.init();
@@ -196,15 +192,17 @@ describe('SigninStore', () => {
 
     it('changes disabled reasons in store when websocket event is emitted', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        jest.spyOn(websocket, 'sub').mockImplementation((method) => {
+        jest.spyOn(websocket2, 'subscribe').mockImplementation((method) => {
           if (method !== 'failover.disabled.reasons') {
             return of();
           }
 
           return cold('a', {
             a: {
-              disabled_reasons: [FailoverDisabledReason.DisagreeVip],
-            },
+              fields: {
+                disabled_reasons: [FailoverDisabledReason.DisagreeVip],
+              },
+            } as unknown as ApiEvent<FailoverDisabledReasonEvent>,
           });
         });
 

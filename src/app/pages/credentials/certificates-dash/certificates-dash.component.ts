@@ -23,13 +23,16 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import {
+  CertificateAddComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { WebSocketService2, DialogService, StorageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
-import { CertificateAddComponent } from './forms/certificate-add.component';
+import { OldCertificateAddComponent } from './forms/certificate-add.component';
 
 @UntilDestroy()
 @Component({
@@ -105,9 +108,7 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add: () => {
-            this.modalService.openInSlideIn(CertificateAddComponent);
-          },
+          add: () => this.slideInService.open(CertificateAddComponent),
           edit: (certificate: Certificate) => {
             const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });
             slideIn.setCertificate(certificate);
@@ -158,7 +159,7 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: () => {
-            this.modalService.openInSlideIn(CertificateAddComponent, 'csr');
+            this.modalService.openInSlideIn(OldCertificateAddComponent, 'csr');
           },
           edit: (certificate: Certificate) => {
             const slideIn = this.slideInService.open(CertificateEditComponent, { wide: true });

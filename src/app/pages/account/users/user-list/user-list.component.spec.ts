@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CoreComponents } from 'app/core/core-components.module';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -71,6 +72,7 @@ describe('UserListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      CoreComponents,
     ],
     declarations: [
       UserDetailsRowComponent,
@@ -118,8 +120,8 @@ describe('UserListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Username', 'UID', 'Builtin', 'Full Name', ''],
-      ['root', '0', 'true', 'root', 'expand_more'],
-      ['test', '1004', 'false', 'test', 'expand_more'],
+      ['root', '0', 'Yes', 'root', 'expand_more'],
+      ['test', '1004', 'No', 'test', 'expand_more'],
     ];
 
     expect(cells).toEqual(expectedRows);

@@ -4,7 +4,8 @@ import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SystemGeneralService, WebSocketService } from './services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { SystemGeneralService } from './services';
 
 @UntilDestroy()
 @Component({
@@ -12,13 +13,17 @@ import { SystemGeneralService, WebSocketService } from './services';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
+  isAuthenticated = false;
   constructor(
     public title: Title,
     private router: Router,
-    private ws: WebSocketService,
+    private authService: AuthService,
     private sysGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
+      this.isAuthenticated = isAuthenticated;
+    });
     this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
     const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
     let path;
@@ -50,7 +55,7 @@ export class AppComponent {
       // save currenturl
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
-        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
+        if (this.isAuthenticated && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }

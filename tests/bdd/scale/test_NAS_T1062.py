@@ -43,8 +43,7 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 @when('on the dashboard, verify the Welcome box is loaded, click Close')
 def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
     """on the dashboard, verify the Welcome box is loaded, click Close."""
-    assert wait_on_element(driver, 5, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()

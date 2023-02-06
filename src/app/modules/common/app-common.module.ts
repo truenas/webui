@@ -6,9 +6,9 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
@@ -36,6 +36,7 @@ import {
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
+import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -95,6 +96,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     UpdateDialogComponent,
     ResilverProgressDialogComponent,
     ShowLogsDialogComponent,
+    SummaryComponent,
   ],
   providers: [
     LanguageService,
@@ -104,6 +106,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
   exports: [
     SearchInputComponent,
     ShowLogsDialogComponent,
+    SummaryComponent,
   ],
 })
 export class AppCommonModule {}
