@@ -130,7 +130,7 @@ export class AuthService {
           id: uuid,
           msg: IncomingApiMessageType.Method,
           method: 'user.query',
-          params: [[['uid', '=', authenticatedUser.pw_uid]]],
+          params: [[['uid', '=', authenticatedUser?.pw_uid]]],
         };
         this.wsManager.send(userQueryPayload);
         return this.getFilteredWebsocketResponse(uuid);

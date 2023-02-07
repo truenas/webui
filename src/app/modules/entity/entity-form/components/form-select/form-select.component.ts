@@ -2,7 +2,7 @@ import {
   Component, ViewChild, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
 } from '@angular/core';
 import { AbstractControl, UntypedFormGroup } from '@angular/forms';
-import { MatLegacyFormField as MatFormField } from '@angular/material/legacy-form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatLegacySelect as MatSelect, MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
