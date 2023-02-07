@@ -16,6 +16,7 @@ import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../../common/entity/utils';
 import { take, filter } from 'rxjs/operators';
+import { UpdateService } from 'app/services/update.service';
 
 @Component({
   selector: 'app-manualupdate',
@@ -82,6 +83,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     public translate: TranslateService,
     private dialogService: DialogService,
     private systemService: SystemGeneralService,
+    private updateService: UpdateService,
   ) {
     super();
 
@@ -135,9 +137,9 @@ export class ManualUpdateComponent extends ViewControllerComponent {
 
     entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation) => {
       if (filelocation === ':temp:') {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = null;
+        this.fileLocation = null;
       } else {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = filelocation;
+        this.fileLocation = filelocation;
       }
     });
     this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
@@ -160,12 +162,14 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         this.dialogRef.close(false);
         if (!this.isHA) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
+            this.updateService.setForHardRefresh();
             this.router.navigate(['/others/reboot']);
           } else {
             this.translate.get('Restart').subscribe((reboot: string) => {
               this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
                 this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
                   if (reboot_res) {
+                    this.updateService.setForHardRefresh();
                     this.router.navigate(['/others/reboot']);
                   }
                 });

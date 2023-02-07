@@ -15,6 +15,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { UpdateService } from 'app/services/update.service';
 
 @Component({
   selector: 'app-update',
@@ -92,10 +93,20 @@ export class UpdateComponent implements OnInit, OnDestroy {
   };
 
   protected dialogRef: any;
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
-    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: HttpClient, public core: CoreService) {
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    public sysGenService: SystemGeneralService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    public translate: TranslateService,
+    protected storage: StorageService,
+    protected http: HttpClient,
+    public core: CoreService,
+    private updateService: UpdateService,
+  ) {
     this.sysGenService.updateRunning.subscribe((res) => {
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
     });
@@ -389,6 +400,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.updateService.setForHardRefresh();
       this.router.navigate(['/others/reboot']);
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
