@@ -56,8 +56,6 @@ export class SigninStore extends ComponentStore<SigninState> {
   private statusSubscription: Subscription;
   private disabledReasonsSubscription: Subscription;
 
-  private readonly tokenLifetime = 300;
-
   constructor(
     private ws2: WebSocketService2,
     private translate: TranslateService,
@@ -177,7 +175,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private authenticateWithTokenWs2(): Observable<unknown> {
-    return this.authService.generateToken(this.tokenLifetime)
+    return this.authService.generateTokenWithDefaultLifetime()
       .pipe(
         tap((token: string) => {
           if (!token) {

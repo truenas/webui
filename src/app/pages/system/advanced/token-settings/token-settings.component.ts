@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
+import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -18,7 +19,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 export class TokenSettingsComponent implements OnInit {
   isFormLoading = false;
   form = this.fb.group({
-    token_lifetime: [null as number, [Validators.required, Validators.min(30)]],
+    token_lifetime: [defaultPreferences.lifetime, [Validators.required, Validators.min(30)]],
   });
 
   constructor(
@@ -31,8 +32,10 @@ export class TokenSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.store$.select(selectPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {
-      this.form.controls.token_lifetime.setValue(preferences.lifetime);
-      this.cdr.markForCheck();
+      if (preferences.lifetime) {
+        this.form.controls.token_lifetime.setValue(preferences.lifetime);
+        this.cdr.markForCheck();
+      }
     });
   }
 

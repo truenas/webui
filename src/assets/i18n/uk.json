@@ -261,6 +261,7 @@
   "Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.": "",
   "Token Lifetime": "",
   "Token Settings": "",
+  "Token expired": "",
   "Train: {train}": "",
   "TrueCommand": "",
   "TrueNAS software versions do not match between storage controllers.": "",

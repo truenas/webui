@@ -103,7 +103,7 @@ describe('SigninStore', () => {
   describe('handleSuccessfulLogin', () => {
     it('generates auth token and redirects user inside', () => {
       spectator.service.handleSuccessfulLogin();
-      expect(authService.generateToken).toHaveBeenCalledWith(300);
+      expect(authService.generateTokenWithDefaultLifetime).toHaveBeenCalledWith();
       expect(authService.token2).toBe('AUTH_TOKEN');
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });

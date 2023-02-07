@@ -45,6 +45,7 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
+import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { ConsoleFormComponent } from './console-form/console-form.component';
@@ -292,7 +293,8 @@ export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
     });
 
     this.store$.select(selectPreferences).pipe(filter(Boolean), untilDestroyed(this)).subscribe((preferences) => {
-      this.lifetimeToken = preferences.lifetime ? preferences.lifetime.toString() : '';
+      this.lifetimeToken = preferences.lifetime
+        ? preferences.lifetime.toString() : defaultPreferences.lifetime.toString();
       this.getDatasetData();
     });
 

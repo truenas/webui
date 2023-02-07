@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,7 +12,6 @@ import { Timeout } from 'app/interfaces/timeout.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -28,7 +29,8 @@ export class TokenLifetimeService {
     private translate: TranslateService,
     private matDialog: MatDialog,
     private authService: AuthService,
-    private wsManager: WebsocketConnectionService,
+    private router: Router,
+    private snackbar: MatSnackBar,
     private appStore$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -60,7 +62,13 @@ export class TokenLifetimeService {
           this.authService.logout().pipe(untilDestroyed(this)).subscribe({
             next: () => {
               this.authService.token2 = null;
-              this.wsManager.closeWebsocketConnection();
+              this.router.navigate(['/sessions/signin']);
+              this.dialogService.closeAllDialogs();
+              this.snackbar.open(
+                this.translate.instant('Token expired'),
+                this.translate.instant('Close'),
+                { duration: 4000, verticalPosition: 'bottom' },
+              );
             },
           });
         }, showConfirmTime);
