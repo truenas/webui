@@ -65,6 +65,11 @@ def Dismiss_All_Alerts(driver):
         driver.find_element_by_xpath('//mat-icon[contains(.,"clear")]').click()
 
 
+def HA_Login_Status_Enable(driver):
+    assert wait_on_element(driver, 180, xpaths.login.user_Input)
+    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+
+
 def Verify_Degraded_Alert(driver):
     assert wait_on_element(driver, 7, xpaths.toolbar.notification_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
@@ -122,6 +127,13 @@ def Input_Value(driver, xpath, value):
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(value)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+
+
+def Trigger_Failover(driver):
+    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
+    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
 
 
 def Wait_For_Inputable_And_Input_Value(driver, xpath, value):

@@ -204,10 +204,8 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+    rsc.Trigger_Failover(driver)
+
     rsc.Confirm_Failover(driver)
 
 
@@ -215,8 +213,7 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    rsc.HA_Login_Status_Enable(driver)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))

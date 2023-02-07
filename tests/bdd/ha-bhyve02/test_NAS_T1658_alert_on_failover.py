@@ -2,12 +2,10 @@
 
 import pytest
 import reusableSeleniumCode as rsc
-import time
 import xpaths
 from function import (
     wait_on_element,
     wait_on_element_disappear,
-    is_element_present,
     ssh_cmd,
     get
 )
@@ -34,7 +32,7 @@ def test_verify_that_a_degraded_pool_alert_is_kept_after_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    # depends(request, ["Setup_HA"], scope='session')
+    depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -45,9 +43,9 @@ def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas
     rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
-@when('on the Dashboard, if there are alerts, dismiss all alerts')
-def on_the_dashboard_if_there_are_alerts_dismiss_all_alerts(driver, notification):
-    """on the Dashboard, if there are alerts, dismiss all alerts."""
+@when('on the Dashboard, look at the number of alerts')
+def on_the_dashboard_look_at_the_number_of_alerts(driver):
+    """on the Dashboard, look at the number of alerts."""
     rsc.Verify_The_Dashboard(driver)
     element_text = driver.find_element_by_xpath(xpaths.toolbar.notification_Text).text
     notification['before'] = element_text
@@ -86,10 +84,10 @@ def wait_for_the_alert_to_appear_and_verify_the_volume_and_the_state_is_degraded
 @then('on the Dashboard, click Initiate Failover on the standby controller')
 def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+    rsc.Verify_The_Dashboard(driver)
+
+    rsc.Trigger_Failover(driver)
+
 
 
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
@@ -101,8 +99,7 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 @then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))
 def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_password(driver, user, password):
     """wait for the login to appear and HA to be enabled, login with <user> and <password>."""
-    assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    rsc.HA_Login_Status_Enable(driver)
 
     rsc.Login(driver, user, password)
 
@@ -138,10 +135,7 @@ def then_wait_for_the_alert_to_disappear_and_trigger_failover_again(driver, noti
 
     rsc.Verify_Degraded_Alert_Is_Gone(driver)
 
-    assert wait_on_element(driver, 60, xpaths.toolbar.ha_Enabled)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
-    assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+    rsc.Trigger_Failover(driver)
 
     rsc.Confirm_Failover(driver)
 
