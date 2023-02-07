@@ -16,6 +16,7 @@
       *ngIf="invalidQuotas.length > 0"
       color="primary"
       mat-button
+      ixTest="remove-invalid-quotas"
       [disabled]="isLoading"
       (click)="removeInvalidQuotas()"
     >
@@ -25,6 +26,7 @@
       color="primary"
       class="add-button"
       mat-button
+      ixTest="add-quota"
       [disabled]="isLoading"
       (click)="doAdd()"
     >

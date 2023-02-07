@@ -8,6 +8,7 @@
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="sidenavToggle"
+      ixTest="toggle-sidenav"
       [matTooltip]="tooltips.toggle_collapse | translate"
       (click)="toggleCollapse()"
     >
@@ -52,6 +53,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="upgradeWaiting"
+        ixTest="finish-update"
         [matTooltip]="tooltips.upgrade_waiting | translate"
         (click)="upgradePendingDialog()"
       >
@@ -66,6 +68,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="updateRunning"
+        ixTest="update-is-running"
         [matTooltip]="tooltips.update | translate"
         (click)="showUpdateDialog()"
       >
@@ -79,6 +82,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="networkPending"
+        ixTest="has-pending-network-changes"
         [matTooltip]="tooltips.pending_network_changes | translate"
         (click)="showNetworkChangesPending()"
       >
@@ -92,6 +96,7 @@
         ix-auto
         ix-auto-type="button"
         ix-auto-identifier="resilvering"
+        ixTest="resilvering"
         [matTooltip]="tooltips.resilvering | translate"
         (click)="showResilveringDetails()"
       >
@@ -107,6 +112,7 @@
           ix-auto
           ix-auto-type="button"
           ix-auto-identifier="haStatus"
+          ixTest="ha-indicator-enabled"
           [matTooltip]="haStatusText | translate"
           (click)="showHaStatus()"
         >
@@ -120,6 +126,7 @@
           ix-auto
           ix-auto-type="button"
           ix-auto-identifier="haStatus"
+          ixTest="ha-indicator-disabled"
           [matTooltip]="haStatusText | translate"
           (click)="showHaStatus()"
         >
@@ -137,6 +144,7 @@
       <button
         mat-icon-button
         class="topbar-button-right overflow-visible"
+        ixTest="alerts-indicator"
         [matTooltip]="tooltips.alerts | translate"
         (click)="onAlertIndicatorPressed()"
       >
