@@ -23,6 +23,8 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import { LocaleService } from 'app/services/locale.service';
+import { UpdateService } from 'app/services/update.service';
+
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -78,15 +80,21 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   tc_ip;
   protected tc_url;
 
-  constructor(private ws: WebSocketService, private router: Router,
-    private snackBar: MatSnackBar, public translate: TranslateService,
+  constructor(
+    private ws: WebSocketService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    public translate: TranslateService,
     private dialogService: DialogService,
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
     private _autofill: AutofillMonitor,
-    private http: HttpClient, private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService) {
+    private http: HttpClient,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+    private updateService: UpdateService,
+  ) {
     this.ws = ws;
     const ha_status = window.sessionStorage.getItem('ha_status');
     if (ha_status && ha_status === 'true') {
@@ -108,6 +116,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ws.call('system.product_type').subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res;
+        this.updateService.hardRefreshIfNeeded();
         if (this.interval) {
           clearInterval(this.interval);
         }

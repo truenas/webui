@@ -53,6 +53,7 @@ import { FormInputComponent } from './pages/common/entity/entity-form/components
 import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
 import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
 import { EntityModule } from './pages/common/entity/entity.module';
+import { getWindow, WINDOW } from 'app/helpers/window.helper';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -108,6 +109,10 @@ export function createTranslateLoader(http: HttpClient) {
     AppLoaderService,
     NotificationsService,
     ErdService,
+    {
+      provide: WINDOW,
+      useFactory: getWindow,
+    },
   ],
   bootstrap: [
     AppComponent,
