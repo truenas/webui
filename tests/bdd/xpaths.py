@@ -90,6 +90,13 @@ class advanced:
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
 
 
+class alert():
+    title = '//h3[text()="Alerts"]'
+    degraded_Critical_Level = '//ix-alert[contains(.,"DEGRADED")]//h3[contains(.,"Critical")]'
+    degraded_Pool_Text = '//h4[contains(.,"Pool tank state is DEGRADED")]'
+    close_Button = '//button[contains(.,"clear")]'
+
+
 class applications:
     title = '//h1[text()="Applications"]'
     available_Applications_Tab = '//div[contains(text(),"Available Applications")]'
@@ -486,6 +493,12 @@ class system_Dataset:
 class toolbar:
     ha_Disabled = '//mat-icon[@data-mat-icon-name="ha_disabled"]'
     ha_Enabled = '//mat-icon[@data-mat-icon-name="ha_enabled"]'
+    notification = '//mat-icon[normalize-space(text())="notifications"]'
+    notification_Button = '//button[contains(.,"notifications")]'
+    notification_Text = '//button[contains(.,"notifications")]//mat-icon/span'
+
+    def notification_Count(text):
+        return f'//span[contains(.,"notifications")]//span[contains(text(),"{text}")]'
 
 
 class unlock_Dataset:

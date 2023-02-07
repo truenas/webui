@@ -54,6 +54,37 @@ def Go_To_Service(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.services).click()
 
 
+def Dismiss_All_Alerts(driver):
+    if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
+        assert wait_on_element(driver, 7, xpaths.toolbar.notification_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
+        assert wait_on_element(driver, 7, xpaths.alert.title)
+        assert wait_on_element(driver, 7, '//button[contains(text(),"Dismiss All Alerts")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(text(),"Dismiss All Alerts")]').click()
+        assert wait_on_element(driver, 7, '//mat-icon[contains(.,"clear")]', 'clickable')
+        driver.find_element_by_xpath('//mat-icon[contains(.,"clear")]').click()
+
+
+def Verify_Degraded_Alert(driver):
+    assert wait_on_element(driver, 7, xpaths.toolbar.notification_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
+    assert wait_on_element(driver, 7, xpaths.alert.title)
+    assert wait_on_element(driver, 7, xpaths.alert.degraded_Critical_Level)
+    assert wait_on_element(driver, 7, xpaths.alert.degraded_Pool_Text)
+    assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.alert.close_Button).click()
+    time.sleep(0.5)
+
+
+def Verify_Degraded_Alert_Is_Gone(driver):
+    driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
+    assert wait_on_element(driver, 7, xpaths.alert.title)
+    assert is_element_present(driver, xpaths.alert.degraded_Critical_Level) is False
+    assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.alert.close_Button).click()
+    time.sleep(0.5)
+
+
 def Login(driver, user, password):
     driver.find_element_by_xpath(xpaths.login.user_Input).clear()
     driver.find_element_by_xpath(xpaths.login.user_Input).send_keys(user)
