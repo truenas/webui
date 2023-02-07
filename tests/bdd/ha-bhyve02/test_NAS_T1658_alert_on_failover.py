@@ -44,7 +44,7 @@ def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas
 
 
 @when('on the Dashboard, look at the number of alerts')
-def on_the_dashboard_look_at_the_number_of_alerts(driver):
+def on_the_dashboard_look_at_the_number_of_alerts(driver, notification):
     """on the Dashboard, look at the number of alerts."""
     rsc.Verify_The_Dashboard(driver)
     element_text = driver.find_element_by_xpath(xpaths.toolbar.notification_Text).text

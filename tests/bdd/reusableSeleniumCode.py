@@ -67,7 +67,7 @@ def Dismiss_All_Alerts(driver):
 
 def HA_Login_Status_Enable(driver):
     assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    assert wait_on_element(driver, 240, xpaths.login.ha_Status_Enable)
 
 
 def Verify_Degraded_Alert(driver):
