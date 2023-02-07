@@ -29,7 +29,8 @@ export class ThemeService {
     this.utils = new ThemeUtils();
 
     this.loadTheme$.subscribe(() => {
-      const savedTheme = this.window.sessionStorage.getItem('theme');
+      const savedTheme = this.window.sessionStorage.getItem('theme') || defaultTheme.name;
+
       if (savedTheme) {
         this.onThemeChanged(savedTheme);
       }

@@ -219,6 +219,7 @@ img.clickable,
   .copy-version-text {
     display: inline-flex;
     flex: 1;
+    max-width: 80%;
     min-width: 0;
 
     span {
