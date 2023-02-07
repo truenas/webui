@@ -85,8 +85,8 @@ export class GroupFormComponent {
         name: group.group,
         sudo_commands: group.sudo_commands.includes(allCommands) ? [] : group.sudo_commands,
         sudo_commands_all: group.sudo_commands.includes(allCommands),
-        sudo_commands_nopasswd: group.sudo_commands_nopasswd.includes(allCommands) ? [] : group.sudo_commands_nopasswd,
-        sudo_commands_nopasswd_all: group.sudo_commands_nopasswd.includes(allCommands),
+        sudo_commands_nopasswd: group.sudo_commands_nopasswd?.includes(allCommands) ? [] : group.sudo_commands_nopasswd,
+        sudo_commands_nopasswd_all: group.sudo_commands_nopasswd?.includes(allCommands),
         smb: group.smb,
         allowDuplicateGid: true,
       });

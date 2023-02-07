@@ -90,12 +90,15 @@
       [ixDetailRowTemplate]="expandedRowTemplate"
       (toggle)="onToggle($event)"
     ></tr>
-
   </table>
 
   <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
 </mat-card>
 
 <ng-template #expandedRowTemplate let-user let-colspan="colspan">
-  <ix-user-details-row [user]="user" [colspan]="colspan"></ix-user-details-row>
+  <ix-user-details-row
+    [user]="user"
+    [colspan]="colspan"
+    (delete)="handleDeletedUser($event)"
+  ></ix-user-details-row>
 </ng-template>
