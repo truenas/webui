@@ -23,6 +23,7 @@
     </mat-menu>
     <button
       mat-icon-button
+      ixTest="close-panel"
       [title]="'Close panel' | translate"
       (click)="onPanelClosed()"
     >
@@ -66,7 +67,12 @@
         </div>
       </div>
 
-      <button matRipple class="button-row" (click)="onDismissAll()">
+      <button
+        matRipple
+        class="button-row"
+        ixTest="dismiss-all-alerts"
+        (click)="onDismissAll()"
+      >
         {{ 'Dismiss All Alerts' | translate }}
       </button>
     </ng-template>
@@ -85,7 +91,12 @@
         </div>
       </div>
 
-      <button class="button-row" matRipple (click)="onReopenAll()">
+      <button
+        class="button-row"
+        matRipple
+        ixTest="reopen-all-alerts"
+        (click)="onReopenAll()"
+      >
         {{ 'Re-Open All Alerts' | translate }}
       </button>
     </ng-container>

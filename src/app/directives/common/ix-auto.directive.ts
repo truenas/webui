@@ -2,6 +2,9 @@ import {
   Directive, ElementRef, Input, OnChanges,
 } from '@angular/core';
 
+/**
+ * @deprecated Use ixTest instead.
+ */
 @Directive({
   selector: '[ix-auto]',
 })

@@ -43,6 +43,7 @@
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="testChange"
+              ixTest="test-changes"
               [disabled]="isHaEnabled"
               (click)="commitPendingChanges()"
             >
@@ -55,6 +56,7 @@
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="keepChange"
+              ixTest="save-changes"
               [disabled]="isHaEnabled"
               (click)="checkInNow()"
             >
@@ -66,6 +68,7 @@
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="revertChange"
+              ixTest="revert-changes"
               [disabled]="isHaEnabled"
               (click)="rollbackPendingChanges()"
             >

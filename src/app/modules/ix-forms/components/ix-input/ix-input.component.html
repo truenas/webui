@@ -43,6 +43,7 @@
     mat-icon-button
     type="button"
     class="toggle_pw"
+    [ixTest]="['toggle-password', controlDirective.name]"
     (click)="onPasswordToggled()"
   >
     <i *ngIf="showPassword" class="material-icons" matTooltip="Hide">
