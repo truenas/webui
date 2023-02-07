@@ -26,12 +26,14 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   formGroup: FormGroup;
   route_success: string[] = ['system', 'update'];
   protected dialogRef: any;
-  fileLocation: any;
+  fileLocation: string;
   subs: any;
   isHA = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';
   saveSubmitText = T('Apply Update');
+  apiEndPoint: string;
+  fileContents: File;
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
@@ -135,9 +137,9 @@ export class ManualUpdateComponent extends ViewControllerComponent {
 
     entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation) => {
       if (filelocation === ':temp:') {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = null;
+        this.fileLocation = null;
       } else {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = filelocation;
+        this.fileLocation = filelocation;
       }
     });
     this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
@@ -155,7 +157,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-      this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+      this.dialogRef.componentInstance.wspost(this.apiEndPoint, this.getFormData());
       this.dialogRef.componentInstance.success.subscribe((succ) => {
         this.dialogRef.close(false);
         if (!this.isHA) {
@@ -260,8 +262,13 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     );
   }
 
-  private addUpdateFile(file: File, apiEndPoint: string) {
+  private addUpdateFile(fileContents: File, apiEndPoint: string) {
     this.save_button_enabled = true;
+    this.apiEndPoint = apiEndPoint;
+    this.fileContents = fileContents;
+  }
+
+  private getFormData(): FormData {
     const formData: FormData = new FormData();
     if (this.isHA) {
       formData.append('data', JSON.stringify({
@@ -273,7 +280,8 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         params: [{ destination: this.fileLocation }],
       }));
     }
-    formData.append('file', file);
-    this.subs = { apiEndPoint, formData };
+
+    formData.append('file', this.fileContents);
+    return formData;
   }
 }
