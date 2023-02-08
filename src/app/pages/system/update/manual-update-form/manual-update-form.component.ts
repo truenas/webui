@@ -22,6 +22,7 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { UpdateService } from 'app/services/update.service';
 import { AppState } from 'app/store';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -61,6 +62,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private updateService: UpdateService,
   ) { }
 
   ngOnInit(): void {
@@ -175,6 +177,7 @@ export class ManualUpdateFormComponent implements OnInit {
     dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
+      this.updateService.setForHardRefresh();
       if (this.isHaLicensed) {
         this.finishHaUpdate();
       } else {
