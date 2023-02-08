@@ -8,6 +8,7 @@ import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormClosedWithoutSaving, guiFormSubmitted,
+  lifetimeTokenUpdated,
   localizationFormSubmitted, noPreferencesFound,
   preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
   themeNotFound,
@@ -46,6 +47,7 @@ export const preferencesReducer = createReducer(
     dateFormat,
     timeFormat,
   })),
+  on(lifetimeTokenUpdated, (state, { lifetime }) => updatePreferences(state, { lifetime })),
 
   on(builtinUsersToggled, (state) => updatePreferences(state, {
     hideBuiltinUsers: !state.preferences.hideBuiltinUsers,
