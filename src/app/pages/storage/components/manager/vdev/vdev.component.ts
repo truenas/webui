@@ -87,6 +87,8 @@ export class VdevComponent implements OnInit {
       this.emitChangedVdev();
       this.onTypeChange();
     });
+
+    this.cdr.markForCheck();
   }
 
   getType(): string {
