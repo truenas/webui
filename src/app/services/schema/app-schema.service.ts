@@ -270,7 +270,7 @@ export class AppSchemaService {
 
       if (!formConfig) { continue; }
 
-      if (this.checkIsValidSchedule(valueConfig as Schedule)) {
+      if (valueConfig && this.checkIsValidSchedule(valueConfig as Schedule)) {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
       } else if (_.isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);

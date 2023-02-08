@@ -6,16 +6,17 @@
         *ngIf="!pool.is_upgraded"
         mat-button
         color="primary"
+        [ixTest]="['upgrade-pool', pool.name]"
         (click)="onUpgrade()"
       >
         {{ 'Upgrade' | translate }}
       </button>
 
-      <button mat-button (click)="onExport()">
+      <button mat-button [ixTest]="['export', pool.name]" (click)="onExport()">
         {{ 'Export/Disconnect' | translate }}
       </button>
 
-      <button mat-button (click)="onExpand()">
+      <button mat-button [ixTest]="['expand', pool.name]" (click)="onExpand()">
         {{ 'Expand' | translate }}
       </button>
     </div>

@@ -18,6 +18,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
@@ -54,6 +55,7 @@ import { routing } from './vm.routing';
     CastModule,
     LayoutModule,
     MatDialogModule,
+    TestIdModule,
   ],
   declarations: [
     VmListComponent,

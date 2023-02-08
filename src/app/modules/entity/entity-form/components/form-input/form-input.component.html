@@ -20,8 +20,8 @@
   </div>
 
   <!-- need to prevent browser autofill :/ -->
-  <input name="DummyUsername" type="text" />
-  <input name="DummyPassword" type="password" />
+  <input ixTest="dummy" name="DummyUsername" type="text" />
+  <input ixTest="dummy" name="DummyPassword" type="password" />
 
   <div
     *ngIf="config.inputType !== 'file'; else elseBlock"
@@ -53,6 +53,7 @@
         autocomplete="new-password"
         ix-auto
         ix-auto-type="input"
+        [ixTest]="config.name"
         [ix-auto-identifier]="config.placeholder"
         [ngStyle]="{
           'padding-left': config.searchable ? '2rem' : '',
@@ -101,7 +102,7 @@
     <span [style.margin-right.px]="10">
       {{ config.placeholder | translate }}
     </span>
-    <input type="file" id="fileInput" (change)="changeListener($event)" />
+    <input type="file" id="fileInput" [ixTest]="config.name" (change)="changeListener($event)" />
   </ng-template>
 
   <div class="margin-for-error">

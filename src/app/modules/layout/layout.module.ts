@@ -33,6 +33,7 @@ import { DirectoryServicesIndicatorComponent } from 'app/modules/layout/componen
 import { TopbarComponent } from 'app/modules/layout/components/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-header/page-title-header.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { JobsIndicatorComponent } from './components/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from './components/topbar/power-menu/power-menu.component';
@@ -62,6 +63,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatBadgeModule,
     EntityModule,
     PageHeaderModule,
+    TestIdModule,
   ],
   declarations: [
     ChangePasswordDialogComponent,

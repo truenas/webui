@@ -12,6 +12,7 @@
       mat-button
       type="button"
       class="add-btn"
+      [ixTest]="['add-item', label]"
       (click)="addItem()"
     >
       {{ 'Add' | translate }}

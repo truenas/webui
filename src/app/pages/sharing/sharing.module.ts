@@ -19,6 +19,7 @@ import { EntityFormService } from 'app/modules/entity/entity-form/services/entit
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
@@ -76,6 +77,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     TooltipModule,
     CastModule,
     IxFormsModule,
+    TestIdModule,
   ],
   declarations: [
     NfsListComponent,

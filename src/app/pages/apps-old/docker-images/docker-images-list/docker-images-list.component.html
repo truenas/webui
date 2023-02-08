@@ -2,7 +2,7 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button (click)="doAdd()">{{ 'Pull Image' | translate }}</button>
+    <button mat-button ixTest="pull-image" (click)="doAdd()">{{ 'Pull Image' | translate }}</button>
 
     <ix-common-apps-toolbar-buttons></ix-common-apps-toolbar-buttons>
   </ix-page-title-header>
@@ -16,13 +16,14 @@
   <div class="actions">
     <button
       mat-button
+      ixTest="update-selected"
       [disabled]="!selectionHasUpdates"
       (click)="doUpdate(checkboxColumn?.selection.selected)"
     >
       <mat-icon>update</mat-icon>
       {{ 'Update' | translate }}
     </button>
-    <button mat-button (click)="doDelete(checkboxColumn?.selection.selected)">
+    <button mat-button ixTest="delete-selected" (click)="doDelete(checkboxColumn?.selection.selected)">
       <mat-icon>delete</mat-icon>
       {{ 'Delete' | translate }}
     </button>

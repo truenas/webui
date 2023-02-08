@@ -44,6 +44,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -82,6 +83,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     MatSidenavModule,
     AlertsModule,
     LayoutModule,
+    TestIdModule,
   ],
   declarations: [
     AboutDialogComponent,

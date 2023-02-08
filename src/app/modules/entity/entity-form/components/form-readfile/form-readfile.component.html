@@ -9,7 +9,7 @@
   [class.has-tooltip]="config.tooltip"
   [attr.id]="config.name"
 >
-  <input type="file" id="input" (change)="changeListener($event)" />
+  <input type="file" id="input" [ixTest]="config.name" (change)="changeListener($event)" />
 
   <ix-tooltip
     *ngIf="config.tooltip"

@@ -2,7 +2,21 @@ import {
   Directive, ElementRef, HostBinding, Input,
 } from '@angular/core';
 import { snakeCase } from 'lodash';
+import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 
+/**
+ * Adds test attribute to the element for the benefit of Release Engineering.
+ * Prefer not to use test attributes in our unit tests.
+ *
+ * Usage:
+ * Add some description to [ixTest]. Both string and array of strings are supported.
+ * Do NOT add element type, in most cases it'll be added automatically.
+ *
+ * Examples:
+ * <button ixTest="reset-settings">Reset Settings</button>
+ * <input [ixTest]="formControl.name">
+ * <mat-option [ixTest]="[formControl.name, option.label]"></mat-option>
+ */
 @Directive({
   selector: '[ixTest]',
 })
@@ -42,15 +56,17 @@ export class TestDirective {
       case 'mat-select':
       case 'mat-radio-group':
       case 'mat-radio-button':
+      case 'mat-icon':
         return tagName.replace('mat-', '');
       case 'input':
       case 'button':
       case 'select':
       case 'textarea':
         return tagName;
+      case 'a':
+        return 'link';
       default:
-        console.error('Unsupported element type in [ixTest]', tagName);
-        return '';
+        assertUnreachable(tagName as never);
     }
   }
 }

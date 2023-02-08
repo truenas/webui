@@ -31,7 +31,7 @@
     <mat-toolbar-row>
       <h3>{{ card.title | translate }}</h3>
       <div class="actions action-icon">
-        <button mat-button color="default" (click)="doAdd(card.id)">
+        <button mat-button color="default" [ixTest]="[card.id, 'settings']" (click)="doAdd(card.id)">
           {{ 'Settings' | translate }}
         </button>
       </div>

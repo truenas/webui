@@ -19,6 +19,7 @@
           <button
             mat-button
             color="default"
+            [ixTest]="[card.id, 'configure']"
             (click)="onSettingsPressed(card.id)"
           >
             {{ 'Configure' | translate }}

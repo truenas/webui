@@ -108,6 +108,7 @@
       mat-button
       class="mat-mdc-button mat-button mat-accent action-btn"
       name="cancel_button"
+      ixTest="cancel"
       (click)="cancel()"
     >
       {{ 'Cancel' | translate }}
@@ -116,6 +117,7 @@
       type="submit"
       mat-button
       class="mat-mdc-button mat-button mat-primary"
+      ixTest="disconnect"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Export/Disconnect' | translate }}

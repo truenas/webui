@@ -2,7 +2,7 @@
   <mat-toolbar-row>
     <h3>{{ 'NTP Servers' | translate }}</h3>
     <div class="actions action-icon">
-      <button mat-button color="default" (click)="doAdd()">
+      <button mat-button color="default" ixTest="add-ntp" (click)="doAdd()">
         {{ 'Add' | translate }}
       </button>
     </div>
@@ -77,6 +77,7 @@
           mat-icon-button
           type="button"
           aria-label="Delete"
+          [ixTest]="['delete', server.address]"
           (click)="doDelete(server); $event.stopPropagation()"
         >
           <mat-icon>delete</mat-icon>

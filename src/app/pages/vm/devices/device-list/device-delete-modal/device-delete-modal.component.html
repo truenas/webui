@@ -43,6 +43,7 @@
       mat-button
       class="mat-mdc-button mat-button mat-accent action-btn"
       name="Cancel_button"
+      ixTest="cancel"
       (click)="cancel()"
     >
       {{ 'Cancel' | translate }}
@@ -52,6 +53,7 @@
       mat-button
       class="mat-mdc-button mat-button mat-primary"
       name="Delete Device_button"
+      ixTest="delete-device"
       [disabled]="form.invalid"
     >
       {{ 'Delete Device' | translate }}

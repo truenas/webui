@@ -41,6 +41,7 @@
       </mat-chip-row>
       <input
         *ngIf="!config.autocomplete; else autoCompleteBlock"
+        [ixTest]="config.name"
         [placeholder]="config.placeholder | translate"
         [matChipInputFor]="chipList"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -53,6 +54,7 @@
           #chipInput
           [placeholder]="config.placeholder | translate"
           [formControl]="chipCtrl"
+          [ixTest]="config.name"
           [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matAutocomplete]="autoComplete"

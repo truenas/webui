@@ -24,6 +24,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
@@ -82,6 +83,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     AppLoaderModule,
     SnapshotsModule,
     AngularResizeEventModule,
+    TestIdModule,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -43,6 +43,7 @@
         #fileInput
         id="fb"
         type="file"
+        [ixTest]="config.name"
         [accept]="config.acceptedFiles"
         [formControlName]="config.name"
         (change)="upload(config.fileLocation)"
@@ -53,6 +54,7 @@
           id="fb"
           type="file"
           multiple
+          [ixTest]="config.name"
           [accept]="config.acceptedFiles"
           [formControlName]="config.name"
           (change)="upload(config.fileLocation)"
@@ -72,6 +74,7 @@
         #fileInput
         id="fb"
         type="file"
+        [ixTest]="config.name"
         [accept]="config.acceptedFiles"
         [formControlName]="config.name"
       />

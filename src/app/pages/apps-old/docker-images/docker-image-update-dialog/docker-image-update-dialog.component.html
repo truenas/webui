@@ -47,17 +47,25 @@
       mat-button
       type="submit"
       color="primary"
+      ixTest="update"
       [disabled]="form.invalid"
     >
       {{ 'Update' | translate }}
     </button>
-    <button *ngIf="!wasSubmitted" mat-button type="button" matDialogClose>
+    <button
+      *ngIf="!wasSubmitted"
+      mat-button
+      type="button"
+      matDialogClose
+      ixTest="cancel"
+    >
       {{ 'Cancel' | translate }}
     </button>
     <button
       *ngIf="wasSubmitted"
       mat-button
       type="button"
+      ixTest="close"
       [matDialogClose]="true"
       [disabled]="!isJobCompleted"
     >

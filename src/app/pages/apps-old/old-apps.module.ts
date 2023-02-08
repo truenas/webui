@@ -28,6 +28,7 @@ import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ApplicationsRoutingModule } from 'app/pages/apps-old/applications-routing.module';
 import { ApplicationsComponent } from 'app/pages/apps-old/applications.component';
 import { CatalogComponent } from 'app/pages/apps-old/catalog/catalog.component';
@@ -90,6 +91,7 @@ import { CommonAppsToolbarButtonsComponent } from './common-apps-toolbar-buttons
     TerminalModule,
     TranslateModule,
     MatProgressSpinnerModule,
+    TestIdModule,
   ],
   declarations: [
     ApplicationsComponent,

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { TestDirective } from 'app/modules/test/test/test.directive';
+import { TestDirective } from 'app/modules/test-id/test/test.directive';
 
 @NgModule({
   declarations: [
@@ -9,4 +9,4 @@ import { TestDirective } from 'app/modules/test/test/test.directive';
     TestDirective,
   ],
 })
-export class TestModule {}
+export class TestIdModule {}

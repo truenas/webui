@@ -17,6 +17,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   CloudCredentialsFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
@@ -133,6 +134,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     RouterModule,
     MatStepperModule,
     AppCommonModule,
+    TestIdModule,
   ],
 })
 export class CredentialsModule { }

@@ -21,6 +21,7 @@ import {
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
 @NgModule({
@@ -38,6 +39,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     MatButtonModule,
     MatCheckboxModule,
     CoreComponents,
+    TestIdModule,
   ],
   exports: [
     SchedulerComponent,

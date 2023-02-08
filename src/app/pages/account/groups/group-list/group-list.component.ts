@@ -20,7 +20,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { groupPageEntered } from 'app/pages/account/groups/store/group.actions';
+import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -149,5 +149,9 @@ export class GroupListComponent implements OnInit, AfterViewInit {
 
   onSearch(query: string): void {
     this.dataSource.filter = query;
+  }
+
+  handleDeletedGroup(id: number): void {
+    this.store$.dispatch(groupRemoved({ id }));
   }
 }

@@ -18,6 +18,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';
@@ -48,6 +49,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     LayoutModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
+    TestIdModule,
   ],
   declarations: [
     LineChartComponent,
