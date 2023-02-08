@@ -44,7 +44,7 @@ export class ManageConfigurationMenuComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/others/config-reset']);
+        this.router.navigate(['/others/config-reset'], { skipLocationChange: true });
       });
   }
 }

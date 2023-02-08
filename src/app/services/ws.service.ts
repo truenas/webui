@@ -27,6 +27,7 @@ import { User } from 'app/interfaces/user.interface';
 export class WebSocketService {
   onCloseSubject$ = new Subject<boolean>();
   onOpenSubject$ = new Subject<boolean>();
+  onConnected$ = new Subject<void>();
 
   socket: WebSocket;
   connected = false;
@@ -90,6 +91,7 @@ export class WebSocketService {
   }
 
   onconnect(): void {
+    this.onConnected$.next();
     this.shuttingdown = false;
     while (this.pendingMessages.length > 0) {
       const payload = this.pendingMessages.pop();
