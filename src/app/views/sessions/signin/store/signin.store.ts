@@ -17,6 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService2 } from 'app/services/ws2.service';
 
@@ -67,6 +68,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private snackbar: MatSnackBar,
     private wsManager: WebsocketConnectionService,
     private authService: AuthService,
+    private updateService: UpdateService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -85,6 +87,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       ])
         .pipe(
           switchMap(() => {
+            this.updateService.hardRefreshIfNeeded();
             this.updateFailoverStatusOnDisconnect();
 
             // TODO: ws.token implicitly stores token in localStorage.
