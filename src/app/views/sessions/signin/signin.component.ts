@@ -87,7 +87,26 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private autofill: AutofillMonitor,
     private sysGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
-  ) {
+  ) {}
+
+  ngAfterViewInit(): void {
+    this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
+      if (!this.didSetFocus) {
+        this.didSetFocus = true;
+        this.usernameInput.nativeElement.focus();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.init();
+
+    this.ws.onConnected$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.init();
+    });
+  }
+
+  init(): void {
     const haStatus = this.window.sessionStorage.getItem('ha_status');
     if (haStatus && haStatus === 'true') {
       this.haStatus = true;
@@ -100,6 +119,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isLogoReady = true;
       if ([ProductType.Scale, ProductType.ScaleEnterprise].includes(this.productType)) {
         if (this.haInterval) {
+          this.checkingStatus = false;
           clearInterval(this.haInterval);
         }
         this.getHaStatus();
@@ -111,18 +131,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.window.localStorage.setItem('product_type', this.productType);
     });
-  }
 
-  ngAfterViewInit(): void {
-    this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
-      if (!this.didSetFocus) {
-        this.didSetFocus = true;
-        this.usernameInput.nativeElement.focus();
-      }
-    });
-  }
-
-  ngOnInit(): void {
     if (this.canLogin()) {
       this.loginToken();
     }
@@ -154,6 +163,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     if (this.haInterval) {
+      this.checkingStatus = false;
       clearInterval(this.haInterval);
     }
     if (this.tokenObservable) {
